@@ -1,0 +1,43 @@
+@import controllers.TaxsLanguageController
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.helpers._
+
+@(atsList: view_models.AtsList, atsYear: Form[view_models.TaxYearEnd], actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, lang: Lang)
+
+@headerContent = {
+    @includes.taxs_breadcrumb(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
+    @if(lang.language == "cy"){
+        <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+    } else {
+        <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+    }
+    @if(actingAsAttorney.isDefined) {
+        <div class="nested-banner">
+            <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+        </div>
+    }
+    @if(!actingAsAttorney.isDefined){
+        <p id="user-info"><strong>@atsList.forename @atsList.surname</strong> <br>@Html(Messages("generic.utr")) @atsList.utr</p>
+    }
+    <h1 aria-level="1" role="heading">@Html(Messages("ats.select_tax_year.title"))</h1>
+}
+
+@includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+    @helpers.errorSummaryTemplate(atsYear)
+    @form(action = controllers.routes.IndexController.authorisedOnSubmit){
+        <div class="form-group">
+            @helpers.taxsInputTypeRadioGroup(
+                InputTypeRadioGroupParams(
+                    atsYear("year"),
+                    atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
+                    fieldSetAttributes = Some("id=year_field"),
+                    legendId = Some("year_field-legend"),
+                    legendClass = Some("visuallyhidden"),
+                    legend = Some(Messages("ats.select_tax_year.title")),
+                    ariaDescribedBy = Some("year_field-legend")
+                )
+            )
+        </div>
+        <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
+    }
+}

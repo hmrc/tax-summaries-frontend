@@ -1,0 +1,7 @@
+@(actingAttorney : Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor])(implicit lang: Lang, messages: Messages)
+
+@if(actingAttorney.isDefined) {
+<div class="nested-banner">
+    <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+</div>
+}

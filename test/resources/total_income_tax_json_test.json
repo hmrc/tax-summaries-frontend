@@ -1,0 +1,32 @@
+{"taxYear":2014,
+"utr":"$utr",
+  "income_tax":{
+      "payload":{
+        "additional_rate":{"amount":10.0,"currency":"GBP"},
+        "other_adjustments_reducing":{"amount":20.0,"currency":"GBP"},
+        "basic_rate_income_tax":{"amount":1860.0,"currency":"GBP"},
+        "upper_rate":{"amount":30.0,"currency":"GBP"},
+        "additional_rate_amount":{"amount":40.0,"currency":"GBP"},
+        "ordinary_rate_amount":{"amount":50.0,"currency":"GBP"},
+        "additional_rate_income_tax_amount":{"amount":60.0,"currency":"GBP"},
+        "total_income_tax":{"amount":372.0,"currency":"GBP"},
+        "higher_rate_income_tax_amount":{"amount":70.0,"currency":"GBP"},
+        "additional_rate_income_tax":{"amount":80.0,"currency":"GBP"},
+        "other_adjustments_increasing":{"amount":90.0,"currency":"GBP"},
+        "ordinary_rate":{"amount":100.0,"currency":"GBP"},
+        "starting_rate_for_savings":{"amount":110.0,"currency":"GBP"},
+        "upper_rate_amount":{"amount":120.0,"currency":"GBP"},
+        "higher_rate_income_tax":{"amount":130.0,"currency":"GBP"},
+        "starting_rate_for_savings_amount":{"amount":140.0,"currency":"GBP"},
+        "basic_rate_income_tax_amount":{"amount":372.0,"currency":"GBP"}},
+      "rates":{"additional_rate_income_tax_rate":{"percent":"45%"},
+        "higher_rate_income_tax_rate":{"percent":"40%"},
+        "upper_rate_rate":{"percent":"32.5%"},
+        "ordinary_rate_tax_rate":{"percent":"10%"},
+        "additional_rate_rate":{"percent":"37.5%"},
+        "starting_rate_for_savings_rate":{"percent":"10%"},
+        "basic_rate_income_tax_rate":{"percent":"20%"}
+      }
+   },
+   "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+}

@@ -1,0 +1,91 @@
+$is-print: true;
+
+@import "taxs.scss";
+
+  /*= Resets
+  ---------------------------------------------------------------------------*/
+  html {
+    background-color: $white;
+  }
+  .header-proposition {
+    float: left !important;
+    width: auto !important;
+  }
+  .header-global {
+    float: right !important;
+    margin-bottom: $gutter-half;
+    width: auto !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: $black;
+  }
+
+  #user-info {
+    clear: both;
+  }
+
+  .header__menu__proposition-name {
+    color: $black;
+  }
+
+  #content {
+    a {
+      text-decoration: none !important;
+      color: $black;
+    }
+
+    article {
+      width: 100% !important;
+
+      table {
+        margin-top: 0;
+      }
+    }
+  }
+
+  /*= Hide these items
+  ---------------------------------------------------------------------------*/
+  .js-header-toggle.menu,
+  .phase-tag, .alpha-tag,
+  .phase-banner, .alpha-banner,
+  .service-info,
+  #global-breadcrumb,
+  .mc-chart, .mc-toggle-link,
+  .back,
+  .report-error {
+    display: none !important;
+  }
+
+  /*= Remove urls being pasted after links
+  ---------------------------------------------------------------------------*/
+  a[href]:after {
+    content: none !important;
+  }
+
+  /*= Your taxes and public spending
+  ---------------------------------------------------------------------------*/
+  #tax-spent {
+
+    position: static !important;
+    clip: auto !important;
+    display: table !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+
+    thead th {
+      padding-top: 0;
+    }
+  }
+
+  /*= Tax calculation
+  ---------------------------------------------------------------------------*/
+  #capital-gains {
+    page-break-inside: avoid;
+  }
+
+  .data-link span {
+    text-decoration: none !important;
+  }

@@ -1,0 +1,15 @@
+@()(implicit lang: Lang, request: Request[AnyRef], messages: Messages)
+
+@headerContent = {
+@includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.noauth", 0)
+
+<h1 aria-level="1" role="heading">@Html(Messages("generic.not_authorised"))</h1>
+}
+
+@includes.taxs_main(title = Messages("generic.not_authorised"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
+    <p class="lede">@Html(Messages("not.authorised.line1"))</p>
+
+    <p>@Html(Messages("client_agent.notice.line1"))</p>
+
+    <p>@Html(Messages("client_agent.notice.line2"))</p>
+}

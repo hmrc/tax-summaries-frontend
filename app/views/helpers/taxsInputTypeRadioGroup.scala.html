@@ -1,0 +1,143 @@
+@(params: views.helpers.InputTypeRadioGroupParams)(implicit message : Messages, formInstance: Option[Form[_]] = None)
+
+@import views.html.helpers._
+@import views.helpers._
+@import utils.validation._
+
+@fieldErrors = @{
+    ErrorMessageInterpreter.getFieldErrors(params.field)
+}
+@fieldSetClass = @{
+    Html((params.fieldSetClass, fieldErrors.nonEmpty) match {
+        case (None, false) => ""
+        case (Some(""), false) => ""
+        case (Some(fieldSetClass), false) => "class=\"" + fieldSetClass + "\""
+        case (Some(fieldSetClass), true) => "class=\"" + fieldSetClass + " form-field--error" + "\""
+        case (None, true) => "class=form-field--error"
+    })
+}
+@fieldSetAttributes = @{
+    params.fieldSetAttributes match {
+        case Some(fieldSetAttributes) => fieldSetAttributes
+        case _ =>
+    }
+}
+@labelAfter = @{
+    params.labelAfter
+}
+@labelStacked = @{
+    params.labelStacked
+}
+@legendClass = @{
+    Html(params.legendClass match {
+        case Some(legendClass) => "class=\"" + legendClass + "\""
+        case _ => ""
+    })
+}
+@legendId = @{
+    Html(params.legendId match {
+        case Some(legendId) => "id=\"" + legendId + "\""
+        case _ => ""
+    })
+}
+@inputTypeId = @{
+    Html(params.legendId match {
+        case Some(legendId) => legendId
+        case _ => ""
+    })
+}
+@legendAttributes = @{
+    params.legendAttributes match {
+        case Some(legendAttributes) => legendAttributes
+        case _ => ""
+    }
+}
+@legend = {
+    @params.legend match {
+        case Some(legend) => {
+            <legend @legendId @legendClass @legendAttributes>@legend</legend>
+        }
+        case _ => {}
+    }
+}
+@formHintId = @{
+    Html(params.formHintId match {
+        case Some(formHintId) => "id=\"" + formHintId + "\""
+        case _ => ""
+    })
+}
+@formHint = {
+    @params.formHint match {
+        case Some(formHint) => {
+            <span @formHintId class="form-hint">@formHint</span>
+        }
+        case _ => {}
+    }
+}
+@optionMessages = @{
+    params.optionMessages
+}
+@inputClass = @{
+    Html(params.inputClass match {
+        case Some(inputClass) => "class=\"" + inputClass + "\""
+        case _ => ""
+    })
+}
+@dataAttributes = @{
+    params.dataAttributes match {
+        case Some(dataAttributes) => dataAttributes
+        case _ => ""
+    }
+}
+@addLabelIfSpecified(label: String, params: InputTypeRadioGroupParams) = @{
+    params.labelStacked match {
+        case true => label.split(" ").mkString("<br>")
+        case false => label
+    }
+}
+@labelClass = @{
+    params.labelClass match {
+        case Some(labelClass) => labelClass
+        case _ => ""
+    }
+}
+
+<fieldset @fieldSetClass @fieldSetAttributes role="radiogroup" aria-required="true" @if(fieldErrors.nonEmpty) {aria-labelledby="@params.field.name-error-0"}>
+    <div>
+        @legend
+        @formHint
+        @commonHelper(params.field, fieldErrors)
+        <div>
+            @params.radioOptions.map { case (value, label) =>
+                @defining(s"${params.field.name}-${value.toLowerCase.replace(" ", "_")}") { inputId =>
+                    <label id="@inputId-label" for="@inputId" class="block-label @labelClass @params.field.value.filter(_ == value).map { _ => selected }">
+                        @if(!labelAfter)@{addLabelIfSpecified(label, params)}
+                        <input type="radio"
+                               id="@inputId"
+                               @if(params.ariaDescribedBy){
+                                    @if(params.ariaDescribedByForYesOptionOnly && (value == "Yes")) {
+                                        aria-describedby="@{params.ariaDescribedBy}"
+                                    } else {
+                                        @if(!params.ariaDescribedByForYesOptionOnly) {
+                                            aria-describedby="@{params.ariaDescribedBy}"
+                                        } else {
+                                            aria-describedby="@{inputTypeId}"
+                                        }
+                                    }
+                               } else {
+                                    aria-describedby="@{inputTypeId}"
+                               }
+                               name="@params.field.name"
+                               value="@value" @inputClass @dataAttributes @params.field.value.filter(_ == value).map { _ => checked="checked"}>
+                        @if(labelAfter)@{addLabelIfSpecified(label, params)}
+                        @if(!optionMessages.isEmpty){
+                            @optionMessages.get.filter(c=>c._1 == inputId).map( item =>
+                                Html(s"<span ${legendClass}>${item._2}</span>")
+                            )
+                        }
+                    </label>
+                }
+            }
+        </div>
+    </div>
+</fieldset>

@@ -1,0 +1,222 @@
+# Generic
+#============================================================
+generic.ats=Annual tax summary
+generic.description=Description
+generic.amount_pounds=Amount
+generic.back=Back
+generic.is=is
+generic.not_authorised=Not authorised
+generic.exit_tax_summaries=Back to HMRC Online Services
+generic.utr=Unique Taxpayer Reference:
+generic.utr_abbrev=UTR
+generic.minus=minus
+generic.english=English
+generic.welsh=Cymraeg
+generic.acting_for=You are acting for
+generic.name_not_defined=Name Not Defined
+generic.tax_year_heading=Tax year: April 6 {0} to April 5 {1}
+generic.to_from=: {0} to {1}
+generic.sign_out=Sign out
+generic.errors_heading=There is a problem with the form
+
+
+# View ATS - Breadcrumbs
+#============================================================
+breadcrumbs.yta.home=Home
+
+breadcrumbs.taxs.select_tax_year=Select tax year
+breadcrumbs.taxs.home=Your annual tax summary
+breadcrumbs.taxs.noauth=Not authorised
+breadcrumbs.taxs.no_ats=No ATS available
+breadcrumbs.taxs.no_ats_error=Technical Difficulties
+breadcrumbs.taxs.index=Your annual tax summary
+breadcrumbs.taxs.nics=Income Tax and National Insurance
+breadcrumbs.taxs.summary=Your income and taxes
+breadcrumbs.taxs.treasury_spending=Your taxes and public spending
+breadcrumbs.taxs.income_before_tax=Income before tax
+breadcrumbs.taxs.tax_free_amount=Tax-free amount
+breadcrumbs.taxs.total_income_tax=Income Tax
+breadcrumbs.taxs.capital_gains_tax=Capital Gains Tax
+breadcrumbs.taxs.agent_service_unavailable=Annual tax summary: 2013 to 2014
+
+
+# View ATS - Select tax year page
+#============================================================
+ats.select_tax_year.title=Select tax year
+ats.select_tax_year.continue=Continue
+ats.select_tax_year.required.summary=Please select tax year
+ats.select_tax_year.required=Select an option for the tax year
+
+
+# View ATS - Landing page
+#============================================================
+ats.index.html.title=Your annual tax summary
+ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
+ats.index.html.tax_calc_link=Your income and taxes
+ats.index.html.tax_calc_description=This shows a break down of your total income, your tax-free amount, and how much tax and National Insurance you&#39;ve paid or will pay.
+ats.index.html.tax_spend_link=Your taxes and public spending
+ats.index.html.tax_spend_description=This shows a break down of how your taxes have been or will be spent by government.
+
+# View ATS - Summary
+#============================================================
+ats.summary.html.title=Your income and taxes
+ats.summary.title=Your income and taxes
+ats.summary.lede=This shows a break down of your income, tax-free amount and taxes you&#39;ve paid or will pay.
+ats.summary.total_income.title=Total income
+ats.summary.total_income.link=Your total income
+ats.summary.total_income.description=This is your total income for the year.
+ats.summary.tax_free.title=Tax-free amount
+ats.summary.tax_free.link=Your tax-free amount
+ats.summary.tax_free.description=This is how much you can earn before you start paying Income Tax.
+ats.summary.tax_and_nics.title=Income Tax and National Insurance
+ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
+ats.summary.tax_and_nics.description=This is how much you pay on all your income above your tax-free amount.
+ats.summary.capital_gains.title=Capital Gains Tax
+ats.summary.capital_gains.link=Your Capital Gains Tax
+ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
+ats.summary.total_tax.your_total_tax=Total tax
+ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
+ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
+ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
+ats.summary.taxable_income.your_total_tax.description_total_income_tax=total income tax
+ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
+ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
+
+# View NICS page
+#=============================================================
+ats.nics.tax_and_nics.title=Income Tax and National Insurance contributions
+ats.nics.tax_and_nics.lede=This is how much you pay on income above your tax-free amount.
+ats.nics.tax_and_nics.description=Your Income Tax and National Insurance is {0} of your total income.
+ats.nics.tax_and_nics.income_tax=Income Tax
+ats.nics.tax_and_nics_explained=National Insurance
+ats.nics.tax_and_nics.total=Income Tax and National Insurance
+
+# View ATS - your income before tax (IND)
+#============================================================
+ats.income_before_tax.html.title=Total income
+ats.income_before_tax.title=Total income
+ats.income_before_tax.intro=This is your total income for the year.
+
+ats.income_before_tax.table_header=Source of income
+ats.income_before_tax.table.line1=Self-employment
+ats.income_before_tax.table.line2=Employment
+ats.income_before_tax.table.line3=State pension
+ats.income_before_tax.table.line4=Other pension income
+ats.income_before_tax.table.line5=Taxable state benefits
+ats.income_before_tax.table.line6=Other income
+ats.income_before_tax.table.line7=Benefits from employment
+
+# View ATS - tax free amount (IND)
+#============================================================
+ats.tax_free_amount.html.title=Tax-free amount
+ats.tax_free_amount.subtitle=Tax-free amount
+ats.tax_free_amount.lede=This is how much you can earn before you start paying Income Tax.
+ats.tax_free_amount.description=This includes your Personal Allowance and any other allowances, deductions and expenses.
+
+ats.tax_free_amount.tax_free_amount=Tax-free amount
+ats.tax_free_amount.table.line1=Personal Allowance
+ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
+ats.tax_free_amount.table.total=Total tax-free amount
+
+# View ATS - total income tax (IND)
+#============================================================
+ats.total_income_tax.html.title=Income Tax
+
+ats.total_income_tax.income_tax=Income Tax
+ats.total_income_tax.dividends=Dividends
+ats.total_income_tax.adjustments=Adjustments
+ats.total_income_tax.total_income_tax=Total Income Tax
+
+ats.total_income_tax.table.savings=Savings rate ({0} at {1})
+ats.total_income_tax.table.basic=Basic rate ({0} at {1})
+ats.total_income_tax.table.higher=Higher rate ({0} at {1})
+ats.total_income_tax.table.additional=Additional rate ({0} at {1})
+ats.total_income_tax.table.other.increasing=Other adjustments that increase your Income Tax
+ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Income Tax
+
+# View ATS - capital gains tax (IND)
+#============================================================
+ats.capital_gains_tax.html.title=Capital Gains Tax
+ats.capital_gains_tax.lede=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
+ats.capital_gains_tax.subtitle=Capital Gains Tax
+ats.capital_gains_tax.description=Your Capital Gains Tax is {0} of your total gains.
+
+ats.capital_gains_tax.capital_gains=Your capital gains
+ats.capital_gains_tax.capital_gains_tax=Capital Gains Tax
+ats.capital_gains_tax.total_capital_gains_tax=Total Capital Gains Tax
+
+ats.capital_gains_tax.table.line1=Your taxable gains
+ats.capital_gains_tax.table.line2={0} annual exempt amount
+ats.capital_gains_tax.table.line3=You pay tax on
+ats.capital_gains_tax.table.line4=Entrepreneurs&apos; Relief rate ({0} at {1})
+ats.capital_gains_tax.table.line5=Ordinary rate ({0} at {1})
+ats.capital_gains_tax.table.line6=Upper rate ({0} at {1})
+ats.capital_gains_tax.table.line7=Adjustment to Capital Gains Tax
+
+ats.capital_gains_tax.tax_year_period={0} to {1}
+
+# View ATS - treasury spending (IND)
+#============================================================
+ats.treasury_spending.html.title=Your taxes and public spending
+
+ats.treasury_spending.title=Your taxes and public spending
+ats.treasury_spending.section.lede=This shows a break down of how your taxes have been or will be spent by government.
+
+ats.treasury_spending.return=Back
+ats.treasury_spending.total=Total
+
+ats.treasury_spending.table.Welfare=Welfare
+ats.treasury_spending.table.Health=Health
+ats.treasury_spending.table.StatePensions=State Pensions
+ats.treasury_spending.table.Education=Education
+ats.treasury_spending.table.NationalDebtInterest=National Debt Interest
+ats.treasury_spending.table.Defence=Defence
+ats.treasury_spending.table.CriminalJustice=Criminal Justice
+ats.treasury_spending.table.Transport=Transport
+ats.treasury_spending.table.GovernmentAdministration=Government Administration
+ats.treasury_spending.table.Culture=Culture e.g. sports, libraries, museums
+ats.treasury_spending.table.Environment=Environment
+ats.treasury_spending.table.HousingAndUtilities=Housing and Utilities e.g. street lighting
+ats.treasury_spending.table.BusinessAndIndustry=Business and Industry
+ats.treasury_spending.table.UkContributionToEuBudget=UK Contribution to the EU Budget
+ats.treasury_spending.table.OverseasAid=Overseas Aid
+ats.treasury_spending.table.PublicOrderAndSafety=Public Order and Safety
+ats.treasury_spending.table.link=View this information as a table
+ats.treasury_spending.chart.link=View this information as a chart
+
+# No ATS - error page
+#============================================================
+generic.error.html.title=Technical Difficulties
+generic.error.title=Sorry, we&#39;re experiencing technical difficulties
+generic.error.lede=Please try again in a few moments.
+
+# No ATS - ats unavailable page
+#============================================================
+no.ats.html.title=No ATS
+no.ats.title=Your annual tax summary
+no.ats.line1=You had no taxable income or capital gains this year so you don't have an annual tax summary.
+no.ats.line2=If you had taxable income, your annual tax summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
+
+# Not authorised page
+#============================================================
+not.authorised.line1=You are not authorised to access Annual Tax Summaries.
+client_agent.notice.line1=The version of the annual tax summary for agents to view their client&#39;s details is not available yet. This version will be coming soon.
+client_agent.notice.line2=The annual tax summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
+
+# Token error page
+#============================================================
+token_error.html.title=Technical problem
+token_error.title=Sorry, there was a technical problem
+token_error.lede=We couldn&#39;t retrieve your client&#39;s summary. Please try again.
+
+# Screen reader - visually hidden
+#============================================================
+screen.reader.total_income=Your total income is
+screen.reader.tax_free_amount=Your tax-free amount is
+screen.reader.income_tax_and_ni=Your Income Tax and National Insurance is
+screen.reader.capital_gains_tax=Your Capital Gains Tax is
+
+# Misc
+#===========================================================
+ats.summary.tax.title=Your tax was calculated as
+ats.summary.nics.title=Your NICs were calculated as

@@ -1,0 +1,16 @@
+{"taxYear":2014,
+"utr":"$utr",
+    "income_data":{
+    "payload":{
+    "self_employment_income":{"amount":1100.0,"currency":"GBP"},
+    "benefits_from_employment":{"amount":20.0,"currency":"GBP"},
+    "other_pension_income":{"amount":2000.0,"currency":"GBP"},
+    "state_pension":{"amount":1000.0,"currency":"GBP"},
+    "taxable_state_benefits":{"amount":3000.0,"currency":"GBP"},
+    "income_from_employment":{"amount":10500.0,"currency":"GBP"},
+    "other_income":{"amount":1500.0,"currency":"GBP"},
+    "total_income_before_tax":{"amount":11600.0,"currency":"GBP"}
+    }
+   },
+   "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+ }

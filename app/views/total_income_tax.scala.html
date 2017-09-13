@@ -1,0 +1,166 @@
+@(viewModel: view_models.TotalIncomeTax, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages)
+
+@headerContent = {
+  @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary", "breadcrumbs.taxs.nics"), "ats.total_income_tax.income_tax", viewModel.year)
+  @if(lang.language == "cy"){
+    <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+  } else {
+    <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+  }
+  @if(actingAsAttorney.isDefined) {
+    <div class="nested-banner">
+      <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+    </div>
+  }
+  @if(!actingAsAttorney.isDefined){
+    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+  }
+  <h1 aria-level="1" role="heading">
+    <span class="gray heading-medium block-heading">
+      @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear))
+    </span>
+    @Html(Messages("ats.total_income_tax.income_tax"))
+  </h1>
+}
+
+@includes.taxs_main(title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+
+<article class="content__body">
+  <div class="grid grid-2-3">
+
+    <table id="income-tax">
+      <thead>
+        <tr>
+          <th scope="col">@Html(Messages("ats.total_income_tax.income_tax"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(!viewModel.startingRateForSavings.isZero) {
+        <tr id="starting-rate-for-savings-row">
+          <td>@Html(Messages("ats.total_income_tax.table.savings",
+              """<span id="start-rate-for-savings-before">"""+includes.currency_amount(viewModel.startingRateForSavings)+"""</span>""",
+              """<span id="start-rate-for-savings-rate">"""+viewModel.startingRateForSavingsRate+"""</span>"""))</td>
+          <td id="starting-rate-for-savings-amount">@includes.currency_amount(viewModel.startingRateForSavingsAmount)</td>
+        </tr>
+        }
+
+        @if(!viewModel.basicRateIncomeTax.isZero) {
+        <tr id="basic-rate-income-tax-row">
+          <td>@Html(Messages("ats.total_income_tax.table.basic",
+                """<span id="basic-rate-income-tax-before">"""+includes.currency_amount(viewModel.basicRateIncomeTax)+"""</span>""",
+                """<span id="basic-rate-income-tax-rate">"""+viewModel.basicRateIncomeTaxRate+"""</span>"""))</td>
+          <td id="basic-rate-income-tax-amount">@includes.currency_amount(viewModel.basicRateIncomeTaxAmount)</td>
+        </tr>
+        }
+
+        @if(!viewModel.basicRateIncomeTax.isZero) {
+          @if(!viewModel.higherRateIncomeTax.isZero) {
+        <tr id="higher-rate-income-tax-row">
+            <td>@Html(Messages("ats.total_income_tax.table.higher",
+                """<span id="higher-rate-income-tax-before">"""+includes.currency_amount(viewModel.higherRateIncomeTax)+"""</span>""",
+                """<span id="higher-rate-income-tax-rate">"""+viewModel.higherRateIncomeTaxRate+"""</span>"""))</td>
+          <td id="higher-rate-income-tax-amount">@includes.currency_amount(viewModel.higherRateIncomeTaxAmount)</td>
+        </tr>
+          }
+
+        @if(!viewModel.additionalRateIncomeTax.isZero) {
+        <tr id="additional-rate-income-tax-row">
+          <td>@Html(Messages("ats.total_income_tax.table.additional",
+              """<span id="additional-rate-income-tax-before">"""+includes.currency_amount(viewModel.additionalRateIncomeTax)+"""</span>""",
+              """<span id="additional-rate-income-tax-rate">"""+viewModel.additionalRateIncomeTaxRate+"""</span>"""))</td>
+          <td id="additional-rate-income-tax-amount">@includes.currency_amount(viewModel.additionalRateIncomeTaxAmount)</td>
+        </tr>
+          }
+        }
+
+      </tbody>
+    </table>
+
+    @if(!(viewModel.ordinaryRate.isZero && viewModel.upperRate.isZero && viewModel.additionalRate.isZero)) {
+    <table id="dividends">
+      <thead>
+        <tr id="dividends-section-row">
+          <th scope="col">@Html(Messages("ats.total_income_tax.dividends"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @if(!viewModel.ordinaryRate.isZero) {
+        <tr id="ordinary-rate-row">
+          <td>@Html(Messages("ats.total_income_tax.table.basic",
+              """<span id="ordinary-rate-before">"""+includes.currency_amount(viewModel.ordinaryRate)+"""</span>""",
+              """<span id="ordinary-rate-rate">"""+viewModel.ordinaryRateTaxRate+"""</span>"""))</td>
+          <td id="ordinary-rate-amount">@includes.currency_amount(viewModel.ordinaryRateAmount)</td>
+        </tr>
+        }
+
+        @if(!viewModel.upperRate.isZero) {
+        <tr id="upper-rate-row">
+          <td>@Html(Messages("ats.total_income_tax.table.higher",
+              """<span id="upper-rate-before">"""+includes.currency_amount(viewModel.upperRate)+"""</span>""",
+              """<span id="upper-rate-rate">"""+viewModel.upperRateRate+"""</span>"""))</td>
+          <td id="upper-rate-amount">@includes.currency_amount(viewModel.upperRateAmount)</td>
+        </tr>
+        }
+
+        @if(!viewModel.additionalRate.isZero) {
+        <tr id="additional-rate-row">
+          <td>@Html(Messages("ats.total_income_tax.table.additional",
+              """<span id="additional-rate-before">"""+includes.currency_amount(viewModel.additionalRate)+"""</span>""",
+              """<span id="additional-rate-rate">"""+viewModel.additionalRateRate+"""</span>"""))</td>
+          <td id="additional-rate-amount">@includes.currency_amount(viewModel.additionalRateAmount)</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+
+    @if(!viewModel.otherAdjustmentsIncreasing.isZero || !viewModel.otherAdjustmentsReducing.isZero) {
+    <table id="adjustments">
+      <thead>
+        <tr id="adjustments-section">
+          <th scope="col">@Html(Messages("ats.total_income_tax.adjustments"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @if(!viewModel.otherAdjustmentsIncreasing.isZero) {
+        <tr>
+          <td>@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
+          <td id="other-adjustments-increasing-amount">@includes.currency_amount(viewModel.otherAdjustmentsIncreasing)</td>
+        </tr>
+        }
+
+        @if(!viewModel.otherAdjustmentsReducing.isZero) {
+        <tr>
+          <td>@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
+          <td id="other-adjustments-reducing-amount">
+              <span id="reducing-amount" class="visuallyhidden">@Html(Messages("generic.minus")) @includes.currency_amount(viewModel.otherAdjustmentsReducing)</span>
+              <span aria-hidden="true">-@includes.currency_amount(viewModel.otherAdjustmentsReducing)</span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+
+    <table id="total-income-tax">
+      <tbody>
+        <tr>
+          <th scope="row">@Html(Messages("ats.total_income_tax.total_income_tax"))</th>
+          <td id="total-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTax)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="back">
+      <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYear">@Html(Messages("generic.back"))</a>
+    </div>
+
+  </div>
+</article>
+
+}
