@@ -89,7 +89,7 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2)").toString should include("Select tax year")
+      document.select("#global-breadcrumb li:nth-child(2)").toString should include("Select the tax year")
     }
   }
 }

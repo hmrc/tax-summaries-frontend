@@ -101,7 +101,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
       document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
@@ -109,7 +109,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       document.select("#global-breadcrumb li:nth-child(4) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(4) a").text should include("Your income and taxes")
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Income Tax and National Insurance</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
     }
   }
 }

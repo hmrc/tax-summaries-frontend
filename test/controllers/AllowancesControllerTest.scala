@@ -82,7 +82,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
       document.toString should include("tax-free-allowance")
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: "+testUtr)
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Tax-free amount"
+      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
@@ -111,7 +111,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
       document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
@@ -119,7 +119,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
       document.select("#global-breadcrumb li:nth-child(4) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Tax-free amount</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
     }
   }
 }

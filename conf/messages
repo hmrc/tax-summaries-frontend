@@ -24,13 +24,13 @@ generic.errors_heading=There is a problem with the form
 #============================================================
 breadcrumbs.yta.home=Home
 
-breadcrumbs.taxs.select_tax_year=Select tax year
+breadcrumbs.taxs.select_tax_year=Select the tax year
 breadcrumbs.taxs.home=Your annual tax summary
 breadcrumbs.taxs.noauth=Not authorised
 breadcrumbs.taxs.no_ats=No ATS available
 breadcrumbs.taxs.no_ats_error=Technical Difficulties
 breadcrumbs.taxs.index=Your annual tax summary
-breadcrumbs.taxs.nics=Income Tax and National Insurance
+breadcrumbs.taxs.nics=Your Income Tax and National Insurance
 breadcrumbs.taxs.summary=Your income and taxes
 breadcrumbs.taxs.treasury_spending=Your taxes and public spending
 breadcrumbs.taxs.income_before_tax=Income before tax
@@ -40,11 +40,11 @@ breadcrumbs.taxs.capital_gains_tax=Capital Gains Tax
 breadcrumbs.taxs.agent_service_unavailable=Annual tax summary: 2013 to 2014
 
 
-# View ATS - Select tax year page
+# View ATS - Select the tax year page
 #============================================================
-ats.select_tax_year.title=Select tax year
+ats.select_tax_year.title=Select the tax year
 ats.select_tax_year.continue=Continue
-ats.select_tax_year.required.summary=Please select tax year
+ats.select_tax_year.required.summary=Please select the tax year
 ats.select_tax_year.required=Select an option for the tax year
 
 
@@ -53,15 +53,15 @@ ats.select_tax_year.required=Select an option for the tax year
 ats.index.html.title=Your annual tax summary
 ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
 ats.index.html.tax_calc_link=Your income and taxes
-ats.index.html.tax_calc_description=This shows a break down of your total income, your tax-free amount, and how much tax and National Insurance you&#39;ve paid or will pay.
+ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you&#39;ve paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
-ats.index.html.tax_spend_description=This shows a break down of how your taxes have been or will be spent by government.
+ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
 
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.lede=This shows a break down of your income, tax-free amount and taxes you&#39;ve paid or will pay.
+ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you&#39;ve paid or will pay.
 ats.summary.total_income.title=Total income
 ats.summary.total_income.link=Your total income
 ats.summary.total_income.description=This is your total income for the year.
@@ -84,7 +84,7 @@ ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
 # View NICS page
 #=============================================================
-ats.nics.tax_and_nics.title=Income Tax and National Insurance contributions
+ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
 ats.nics.tax_and_nics.lede=This is how much you pay on income above your tax-free amount.
 ats.nics.tax_and_nics.description=Your Income Tax and National Insurance is {0} of your total income.
 ats.nics.tax_and_nics.income_tax=Income Tax
@@ -93,8 +93,8 @@ ats.nics.tax_and_nics.total=Income Tax and National Insurance
 
 # View ATS - your income before tax (IND)
 #============================================================
-ats.income_before_tax.html.title=Total income
-ats.income_before_tax.title=Total income
+ats.income_before_tax.html.title=Your total income
+ats.income_before_tax.title=Your total income
 ats.income_before_tax.intro=This is your total income for the year.
 
 ats.income_before_tax.table_header=Source of income
@@ -108,12 +108,12 @@ ats.income_before_tax.table.line7=Benefits from employment
 
 # View ATS - tax free amount (IND)
 #============================================================
-ats.tax_free_amount.html.title=Tax-free amount
-ats.tax_free_amount.subtitle=Tax-free amount
+ats.tax_free_amount.html.title=Your tax-free amount
+ats.tax_free_amount.subtitle=Your tax-free amount
 ats.tax_free_amount.lede=This is how much you can earn before you start paying Income Tax.
 ats.tax_free_amount.description=This includes your Personal Allowance and any other allowances, deductions and expenses.
 
-ats.tax_free_amount.tax_free_amount=Tax-free amount
+ats.tax_free_amount.tax_free_amount=Your tax-free amount
 ats.tax_free_amount.table.line1=Personal Allowance
 ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
 ats.tax_free_amount.table.total=Total tax-free amount
@@ -160,7 +160,7 @@ ats.capital_gains_tax.tax_year_period={0} to {1}
 ats.treasury_spending.html.title=Your taxes and public spending
 
 ats.treasury_spending.title=Your taxes and public spending
-ats.treasury_spending.section.lede=This shows a break down of how your taxes have been or will be spent by government.
+ats.treasury_spending.section.lede=This shows a breakdown of how your taxes have been, or will be spent by government.
 
 ats.treasury_spending.return=Back
 ats.treasury_spending.total=Total
