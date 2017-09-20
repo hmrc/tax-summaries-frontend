@@ -396,7 +396,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
       document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
@@ -428,7 +428,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
       document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Technical Difficulties</strong>")
     }

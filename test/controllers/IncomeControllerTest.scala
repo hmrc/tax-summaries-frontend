@@ -91,10 +91,10 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       document.getElementById("taxable-state-benefits").text() shouldBe "£3,000"
       document.getElementById("other-income-amount").text() shouldBe "£1,500"
 
-      document.toString should include("Total income")
+      document.toString should include("Your total income")
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: "+testUtr)
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Total income"
+      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
@@ -139,7 +139,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
       document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
@@ -147,7 +147,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       document.select("#global-breadcrumb li:nth-child(4) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Total income</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your total income</strong>")
     }
   }
 }
