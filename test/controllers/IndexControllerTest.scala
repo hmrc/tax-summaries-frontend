@@ -34,6 +34,7 @@ import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{GenericViewModel, AuthorityUtils}
+import view_models.AtsForms._
 import view_models.{TaxYearEnd, AtsList}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -84,6 +85,16 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       status(result) shouldBe 303
     }
   }
+
+  "Calling Index Page submit" should {
+
+    "return a 303 response" in new TestController {
+
+      val result = Future.successful(authorisedOnSubmit(request))
+      status(result) shouldBe 303
+    }
+  }
+
 
   "Calling with request param" should {
 
@@ -209,4 +220,21 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       document.text() contains "2014"
     }
   }
+
+  "Submitting the Index page" should {
+
+    "give a Ok status and stay on the same page if form errors and display the error" in new TestController {
+
+      when(atsListService.getAtsYearList(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(data)
+      val atsYear = Map("atsYear" -> "")
+      val form = atsYearFormMapping.bind(atsYear)
+      val requestWithQuery = FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      val result = Future.successful(onSubmit(user, requestWithQuery))
+      status(result) shouldBe OK
+
+    }
+
+  }
+
+
 }

@@ -25,10 +25,31 @@ import utils.AuthorityUtils
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.TestConstants._
 
+import scala.concurrent.Future
+
 class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val request = FakeRequest()
+
+  "Calling ErrorController with no session" should {
+
+    "return a 303 response" in new ErrorController {
+
+      val result = notAuthorised(request)
+      status(result) shouldBe 303
+    }
+  }
+
+  "Calling ErrorController authorised noATS" should {
+
+    "return a 303 response" in new ErrorController {
+
+      val result = Future.successful(authorisedNoAts(request))
+      status(result) shouldBe 303
+    }
+  }
+
 
   "ErrorController" should {
 
