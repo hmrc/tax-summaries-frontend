@@ -48,6 +48,16 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
     when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
+  "Calling Index Page with no session" should {
+
+    "return a 303 response" in new TestController {
+
+      val result = Future.successful(authorisedAtsMain(request))
+      status(result) shouldBe 303
+    }
+  }
+
+
   "Calling Index Page with session" should {
 
     "have the right user data in the view" in new TestController {
