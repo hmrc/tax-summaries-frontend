@@ -28,13 +28,7 @@ import scala.concurrent.Future
 
 trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterEach with OneServerPerSuite {
 
-  lazy val allEntities = List("SOP", "LTD", "Partnership", "LLP", "LTD_GRP", "LLP_GRP")
-  lazy val directorEntities = List("LTD", "LTD_GRP")
-  lazy val partnerEntities = List("Partnership", "LLP", "LLP_GRP")
-  lazy val groupEntities = List("LTD_GRP", "LLP_GRP")
-
   implicit lazy val hc = HeaderCarrier()
-//  implicit val user = AuthBuilder.createUserAuthContextOrgWithAWRS("userId", "joe bloggs", testUtr)
 
   implicit def convertToOption[T](value: T): Option[T] = Some(value)
 
@@ -88,12 +82,6 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
   }
 
   case class Ids(utr: Boolean, nino: Boolean, crn: Boolean, vrn: Boolean)
-
-  def getIds(entityType: String): Ids = entityType match {
-    case "SOP" => Ids(utr = true, nino = true, crn = false, vrn = true)
-    case "Partnership" => Ids(utr = true, nino = false, crn = false, vrn = true)
-    case _ => Ids(utr = true, nino = false, crn = true, vrn = true)
-  }
 
   def testId(shouldExist: Boolean)(targetFieldId: String)(implicit doc: Document) = shouldExist match {
     case false => doc.getElementById(targetFieldId) shouldBe null
