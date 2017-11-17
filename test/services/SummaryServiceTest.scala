@@ -27,13 +27,13 @@ import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.JsonUtil._
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HeaderCarrier
 
 class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 

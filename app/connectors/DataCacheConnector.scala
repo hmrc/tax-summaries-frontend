@@ -21,10 +21,10 @@ import services.{CryptoService, AgentToken}
 import uk.gov.hmrc.http.cache.client.{CacheMap}
 import config.TAXSSessionCache
 import models.AtsData
-import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.Globals
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HeaderCarrier
 
 object DataCacheConnector extends DataCacheConnector {
   lazy val cryptoService = CryptoService

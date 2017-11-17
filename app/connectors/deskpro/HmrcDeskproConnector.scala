@@ -20,11 +20,11 @@ import config.WSHttp
 import connectors.deskpro.domain.{Feedback, TicketId, Ticket}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost}
 import scala.concurrent.Future
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpPost }
 
 object HmrcDeskproConnector extends HmrcDeskproConnector with ServicesConfig {
   override lazy val serviceUrl = baseUrl("hmrc-deskpro")

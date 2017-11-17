@@ -19,12 +19,12 @@ package services
 import models.{AtsData, DataHolder}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.CapitalGains
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object CapitalGainsService extends CapitalGainsService {
   override val atsService = AtsService

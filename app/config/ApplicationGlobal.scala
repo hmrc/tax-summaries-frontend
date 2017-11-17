@@ -16,18 +16,16 @@
 
 package config
 
-import play.api.i18n.{Messages, Lang}
 import play.api.mvc.Request
-import play.api.{Configuration, Application, Play}
+import play.api.{Configuration, Application}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.config.RunMode
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
-import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.frontend.filters.{ FrontendAuditFilter, FrontendLoggingFilter }
 
 
 object ApplicationGlobal extends DefaultFrontendGlobal with RunMode {

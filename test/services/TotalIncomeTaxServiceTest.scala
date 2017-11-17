@@ -24,7 +24,6 @@ import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil._
 import utils.TestConstants._
@@ -32,6 +31,7 @@ import utils.AuthorityUtils
 import org.mockito.Matchers
 import scala.concurrent.Future
 import uk.gov.hmrc.play.frontend.auth.AuthContext
+import uk.gov.hmrc.http.HeaderCarrier
 
 class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 

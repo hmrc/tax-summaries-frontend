@@ -26,7 +26,6 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{Uar, SaUtr}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AuthorityUtils}
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -35,6 +34,7 @@ import scala.concurrent.{Future, ExecutionContext}
 import scala.io.Source
 import utils.TestConstants._
 import utils.JsonUtil._
+import uk.gov.hmrc.http.HeaderCarrier
 
 class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 

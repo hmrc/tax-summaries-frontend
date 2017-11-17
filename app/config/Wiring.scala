@@ -18,21 +18,21 @@ package config
 
 import com.typesafe.config.Config
 import play.api.Play
+import uk.gov.hmrc.http.hooks.HttpHook
+import uk.gov.hmrc.http.{HttpDelete, HttpGet, HttpPost, HttpPut}
+import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
-import uk.gov.hmrc.play.audit.http.config.{LoadAuditingConfig, AuditingConfig}
+import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.config.{ServicesConfig, ControllerConfig, AppName, RunMode}
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
+import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode, ServicesConfig}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.http.hooks.HttpHook
-import uk.gov.hmrc.play.http.{HttpDelete, HttpPut, HttpGet}
-import uk.gov.hmrc.play.http.ws.{WSDelete, WSPost, WSPut, WSGet}
-import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
+import uk.gov.hmrc.play.frontend.config.LoadAuditingConfig
+import uk.gov.hmrc.play.frontend.filters.{FrontendAuditFilter, FrontendLoggingFilter, MicroserviceFilterSupport}
 
 object TAXSControllerConfig extends ControllerConfig {
-  override def controllerConfigs: Config = Play.current.configuration.underlying.getConfig("controllers")
+  lazy val controllerConfigs: Config = Play.current.configuration.underlying.getConfig("controllers")
 }
 
 object TAXSAuditConnector extends AuditConnector with AppName with RunMode {
@@ -40,8 +40,8 @@ object TAXSAuditConnector extends AuditConnector with AppName with RunMode {
 }
 
 object TAXSAuthConnector extends AuthConnector with ServicesConfig {
-  override val serviceUrl: String = ApplicationConfig.authHost
-  override lazy val http: HttpGet = WSHttp
+  val serviceUrl: String = ApplicationConfig.authHost
+  lazy val http = WSHttp
 }
 
 object TAXSAuditFilter extends FrontendAuditFilter with RunMode with AppName with MicroserviceFilterSupport {
@@ -57,16 +57,21 @@ object TAXSLoggingFilter extends FrontendLoggingFilter with MicroserviceFilterSu
     TAXSControllerConfig.paramsForController(controllerName).needsLogging
 }
 
-object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode {
+trait WSHttp extends WSGet with HttpGet with WSPut with HttpPut with WSPost with HttpPost with WSDelete with HttpDelete
+object WSHttp extends WSHttp with AppName with RunMode {
+  override val hooks: Seq[HttpHook] = NoneRequired
+}
+
+object WSGet extends WSGet with HttpGet with AppName with RunMode{
   override val hooks: Seq[HttpHook] = NoneRequired
 }
 
 object CachedStaticHtmlPartialProvider extends CachedStaticHtmlPartialRetriever {
-  override lazy val httpGet: HttpGet = WSHttp
+ override def httpGet: CoreGet = WSGet
 }
 
 object TAXSSessionCache extends SessionCache with AppName {
-  override lazy val http: HttpGet with HttpPut with HttpDelete = WSHttp
+  lazy val http = WSHttp
   override lazy val defaultSource: String = appName
   override lazy val baseUri: String = ApplicationConfig.sessionCacheHost
   override lazy val domain: String = ApplicationConfig.sessionCacheDomain
