@@ -18,7 +18,7 @@ package view_models
 
 import utils.GenericViewModel
 
-case class Allowances(taxYear: Int,  utr: String, taxFreeAllowance: Amount, otherAllowances: Amount, totalTaxFree: Amount,
+case class Allowances(taxYear: Int,  utr: String, taxFreeAllowance: Amount, marriageAllowanceTransferred: Amount, otherAllowances: Amount, totalTaxFree: Amount,
                       title: String, forename: String, surname: String) extends GenericViewModel {
   def year = taxYear
   def taxYearTo = taxYear.toString

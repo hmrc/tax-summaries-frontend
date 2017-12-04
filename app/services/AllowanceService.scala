@@ -47,6 +47,7 @@ trait AllowanceService {
       Allowances(output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("personal_tax_free_amount").get,
+        wrapper.payload.get.get("marriage_allowance_transferred_amount").get,
         wrapper.payload.get.get("other_allowances_amount").get,
         wrapper.payload.get.get("total_tax_free_amount").get,
         output.taxPayerData.get.taxpayer_name.get("title"),

@@ -55,6 +55,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     additionalRate = Amount(10, "GBP"),
     additionalRateAmount = Amount(40, "GBP"),
     otherAdjustmentsIncreasing = Amount(90, "GBP"),
+    marriageAllowanceReceivedAmount = Amount(0, "GBP"),
     otherAdjustmentsReducing = Amount(20, "GBP"),
     totalIncomeTax = Amount(372, "GBP"),
     startingRateForSavingsRateRate = Rate("10%"),
@@ -313,6 +314,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
       "show zero value" in new TestController {
 
         override val model = baseModel.copy(
+          marriageAllowanceReceivedAmount = Amount(0, "GBP"),
           totalIncomeTax = Amount(0, "GBP")
         )
 

@@ -61,6 +61,7 @@ trait TotalIncomeTaxService {
         wrapper.payload.get.get("additional_rate").get,
         wrapper.payload.get.get("additional_rate_amount").get,
         wrapper.payload.get.get("other_adjustments_increasing").get,
+        wrapper.payload.get.get("marriage_allowance_received_amount").get,
         wrapper.payload.get.get("other_adjustments_reducing").get,
         wrapper.payload.get.get("total_income_tax").get,
         wrapper.rates.get("starting_rate_for_savings_rate"),
