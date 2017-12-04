@@ -117,7 +117,7 @@
     </table>
     }
 
-    @if(!viewModel.otherAdjustmentsIncreasing.isZero || !viewModel.otherAdjustmentsReducing.isZero) {
+    @if(!viewModel.otherAdjustmentsIncreasing.isZero || !viewModel.otherAdjustmentsReducing.isZero || !viewModel.marriageAllowanceReceivedAmount.isZero ) {
     <table id="adjustments">
       <thead>
         <tr id="adjustments-section">
@@ -131,6 +131,13 @@
         <tr>
           <td>@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
           <td id="other-adjustments-increasing-amount">@includes.currency_amount(viewModel.otherAdjustmentsIncreasing)</td>
+        </tr>
+        }
+
+        @if(!viewModel.marriageAllowanceReceivedAmount.isZero) {
+        <tr>
+          <td>@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
+          <td id="marriage-allowance-received-amount">@includes.currency_amount(viewModel.marriageAllowanceReceivedAmount)</td>
         </tr>
         }
 

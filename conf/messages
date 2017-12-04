@@ -116,6 +116,7 @@ ats.tax_free_amount.description=This includes your Personal Allowance and any ot
 ats.tax_free_amount.tax_free_amount=Your tax-free amount
 ats.tax_free_amount.table.line1=Personal Allowance
 ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
+ats.tax_free_amount.table.line3=Less Marriage Allowance transferred
 ats.tax_free_amount.table.total=Total tax-free amount
 
 # View ATS - total income tax (IND)
@@ -133,6 +134,8 @@ ats.total_income_tax.table.higher=Higher rate ({0} at {1})
 ats.total_income_tax.table.additional=Additional rate ({0} at {1})
 ats.total_income_tax.table.other.increasing=Other adjustments that increase your Income Tax
 ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Income Tax
+ats.total_income_tax.table.marriage_allowance_received=Less Marriage Allowance received that reduces your Income Tax
+
 
 # View ATS - capital gains tax (IND)
 #============================================================

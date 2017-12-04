@@ -45,7 +45,12 @@
         <td id="tax-free-allowance-amount">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
       </tr>
       }
-
+      @if(!viewModel.marriageAllowanceTransferred.isZero) {
+      <tr>
+        <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
+        <td id="marriage_allowance_transferred_amount">@includes.currency_amount(viewModel.marriageAllowanceTransferred)</td>
+      </tr>
+      }
       @if(!viewModel.otherAllowances.isZero) {
       <tr>
         <td>@Html(Messages("ats.tax_free_amount.table.line2"))</td>

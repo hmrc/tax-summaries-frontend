@@ -41,6 +41,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     taxYear = 2014,
     utr = testUtr,
     taxFreeAllowance = Amount(9440, "GBP"),
+    marriageAllowanceTransferred = Amount(0, "GBP"),
     otherAllowances = Amount(300, "GBP"),
     totalTaxFree = Amount(9740, "GBP"),
     title = "Mr",
