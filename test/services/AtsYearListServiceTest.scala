@@ -29,7 +29,6 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Account
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{GenericViewModel, AccountUtils, AgentTokenException, AuthorityUtils}
@@ -37,6 +36,7 @@ import view_models.{TaxYearEnd, AtsList}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
+import uk.gov.hmrc.http.HeaderCarrier
 
 class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 

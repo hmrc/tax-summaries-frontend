@@ -26,12 +26,12 @@ import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{Amount, GovernmentSpend}
 import scala.concurrent.Future
 import utils.TestConstants._
+import uk.gov.hmrc.http.HeaderCarrier
 
 
 class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {

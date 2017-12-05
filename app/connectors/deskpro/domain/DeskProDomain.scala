@@ -21,7 +21,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import play.api.mvc.Request
 import uk.gov.hmrc.domain._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.{ HeaderCarrier, SessionKeys }
 
 case class Ticket private(name: String,
                           email: String,

@@ -19,11 +19,11 @@ package services
 import models.AtsListData
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.{TaxYearEnd, AtsList}
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object AtsYearListService extends AtsYearListService {
   override val atsListService = AtsListService

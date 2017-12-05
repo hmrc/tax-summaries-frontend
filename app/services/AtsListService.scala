@@ -22,11 +22,11 @@ import models.{ AtsListData, IncomingAtsError}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Account, SaAccount, TaxSummariesAgentAccount}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.{AccountUtils, AuthorityUtils, AtsError, GenericViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object AtsListService extends AtsListService {
   override lazy val middleConnector = MiddleConnector

@@ -25,12 +25,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{TotalIncomeTax, Rate, Amount}
 import utils.TestConstants._
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
