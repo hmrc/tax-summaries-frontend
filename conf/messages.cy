@@ -110,7 +110,7 @@ ats.tax_free_amount.description=Mae hwn yn cynnwys eich Lwfans Personol ac unrhy
 ats.tax_free_amount.tax_free_amount=Swm yn rhydd o dreth
 ats.tax_free_amount.table.line1=Lwfans Personol
 ats.tax_free_amount.table.line2=Lwfansau, didyniadau a threuliau eraill
-ats.tax_free_amount.table.line3=Less Marriage Allowance Transferred
+ats.tax_free_amount.table.line3=Llai''r Lwfans Priodasol sydd wedi''i drosglwyddo
 ats.tax_free_amount.table.total=Cyfanswm yn rhydd o dreth
 
 # View ATS - total income tax (IND)
@@ -128,7 +128,7 @@ ats.total_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
 ats.total_income_tax.table.additional=Cyfradd ychwanegol ({0} ar {1})
 ats.total_income_tax.table.other.increasing=Addasiadau eraill sy&#39;n cynyddu eich Treth Incwm
 ats.total_income_tax.table.other.reducing=Addasiadau eraill sy&#39;n gostwng eich Treth Incwm
-ats.total_income_tax.table.marriage_allowance_received=Less Your Marriage Allowance Received
+ats.total_income_tax.table.marriage_allowance_received=Llai''r Lwfans Priodasol yr ydych wedi''i gael
 
 # View ATS - capital gains tax (IND)
 #============================================================
