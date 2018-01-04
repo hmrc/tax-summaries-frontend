@@ -129,6 +129,7 @@ ats.total_income_tax.table.additional=Cyfradd ychwanegol ({0} ar {1})
 ats.total_income_tax.table.other.increasing=Addasiadau eraill sy&#39;n cynyddu eich Treth Incwm
 ats.total_income_tax.table.other.reducing=Addasiadau eraill sy&#39;n gostwng eich Treth Incwm
 ats.total_income_tax.table.marriage_allowance_received=Llai''r Lwfans Priodasol yr ydych wedi''i gael
+ats.total_income_tax.table.scottish_income_tax=Mae hyn yn cynnwys Treth Incwm yn yr Alban o
 
 # View ATS - capital gains tax (IND)
 #============================================================
@@ -157,6 +158,8 @@ ats.treasury_spending.html.title=Eich trethi a gwariant cyhoeddus
 
 ats.treasury_spending.title=Eich trethi a gwariant cyhoeddus
 ats.treasury_spending.section.lede=Mae hwn yn dangos dadansoddiad o sut mae&#39;r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario.
+ats.treasury_spending.section.sit.lede=This shows a breakdown of how your taxes have been, or will be spent by government across the whole of the UK, including spending by the devolved administrations.
+ats.treasury_spending.section.sit.lede2=For more information about Scottish Government spending, go to <a href="http://www.gov.scot/accounts" target="_blank">www.gov.scot/accounts</a>. For information about Scottish Rate of Income Tax, go to <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank">www.gov.uk/scottish-rate-income-tax/how-it-works</a>.
 
 ats.treasury_spending.return=Nôl
 ats.treasury_spending.total=Cyfanswm

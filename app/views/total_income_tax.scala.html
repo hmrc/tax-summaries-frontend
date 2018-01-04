@@ -160,6 +160,12 @@
           <th scope="row">@Html(Messages("ats.total_income_tax.total_income_tax"))</th>
           <td id="total-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTax)</td>
         </tr>
+        @if(viewModel.incomeTaxStatus == "0002") {
+        <tr>
+          <td class="scottish-income-tax">@Html(Messages("ats.total_income_tax.table.scottish_income_tax"))</td>
+          <td id="scottish-income-tax-amount" class="scottish-income-tax">@includes.currency_amount(viewModel.scottishIncomeTax)</td>
+        </tr>
+        }
       </tbody>
     </table>
 

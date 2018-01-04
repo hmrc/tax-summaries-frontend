@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,8 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       userTitle = "Mr",
       userForename = "userForename",
       userSurname = "userSurname",
-      totalAmount = new Amount(23912.00, "GBP")
+      totalAmount = new Amount(23912.00, "GBP"),
+      incomeTaxStatus = "0002"
     )
 
     when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
@@ -158,7 +159,8 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         userTitle = "Mr",
         userForename = "userForename",
         userSurname = "userSurname",
-        totalAmount = new Amount(10000.0,"GBP")
+        totalAmount = new Amount(10000.0,"GBP"),
+        incomeTaxStatus = "0002"
       )
 
       when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)

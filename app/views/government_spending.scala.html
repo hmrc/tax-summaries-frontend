@@ -26,7 +26,12 @@
 @includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     <article class="content__body">
         <div class="grid grid-2-3">
+            @if(viewModel.incomeTaxStatus == "0002") {
+            <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
+            <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede2"))</p>
+            } else {
             <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
+            }
 
             <table id="tax-spent" aria-hidden="false">
                 <thead>

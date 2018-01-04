@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     marriageAllowanceReceivedAmount = Amount(0, "GBP"),
     otherAdjustmentsReducing = Amount(20, "GBP"),
     totalIncomeTax = Amount(372, "GBP"),
+    scottishIncomeTax = Amount(100, "GBP"),
+    incomeTaxStatus = "0002",
     startingRateForSavingsRateRate = Rate("10%"),
     basicRateIncomeTaxRateRate = Rate("20%"),
     higherRateIncomeTaxRateRate = Rate("40%"),
