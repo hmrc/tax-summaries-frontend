@@ -32,12 +32,12 @@ trait ErrorController extends FrontendController
         with AccountUtils
         with AuthenticationConnector {
 
-  def notAuthorised = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) {
-    implicit user => implicit request => Ok(views.html.errors.not_authorised())
-  }
-
   def authorisedNoAts = AuthorisedFor(TaxSummariesRegime, GGConfidence) {
     implicit user => implicit request => noAts
+  }
+  
+  def notAuthorised = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) {
+    implicit user => implicit request => Ok(views.html.errors.not_authorised())
   }
 
   def noAts(implicit user: User, request: Request[AnyRef]): Result = {
