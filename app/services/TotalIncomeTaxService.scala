@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,8 @@ trait TotalIncomeTaxService {
         wrapper.payload.get.get("marriage_allowance_received_amount").get,
         wrapper.payload.get.get("other_adjustments_reducing").get,
         wrapper.payload.get.get("total_income_tax").get,
+        wrapper.payload.get.get("scottish_income_tax").get,
+        wrapper.incomeTaxStatus.get,
         wrapper.rates.get("starting_rate_for_savings_rate"),
         wrapper.rates.get("basic_rate_income_tax_rate"),
         wrapper.rates.get("higher_rate_income_tax_rate"),

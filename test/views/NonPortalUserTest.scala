@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with Mocki
         ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
-        ("gov_spend_total", spendData)), "", "", "", amount)
+        ("gov_spend_total", spendData)), "", "", "", amount, "")
       val result = views.html.government_spending(fakeViewModel)(language, request, messages)
       val document = Jsoup.parse(contentAsString(result))
 
