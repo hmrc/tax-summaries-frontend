@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
 
-                @viewModel.govSpendAmountData.toList.sortWith(_._2.percentage > _._2.percentage).filter(  _._1 != "GovSpendTotal" ).map {
+                @viewModel.govSpendAmountData.toList.sortWith(_._1 < _._1).sortWith(_._2.percentage > _._2.percentage).filter(  _._1 != "GovSpendTotal" ).map {
                     case (key, value) => {
                         <tr>
                             <td id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
