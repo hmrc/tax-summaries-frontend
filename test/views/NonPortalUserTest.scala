@@ -44,12 +44,13 @@ class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with Mocki
     "not show the menu link in the header if on a mobile device" in  {
 
       val spendData = new SpendData(amount, 20)
+      val scottishIncomeTax = new Amount(0.00, "GBP")
       val fakeViewModel = new GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
         ("education", spendData), ("pension", spendData), ("national_debt_interest", spendData), ("defence", spendData),
         ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
-        ("gov_spend_total", spendData)), "", "", "", amount, "")
+        ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
       val result = views.html.government_spending(fakeViewModel)(language, request, messages)
       val document = Jsoup.parse(contentAsString(result))
 
