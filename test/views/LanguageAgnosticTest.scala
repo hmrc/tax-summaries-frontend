@@ -95,6 +95,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
     "show the treasury spending page in welsh language" in {
       val amount = new Amount(0.00, "GBP")
       val totalAmount = new Amount(0.00, "GBP")
+      val scottishIncomeTax = new Amount(0.00, "GBP")
       val spendData = new SpendData(amount, 20)
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
@@ -103,7 +104,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
         ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
-        ("gov_spend_total", spendData)), "", "", "", totalAmount, "")
+        ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
       val result = views.html.government_spending(fakeViewModel)(language, request, messages)
       val document = Jsoup.parse(contentAsString(result))
 

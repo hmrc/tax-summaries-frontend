@@ -51,7 +51,8 @@ trait GovernmentSpendService {
         output.taxPayerData.get.taxpayer_name.get("forename"),
         output.taxPayerData.get.taxpayer_name.get("surname"),
         wrapper.totalAmount,
-        output.income_tax.get.incomeTaxStatus.getOrElse("")
+        output.income_tax.get.incomeTaxStatus.getOrElse(""),
+        output.income_tax.get.payload.get("scottish_income_tax")
       )
     }
 }

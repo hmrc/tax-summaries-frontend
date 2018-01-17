@@ -68,7 +68,8 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       userForename = "userForename",
       userSurname = "userSurname",
       totalAmount = new Amount(23912.00, "GBP"),
-      incomeTaxStatus = "0002"
+      incomeTaxStatus = "0002",
+      scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
     when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
@@ -160,7 +161,8 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         userForename = "userForename",
         userSurname = "userSurname",
         totalAmount = new Amount(10000.0,"GBP"),
-        incomeTaxStatus = "0002"
+        incomeTaxStatus = "0002",
+        scottishIncomeTax = new Amount(2000.00, "GBP")
       )
 
       when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
