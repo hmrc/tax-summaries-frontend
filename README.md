@@ -27,4 +27,10 @@ This user logs into this service using the [Government Gateway]
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+
+
+[Scala]: http://www.scala-lang.org/
+[Play]: http://playframework.com/
+[JRE]: http://www.oracle.com/technetwork/java/javase/overview/index.html
+[Government Gateway]: http://www.gateway.gov.uk/
     
