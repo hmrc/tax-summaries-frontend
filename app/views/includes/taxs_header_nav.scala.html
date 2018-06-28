@@ -24,14 +24,14 @@
 <div class="header-proposition">
     <div class="content">
         @if(utils.AccountUtils.isPortalUser(request)){
-            <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
+            <a href="#proposition-links" class="js-header-toggle menu">@Messages("generic.menu")</a>
         }
         <nav id="proposition-menu" class="header__menu" role="navigation">
 
         <span class="header__menu__proposition-name">@navTitle</span>
 
         @if(showBetaLink) {
-            <a href="https://www.gov.uk/service-manual" class="phase-tag beta">Beta</a>
+            <a href="https://www.gov.uk/service-manual" class="phase-tag beta">@Messages("generic.beta")</a>
         }
 
         @if(utils.AccountUtils.isPortalUser(request)) {
