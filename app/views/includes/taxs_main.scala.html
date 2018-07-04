@@ -117,18 +117,9 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     )
 }
 
-@betaBanner = {
-    @uiLayouts.betaBanner(
-        userLoggedIn,
-        ApplicationConfig.betaFeedbackUrl,
-        ApplicationConfig.betaFeedbackUnauthenticatedUrl,
-        showFeedbackLinkInBetaBanner
-    )
-}
-
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-        betaBanner,
+        betaBanner = HtmlFormat.empty,
         includeGridWrapper,
         serviceInfoContent
     )
