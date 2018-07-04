@@ -117,11 +117,9 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     )
 }
 
-@betaBanner = {}
-
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-        betaBanner,
+        betaBanner = HtmlFormat.empty,
         includeGridWrapper,
         serviceInfoContent
     )
