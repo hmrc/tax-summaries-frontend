@@ -28,7 +28,7 @@ userLoggedIn: Boolean = true,
 supportLinkEnabled: Boolean = true,
 serviceInfoContent: Option[Html] = None,
 contentHeader: Option[Html] = None,
-showFeedbackLinkInBetaBanner: Boolean = true,
+showFeedbackLinkInBetaBanner: Boolean = false,
 linkElement: Option[Html] = None,
 headScripts: Option[Html] = None,
 scriptElement: Option[Html] = None,
@@ -128,7 +128,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-        betaBanner,
+        betaBanner = HtmlFormat.empty,
         includeGridWrapper,
         serviceInfoContent
     )
