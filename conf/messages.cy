@@ -16,6 +16,8 @@ generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} hyd at Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Wedi allgofnodi
 generic.errors_heading=Mae problem gyda''r ffurflen
+generic.menu = Dewislen
+generic.beta = Beta
 
 # View ATS - Breadcrumbs
 #============================================================
