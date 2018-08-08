@@ -211,14 +211,14 @@ no.ats.line2=If you had taxable income, your annual tax summary would show how y
 # Not authorised page
 #============================================================
 not.authorised.line1=You are not authorised to access Annual Tax Summaries.
-client_agent.notice.line1=The version of the annual tax summary for agents to view their client&#39;s details is not available yet. This version will be coming soon.
+client_agent.notice.line1=The version of the annual tax summary for agents to view their client’s details is not available yet. This version will be coming soon.
 client_agent.notice.line2=The annual tax summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
 
 # Token error page
 #============================================================
 token_error.html.title=Technical problem
 token_error.title=Sorry, there was a technical problem
-token_error.lede=We couldn&#39;t retrieve your client&#39;s summary. Please try again.
+token_error.lede=We couldn&#39;t retrieve your client’s summary. Please try again.
 
 # Screen reader - visually hidden
 #============================================================
