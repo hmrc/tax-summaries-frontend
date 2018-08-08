@@ -15,7 +15,7 @@ generic.name_not_defined=enw heb ei ddiffinio
 generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} hyd at Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Wedi allgofnodi
-generic.errors_heading=Mae problem gyda''r ffurflen
+generic.errors_heading=Mae problem gyda’r ffurflen
 generic.menu = Dewislen
 generic.beta = Beta
 
@@ -56,7 +56,7 @@ ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae&#3
 
 # View ATS - Summary
 #============================================================
-ats.summary.html.title=Eich incwm a''ch trethi
+ats.summary.html.title=Eich incwm a’ch trethi
 ats.summary.title=Eich incwm a&#39;ch trethi
 ats.summary.lede=Mae hwn yn dangos dadansoddiad o&#39;ch incwm, swm yn rhydd o dreth, a threthi rydych wedi eu talu neu y byddwch yn eu talu.
 ats.summary.total_income.title=Cyfanswm yr incwm
@@ -112,7 +112,7 @@ ats.tax_free_amount.description=Mae hwn yn cynnwys eich Lwfans Personol ac unrhy
 ats.tax_free_amount.tax_free_amount=Swm yn rhydd o dreth
 ats.tax_free_amount.table.line1=Lwfans Personol
 ats.tax_free_amount.table.line2=Lwfansau, didyniadau a threuliau eraill
-ats.tax_free_amount.table.line3=Llai''r Lwfans Priodasol sydd wedi''i drosglwyddo
+ats.tax_free_amount.table.line3=Llai’r Lwfans Priodasol sydd wedi’i drosglwyddo
 ats.tax_free_amount.table.total=Cyfanswm yn rhydd o dreth
 
 # View ATS - total income tax (IND)
@@ -130,7 +130,7 @@ ats.total_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
 ats.total_income_tax.table.additional=Cyfradd ychwanegol ({0} ar {1})
 ats.total_income_tax.table.other.increasing=Addasiadau eraill sy&#39;n cynyddu eich Treth Incwm
 ats.total_income_tax.table.other.reducing=Addasiadau eraill sy&#39;n gostwng eich Treth Incwm
-ats.total_income_tax.table.marriage_allowance_received=Llai''r Lwfans Priodasol yr ydych wedi''i gael
+ats.total_income_tax.table.marriage_allowance_received=Llai’r Lwfans Priodasol yr ydych wedi’i gael
 ats.total_income_tax.table.scottish_income_tax=Mae hyn yn cynnwys Treth Incwm yn yr Alban o
 
 # View ATS - capital gains tax (IND)
@@ -145,7 +145,7 @@ ats.capital_gains_tax.capital_gains_tax=Treth Enillion Cyfalaf
 ats.capital_gains_tax.total_capital_gains_tax=Cyfanswm Treth Enillion Cyfalaf
 
 ats.capital_gains_tax.table.line1=Eich enillion trethadwy
-ats.capital_gains_tax.table.line2=Swm blynyddol sydd wedi''i eithrio {0}
+ats.capital_gains_tax.table.line2=Swm blynyddol sydd wedi’i eithrio {0}
 ats.capital_gains_tax.table.line3=Rydych yn talu treth ar
 ats.capital_gains_tax.table.line4=Cyfradd Rhyddhad Mentrwr ({0} ar {1})
 ats.capital_gains_tax.table.line5=Cyfradd gyffredin ({0} ar {1})
