@@ -65,7 +65,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       implicit val messages = Messages(language, messagesApi)
       val result = views.html.errors.generic_error()(language, request, user, messages)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#generic-error-page-heading").text should include("Mae'n flin gennym, rydym yn profi anawsterau technegol")
+      document.select("#generic-error-page-heading").text should include("Mae’n flin gennym, rydym yn profi anawsterau technegol")
     }
 
 
@@ -88,8 +88,8 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
-      document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a'ch Yswiriant Gwladol, " +
-        "a sut mae'r llywodraeth yn eu gwario. Daw'r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn."
+      document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +
+        "a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn."
     }
 
     "show the treasury spending page in welsh language" in {
@@ -109,7 +109,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#content header h1").text should include ("Eich trethi a gwariant cyhoeddus")
-      document.select(".lede").text shouldBe "Mae hwn yn dangos dadansoddiad o sut mae'r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario."
+      document.select(".lede").text shouldBe "Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario."
     }
 
     "show the summary page in welsh language" in  {
@@ -124,10 +124,10 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select(".page-header h1").text should include ("Eich incwm a'ch trethi")
+      document.select(".page-header h1").text should include ("Eich incwm a’ch trethi")
       document.select(".back").text shouldBe "Nôl"
       document.select("#agent-banner").text shouldBe "Rydych yn gweithredu ar ran Forename Surname (UTR: "+testUtr+")."
-      document.select("#total-tax-description").text shouldBe "Cyfanswm eich Treth Incwm, Yswiriant Gwladol a, lle'n briodol, Treth Enillion Cyfalaf"
+      document.select("#total-tax-description").text shouldBe "Cyfanswm eich Treth Incwm, Yswiriant Gwladol a, lle’n briodol, Treth Enillion Cyfalaf"
     }
   }
 }
