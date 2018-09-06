@@ -55,7 +55,7 @@ ats.select_tax_year.required=Select an option for the tax year
 ats.index.html.title=Your annual tax summary
 ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
 ats.index.html.tax_calc_link=Your income and taxes
-ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you’ve paid or will pay.
+ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you have paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
 
@@ -63,7 +63,7 @@ ats.index.html.tax_spend_description=This shows a breakdown of how your taxes ha
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you’ve paid or will pay.
+ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
 ats.summary.total_income.title=Total income
 ats.summary.total_income.link=Your total income
 ats.summary.total_income.description=This is your total income for the year.
@@ -170,9 +170,6 @@ ats.treasury_spending.section.lede=This shows a breakdown of how your taxes have
 ats.treasury_spending.section.sit.lede=This shows a breakdown of how your taxes have been, or will be spent by government across the whole of the UK, including spending by the devolved administrations.
 ats.treasury_spending.section.sit.lede2=For more information about Scottish Government spending, go to <a href="http://www.gov.scot/accounts" target="_blank">www.gov.scot/accounts</a>. For information about Scottish Rate of Income Tax, go to <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank">www.gov.uk/scottish-rate-income-tax/how-it-works</a>.
 
-
-
-
 ats.treasury_spending.return=Back
 ats.treasury_spending.total=Total
 
@@ -198,14 +195,14 @@ ats.treasury_spending.chart.link=View this information as a chart
 # No ATS - error page
 #============================================================
 generic.error.html.title=Technical Difficulties
-generic.error.title=Sorry, we’re experiencing technical difficulties
+generic.error.title=Sorry, we are experiencing technical difficulties
 generic.error.lede=Please try again in a few moments.
 
 # No ATS - ats unavailable page
 #============================================================
 no.ats.html.title=No ATS
 no.ats.title=Your annual tax summary
-no.ats.line1=You had no taxable income or capital gains this year so you don't have an annual tax summary.
+no.ats.line1=You had no taxable income or capital gains this year so you do not have an annual tax summary.
 no.ats.line2=If you had taxable income, your annual tax summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
 
 # Not authorised page
