@@ -55,7 +55,7 @@ ats.select_tax_year.required=Select an option for the tax year
 ats.index.html.title=Your annual tax summary
 ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
 ats.index.html.tax_calc_link=Your income and taxes
-ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you&#39;ve paid or will pay.
+ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you’ve paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
 
@@ -63,7 +63,7 @@ ats.index.html.tax_spend_description=This shows a breakdown of how your taxes ha
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you&#39;ve paid or will pay.
+ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you’ve paid or will pay.
 ats.summary.total_income.title=Total income
 ats.summary.total_income.link=Your total income
 ats.summary.total_income.description=This is your total income for the year.
@@ -198,7 +198,7 @@ ats.treasury_spending.chart.link=View this information as a chart
 # No ATS - error page
 #============================================================
 generic.error.html.title=Technical Difficulties
-generic.error.title=Sorry, we&#39;re experiencing technical difficulties
+generic.error.title=Sorry, we’re experiencing technical difficulties
 generic.error.lede=Please try again in a few moments.
 
 # No ATS - ats unavailable page
@@ -218,7 +218,7 @@ client_agent.notice.line2=The annual tax summary will provide a breakdown of how
 #============================================================
 token_error.html.title=Technical problem
 token_error.title=Sorry, there was a technical problem
-token_error.lede=We couldn&#39;t retrieve your client’s summary. Please try again.
+token_error.lede=We couldn’t retrieve your client’s summary. Please try again.
 
 # Screen reader - visually hidden
 #============================================================
