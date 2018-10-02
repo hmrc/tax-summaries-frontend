@@ -67,7 +67,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
   // Encryption config
-  override lazy val encryptionKey = getConfString("portal.clientagent.encryption.key", "1111111111111111111111")
+  override lazy val encryptionKey = runModeConfiguration.getString("portal.clientagent.encryption.key").getOrElse("1111111111111111111111")
   override lazy val encryptionTokenMaxAge = getConfInt("encryption.tokenMaxAge", 0)
 
   override lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
