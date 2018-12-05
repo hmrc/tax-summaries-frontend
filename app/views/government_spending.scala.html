@@ -18,6 +18,12 @@
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
+
+    <div class="hmrc-logo-print">
+        <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
+        <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
+    </div>
+
     @if(lang.language == "cy"){
         <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
     } else {
@@ -31,6 +37,12 @@
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
     }
+
+    <div class="print-this">
+        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
+        <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("ats.treasury_spending.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
+    </div>
+
     <h1 aria-level="1" role="heading">
         <span class="gray heading-medium block-heading">
             @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))

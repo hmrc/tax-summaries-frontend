@@ -857,3 +857,22 @@ section[id] h2, article section[id] h2,
 #wrapper #content .page-header h1, #wrapper #content .heading-medium {margin-top:0;}
 
 a.data-link + p {margin-top:0; font-size:14px;}
+
+.hmrc-logo-print {
+    display: block;
+    border-left: #28A197 solid;
+    padding-left: 8px;
+}
+.hmrc-logo-print h2 {
+    font-size: 1.4em;
+    font-weight: normal;
+    margin: 0;
+    line-height: 1;
+}
+.hmrc-logo-print h2 span {
+    display: block;
+}
+
+.print-this {
+    display: none;
+}
