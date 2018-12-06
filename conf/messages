@@ -22,6 +22,7 @@ generic.menu = Menu
 generic.beta = Beta
 generic.hm.revenue.and.customs = HM Revenue & Customs
 generic.hm.revenue = HM Revenue
+generic.hm.and = &
 generic.hm.customs = Customs
 
 # View ATS - Breadcrumbs

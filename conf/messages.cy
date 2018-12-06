@@ -18,6 +18,9 @@ generic.sign_out=Wedi allgofnodi
 generic.errors_heading=Mae problem gyda’r ffurflen
 generic.menu = Dewislen
 generic.beta = Beta
+generic.hm.revenue = Cyllid
+generic.hm.and = &
+generic.hm.customs = Thollau EM
 
 # View ATS - Breadcrumbs
 #============================================================
@@ -184,6 +187,7 @@ ats.treasury_spending.table.OverseasAid=Cymorth tramor
 ats.treasury_spending.table.PublicOrderAndSafety=Trefn a diogelwch cyhoeddus
 ats.treasury_spending.table.link=Bwrw golwg ar yr wybodaeth hon fel tabl
 ats.treasury_spending.chart.link=Bwrw golwg ar yr wybodaeth hon fel siart
+ats.treasury_spending.print.this.page = Argraffu’r dudalen hon
 
 # No ATS - error page
 #============================================================
