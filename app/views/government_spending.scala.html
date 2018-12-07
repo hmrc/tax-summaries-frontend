@@ -19,7 +19,7 @@
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
 
-    <div class="hmrc-logo-print">
+    <div class="hmrc-logo-print" aria-hidden="true">
         <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
         <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
     </div>
