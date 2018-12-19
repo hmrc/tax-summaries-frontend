@@ -20,7 +20,10 @@ generic.sign_out=Sign out
 generic.errors_heading=There is a problem with the form
 generic.menu = Menu
 generic.beta = Beta
-
+generic.hm.revenue.and.customs = HM Revenue & Customs
+generic.hm.revenue = HM Revenue
+generic.hm.and = &
+generic.hm.customs = Customs
 
 # View ATS - Breadcrumbs
 #============================================================
@@ -191,6 +194,9 @@ ats.treasury_spending.table.OverseasAid=Overseas Aid
 ats.treasury_spending.table.PublicOrderAndSafety=Public Order and Safety
 ats.treasury_spending.table.link=View this information as a table
 ats.treasury_spending.chart.link=View this information as a chart
+ats.treasury_spending.print.click = print - click
+ats.treasury_spending.print.this.page = Print this page
+
 
 # No ATS - error page
 #============================================================

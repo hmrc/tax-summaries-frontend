@@ -270,7 +270,6 @@ main, section, article, aside {
 #wrapper #content .page-header #english-switch, #wrapper #content .page-header #welsh-switch {
   float: right; }
 #wrapper #content .page-header #user-info {
-  float: right;
   text-align: right;
   clear: both; }
 #wrapper #content .page-header h1 {
@@ -814,3 +813,31 @@ a, a:visited {color:#005ea5;}
 #errors:focus {outline: 3px solid #ffbf47;}
 
 .scottish-income-tax {padding-top:0; border-width:0;}
+
+.hmrc-logo-print {
+    display: none;
+}
+
+.print-this {
+  border-bottom: 1px solid #000;
+  margin: 0 0 15px 0;
+  position: relative;
+  display: inline;
+
+}
+
+.page-header h1 {
+    margin-top: 0;
+}
+
+.print-this__icon {
+    left: 0;
+    position: absolute;
+    top: 2px;
+}
+.print-this__link {
+    color: #000;
+    font-size: 16px;
+    padding-left: 25px;
+    text-decoration: none;
+}
