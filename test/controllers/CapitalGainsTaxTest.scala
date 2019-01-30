@@ -306,5 +306,17 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       document.getElementById("rpci-higher-rate-before").text() should equal("£5,555")
       document.getElementById("rpci-higher-rate-amount").text() should equal("£555")
     }
+
+    "hide proper higher rpci tax rate when is 0" in new TestController {
+
+      override val model = baseModel.copy(
+        rpciHigherAmountBeforeTax = Amount(0, "GBP")
+      )
+
+      val result = Future.successful(show(user, request))
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("rpci-higher-rate-section") should be(null)
+    }
   }
 }
