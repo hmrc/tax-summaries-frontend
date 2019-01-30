@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,15 @@ import java.util.Date
 import connectors.AuthenticationConnector
 import controllers.routes
 import play.Logger
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, Request, Result}
 import services._
-import uk.gov.hmrc.play.frontend.auth.Actions
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import view_models.NoATSViewModel
+
 import scala.concurrent.Future
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
 
 abstract class TaxsController extends FrontendController
           with Actions

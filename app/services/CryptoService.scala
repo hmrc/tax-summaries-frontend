@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.joda.time.{DateTime, Interval}
 import play.api.libs.json.Json
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
-import uk.gov.hmrc.domain.{SaUtr, Uar}
 import utils.AgentTokenException
 
 import scala.util.matching.Regex

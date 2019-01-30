@@ -1,5 +1,5 @@
 @*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@
       </tbody>
     </table>
 
+
     @if(!viewModel.payCgTaxOn.isZero) {
       <table>
         <thead>
@@ -81,6 +82,24 @@
           </tr>
         </thead>
         <tbody>
+
+        @if(!viewModel.rpciLowerAmountBeforeTax.isZero) {
+        <tr id="rpci-lower-rate-section">
+            <td>@Html(Messages("ats.capital_gains_tax.table.line8",
+                """<span id="rpci-lower-rate-before">"""+includes.currency_amount(viewModel.rpciLowerAmountBeforeTax)+"""</span>""",
+                """<span id="rpci-lower-rate">""" + viewModel.propInterestRateLowerRate.percent + """</span>"""))</td>
+            <td id="rpci-lower-rate-amount">@includes.currency_amount(viewModel.rpciLowerAmountAfterTax)</td>
+        </tr>
+        }
+
+        @if(!viewModel.rpciHigherAmountBeforeTax.isZero) {
+        <tr id="rpci-higher-rate-section">
+            <td>@Html(Messages("ats.capital_gains_tax.table.line8",
+                """<span id="rpci-higher-rate-before">"""+includes.currency_amount(viewModel.rpciHigherAmountBeforeTax)+"""</span>""",
+                """<span id="rpci-higher-rate">""" + viewModel.propInterestRateHigherRate.percent + """</span>"""))</td>
+            <td id="rpci-higher-rate-amount">@includes.currency_amount(viewModel.rpciHigherAmountAfterTax)</td>
+        </tr>
+        }
 
           @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
           <tr id="entrepreneurs-relief-rate-section">

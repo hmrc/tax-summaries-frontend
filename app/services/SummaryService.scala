@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ trait SummaryService {
   private def summaryConverter: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.summary_data.get
-
       Summary(output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("employee_nic_amount").get,

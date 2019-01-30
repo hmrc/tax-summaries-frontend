@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,12 @@ package services
 
 import models.{AtsData, DataHolder}
 import play.api.mvc.Request
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.CapitalGains
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 object CapitalGainsService extends CapitalGainsService {
   override val atsService = AtsService
@@ -44,7 +43,7 @@ trait CapitalGainsService {
   private def capitalGains: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.capital_gains_data.get
-      CapitalGains(output.taxYear,
+      view_models.CapitalGains(output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("taxable_gains").get,
         wrapper.payload.get.get("less_tax_free_amount").get,
@@ -64,7 +63,13 @@ trait CapitalGainsService {
         wrapper.rates.get("total_cg_tax_rate"),
         output.taxPayerData.get.taxpayer_name.get("title"),
         output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
+        output.taxPayerData.get.taxpayer_name.get("surname"),
+        wrapper.rates.get("prop_interest_rate_lower_rate"),
+        wrapper.rates.get("prop_interest_rate_higher_rate"),
+        wrapper.payload.get.get("amount_at_rpci_lower_rate").get,
+        wrapper.payload.get.get("amount_due_rpci_lower_rate").get,
+        wrapper.payload.get.get("amount_at_rpci_higher_rate").get,
+        wrapper.payload.get.get("amount_due_rpci_higher_rate").get
       )
     }
 }

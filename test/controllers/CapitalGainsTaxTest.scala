@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,13 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     totalCgTaxRate = Rate("12.34%"),
     title = "Mr",
     forename = "forename",
-    surname = "surname"
+    surname = "surname",
+    propInterestRateLowerRate = Rate("18%"),
+    propInterestRateHigherRate = Rate("0%"),
+    rpciLowerAmountBeforeTax = Amount(4444,"GBP"),
+    rpciLowerAmountAfterTax = Amount(444,"GBP"),
+    rpciHigherAmountBeforeTax = Amount(5555,"GBP"),
+    rpciHigherAmountAfterTax = Amount(555,"GBP")
   )
 
   class TestController extends CapitalGainsTaxController {
@@ -269,6 +275,36 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
       document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Capital Gains Tax</strong>")
+    }
+
+    "show proper lower rpci tax rate" in new TestController{
+      val result = Future.successful(show(user, request))
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("rpci-lower-rate").text() should equal("18%")
+      document.getElementById("rpci-lower-rate-before").text() should equal("£4,444")
+      document.getElementById("rpci-lower-rate-amount").text() should equal("£444")
+    }
+
+    "hide proper lower rpci tax rate when is 0" in new TestController {
+
+      override val model = baseModel.copy(
+        rpciLowerAmountBeforeTax = Amount(0, "GBP")
+      )
+
+      val result = Future.successful(show(user, request))
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("rpci-lower-rate-section") should be(null)
+    }
+
+    "show proper higher rpci tax rate" in new TestController{
+      val result = Future.successful(show(user, request))
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("rpci-higher-rate").text() should equal("0%")
+      document.getElementById("rpci-higher-rate-before").text() should equal("£5,555")
+      document.getElementById("rpci-higher-rate-amount").text() should equal("£555")
     }
   }
 }

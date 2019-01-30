@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,26 +19,33 @@ package view_models
 import utils.GenericViewModel
 
 case class CapitalGains(taxYear: Int,
-    utr: String,
-    taxableGains: Amount,
-    lessTaxFreeAmount: Amount,
-    payCgTaxOn: Amount,
-    entrepreneursReliefRateBefore: Amount,
-    entrepreneursReliefRateAmount: Amount,
-    ordinaryRateBefore: Amount,
-    ordinaryRateAmount: Amount,
-    upperRateBefore: Amount,
-    upperRateAmount: Amount,
-    adjustmentsAmount: Amount,
-    totalCapitalGainsTaxAmount: Amount,
-    cgTaxPerCurrencyUnit: Amount,
-    entrepreneursReliefRateRate: Rate,
-    ordinaryRateRate: Rate,
-    upperRateRate: Rate,
-    totalCgTaxRate: Rate,
-    title: String,
-    forename: String,
-    surname: String) extends GenericViewModel {
+                        utr: String,
+                        taxableGains: Amount,
+                        lessTaxFreeAmount: Amount,
+                        payCgTaxOn: Amount,
+                        entrepreneursReliefRateBefore: Amount,
+                        entrepreneursReliefRateAmount: Amount,
+                        ordinaryRateBefore: Amount,
+                        ordinaryRateAmount: Amount,
+                        upperRateBefore: Amount,
+                        upperRateAmount: Amount,
+                        adjustmentsAmount: Amount,
+                        totalCapitalGainsTaxAmount: Amount,
+                        cgTaxPerCurrencyUnit: Amount,
+                        entrepreneursReliefRateRate: Rate,
+
+                        ordinaryRateRate: Rate,
+                        upperRateRate: Rate,
+                        totalCgTaxRate: Rate,
+                        title: String,
+                        forename: String,
+                        surname: String,
+                        propInterestRateLowerRate: Rate,
+                        propInterestRateHigherRate: Rate,
+                        rpciLowerAmountBeforeTax: Amount,
+                        rpciLowerAmountAfterTax: Amount,
+                        rpciHigherAmountBeforeTax: Amount,
+                        rpciHigherAmountAfterTax: Amount) extends GenericViewModel {
 
   def taxYearFrom = (taxYear-1).toString
   def taxYearTo = taxYear.toString

@@ -20,7 +20,8 @@
     "cg_entrepreneurs_rate":{"percent":"10%"},
     "cg_ordinary_rate":{"percent":"18%"},
     "cg_upper_rate":{"percent":"28%"},
-    "total_cg_tax_rate":{"percent":"12.34%"}
+    "total_cg_tax_rate":{"percent":"12.34%"},
+    "prop_interest_rate_lower_rate":{"percent":"18.00%"}
   }
  },
  "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}

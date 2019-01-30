@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package controllers
 
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Request, Result}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
 import view_models.CapitalGains
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
+
 import scala.concurrent.Future
 
 object CapitalGainsTaxController extends CapitalGainsTaxController {
@@ -36,7 +36,8 @@ trait CapitalGainsTaxController extends TaxsController {
   def capitalGainsService: CapitalGainsService
 
   def authorisedCapitalGains = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user,request)
+    user => request =>
+      show(user,request)
   }
 
   type T = CapitalGains

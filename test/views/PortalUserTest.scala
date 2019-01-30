@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
     "show the 'exit tax summaries' link on the capital gains page" in  {
 
       val fakeViewModel = new CapitalGains(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, rate, rate, rate, rate, "", "", "")
+        amount, amount, amount, amount, rate, rate, rate, rate, "", "", "", rate, rate,amount, amount, amount, amount)
       val result = views.html.capital_gains(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
       val document = Jsoup.parse(contentAsString(result))
 
