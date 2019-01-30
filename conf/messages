@@ -161,7 +161,7 @@ ats.capital_gains_tax.table.line4=Entrepreneurs&apos; Relief rate ({0} at {1})
 ats.capital_gains_tax.table.line5=Ordinary rate ({0} at {1})
 ats.capital_gains_tax.table.line6=Upper rate ({0} at {1})
 ats.capital_gains_tax.table.line7=Adjustment to Capital Gains Tax
-ats.capital_gains_tax.table.line8= crpi tax rate ({0} at {1})
+ats.capital_gains_tax.table.line8=Individuals for residential property and carried interest ({0} at {1})
 
 ats.capital_gains_tax.tax_year_period={0} to {1}
 
