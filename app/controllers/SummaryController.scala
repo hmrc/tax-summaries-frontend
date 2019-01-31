@@ -46,7 +46,6 @@ trait SummaryController extends TaxsController {
   }
 
   override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
-    print(result)
     Ok(views.html.summary(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }
