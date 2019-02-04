@@ -27,10 +27,10 @@
           @for(link <- links) {
               @if(link == "breadcrumbs.taxs.select_tax_year") {
                 @if(request.session.get("TaxYearListLength").getOrElse("0") != "1") {
-                    <li><a href="@TaxsBreadcrumbLinks.getLink(link)">@Html(Messages(link))</a></li>
+                    <li><a href="@TaxsBreadcrumbLinks.getLink(link)" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>
                 }
               } else {
-                <li><a href="@TaxsBreadcrumbLinks.getLink(link)?taxYear=@taxYear">@Html(Messages(link))</a></li>
+                <li><a href="@TaxsBreadcrumbLinks.getLink(link)?taxYear=@taxYear" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>
               }
           }
           @if(!(utils.AccountUtils.isPortalUser(request) && isLandingPage)) {

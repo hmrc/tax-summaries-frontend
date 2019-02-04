@@ -130,6 +130,7 @@
                         @if(!labelAfter)@{addLabelIfSpecified(label, params)}
                         <input type="radio"
                                id="@inputId"
+                               data-journey-click="radio - click:@Messages("ats.select_tax_year.title"):@value"
                                @if(params.ariaDescribedBy){
                                     @if(params.ariaDescribedByForYesOptionOnly && (value == "Yes")) {
                                         aria-describedby="@{params.ariaDescribedBy}"
