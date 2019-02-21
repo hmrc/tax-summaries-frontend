@@ -164,7 +164,13 @@ ats.treasury_spending.html.title=Eich trethi a gwariant cyhoeddus
 ats.treasury_spending.title=Eich trethi a gwariant cyhoeddus
 ats.treasury_spending.section.lede=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario.
 ats.treasury_spending.section.sit.lede=Mae hwn yn dangos dadansoddiad o sut mae’r Llywodraeth wedi gwario’ch trethi ledled y DU gyfan, neu sut y byddant yn gwneud hynny. Mae’n cynnwys gwariant gan y gweinyddiaethau datganoledig.
-ats.treasury_spending.section.sit.lede2=I gael rhagor o wybodaeth am wariant Llywodraeth yr Alban, ewch i <a href="http://www.gov.scot/accounts" target="_blank">www.gov.scot/accounts</a>. I gael gwybodaeth am Gyfradd yr Alban o Dreth Incwm, ewch i <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank">www.gov.uk/scottish-rate-income-tax/how-it-works</a>.
+ats.treasury_spending.section.sit.scottish.spending.1=I gael rhagor o wybodaeth am wariant Llywodraeth yr Alban, ewch i
+ats.treasury_spending.section.sit.scottish.spending.link.1.text= www.gov.scot/accounts.
+ats.treasury_spending.section.sit.scottish.spending.2=I gael gwybodaeth am Gyfradd yr Alban o Dreth Incwm, ewch i
+ats.treasury_spending.section.sit.scottish.spending.link.2.text= www.gov.uk/scottish-rate-income-tax/how-it-works.
+
+
+
 
 ats.treasury_spending.return=Nôl
 ats.treasury_spending.total=Cyfanswm

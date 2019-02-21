@@ -151,7 +151,8 @@
       "href" : "#",
       "class" : "mc-toggle-link",
       "text" : this.options.toggleText,
-      "aria-hidden" : "false"
+      "aria-hidden" : "false",
+      "data-journey-click" : "link - click:Your taxes and public spending:"+this.options.toggleText
     }).on("click", function(e) {
       that.toggle(e);
     });

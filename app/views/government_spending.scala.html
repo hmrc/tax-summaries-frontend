@@ -55,10 +55,10 @@
     <article class="content__body">
         <div class="grid grid-2-3">
             @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
-            <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
-            <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede2"))</p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
             } else {
-            <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
             }
 
             <table id="tax-spent" aria-hidden="false">
@@ -90,7 +90,7 @@
                 </tfoot>
             </table>
             <div class="back">
-                <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.treasury_spending.return"))</a>
+                <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.return"))">@Html(Messages("ats.treasury_spending.return"))</a>
             </div>
             <script>
                 var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];

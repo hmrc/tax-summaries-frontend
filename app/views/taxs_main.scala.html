@@ -56,8 +56,8 @@
       <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
     </div>
     @if(request.session.get("TaxYearListLength").getOrElse("0") != "1"){
-        <div class="back" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("generic.back")">
-            <a href="@controllers.routes.IndexController.authorisedIndex()">@Html(Messages("generic.back"))</a>
+        <div class="back">
+            <a href="@controllers.routes.IndexController.authorisedIndex()" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("generic.back")">@Html(Messages("generic.back"))</a>
         </div>
     }
 }
