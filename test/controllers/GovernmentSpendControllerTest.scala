@@ -214,13 +214,13 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
     val result = Future.successful(show(user, request))
     val document = Jsoup.parse(contentAsString(result))
 
-    document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
+    document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
     document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-    document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
+    document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
     document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-    document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+    document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
     document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
     document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
