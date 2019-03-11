@@ -9,19 +9,19 @@ private object AppDependencies {
   import play.core.PlayVersion
   import play.sbt.PlayImport._
 
-  private val frontendbootstrap = "10.4.0"
-  private val govukTemplateVersion = "5.3.0"
-  private val urlBuilderVersion = "2.0.0"
-  private val httpCachingClientVersion = "7.1.0"
-  private val playPartialsVersion = "6.1.0"
-  private val domainVersion = "5.2.0"
-  private val jSonEncryptionVersion = "3.2.0"
+  private val frontendbootstrap = "12.4.0"
+  private val govukTemplateVersion = "5.30.0-play-25"
+  private val urlBuilderVersion = "3.1.0"
+  private val httpCachingClientVersion = "8.1.0"
+  private val playPartialsVersion = "6.5.0"
+  private val domainVersion = "5.3.0"
+  private val jSonEncryptionVersion = "4.1.0"
 
   private val pegDownVersion = "1.6.0"
-  private val hmrcTestVersion = "2.3.0"
+  private val hmrcTestVersion = "3.6.0-play-25"
   private val mockitoAllVersion = "1.10.19"
-  private val jSoupVersion = "1.8.3"
-  private val scalaTestPlusPlayVersion = "1.5.1"
+  private val jSoupVersion = "1.11.3"
+  private val scalaTestPlusPlayVersion = "2.0.1"
   private val scalatestVersion = "2.2.6"
   private val playLanguageVersion = "3.0.0"
 

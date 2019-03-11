@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,15 @@ package connectors
 
 import config.WSHttp
 import models.AtsData
-import models.{AtsListData, AtsData}
+import models.{AtsData, AtsListData}
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.config.ServicesConfig
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 
 object MiddleConnector extends MiddleConnector with ServicesConfig {
 
@@ -31,6 +34,10 @@ object MiddleConnector extends MiddleConnector with ServicesConfig {
   override val agentServiceUrl = baseUrl("tax-summaries-agent")
 
   override def http = WSHttp
+
+  override protected def mode: Mode = Play.current.mode
+
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
 }
 
 trait MiddleConnector {

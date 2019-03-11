@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,16 @@
 
 package config
 
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait ApplicationConfig {
+
+  protected def mode: Mode = Play.current.mode
+
+  protected def runModeConfiguration: Configuration = Play.current.configuration
+
   val assetsPrefix: String
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
