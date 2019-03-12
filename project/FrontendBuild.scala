@@ -17,12 +17,10 @@ private object AppDependencies {
   private val domainVersion = "5.3.0"
   private val jSonEncryptionVersion = "4.1.0"
 
-  private val pegDownVersion = "1.6.0"
   private val hmrcTestVersion = "3.6.0-play-25"
   private val mockitoAllVersion = "1.10.19"
   private val jSoupVersion = "1.11.3"
   private val scalaTestPlusPlayVersion = "2.0.1"
-  private val scalatestVersion = "2.2.6"
   private val playLanguageVersion = "3.0.0"
 
   val compile = Seq(
@@ -47,13 +45,11 @@ private object AppDependencies {
   object Test {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
-        "org.pegdown" % "pegdown" % pegDownVersion % scope,
         "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
         "org.jsoup" % "jsoup" % jSoupVersion % scope,
         "org.mockito" % "mockito-all" % mockitoAllVersion % scope,
         "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion % scope,
-        "org.scalatest" %% "scalatest" % scalatestVersion % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
       )
     }.test
