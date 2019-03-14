@@ -16,9 +16,16 @@
 
 package config
 
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait ApplicationConfig {
+
+  protected def mode: Mode = Play.current.mode
+
+  protected def runModeConfiguration: Configuration = Play.current.configuration
+
   val assetsPrefix: String
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
