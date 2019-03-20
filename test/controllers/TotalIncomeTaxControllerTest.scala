@@ -168,9 +168,6 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
-      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
-
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 

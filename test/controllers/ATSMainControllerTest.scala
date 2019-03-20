@@ -96,7 +96,7 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
       document.select("#global-breadcrumb li:nth-child(2)").toString should include("Select the tax year")
