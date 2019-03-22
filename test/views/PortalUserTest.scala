@@ -16,14 +16,16 @@
 
 package views
 
+import config.AppFormPartialRetriever
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
-import play.api.i18n.{MessagesApi, Messages, Lang}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models._
@@ -40,12 +42,14 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages = Messages(language, messagesApi)
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
 
   "Logging in as a portal user" should {
 
     "show the 'exit tax summaries' link on the error page" in  {
 
-      val result = views.html.errors.generic_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages)
+      val result = views.html.errors.generic_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -62,7 +66,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language)
+      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -74,7 +78,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = new CapitalGains(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, rate, rate, rate, rate, "", "", "")
-      val result = views.html.capital_gains(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.capital_gains(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -97,7 +101,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = new IncomeBeforeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount,
         amount, "", "", "")
-      val result = views.html.income_before_tax(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.income_before_tax(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -120,7 +124,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = views.html.nics(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.nics(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -141,7 +145,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the no ats page" in  {
 
-      val result = views.html.errors.no_ats_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages)
+      val result = views.html.errors.no_ats_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -158,7 +162,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = views.html.summary(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.summary(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -178,7 +182,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
     "show the 'exit tax summaries' link on the tax free amount page" in  {
 
       val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, "", "", "")
-      val result = views.html.tax_free_amount(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.tax_free_amount(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -202,7 +206,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val fakeViewModel = new TotalIncomeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, "", rate, rate, rate, rate, rate,
         rate, rate, "", "", "")
-      val result = views.html.total_income_tax(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.total_income_tax(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -234,7 +238,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.government_spending(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -259,7 +263,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.government_spending(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -273,7 +277,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language)
+      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include("annual-tax-summary:portal-user:start")
@@ -286,7 +290,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language)
+      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")

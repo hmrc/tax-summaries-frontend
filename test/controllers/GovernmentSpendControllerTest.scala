@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
@@ -29,9 +30,11 @@ import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{Amount, GovernmentSpend}
+
 import scala.concurrent.Future
 import utils.TestConstants._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 
 class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
@@ -43,6 +46,8 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
     override lazy val governmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
     override lazy val auditService: AuditService = mock[AuditService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
 
     val model = new GovernmentSpend(
       taxYear = 2014,

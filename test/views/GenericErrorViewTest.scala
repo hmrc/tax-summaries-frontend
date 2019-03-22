@@ -16,17 +16,19 @@
 
 package views
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
-import play.api.i18n.{MessagesApi, Lang, Messages}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{Amount, Rate}
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite, PlaySpec}
 import utils.TestConstants._
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
 
@@ -39,12 +41,13 @@ class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrows
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages = Messages(language, messagesApi)
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
   "Logging in as a portal user" should {
 
     "show the correct contents of the generic error page" in  {
 
-      val result = views.html.errors.generic_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages)
+      val result = views.html.errors.generic_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")

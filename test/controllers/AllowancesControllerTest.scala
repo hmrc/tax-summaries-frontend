@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -28,9 +29,11 @@ import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{Allowances, Amount}
+
 import scala.concurrent.Future
 import utils.TestConstants._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
@@ -52,6 +55,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
   trait TestController extends AllowancesController {
     override lazy val allowanceService = mock[AllowanceService]
     override lazy val auditService = mock[AuditService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
     val model = baseModel
 

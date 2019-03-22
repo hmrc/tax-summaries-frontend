@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.scalatest.concurrent.ScalaFutures
 import org.mockito.Mockito._
@@ -29,8 +30,10 @@ import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.TestConstants._
+
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
@@ -45,6 +48,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val allowanceService = mock[AllowanceService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(allowanceService.getAllowances(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
 
@@ -59,6 +63,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val capitalGainsService = mock[CapitalGainsService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failure")))
 
@@ -73,6 +78,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val governmentSpendService = mock[GovernmentSpendService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failure")))
 
@@ -87,6 +93,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val incomeService = mock[IncomeService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failure")))
 
@@ -101,6 +108,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val totalIncomeTaxService = mock[TotalIncomeTaxService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failure")))
 
@@ -115,6 +123,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val summaryService = mock[SummaryService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failure")))
 
@@ -129,6 +138,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       override lazy val summaryService = mock[SummaryService]
       override lazy val auditService = mock[AuditService]
+      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
       when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failure")))
 

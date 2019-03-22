@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
 import models.AtsListData
 import org.jsoup.Jsoup
@@ -24,7 +25,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatest.time.{Seconds, Span, Millis}
+import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -32,13 +33,15 @@ import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{GenericViewModel, AuthorityUtils}
+import utils.{AuthorityUtils, GenericViewModel}
 import view_models.AtsForms._
-import view_models.{TaxYearEnd, AtsList}
+import view_models.{AtsList, TaxYearEnd}
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import utils.TestConstants._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
@@ -61,6 +64,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     override lazy val atsYearListService = mock[AtsYearListService]
     override lazy val auditService = mock[AuditService]
     override lazy val atsListService = mock[AtsListService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
     val model: GenericViewModel = AtsList(
       utr = testUtr,

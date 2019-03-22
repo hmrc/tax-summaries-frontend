@@ -16,15 +16,17 @@
 
 package views
 
+import config.AppFormPartialRetriever
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
-import utils.{AuthorityUtils, AttorneyUtils}
+import utils.{AttorneyUtils, AuthorityUtils}
 import models.SpendData
 import org.jsoup.Jsoup
-import play.api.i18n.{Messages, MessagesApi, Lang}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import view_models.AtsForms._
 import view_models._
@@ -38,12 +40,14 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
   val user = User(AuthorityUtils.saAuthority(testOid, utr))
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
 
   "Logging in with English language settings" should {
     "show the correct contents of the generic error page in English" in  {
       val language = Lang("en")
       implicit val messages = Messages(language, messagesApi)
-      val result = views.html.errors.generic_error()(language, request, user, messages)
+      val result = views.html.errors.generic_error()(language, request, user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, we are experiencing technical difficulties")
     }
@@ -53,7 +57,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
     "show the correct contents of the generic error page in English" in  {
       val language = Lang("xy")
       implicit val messages = Messages(language, messagesApi)
-      val result = views.html.errors.generic_error()(language, request, user, messages)
+      val result = views.html.errors.generic_error()(language, request, user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, we are experiencing technical difficulties")
     }
@@ -63,7 +67,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
     "show the correct contents of the generic error page in Welsh" in {
       val language = Lang("cy")
       implicit val messages = Messages(language, messagesApi)
-      val result = views.html.errors.generic_error()(language, request, user, messages)
+      val result = views.html.errors.generic_error()(language, request, user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Mae’n flin gennym, rydym yn profi anawsterau technegol")
     }
@@ -73,7 +77,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
       val atsList = AtsList("", "", "", List(TaxYearEnd(Some("2014")), TaxYearEnd(Some("2015"))))
-      val result = views.html.taxs_index(atsList, atsYearFormMapping)(request, messages, language)
+      val result = views.html.taxs_index(atsList, atsYearFormMapping)(request, messages, formPartialRetriever, language)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("english-switch").text should include("English")
     }
@@ -85,7 +89,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
-      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language)
+      val result = views.html.taxs_main(fakeViewModel)(request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
       document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +
@@ -105,7 +109,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request, messages)
+      val result = views.html.government_spending(fakeViewModel)(language, request, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#content header h1").text should include ("Eich trethi a gwariant cyhoeddus")
@@ -121,7 +125,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentUser, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
-      val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages)
+      val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select(".page-header h1").text should include ("Eich incwm a’ch trethi")
