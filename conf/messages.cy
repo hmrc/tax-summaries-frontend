@@ -79,6 +79,9 @@ ats.summary.taxable_income.your_total_tax.description_total_income_tax=cyfanswm 
 ats.summary.taxable_income.your_total_tax.description_cg=Treth Enillion Cyfalaf
 ats.summary.taxable_income.your_total_tax.description_nics=Yswiriant Gwladol
 ats.summary.taxable_income.your_total_tax_msg=Cyfanswm eich Treth Incwm, Yswiriant Gwladol a, lle’n briodol, Treth Enillion Cyfalaf
+ats.summary.taxable_income.your_total_tax.msg_ternary=Eich {0}, {1} a {2}.
+ats.summary.taxable_income.your_total_tax.msg_binary=Eich {0} ac {1}.
+ats.summary.taxable_income.your_total_tax.msg_unary=Eich {0}.
 
 
 # View NICS page
