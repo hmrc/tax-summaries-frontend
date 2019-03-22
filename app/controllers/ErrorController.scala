@@ -16,21 +16,27 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import connectors.AuthenticationConnector
-import play.api.mvc.{Result, Request}
+import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import utils.{AccountUtils, TAXSGovernmentGateway, TaxSummariesRegime}
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-object ErrorController extends ErrorController
+object ErrorController extends ErrorController {
+  override val formPartialRetriever = AppFormPartialRetriever
+}
 
 trait ErrorController extends FrontendController
         with Actions
         with AccountUtils
         with AuthenticationConnector {
+
+  implicit val formPartialRetriever: FormPartialRetriever
 
   def authorisedNoAts = AuthorisedFor(TaxSummariesRegime, GGConfidence) {
     implicit user => implicit request => noAts

@@ -27,16 +27,20 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import view_models.NoATSViewModel
+
 import scala.concurrent.Future
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 abstract class TaxsController extends FrontendController
           with Actions
           with AccountUtils
           with AttorneyUtils
           with AuthenticationConnector {
+
+  implicit val formPartialRetriever: FormPartialRetriever
 
   def auditService: AuditService
 
