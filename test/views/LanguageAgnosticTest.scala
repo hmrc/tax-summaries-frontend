@@ -125,7 +125,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val document = Jsoup.parse(contentAsString(result))
 
       document.select(".page-header h1").text should include ("Eich incwm a’ch trethi")
-      document.select(".back").text shouldBe "Nôl"
+      document.select(".link-back").text shouldBe "Yn ôl"
       document.select("#agent-banner").text shouldBe "Rydych yn gweithredu ar ran Forename Surname (UTR: "+testUtr+")."
       document.select("#total-tax-description").text shouldBe "Cyfanswm eich Treth Incwm, Yswiriant Gwladol a, lle’n briodol, Treth Enillion Cyfalaf"
     }
