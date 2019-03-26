@@ -24,7 +24,7 @@
 <h1 id="zero-income-page-heading" aria-level="1" role="heading">@Html(Messages("no.ats.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("no.ats.html.title") + " - " + Messages("generic.ats.browser.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
+@includes.taxs_main(title = Messages("no.ats.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
   <p>@Html(Messages("no.ats.line1"))</p>
   <p>@Html(Messages("no.ats.line2"))</p>
 }

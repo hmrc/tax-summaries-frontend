@@ -48,7 +48,7 @@
     data-journey="@utils.Analytics.getAnalyticsAttribute(request, actingAsAttorney)"
 }
 
-@includes.taxs_main(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo) + " - " + Messages("generic.ats.browser.title"), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
+@includes.taxs_main(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
     <div id="tax-summary">
       <h2 aria-level="2" role="heading"><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
        <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>

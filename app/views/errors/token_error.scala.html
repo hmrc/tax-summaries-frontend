@@ -23,7 +23,7 @@
     <h1 id="error-page-heading" aria-level="1" role="heading">@Html(Messages("token_error.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("token_error.html.title") + " - " + Messages("generic.ats.browser.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
+@includes.taxs_main(title = Messages("token_error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
 
 <p>@Html(Messages("token_error.lede"))</p>
 
