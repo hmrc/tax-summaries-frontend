@@ -59,7 +59,7 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.title shouldBe "No ATS"
+      document.title shouldBe "No ATS - Annual tax summary - GOV.UK"
 
       // Make sure that breadcrumbs are correct
       document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
