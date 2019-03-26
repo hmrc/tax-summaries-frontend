@@ -1,5 +1,6 @@
 # Generic
 #============================================================
+generic.ats.browser.title=Crynodeb treth blynyddol - GOV.UK
 generic.description=Disgrifiad
 generic.amount_pounds=Swm
 generic.back=Nôl

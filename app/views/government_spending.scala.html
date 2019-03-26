@@ -51,7 +51,7 @@
     </h1>
 }
 
-@includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo) + " - " + Messages("generic.ats.browser.title"), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     <article class="content__body">
         <div class="grid grid-2-3">
             @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {

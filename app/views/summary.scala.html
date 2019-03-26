@@ -41,7 +41,7 @@
     <p class="lede">@Html(Messages("ats.summary.lede"))</p>
 }
 
-@includes.taxs_main(title = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(title = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo) + " - " + Messages("generic.ats.browser.title"), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     <section id="taxable-income">
 

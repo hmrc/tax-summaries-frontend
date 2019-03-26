@@ -40,7 +40,7 @@
   </h1>
 }
 
-@includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo) + " - " + Messages("generic.ats.browser.title"), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 <article class="content__body">
   <div class="grid grid-2-3">
   <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>

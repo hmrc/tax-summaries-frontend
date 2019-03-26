@@ -22,7 +22,7 @@
 <h1 aria-level="1" role="heading">@Html(Messages("generic.not_authorised"))</h1>
 }
 
-@includes.taxs_main(title = Messages("generic.not_authorised"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
+@includes.taxs_main(title = Messages("generic.not_authorised") + " - " + Messages("generic.ats.browser.title"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
     <p class="lede">@Html(Messages("not.authorised.line1"))</p>
 
     <p>@Html(Messages("client_agent.notice.line1"))</p>

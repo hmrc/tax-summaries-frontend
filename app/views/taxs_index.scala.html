@@ -38,7 +38,7 @@
     <h1 aria-level="1" role="heading">@Html(Messages("ats.select_tax_year.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(title = Messages("ats.select_tax_year.title") + " - " + Messages("generic.ats.browser.title"), "", contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     @helpers.errorSummaryTemplate(atsYear)
     @form(action = controllers.routes.IndexController.authorisedOnSubmit){
         <div class="form-group">

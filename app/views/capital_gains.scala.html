@@ -35,7 +35,7 @@
   </h1>
 }
 
-@includes.taxs_main(title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo) + " - " + Messages("generic.ats.browser.title"), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 <article class="content__body">
   <div class="grid grid-2-3">
 

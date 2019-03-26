@@ -24,7 +24,7 @@
 <h1 id="generic-error-page-heading" aria-level="1" role="heading">@Html(Messages("generic.error.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
+@includes.taxs_main(title = Messages("generic.error.html.title") + " - " + Messages("generic.ats.browser.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
 
 <p>@Html(Messages("generic.error.lede"))</p>
 

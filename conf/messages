@@ -1,6 +1,7 @@
 # Generic
 #============================================================
 generic.ats=Annual tax summary
+generic.ats.browser.title=Annual tax summary - GOV.UK
 generic.description=Description
 generic.amount_pounds=Amount
 generic.back=Back
