@@ -24,6 +24,7 @@ generic.hm.revenue.and.customs = HM Revenue & Customs
 generic.hm.revenue = HM Revenue
 generic.hm.and = &
 generic.hm.customs = Customs
+site.back=Back
 
 # View ATS - Breadcrumbs
 #============================================================
@@ -189,9 +190,9 @@ ats.treasury_spending.table.Defence=Defence
 ats.treasury_spending.table.CriminalJustice=Criminal Justice
 ats.treasury_spending.table.Transport=Transport
 ats.treasury_spending.table.GovernmentAdministration=Government Administration
-ats.treasury_spending.table.Culture=Culture e.g. sports, libraries, museums
+ats.treasury_spending.table.Culture=Culture, like sports, libraries, museums
 ats.treasury_spending.table.Environment=Environment
-ats.treasury_spending.table.HousingAndUtilities=Housing and Utilities e.g. street lighting
+ats.treasury_spending.table.HousingAndUtilities=Housing and Utilities, like street lighting
 ats.treasury_spending.table.BusinessAndIndustry=Business and Industry
 ats.treasury_spending.table.UkContributionToEuBudget=UK Contribution to the EU Budget
 ats.treasury_spending.table.OverseasAid=Overseas Aid

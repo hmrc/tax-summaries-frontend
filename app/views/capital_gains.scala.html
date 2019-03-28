@@ -26,6 +26,7 @@
   @if(!actingAsAttorney.isDefined){
     <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }
+@helpers.back_link(Messages("generic.back"))
   <h1 aria-level="1" role="heading">
     <span class="gray heading-medium block-heading">
       @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
