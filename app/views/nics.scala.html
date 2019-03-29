@@ -57,7 +57,8 @@
       <tbody>
         <tr>
           <td>
-              <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax()?taxYear=@viewModel.taxYearTo">
+              <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax()?taxYear=@viewModel.taxYearTo"
+                 data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("ats.nics.tax_and_nics.income_tax"))">
                   @Html(Messages("ats.nics.tax_and_nics.income_tax"))
               </a>
           </td>
@@ -75,6 +76,11 @@
         </tr>
       </tfoot>
     </table>
+
+
+    <div class="back">
+      <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
+    </div>
 </div>
 </article>
 

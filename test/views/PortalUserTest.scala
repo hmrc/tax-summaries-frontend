@@ -52,7 +52,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2)").toString should include("<strong>Technical Difficulties</strong>")
@@ -81,13 +81,13 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Capital Gains Tax</strong>")
@@ -104,13 +104,13 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your total income</strong>")
@@ -127,13 +127,13 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
@@ -148,7 +148,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2)").toString should include("<strong>No ATS available</strong>")
@@ -166,10 +166,10 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your income and taxes</strong>")
@@ -185,13 +185,13 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your tax-free amount</strong>")
@@ -209,16 +209,16 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
 
-      document.select("#global-breadcrumb li:nth-child(4) a").toString should include("<a href=\"/annual-tax-summary/nics?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/nics?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text should include("Your Income Tax and National Insurance")
 
       document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Income Tax</strong>")
@@ -241,10 +241,10 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your taxes and public spending</strong>")

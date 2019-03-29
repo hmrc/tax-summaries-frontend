@@ -50,6 +50,11 @@
                                              : chart_toggle_text[1]
         );
 
+        var gaLinkText = table.hasClass("visually-hidden") ? chart_toggle_text_ga[0] : chart_toggle_text_ga[1];
+
+        link.attr('data-journey-click', "link - click:Your taxes and public spending:" + gaLinkText);
+
+
         $("a.mc-toggle-link").blur();
 
       }

@@ -56,7 +56,7 @@ class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrows
       document.toString should not include "no.ats.error.list.lede"
       document.toString should not include "taxsummaries@hmrc.gsi.gov.uk"
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
       document.select("#global-breadcrumb li:nth-child(2)").text shouldBe "Technical Difficulties"
     }
