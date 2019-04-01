@@ -271,7 +271,8 @@ main, section, article, aside {
   float: right; }
 #wrapper #content .page-header #user-info {
   text-align: right;
-  clear: both; }
+  clear: both;
+  float: right;}
 #wrapper #content .page-header h1 {
   clear: right; }
 

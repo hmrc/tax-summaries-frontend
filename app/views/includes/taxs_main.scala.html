@@ -40,6 +40,8 @@ includeGridWrapper: Boolean = false,
 actingAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None,
 gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages)
 
+@fullTitle = {@title - @Messages("generic.ats.browser.title")}
+
 @linkElement = {
     <!--[if gt IE 8]><!--><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs.css")' /><!--<![endif]-->
     <!--[if IE 6]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie6.css")' /><![endif]-->
@@ -134,5 +136,5 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     )
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
 
