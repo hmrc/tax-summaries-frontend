@@ -2,7 +2,7 @@
 #============================================================
 generic.description=Disgrifiad
 generic.amount_pounds=Swm
-generic.back=Nôl
+generic.back=Yn ôl
 generic.is=yw
 generic.not_authorised=Heb eich awdurdodi
 generic.exit_tax_summaries=Nôl i Wasanaethau Ar-lein CThEM
@@ -12,7 +12,7 @@ generic.utr_abbrev=UTR
 generic.minus=llai
 generic.acting_for=Rydych yn gweithredu ar ran
 generic.name_not_defined=enw heb ei ddiffinio
-generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} hyd at Ebrill 5 {1}
+generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} i Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Allgofnodi
 generic.errors_heading=Mae problem gyda’r ffurflen
@@ -75,7 +75,7 @@ ats.summary.capital_gains.title=Treth Enillion Cyfalaf
 ats.summary.capital_gains.link=Eich Treth Enillion Cyfalaf
 ats.summary.capital_gains.description=Dyma faint o dreth y talwch ar elw uwchlaw eich lwfans blynyddol yn rhydd o dreth pan fyddwch yn gwerthu, neu’n rhoi i fwrdd, rhywbeth sydd wedi cynyddu mewn gwerth.
 ats.summary.total_tax.your_total_tax=Cyfanswm y dreth
-ats.summary.taxable_income.your_total_tax.description_total_income_tax=cyfanswm y dreth
+ats.summary.taxable_income.your_total_tax.description_total_income_tax=cyfanswm Treth Incwm
 ats.summary.taxable_income.your_total_tax.description_cg=Treth Enillion Cyfalaf
 ats.summary.taxable_income.your_total_tax.description_nics=Yswiriant Gwladol
 ats.summary.taxable_income.your_total_tax_msg=Cyfanswm eich Treth Incwm, Yswiriant Gwladol a, lle’n briodol, Treth Enillion Cyfalaf
@@ -169,7 +169,7 @@ ats.treasury_spending.section.lede=Mae hwn yn dangos dadansoddiad o sut mae’r 
 ats.treasury_spending.section.sit.lede=Mae hwn yn dangos dadansoddiad o sut mae’r Llywodraeth wedi gwario’ch trethi ledled y DU gyfan, neu sut y byddant yn gwneud hynny. Mae’n cynnwys gwariant gan y gweinyddiaethau datganoledig.
 ats.treasury_spending.section.sit.lede2=I gael rhagor o wybodaeth am wariant Llywodraeth yr Alban, ewch i <a href="http://www.gov.scot/accounts" target="_blank">www.gov.scot/accounts</a>. I gael gwybodaeth am Gyfradd yr Alban o Dreth Incwm, ewch i <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank">www.gov.uk/scottish-rate-income-tax/how-it-works</a>.
 
-ats.treasury_spending.return=Nôl
+ats.treasury_spending.return=Yn ôl
 ats.treasury_spending.total=Cyfanswm
 
 ats.treasury_spending.table.Welfare=Lles
