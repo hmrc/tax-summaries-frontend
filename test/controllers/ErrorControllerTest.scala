@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
@@ -23,6 +24,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import play.api.test.Helpers._
 import utils.AuthorityUtils
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants._
 
 import scala.concurrent.Future
@@ -32,9 +34,13 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val request = FakeRequest()
 
+  trait TestErrorController extends ErrorController {
+    implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  }
+
   "Calling ErrorController with no session" should {
 
-    "return a 303 response" in new ErrorController {
+    "return a 303 response" in new TestErrorController {
 
       val result = notAuthorised(request)
       status(result) shouldBe 303
@@ -43,7 +49,7 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   "Calling ErrorController authorised noATS" should {
 
-    "return a 303 response" in new ErrorController {
+    "return a 303 response" in new TestErrorController {
 
       val result = Future.successful(authorisedNoAts(request))
       status(result) shouldBe 303
@@ -53,7 +59,7 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   "ErrorController" should {
 
-    "Show No ATS page" in new ErrorController {
+    "Show No ATS page" in new TestErrorController {
 
       val result = noAts(user, request)
       val document = Jsoup.parse(contentAsString(result))

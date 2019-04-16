@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import play.api.mvc.{Request, Result}
 import services.{AllowanceService, AuditService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
@@ -23,14 +24,19 @@ import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
 import view_models.Allowances
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 import scala.concurrent.Future
 
 object AllowancesController extends AllowancesController {
   override val allowanceService = AllowanceService
   override val auditService = AuditService
+  override val formPartialRetriever = AppFormPartialRetriever
 }
 
 trait AllowancesController extends TaxsController {
+
+  implicit val formPartialRetriever: FormPartialRetriever
 
   def allowanceService: AllowanceService
 

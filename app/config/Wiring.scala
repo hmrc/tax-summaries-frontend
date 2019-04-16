@@ -20,6 +20,7 @@ import akka.actor.ActorSystem
 import com.typesafe.config.Config
 import play.api.Mode.Mode
 import play.api.{Configuration, Play}
+import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.hooks.HttpHook
 import uk.gov.hmrc.http.{HttpDelete, HttpGet, HttpPost, HttpPut}
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
@@ -99,4 +100,8 @@ object TAXSSessionCache extends SessionCache with AppName {
   override lazy val domain: String = ApplicationConfig.sessionCacheDomain
 
   override protected def appNameConfiguration: Configuration = Play.current.configuration
+}
+
+object  TAXSSessionCookieCrypto {
+  val crypto = new ApplicationCrypto(Play.current.configuration.underlying).SessionCookieCrypto
 }

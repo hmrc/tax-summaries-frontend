@@ -16,21 +16,27 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import play.api.mvc.{Request, Result}
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
 import view_models.Summary
+
 import scala.concurrent.Future
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 object AtsMainController extends AtsMainController {
   override val summaryService = SummaryService
   override val auditService = AuditService
+  override val formPartialRetriever = AppFormPartialRetriever
 }
 
 trait AtsMainController extends TaxsController {
+
+  implicit val formPartialRetriever: FormPartialRetriever
 
   def summaryService: SummaryService
 

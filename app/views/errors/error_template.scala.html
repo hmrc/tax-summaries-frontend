@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@(title: String, header: String, message: String)(implicit lang: Lang, request: Request[_], messages: Messages)
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
+@(title: String, header: String, message: String)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @includes.taxs_main(title, "") {
     <h1>@header</h1>

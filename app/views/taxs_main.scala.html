@@ -15,8 +15,9 @@
  *@
 
 @import controllers.TaxsLanguageController
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-@(viewModel: view_models.Summary, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, lang: Lang)
+@(viewModel: view_models.Summary, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.home", viewModel.year)

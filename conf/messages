@@ -85,7 +85,7 @@ ats.summary.total_tax.your_total_tax=Total tax
 ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
 ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
 ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
-ats.summary.taxable_income.your_total_tax.description_total_income_tax=total income tax
+ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Income Tax
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 

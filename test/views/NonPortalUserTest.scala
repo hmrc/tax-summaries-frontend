@@ -16,10 +16,11 @@
 
 package views
 
+import config.AppFormPartialRetriever
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
-import play.api.i18n.{Messages, Lang}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
@@ -27,17 +28,20 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models._
 import controllers.FakeTaxsPlayApplication
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants._
 
 class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val messages: Messages = mock[Messages]
-  val request = FakeRequest()
+  val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val language = Lang("en")
+  val messages: Messages = Messages(language, messagesApi)
+  val request = FakeRequest()
   val utr = testUtr
   val user = User(AuthorityUtils.saAuthority(testOid, utr))
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
+  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
   "Logging in as a transitioned user" should {
     
@@ -51,7 +55,7 @@ class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with Mocki
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request, messages)
+      val result = views.html.government_spending(fakeViewModel)(language, request, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -65,7 +69,7 @@ class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with Mocki
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = views.html.taxs_main(fakeViewModel)(request, messages, language)
+      val result = views.html.taxs_main(fakeViewModel)(request, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include("annual-tax-summary:transitioned-user:start")

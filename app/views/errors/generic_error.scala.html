@@ -16,7 +16,9 @@
 
 @import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 
-@()(implicit lang: Lang, request: Request[AnyRef], user: User, messages: Messages)
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
+@()(implicit lang: Lang, request: Request[AnyRef], user: User, messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.no_ats_error", 0)

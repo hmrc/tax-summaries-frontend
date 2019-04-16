@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -26,12 +27,14 @@ import play.api.test.FakeRequest
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{GenericViewModel, AuthorityUtils}
-import view_models.{NoATSViewModel, Rate, Summary, Amount}
+import utils.{AuthorityUtils, GenericViewModel}
+import view_models.{Amount, NoATSViewModel, Rate, Summary}
 import utils.TestConstants._
+
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 
 object SummaryControllerTest {
@@ -68,6 +71,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
     val model: GenericViewModel = baseModel
 
@@ -297,7 +301,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-tax-description").text() should equal("Your total income tax, National Insurance and Capital Gains Tax.")
+      document.getElementById("total-tax-description").text() should equal("Your total Income Tax, National Insurance and Capital Gains Tax.")
     }
 
     "show Your Total Tax description having only (total income tax)" in new TestController {
@@ -312,7 +316,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-tax-description").text() should equal("Your total income tax.")
+      document.getElementById("total-tax-description").text() should equal("Your total Income Tax.")
     }
 
     "show Your Total Tax description having only (capital gains)" in new TestController {
@@ -356,7 +360,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-tax-description").text() should equal("Your total income tax and Capital Gains Tax.")
+      document.getElementById("total-tax-description").text() should equal("Your total Income Tax and Capital Gains Tax.")
     }
 
     "show Your Total Tax description having only (total income tax, employee nics)" in new TestController {
@@ -370,7 +374,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-tax-description").text() should equal("Your total income tax and National Insurance.")
+      document.getElementById("total-tax-description").text() should equal("Your total Income Tax and National Insurance.")
     }
 
     "show Your Total Tax description having only (capital gains, employee nics)" in new TestController {

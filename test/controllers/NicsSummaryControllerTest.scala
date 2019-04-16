@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -23,14 +24,16 @@ import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{SummaryService, AuditService}
+import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
-import view_models.{Rate, Amount, Summary}
+import view_models.{Amount, Rate, Summary}
 import utils.TestConstants._
+
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
@@ -42,6 +45,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
     override lazy val auditService = mock[AuditService]
     override lazy val summaryService = mock[SummaryService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
     val model = Summary(
       year = 2014,
