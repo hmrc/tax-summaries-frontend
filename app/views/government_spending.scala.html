@@ -14,7 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.partials.FormPartialRetriever; var percentEnviron=0.0; var percentCultural=0.0; var percentHousing=0.0
+
 
 @(viewModel: view_models.GovernmentSpend, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
@@ -72,17 +73,56 @@
                 </thead>
                 <tbody>
 
-                @viewModel.govSpendAmountData.toList.sortWith(_._1 < _._1).sortWith(_._2.percentage > _._2.percentage).filter(  _._1 != "GovSpendTotal" ).map {
+                @viewModel.govSpendAmountData.toList.sortWith(_._2.percentage > _._2.percentage).filter(  _._1 != "GovSpendTotal" ).map {
                     case (key, value) => {
+                        @if(key == "Environment") {
+                            @{percentEnviron = (value.percentage).doubleValue()}
+                        }
+                        @if(key == "Culture") {
+                            @{percentCultural = (value.percentage).doubleValue()}
+                        }
+                        @if(key == "HousingAndUtilities") {
+                            @{percentHousing = (value.percentage).doubleValue()}
+                        }
+                    }
+                }
+
+                @viewModel.govSpendAmountData.toList.sortWith(_._2.percentage > _._2.percentage).filter(  _._1 != "GovSpendTotal" ).map {
+                    case (key, value) => {
+                        @if(key == "Environment" && percentEnviron == percentCultural && percentEnviron == percentHousing) {
+                        <tr>
+                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </td>
+                            <td>@includes.currency_amount(value.amount, true)</td>
+                        </tr>
+                        } else {
+                        @if(key == "Culture" && percentCultural == percentEnviron && percentCultural == percentHousing) {
+                        <tr>
+                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </td>
+                            <td>@includes.currency_amount(value.amount, true)</td>
+                        </tr>
+                        } else {
+                        @if(key == "HousingAndUtilities" && percentHousing == percentCultural && percentHousing == percentEnviron) {
+                        <tr>
+                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </td>
+                            <td>@includes.currency_amount(value.amount, true)</td>
+                        </tr>
+                        } else {
                         <tr>
                             <td id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
                                 <span class="gray">(@value.percentage%)</span>
                             </td>
                             <td>@includes.currency_amount(value.amount, true)</td>
                         </tr>
+                        }
+                    } }
                     }
                 }
-
                 </tbody>
                 <tfoot>
                     <tr>
