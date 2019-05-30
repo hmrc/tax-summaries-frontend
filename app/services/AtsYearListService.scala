@@ -44,7 +44,7 @@ trait AtsYearListService {
     Future.successful( request.getQueryString("taxYear").getOrElse("").toInt )
   }
 
-  private def atsList: (AtsListData => GenericViewModel) =
+  private def atsList: AtsListData => GenericViewModel =
     (output: AtsListData) => {
       new AtsList(output.utr,
         output.taxPayer.get.taxpayer_name.get("forename"),

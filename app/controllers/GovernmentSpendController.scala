@@ -18,13 +18,11 @@ package controllers
 
 import config.AppFormPartialRetriever
 import models.SpendData
-import play.api.Logger
 import play.api.mvc.{Request, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
 import view_models.GovernmentSpend
-import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -54,7 +52,6 @@ trait GovernmentSpendController extends TaxsController {
   }
 
   override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {
-
     Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(user, result.userForename, result.userSurname, result.userUtr)))
   }
 
@@ -67,11 +64,9 @@ trait GovernmentSpendController extends TaxsController {
       case (key, value) =>
         if(key == "Environment") {
           percentEnviron = value.percentage.doubleValue()
-        }
-        if(key == "Culture") {
+        } else if(key == "Culture") {
           percentCultural = value.percentage.doubleValue()
-        }
-        if(key == "HousingAndUtilities") {
+        } else if(key == "HousingAndUtilities") {
           percentHousing = value.percentage.doubleValue()
         }
 

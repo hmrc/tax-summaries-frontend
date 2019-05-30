@@ -73,7 +73,7 @@
                 </thead>
                 <tbody>
 
-                @viewModel.govSpendAmountData.toList.filter(  _._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage).foreach {
+                @viewModel.govSpendAmountData.toList.filter(  _._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage).map {
                     case (key, value) => {
                         @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
                         <tr>

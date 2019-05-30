@@ -63,9 +63,9 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         ("transport" , SpendData(Amount(705.4, "GBP"), 2.95)),
         ("business_and_industry" , SpendData(Amount(655.19, "GBP"), 2.74)),
         ("government_administration" , SpendData(Amount(490.2, "GBP"), 2.05)),
-        ("culture" , SpendData(Amount(404.11, "GBP"), 1.69)),
-        ("housing_and_utilities" , SpendData(Amount(392.16, "GBP"), 1.64)),
-        ("environment" , SpendData(Amount(396.94, "GBP"), 1.66)),
+        ("Culture" , SpendData(Amount(404.11, "GBP"), 1.69)),
+        ("HousingAndUtilities" , SpendData(Amount(392.16, "GBP"), 1.64)),
+        ("Environment" , SpendData(Amount(396.94, "GBP"), 1.66)),
         ("overseas_aid" , SpendData(Amount(274.99, "GBP"), 1.15)),
         ("uk_contribution_to_eu_budget" , SpendData(Amount(179.34, "GBP"), 0.75))
       ),
@@ -123,12 +123,12 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       document.select("#business_and_industry").text() should include ("2.74%")
       document.select("#government_administration + td").text() shouldBe "£490.20"
       document.select("#government_administration").text() should include ("2.05%")
-      document.select("#culture + td").text() shouldBe "£404.11"
-      document.select("#culture").text() should include ("1.69%")
-      document.select("#environment + td").text() shouldBe "£396.94"
-      document.select("#environment").text() should include ("1.66%")
-      document.select("#housing_and_utilities + td").text() shouldBe "£392.16"
-      document.select("#housing_and_utilities").text() should include ("1.64%")
+      document.select("#Culture + td").text() shouldBe "£404.11"
+      document.select("#Culture").text() should include ("1.69%")
+      document.select("#Environment + td").text() shouldBe "£396.94"
+      document.select("#Environment").text() should include ("1.66%")
+      document.select("#HousingAndUtilities + td").text() shouldBe "£392.16"
+      document.select("#HousingAndUtilities").text() should include ("1.64%")
       document.select("#overseas_aid + td").text() shouldBe "£274.99"
       document.select("#overseas_aid").text() should include ("1.15%")
       document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£179.34"
@@ -156,9 +156,9 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
           ("transport" , SpendData(Amount(300 ,"GBP"), 3.0)),
           ("business_and_industry" , SpendData(Amount(270 ,"GBP"), 2.7)),
           ("government_administration" , SpendData(Amount(200 ,"GBP"), 2.0)),
-          ("culture" , SpendData(Amount(180 ,"GBP"), 1.8)),
-          ("environment" , SpendData(Amount(170 ,"GBP"), 1.7)),
-          ("housing_and_utilities" , SpendData(Amount(160 ,"GBP"), 1.6)),
+          ("Culture" , SpendData(Amount(180 ,"GBP"), 1.8)),
+          ("Environment" , SpendData(Amount(170 ,"GBP"), 1.7)),
+          ("HousingAndUtilities" , SpendData(Amount(160 ,"GBP"), 1.6)),
           ("overseas_aid" , SpendData(Amount(130 ,"GBP"), 1.3 )),
           ("uk_contribution_to_eu_budget" , SpendData(Amount(600 ,"GBP"), 0.6))
         ),
@@ -195,19 +195,19 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       document.select("#business_and_industry").text() should include ("2.7%")
       document.select("#government_administration + td").text() shouldBe "£200.00"
       document.select("#government_administration").text() should include ("2.0%")
-      document.select("#culture + td").text() shouldBe "£180.00"
-      document.select("#culture").text() should include ("1.8%")
-      document.select("#environment + td").text() shouldBe "£170.00"
-      document.select("#environment").text() should include ("1.7%")
-      document.select("#housing_and_utilities + td").text() shouldBe "£160.00"
-      document.select("#housing_and_utilities").text() should include ("1.6%")
+      document.select("#Culture + td").text() shouldBe "£180.00"
+      document.select("#Culture").text() should include ("1.8%")
+      document.select("#Environment + td").text() shouldBe "£170.00"
+      document.select("#Environment").text() should include ("1.7%")
+      document.select("#HousingAndUtilities + td").text() shouldBe "£160.00"
+      document.select("#HousingAndUtilities").text() should include ("1.6%")
       document.select("#overseas_aid + td").text() shouldBe "£130.00"
       document.select("#overseas_aid").text() should include ("1.3%")
       document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£600.00"
       document.select("#uk_contribution_to_eu_budget").text() should include ("0.6%")
 
       document.getElementById("user-info").text() should include("userForename userSurname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + td").text() shouldBe "£10,000.00"
     }
 
