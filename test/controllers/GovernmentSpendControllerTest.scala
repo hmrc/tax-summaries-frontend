@@ -21,7 +21,7 @@ import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Request
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
@@ -230,4 +230,57 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
     document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
   }
+
+  "return zero percentage for Housing, Cultural and Environment when they are not same" in new TestController {
+
+    val govSpendAmountData = List (
+      ("welfare" , SpendData(Amount(2530 ,"GBP"), 25.3)),
+      ("health", SpendData(Amount(1990 ,"GBP"), 19.9)),
+      ("pension" , SpendData(Amount(1280 ,"GBP"), 12.8)),
+      ("education" , SpendData(Amount(1250 ,"GBP"), 12.5)),
+      ("defence" , SpendData(Amount(540 , "GBP"), 5.4)),
+      ("national_debt_interest" , SpendData(Amount(500 ,"GBP"), 5.0)),
+      ("public_order_and_safety" , SpendData(Amount(440 ,"GBP"), 4.4)),
+      ("transport" , SpendData(Amount(300 ,"GBP"), 3.0)),
+      ("business_and_industry" , SpendData(Amount(270 ,"GBP"), 2.7)),
+      ("government_administration" , SpendData(Amount(200 ,"GBP"), 2.0)),
+      ("Culture" , SpendData(Amount(180 ,"GBP"), 1.8)),
+      ("Environment" , SpendData(Amount(170 ,"GBP"), 1.7)),
+      ("HousingAndUtilities" , SpendData(Amount(160 ,"GBP"), 1.6)),
+      ("overseas_aid" , SpendData(Amount(130 ,"GBP"), 1.3 )),
+      ("uk_contribution_to_eu_budget" , SpendData(Amount(600 ,"GBP"), 0.6))
+    )
+
+    val result = assignPercentage(govSpendAmountData)
+
+    result shouldBe(1.7, 1.8, 1.6)
+
+  }
+
+  "return equal percentage for Housing, Cultural and Environment when they are same" in new TestController {
+
+    val govSpendAmountData = List (
+      ("welfare" , SpendData(Amount(2530 ,"GBP"), 25.3)),
+      ("health", SpendData(Amount(1990 ,"GBP"), 19.9)),
+      ("pension" , SpendData(Amount(1280 ,"GBP"), 12.8)),
+      ("education" , SpendData(Amount(1250 ,"GBP"), 12.5)),
+      ("defence" , SpendData(Amount(540 , "GBP"), 5.4)),
+      ("national_debt_interest" , SpendData(Amount(500 ,"GBP"), 5.0)),
+      ("public_order_and_safety" , SpendData(Amount(440 ,"GBP"), 4.4)),
+      ("transport" , SpendData(Amount(300 ,"GBP"), 3.0)),
+      ("business_and_industry" , SpendData(Amount(270 ,"GBP"), 2.7)),
+      ("government_administration" , SpendData(Amount(200 ,"GBP"), 2.0)),
+      ("Culture" , SpendData(Amount(180 ,"GBP"), 1.8)),
+      ("Environment" , SpendData(Amount(180 ,"GBP"), 1.8)),
+      ("HousingAndUtilities" , SpendData(Amount(180 ,"GBP"), 1.8)),
+      ("overseas_aid" , SpendData(Amount(130 ,"GBP"), 1.3 )),
+      ("uk_contribution_to_eu_budget" , SpendData(Amount(600 ,"GBP"), 0.6))
+    )
+
+    val result = assignPercentage(govSpendAmountData)
+
+    result shouldBe(1.8, 1.8, 1.8)
+
+  }
+
 }

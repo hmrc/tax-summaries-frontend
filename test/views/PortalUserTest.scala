@@ -19,7 +19,7 @@ package views
 import config.AppFormPartialRetriever
 import models.SpendData
 import org.jsoup.Jsoup
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -238,7 +238,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
+      val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -263,7 +263,7 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
+      val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")

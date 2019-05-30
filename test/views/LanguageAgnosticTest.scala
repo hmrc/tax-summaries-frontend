@@ -17,7 +17,7 @@
 package views
 
 import config.AppFormPartialRetriever
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
 import utils.{AttorneyUtils, AuthorityUtils}
 import models.SpendData
@@ -100,7 +100,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val amount = new Amount(0.00, "GBP")
       val totalAmount = new Amount(0.00, "GBP")
       val scottishIncomeTax = new Amount(0.00, "GBP")
-      val spendData = new SpendData(amount, 20)
+      val spendData = new SpendData(amount, 24)
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
       val fakeViewModel = new GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
@@ -109,7 +109,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request, messages, formPartialRetriever)
+      val result = views.html.government_spending(fakeViewModel, (24.0,24.0,24.0))(language, request, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#content header h1").text should include ("Eich trethi a gwariant cyhoeddus")
