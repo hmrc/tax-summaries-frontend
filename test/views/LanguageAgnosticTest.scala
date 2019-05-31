@@ -17,7 +17,7 @@
 package views
 
 import config.AppFormPartialRetriever
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
 import utils.{AttorneyUtils, AuthorityUtils}
 import models.SpendData
@@ -103,13 +103,13 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val spendData = new SpendData(amount, 20)
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
-      val fakeViewModel = new GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
+      val fakeViewModel = GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
         ("education", spendData), ("pension", spendData), ("national_debt_interest", spendData), ("defence", spendData),
         ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel)(language, request, messages, formPartialRetriever)
+      val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#content header h1").text should include ("Eich trethi a gwariant cyhoeddus")
@@ -122,7 +122,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       val rate = new Rate("5")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentUser, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
       val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), messages, formPartialRetriever)

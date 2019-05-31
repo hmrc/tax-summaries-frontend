@@ -20,7 +20,7 @@ import models.{AtsData, GovernmentSpendingOutputWrapper}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{Amount, GovernmentSpend}
+import view_models.GovernmentSpend
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,7 +41,7 @@ trait GovernmentSpendService {
     }
   }
 
-  private def govSpend: (AtsData => GenericViewModel) =
+  private def govSpend: AtsData => GenericViewModel =
     (output: AtsData) => {
       val wrapper: GovernmentSpendingOutputWrapper = output.gov_spending.get
       new GovernmentSpend(output.taxYear,
