@@ -32,6 +32,6 @@
 @includes.taxs_main(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
 
 <p>@Html(Messages("generic.error.try.later"))</p>
-<p><a href="@Messages("generic.error.contact.link")" data-journey-click="link - click:@Messages("generic.error.title"):@Messages("generic.error.contact.helpline")">@Messages("generic.error.contact.helpline")</a> @Messages("generic.error.if.you.need.to.speak.to.someone")</p>
+<p><a id="contactLink" href="@Messages("generic.error.contact.link")" data-journey-click="link - click:@Messages("generic.error.title"):@Messages("generic.error.contact.helpline")">@Messages("generic.error.contact.helpline")</a> @Messages("generic.error.if.you.need.to.speak.to.someone")</p>
 
 }
