@@ -56,7 +56,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
 
     "show ats error page for capital-gains" in new CapitalGainsTaxController {
@@ -71,7 +71,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
 
     "show ats error page for government-spend" in new GovernmentSpendController {
@@ -86,7 +86,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
 
     "show ats error page for income" in new IncomeController {
@@ -101,7 +101,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
 
     "show ats error page for total-income-tax" in new TotalIncomeTaxController {
@@ -116,7 +116,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
 
     "show ats error page for summary page" in new SummaryController {
@@ -131,7 +131,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
 
     "show ats error page for nics on summary page" in new NicsController {
@@ -147,7 +147,7 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
       status(result) shouldBe 200
 
-      document.toString should include("Technical Difficulties")
+      document.toString should include("Sorry, there is a problem with the service")
     }
   }
 }

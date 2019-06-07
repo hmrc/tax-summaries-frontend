@@ -47,21 +47,6 @@ class PortalUserTest extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
   "Logging in as a portal user" should {
 
-    "show the 'exit tax summaries' link on the error page" in  {
-
-      val result = views.html.errors.generic_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages, formPartialRetriever)
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
-
-      document.select("#global-breadcrumb li:nth-child(2)").toString should include("<strong>Technical Difficulties</strong>")
-    }
-
     "show the 'exit tax summaries' link on the landing page" in  {
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
