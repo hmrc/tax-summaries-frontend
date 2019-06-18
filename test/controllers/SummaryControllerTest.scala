@@ -419,22 +419,5 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
     }
-
-    "show 'ATS error' page with a correct breadcrumb" in new TestController {
-
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(Future.failed(new Exception("failed")))
-
-      val result = Future.successful(show(user, request))
-      val document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe 200
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
-      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
-
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
-
-      document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Technical Difficulties</strong>")
-    }
   }
 }

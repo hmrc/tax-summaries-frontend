@@ -202,9 +202,12 @@ ats.treasury_spending.print.this.page = Argraffu’r dudalen hon
 
 # No ATS - error page
 #============================================================
-generic.error.html.title=Anawsterau Technegol
-generic.error.title=Mae’n flin gennym, rydym yn profi anawsterau technegol
-generic.error.lede=Rhowch gynnig arni eto mewn ychydig funudau.
+generic.error.html.title=Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+generic.error.title=Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+generic.error.try.later=Rhowch gynnig arall arni yn nes ymlaen.
+generic.error.contact.helpline=Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
+generic.error.if.you.need.to.speak.to.someone=os ydych am siarad â rhywun am eich crynodeb treth.
+generic.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/welsh-language-helplines
 
 # No ATS - ats unavailable page
 #============================================================

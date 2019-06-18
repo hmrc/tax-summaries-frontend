@@ -49,7 +49,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       implicit val messages = Messages(language, messagesApi)
       val result = views.html.errors.generic_error()(language, request, user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#generic-error-page-heading").text should include("Sorry, we are experiencing technical difficulties")
+      document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
   }
 
@@ -59,7 +59,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       implicit val messages = Messages(language, messagesApi)
       val result = views.html.errors.generic_error()(language, request, user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#generic-error-page-heading").text should include("Sorry, we are experiencing technical difficulties")
+      document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
   }
 
@@ -69,7 +69,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       implicit val messages = Messages(language, messagesApi)
       val result = views.html.errors.generic_error()(language, request, user, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#generic-error-page-heading").text should include("Mae’n flin gennym, rydym yn profi anawsterau technegol")
+      document.select("#generic-error-page-heading").text should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
     }
 
 
