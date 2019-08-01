@@ -209,10 +209,6 @@ ats.treasury_spending.print.this.page = Print this page
 generic.error.html.title=Sorry, there is a problem with the service
 generic.error.title=Sorry, there is a problem with the service
 generic.error.try.later=Try again later.
-generic.error.contact.helpline=Contact the Self Assessment Helpline
-generic.error.if.you.need.to.speak.to.someone=if you need to speak to someone about your tax summary.
-generic.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
-
 
 
 # No ATS - ats unavailable page
