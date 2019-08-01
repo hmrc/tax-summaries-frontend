@@ -51,26 +51,16 @@ class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrows
 
       val resultEn = views.html.errors.generic_error()(languageEn, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messagesEn, formPartialRetriever)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
-
       documentEn.toString should include("Sorry, there is a problem with the service")
       documentEn.toString should include("Try again later.")
-      documentEn.toString should include("Contact the Self Assessment Helpline")
-      documentEn.toString should include("if you need to speak to someone about your tax summary.")
-      documentEn.getElementById("contactLink").attr("href") shouldBe("https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment")
-
     }
 
     "show the correct contents of the generic error page in Welsh" in  {
 
       val resultCy = views.html.errors.generic_error()(languageCy, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messagesCy, formPartialRetriever)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
-println(documentCy)
       documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
       documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")
-      documentCy.toString should include("Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM")
-      documentCy.toString should include("os ydych am siarad â rhywun am eich crynodeb treth.")
-      documentCy.getElementById("contactLink").attr("href") shouldBe("https://www.gov.uk/government/organisations/hm-revenue-customs/contact/welsh-language-helplines")
-
     }
   }
 }
