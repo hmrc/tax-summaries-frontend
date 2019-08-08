@@ -16,48 +16,81 @@
 
 package services
 
-import connectors.DataCacheConnector
 import controllers.FakeTaxsPlayApplication
-import models.AtsData
 import org.mockito.Matchers
-import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.libs.json.Json
+import play.api.mvc.Request
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
-import utils.JsonUtil._
 import utils.TestConstants._
-
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
+import utils.{AuthorityUtils, GenericViewModel}
+import view_models.{AtsList, NoTaxYearViewModel, TaxYearEnd}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.Success
 
 class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
-  val data = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
-    Json.fromJson[AtsData](json).get
-  }
+  val genericViewModel: GenericViewModel =  AtsList(
+    utr = testUtr,
+    forename = "forename",
+    surname = "surname",
+    yearList = List(
+      TaxYearEnd(Some("2015"))
+    )
+  )
+
+  val noTaxViewModel: NoTaxYearViewModel  = new NoTaxYearViewModel
+
 
   class TestService extends SummaryService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     implicit val request = FakeRequest()
+
+    override def getSummaryData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+
+      atsYearListService.getSelectedAtsTaxYear flatMap {
+        case Some(taxYear) => {
+          Future.successful(genericViewModel)
+        }
+        case None => {
+          Future.successful(noTaxViewModel)
+        }
+      }
+    }
   }
 
   "SummaryService getSummaryData" should {
 
-    "return model " in new TestService {
+    "return a NoTaxYearViewModel when getSelectedAtsTaxYear returns None" in new TestService {
 
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(2015))
-      val result = getSummaryData(user, hc, request)
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(None))
+       val result = getSummaryData(user, hc, request)
+       result.onComplete(
+         res => res mustBe Success(noTaxViewModel)
+       )
 
     }
+
+    "return a GenericViewModel when getSelectedAtsTaxYear returns Some(taxYear)" in new TestService {
+
+      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Some(2015)))
+      val result = getSummaryData(user, hc, request)
+      result.onComplete(
+        res => res mustBe Success(genericViewModel)
+      )
+
+    }
+
 
   }
 }

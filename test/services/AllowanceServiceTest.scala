@@ -21,34 +21,79 @@ import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
+import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
+import utils.{AuthorityUtils, GenericViewModel}
 import utils.TestConstants._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
+import view_models.{AtsList, NoTaxYearViewModel, TaxYearEnd}
+import org.scalatest.MustMatchers._
+import scala.util.Success
 
 class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
-  class TestService extends AllowanceService with MockitoSugar {
+  val genericViewModel: GenericViewModel =  AtsList(
+    utr = testUtr,
+    forename = "forename",
+    surname = "surname",
+    yearList = List(
+      TaxYearEnd(Some("2015"))
+    )
+  )
 
+  val noTaxViewModel: NoTaxYearViewModel  = new NoTaxYearViewModel
+
+  class TestService extends AllowanceService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     implicit val request = FakeRequest()
+
+    //TODO - override isn't working.Understand why
+    def getAllowances(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+
+      atsYearListService.getSelectedAtsTaxYear flatMap {
+        case Some(taxYear) => {
+          Future.successful(genericViewModel)
+        }
+        case None => {
+          Future.successful(noTaxViewModel)
+        }
+      }
+    }
   }
 
   "AllowanceService getAllowances" should {
 
-    "return model " in new TestService {
+    "return a NoTaxYearViewModel when getSelectedAtsTaxYear returns None" in new TestService {
 
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(2015))
-      val result = getAllowances(user, request, hc)
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(None))
+      val result = getAllowances(user, hc, request)
+      result.onComplete(
+        res => res mustBe Success(noTaxViewModel)
+      )
 
     }
+
+    "return a GenericViewModel when getSelectedAtsTaxYear returns Some(taxYear)" in new TestService {
+
+      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Some(2015)))
+      val result = getAllowances(user, hc, request)
+      result.onComplete(
+        res => res mustBe Success(genericViewModel)
+      )
+
+    }
+
+
+
+
 
   }
 }

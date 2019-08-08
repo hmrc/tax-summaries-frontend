@@ -26,7 +26,7 @@ import services._
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.NoATSViewModel
+import view_models.{NoATSViewModel, NoTaxYearViewModel}
 
 import scala.concurrent.Future
 import play.api.i18n.Messages
@@ -66,6 +66,7 @@ abstract class TaxsController extends FrontendController
   protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
       case noATS: NoATSViewModel => Redirect(routes.ErrorController.authorisedNoAts())
+      case noTaxYear: NoTaxYearViewModel => Redirect("")
       case result: T => obtainResult(result)
     }
   }

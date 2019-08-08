@@ -20,11 +20,11 @@ import models.{AtsData, DataHolder}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.Allowances
-import scala.concurrent.ExecutionContext.Implicits.global
+import view_models.{Allowances, NoATSViewModel, NoTaxYearViewModel}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 
 object AllowanceService extends AllowanceService {
   override val atsService = AtsService
@@ -37,7 +37,11 @@ trait AllowanceService {
 
   def getAllowances(implicit user: User, request: Request[AnyRef], hc: HeaderCarrier): Future[GenericViewModel] = {
     atsYearListService.getSelectedAtsTaxYear flatMap {
-      case taxYear => atsService.createModel(taxYear, allowanceService)
+      case Some(taxYear) => atsService.createModel(taxYear, allowanceService)
+      case None => {
+        val noTaxYearViewModel = new NoTaxYearViewModel
+        Future.successful(noTaxYearViewModel)
+      }
     }
   }
 
@@ -55,4 +59,6 @@ trait AllowanceService {
         output.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
+
+
 }

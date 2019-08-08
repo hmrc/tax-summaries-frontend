@@ -20,7 +20,7 @@ import models.{AtsData, GovernmentSpendingOutputWrapper}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.GovernmentSpend
+import view_models.{GovernmentSpend, NoATSViewModel, NoTaxYearViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,7 +37,11 @@ trait GovernmentSpendService {
 
   def getGovernmentSpendData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
     atsYearListService.getSelectedAtsTaxYear flatMap {
-      case taxYear => atsService.createModel(taxYear, govSpend)
+      case Some(taxYear) => atsService.createModel(taxYear, govSpend)
+      case None => {
+        val noTaxYearViewModel = new NoTaxYearViewModel
+        Future.successful(noTaxYearViewModel)
+      }
     }
   }
 

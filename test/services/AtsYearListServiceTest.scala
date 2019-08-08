@@ -58,6 +58,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
       timestamp = 0
     )
 
+
     override val atsListService = mock[AtsListService]
 
   }
@@ -97,9 +98,21 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
       val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
 
       whenReady(result) { result =>
-        result shouldBe 2014
+        result shouldBe Some(2014)
       }
     }
+
+    "Not return a None when there is no taxYear fiels in the request" in new TestService {
+
+      val fakeRequest = FakeRequest("GET","")
+
+      val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
+
+      whenReady(result) { result =>
+        result shouldBe None
+      }
+    }
+    
 
   }
 

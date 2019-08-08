@@ -23,7 +23,7 @@ import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils._
 import view_models.AtsForms._
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{AtsList, NoATSViewModel, NoTaxYearViewModel, TaxYearEnd}
 
 import scala.concurrent.Future
 import play.api.i18n.Messages.Implicits._
@@ -94,7 +94,8 @@ trait IndexController extends TaxsController {
 
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
-      case x: NoATSViewModel => Future { Redirect("") }
+      case noATS: NoATSViewModel => Future { Redirect("") }
+      case noTaxYear: NoTaxYearViewModel   => Future { Redirect("") }
       case result: T => getViewModel(result)
     }
   }

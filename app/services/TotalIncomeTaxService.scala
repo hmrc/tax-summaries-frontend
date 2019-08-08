@@ -20,7 +20,7 @@ import models.{AtsData, DataHolder}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.TotalIncomeTax
+import view_models.{NoATSViewModel, NoTaxYearViewModel, TotalIncomeTax}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,7 +37,11 @@ trait TotalIncomeTaxService {
 
   def getIncomeData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
     atsYearListService.getSelectedAtsTaxYear flatMap {
-      case taxYear => atsService.createModel(taxYear, totalIncomeConverter)
+      case Some(taxYear) => atsService.createModel(taxYear, totalIncomeConverter)
+      case None => {
+        val noTaxYearViewModel = new NoTaxYearViewModel
+        Future.successful(noTaxYearViewModel)
+      }
     }
   }
 
