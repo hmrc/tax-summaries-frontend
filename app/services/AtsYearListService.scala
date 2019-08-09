@@ -21,7 +21,7 @@ import play.api.mvc.Request
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
-
+import scala.util.Try
 import scala.concurrent.Future
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 
@@ -40,13 +40,8 @@ trait AtsYearListService {
     atsListService.storeSelectedTaxYear(taxYear)
   }
 
-  def getSelectedAtsTaxYear(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Option[Int]] = {
-   try {
-     val taxYear: Int = request.getQueryString("taxYear").getOrElse("").toInt
-     Future.successful(Some(taxYear))
-   }catch{
-     case e: NumberFormatException => Future.successful(None)
-   }
+  def getSelectedAtsTaxYear(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Try[Int]] = {
+    Future.successful(Try(request.getQueryString("taxYear").getOrElse("").toInt))
   }
 
   private def atsList: AtsListData => GenericViewModel =

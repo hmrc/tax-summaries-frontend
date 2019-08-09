@@ -49,4 +49,6 @@ trait ErrorController extends FrontendController
   def noAts(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.errors.no_ats_error())
   }
+
+
 }

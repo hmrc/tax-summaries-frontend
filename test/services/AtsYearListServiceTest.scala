@@ -31,12 +31,14 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.Account
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{GenericViewModel, AccountUtils, AgentTokenException, AuthorityUtils}
-import view_models.{TaxYearEnd, AtsList}
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils, GenericViewModel}
+import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.util.{Failure, Success}
 
 class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
@@ -98,18 +100,18 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
       val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
 
       whenReady(result) { result =>
-        result shouldBe Some(2014)
+        result shouldBe Success(2014)
       }
     }
 
-    "Not return a None when there is no taxYear fiels in the request" in new TestService {
+    "Not return a Failure(NumberFormatException) when there is no taxYear fiels in the request" in new TestService {
 
       val fakeRequest = FakeRequest("GET","")
 
       val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
 
       whenReady(result) { result =>
-        result shouldBe None
+        result.toString shouldBe "Failure(java.lang.NumberFormatException: For input string: \"\")"
       }
     }
     

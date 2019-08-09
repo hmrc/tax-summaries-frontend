@@ -17,27 +17,28 @@
 package services
 
 import controllers.FakeTaxsPlayApplication
+import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{AtsList, NoTaxYearViewModel, TaxYearEnd}
+import view_models.{AtsList, TaxYearEnd}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Success
+import scala.util.{Failure, Success}
 
-class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar with MockFactory{
 
   val genericViewModel: GenericViewModel =  AtsList(
-    utr = testUtr,
+    utr = "3000024376",
     forename = "forename",
     surname = "surname",
     yearList = List(
@@ -45,52 +46,33 @@ class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with Scal
     )
   )
 
-  val noTaxViewModel: NoTaxYearViewModel  = new NoTaxYearViewModel
-
-
   class TestService extends SummaryService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
-    implicit val request = FakeRequest()
-
-    override def getSummaryData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
-
-      atsYearListService.getSelectedAtsTaxYear flatMap {
-        case Some(taxYear) => {
-          Future.successful(genericViewModel)
-        }
-        case None => {
-          Future.successful(noTaxViewModel)
-        }
-      }
-    }
+    implicit val request = FakeRequest("GET","?taxYear=2015")
   }
 
   "SummaryService getSummaryData" should {
 
-    "return a NoTaxYearViewModel when getSelectedAtsTaxYear returns None" in new TestService {
-
+    "return a NoTaxYearViewModel when atsYearListService returns Failure" in new TestService {
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(None))
-       val result = getSummaryData(user, hc, request)
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
+      val result = getSummaryData(user, hc, request)
        result.onComplete(
-         res => res mustBe Success(noTaxViewModel)
-       )
-
+         res => {res.toString.split("\\@")(0) mustBe "Success(view_models.NoTaxYearViewModel"}
+      )
     }
 
-    "return a GenericViewModel when getSelectedAtsTaxYear returns Some(taxYear)" in new TestService {
-
+    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Some(2015)))
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Success(2015)))
+      when(atsService.createModel(Matchers.eq(2015),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = getSummaryData(user, hc, request)
       result.onComplete(
-        res => res mustBe Success(genericViewModel)
-      )
-
+        result => result.toString mustBe "Success(AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015)))))"
+        )
     }
-
 
   }
 }

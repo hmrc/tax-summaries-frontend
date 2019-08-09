@@ -26,6 +26,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 
+import scala.util.{Failure, Success}
+
 object AllowanceService extends AllowanceService {
   override val atsService = AtsService
   override val atsYearListService = AtsYearListService
@@ -37,8 +39,8 @@ trait AllowanceService {
 
   def getAllowances(implicit user: User, request: Request[AnyRef], hc: HeaderCarrier): Future[GenericViewModel] = {
     atsYearListService.getSelectedAtsTaxYear flatMap {
-      case Some(taxYear) => atsService.createModel(taxYear, allowanceService)
-      case None => {
+      case Success(taxYear) => atsService.createModel(taxYear, allowanceService)
+      case Failure(exception) => {
         val noTaxYearViewModel = new NoTaxYearViewModel
         Future.successful(noTaxYearViewModel)
       }

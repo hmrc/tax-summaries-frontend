@@ -26,6 +26,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.util.{Failure, Success}
+
 object SummaryService extends SummaryService {
   override val atsService = AtsService
   override val atsYearListService = AtsYearListService
@@ -38,10 +40,10 @@ trait SummaryService {
 
   def getSummaryData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
     atsYearListService.getSelectedAtsTaxYear flatMap {
-      case Some(taxYear) => {
+      case Success(taxYear) => {
         atsService.createModel(taxYear, summaryConverter)
       }
-      case None => {
+      case Failure(exception) => {
         val noTaxYearViewModel = new NoTaxYearViewModel
         Future.successful(noTaxYearViewModel)
       }
