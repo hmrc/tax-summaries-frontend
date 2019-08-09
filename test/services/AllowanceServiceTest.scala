@@ -62,7 +62,7 @@ class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with Sc
       when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
       val result = getAllowances(user, request, hc)
       result.onComplete(
-        res => {res.toString.split("\\@")(0) mustBe "Success(view_models.NoTaxYearViewModel"}
+        res => {res.toString.split("\\@")(0) mustEqual "Success(view_models.NoATSViewModel"}
       )
     }
 
@@ -72,7 +72,7 @@ class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with Sc
       when(atsService.createModel(Matchers.eq(2015),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = getAllowances(user, request, hc)
       result.onComplete(
-        result => result.toString mustBe "Success(AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015)))))"
+        result => result.toString mustEqual "Success(AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015)))))"
       )
     }
   }

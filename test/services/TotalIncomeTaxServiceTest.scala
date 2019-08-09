@@ -62,7 +62,7 @@ class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication wi
       val result = getIncomeData(user, hc, request)
       result.onComplete(
         res => {
-          res.toString.split("\\@")(0) mustBe "Success(view_models.NoTaxYearViewModel"
+          res.toString.split("\\@")(0) mustEqual "Success(view_models.NoATSViewModel"
         }
       )
     }
@@ -73,7 +73,7 @@ class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication wi
       when(atsService.createModel(Matchers.eq(2015), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = getIncomeData(user, hc, request)
       result.onComplete(
-        result => result.toString mustBe "Success(AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015)))))"
+        result => result.toString mustEqual "Success(AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015)))))"
       )
     }
 

@@ -44,8 +44,8 @@ trait SummaryService {
         atsService.createModel(taxYear, summaryConverter)
       }
       case Failure(exception) => {
-        val noTaxYearViewModel = new NoTaxYearViewModel
-        Future.successful(noTaxYearViewModel)
+        val noATSViewModel = new NoATSViewModel
+        Future.successful(noATSViewModel)
       }
     }
   }

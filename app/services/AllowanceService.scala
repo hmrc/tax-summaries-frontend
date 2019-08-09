@@ -41,8 +41,8 @@ trait AllowanceService {
     atsYearListService.getSelectedAtsTaxYear flatMap {
       case Success(taxYear) => atsService.createModel(taxYear, allowanceService)
       case Failure(exception) => {
-        val noTaxYearViewModel = new NoTaxYearViewModel
-        Future.successful(noTaxYearViewModel)
+        val noATSViewModel = new NoATSViewModel
+        Future.successful(noATSViewModel)
       }
     }
   }

@@ -95,7 +95,6 @@ trait IndexController extends TaxsController {
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
       case noATS: NoATSViewModel => Future { Redirect("") }
-      case noTaxYear: NoTaxYearViewModel   => Future { Redirect("") }
       case result: T => getViewModel(result)
     }
   }
