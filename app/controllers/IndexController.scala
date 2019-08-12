@@ -18,17 +18,17 @@ package controllers
 
 import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Request, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 import view_models.AtsForms._
-import view_models.{AtsList, NoATSViewModel, NoTaxYearViewModel, TaxYearEnd}
+import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.Future
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService

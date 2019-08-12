@@ -18,14 +18,13 @@ package services
 
 import models.{AtsData, GovernmentSpendingOutputWrapper}
 import play.api.mvc.Request
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{GovernmentSpend, NoATSViewModel, NoTaxYearViewModel}
+import view_models.{GovernmentSpend, NoATSViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-
 import scala.util.{Failure, Success}
 
 object GovernmentSpendService extends GovernmentSpendService {

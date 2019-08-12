@@ -16,7 +16,6 @@
 
 package services
 
-import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.FakeTaxsPlayApplication
 import models.AtsListData
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -26,19 +25,16 @@ import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.Account
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{AccountUtils, AgentTokenException, AuthorityUtils, GenericViewModel}
+import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.io.Source
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 

@@ -31,8 +31,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
 class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar with MockFactory{
@@ -58,20 +59,16 @@ class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with Scal
     "return a NoATSViewModel when atsYearListService returns Failure" in new TestService {
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
       when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
-      val result = getSummaryData(user, hc, request)
-       result.onComplete(
-         res => {res.toString.split("\\@")(0) mustEqual "Success(view_models.NoATSViewModel"}
-      )
+      val result = Await.result(getSummaryData(user, hc, request), 1500 millis)
+      result.toString.split("\\@")(0).trim mustEqual "view_models.NoATSViewModel"
     }
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
       when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Success(2015)))
       when(atsService.createModel(Matchers.eq(2015),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = getSummaryData(user, hc, request)
-      result.onComplete(
-        result => result.toString mustEqual "Success(AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015)))))"
-        )
+      val result = Await.result(getSummaryData(user, hc, request), 1500 millis)
+      result.toString.trim mustEqual "AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015))))"
     }
 
   }
