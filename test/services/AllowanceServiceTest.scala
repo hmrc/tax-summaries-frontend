@@ -62,7 +62,7 @@ class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with Sc
       result.toString.trim mustEqual "AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015))))"
     }
 
-    "return a NoATSViewModel when atsYearListService returns Failure" in new TestService {
+    "return a NoYearViewModel when atsYearListService returns Failure" in new TestService {
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
       when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
       val result = Await.result(getAllowances(user, request, hc), 1500 millis)
