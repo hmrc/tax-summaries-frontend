@@ -49,8 +49,4 @@ trait ErrorController extends FrontendController
     Ok(views.html.errors.no_ats_error())
   }
 
-  def noYear = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) {
-    implicit user => implicit request => BadRequest(views.html.errors.no_year())
-  }
-
 }

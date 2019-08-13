@@ -22,7 +22,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
-
 import scala.concurrent.Future
 import scala.util.Try
 

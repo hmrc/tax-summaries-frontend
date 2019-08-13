@@ -230,12 +230,6 @@ token_error.html.title=Technical problem
 token_error.title=Sorry, there was a technical problem
 token_error.lede=We couldn’t retrieve your client’s summary. Please try again.
 
-# No year in ATS request page
-#============================================================
-no_year.html.title=There is a problem
-no_year.title=There is a problem with your request
-no_year.message=Sorry, we are experiencing technical difficulties. <p>Please try again later. </p>
-
 
 # Screen reader - visually hidden
 #============================================================

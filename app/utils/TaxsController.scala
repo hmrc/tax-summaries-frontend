@@ -64,7 +64,7 @@ abstract class TaxsController extends FrontendController
   protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
       case noATS: NoATSViewModel => Redirect(routes.ErrorController.authorisedNoAts())
-      case noYear: NoYearViewModel => Redirect(routes.ErrorController.noYear())
+      case noYear: NoYearViewModel => BadRequest(views.html.errors.generic_error())
       case result: T => obtainResult(result)
     }
   }

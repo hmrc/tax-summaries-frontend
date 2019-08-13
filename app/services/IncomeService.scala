@@ -21,8 +21,7 @@ import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{IncomeBeforeTax, NoATSViewModel, NoYearViewModel}
-
+import view_models.{IncomeBeforeTax, NoYearViewModel}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

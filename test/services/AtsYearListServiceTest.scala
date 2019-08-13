@@ -31,7 +31,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
-
 import scala.concurrent.Future
 import scala.io.Source
 import scala.util.Success

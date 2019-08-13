@@ -17,14 +17,11 @@
 package services
 
 import models.{AtsData, DataHolder}
-import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{NoATSViewModel, NoYearViewModel, Summary}
-import views.html.errors.generic_error
-
+import view_models.{NoYearViewModel, Summary}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
