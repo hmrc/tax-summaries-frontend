@@ -21,7 +21,7 @@ import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{CapitalGains, NoATSViewModel}
+import view_models.{CapitalGains, NoATSViewModel, NoYearViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,9 +39,9 @@ trait CapitalGainsService {
   def getCapitalGains(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
     atsYearListService.getSelectedAtsTaxYear flatMap {
       case Success(taxYear) => atsService.createModel(taxYear, capitalGains)
-      case Failure(exception) => {
-        val noATSViewModel = new NoATSViewModel
-        Future.successful(noATSViewModel)
+      case Failure(exception:Exception) => {
+        val noYearViewModel = new NoYearViewModel
+        Future(noYearViewModel)
       }
     }
   }

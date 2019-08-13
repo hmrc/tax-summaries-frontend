@@ -18,14 +18,13 @@ package controllers
 
 import config.AppFormPartialRetriever
 import connectors.AuthenticationConnector
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import utils.{AccountUtils, TAXSGovernmentGateway, TaxSummariesRegime}
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils.{AccountUtils, TAXSGovernmentGateway, TaxSummariesRegime}
 
 object ErrorController extends ErrorController {
   override val formPartialRetriever = AppFormPartialRetriever
@@ -50,5 +49,8 @@ trait ErrorController extends FrontendController
     Ok(views.html.errors.no_ats_error())
   }
 
+  def noYear = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) {
+    implicit user => implicit request => BadRequest(views.html.errors.no_year())
+  }
 
 }

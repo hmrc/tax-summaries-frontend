@@ -56,19 +56,19 @@ class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with Scal
 
   "SummaryService getSummaryData" should {
 
-    "return a NoATSViewModel when atsYearListService returns Failure" in new TestService {
-      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
-      val result = Await.result(getSummaryData(user, hc, request), 1500 millis)
-      result.toString.split("\\@")(0).trim mustEqual "view_models.NoATSViewModel"
-    }
-
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
       when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Success(2015)))
       when(atsService.createModel(Matchers.eq(2015),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(getSummaryData(user, hc, request), 1500 millis)
       result.toString.trim mustEqual "AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015))))"
+    }
+
+    "return a NoATSViewModel when atsYearListService returns Failure" in new TestService {
+      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
+      val result = Await.result(getSummaryData(user, hc, request), 1500 millis)
+      result.toString.split("\\@")(0).trim mustEqual "view_models.NoYearViewModel"
     }
 
   }

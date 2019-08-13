@@ -17,11 +17,13 @@
 package services
 
 import models.{AtsData, DataHolder}
+import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{NoATSViewModel, Summary}
+import view_models.{NoATSViewModel, NoYearViewModel, Summary}
+import views.html.errors.generic_error
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,9 +44,9 @@ trait SummaryService {
       case Success(taxYear) => {
         atsService.createModel(taxYear, summaryConverter)
       }
-      case Failure(exception) => {
-        val noATSViewModel = new NoATSViewModel
-        Future.successful(noATSViewModel)
+      case Failure(exception:Exception) => {
+        val noYearViewModel = new NoYearViewModel
+        Future(noYearViewModel)
       }
     }
   }

@@ -56,13 +56,6 @@ class CapitalGainsServiceTest extends UnitSpec with FakeTaxsPlayApplication with
 
   "CapitalGainsService getCapitalGains" should {
 
-    "return a NoATSViewModel when atsYearListService returns Failure" in new TestService {
-      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
-      val result = Await.result(getCapitalGains(user, hc, request), 1500 millis)
-      result.toString.split("\\@")(0).trim mustEqual "view_models.NoATSViewModel"
-    }
-
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
       when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Success(2015)))
@@ -70,5 +63,13 @@ class CapitalGainsServiceTest extends UnitSpec with FakeTaxsPlayApplication with
       val result = Await.result(getCapitalGains(user, hc, request), 1500 millis)
       result.toString.trim mustEqual "AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015))))"
     }
+
+    "return a NoATSViewModel when atsYearListService returns Failure" in new TestService {
+      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
+      val result = Await.result(getCapitalGains(user, hc, request), 1500 millis)
+      result.toString.split("\\@")(0).trim mustEqual "view_models.NoYearViewModel"
+    }
+
   }
 }

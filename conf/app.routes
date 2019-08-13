@@ -14,6 +14,7 @@ GET     /capital-gains-tax                                      controllers.Capi
 
 GET     /not-authorised                                         controllers.ErrorController.notAuthorised
 GET     /no-ats                                                 controllers.ErrorController.authorisedNoAts
+GET     /no-year                                                controllers.ErrorController.noYear
 
 GET     /switch-to-welsh                                       controllers.TaxsLanguageController.switchLanguage(lang = "cy")
 GET     /switch-to-english                                     controllers.TaxsLanguageController.switchLanguage(lang = "en")

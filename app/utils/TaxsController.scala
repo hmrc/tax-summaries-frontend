@@ -28,7 +28,7 @@ import services._
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import view_models.NoATSViewModel
+import view_models.{NoATSViewModel, NoYearViewModel}
 
 import scala.concurrent.Future
 
@@ -64,15 +64,13 @@ abstract class TaxsController extends FrontendController
   protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
       case noATS: NoATSViewModel => Redirect(routes.ErrorController.authorisedNoAts())
+      case noYear: NoYearViewModel => Redirect(routes.ErrorController.noYear())
       case result: T => obtainResult(result)
     }
   }
 
   def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]) = {
-
     val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)
-
     block(intParam)
-
   }
 }
