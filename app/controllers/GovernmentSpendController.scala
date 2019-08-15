@@ -17,11 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.SpendData
+import models.{ErrorResponse, SpendData}
 import play.api.mvc.{Request, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
 import view_models.GovernmentSpend
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
@@ -47,8 +47,11 @@ trait GovernmentSpendController extends TaxsController {
 
   type T = GovernmentSpend
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    governmentSpendService.getGovernmentSpendData
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+    TaxYearUtil.extractTaxYear match {
+      case Right(taxYear) => governmentSpendService.getGovernmentSpendData(taxYear).map(Right(_))
+      case Left(errorResponse) => Future.successful(Left(errorResponse))
+    }
   }
 
   override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {

@@ -18,6 +18,7 @@ package controllers
 
 import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
+import models.ErrorResponse
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Request, Result}
@@ -81,8 +82,9 @@ trait IndexController extends TaxsController {
 
   type T = AtsList
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    atsYearListService.getAtsListData
+
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      atsYearListService.getAtsListData.map(Right(_))
   }
 
   def getViewModel(result: T)(implicit user: User, request: Request[AnyRef]): Future[Result] = {

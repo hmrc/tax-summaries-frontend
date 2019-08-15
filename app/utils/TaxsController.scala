@@ -20,15 +20,17 @@ import java.util.Date
 
 import connectors.AuthenticationConnector
 import controllers.routes
+import models.{ErrorResponse, InvalidTaxYear}
 import play.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Results.BadRequest
 import play.api.mvc.{AnyContent, Request, Result}
 import services._
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import view_models.{NoATSViewModel, NoYearViewModel}
+import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
@@ -46,7 +48,7 @@ abstract class TaxsController extends FrontendController
 
   def obtainResult(data:T)(implicit user:User, request: Request[AnyRef]): Result
 
-  def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel]
+  def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]]
 
   def show(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     transformation recover {
@@ -63,9 +65,10 @@ abstract class TaxsController extends FrontendController
 
   protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
-      case noATS: NoATSViewModel => Redirect(routes.ErrorController.authorisedNoAts())
-      case noYear: NoYearViewModel => BadRequest(views.html.errors.generic_error())
-      case result: T => obtainResult(result)
+      case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
+      case Right(result: T) => obtainResult(result)
+      case Left(InvalidTaxYear) => BadRequest("Request does not contain valid tax year")
+
     }
   }
 

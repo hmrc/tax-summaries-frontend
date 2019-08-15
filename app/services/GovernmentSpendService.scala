@@ -21,10 +21,9 @@ import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{GovernmentSpend, NoYearViewModel}
-import scala.concurrent.ExecutionContext.Implicits.global
+import view_models.GovernmentSpend
+
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 object GovernmentSpendService extends GovernmentSpendService {
   override val atsService = AtsService
@@ -35,15 +34,8 @@ trait GovernmentSpendService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getGovernmentSpendData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
-    atsYearListService.getSelectedAtsTaxYear flatMap {
-      case Success(taxYear) => atsService.createModel(taxYear, govSpend)
-      case Failure(exception:Exception) => {
-        val noYearViewModel = new NoYearViewModel
-        Future(noYearViewModel)
-      }
-    }
-  }
+  def getGovernmentSpendData(taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
+    atsService.createModel(taxYear, govSpend)
 
   private def govSpend: AtsData => GenericViewModel =
     (output: AtsData) => {

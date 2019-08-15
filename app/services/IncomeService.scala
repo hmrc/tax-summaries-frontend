@@ -21,10 +21,9 @@ import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{IncomeBeforeTax, NoYearViewModel}
-import scala.concurrent.ExecutionContext.Implicits.global
+import view_models.IncomeBeforeTax
+
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 object IncomeService extends IncomeService {
   override val atsService = AtsService
@@ -35,14 +34,8 @@ trait IncomeService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getIncomeData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
-    atsYearListService.getSelectedAtsTaxYear flatMap {
-      case Success(taxYear) => atsService.createModel(taxYear, createIncomeConverter)
-      case Failure(exception:Exception) => {
-        val noYearViewModel = new NoYearViewModel
-        Future(noYearViewModel)
-      }
-    }
+  def getIncomeData(taxYear:Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+    atsService.createModel(taxYear, createIncomeConverter)
   }
 
   private def createIncomeConverter:

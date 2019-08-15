@@ -18,10 +18,11 @@ package services
 
 import models.AtsListData
 import play.api.mvc.Request
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
+
 import scala.concurrent.Future
 import scala.util.Try
 
@@ -40,9 +41,14 @@ trait AtsYearListService {
     atsListService.storeSelectedTaxYear(taxYear)
   }
 
-  def getSelectedAtsTaxYear(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Try[Int]] = {
-    Future.successful(Try(request.getQueryString("taxYear").getOrElse("").toInt))
-  }
+
+//  //TODO should this live here, we are dealing with extracting something from a url??
+//  def getSelectedAtsTaxYear(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Try[Int]] = {
+//
+//    val taxYear = request.getQueryString("taxYear").fold(throw new BadRequestException(""))(_.toInt)
+//
+//    Future.successful(Try(taxYear))
+//  }
 
   private def atsList: AtsListData => GenericViewModel =
     (output: AtsListData) => {

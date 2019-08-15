@@ -17,13 +17,15 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import play.api.mvc.{Request, Result}
 import services.{AllowanceService, AuditService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
 import view_models.Allowances
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import play.api.mvc.Results.BadRequest
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
@@ -46,8 +48,12 @@ trait AllowancesController extends TaxsController {
 
   type T = Allowances
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    allowanceService.getAllowances
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+
+    TaxYearUtil.extractTaxYear match {
+      case Right(taxYear) => allowanceService.getAllowances(taxYear).map(Right(_))
+      case Left(errorResponse) => Future.successful(Left(errorResponse))
+    }
   }
 
   override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package view_models
+package models
 
-import utils.GenericViewModel
-
-class NoYearViewModel extends GenericViewModel
+sealed trait ErrorResponse
+case object InvalidTaxYear extends ErrorResponse
