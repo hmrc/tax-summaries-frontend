@@ -40,6 +40,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
+  val taxYear = 2014
 
   "Opening link if user has no income tax or cg tax liability" should {
 
@@ -50,7 +51,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-      when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
 
@@ -66,7 +67,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(incomeService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 
@@ -81,7 +82,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(incomeService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 
@@ -96,7 +97,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(allowanceService.getAllowances(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
+    when(allowanceService.getAllowances(taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 
@@ -111,7 +112,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 
@@ -126,7 +127,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(governmentSpendService.getGovernmentSpendData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 
@@ -141,7 +142,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 
@@ -156,7 +157,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
 
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
     val result = Future.successful(show(user, request))
 

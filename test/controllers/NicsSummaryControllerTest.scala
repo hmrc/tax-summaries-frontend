@@ -40,7 +40,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/summary_json_test.json"
-
+  val taxYear = 2014
   trait TestController extends NicsController {
 
     override lazy val auditService = mock[AuditService]
@@ -68,7 +68,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       surname = "surname"
     )
 
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling NICs with no session" should {

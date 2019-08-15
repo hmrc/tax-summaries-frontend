@@ -39,7 +39,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
+  val taxYear = 2014
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,
@@ -65,7 +65,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
     val model = baseModel
 
-    when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(incomeService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling incomes with no session" should {
@@ -115,7 +115,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(incomeService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
 

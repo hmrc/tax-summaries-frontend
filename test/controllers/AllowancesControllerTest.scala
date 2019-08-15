@@ -18,27 +18,28 @@ package controllers
 
 import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Request
-import play.api.test.Helpers._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
+import utils.TestConstants._
 import view_models.{Allowances, Amount}
 
 import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+  val taxYear = 2014
 
   val baseModel = Allowances(
     taxYear = 2014,
@@ -59,7 +60,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
 
     val model = baseModel
 
-    when(allowanceService.getAllowances(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
+    when(allowanceService.getAllowances(taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
   }
 
   "Calling allowances with no session" should {
@@ -75,7 +76,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
 
     "have the right user data in the view" in new TestController {
 
-      when(allowanceService.getAllowances(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
+      when(allowanceService.getAllowances(model.taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -97,7 +98,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
         otherAllowances = Amount(0, "GBP")
       )
 
-      when(allowanceService.getAllowances(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
+      when(allowanceService.getAllowances(model.taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200

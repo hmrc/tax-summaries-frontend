@@ -39,7 +39,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
+  val taxYear = 2014
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,
@@ -72,7 +72,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     val model = baseModel
 
-    when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling Capital Gains with no session" should {
@@ -120,7 +120,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         taxableGains = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -155,7 +155,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -171,7 +171,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -187,7 +187,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -221,7 +221,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -246,7 +246,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

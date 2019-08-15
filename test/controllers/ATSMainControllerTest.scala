@@ -38,7 +38,7 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val request = FakeRequest()
-
+  val taxYear  =2014
   val baseModel = SummaryControllerTest.baseModel
 
   trait TestController extends AtsMainController {
@@ -50,7 +50,7 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     val model = baseModel
 
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling Index Page with no session" should {
@@ -86,8 +86,6 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       override val model = baseModel.copy(
         year = 2015
       )
-
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

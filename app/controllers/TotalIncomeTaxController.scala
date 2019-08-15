@@ -49,10 +49,7 @@ trait TotalIncomeTaxController extends TaxsController {
   type T = TotalIncomeTax
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    TaxYearUtil.extractTaxYear match {
-      case Right(taxYear) => totalIncomeTaxService.getIncomeData(taxYear).map(Right(_))
-      case Left(errorResponse) => Future.successful(Left(errorResponse))
-    }
+    extractViewModel(totalIncomeTaxService.getIncomeData(_))
   }
 
   override def obtainResult(result:T)(implicit user:User, request: Request[AnyRef]): Result = {

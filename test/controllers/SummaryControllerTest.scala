@@ -39,6 +39,8 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 object SummaryControllerTest {
 
+
+
   val baseModel = Summary(
     year = 2014,
     utr = testUtr,
@@ -66,6 +68,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val baseModel = SummaryControllerTest.baseModel
+  val taxYear = 2014
 
   trait TestController extends SummaryController {
 
@@ -75,7 +78,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     val model: GenericViewModel = baseModel
 
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling Summary with no session" should {
@@ -116,7 +119,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalTaxFreeAllowance = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -149,7 +152,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         taxableGains = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -182,7 +185,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -198,7 +201,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAndNics = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -222,7 +225,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -237,7 +240,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -252,7 +255,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -266,7 +269,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -280,7 +283,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -311,7 +314,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -326,7 +329,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -341,7 +344,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -355,7 +358,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -369,7 +372,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -383,7 +386,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -412,7 +415,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
       override val model = new NoATSViewModel
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
 

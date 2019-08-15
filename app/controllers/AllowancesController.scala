@@ -49,11 +49,7 @@ trait AllowancesController extends TaxsController {
   type T = Allowances
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-
-    TaxYearUtil.extractTaxYear match {
-      case Right(taxYear) => allowanceService.getAllowances(taxYear).map(Right(_))
-      case Left(errorResponse) => Future.successful(Left(errorResponse))
-    }
+    extractViewModel(allowanceService.getAllowances(_))
   }
 
   override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {

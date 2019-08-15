@@ -39,7 +39,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
+  val taxYear = 2014
   val baseModel = TotalIncomeTax(
     year = 2014,
     utr = testUtr,
@@ -83,7 +83,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
     val model = baseModel
 
-    when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling Total Income Tax with no session" should {
@@ -135,7 +135,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -155,7 +155,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -221,7 +221,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
           additionalRate = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -241,7 +241,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
           additionalRate = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -272,7 +272,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
           otherAdjustmentsIncreasing = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -288,7 +288,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
           otherAdjustmentsReducing = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -305,7 +305,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
           otherAdjustmentsReducing = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -325,7 +325,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
           totalIncomeTax = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
         val result = Future.successful(show(user, request))
         val document = Jsoup.parse(contentAsString(result))

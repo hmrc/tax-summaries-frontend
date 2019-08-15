@@ -41,6 +41,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
   val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+  val taxYear = 2014
 
   trait TestController extends GovernmentSpendController {
 
@@ -77,7 +78,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(governmentSpendService.getGovernmentSpendData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling government spend with no session" should {
@@ -170,7 +171,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         scottishIncomeTax = new Amount(2000.00, "GBP")
       )
 
-      when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(governmentSpendService.getGovernmentSpendData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

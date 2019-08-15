@@ -76,4 +76,12 @@ abstract class TaxsController extends FrontendController
     val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)
     block(intParam)
   }
+
+  protected def extractViewModel(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
+  Future[Either[ErrorResponse, GenericViewModel]] = {
+    TaxYearUtil.extractTaxYear match {
+      case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
+      case Left(errorResponse) => Future.successful(Left(errorResponse))
+    }
+  }
 }

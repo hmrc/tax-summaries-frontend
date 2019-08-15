@@ -22,11 +22,13 @@ import play.api.mvc.Request
 
 object TaxYearUtil {
 
-  private val taxYearPattern = """(19|[2-9][0-9])[\d]{2}""".r
+  private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
 
   def extractTaxYear(implicit request: Request[AnyRef]): Either[ErrorResponse, Int] = {
     request.getQueryString("taxYear") match {
-      case Some(taxYearPattern(year)) => Right(year.toInt)
+      case Some(taxYearPattern(year, _)) => {
+        Right(year.toInt)
+      }
       case _ => Left(InvalidTaxYear)
     }
   }
