@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -27,7 +28,7 @@ import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
+import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, Rate, TotalIncomeTax}
 import utils.TestConstants._
 
@@ -83,7 +84,13 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
     val model = baseModel
 
-    when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      extractViewModel(totalIncomeTaxService.getIncomeData(_))
+    }
+
+    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(model)
+    }
   }
 
   "Calling Total Income Tax with no session" should {
@@ -130,12 +137,14 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
     "hide rows if there is a zero value in the left cell amount field of the view" in new TestController {
 
-      override val model = baseModel.copy(
+      val model2 = baseModel.copy(
         startingRateForSavings = Amount(0, "GBP"),
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model2)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -150,12 +159,14 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
     "hide Higher and Additional Rate fields if the amounts are 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model3 = baseModel.copy(
         higherRateIncomeTax = Amount(0, "GBP"),
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model3)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -215,13 +226,15 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       "hide Dividends section if the amount before in each row is 0.00" in new TestController {
 
-        override val model = baseModel.copy(
+        val model4 = baseModel.copy(
           ordinaryRate = Amount(0, "GBP"),
           upperRate = Amount(0, "GBP"),
           additionalRate = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+          Right(model4)
+        }
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -236,12 +249,14 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in new TestController {
 
-        override val model = baseModel.copy(
+        val model5 = baseModel.copy(
           upperRate = Amount(0, "GBP"),
           additionalRate = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+          Right(model5)
+        }
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -268,11 +283,13 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       "hide other adjustments increasing your tax section if the amount is 0.00" in new TestController {
 
-        override val model = baseModel.copy(
+        val model6 = baseModel.copy(
           otherAdjustmentsIncreasing = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+          Right(model6)
+        }
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -284,11 +301,13 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       "hide other adjustments reducing your tax section if the amount is 0.00" in new TestController {
 
-        override val model = baseModel.copy(
+        val model7 = baseModel.copy(
           otherAdjustmentsReducing = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+          Right(model7)
+        }
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -300,12 +319,14 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       "hide Adjustments section if all the amounts in this section are 0.00" in new TestController {
 
-        override val model = baseModel.copy(
+        val model8 = baseModel.copy(
           otherAdjustmentsIncreasing = Amount(0, "GBP"),
           otherAdjustmentsReducing = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+          Right(model8)
+        }
 
         val result = Future.successful(show(user, request))
         status(result) shouldBe 200
@@ -320,12 +341,14 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       "show zero value" in new TestController {
 
-        override val model = baseModel.copy(
+        val model9 = baseModel.copy(
           marriageAllowanceReceivedAmount = Amount(0, "GBP"),
           totalIncomeTax = Amount(0, "GBP")
         )
 
-        when(totalIncomeTaxService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+          Right(model9)
+        }
 
         val result = Future.successful(show(user, request))
         val document = Jsoup.parse(contentAsString(result))

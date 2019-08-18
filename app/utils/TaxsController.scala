@@ -79,8 +79,12 @@ abstract class TaxsController extends FrontendController
 
   protected def extractViewModel(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
   Future[Either[ErrorResponse, GenericViewModel]] = {
+    println("%%%%%%% request -> " + request)
     TaxYearUtil.extractTaxYear match {
-      case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
+      case Right(taxYear) => {
+        println("Here")
+        genericViewModel(taxYear).map(Right(_))
+      }
       case Left(errorResponse) => Future.successful(Left(errorResponse))
     }
   }

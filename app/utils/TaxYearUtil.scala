@@ -29,7 +29,9 @@ object TaxYearUtil {
       case Some(taxYearPattern(year, _)) => {
         Right(year.toInt)
       }
-      case _ => Left(InvalidTaxYear)
+      case _ => {
+        Left(InvalidTaxYear)
+      }
     }
   }
 }

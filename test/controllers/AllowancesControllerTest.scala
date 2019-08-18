@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.{AtsData, ErrorResponse}
 import org.jsoup.Jsoup
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -29,17 +30,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
+import utils.{AuthorityUtils, GenericViewModel, TaxYearUtil, TaxsController}
 import utils.TestConstants._
-import view_models.{Allowances, Amount}
+import view_models.{Allowances, Amount, AtsList, TaxYearEnd}
+import utils.TaxYearUtil.extractTaxYear
+import org.mockito.Matchers
+import org.scalatest.MustMatchers._
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.util.Success
 
 class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear = 2014
+  val taxYear = 2015
 
   val baseModel = Allowances(
     taxYear = 2014,
@@ -53,79 +56,117 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     surname = "surname"
   )
 
+  val genericViewModel: GenericViewModel =  AtsList(
+    utr = "3000024376",
+    forename = "forename",
+    surname = "surname",
+    yearList = List(
+      TaxYearEnd(Some("2015"))
+    )
+  )
+
   trait TestController extends AllowancesController {
     override lazy val allowanceService = mock[AllowanceService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
     val model = baseModel
+    implicit val request = FakeRequest("GET","?taxYear=2015")
+    implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
 
-    when(allowanceService.getAllowances(taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      extractViewModel(allowanceService.getAllowances(_))
+    }
+
+    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(baseModel)
+    }
   }
+
+
+
 
   "Calling allowances with no session" should {
 
     "return a 303 response" in new TestController {
-
       val result = Future.successful(authorisedAllowance(request))
       status(result) shouldBe 303
     }
+
   }
 
-  "Calling allowances with session" should {
+"Calling allowances with session" should {
 
-    "have the right user data in the view" in new TestController {
+  "return a Future[Either[ErrorResponse,GenericViewModel]] when extractModel is called " in new TestController {
 
-      when(allowanceService.getAllowances(model.taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
-
-      val result = Future.successful(show(user, request))
-      status(result) shouldBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.getElementById("tax-free-total").text() shouldBe "£9,740"
-      document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
-      document.getElementById("other-allowances").text() shouldBe "£300"
-      document.toString should include("tax-free-allowance")
-      document.getElementById("user-info").text() should include("forename surname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: "+testUtr)
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      extractViewModel(allowanceService.getAllowances(_))
     }
 
-    "have zero-value fields hidden in the view" in new TestController {
-
-      override val model = baseModel.copy(
-        taxFreeAllowance = Amount(0, "GBP"),
-        otherAllowances = Amount(0, "GBP")
-      )
-
-      when(allowanceService.getAllowances(model.taxYear)(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
-
-      val result = Future.successful(show(user, request))
-      status(result) shouldBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.toString should not include "tax-free-allowance-amount"
-      document.toString should not include "other-allowances"
+    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(genericViewModel)
     }
 
-    "show 'Allowances' page with a correct breadcrumb" in new TestController {
+    val result = extractViewModel()(user, request)
 
-      val result = Future.successful(show(user, request))
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
-      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
-
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
-
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
-
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
-
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
-    }
+    result.toString.trim mustEqual Future.successful(Right(genericViewModel)).toString.trim
   }
+
+  "have the right user data in the view" in new TestController {
+
+
+    val result = Future.successful(show(user, request))
+    status(result) shouldBe 200
+
+    val document = Jsoup.parse(contentAsString(result))
+
+    document.getElementById("tax-free-total").text() shouldBe "£9,740"
+    document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
+    document.getElementById("other-allowances").text() shouldBe "£300"
+    document.toString should include("tax-free-allowance")
+    document.getElementById("user-info").text() should include("forename surname")
+    document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
+    document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+  }
+
+  "have zero-value fields hidden in the view" in new TestController {
+
+    val model2 = baseModel.copy(
+      taxFreeAllowance = Amount(0, "GBP"),
+      otherAllowances = Amount(0, "GBP")
+    )
+
+    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(model2)
+    }
+
+    val result = Future.successful(show(user, request))
+    status(result) shouldBe 200
+    val document = Jsoup.parse(contentAsString(result))
+
+    document.toString should not include "tax-free-allowance-amount"
+    document.toString should not include "other-allowances"
+  }
+
+  "show 'Allowances' page with a correct breadcrumb" in new TestController {
+
+    val result = Future.successful(show(user, request))
+    val document = Jsoup.parse(contentAsString(result))
+
+    document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
+    document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
+
+    document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
+    document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
+
+    document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+    document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
+
+    document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+    document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
+
+    document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
+  }
+
+}
+
 }

@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -27,7 +28,7 @@ import play.api.test.Helpers._
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
+import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, IncomeBeforeTax}
 
 import scala.concurrent.Future
@@ -62,10 +63,17 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService: AuditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
     val model = baseModel
 
-    when(incomeService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      extractViewModel(incomeService.getIncomeData(_))
+    }
+
+    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(model)
+    }
+
+
   }
 
   "Calling incomes with no session" should {
@@ -114,8 +122,6 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
         getBenefitsFromEmployment = Amount(0, "GBP"),
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
-
-      when(incomeService.getIncomeData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
 
       val result = Future.successful(show(user, request))
 

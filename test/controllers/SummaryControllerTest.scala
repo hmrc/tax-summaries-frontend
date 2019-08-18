@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -78,7 +79,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     val model: GenericViewModel = baseModel
 
-    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      extractViewModel(summaryService.getSummaryData(_))
+    }
+
+    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(model)
+    }
   }
 
   "Calling Summary with no session" should {
@@ -115,11 +122,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "still show a 0 tax free amount" in new TestController {
 
-      override val model = baseModel.copy(
+      val model2 = baseModel.copy(
         totalTaxFreeAllowance = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model2)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -148,11 +157,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "not show capital gains on the summary if capital gains is 0" in new TestController {
 
-      override val model = baseModel.copy(
+      val model3 = baseModel.copy(
         taxableGains = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model3)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -181,11 +192,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "hide capital gains description on the summary if total capital gains tax is  0" in new TestController {
 
-      override val model = baseModel.copy(
+      val model4 = baseModel.copy(
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model4)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -197,11 +210,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show zero in Total Income Tax value" in new TestController {
 
-      override val model = baseModel.copy(
+      val model5 = baseModel.copy(
         totalIncomeTaxAndNics = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model5)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -220,12 +235,14 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Tax and Nics description having only (total income tax)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model6 = baseModel.copy(
         employeeNicAmount = Amount(0, "GBP"),
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model6)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -235,12 +252,14 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Tax and Nics description having only (capital gains)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model7 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP"),
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model7)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -250,12 +269,14 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Tax and Nics description having only (employee nics)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model8 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP"),
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model8)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -265,11 +286,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Tax and Nics description having only (total income tax, employee nics)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model9 = baseModel.copy(
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model9)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -279,11 +302,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Tax and Nics description having only (capital gains, employee nics)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model10 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model10)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -309,12 +334,14 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (total income tax)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model10a = baseModel.copy(
         employeeNicAmount = Amount(0, "GBP"),
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model10a)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -324,12 +351,14 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (capital gains)" in new TestController {
 
-      override val model = baseModel.copy(
+       val model11 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP"),
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model11)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -339,12 +368,14 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (employee nics)" in new TestController {
 
-      override val model = baseModel.copy(
+       val model12 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP"),
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model12)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -354,11 +385,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (total income tax, capital gains)" in new TestController {
 
-      override val model = baseModel.copy(
+       val model13 = baseModel.copy(
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model13)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -368,11 +401,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (total income tax, employee nics)" in new TestController {
 
-      override val model = baseModel.copy(
+      val model14 = baseModel.copy(
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model14)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -382,11 +417,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (capital gains, employee nics)" in new TestController {
 
-      override val model = baseModel.copy(
+       val model15 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model15)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -413,9 +450,11 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "Redirect to 'No ATS' page" in new TestController {
 
-      override val model = new NoATSViewModel
+      val model17 = new NoATSViewModel
 
-      when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model17)
+      }
 
       val result = Future.successful(show(user, request))
 

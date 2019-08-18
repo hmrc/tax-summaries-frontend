@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -27,7 +28,7 @@ import play.api.test.FakeRequest
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
+import utils.{AuthorityUtils, GenericViewModel}
 import utils.TestConstants._
 import view_models.{Amount, CapitalGains, Rate}
 
@@ -72,7 +73,13 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     val model = baseModel
 
-    when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      extractViewModel(capitalGainsService.getCapitalGains(_))
+    }
+
+    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(model)
+    }
   }
 
   "Calling Capital Gains with no session" should {
@@ -104,7 +111,6 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in new TestController {
 
-//      val controllerUnderTest = makeController(dataPath, MockConnections.defaultManipulation, false)
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
@@ -115,12 +121,15 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Capital Gains Tax section if total amount of capital gains to pay tax on is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model2 = baseModel.copy(
         payCgTaxOn = Amount(0, "GBP"),
         taxableGains = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model2)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -151,11 +160,14 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Entrepreneurs' Relief Rate field if the amount on the left side is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model3 = baseModel.copy(
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model3)
+      }
+
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -167,11 +179,13 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Ordinary Rate field if the amount on the left side is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model4 = baseModel.copy(
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model4)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -183,11 +197,13 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Upper Rate field if the amount on the left side is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model5 = baseModel.copy(
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model5)
+      }
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -217,11 +233,14 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Adjustments section if the Adjustments amount is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model6 = baseModel.copy(
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model6)
+      }
+
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -242,11 +261,13 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     
     "hide capital gains description if total capital gains tax is 0" in new TestController {
 
-      override val model = baseModel.copy(
+      val model7 = baseModel.copy(
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+        Right(model7)
+      }
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

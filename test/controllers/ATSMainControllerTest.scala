@@ -17,17 +17,18 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
+import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
+import utils.{AuthorityUtils, GenericViewModel}
 
 import scala.concurrent.Future
 import utils.TestConstants._
@@ -50,7 +51,15 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     val model = baseModel
 
-    when(summaryService.getSummaryData(taxYear)(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      extractViewModel(summaryService.getSummaryData(_))
+    }
+
+    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
+      Right(model)
+    }
+
+
   }
 
   "Calling Index Page with no session" should {

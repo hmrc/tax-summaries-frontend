@@ -19,7 +19,7 @@ package services
 import controllers.FakeTaxsPlayApplication
 import models.AtsData
 import org.mockito.Matchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -27,12 +27,11 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants._
+import utils.TestConstants.{testOid, testUtr}
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success}
 
 class IncomeServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
@@ -51,24 +50,18 @@ class IncomeServiceTest extends UnitSpec with FakeTaxsPlayApplication with Scala
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     implicit val request = FakeRequest("GET","?taxYear=2015")
+    val taxYear = 2015
   }
 
   "IncomeService getIncomeData" should {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
-//      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-//      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Success(2015)))
-//      when(atsService.createModel(Matchers.eq(2015),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-//      val result = Await.result(getIncomeData(user, hc, request), 1500 millis)
-//      result.toString.trim mustEqual "AtsList(3000024376,forename,surname,List(TaxYearEnd(Some(2015))))"
+     implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(getIncomeData(taxYear)(user, hc, request), 1500 millis)
+      result mustEqual genericViewModel
     }
 
-    "return a NoYearViewModel when atsYearListService returns Failure" in new TestService {
-//      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-//      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(Failure(new NumberFormatException())))
-//      val result = Await.result(getIncomeData(user, hc, request), 1500 millis)
-//      result.toString.split("\\@")(0).trim mustEqual "view_models.NoYearViewModel"
-    }
 
   }
 }
