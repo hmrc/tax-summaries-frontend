@@ -42,14 +42,6 @@ trait AtsYearListService {
   }
 
 
-//  //TODO should this live here, we are dealing with extracting something from a url??
-//  def getSelectedAtsTaxYear(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Try[Int]] = {
-//
-//    val taxYear = request.getQueryString("taxYear").fold(throw new BadRequestException(""))(_.toInt)
-//
-//    Future.successful(Try(taxYear))
-//  }
-
   private def atsList: AtsListData => GenericViewModel =
     (output: AtsListData) => {
       new AtsList(output.utr,

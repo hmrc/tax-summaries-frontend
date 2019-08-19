@@ -19,22 +19,18 @@ package controllers
 import config.AppFormPartialRetriever
 import models.ErrorResponse
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, IncomeBeforeTax}
-
 import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
@@ -72,7 +68,6 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
       Right(model)
     }
-
 
   }
 

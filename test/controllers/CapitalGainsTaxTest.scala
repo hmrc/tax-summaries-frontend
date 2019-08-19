@@ -31,7 +31,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AuthorityUtils, GenericViewModel}
 import utils.TestConstants._
 import view_models.{Amount, CapitalGains, Rate}
-
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -126,7 +125,6 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         taxableGains = Amount(0, "GBP")
       )
 
-
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
         Right(model2)
       }
@@ -167,7 +165,6 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
         Right(model3)
       }
-
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -240,7 +237,6 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
         Right(model6)
       }
-
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200

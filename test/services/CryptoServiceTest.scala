@@ -18,12 +18,11 @@ package services
 
 import java.util.Date
 
+import controllers.FakeTaxsPlayApplication
 import org.scalatest.concurrent.ScalaFutures
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
-import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.test.UnitSpec
-import controllers.FakeTaxsPlayApplication
 import utils.AgentTokenException
 import utils.TestConstants._
 

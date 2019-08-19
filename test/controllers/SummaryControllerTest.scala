@@ -31,7 +31,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
 import utils.TestConstants._
-
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 import uk.gov.hmrc.http.HeaderCarrier
@@ -334,13 +333,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (total income tax)" in new TestController {
 
-      val model10a = baseModel.copy(
+      val model11 = baseModel.copy(
         employeeNicAmount = Amount(0, "GBP"),
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model10a)
+        Right(model11)
       }
 
       val result = Future.successful(show(user, request))
@@ -351,13 +350,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (capital gains)" in new TestController {
 
-       val model11 = baseModel.copy(
+       val model12 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP"),
         employeeNicAmount = Amount(0, "GBP")
       )
 
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model11)
+        Right(model12)
       }
 
       val result = Future.successful(show(user, request))
@@ -368,13 +367,13 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (employee nics)" in new TestController {
 
-       val model12 = baseModel.copy(
+       val model13 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP"),
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model12)
+        Right(model13)
       }
 
       val result = Future.successful(show(user, request))
@@ -385,12 +384,12 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (total income tax, capital gains)" in new TestController {
 
-       val model13 = baseModel.copy(
+       val model14 = baseModel.copy(
         employeeNicAmount = Amount(0, "GBP")
       )
 
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model13)
+        Right(model14)
       }
 
       val result = Future.successful(show(user, request))
@@ -401,12 +400,12 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (total income tax, employee nics)" in new TestController {
 
-      val model14 = baseModel.copy(
+      val model15 = baseModel.copy(
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model14)
+        Right(model15)
       }
 
       val result = Future.successful(show(user, request))
@@ -417,12 +416,12 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having only (capital gains, employee nics)" in new TestController {
 
-       val model15 = baseModel.copy(
+       val model16 = baseModel.copy(
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
       override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model15)
+        Right(model16)
       }
 
       val result = Future.successful(show(user, request))

@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{AtsList, TaxYearEnd}
+import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -43,6 +43,8 @@ class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with Sc
       TaxYearEnd(Some("2015"))
     )
   )
+
+  val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
 
   class TestService extends AllowanceService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
@@ -60,6 +62,7 @@ class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with Sc
       val result = Await.result(getAllowances(taxYear)(user, request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
+
 
 
   }

@@ -18,8 +18,10 @@ package services
 
 import controllers.FakeTaxsPlayApplication
 import models.AtsListData
+import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
+import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
@@ -33,7 +35,6 @@ import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
 import scala.concurrent.Future
 import scala.io.Source
-import scala.util.Success
 
 class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
@@ -57,7 +58,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
 
     override val atsListService = mock[AtsListService]
-
+    val atsService = mock[AtsService]
   }
 
   "storeSelectedAtsTaxYear" should {
@@ -86,38 +87,12 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
   }
 
-  "getSelectedAtsTaxYear" should {
-
-    "Return a successful future upon success" in new TestService {
-
-//      val fakeRequest = FakeRequest("GET","?taxYear=2014")
-//
-//      val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
-//
-//      whenReady(result) { result =>
-//        result shouldBe Success(2014)
-//      }
-    }
-
-    "Not return a Failure(NumberFormatException) when there is no taxYear fiels in the request" in new TestService {
-
-//      val fakeRequest = FakeRequest("GET","")
-//
-//      val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
-//
-//      whenReady(result) { result =>
-//        result.toString shouldBe "Failure(java.lang.NumberFormatException: For input string: \"\")"
-//      }
-    }
-    
-
-  }
 
   "getAtsListData" should {
 
     "Return a successful future upon success" in new TestService {
 
-      val atsList: AtsList = AtsList(
+      val atsListModel: AtsList = AtsList(
         utr = testUtr,
         forename = "forename",
         surname = "surname",
@@ -127,11 +102,27 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
         )
       )
 
-      val model: GenericViewModel = atsList
+      override def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+        atsListService.createModel(atsList)
+      }
 
-      when(atsListService.createModel(eqTo(atsList => model))(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      def atsList: AtsListData => GenericViewModel =
+        (output: AtsListData) => {
+          new AtsList(output.utr,
+            output.taxPayer.get.taxpayer_name.get("forename"),
+            output.taxPayer.get.taxpayer_name.get("surname"),
+            output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+          )
+        }
+
+      val model: GenericViewModel = atsListModel
+
+      when(atsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(model)
 
       val result = getAtsListData(user, hc, request)
+
+      result.toString().trim mustEqual Future.successful(model).toString().trim()
+
 
     }
 

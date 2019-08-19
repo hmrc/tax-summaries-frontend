@@ -31,7 +31,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, Rate, TotalIncomeTax}
 import utils.TestConstants._
-
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever

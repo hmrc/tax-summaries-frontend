@@ -17,28 +17,21 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.{AtsData, ErrorResponse}
+import models.ErrorResponse
 import org.jsoup.Jsoup
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel, TaxYearUtil, TaxsController}
 import utils.TestConstants._
+import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Allowances, Amount, AtsList, TaxYearEnd}
-import utils.TaxYearUtil.extractTaxYear
-import org.mockito.Matchers
-import org.scalatest.MustMatchers._
-
-import scala.concurrent.{Await, Future}
-import scala.util.Success
+import scala.concurrent.Future
 
 class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
@@ -82,9 +75,6 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     }
   }
 
-
-
-
   "Calling allowances with no session" should {
 
     "return a 303 response" in new TestController {
@@ -97,10 +87,6 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
 "Calling allowances with session" should {
 
   "return a Future[Either[ErrorResponse,GenericViewModel]] when extractModel is called " in new TestController {
-
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      extractViewModel(allowanceService.getAllowances(_))
-    }
 
     override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
       Right(genericViewModel)

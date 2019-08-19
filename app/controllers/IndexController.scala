@@ -57,8 +57,9 @@ trait IndexController extends TaxsController {
 
   //FIXME add extra check - agent tries multiple ids in same session
   def agentAwareShow(implicit user: User, request: Request[AnyRef]): Future[Result] =
+
     request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) match {
-      case Some(Globals.TAXS_PORTAL_REFERENCE) =>
+      case Some(Globals.TAXS_PORTAL_REFERENCE) =>{
 
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
         val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
@@ -75,6 +76,7 @@ trait IndexController extends TaxsController {
         } map {
           x => Redirect(routes.IndexController.authorisedIndex()).withSession(session)
         }
+    }
       case _ => {
         show(user, request)
       }
@@ -96,8 +98,8 @@ trait IndexController extends TaxsController {
 
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
-      case noATS: NoATSViewModel => Future { Redirect("") }
-      case result: T => getViewModel(result)
+      case Right(noATS: NoATSViewModel) => Future { Redirect("") }
+      case Right(result: T) => getViewModel(result)
     }
   }
 

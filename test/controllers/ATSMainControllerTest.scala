@@ -48,7 +48,6 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
     val model = baseModel
 
     override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {

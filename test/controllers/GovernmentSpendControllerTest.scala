@@ -30,7 +30,6 @@ import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, GovernmentSpend}
-
 import scala.concurrent.Future
 import utils.TestConstants._
 import uk.gov.hmrc.http.HeaderCarrier
