@@ -51,7 +51,6 @@ abstract class TaxsController extends FrontendController
   def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]]
 
   def show(implicit user: User, request: Request[AnyRef]): Future[Result] = {
-    println("show req  --> " + request.toString)
     transformation recover {
       case error =>
         Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
@@ -66,19 +65,9 @@ abstract class TaxsController extends FrontendController
 
   protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
-      case Right(noAts: NoATSViewModel) => {
-        println("redirect")
-        Redirect(routes.ErrorController.authorisedNoAts())
-      }
-      case Right(result: T) => {
-        println("result")
-        obtainResult(result)
-      }
-      case Left(InvalidTaxYear) => {
-        println("request")
-        BadRequest("Request does not contain valid tax year")
-      }
-
+      case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
+      case Right(result: T) => obtainResult(result)
+      case Left(InvalidTaxYear) => BadRequest("Request does not contain valid tax year")
     }
   }
 
@@ -89,12 +78,8 @@ abstract class TaxsController extends FrontendController
 
   protected def extractViewModel(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
   Future[Either[ErrorResponse, GenericViewModel]] = {
-    println("%%%%%%% request -> " + request)
     TaxYearUtil.extractTaxYear match {
-      case Right(taxYear) => {
-        println("Here")
-        genericViewModel(taxYear).map(Right(_))
-      }
+      case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
       case Left(errorResponse) => Future.successful(Left(errorResponse))
     }
   }
