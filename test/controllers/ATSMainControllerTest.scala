@@ -17,54 +17,38 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
-import org.scalatest.mock.MockitoSugar
-import play.api.mvc.{Request, Result}
-import play.api.test.Helpers._
+import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
-
-import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.AuthorityUtils
+import utils.TestConstants._
+import scala.concurrent.Future
 
 class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val request = FakeRequest()
-  val taxYear  =2014
+  val taxYear  =2015
   val baseModel = SummaryControllerTest.baseModel
+  val request = FakeRequest("Get",s"?taxYear=$taxYear")
 
   trait TestController extends AtsMainController {
-
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-    val model = baseModel
-
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(summaryService.getSummaryData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
-
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
   }
 
   "Calling Index Page with no session" should {
 
     "return a 303 response" in new TestController {
-
       val result = Future.successful(authorisedAtsMain(request))
       status(result) shouldBe 303
     }
@@ -91,9 +75,11 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "display the right years" in new TestController {
 
-      override val model = baseModel.copy(
+      val model = baseModel.copy(
         year = 2015
       )
+
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

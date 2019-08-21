@@ -44,11 +44,9 @@ import scala.io.Source
 
 class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
-  implicit val defaultPatience =
-    PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
-
-  val request = FakeRequest()
-
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
+  val taxYear = 2015
+  val request = FakeRequest("Get", s"?taxYear=$taxYear")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val agentUser = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
 
@@ -76,7 +74,6 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       )
     )
 
-//    ScalaTest used here instead of Specs as the verify functionality doesn't work so well
     when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
     when(dataCache.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
   }
@@ -157,10 +154,6 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
           TaxYearEnd(Some("2014"))
         )
       )
-
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model)
-      }
 
       when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model2)
       when(atsListService.getAtsYearList(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(data)

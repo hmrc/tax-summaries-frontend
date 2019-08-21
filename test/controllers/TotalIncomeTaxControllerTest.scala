@@ -17,29 +17,27 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{Amount, Rate, TotalIncomeTax}
-import utils.TestConstants._
-import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.AuthorityUtils
+import utils.TestConstants._
+import view_models.{Amount, Rate, TotalIncomeTax}
+
+import scala.concurrent.Future
 
 class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear = 2014
+  val taxYear = 2015
+  val request = FakeRequest("Get", s"?taxYear=$taxYear")
   val baseModel = TotalIncomeTax(
     year = 2014,
     utr = testUtr,
@@ -81,15 +79,9 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     override lazy val auditService: AuditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    val model = baseModel
+    when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(totalIncomeTaxService.getIncomeData(_))
-    }
 
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
   }
 
   "Calling Total Income Tax with no session" should {
@@ -131,7 +123,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
 
       document.toString should include("Total Income Tax")
       document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "hide rows if there is a zero value in the left cell amount field of the view" in new TestController {
@@ -141,9 +133,8 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model2)
-      }
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
+
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -163,9 +154,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model3)
-      }
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -202,158 +191,154 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     }
   }
 
-    "Dividends section" should {
-      "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in new TestController {
 
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
+  "Dividends section" should {
+    "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in new TestController {
 
-        document.toString should not include "Technical Difficulties"
-        document.getElementById("ordinary-rate-amount").text() should equal("£50")
-        document.getElementById("ordinary-rate-before").text() should equal("£100")
-        document.getElementById("ordinary-rate-rate").text() should equal("10%")
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("upper-rate-amount").text() should equal("£120")
-        document.getElementById("upper-rate-before").text() should equal("£30")
-        document.getElementById("upper-rate-rate").text() should equal("32.5%")
+      document.toString should not include "Technical Difficulties"
+      document.getElementById("ordinary-rate-amount").text() should equal("£50")
+      document.getElementById("ordinary-rate-before").text() should equal("£100")
+      document.getElementById("ordinary-rate-rate").text() should equal("10%")
 
-        document.getElementById("additional-rate-amount").text() should equal("£40")
-        document.getElementById("additional-rate-before").text() should equal("£10")
-        document.getElementById("additional-rate-rate").text() should equal("37.5%")
-      }
+      document.getElementById("upper-rate-amount").text() should equal("£120")
+      document.getElementById("upper-rate-before").text() should equal("£30")
+      document.getElementById("upper-rate-rate").text() should equal("32.5%")
 
-      "hide Dividends section if the amount before in each row is 0.00" in new TestController {
-
-        val model4 = baseModel.copy(
-          ordinaryRate = Amount(0, "GBP"),
-          upperRate = Amount(0, "GBP"),
-          additionalRate = Amount(0, "GBP")
-        )
-
-        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-          Right(model4)
-        }
-
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.toString should not include "Technical Difficulties"
-        document.toString should not include "dividends-section-row"
-        document.toString should not include "ordinary-rate-row"
-        document.toString should not include "upper-rate-row"
-        document.toString should not include "additional-rate-row"
-      }
-
-      "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in new TestController {
-
-        val model5 = baseModel.copy(
-          upperRate = Amount(0, "GBP"),
-          additionalRate = Amount(0, "GBP")
-        )
-
-        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-          Right(model5)
-        }
-
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.toString should not include "Technical Difficulties"
-        document.toString should include("dividends-section-row")
-        document.toString should include("ordinary-rate-row")
-        document.toString should not include "upper-rate-row"
-        document.toString should not include "additional-rate-row"
-      }
-
-    "Adjustments section" should {
-
-      "have the right user data for adjustments increasing and reducing income tax" in new TestController {
-
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("other-adjustments-increasing-amount").text() should equal("£90")
-        document.getElementById("other-adjustments-reducing-amount").text() should equal("minus £20 -£20")
-      }
-
-      "hide other adjustments increasing your tax section if the amount is 0.00" in new TestController {
-
-        val model6 = baseModel.copy(
-          otherAdjustmentsIncreasing = Amount(0, "GBP")
-        )
-
-        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-          Right(model6)
-        }
-
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.toString should not include "Technical Difficulties"
-        document.toString should not include "other-adjustments-increasing-amount"
-      }
-
-      "hide other adjustments reducing your tax section if the amount is 0.00" in new TestController {
-
-        val model7 = baseModel.copy(
-          otherAdjustmentsReducing = Amount(0, "GBP")
-        )
-
-        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-          Right(model7)
-        }
-
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.toString should not include "Technical Difficulties"
-        document.toString should not include "other-adjustments-reducing-amount"
-      }
-
-      "hide Adjustments section if all the amounts in this section are 0.00" in new TestController {
-
-        val model8 = baseModel.copy(
-          otherAdjustmentsIncreasing = Amount(0, "GBP"),
-          otherAdjustmentsReducing = Amount(0, "GBP")
-        )
-
-        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-          Right(model8)
-        }
-
-        val result = Future.successful(show(user, request))
-        status(result) shouldBe 200
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.toString should not include "Technical Difficulties"
-        document.toString should not include "adjustments-section"
-      }
+      document.getElementById("additional-rate-amount").text() should equal("£40")
+      document.getElementById("additional-rate-before").text() should equal("£10")
+      document.getElementById("additional-rate-rate").text() should equal("37.5%")
     }
 
-    "Total Income Tax" should {
+    "hide Dividends section if the amount before in each row is 0.00" in new TestController {
 
-      "show zero value" in new TestController {
+      val model4 = baseModel.copy(
+        ordinaryRate = Amount(0, "GBP"),
+        upperRate = Amount(0, "GBP"),
+        additionalRate = Amount(0, "GBP")
+      )
 
-        val model9 = baseModel.copy(
-          marriageAllowanceReceivedAmount = Amount(0, "GBP"),
-          totalIncomeTax = Amount(0, "GBP")
-        )
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
 
-        override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-          Right(model9)
-        }
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
 
-        val result = Future.successful(show(user, request))
-        val document = Jsoup.parse(contentAsString(result))
+      document.toString should not include "Technical Difficulties"
+      document.toString should not include "dividends-section-row"
+      document.toString should not include "ordinary-rate-row"
+      document.toString should not include "upper-rate-row"
+      document.toString should not include "additional-rate-row"
+    }
 
-        document.getElementById("total-income-tax-amount").text() should equal("£0")
-      }
+
+    "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in new TestController {
+
+      val model5 = baseModel.copy(
+        upperRate = Amount(0, "GBP"),
+        additionalRate = Amount(0, "GBP")
+      )
+
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
+
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.toString should not include "Technical Difficulties"
+      document.toString should include("dividends-section-row")
+      document.toString should include("ordinary-rate-row")
+      document.toString should not include "upper-rate-row"
+      document.toString should not include "additional-rate-row"
+
     }
   }
+
+  "Adjustments section" should {
+
+    "have the right user data for adjustments increasing and reducing income tax" in new TestController {
+
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("other-adjustments-increasing-amount").text() should equal("£90")
+      document.getElementById("other-adjustments-reducing-amount").text() should equal("minus £20 -£20")
+    }
+
+
+    "hide other adjustments increasing your tax section if the amount is 0.00" in new TestController {
+
+      val model6 = baseModel.copy(
+        otherAdjustmentsIncreasing = Amount(0, "GBP")
+      )
+
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
+
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.toString should not include "Technical Difficulties"
+      document.toString should not include "other-adjustments-increasing-amount"
+
+    }
+
+    "hide other adjustments reducing your tax section if the amount is 0.00" in new TestController {
+
+      val model7 = baseModel.copy(
+        otherAdjustmentsReducing = Amount(0, "GBP")
+      )
+
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
+
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.toString should not include "Technical Difficulties"
+      document.toString should not include "other-adjustments-reducing-amount"
+    }
+
+    "hide Adjustments section if all the amounts in this section are 0.00" in new TestController {
+
+      val model8 = baseModel.copy(
+        otherAdjustmentsIncreasing = Amount(0, "GBP"),
+        otherAdjustmentsReducing = Amount(0, "GBP")
+      )
+
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
+
+      val result = Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.toString should not include "Technical Difficulties"
+      document.toString should not include "adjustments-section"
+    }
+  }
+
+  "Total Income Tax" should {
+
+    "show zero value" in new TestController {
+
+      val model9 = baseModel.copy(
+        marriageAllowanceReceivedAmount = Amount(0, "GBP"),
+        totalIncomeTax = Amount(0, "GBP")
+      )
+
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
+
+      val result = Future.successful(show(user, request))
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("total-income-tax-amount").text() should equal("£0")
+    }
+
+  }
+
+
 }

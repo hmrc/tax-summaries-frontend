@@ -17,29 +17,24 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
-import play.api.test.Helpers._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{Amount, NoATSViewModel, Rate, Summary}
+import utils.AuthorityUtils
 import utils.TestConstants._
+import view_models.{Amount, NoATSViewModel, Rate, Summary}
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 
 object SummaryControllerTest {
-
-
 
   val baseModel = Summary(
     year = 2014,
@@ -65,10 +60,10 @@ object SummaryControllerTest {
 
 class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val taxYear = 2015
+  val request = FakeRequest("Get", s"?taxYear=$taxYear")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val baseModel = SummaryControllerTest.baseModel
-  val taxYear = 2014
 
   trait TestController extends SummaryController {
 
@@ -76,15 +71,8 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    val model: GenericViewModel = baseModel
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(summaryService.getSummaryData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
   }
 
   "Calling Summary with no session" should {
@@ -125,9 +113,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalTaxFreeAllowance = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model2)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -160,9 +146,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         taxableGains = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model3)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -195,9 +179,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model4)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -213,9 +195,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAndNics = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model5)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -239,9 +219,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model6)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -256,9 +234,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model7)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -273,9 +249,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model8)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -289,9 +263,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model9)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -305,9 +277,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model10)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model10))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -325,6 +295,8 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having (total income tax, capital gains, employee nics)" in new TestController {
 
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
@@ -338,9 +310,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model11)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model11))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -355,9 +325,8 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model12)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model12))
+
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -372,9 +341,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model13)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model13))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -388,9 +355,8 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model14)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model14))
+
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -404,9 +370,8 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model15)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model15))
+
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -420,9 +385,8 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model16)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model16))
+
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -451,9 +415,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
       val model17 = new NoATSViewModel
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model17)
-      }
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model17))
 
       val result = Future.successful(show(user, request))
 

@@ -24,7 +24,6 @@ import models.{ErrorResponse, InvalidTaxYear}
 import play.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.Results.BadRequest
 import play.api.mvc.{AnyContent, Request, Result}
 import services._
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}

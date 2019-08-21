@@ -17,29 +17,27 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
+import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, CapitalGains, Rate}
+
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear = 2014
+  val taxYear = 2015
+  val request = FakeRequest("Get",s"?taxYear=$taxYear")
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,
@@ -70,15 +68,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    val model = baseModel
+    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(capitalGainsService.getCapitalGains(_))
-    }
 
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
   }
 
   "Calling Capital Gains with no session" should {
@@ -125,9 +117,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         taxableGains = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model2)
-      }
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -162,9 +152,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model3)
-      }
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -180,9 +168,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model4)
-      }
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -198,9 +184,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         upperRateBefore = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model5)
-      }
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -234,9 +218,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model6)
-      }
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -261,9 +243,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model7)
-      }
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

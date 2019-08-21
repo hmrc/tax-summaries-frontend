@@ -17,11 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Allowances, Amount, AtsList, TaxYearEnd}
+
 import scala.concurrent.Future
 
 class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
@@ -65,14 +66,8 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     val model = baseModel
     implicit val request = FakeRequest("GET","?taxYear=2015")
     implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(baseModel))
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(allowanceService.getAllowances(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(baseModel)
-    }
   }
 
   "Calling allowances with no session" should {
@@ -88,19 +83,14 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
 
   "return a Future[Either[ErrorResponse,GenericViewModel]] when extractModel is called " in new TestController {
 
-    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(genericViewModel)
-    }
-
     val result = extractViewModel()(user, request)
-
-    result.toString.trim mustEqual Future.successful(Right(genericViewModel)).toString.trim
+    result.toString.trim mustEqual Future.successful(Right(baseModel)).toString.trim
   }
 
   "have the right user data in the view" in new TestController {
 
-
     val result = Future.successful(show(user, request))
+
     status(result) shouldBe 200
 
     val document = Jsoup.parse(contentAsString(result))
@@ -121,9 +111,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
       otherAllowances = Amount(0, "GBP")
     )
 
-    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model2)
-    }
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model2))
 
     val result = Future.successful(show(user, request))
     status(result) shouldBe 200

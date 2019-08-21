@@ -17,30 +17,28 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{Amount, Rate, Summary}
-import utils.TestConstants._
-import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.AuthorityUtils
+import utils.TestConstants._
+import view_models.{Amount, Rate, Summary}
+import scala.concurrent.Future
 
 class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val taxYear = 2015
+  val request = FakeRequest("Get", s"?taxYear=$taxYear")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/summary_json_test.json"
-  val taxYear = 2014
+
   trait TestController extends NicsController {
 
     override lazy val auditService = mock[AuditService]
@@ -68,13 +66,9 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       surname = "surname"
     )
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(summaryService.getSummaryData(_))
-    }
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+
   }
 
   "Calling NICs with no session" should {

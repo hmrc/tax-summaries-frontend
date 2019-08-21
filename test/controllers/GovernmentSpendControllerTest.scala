@@ -17,37 +17,45 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.{ErrorResponse, SpendData}
+import models.SpendData
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.mockito.Matchers._
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Request
-import play.api.test.Helpers._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{Amount, GovernmentSpend}
-import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestConstants._
+import utils.{AuthorityUtils, GenericViewModel}
+import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
+
+import scala.concurrent.Future
 
 
 class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val request = FakeRequest("GET","?taxYear=2015")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear = 2014
+  val taxYear = 2015
 
   trait TestController extends GovernmentSpendController {
 
     override lazy val governmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
     override lazy val auditService: AuditService = mock[AuditService]
+    lazy val atsService: AtsService = mock[AtsService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
+    val genericViewModel: GenericViewModel =  AtsList(
+      utr = "3000024376",
+      forename = "forename",
+      surname = "surname",
+      yearList = List(
+        TaxYearEnd(Some("2015"))
+      )
+    )
 
     val model = new GovernmentSpend(
       taxYear = 2014,
@@ -77,22 +85,15 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      extractViewModel(governmentSpendService.getGovernmentSpendData(_))
-    }
+    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
 
   }
 
   "Calling government spend with no session" should {
 
     "return a 303 response" in new TestController {
-
       val result = Future.successful(authorisedGovernmentSpendData(request))
-
       status(result) shouldBe 303
     }
   }
@@ -100,6 +101,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
   "Calling government spend with session" should {
 
     "return a 200 response" in new TestController {
+
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
     }
@@ -147,7 +149,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
     "have correct data for 2015" in new TestController {
 
-      override val model = new GovernmentSpend(
+       val model2 = new GovernmentSpend(
         taxYear = 2015,
         userUtr = testUtr,
         govSpendAmountData = List(
@@ -174,6 +176,8 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         incomeTaxStatus = "0002",
         scottishIncomeTax = new Amount(2000.00, "GBP")
       )
+
+      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

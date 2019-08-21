@@ -17,26 +17,27 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.AuthorityUtils
 import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{Amount, IncomeBeforeTax}
+
 import scala.concurrent.Future
 
 class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val taxYear = 2015
+  val request = FakeRequest("Get", s"?taxYear=$taxYear")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear = 2014
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,
@@ -59,15 +60,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService: AuditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    val model = baseModel
-
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      extractViewModel(incomeService.getIncomeData(_))
-    }
-
-    override protected def extractViewModel(func: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(baseModel)
 
   }
 
@@ -107,7 +100,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
     "have zero-value fields hidden in the view" in new TestController {
 
-      override val model = baseModel.copy(
+      val model = baseModel.copy(
         getSelfEmployTotal = Amount(0, "GBP"),
         getIncomeFromEmployment = Amount(0, "GBP"),
         getStatePension = Amount(0, "GBP"),
@@ -117,6 +110,9 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
         getBenefitsFromEmployment = Amount(0, "GBP"),
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
+
+      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(model)
+
 
       val result = Future.successful(show(user, request))
 

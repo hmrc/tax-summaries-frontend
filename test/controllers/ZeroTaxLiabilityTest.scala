@@ -17,30 +17,27 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.ErrorResponse
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AuthorityUtils, GenericViewModel}
+import utils.AuthorityUtils
+import utils.TestConstants._
 import view_models.NoATSViewModel
 import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val request = FakeRequest("GET","?taxYear=2015")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
-  val taxYear = 2014
+  val taxYear = 2015
 
   "Opening link if user has no income tax or cg tax liability" should {
 
@@ -50,13 +47,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       override lazy val auditService = mock[AuditService]
       implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-      override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-        extractViewModel(totalIncomeTaxService.getIncomeData(_))
-      }
-
-      override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-        Right(model)
-      }
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
 
@@ -71,13 +62,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(incomeService.getIncomeData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -91,13 +76,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(incomeService.getIncomeData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -111,13 +90,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(allowanceService.getAllowances(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -131,13 +104,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(capitalGainsService.getCapitalGains(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -151,13 +118,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(governmentSpendService.getGovernmentSpendData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -171,13 +132,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(summaryService.getSummaryData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -191,13 +146,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      extractViewModel(summaryService.getSummaryData(_))
-    }
-
-    override protected def extractViewModel(func : Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] = {
-      Right(model)
-    }
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
