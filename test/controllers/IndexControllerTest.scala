@@ -18,11 +18,12 @@ package controllers
 
 import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
-import models.{AtsListData, ErrorResponse}
+import models.{AtsListData, InvalidTaxYear}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.mockito.Mockito.{when, _}
+import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -39,6 +40,7 @@ import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.AtsForms._
 import view_models.{AtsList, TaxYearEnd}
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
@@ -47,6 +49,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   val taxYear = 2015
   val request = FakeRequest("Get", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20155")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val agentUser = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
 
@@ -108,6 +111,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
     }
+
   }
 
   "Calling with request param and trailing slash (non-AGENT)" should {

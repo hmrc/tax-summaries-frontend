@@ -17,9 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.InvalidTaxYear
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.when
+import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,12 +32,14 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, Rate, Summary}
+
 import scala.concurrent.Future
 
 class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2015
-  val request = FakeRequest("Get", s"?taxYear=$taxYear")
+  val request = FakeRequest("GET", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20155")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/summary_json_test.json"
 
@@ -81,6 +85,20 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
   }
 
   "Calling NICs with session" should {
+
+    "return a 200 response if request contains an valid tax year value " in new TestController {
+      val result =  Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.toString should include("<title>Your Income Tax and National Insurance contributions: 2013 to 2014 - Annual tax summary - GOV.UK</title>")
+    }
+
+    "return a 400 BadRequest statue with response if request contains an invalid tax year value " in new TestController {
+      val result = Future.successful(show(user, badRequest))
+      status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
+    }
 
     "have the right user data in the view" in new TestController {
 

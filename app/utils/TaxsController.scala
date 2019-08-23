@@ -62,7 +62,7 @@ abstract class TaxsController extends FrontendController
     }
   }
 
-  protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+   def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
       case Right(result: T) => obtainResult(result)
@@ -75,7 +75,7 @@ abstract class TaxsController extends FrontendController
     block(intParam)
   }
 
-  protected def extractViewModel(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
+   def extractViewModel(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
   Future[Either[ErrorResponse, GenericViewModel]] = {
     TaxYearUtil.extractTaxYear match {
       case Right(taxYear) => genericViewModel(taxYear).map(Right(_))

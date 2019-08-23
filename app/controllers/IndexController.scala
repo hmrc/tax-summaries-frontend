@@ -31,6 +31,8 @@ import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.Future
 
+
+
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService
   override val auditService = AuditService
@@ -76,7 +78,7 @@ trait IndexController extends TaxsController {
         } map {
           x => Redirect(routes.IndexController.authorisedIndex()).withSession(session)
         }
-    }
+      }
       case _ => {
         show(user, request)
       }
@@ -98,7 +100,7 @@ trait IndexController extends TaxsController {
 
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
-      case Right(noATS: NoATSViewModel) => Future { Redirect("") }
+      case Right(noATS: NoATSViewModel) => Future.successful(Redirect(""))
       case Right(result: T) => getViewModel(result)
     }
   }
