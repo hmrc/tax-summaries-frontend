@@ -103,6 +103,17 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
     }
 
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
+    }
+
     "have the right user data in the view" in new TestController {
 
       val result = Future.successful(show(user, request))

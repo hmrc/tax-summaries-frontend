@@ -155,7 +155,17 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     val document = Jsoup.parse(contentAsString(result))
     document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
   }
-  
+
+  "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(new NoATSViewModel))
+
+    val result = Future.successful(show(user, request))
+    status(result) mustBe SEE_OTHER
+
+    redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
+  }
 
 }
 

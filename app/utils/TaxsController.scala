@@ -19,8 +19,7 @@ package utils
 import java.util.Date
 
 import connectors.AuthenticationConnector
-import controllers.routes
-import models.{ErrorResponse, InvalidTaxYear}
+import models.ErrorResponse
 import play.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
@@ -29,7 +28,6 @@ import services._
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
@@ -49,6 +47,8 @@ abstract class TaxsController extends FrontendController
 
   def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]]
 
+  def transformation(implicit user: User, request: Request[AnyRef]): Future[Result]
+
   def show(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     transformation recover {
       case error =>
@@ -62,24 +62,9 @@ abstract class TaxsController extends FrontendController
     }
   }
 
-   def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
-    extractViewModel map {
-      case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
-      case Right(result: T) => obtainResult(result)
-      case Left(InvalidTaxYear) => BadRequest("Request does not contain valid tax year")
-    }
-  }
-
   def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]) = {
     val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)
     block(intParam)
   }
 
-   def extractViewModel(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
-  Future[Either[ErrorResponse, GenericViewModel]] = {
-    TaxYearUtil.extractTaxYear match {
-      case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
-      case Left(errorResponse) => Future.successful(Left(errorResponse))
-    }
-  }
 }

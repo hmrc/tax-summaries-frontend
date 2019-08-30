@@ -35,7 +35,7 @@ object GovernmentSpendController extends GovernmentSpendController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait GovernmentSpendController extends TaxsController {
+trait GovernmentSpendController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -48,7 +48,7 @@ trait GovernmentSpendController extends TaxsController {
   type T = GovernmentSpend
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModel(governmentSpendService.getGovernmentSpendData(_))
+    extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
   }
 
   override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {

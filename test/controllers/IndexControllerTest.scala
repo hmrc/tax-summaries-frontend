@@ -39,7 +39,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.AtsForms._
-import view_models.{AtsList, TaxYearEnd}
+import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -235,6 +235,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       val result = Future.successful(onSubmit(user, requestWithQuery))
       status(result) shouldBe OK
+
+    }
+
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(new NoATSViewModel)
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
 
     }
 

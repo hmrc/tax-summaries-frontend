@@ -31,6 +31,8 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.TestConstants._
+import view_models.NoATSViewModel
+
 import scala.concurrent.Future
 
 class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
@@ -71,6 +73,18 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
+    }
+
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
     }
 
     "have the right user data in the view" in new TestController {

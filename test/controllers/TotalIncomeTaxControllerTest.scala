@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.TestConstants._
-import view_models.{Amount, Rate, TotalIncomeTax}
+import view_models.{Amount, NoATSViewModel, Rate, TotalIncomeTax}
 
 import scala.concurrent.Future
 
@@ -112,6 +112,16 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
       document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
     }
 
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
+    }
 
     "have the right user data in the view" in new TestController {
 

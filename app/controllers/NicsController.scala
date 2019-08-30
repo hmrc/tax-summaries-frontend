@@ -36,7 +36,7 @@ object NicsController extends NicsController{
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait NicsController extends TaxsController {
+trait NicsController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -49,7 +49,7 @@ trait NicsController extends TaxsController {
   type T = Summary
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModel(summaryService.getSummaryData(_))
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
   override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {
     Ok(views.html.nics(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))

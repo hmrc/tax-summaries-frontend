@@ -100,7 +100,7 @@ trait IndexController extends TaxsController {
 
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
-      case Right(noATS: NoATSViewModel) => Future.successful(Redirect(""))
+      case Right(noATS: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
       case Right(result: T) => getViewModel(result)
     }
   }

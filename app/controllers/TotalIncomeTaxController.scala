@@ -36,7 +36,7 @@ object TotalIncomeTaxController extends TotalIncomeTaxController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait TotalIncomeTaxController extends TaxsController {
+trait TotalIncomeTaxController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -49,7 +49,7 @@ trait TotalIncomeTaxController extends TaxsController {
   type T = TotalIncomeTax
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModel(totalIncomeTaxService.getIncomeData(_))
+    extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
   }
 
   override def obtainResult(result:T)(implicit user:User, request: Request[AnyRef]): Result = {

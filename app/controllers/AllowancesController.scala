@@ -35,7 +35,7 @@ object AllowancesController extends AllowancesController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait AllowancesController extends TaxsController {
+trait AllowancesController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -48,7 +48,7 @@ trait AllowancesController extends TaxsController {
   type T = Allowances
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModel(allowanceService.getAllowances(_))
+    extractViewModelWithTaxYear(allowanceService.getAllowances(_))
   }
 
   override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {

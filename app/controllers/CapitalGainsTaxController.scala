@@ -35,7 +35,7 @@ object CapitalGainsTaxController extends CapitalGainsTaxController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait CapitalGainsTaxController extends TaxsController {
+trait CapitalGainsTaxController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -48,7 +48,7 @@ trait CapitalGainsTaxController extends TaxsController {
   type T = CapitalGains
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModel(capitalGainsService.getCapitalGains(_))
+    extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
   }
 
   override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {

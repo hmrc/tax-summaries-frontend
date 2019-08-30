@@ -24,14 +24,14 @@ import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, _}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AuthorityUtils, GenericViewModel}
 import utils.TestConstants._
-import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
+import view_models._
 
 import scala.concurrent.Future
 
@@ -113,6 +113,17 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
+    }
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
     }
 
     "have correct data for 2014" in new TestController {

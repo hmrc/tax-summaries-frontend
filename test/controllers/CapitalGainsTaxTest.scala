@@ -24,14 +24,15 @@ import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.TestConstants._
-import view_models.{Amount, CapitalGains, Rate}
+import view_models.{Amount, CapitalGains, NoATSViewModel, Rate}
+
 import scala.concurrent.Future
 
 class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
@@ -98,6 +99,18 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
+    }
+
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
     }
 
     "show Your Capital Gains section with the right user data" in new TestController {
