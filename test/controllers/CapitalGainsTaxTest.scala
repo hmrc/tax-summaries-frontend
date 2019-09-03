@@ -17,12 +17,14 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.InvalidTaxYear
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
@@ -38,9 +40,9 @@ import scala.concurrent.Future
 class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear = 2015
+  val taxYear = 2014
   val request = FakeRequest("GET",s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20155")
+  val badRequest = FakeRequest("GET","?taxYear=20145")
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,
@@ -87,30 +89,25 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   "Calling Capital Gains with session" should {
 
-    "return a 200 response if request contains an valid tax year value " in new TestController {
+    "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.toString should include("<title>Capital Gains Tax: 2013 to 2014 - Annual tax summary - GOV.UK</title>")
+      document.title should include(Messages("ats.capital_gains_tax.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
-    "return a 400 BadRequest statue with response if request contains an invalid tax year value " in new TestController {
+    "display an error page for an invalid request " in new TestController {
       val result = Future.successful(show(user, badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
+      document.title should include(Messages("generic.error.html.title"))
     }
 
-
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-
       when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
-
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
-
     }
 
     "show Your Capital Gains section with the right user data" in new TestController {

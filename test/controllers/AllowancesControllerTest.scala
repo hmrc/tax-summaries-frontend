@@ -22,26 +22,27 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AuthorityUtils, GenericViewModel, TaxsController}
 import view_models._
-import models.{ErrorResponse, InvalidTaxYear}
 
 import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.{Request, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 
 
 class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val taxYear = 2015
+  val taxYear = 2014
 
   val baseModel = Allowances(
     taxYear = 2014,
@@ -73,7 +74,8 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
     val model = baseModel
-    implicit val request = FakeRequest("GET","?taxYear=2015")
+    val taxYear = 2014
+    implicit val request = FakeRequest("GET","?taxYear="+taxYear)
     implicit val badRequest = FakeRequest("GET","?taxYear=20155")
     implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
     implicit val hc = new HeaderCarrier
@@ -142,29 +144,25 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
   }
 
-  "return a 200 response if request contains an valid tax year value " in new TestController {
+  "return a successful response for a valid request" in new TestController {
     val result =  Future.successful(show(user, request))
     status(result) shouldBe 200
     val document = Jsoup.parse(contentAsString(result))
-    document.toString should include("<title>Your tax-free amount: 2013 to 2014 - Annual tax summary - GOV.UK</title>")
+    document.title should include(Messages("ats.tax_free_amount.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
   }
 
-  "return a 400 BadRequest statue with response if request contains an invalid tax year value " in new TestController {
+  "display an error page for an invalid request" in new TestController {
     val result = Future.successful(show(user, badRequest))
     status(result) shouldBe 400
     val document = Jsoup.parse(contentAsString(result))
-    document.toString should include("<body>\n  Request does not contain valid tax year\n </body>")
+    document.title should include(Messages("generic.error.html.title"))
   }
 
   "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(new NoATSViewModel))
-
     val result = Future.successful(show(user, request))
     status(result) mustBe SEE_OTHER
-
     redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
-
   }
 
 }

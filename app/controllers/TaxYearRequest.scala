@@ -21,6 +21,9 @@ import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.{GenericViewModel, TaxYearUtil, TaxsController}
 import view_models.NoATSViewModel
+import play.api.i18n.Messages.Implicits._
+
+import play.api.Play.current
 import scala.concurrent.Future
 
 trait TaxYearRequest extends TaxsController {
@@ -37,7 +40,7 @@ trait TaxYearRequest extends TaxsController {
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
       case Right(result: T) => obtainResult(result)
-      case Left(InvalidTaxYear) => BadRequest("Request does not contain valid tax year")
+      case Left(InvalidTaxYear) => BadRequest(views.html.errors.generic_error())
     }
   }
 }
