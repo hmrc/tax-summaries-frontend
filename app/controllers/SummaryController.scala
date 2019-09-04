@@ -46,13 +46,13 @@ trait SummaryController extends TaxYearRequest {
     user => request => show(user, request)
   }
 
-  type T = Summary
+  type ViewModel = Summary
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
      extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
 
-  override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.summary(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

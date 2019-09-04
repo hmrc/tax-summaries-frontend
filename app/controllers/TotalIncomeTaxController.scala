@@ -46,13 +46,13 @@ trait TotalIncomeTaxController extends TaxYearRequest {
     user => request => show(user, request)
   }
 
-  type T = TotalIncomeTax
+  type ViewModel = TotalIncomeTax
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
   }
 
-  override def obtainResult(result:T)(implicit user:User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result:ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
     Ok(views.html.total_income_tax(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

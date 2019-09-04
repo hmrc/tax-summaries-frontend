@@ -45,13 +45,13 @@ trait CapitalGainsTaxController extends TaxYearRequest {
     user => request => show(user,request)
   }
 
-  type T = CapitalGains
+  type ViewModel = CapitalGains
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
   }
 
-  override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.capital_gains(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

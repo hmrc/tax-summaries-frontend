@@ -41,9 +41,9 @@ abstract class TaxsController extends FrontendController
 
   def auditService: AuditService
 
-  type T <: GenericViewModel
+  type ViewModel <: GenericViewModel
 
-  def obtainResult(data:T)(implicit user:User, request: Request[AnyRef]): Result
+  def obtainResult(data:ViewModel)(implicit user:User, request: Request[AnyRef]): Result
 
   def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]]
 

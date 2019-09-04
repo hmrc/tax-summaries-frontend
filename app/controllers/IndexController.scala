@@ -84,14 +84,14 @@ trait IndexController extends TaxsController {
       }
     }
 
-  type T = AtsList
+  type ViewModel = AtsList
 
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
       atsYearListService.getAtsListData.map(Right(_))
   }
 
-  def getViewModel(result: T)(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  def getViewModel(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     result.yearList match {
       case TaxYearEnd(year) :: Nil => redirectWithYear(year.get.toInt)
       case _ => Future.successful(Ok(views.html.taxs_index(result, atsYearFormMapping, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr))).withSession(request.session + ("atsList" -> result.toString)))
@@ -101,7 +101,7 @@ trait IndexController extends TaxsController {
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
       case Right(noATS: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
-      case Right(result: T) => getViewModel(result)
+      case Right(result: ViewModel) => getViewModel(result)
     }
   }
 
@@ -133,7 +133,7 @@ trait IndexController extends TaxsController {
   }
 
   // This is unused, it is only implemented to adhere to the interface
-  override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.taxs_index(result, atsYearFormMapping, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

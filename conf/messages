@@ -230,7 +230,6 @@ token_error.html.title=Technical problem
 token_error.title=Sorry, there was a technical problem
 token_error.lede=We couldn’t retrieve your client’s summary. Please try again.
 
-
 # Screen reader - visually hidden
 #============================================================
 screen.reader.total_income=Your total income is

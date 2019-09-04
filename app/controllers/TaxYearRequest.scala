@@ -39,7 +39,7 @@ trait TaxYearRequest extends TaxsController {
   def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
-      case Right(result: T) => obtainResult(result)
+      case Right(result: ViewModel) => obtainResult(result)
       case Left(InvalidTaxYear) => BadRequest(views.html.errors.generic_error())
     }
   }

@@ -45,13 +45,13 @@ trait GovernmentSpendController extends TaxYearRequest {
     user => request => show(user,request)
   }
 
-  type T = GovernmentSpend
+  type ViewModel = GovernmentSpend
 
   override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
   }
 
-  override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
     Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(user, result.userForename, result.userSurname, result.userUtr)))
   }
 
