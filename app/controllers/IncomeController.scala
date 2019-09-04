@@ -17,10 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import play.api.mvc.{Request, Result}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
 import view_models.IncomeBeforeTax
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
@@ -35,7 +36,7 @@ object IncomeController extends IncomeController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait IncomeController extends TaxsController {
+trait IncomeController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -45,13 +46,13 @@ trait IncomeController extends TaxsController {
     user => request => show(user,request)
   }
 
-  type T = IncomeBeforeTax
+  type ViewModel = IncomeBeforeTax
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    incomeService.getIncomeData
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+    extractViewModelWithTaxYear(incomeService.getIncomeData(_))
   }
 
-  override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.income_before_tax(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

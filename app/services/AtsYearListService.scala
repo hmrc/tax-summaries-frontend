@@ -18,12 +18,13 @@ package services
 
 import models.AtsListData
 import play.api.mvc.Request
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
-import view_models.{TaxYearEnd, AtsList}
+import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
+import scala.util.Try
 
 object AtsYearListService extends AtsYearListService {
   override val atsListService = AtsListService
@@ -40,9 +41,6 @@ trait AtsYearListService {
     atsListService.storeSelectedTaxYear(taxYear)
   }
 
-  def getSelectedAtsTaxYear(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Int] = {
-    Future.successful( request.getQueryString("taxYear").getOrElse("").toInt )
-  }
 
   private def atsList: AtsListData => GenericViewModel =
     (output: AtsListData) => {

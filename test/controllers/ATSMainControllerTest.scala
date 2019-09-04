@@ -18,52 +18,75 @@ package controllers
 
 import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.mockito.Matchers._
+import org.mockito.Matchers
+import org.mockito.Mockito.when
+import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
-import play.api.test.Helpers._
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
+import utils.TestConstants._
+import view_models.NoATSViewModel
 
 import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val request = FakeRequest()
-
+  val taxYear  =2014
   val baseModel = SummaryControllerTest.baseModel
+  val request = FakeRequest("GET",s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20145")
 
   trait TestController extends AtsMainController {
-
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-
-    val model = baseModel
-
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling Index Page with no session" should {
 
     "return a 303 response" in new TestController {
-
       val result = Future.successful(authorisedAtsMain(request))
       status(result) shouldBe 303
     }
   }
 
-
   "Calling Index Page with session" should {
+
+    "return a successful response for a valid request" in new TestController {
+      val result =  Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("ats.index.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+    }
+
+    "display an error page for an invalid request" in new TestController {
+      val result = Future.successful(show(user, badRequest))
+      status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("generic.error.html.title"))
+    }
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
+    }
 
     "have the right user data in the view" in new TestController {
 
@@ -83,11 +106,11 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "display the right years" in new TestController {
 
-      override val model = baseModel.copy(
+      val model = baseModel.copy(
         year = 2015
       )
 
-      when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

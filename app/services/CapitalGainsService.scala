@@ -18,13 +18,12 @@ package services
 
 import models.{AtsData, DataHolder}
 import play.api.mvc.Request
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.CapitalGains
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 object CapitalGainsService extends CapitalGainsService {
   override val atsService = AtsService
@@ -35,10 +34,8 @@ trait CapitalGainsService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getCapitalGains(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
-    atsYearListService.getSelectedAtsTaxYear flatMap {
-      case taxYear => atsService.createModel(taxYear, capitalGains)
-    }
+  def getCapitalGains(taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+    atsService.createModel(taxYear, capitalGains)
   }
 
   private def capitalGains: (AtsData => GenericViewModel) =

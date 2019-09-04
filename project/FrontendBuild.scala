@@ -22,6 +22,9 @@ private object AppDependencies {
   private val jSoupVersion = "1.11.3"
   private val scalaTestPlusPlayVersion = "2.0.1"
   private val playLanguageVersion = "3.0.0"
+  private val scalaMockVersion = "3.6.0"
+
+
 
   val compile = Seq(
     filters,
@@ -50,6 +53,7 @@ private object AppDependencies {
         "org.mockito" % "mockito-all" % mockitoAllVersion % scope,
         "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion % scope,
+        "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
       )
     }.test

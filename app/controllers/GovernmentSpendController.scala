@@ -17,11 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import models.SpendData
+import models.{ErrorResponse, SpendData}
 import play.api.mvc.{Request, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
 import view_models.GovernmentSpend
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
@@ -35,7 +35,7 @@ object GovernmentSpendController extends GovernmentSpendController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait GovernmentSpendController extends TaxsController {
+trait GovernmentSpendController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -45,13 +45,13 @@ trait GovernmentSpendController extends TaxsController {
     user => request => show(user,request)
   }
 
-  type T = GovernmentSpend
+  type ViewModel = GovernmentSpend
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    governmentSpendService.getGovernmentSpendData
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+    extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
   }
 
-  override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
     Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(user, result.userForename, result.userSurname, result.userUtr)))
   }
 

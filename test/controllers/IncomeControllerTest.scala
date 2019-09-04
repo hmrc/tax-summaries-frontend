@@ -18,28 +18,31 @@ package controllers
 
 import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.mockito.Matchers._
+import org.mockito.Matchers
+import org.mockito.Mockito.when
+import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
-import view_models.{Amount, IncomeBeforeTax}
+import utils.TestConstants._
+import view_models.{Amount, IncomeBeforeTax, NoATSViewModel}
 
 import scala.concurrent.Future
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val taxYear = 2014
+  val request = FakeRequest("GET", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20145")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,
@@ -62,10 +65,8 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService: AuditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-    val model = baseModel
-
-    when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
   }
 
   "Calling incomes with no session" should {
@@ -78,6 +79,31 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
   }
 
   "Calling incomes with session" should {
+
+    "return a successful response for a valid request" in new TestController {
+      val result =  Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("ats.income_before_tax.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+    }
+
+    "display an error page for an invalid request" in new TestController {
+      val result = Future.successful(show(user, badRequest))
+      status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("generic.error.html.title"))
+    }
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
+    }
 
     "have the right user data in the view" in new TestController {
 
@@ -104,7 +130,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
     "have zero-value fields hidden in the view" in new TestController {
 
-      override val model = baseModel.copy(
+      val model = baseModel.copy(
         getSelfEmployTotal = Amount(0, "GBP"),
         getIncomeFromEmployment = Amount(0, "GBP"),
         getStatePension = Amount(0, "GBP"),
@@ -115,7 +141,8 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(model)
+
 
       val result = Future.successful(show(user, request))
 

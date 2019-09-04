@@ -16,27 +16,25 @@
 
 package services
 
-import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.FakeTaxsPlayApplication
 import models.AtsListData
+import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
+import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.Account
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{GenericViewModel, AccountUtils, AgentTokenException, AuthorityUtils}
-import view_models.{TaxYearEnd, AtsList}
-
-import scala.concurrent.{ExecutionContext, Future}
+import utils.{AuthorityUtils, GenericViewModel}
+import view_models.{AtsList, TaxYearEnd}
+import scala.concurrent.Future
 import scala.io.Source
-import uk.gov.hmrc.http.HeaderCarrier
 
 class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
@@ -58,8 +56,9 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
       timestamp = 0
     )
 
-    override val atsListService = mock[AtsListService]
 
+    override val atsListService = mock[AtsListService]
+    val atsService = mock[AtsService]
   }
 
   "storeSelectedAtsTaxYear" should {
@@ -88,26 +87,12 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
   }
 
-  "getSelectedAtsTaxYear" should {
-
-    "Return a successful future upon success" in new TestService {
-
-      val fakeRequest = FakeRequest("GET","?taxYear=2014")
-
-      val result = getSelectedAtsTaxYear(user , hc, fakeRequest)
-
-      whenReady(result) { result =>
-        result shouldBe 2014
-      }
-    }
-
-  }
 
   "getAtsListData" should {
 
     "Return a successful future upon success" in new TestService {
 
-      val atsList: AtsList = AtsList(
+      val atsListModel: AtsList = AtsList(
         utr = testUtr,
         forename = "forename",
         surname = "surname",
@@ -117,11 +102,27 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
         )
       )
 
-      val model: GenericViewModel = atsList
+      override def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+        atsListService.createModel(atsList)
+      }
 
-      when(atsListService.createModel(eqTo(atsList => model))(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      def atsList: AtsListData => GenericViewModel =
+        (output: AtsListData) => {
+          new AtsList(output.utr,
+            output.taxPayer.get.taxpayer_name.get("forename"),
+            output.taxPayer.get.taxpayer_name.get("surname"),
+            output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+          )
+        }
+
+      val model: GenericViewModel = atsListModel
+
+      when(atsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(model)
 
       val result = getAtsListData(user, hc, request)
+
+      result.toString().trim mustEqual Future.successful(model).toString().trim()
+
 
     }
 

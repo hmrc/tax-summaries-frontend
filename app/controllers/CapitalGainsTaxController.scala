@@ -17,10 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import play.api.mvc.{Request, Result}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
 import view_models.CapitalGains
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
@@ -34,7 +35,7 @@ object CapitalGainsTaxController extends CapitalGainsTaxController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait CapitalGainsTaxController extends TaxsController {
+trait CapitalGainsTaxController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -44,13 +45,13 @@ trait CapitalGainsTaxController extends TaxsController {
     user => request => show(user,request)
   }
 
-  type T = CapitalGains
+  type ViewModel = CapitalGains
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    capitalGainsService.getCapitalGains
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+    extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
   }
 
-  override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.capital_gains(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

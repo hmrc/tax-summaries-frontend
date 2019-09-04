@@ -19,20 +19,17 @@ package utils
 import java.util.Date
 
 import connectors.AuthenticationConnector
-import controllers.routes
+import models.ErrorResponse
 import play.Logger
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, Request, Result}
 import services._
-import uk.gov.hmrc.play.frontend.auth.Actions
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.NoATSViewModel
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 abstract class TaxsController extends FrontendController
           with Actions
@@ -44,11 +41,13 @@ abstract class TaxsController extends FrontendController
 
   def auditService: AuditService
 
-  type T <: GenericViewModel
+  type ViewModel <: GenericViewModel
 
-  def obtainResult(data:T)(implicit user:User, request: Request[AnyRef]): Result
+  def obtainResult(data:ViewModel)(implicit user:User, request: Request[AnyRef]): Result
 
-  def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel]
+  def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]]
+
+  def transformation(implicit user: User, request: Request[AnyRef]): Future[Result]
 
   def show(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     transformation recover {
@@ -63,18 +62,9 @@ abstract class TaxsController extends FrontendController
     }
   }
 
-  protected def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
-    extractViewModel map {
-      case noATS: NoATSViewModel => Redirect(routes.ErrorController.authorisedNoAts())
-      case result: T => obtainResult(result)
-    }
-  }
-
   def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]) = {
-
     val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)
-
     block(intParam)
-
   }
+
 }

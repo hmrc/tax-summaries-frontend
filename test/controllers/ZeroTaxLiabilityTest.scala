@@ -17,29 +17,27 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
-import view_models.NoATSViewModel
-
-import scala.concurrent.Future
 import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import view_models.NoATSViewModel
+import scala.concurrent.Future
 
 class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val request = FakeRequest("GET","?taxYear=2015")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
+  val taxYear = 2015
 
   "Opening link if user has no income tax or cg tax liability" should {
 
@@ -49,8 +47,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       override lazy val auditService = mock[AuditService]
       implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-      when(totalIncomeTaxService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
 
@@ -65,8 +62,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -80,8 +76,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(incomeService.getIncomeData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -95,8 +90,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(allowanceService.getAllowances(any[User], any[Request[AnyRef]], any[HeaderCarrier])).thenReturn(model)
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -110,8 +104,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -125,8 +118,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(governmentSpendService.getGovernmentSpendData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -140,8 +132,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -155,8 +146,7 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 

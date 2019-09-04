@@ -17,10 +17,11 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import models.ErrorResponse
 import play.api.mvc.{Request, Result}
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
 import view_models.Summary
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
@@ -35,7 +36,7 @@ object NicsController extends NicsController{
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait NicsController extends TaxsController {
+trait NicsController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -45,13 +46,12 @@ trait NicsController extends TaxsController {
     user => request => show(user,request)
   }
 
-  type T = Summary
+  type ViewModel = Summary
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    summaryService.getSummaryData
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
-
-  override def obtainResult(result: T)(implicit user:User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
     Ok(views.html.nics(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

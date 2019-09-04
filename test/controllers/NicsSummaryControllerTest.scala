@@ -18,26 +18,30 @@ package controllers
 
 import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.mockito.Matchers._
+import org.mockito.Matchers
+import org.mockito.Mockito.when
+import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
-import view_models.{Amount, Rate, Summary}
 import utils.TestConstants._
+import view_models.{Amount, NoATSViewModel, Rate, Summary}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
+  val taxYear = 2014
+  val request = FakeRequest("GET", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20145")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/summary_json_test.json"
 
@@ -68,7 +72,9 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       surname = "surname"
     )
 
-    when(summaryService.getSummaryData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
+
+
   }
 
   "Calling NICs with no session" should {
@@ -81,6 +87,31 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
   }
 
   "Calling NICs with session" should {
+
+    "return a successful response for a valid request" in new TestController {
+      val result =  Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("ats.nics.tax_and_nics.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+    }
+
+    "display an error page for an invalid request" in new TestController {
+      val result = Future.successful(show(user, badRequest))
+      status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("generic.error.html.title"))
+    }
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+
+    }
 
     "have the right user data in the view" in new TestController {
 
