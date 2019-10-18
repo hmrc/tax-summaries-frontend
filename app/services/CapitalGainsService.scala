@@ -18,8 +18,10 @@ package services
 
 import models.{AtsData, DataHolder}
 import play.api.mvc.Request
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
+
 import scala.concurrent.Future
 
 object CapitalGainsService extends CapitalGainsService {

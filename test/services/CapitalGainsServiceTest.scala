@@ -17,6 +17,7 @@
 package services
 
 import controllers.FakeTaxsPlayApplication
+import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
@@ -27,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import utils.{AuthorityUtils, GenericViewModel}

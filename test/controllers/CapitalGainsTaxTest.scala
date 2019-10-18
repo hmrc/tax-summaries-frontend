@@ -315,9 +315,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide proper lower rpci tax rate when is 0" in new TestController {
 
-      override val model = baseModel.copy(
+      val model = baseModel.copy(
         rpciLowerAmountBeforeTax = Amount(0, "GBP")
       )
+
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -336,9 +338,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide proper higher rpci tax rate when is 0" in new TestController {
 
-      override val model = baseModel.copy(
+      val model = baseModel.copy(
         rpciHigherAmountBeforeTax = Amount(0, "GBP")
       )
+
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
