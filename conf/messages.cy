@@ -236,3 +236,12 @@ screen.reader.capital_gains_tax=Eich Treth Enillion Cyfalaf yw
 #===========================================================
 ats.summary.tax.title=Cyfrifwyd eich treth i fod yn
 ats.summary.nics.title=Cyfrifwyd eich CYG i fod yn
+
+global.page.not.found.error.title=Heb ddod o hyd i’r dudalen
+global.page.not.found.error.heading=Heb ddod o hyd i’r dudalen
+global.page.not.found.error.check.web.address.correct=Os gwnaethoch deipio’r cyfeiriad gwe, gwiriwch ei fod yn gywir.
+global.page.not.found.error.check.web.address.full=Os gwnaethoch ludo’r cyfeiriad gwe, gwiriwch eich bod wedi copïo’r cyfeiriad yn llawn.
+global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, {0} os ydych am siarad â rhywun am eich crynodeb treth blynyddol.
+global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
+global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
+
