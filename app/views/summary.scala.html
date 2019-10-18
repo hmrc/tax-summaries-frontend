@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@(viewModel: view_models.Summary, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages)
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
+@(viewModel: view_models.Summary, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "ats.summary.title", viewModel.year)
@@ -31,6 +33,7 @@
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
     }
+    @helpers.back_link(Messages("generic.back"))
     <h1 aria-level="1" role="heading">
         <span class="gray heading-medium block-heading">
             @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
@@ -46,7 +49,7 @@
 
         <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.total_income.title"))</h2>
 
-        <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link">
+        <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.total_income.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.total_income")) </span>
             <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.yourIncomeBeforeTax)</span><br>
             <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.total_income.link"))</span>
@@ -60,7 +63,7 @@
 
         <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.tax_free.title"))</h2>
 
-        <a href="@controllers.routes.AllowancesController.authorisedAllowance()?taxYear=@viewModel.taxYearTo" class="data-link">
+        <a href="@controllers.routes.AllowancesController.authorisedAllowance()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_free.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.tax_free_amount")) </span>
             <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.totalTaxFreeAllowance)</span><br>
             <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.tax_free.link"))</span>
@@ -74,7 +77,7 @@
 
         <h2 id="tax-and-nics-title" aria-level="2" role="heading">@Html(Messages(viewModel.yourTotalTaxTextKey))</h2>
 
-        <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link">
+        <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.income_tax_and_ni")) </span>
             <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</span><br>
             <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.tax_and_nics.link"))</span>
@@ -90,7 +93,7 @@
 
         <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.capital_gains.title"))</h2>
 
-        <a href="@controllers.routes.CapitalGainsTaxController.authorisedCapitalGains()?taxYear=@viewModel.taxYearTo" class="data-link">
+        <a href="@controllers.routes.CapitalGainsTaxController.authorisedCapitalGains()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.capital_gains.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.capital_gains_tax")) </span>
             <span class="bold-xlarge" id="total-capital-gains-tax">@includes.currency_amount(viewModel.totalCapitalGainsTax)</span><br>
             <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.capital_gains.link"))</span>
@@ -128,7 +131,9 @@
 
     </section>
 
+
     <div class="back">
-        <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo">@Html(Messages("generic.back"))</a>
+        <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("generic.back")">@Html(Messages("generic.back"))</a>
     </div>
+
 }

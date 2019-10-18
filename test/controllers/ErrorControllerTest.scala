@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
@@ -23,6 +24,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import play.api.test.Helpers._
 import utils.AuthorityUtils
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants._
 
 import scala.concurrent.Future
@@ -32,9 +34,13 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val request = FakeRequest()
 
+  trait TestErrorController extends ErrorController {
+    implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  }
+
   "Calling ErrorController with no session" should {
 
-    "return a 303 response" in new ErrorController {
+    "return a 303 response" in new TestErrorController {
 
       val result = notAuthorised(request)
       status(result) shouldBe 303
@@ -43,7 +49,7 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   "Calling ErrorController authorised noATS" should {
 
-    "return a 303 response" in new ErrorController {
+    "return a 303 response" in new TestErrorController {
 
       val result = Future.successful(authorisedNoAts(request))
       status(result) shouldBe 303
@@ -53,19 +59,19 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   "ErrorController" should {
 
-    "Show No ATS page" in new ErrorController {
+    "Show No ATS page" in new TestErrorController {
 
       val result = noAts(user, request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.title shouldBe "No ATS"
+      document.title shouldBe "No ATS - Annual tax summary - GOV.UK"
 
       // Make sure that breadcrumbs are correct
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>No ATS available</strong>")

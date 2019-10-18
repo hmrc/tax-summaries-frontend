@@ -16,16 +16,21 @@
 
 @import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 
-@()(implicit lang: Lang, request: Request[AnyRef], user: User, messages: Messages)
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
+@()(implicit lang: Lang, request: Request[AnyRef], user: User, messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
-@includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.no_ats_error", 0)
-
+@if(lang.language == "cy"){
+<a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+} else {
+<a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+}
 <h1 id="generic-error-page-heading" aria-level="1" role="heading">@Html(Messages("generic.error.title"))</h1>
 }
 
 @includes.taxs_main(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
 
-<p>@Html(Messages("generic.error.lede"))</p>
+<p>@Html(Messages("generic.error.try.later"))</p>
 
 }

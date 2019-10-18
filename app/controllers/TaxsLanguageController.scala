@@ -16,16 +16,21 @@
 
 package controllers
 
-import play.api.i18n.{I18nSupport, MessagesApi, Lang}
+import config.AppFormPartialRetriever
+import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.Action
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.Play
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 object TaxsLanguageController extends TaxsLanguageController {
   override def messagesApi: MessagesApi = Play.current.injector.instanceOf(classOf[MessagesApi])
+  override val formPartialRetriever = AppFormPartialRetriever
 }
 
 trait TaxsLanguageController extends FrontendController with I18nSupport {
+
+  implicit val formPartialRetriever: FormPartialRetriever
 
   def switchLanguage(lang: String) = Action { implicit request =>
     request.headers.get(REFERER) match {

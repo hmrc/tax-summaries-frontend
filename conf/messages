@@ -1,6 +1,7 @@
 # Generic
 #============================================================
 generic.ats=Annual tax summary
+generic.ats.browser.title=Annual tax summary - GOV.UK
 generic.description=Description
 generic.amount_pounds=Amount
 generic.back=Back
@@ -24,6 +25,7 @@ generic.hm.revenue.and.customs = HM Revenue & Customs
 generic.hm.revenue = HM Revenue
 generic.hm.and = &
 generic.hm.customs = Customs
+site.back=Back
 
 # View ATS - Breadcrumbs
 #============================================================
@@ -83,7 +85,7 @@ ats.summary.total_tax.your_total_tax=Total tax
 ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
 ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
 ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
-ats.summary.taxable_income.your_total_tax.description_total_income_tax=total income tax
+ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Income Tax
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
@@ -172,7 +174,11 @@ ats.treasury_spending.html.title=Your taxes and public spending
 ats.treasury_spending.title=Your taxes and public spending
 ats.treasury_spending.section.lede=This shows a breakdown of how your taxes have been, or will be spent by government.
 ats.treasury_spending.section.sit.lede=This shows a breakdown of how your taxes have been, or will be spent by government across the whole of the UK, including spending by the devolved administrations.
-ats.treasury_spending.section.sit.lede2=For more information about Scottish Government spending, go to <a href="http://www.gov.scot/accounts" target="_blank">www.gov.scot/accounts</a>. For information about Scottish Rate of Income Tax, go to <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank">www.gov.uk/scottish-rate-income-tax/how-it-works</a>.
+ats.treasury_spending.section.sit.scottish.spending.1=For more information about Scottish Government spending, go to
+ats.treasury_spending.section.sit.scottish.spending.link.1.text= www.gov.scot/accounts.
+ats.treasury_spending.section.sit.scottish.spending.2=For information about Scottish Rate of Income Tax, go to
+ats.treasury_spending.section.sit.scottish.spending.link.2.text= www.gov.uk/scottish-rate-income-tax/how-it-works.
+
 
 ats.treasury_spending.return=Back
 ats.treasury_spending.total=Total
@@ -186,9 +192,9 @@ ats.treasury_spending.table.Defence=Defence
 ats.treasury_spending.table.CriminalJustice=Criminal Justice
 ats.treasury_spending.table.Transport=Transport
 ats.treasury_spending.table.GovernmentAdministration=Government Administration
-ats.treasury_spending.table.Culture=Culture e.g. sports, libraries, museums
+ats.treasury_spending.table.Culture=Culture, like sports, libraries, museums
 ats.treasury_spending.table.Environment=Environment
-ats.treasury_spending.table.HousingAndUtilities=Housing and Utilities e.g. street lighting
+ats.treasury_spending.table.HousingAndUtilities=Housing and Utilities, like street lighting
 ats.treasury_spending.table.BusinessAndIndustry=Business and Industry
 ats.treasury_spending.table.UkContributionToEuBudget=UK Contribution to the EU Budget
 ats.treasury_spending.table.OverseasAid=Overseas Aid
@@ -201,9 +207,10 @@ ats.treasury_spending.print.this.page = Print this page
 
 # No ATS - error page
 #============================================================
-generic.error.html.title=Technical Difficulties
-generic.error.title=Sorry, we are experiencing technical difficulties
-generic.error.lede=Please try again in a few moments.
+generic.error.html.title=Sorry, there is a problem with the service
+generic.error.title=Sorry, there is a problem with the service
+generic.error.try.later=Try again later.
+
 
 # No ATS - ats unavailable page
 #============================================================

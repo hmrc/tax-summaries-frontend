@@ -17,8 +17,9 @@
 @import controllers.TaxsLanguageController
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.helpers._
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-@(atsList: view_models.AtsList, atsYear: Form[view_models.TaxYearEnd], actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, lang: Lang)
+@(atsList: view_models.AtsList, atsYear: Form[view_models.TaxYearEnd], actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, formPartialRetriever: FormPartialRetriever, lang: Lang)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
@@ -54,6 +55,6 @@
                 )
             )
         </div>
-        <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
+        <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
     }
 }

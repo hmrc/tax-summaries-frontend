@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import uk.gov.hmrc.play.frontend.filters.{FrontendAuditFilter, FrontendLoggingFilter}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 
 object ApplicationGlobal extends DefaultFrontendGlobal {
@@ -33,6 +34,8 @@ object ApplicationGlobal extends DefaultFrontendGlobal {
   override lazy val auditConnector: AuditConnector = TAXSAuditConnector
   override lazy val loggingFilter: FrontendLoggingFilter = TAXSLoggingFilter
   override lazy val frontendAuditFilter: FrontendAuditFilter = TAXSAuditFilter
+
+  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
   override def onStart(app: Application) {
     super.onStart(app)

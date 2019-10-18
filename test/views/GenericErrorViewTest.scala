@@ -16,49 +16,51 @@
 
 package views
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
-import play.api.i18n.{MessagesApi, Lang, Messages}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{Amount, Rate}
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite, PlaySpec}
 import utils.TestConstants._
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
 
   val request = FakeRequest()
-  val language = Lang("en")
+  val languageEn = Lang("en")
+  val languageCy = Lang("cy")
   val utr = testUtr
   val user = User(AuthorityUtils.saAuthority(testOid, utr))
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages = Messages(language, messagesApi)
+  implicit val messagesEn = Messages(languageEn, messagesApi)
+  implicit val messagesCy = Messages(languageCy, messagesApi)
+  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
   "Logging in as a portal user" should {
 
-    "show the correct contents of the generic error page" in  {
+    "show the correct contents of the generic error page in English" in  {
 
-      val result = views.html.errors.generic_error()(language, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messages)
-      val document = Jsoup.parse(contentAsString(result))
+      val resultEn = views.html.errors.generic_error()(languageEn, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messagesEn, formPartialRetriever)
+      val documentEn = Jsoup.parse(contentAsString(resultEn))
+      documentEn.toString should include("Sorry, there is a problem with the service")
+      documentEn.toString should include("Try again later.")
+    }
 
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
+    "show the correct contents of the generic error page in Welsh" in  {
 
-      document.toString should not include "0345 123 4567"
-      document.toString should not include "no.ats.error.list.item1"
-      document.toString should not include "no.ats.error.list.lede"
-      document.toString should not include "taxsummaries@hmrc.gsi.gov.uk"
-
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("<a href=\"/annual-tax-summary\">")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
-      document.select("#global-breadcrumb li:nth-child(2)").text shouldBe "Technical Difficulties"
+      val resultCy = views.html.errors.generic_error()(languageCy, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messagesCy, formPartialRetriever)
+      val documentCy = Jsoup.parse(contentAsString(resultCy))
+      documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
+      documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")
     }
   }
 }

@@ -15,11 +15,13 @@
  *@
 
 @import controllers.TaxsLanguageController
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-@(viewModel: view_models.Summary, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, lang: Lang)
+@(viewModel: view_models.Summary, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[AnyRef], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.home", viewModel.year)
+
     @if(lang.language == "cy"){
         <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
     } else {
@@ -33,6 +35,7 @@
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
     }
+    @helpers.back_link(Messages("generic.back"))
     <h1 id="index-page-header" aria-level="1" role="heading">
         <span class="gray heading-medium block-heading">
             @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
@@ -48,16 +51,18 @@
 
 @includes.taxs_main(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
     <div id="tax-summary">
-      <h2 aria-level="2" role="heading"><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
+      <h2 aria-level="2" role="heading"><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
        <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>
     </div>
     <div id="tax-spent">
-      <h2 aria-level="2" role="heading"><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
+      <h2 aria-level="2" role="heading"><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_spend_link")">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
       <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
     </div>
+
     @if(request.session.get("TaxYearListLength").getOrElse("0") != "1"){
         <div class="back">
-            <a href="@controllers.routes.IndexController.authorisedIndex()">@Html(Messages("generic.back"))</a>
+            <a href="@controllers.routes.IndexController.authorisedIndex()" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("generic.back")">@Html(Messages("generic.back"))</a>
         </div>
     }
+
 }

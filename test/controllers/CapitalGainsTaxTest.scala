@@ -16,27 +16,33 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.mockito.Matchers._
+import org.mockito.Matchers
+import org.mockito.Mockito.when
+import org.scalatest.MustMatchers._
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import utils.TestConstants._
-import view_models.{Rate, CapitalGains, Amount}
+import view_models.{Amount, CapitalGains, NoATSViewModel, Rate}
+
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest()
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
+  val taxYear = 2014
+  val request = FakeRequest("GET",s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20145")
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,
@@ -71,10 +77,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     override lazy val capitalGainsService = mock[CapitalGainsService]
     override lazy val auditService = mock[AuditService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    val model = baseModel
+    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-    when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+
   }
 
   "Calling Capital Gains with no session" should {
@@ -87,6 +94,27 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
   }
 
   "Calling Capital Gains with session" should {
+
+    "return a successful response for a valid request" in new TestController {
+      val result =  Future.successful(show(user, request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("ats.capital_gains_tax.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+    }
+
+    "display an error page for an invalid request " in new TestController {
+      val result = Future.successful(show(user, badRequest))
+      status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("generic.error.html.title"))
+    }
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+    }
 
     "show Your Capital Gains section with the right user data" in new TestController {
 
@@ -106,7 +134,6 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in new TestController {
 
-//      val controllerUnderTest = makeController(dataPath, MockConnections.defaultManipulation, false)
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
@@ -117,12 +144,12 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Capital Gains Tax section if total amount of capital gains to pay tax on is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model2 = baseModel.copy(
         payCgTaxOn = Amount(0, "GBP"),
         taxableGains = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -153,11 +180,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Entrepreneurs' Relief Rate field if the amount on the left side is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model3 = baseModel.copy(
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -169,11 +196,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Ordinary Rate field if the amount on the left side is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model4 = baseModel.copy(
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -185,11 +212,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Upper Rate field if the amount on the left side is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model5 = baseModel.copy(
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -219,11 +246,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "hide Adjustments section if the Adjustments amount is 0.00" in new TestController {
 
-      override val model = baseModel.copy(
+      val model6 = baseModel.copy(
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -244,11 +271,11 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     
     "hide capital gains description if total capital gains tax is 0" in new TestController {
 
-      override val model = baseModel.copy(
+      val model7 = baseModel.copy(
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -262,16 +289,16 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").toString should include("/account\">")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2) a").toString should include("<a href=\"/annual-tax-summary\">")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").toString should include("<a href=\"/annual-tax-summary/main?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").toString should include("<a href=\"/annual-tax-summary/summary?taxYear=2014\">")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
       document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Capital Gains Tax</strong>")

@@ -20,10 +20,10 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 @(title: String,
 utr: String,
-sidebarLinks: Html = HtmlFormat.empty,
 userLoggedIn: Boolean = true,
 supportLinkEnabled: Boolean = true,
 serviceInfoContent: Option[Html] = None,
@@ -38,7 +38,11 @@ mainDataAttributes: Option[Html] = None,
 articleClasses: Option[String] = None,
 includeGridWrapper: Boolean = false,
 actingAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None,
-gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages)
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+
+@sidebarLinks = {@HtmlFormat.empty}
+
+@fullTitle = {@title - @Messages("generic.ats.browser.title")}
 
 @linkElement = {
     <!--[if gt IE 8]><!--><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs.css")' /><!--<![endif]-->
@@ -83,7 +87,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }*@
 
 @getHelpForm = {
-    @config.CachedStaticHtmlPartialProvider.getPartialContent(ApplicationConfig.reportAProblemPartialUrl)
+    @formPartialRetriever.getPartialContent(ApplicationConfig.reportAProblemPartialUrl)
 }
 
 @mainContentHeader = {
@@ -130,9 +134,10 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     @uiLayouts.serviceInfo(
         betaBanner = HtmlFormat.empty,
         includeGridWrapper,
-        serviceInfoContent
+        serviceInfoContent,
+        setLang = messages.lang.code
     )
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
 

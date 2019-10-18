@@ -14,11 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@(pageHeading: String=null)(implicit messages: Messages)
 
-@(title: String, header: String, message: String)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
-
-@includes.taxs_main(title, "") {
-    <h1>@header</h1>
-    <p>@message</p>
-}
+<div class="js-visible">
+ <p><a id="back-link" class="link-back" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a></p>
+</div>

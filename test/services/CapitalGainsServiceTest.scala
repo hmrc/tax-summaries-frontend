@@ -19,6 +19,7 @@ package services
 import controllers.FakeTaxsPlayApplication
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
@@ -26,43 +27,40 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
 
-import scala.concurrent.Future
-
 class CapitalGainsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
-  class TestService extends CapitalGainsService with MockitoSugar {
 
+  val genericViewModel: GenericViewModel =  AtsList(
+    utr = "3000024376",
+    forename = "forename",
+    surname = "surname",
+    yearList = List(
+      TaxYearEnd(Some("2015"))
+    )
+  )
+
+  class TestService extends CapitalGainsService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
-    implicit val request = FakeRequest()
-
-
-
+    implicit val request = FakeRequest("GET","?taxYear=2015")
+    val taxYear = 2015
   }
 
   "CapitalGainsService getCapitalGains" should {
 
-    "return model " in new TestService {
-
-      val model: GenericViewModel = AtsList(
-        utr = testUtr,
-        forename = "forename",
-        surname = "surname",
-        yearList = List(
-          TaxYearEnd(Some("2014"))
-        )
-      )
-
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
       implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-      when(atsYearListService.getSelectedAtsTaxYear(Matchers.any[User](), Matchers.any[HeaderCarrier], Matchers.any())).thenReturn(Future.successful(2015))
-//      when(atsService.createModel(Matchers.any(),Matchers.any())).thenReturn(model)
-      val result = getCapitalGains(user, hc, request)
-
+      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(getCapitalGains(taxYear)(user, hc, request), 1500 millis)
+      result mustEqual genericViewModel
     }
+
 
   }
 }

@@ -16,25 +16,34 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
+import models.ErrorResponse
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Request, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 import view_models.AtsForms._
-import view_models.{NoATSViewModel, TaxYearEnd, AtsList}
+import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+
 import scala.concurrent.Future
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
+
+
 
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService
   override val auditService = AuditService
   override lazy val dataCache = DataCacheConnector
   override val atsListService = AtsListService
+  override val formPartialRetriever = AppFormPartialRetriever
 }
 
 trait IndexController extends TaxsController {
+
+  implicit val formPartialRetriever: FormPartialRetriever
 
   val dataCache: DataCacheConnector
   def atsYearListService: AtsYearListService
@@ -50,8 +59,9 @@ trait IndexController extends TaxsController {
 
   //FIXME add extra check - agent tries multiple ids in same session
   def agentAwareShow(implicit user: User, request: Request[AnyRef]): Future[Result] =
+
     request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) match {
-      case Some(Globals.TAXS_PORTAL_REFERENCE) =>
+      case Some(Globals.TAXS_PORTAL_REFERENCE) =>{
 
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
         val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
@@ -68,18 +78,20 @@ trait IndexController extends TaxsController {
         } map {
           x => Redirect(routes.IndexController.authorisedIndex()).withSession(session)
         }
+      }
       case _ => {
         show(user, request)
       }
     }
 
-  type T = AtsList
+  type ViewModel = AtsList
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[GenericViewModel] = {
-    atsYearListService.getAtsListData
+
+  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+      atsYearListService.getAtsListData.map(Right(_))
   }
 
-  def getViewModel(result: T)(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  def getViewModel(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     result.yearList match {
       case TaxYearEnd(year) :: Nil => redirectWithYear(year.get.toInt)
       case _ => Future.successful(Ok(views.html.taxs_index(result, atsYearFormMapping, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr))).withSession(request.session + ("atsList" -> result.toString)))
@@ -88,8 +100,8 @@ trait IndexController extends TaxsController {
 
   override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
     extractViewModel flatMap {
-      case x: NoATSViewModel => Future { Redirect("") }
-      case result: T => getViewModel(result)
+      case Right(noATS: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
+      case Right(result: ViewModel) => getViewModel(result)
     }
   }
 
@@ -121,7 +133,7 @@ trait IndexController extends TaxsController {
   }
 
   // This is unused, it is only implemented to adhere to the interface
-  override def obtainResult(result: T)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
     Ok(views.html.taxs_index(result, atsYearFormMapping, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
   }
 }

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+package utils
 
-@(title: String, header: String, message: String)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
-@includes.taxs_main(title, "") {
-    <h1>@header</h1>
-    <p>@message</p>
+import models.{ErrorResponse, InvalidTaxYear}
+import play.api.mvc.Request
+
+object TaxYearUtil {
+
+  private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
+
+  def extractTaxYear(implicit request: Request[AnyRef]): Either[ErrorResponse, Int] = {
+    request.getQueryString("taxYear") match {
+      case Some(taxYearPattern(year, _)) => {
+        Right(year.toInt)
+      }
+      case _ => {
+        Left(InvalidTaxYear)
+      }
+    }
+  }
 }

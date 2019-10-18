@@ -16,36 +16,40 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
-import models.AtsListData
+import models.{AtsListData, InvalidTaxYear}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
+import org.mockito.Matchers._
+import org.mockito.Mockito.{when, _}
+import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import org.scalatest.time.{Seconds, Span, Millis}
+import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{GenericViewModel, AuthorityUtils}
+import utils.TestConstants._
+import utils.{AuthorityUtils, GenericViewModel}
 import view_models.AtsForms._
-import view_models.{TaxYearEnd, AtsList}
+import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
-import utils.TestConstants._
-import uk.gov.hmrc.http.HeaderCarrier
 
 class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
-  implicit val defaultPatience =
-    PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
-
-  val request = FakeRequest()
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
+  val taxYear = 2015
+  val request = FakeRequest("Get", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET","?taxYear=20155")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val agentUser = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
 
@@ -61,6 +65,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     override lazy val atsYearListService = mock[AtsYearListService]
     override lazy val auditService = mock[AuditService]
     override lazy val atsListService = mock[AtsListService]
+    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
     val model: GenericViewModel = AtsList(
       utr = testUtr,
@@ -72,7 +77,6 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       )
     )
 
-//    ScalaTest used here instead of Specs as the verify functionality doesn't work so well
     when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
     when(dataCache.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
   }
@@ -107,6 +111,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
     }
+
   }
 
   "Calling with request param and trailing slash (non-AGENT)" should {
@@ -145,7 +150,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "go straight to summary if user has only one tax year" in new TestController {
 
-      override val model: GenericViewModel = AtsList(
+      val model2: GenericViewModel = AtsList(
         utr = testUtr,
         forename = "forename",
         surname = "surname",
@@ -154,14 +159,13 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         )
       )
 
-      when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
-
+      when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model2)
       when(atsListService.getAtsYearList(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(data)
+
 
       val result = agentAwareShow(user, request)
 
       whenReady(result) { result =>
-
         status(result) shouldBe 303
         redirectLocation(result) shouldBe Some("/annual-tax-summary/main?taxYear=2014")
       }
@@ -231,6 +235,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       val result = Future.successful(onSubmit(user, requestWithQuery))
       status(result) shouldBe OK
+
+    }
+
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+
+      when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(new NoATSViewModel)
+
+      val result = Future.successful(show(user, request))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
 
     }
 

@@ -14,7 +14,10 @@
  * limitations under the License.
  *@
 
-@(viewModel: view_models.GovernmentSpend, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages)
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
+
+@(viewModel: view_models.GovernmentSpend, percent: (Double, Double, Double), actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
@@ -42,7 +45,7 @@
         <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
         <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("ats.treasury_spending.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
     </div>
-
+@helpers.back_link(Messages("generic.back"))
     <h1 aria-level="1" role="heading">
         <span class="gray heading-medium block-heading">
             @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
@@ -55,10 +58,10 @@
     <article class="content__body">
         <div class="grid grid-2-3">
             @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
-            <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
-            <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede2"))</p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
             } else {
-            <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
             }
 
             <table id="tax-spent" aria-hidden="false">
@@ -70,17 +73,42 @@
                 </thead>
                 <tbody>
 
-                @viewModel.govSpendAmountData.toList.sortWith(_._1 < _._1).sortWith(_._2.percentage > _._2.percentage).filter(  _._1 != "GovSpendTotal" ).map {
+                @viewModel.govSpendAmountData.toList.filter(  _._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage).map {
                     case (key, value) => {
+                        @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
+                        <tr>
+                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </td>
+                            <td>@includes.currency_amount(value.amount, true)</td>
+                        </tr>
+                        } else {
+                        @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
+                        <tr>
+                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </td>
+                            <td>@includes.currency_amount(value.amount, true)</td>
+                        </tr>
+                        } else {
+                        @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
+                        <tr>
+                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </td>
+                            <td>@includes.currency_amount(value.amount, true)</td>
+                        </tr>
+                        } else {
                         <tr>
                             <td id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
                                 <span class="gray">(@value.percentage%)</span>
                             </td>
                             <td>@includes.currency_amount(value.amount, true)</td>
                         </tr>
+                        }
+                    } }
                     }
                 }
-
                 </tbody>
                 <tfoot>
                     <tr>
@@ -89,11 +117,14 @@
                     </tr>
                 </tfoot>
             </table>
+
             <div class="back">
-                <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.treasury_spending.return"))</a>
+                <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.return"))">@Html(Messages("ats.treasury_spending.return"))</a>
             </div>
+
             <script>
                 var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];
+                var chart_toggle_text_ga = ['View this information as a table', 'View this information as a chart'];
             </script>
         </div>
     </article>

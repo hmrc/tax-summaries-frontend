@@ -45,13 +45,13 @@ trait AtsService {
   val authUtils: AuthorityUtils
   val accountUtils: AccountUtils
 
-  def createModel(taxYear: Int, converter: (AtsData => GenericViewModel))(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def createModel(taxYear: Int, converter: AtsData => GenericViewModel)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
     getAts(taxYear) map {
       checkCreateModel(_, converter)
     }
   }
 
-  def checkCreateModel(output: AtsData, converter: (AtsData => GenericViewModel)): GenericViewModel = {
+  def checkCreateModel(output: AtsData, converter: AtsData => GenericViewModel): GenericViewModel = {
     output match {
       case errors if errors.errors.nonEmpty => errors.errors.get match {
         case IncomingAtsError("NoAtsError") => new NoATSViewModel
