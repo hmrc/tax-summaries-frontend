@@ -16,8 +16,7 @@
 
 package views.helpers
 
-case class BackLinkParams
-(
+case class BackLinkParams(
   sectionName: String,
   sectionEntryId: Option[Int] = None
 )

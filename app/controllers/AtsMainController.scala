@@ -42,18 +42,17 @@ trait AtsMainController extends TaxYearRequest {
 
   def summaryService: SummaryService
 
-  def authorisedAtsMain = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user, request)
+  def authorisedAtsMain = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    show(user, request)
   }
 
   type ViewModel = Summary
 
-
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
     Ok(views.html.taxs_main(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
-  }
 }

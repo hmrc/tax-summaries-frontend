@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
 
-object SummaryController extends SummaryController{
+object SummaryController extends SummaryController {
   override val summaryService = SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
@@ -42,17 +42,17 @@ trait SummaryController extends TaxYearRequest {
 
   def summaryService: SummaryService
 
-  def authorisedSummaries = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user, request)
+  def authorisedSummaries = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    show(user, request)
   }
 
   type ViewModel = Summary
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
 
-  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
     Ok(views.html.summary(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
-  }
 }

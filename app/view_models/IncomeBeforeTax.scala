@@ -18,20 +18,22 @@ package view_models
 
 import utils.GenericViewModel
 
-case class IncomeBeforeTax (taxYear: Int,
-                            utr: String,
-                            getSelfEmployTotal: Amount,
-                            getIncomeFromEmployment: Amount,
-                            getStatePension: Amount,
-                            getOtherPensionTotal: Amount,
-                            getTaxableStateBenefit: Amount,
-                            getOtherIncome: Amount,
-                            getBenefitsFromEmployment: Amount,
-                            getIncomeBeforeTaxTotal: Amount,
-                            title: String,
-                            forename: String,
-                            surname: String)  extends GenericViewModel {
+case class IncomeBeforeTax(
+  taxYear: Int,
+  utr: String,
+  getSelfEmployTotal: Amount,
+  getIncomeFromEmployment: Amount,
+  getStatePension: Amount,
+  getOtherPensionTotal: Amount,
+  getTaxableStateBenefit: Amount,
+  getOtherIncome: Amount,
+  getBenefitsFromEmployment: Amount,
+  getIncomeBeforeTaxTotal: Amount,
+  title: String,
+  forename: String,
+  surname: String)
+    extends GenericViewModel {
 
   def taxYearTo = taxYear.toString
-  def taxYearFrom = (taxYear-1).toString
+  def taxYearFrom = (taxYear - 1).toString
 }

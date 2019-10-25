@@ -18,4 +18,4 @@ package view_models
 
 import utils.GenericViewModel
 
-case class TaxpayerName (title: String, forename: String, surname: String)  extends GenericViewModel
+case class TaxpayerName(title: String, forename: String, surname: String) extends GenericViewModel

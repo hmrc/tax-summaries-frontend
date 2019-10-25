@@ -27,13 +27,12 @@ object TAXSEnums {
   trait BooleanEnumeration extends TAXSEnumeration {
     def toBoolean(value: BooleanEnumeration#Value): Option[Boolean]
 
-    final def toBoolean(value: String): Option[Boolean] = {
+    final def toBoolean(value: String): Option[Boolean] =
       if (isEnumValue(value)) {
         toBoolean(this.withName(value))
       } else {
         None
       }
-    }
   }
 
   object BooleanCheckboxEnum extends BooleanEnumeration {
@@ -45,9 +44,9 @@ object TAXSEnums {
     val FalseString = False.toString
 
     def toBoolean(value: BooleanEnumeration#Value): Option[Boolean] = value match {
-      case True => Some(true)
+      case True  => Some(true)
       case False => Some(false)
-      case _ => None
+      case _     => None
     }
   }
 
@@ -61,8 +60,8 @@ object TAXSEnums {
 
     def toBoolean(value: BooleanEnumeration#Value): Option[Boolean] = value match {
       case Yes => Some(true)
-      case No => Some(false)
-      case _ => None
+      case No  => Some(false)
+      case _   => None
     }
 
   }

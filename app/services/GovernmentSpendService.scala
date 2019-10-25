@@ -34,13 +34,15 @@ trait GovernmentSpendService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getGovernmentSpendData(taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
+  def getGovernmentSpendData(
+    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
   private def govSpend: AtsData => GenericViewModel =
     (output: AtsData) => {
       val wrapper: GovernmentSpendingOutputWrapper = output.gov_spending.get
-      new GovernmentSpend(output.taxYear,
+      new GovernmentSpend(
+        output.taxYear,
         output.utr.get,
         wrapper.govSpendAmountData.get.toList,
         output.taxPayerData.get.taxpayer_name.get("title"),

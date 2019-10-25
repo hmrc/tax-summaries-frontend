@@ -31,6 +31,5 @@ trait AppFormPartialRetriever extends FormPartialRetriever {
   val sessionCrypto: CompositeSymmetricCrypto
 
   override val crypto: String => String =
-    str =>
-      sessionCrypto.encrypt(PlainText(str)).value
+    str => sessionCrypto.encrypt(PlainText(str)).value
 }

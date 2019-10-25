@@ -17,51 +17,59 @@
 package utils
 
 object TextGenerator {
-  def createOnScreenText(hasTotalIncomeTax:Boolean, hasCapitalGainsTax:Boolean, hasNics: Boolean) = {
+  def createOnScreenText(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
     if (hasTotalIncomeTax && hasCapitalGainsTax && hasNics) {
       createOnScreenTextTernary
     } else if (hasTotalIncomeTax ^ hasCapitalGainsTax ^ hasNics) {
-      createOnScreenTextUnary(hasTotalIncomeTax,hasCapitalGainsTax, hasNics)
+      createOnScreenTextUnary(hasTotalIncomeTax, hasCapitalGainsTax, hasNics)
     } else {
-      createOnScreenTextBinary(hasTotalIncomeTax,hasCapitalGainsTax, hasNics)
+      createOnScreenTextBinary(hasTotalIncomeTax, hasCapitalGainsTax, hasNics)
     }
-  }
 
-  private def createOnScreenTextTernary = {
-    ("ats.summary.taxable_income.your_total_tax.msg_ternary",
-      List("ats.summary.taxable_income.your_total_tax.description_total_income_tax",
+  private def createOnScreenTextTernary =
+    (
+      "ats.summary.taxable_income.your_total_tax.msg_ternary",
+      List(
+        "ats.summary.taxable_income.your_total_tax.description_total_income_tax",
         "ats.summary.taxable_income.your_total_tax.description_nics",
-        "ats.summary.taxable_income.your_total_tax.description_cg"))
-  }
+        "ats.summary.taxable_income.your_total_tax.description_cg"
+      ))
 
-  private def createOnScreenTextBinary(hasTotalIncomeTax:Boolean, hasCapitalGainsTax:Boolean, hasNics: Boolean) = {
+  private def createOnScreenTextBinary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
     if (hasTotalIncomeTax) {
       if (hasCapitalGainsTax) {
-        ("ats.summary.taxable_income.your_total_tax.msg_binary",
-          List("ats.summary.taxable_income.your_total_tax.description_total_income_tax",
+        (
+          "ats.summary.taxable_income.your_total_tax.msg_binary",
+          List(
+            "ats.summary.taxable_income.your_total_tax.description_total_income_tax",
             "ats.summary.taxable_income.your_total_tax.description_cg"))
       } else {
-        ("ats.summary.taxable_income.your_total_tax.msg_binary",
-          List("ats.summary.taxable_income.your_total_tax.description_total_income_tax",
+        (
+          "ats.summary.taxable_income.your_total_tax.msg_binary",
+          List(
+            "ats.summary.taxable_income.your_total_tax.description_total_income_tax",
             "ats.summary.taxable_income.your_total_tax.description_nics"))
       }
     } else {
-      ("ats.summary.taxable_income.your_total_tax.msg_binary",
-        List("ats.summary.taxable_income.your_total_tax.description_nics",
+      (
+        "ats.summary.taxable_income.your_total_tax.msg_binary",
+        List(
+          "ats.summary.taxable_income.your_total_tax.description_nics",
           "ats.summary.taxable_income.your_total_tax.description_cg"))
     }
-  }
 
-  private def createOnScreenTextUnary(hasTotalIncomeTax:Boolean, hasCapitalGainsTax:Boolean, hasNics: Boolean) = {
+  private def createOnScreenTextUnary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
     if (hasTotalIncomeTax) {
-      ("ats.summary.taxable_income.your_total_tax.msg_unary",
+      (
+        "ats.summary.taxable_income.your_total_tax.msg_unary",
         List("ats.summary.taxable_income.your_total_tax.description_total_income_tax"))
     } else if (hasCapitalGainsTax) {
-      ("ats.summary.taxable_income.your_total_tax.msg_unary",
+      (
+        "ats.summary.taxable_income.your_total_tax.msg_unary",
         List("ats.summary.taxable_income.your_total_tax.description_cg"))
     } else {
-      ("ats.summary.taxable_income.your_total_tax.msg_unary",
+      (
+        "ats.summary.taxable_income.your_total_tax.msg_unary",
         List("ats.summary.taxable_income.your_total_tax.description_nics"))
     }
-  }
 }

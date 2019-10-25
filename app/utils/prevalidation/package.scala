@@ -23,38 +23,41 @@ package object prevalidation {
   import TrimOption._
 
   val defaultTrims = Map[String, TrimOption](
-    "NINO" -> all,
-    "nino" -> all,
-    "passportNumber" -> all,
-    "nationalID" -> all,
-    "vrn" -> all,
-    "vatNumber" -> all,
-    "companyRegNumber" -> all,
+    "NINO"                      -> all,
+    "nino"                      -> all,
+    "passportNumber"            -> all,
+    "nationalID"                -> all,
+    "vrn"                       -> all,
+    "vatNumber"                 -> all,
+    "companyRegNumber"          -> all,
     "companyRegistrationNumber" -> all,
-    "utr" -> all,
-    "postcode" -> all
+    "utr"                       -> all,
+    "postcode"                  -> all
   )
 
   import CaseOption._
 
   val defaultCases = Map[String, CaseOption](
-    "NINO" -> upper,
-    "nino" -> upper,
-    "passportNumber" -> upper,
-    "nationalID" -> upper,
-    "vrn" -> upper,
-    "vatNumber" -> upper,
-    "companyRegNumber" -> upper,
+    "NINO"                      -> upper,
+    "nino"                      -> upper,
+    "passportNumber"            -> upper,
+    "nationalID"                -> upper,
+    "vrn"                       -> upper,
+    "vatNumber"                 -> upper,
+    "companyRegNumber"          -> upper,
     "companyRegistrationNumber" -> upper,
-    "utr" -> upper,
-    "postcode" -> upper
+    "utr"                       -> upper,
+    "postcode"                  -> upper
   )
 
   val trimAllFunc = (value: String) => value.replaceAll("[\\s]", "")
   val trimBothFunc = (value: String) => value.trim
   val trimBothAndCompressFunc = (value: String) => value.trim.replaceAll("[\\s]{2,}", " ")
 
-  def PreprocessedForm[T](validation: Form[T], trimRules: Map[String, TrimOption] = defaultTrims, caseRules: Map[String, CaseOption] = defaultCases) = {
+  def PreprocessedForm[T](
+    validation: Form[T],
+    trimRules: Map[String, TrimOption] = defaultTrims,
+    caseRules: Map[String, CaseOption] = defaultCases) = {
     val trules = trimRules
     val crules = caseRules
     new PrevalidationAPI[T] {

@@ -19,15 +19,16 @@ package utils
 object TaxsBreadcrumbLinks {
 
   private val links = Map(
-    "breadcrumbs.taxs.index" -> controllers.routes.AtsMainController.authorisedAtsMain,
-    "breadcrumbs.taxs.summary" -> controllers.routes.SummaryController.authorisedSummaries,
-    "breadcrumbs.taxs.nics" -> controllers.routes.NicsController.authorisedNics,
+    "breadcrumbs.taxs.index"             -> controllers.routes.AtsMainController.authorisedAtsMain,
+    "breadcrumbs.taxs.summary"           -> controllers.routes.SummaryController.authorisedSummaries,
+    "breadcrumbs.taxs.nics"              -> controllers.routes.NicsController.authorisedNics,
     "breadcrumbs.taxs.treasury_spending" -> controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData,
     "breadcrumbs.taxs.income_before_tax" -> controllers.routes.IncomeController.authorisedIncomeBeforeTax,
-    "breadcrumbs.taxs.tax_free_amount" -> controllers.routes.AllowancesController.authorisedAllowance,
-    "breadcrumbs.taxs.total_income_tax" -> controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax,
+    "breadcrumbs.taxs.tax_free_amount"   -> controllers.routes.AllowancesController.authorisedAllowance,
+    "breadcrumbs.taxs.total_income_tax"  -> controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax,
     "breadcrumbs.taxs.capital_gains_tax" -> controllers.routes.CapitalGainsTaxController.authorisedCapitalGains,
-    "breadcrumbs.taxs.select_tax_year" -> controllers.routes.IndexController.authorisedIndex)
+    "breadcrumbs.taxs.select_tax_year"   -> controllers.routes.IndexController.authorisedIndex
+  )
 
   def getLink(key: String) = links.get(key)
 }
