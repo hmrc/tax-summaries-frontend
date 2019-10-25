@@ -40,16 +40,17 @@ import scala.concurrent.Future
 class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val taxYear  =2014
+  val taxYear = 2014
   val baseModel = SummaryControllerTest.baseModel
-  val request = FakeRequest("GET",s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val request = FakeRequest("GET", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET", "?taxYear=20145")
 
   trait TestController extends AtsMainController {
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(baseModel))
 
   }
 
@@ -64,10 +65,11 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
   "Calling Index Page with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.index.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
@@ -79,7 +81,8 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
@@ -96,12 +99,16 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
       status(result) shouldBe 200
       document.getElementById("tax-calc-link").text shouldBe "Your income and taxes"
       document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
-      document.getElementById("index-page-header").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your annual tax summary"
-      document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
+      document
+        .getElementById("index-page-header")
+        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your annual tax summary"
+      document
+        .getElementById("index-page-description")
+        .text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
       document.getElementById("tax-calc-link").tagName shouldBe "a"
       document.getElementById("tax-services-link").tagName shouldBe "a"
       document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "display the right years" in new TestController {
@@ -110,7 +117,8 @@ class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         year = 2015
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))

@@ -41,8 +41,8 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val taxYear = 2014
-  val request = FakeRequest("GET",s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val request = FakeRequest("GET", s"?taxYear=$taxYear")
+  val badRequest = FakeRequest("GET", "?taxYear=20145")
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,
@@ -73,8 +73,10 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
-
+    when(
+      capitalGainsService
+        .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(baseModel))
 
   }
 
@@ -90,10 +92,14 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
   "Calling Capital Gains with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.capital_gains_tax.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.capital_gains_tax.html.title") + Messages(
+          "generic.to_from",
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "display an error page for an invalid request " in new TestController {
@@ -104,7 +110,10 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -122,7 +131,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       document.getElementById("tax-period").text() shouldBe "2013 to 2014"
       document.getElementById("total-cg-tax-rate").text() shouldBe "12.34%"
       document.getElementById("user-info").text() should include("forename surname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Capital Gains Tax"
     }
 
@@ -143,7 +152,10 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         taxableGains = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -178,13 +190,16 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model3))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("entrepreneurs-relief-rate-section") should be(null)
     }
 
@@ -194,13 +209,16 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model4))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("ordinary-rate-section") should be(null)
     }
 
@@ -210,13 +228,16 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model5))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("upper-rate-section") should be(null)
     }
 
@@ -244,16 +265,19 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model6))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("adjustments-section") should be(null)
     }
-    
+
     "show capital gains description if total capital gains tax is not 0" in new TestController {
 
       val result = Future.successful(show(user, request))
@@ -262,19 +286,22 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       document.getElementById("total-cg-description") should not be null
       document.getElementById("total-cg-tax-rate").text() should equal("12.34%")
     }
-    
+
     "hide capital gains description if total capital gains tax is 0" in new TestController {
 
       val model7 = baseModel.copy(
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(
+        capitalGainsService
+          .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model7))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("total-cg-description") should be(null)
     }
 
@@ -289,13 +316,16 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Capital Gains Tax</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include(
+        "<strong>Capital Gains Tax</strong>")
     }
   }
 }

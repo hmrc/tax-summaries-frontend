@@ -20,9 +20,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import controllers.FakeTaxsPlayApplication
 
-
-
-class AmountTest extends UnitSpec with FakeTaxsPlayApplication  {
+class AmountTest extends UnitSpec with FakeTaxsPlayApplication {
   "Amount" should {
 
     "not change constructor parameter values" in {
@@ -60,7 +58,7 @@ class AmountTest extends UnitSpec with FakeTaxsPlayApplication  {
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toCreditString shouldEqual "1,001"
     }
-    
+
     "produce correct inverse amount" in {
       val testValue: BigDecimal = 1000.00
       val testCurrency: String = "GBP"

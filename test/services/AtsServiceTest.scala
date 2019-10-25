@@ -24,13 +24,13 @@ import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{Uar, SaUtr}
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AuthorityUtils}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import utils.TestConstants._
 import utils.JsonUtil._
@@ -72,7 +72,8 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
+      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(data)))
       when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
       val result = getAts(2014)
@@ -81,7 +82,8 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
         result shouldBe data
       }
 
-      verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+      verify(auditService, never())
+        .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
       verify(dataCache, never()).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -93,7 +95,8 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
+      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(data)))
       when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
       val result = getAts(2014)
@@ -101,7 +104,8 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
       whenReady(result) { result =>
         result shouldBe data
       }
-      verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+      verify(auditService, times(1))
+        .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
       verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -113,15 +117,18 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-      when(middleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(data)))
+      when(middleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(data))
 
       val result = getAts(2014)
 
       whenReady(result) { result =>
         result shouldBe data
       }
-      verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+      verify(auditService, times(1))
+        .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
       verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -133,7 +140,8 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
       when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
-      verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+      verify(auditService, never())
+        .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
       verify(dataCache, never()).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
     }
   }

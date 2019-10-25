@@ -27,13 +27,11 @@ trait JsonUtil {
 
   lazy val dummyDataMap = Map("$utr" -> testUtr)
 
-  def load(path: String): String = {
+  def load(path: String): String =
     Source.fromURL(getClass.getResource(path)).mkString
-  }
 
-  def loadAndParseJsonWithDummyData(path: String): JsValue = {
+  def loadAndParseJsonWithDummyData(path: String): JsValue =
     Json.parse(loadAndReplace(path, dummyDataMap))
-  }
 
   def loadAndReplace(path: String, replaceMap: Map[String, String]): String = {
     var jsonString = Source.fromURL(getClass.getResource(path)).mkString
