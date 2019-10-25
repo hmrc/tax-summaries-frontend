@@ -34,14 +34,15 @@ trait CapitalGainsService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getCapitalGains(taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getCapitalGains(
+    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
     atsService.createModel(taxYear, capitalGains)
-  }
 
   private def capitalGains: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.capital_gains_data.get
-      CapitalGains(output.taxYear,
+      CapitalGains(
+        output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("taxable_gains").get,
         wrapper.payload.get.get("less_tax_free_amount").get,

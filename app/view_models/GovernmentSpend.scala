@@ -19,10 +19,19 @@ package view_models
 import models.SpendData
 import utils.GenericViewModel
 
-case class GovernmentSpend(taxYear: Int, userUtr: String, govSpendAmountData: List[(String, SpendData)],
-                      userTitle: String, userForename: String, userSurname: String, totalAmount: Amount, incomeTaxStatus: String, scottishIncomeTax: Amount) extends GenericViewModel {
+case class GovernmentSpend(
+  taxYear: Int,
+  userUtr: String,
+  govSpendAmountData: List[(String, SpendData)],
+  userTitle: String,
+  userForename: String,
+  userSurname: String,
+  totalAmount: Amount,
+  incomeTaxStatus: String,
+  scottishIncomeTax: Amount)
+    extends GenericViewModel {
 
-  def taxYearInterval = (taxYear-1).toString + "-" + taxYear.toString.substring(2)
-  def taxYearFrom = (taxYear -1).toString
+  def taxYearInterval = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
+  def taxYearFrom = (taxYear - 1).toString
   def taxYearTo = taxYear.toString
 }

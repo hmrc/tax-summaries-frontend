@@ -18,38 +18,40 @@ package view_models
 
 import utils.GenericViewModel
 
-case class TotalIncomeTax(year: Int,
-                      utr: String,
-                      startingRateForSavings: Amount,
-                      startingRateForSavingsAmount: Amount,
-                      basicRateIncomeTax: Amount,
-                      basicRateIncomeTaxAmount: Amount,
-                      higherRateIncomeTax: Amount,
-                      higherRateIncomeTaxAmount: Amount,
-                      additionalRateIncomeTax: Amount,
-                      additionalRateIncomeTaxAmount: Amount,
-                      ordinaryRate: Amount,
-                      ordinaryRateAmount: Amount,
-                      upperRate: Amount,
-                      upperRateAmount: Amount,
-                      additionalRate: Amount,
-                      additionalRateAmount: Amount,
-                      otherAdjustmentsIncreasing: Amount,
-                      marriageAllowanceReceivedAmount: Amount,
-                      otherAdjustmentsReducing: Amount,
-                      totalIncomeTax: Amount,
-                      scottishIncomeTax: Amount,
-                      incomeTaxStatus: String,
-                      startingRateForSavingsRateRate: Rate,
-                      basicRateIncomeTaxRateRate: Rate,
-                      higherRateIncomeTaxRateRate: Rate,
-                      additionalRateIncomeTaxRateRate: Rate,
-                      ordinaryRateTaxRateRate: Rate,
-                      upperRateRateRate: Rate,
-                      additionalRateRateRate: Rate,
-                      title: String,
-                      forename: String,
-                      surname: String)  extends GenericViewModel  {
+case class TotalIncomeTax(
+  year: Int,
+  utr: String,
+  startingRateForSavings: Amount,
+  startingRateForSavingsAmount: Amount,
+  basicRateIncomeTax: Amount,
+  basicRateIncomeTaxAmount: Amount,
+  higherRateIncomeTax: Amount,
+  higherRateIncomeTaxAmount: Amount,
+  additionalRateIncomeTax: Amount,
+  additionalRateIncomeTaxAmount: Amount,
+  ordinaryRate: Amount,
+  ordinaryRateAmount: Amount,
+  upperRate: Amount,
+  upperRateAmount: Amount,
+  additionalRate: Amount,
+  additionalRateAmount: Amount,
+  otherAdjustmentsIncreasing: Amount,
+  marriageAllowanceReceivedAmount: Amount,
+  otherAdjustmentsReducing: Amount,
+  totalIncomeTax: Amount,
+  scottishIncomeTax: Amount,
+  incomeTaxStatus: String,
+  startingRateForSavingsRateRate: Rate,
+  basicRateIncomeTaxRateRate: Rate,
+  higherRateIncomeTaxRateRate: Rate,
+  additionalRateIncomeTaxRateRate: Rate,
+  ordinaryRateTaxRateRate: Rate,
+  upperRateRateRate: Rate,
+  additionalRateRateRate: Rate,
+  title: String,
+  forename: String,
+  surname: String)
+    extends GenericViewModel {
   def taxYear = year.toString
 
   def startingRateForSavingsRate = startingRateForSavingsRateRate.percent
@@ -59,5 +61,5 @@ case class TotalIncomeTax(year: Int,
   def ordinaryRateTaxRate = ordinaryRateTaxRateRate.percent
   def upperRateRate = upperRateRateRate.percent
   def additionalRateRate = additionalRateRateRate.percent
-  def taxYearFrom = (year-1).toString
+  def taxYearFrom = (year - 1).toString
 }

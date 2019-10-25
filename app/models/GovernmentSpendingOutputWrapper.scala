@@ -19,7 +19,11 @@ package models
 import play.api.libs.json.Json
 import view_models.Amount
 
-case class GovernmentSpendingOutputWrapper(taxYear: Int, govSpendAmountData: Option[Map[String, SpendData]], totalAmount: Amount, errors: Option[List[String]])
+case class GovernmentSpendingOutputWrapper(
+  taxYear: Int,
+  govSpendAmountData: Option[Map[String, SpendData]],
+  totalAmount: Amount,
+  errors: Option[List[String]])
 
 object GovernmentSpendingOutputWrapper {
   implicit val formats = Json.format[GovernmentSpendingOutputWrapper]

@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.{TAXSAuthConnector, TAXSAuditConnector}
+import config.{TAXSAuditConnector, TAXSAuthConnector}
 
 trait AuthenticationConnector {
   lazy val auditConnector = TAXSAuditConnector

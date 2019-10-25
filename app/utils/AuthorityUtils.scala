@@ -18,7 +18,7 @@ package utils
 
 import services.{AgentToken, CryptoService}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User, NonNegotiableIdentityConfidencePredicate}
-import uk.gov.hmrc.domain.{Uar, SaUtr}
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 
 object AuthorityUtils extends AuthorityUtils
@@ -49,7 +49,7 @@ trait AuthorityUtils {
       ),
       None,
       None,
-      CredentialStrength.Weak,////this class may need to be refactored as these methods are only used in test only
+      CredentialStrength.Weak, ////this class may need to be refactored as these methods are only used in test only
       ConfidenceLevel.L50,
       None,
       None,
@@ -57,7 +57,7 @@ trait AuthorityUtils {
       ""
     )
 
-  def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit user: User): Boolean = {
+  def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit user: User): Boolean =
     (AccountUtils.getAccount(user), agentToken) match {
       case (agentAccount, None) if (AccountUtils.isAgent(user)) =>
         true
@@ -66,13 +66,11 @@ trait AuthorityUtils {
       case (account: SaAccount, _) =>
         SaUtr(utr) == account.utr
     }
-  }
 
-  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit user: User): Boolean = {
+  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit user: User): Boolean =
     utr.fold { false } { checkUtr(_, agentToken) }
-  }
 
-  def getRequestedUtr(account: Account, agentToken: Option[AgentToken] = None): SaUtr = {
+  def getRequestedUtr(account: Account, agentToken: Option[AgentToken] = None): SaUtr =
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
       case taxsAgent: TaxSummariesAgentAccount =>
@@ -87,5 +85,4 @@ trait AuthorityUtils {
         }
       case sa: SaAccount => sa.utr
     }
-  }
 }

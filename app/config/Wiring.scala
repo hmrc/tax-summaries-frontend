@@ -68,7 +68,8 @@ object TAXSLoggingFilter extends FrontendLoggingFilter with MicroserviceFilterSu
     TAXSControllerConfig.paramsForController(controllerName).needsLogging
 }
 
-trait WSHttp extends WSGet with HttpGet with WSPut with HttpPut with WSPost with HttpPost with WSDelete with HttpDelete{
+trait WSHttp
+    extends WSGet with HttpGet with WSPut with HttpPut with WSPost with HttpPost with WSDelete with HttpDelete {
   protected def appNameConfiguration: Configuration = Play.current.configuration
 
   override protected def actorSystem: ActorSystem = Play.current.actorSystem
@@ -90,7 +91,7 @@ object WSGet extends WSGet with HttpGet with AppName {
 }
 
 object CachedStaticHtmlPartialProvider extends CachedStaticHtmlPartialRetriever {
- override def httpGet: CoreGet = WSGet
+  override def httpGet: CoreGet = WSGet
 }
 
 object TAXSSessionCache extends SessionCache with AppName {
@@ -102,6 +103,6 @@ object TAXSSessionCache extends SessionCache with AppName {
   override protected def appNameConfiguration: Configuration = Play.current.configuration
 }
 
-object  TAXSSessionCookieCrypto {
+object TAXSSessionCookieCrypto {
   val crypto = new ApplicationCrypto(Play.current.configuration.underlying).SessionCookieCrypto
 }

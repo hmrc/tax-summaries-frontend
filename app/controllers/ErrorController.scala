@@ -30,23 +30,19 @@ object ErrorController extends ErrorController {
   override val formPartialRetriever = AppFormPartialRetriever
 }
 
-trait ErrorController extends FrontendController
-        with Actions
-        with AccountUtils
-        with AuthenticationConnector {
+trait ErrorController extends FrontendController with Actions with AccountUtils with AuthenticationConnector {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
-  def authorisedNoAts = AuthorisedFor(TaxSummariesRegime, GGConfidence) {
-    implicit user => implicit request => noAts
-  }
-  
-  def notAuthorised = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) {
-    implicit user => implicit request => Ok(views.html.errors.not_authorised())
+  def authorisedNoAts = AuthorisedFor(TaxSummariesRegime, GGConfidence) { implicit user => implicit request =>
+    noAts
   }
 
-  def noAts(implicit user: User, request: Request[AnyRef]): Result = {
-    Ok(views.html.errors.no_ats_error())
+  def notAuthorised = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) { implicit user => implicit request =>
+    Ok(views.html.errors.not_authorised())
   }
+
+  def noAts(implicit user: User, request: Request[AnyRef]): Result =
+    Ok(views.html.errors.no_ats_error())
 
 }

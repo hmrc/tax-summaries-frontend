@@ -28,7 +28,6 @@ import play.api.Play.current
 import uk.gov.hmrc.play.frontend.filters.{FrontendAuditFilter, FrontendLoggingFilter}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-
 object ApplicationGlobal extends DefaultFrontendGlobal {
 
   override lazy val auditConnector: AuditConnector = TAXSAuditConnector
@@ -39,12 +38,12 @@ object ApplicationGlobal extends DefaultFrontendGlobal {
 
   override def onStart(app: Application) {
     super.onStart(app)
-    new ApplicationCrypto ( Play .current.configuration.underlying) .verifyConfiguration()
+    new ApplicationCrypto(Play.current.configuration.underlying).verifyConfiguration()
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
+    implicit request: Request[_]): Html =
     views.html.errors.error_template(pageTitle, heading, message)
-
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
     app.configuration.getConfig(s"microservice.metrics")

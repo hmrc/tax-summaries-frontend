@@ -20,44 +20,53 @@ import utils.validation.ConstraintUtil.{FieldFormatConstraintParameter, FieldIsE
 import utils.validation.ErrorMessageFactory._
 import play.api.data.validation.Valid
 
-
 object ErrorMessagesUtilAPI {
 
   val simpleErrorMessage = (fieldId: String, msgId: String) =>
     createErrorMessage(
       TargetFieldIds(fieldId),
       FieldErrorConfig(msgId)
-    )
+  )
 
-  val simpleCrossFieldErrorMessage = (ids:TargetFieldIds, msgId: String) =>
+  val simpleCrossFieldErrorMessage = (ids: TargetFieldIds, msgId: String) =>
     createErrorMessage(
       ids,
       FieldErrorConfig(msgId)
-    )
+  )
 
   def simpleFieldIsEmptyConstraintParameter(fieldId: String, msgId: String): FieldIsEmptyConstraintParameter =
     FieldIsEmptyConstraintParameter(simpleErrorMessage(fieldId, msgId))
 
-
-  def genericInvalidFormatConstraintParameter(validationFunction: (String) => Boolean, fieldId: String, fieldNameInErrorMessage: String, errorMsg: String = "generic.error.character_invalid"): Seq[FieldFormatConstraintParameter] =
+  def genericInvalidFormatConstraintParameter(
+    validationFunction: (String) => Boolean,
+    fieldId: String,
+    fieldNameInErrorMessage: String,
+    errorMsg: String = "generic.error.character_invalid"): Seq[FieldFormatConstraintParameter] =
     Seq[FieldFormatConstraintParameter](
       FieldFormatConstraintParameter(
-        (name: String) => validationFunction(name) match {
-          case true =>
-            Valid
-          case false =>
-            createErrorMessage(
-              TargetFieldIds(fieldId),
-              FieldErrorConfig(errorMsg),
-              SummaryErrorConfig(MessageArguments(fieldNameInErrorMessage)))
+        (name: String) =>
+          validationFunction(name) match {
+            case true =>
+              Valid
+            case false =>
+              createErrorMessage(
+                TargetFieldIds(fieldId),
+                FieldErrorConfig(errorMsg),
+                SummaryErrorConfig(MessageArguments(fieldNameInErrorMessage)))
         }
       )
     )
 
-  def genericFieldMaxLengthConstraintParameter(maxLen: Int, fieldId: String, fieldNameInErrorMessage: String): FieldMaxLengthConstraintParameter =
-    FieldMaxLengthConstraintParameter(maxLen,
-      createErrorMessage(TargetFieldIds(fieldId),
-        FieldErrorConfig("generic.error.maximum_length",
-          MessageArguments(fieldNameInErrorMessage, maxLen)),
-        SummaryErrorConfig(MessageArguments(fieldNameInErrorMessage))))
+  def genericFieldMaxLengthConstraintParameter(
+    maxLen: Int,
+    fieldId: String,
+    fieldNameInErrorMessage: String): FieldMaxLengthConstraintParameter =
+    FieldMaxLengthConstraintParameter(
+      maxLen,
+      createErrorMessage(
+        TargetFieldIds(fieldId),
+        FieldErrorConfig("generic.error.maximum_length", MessageArguments(fieldNameInErrorMessage, maxLen)),
+        SummaryErrorConfig(MessageArguments(fieldNameInErrorMessage))
+      )
+    )
 }

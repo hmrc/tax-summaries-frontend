@@ -49,9 +49,8 @@ trait TestUtilAPI {
     */
   def generateFieldTestDataInThisFormat(formatRequirements: DataFormat*): String = {
     require(formatRequirements.nonEmpty)
-    formatRequirements.foldLeft("") {
-      (x: String, format: DataFormat) =>
-        x + format.character.toString * format.repeat
+    formatRequirements.foldLeft("") { (x: String, format: DataFormat) =>
+      x + format.character.toString * format.repeat
     }
   }
 
@@ -97,7 +96,6 @@ trait TestUtilAPI {
   def generateFormTestData(fieldId: String, dataValue: String): Map[String, String] =
     Map(fieldId -> dataValue)
 
-
   /**
     * generateFormTestData is used to aid the generation of test data for a form
     *
@@ -123,9 +121,11 @@ trait TestUtilAPI {
     * @param dataValue    the value to be set for all of the new data fields
     * @return the new test data with (fieldId1 -> dataValue) + (fieldId2 -> dataValue) ...(fieldIdN -> dataValue) appended to the preCondition
     */
-  def generateFormTestData(preCondition: Map[String, String], fieldIds: Set[String], dataValue: String): Map[String, String] =
+  def generateFormTestData(
+    preCondition: Map[String, String],
+    fieldIds: Set[String],
+    dataValue: String): Map[String, String] =
     fieldIds.foldLeft(preCondition)((map, fieldId) => map + (fieldId -> dataValue))
-
 
   /**
     * generateFormTestData is used to aid the generation of test data for a form

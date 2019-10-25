@@ -34,15 +34,15 @@ trait IncomeService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getIncomeData(taxYear:Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getIncomeData(
+    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
     atsService.createModel(taxYear, createIncomeConverter)
-  }
 
-  private def createIncomeConverter:
-  (AtsData => GenericViewModel) =
+  private def createIncomeConverter: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.income_data.get
-      IncomeBeforeTax(output.taxYear,
+      IncomeBeforeTax(
+        output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("self_employment_income").get,
         wrapper.payload.get.get("income_from_employment").get,

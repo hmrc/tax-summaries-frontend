@@ -3,6 +3,7 @@ import sbt._
 import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.scalafmtOnCompile
 import play.sbt.routes.RoutesKeys.routesGenerator
 
 trait MicroService {
@@ -45,6 +46,7 @@ trait MicroService {
       majorVersion := 1,
       libraryDependencies ++= appDependencies,
       retrieveManaged := true,
+      scalafmtOnCompile := true,
       evictionWarningOptions in update :=
         EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
         routesGenerator := StaticRoutesGenerator

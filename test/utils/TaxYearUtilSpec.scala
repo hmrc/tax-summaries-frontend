@@ -27,7 +27,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
       val taxYear = 2019
 
-      implicit val request = FakeRequest("GET","?taxYear=2019")
+      implicit val request = FakeRequest("GET", "?taxYear=2019")
 
       val result = TaxYearUtil.extractTaxYear
 
@@ -72,10 +72,8 @@ class TaxYearUtilSpec extends UnitSpec {
 
         result shouldBe Left(InvalidTaxYear)
       }
-      
+
     }
-
-
 
   }
 

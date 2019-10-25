@@ -53,10 +53,8 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
       case true  => errorMessageWhenEmpty
     }
 
-  val testModelMapping = mapping(
-    "field1" -> text,
-    "field2" -> text,
-    "field3" -> text)(TestModel.apply)(TestModel.unapply)
+  val testModelMapping =
+    mapping("field1" -> text, "field2" -> text, "field3" -> text)(TestModel.apply)(TestModel.unapply)
 
   "The Message Handler" should {
 
@@ -203,7 +201,7 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
         summary.msgArgs shouldBe testVarparam
       }
 
-      "empty strings used in field error message" in{
+      "empty strings used in field error message" in {
         //setup
         val testMessage = createErrorMessage(singleId, FieldErrorConfig("empty", testEmptyVarparam))
         val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
@@ -217,7 +215,7 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
         field1Error.msgArgs shouldBe testEmptyVarparam
       }
 
-      "empty strings used in summary error message" in{
+      "empty strings used in summary error message" in {
         //setup
         val testMessage = createErrorMessage(singleId, simpleFieldMessage, SummaryErrorConfig(testEmptyVarparam))
         val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
@@ -275,7 +273,9 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
       "nested usage in field error message " in {
         val msgKey = "empty"
         val embeddedArgs = MessageArguments("hello", 2, "world")
-        val embeddedMessage = EmbeddedMessage("testkey2", MessageArguments(EmbeddedMessage("testkey2", embeddedArgs), EmbeddedMessage("testkey2", embeddedArgs)))
+        val embeddedMessage = EmbeddedMessage(
+          "testkey2",
+          MessageArguments(EmbeddedMessage("testkey2", embeddedArgs), EmbeddedMessage("testkey2", embeddedArgs)))
         val testVarparam = MessageArguments(embeddedMessage, embeddedMessage)
         val testMessage = createErrorMessage(singleId, FieldErrorConfig(msgKey, testVarparam))
         val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
@@ -315,7 +315,8 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
           val embeddedArgs = MessageArguments("hello", 2, "world")
           val embeddedMessage = EmbeddedMessage("testkey2", embeddedArgs)
           val testVarparam = MessageArguments(embeddedMessage)
-          val testMessage = createErrorMessage(singleId, FieldErrorConfig("test"), SummaryErrorConfig(msgKey, testVarparam))
+          val testMessage =
+            createErrorMessage(singleId, FieldErrorConfig("test"), SummaryErrorConfig(msgKey, testVarparam))
           val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
 
           // execute process
@@ -354,7 +355,8 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
           val embeddedArgs = MessageArguments("hello", 2, "world")
           val embeddedMessage = EmbeddedMessage("testkey2", embeddedArgs)
           val testVarparam = MessageArguments(embeddedMessage, embeddedMessage)
-          val testMessage = createErrorMessage(singleId, FieldErrorConfig("test"), SummaryErrorConfig(msgKey, testVarparam))
+          val testMessage =
+            createErrorMessage(singleId, FieldErrorConfig("test"), SummaryErrorConfig(msgKey, testVarparam))
           val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
 
           // execute process
@@ -373,7 +375,9 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
         "the default summary key is assumed" in {
           val msgKey = "empty"
           val embeddedArgs = MessageArguments("hello", 2, "world")
-          val embeddedMessage = EmbeddedMessage("testkey2", MessageArguments(EmbeddedMessage("testkey2", embeddedArgs), EmbeddedMessage("testkey2", embeddedArgs)))
+          val embeddedMessage = EmbeddedMessage(
+            "testkey2",
+            MessageArguments(EmbeddedMessage("testkey2", embeddedArgs), EmbeddedMessage("testkey2", embeddedArgs)))
           val testVarparam = MessageArguments(embeddedMessage, embeddedMessage)
           val testMessage = createErrorMessage(singleId, FieldErrorConfig(msgKey), SummaryErrorConfig(testVarparam))
           val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
@@ -392,9 +396,12 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
         "there is a specified summary key" in {
           val msgKey = "empty"
           val embeddedArgs = MessageArguments("hello", 2, "world")
-          val embeddedMessage = EmbeddedMessage("testkey2", MessageArguments(EmbeddedMessage("testkey2", embeddedArgs), EmbeddedMessage("testkey2", embeddedArgs)))
+          val embeddedMessage = EmbeddedMessage(
+            "testkey2",
+            MessageArguments(EmbeddedMessage("testkey2", embeddedArgs), EmbeddedMessage("testkey2", embeddedArgs)))
           val testVarparam = MessageArguments(embeddedMessage, embeddedMessage)
-          val testMessage = createErrorMessage(singleId, FieldErrorConfig("test"), SummaryErrorConfig(msgKey, testVarparam))
+          val testMessage =
+            createErrorMessage(singleId, FieldErrorConfig("test"), SummaryErrorConfig(msgKey, testVarparam))
           val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
 
           // execute process
@@ -417,7 +424,8 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
           val embeddedArgs = MessageArguments("hello", innerembeddedMessage, "world")
           val embeddedMessage = EmbeddedMessage("testkey2", embeddedArgs)
           val testVarparam = MessageArguments(embeddedMessage, embeddedMessage, innerembeddedMessage)
-          val testMessage = createErrorMessage(singleId, FieldErrorConfig(msgKey, testVarparam), SummaryErrorConfig(testVarparam))
+          val testMessage =
+            createErrorMessage(singleId, FieldErrorConfig(msgKey, testVarparam), SummaryErrorConfig(testVarparam))
           val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
 
           // execute process
@@ -427,7 +435,10 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
           val summarys: Seq[SummaryError] = getSummaryErrors(formWithErrors)
           val summary: SummaryError = summarys.head
           summary.msgKey shouldBe defaultSummaryId(msgKey)
-          summary.msgArgs shouldBe MessageArguments(messageLookup(embeddedMessage), messageLookup(embeddedMessage), messageLookup(innerembeddedMessage))
+          summary.msgArgs shouldBe MessageArguments(
+            messageLookup(embeddedMessage),
+            messageLookup(embeddedMessage),
+            messageLookup(innerembeddedMessage))
           summary.anchor shouldBe singleId.anchor
         }
 
@@ -438,7 +449,10 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
           val embeddedArgs = MessageArguments("hello", innerembeddedMessage, "world")
           val embeddedMessage = EmbeddedMessage("testkey2", embeddedArgs)
           val testVarparam = MessageArguments(embeddedMessage, embeddedMessage, innerembeddedMessage)
-          val testMessage = createErrorMessage(singleId, FieldErrorConfig(msgKey, testVarparam), SummaryErrorConfig(msgKey, testVarparam))
+          val testMessage = createErrorMessage(
+            singleId,
+            FieldErrorConfig(msgKey, testVarparam),
+            SummaryErrorConfig(msgKey, testVarparam))
           val testModelForm = specifyField1IsEmptyErrorMessage(testMessage)
 
           // execute process
@@ -449,7 +463,10 @@ class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSui
           val summary: SummaryError = summarys.head
           summary.msgKey shouldBe msgKey
           val temp = messageLookup(embeddedMessage)
-          summary.msgArgs shouldBe MessageArguments(messageLookup(embeddedMessage), messageLookup(embeddedMessage), messageLookup(innerembeddedMessage))
+          summary.msgArgs shouldBe MessageArguments(
+            messageLookup(embeddedMessage),
+            messageLookup(embeddedMessage),
+            messageLookup(innerembeddedMessage))
           summary.anchor shouldBe singleId.anchor
         }
       }

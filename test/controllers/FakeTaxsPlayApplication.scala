@@ -20,14 +20,14 @@ import org.scalatest.Suite
 import play.api.test.FakeApplication
 import uk.gov.hmrc.play.test.WithFakeApplication
 
-trait FakeTaxsPlayApplication  extends WithFakeApplication {
+trait FakeTaxsPlayApplication extends WithFakeApplication {
   this: Suite =>
 
-  val config : Map[String, _] = Map(
+  val config: Map[String, _] = Map(
     "Test.microservice.services.contact-frontend.host" -> "localhost",
     "Test.microservice.services.contact-frontend.port" -> "9250",
-    "Test.microservice.services.auditing.host" -> "localhost",
-    "Test.microservice.services.auditing.port" -> "8100"
+    "Test.microservice.services.auditing.host"         -> "localhost",
+    "Test.microservice.services.auditing.port"         -> "8100"
   )
 
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = config)

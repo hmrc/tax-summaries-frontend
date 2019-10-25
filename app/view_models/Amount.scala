@@ -23,8 +23,11 @@ import play.api.libs.json.Json
 
 case class Amount(amount: BigDecimal, currency: String) {
 
-  private def format(decimalNumber: Int, roundingMode: BigDecimal.RoundingMode.Value, setMinFractionDigits: Int = 0,
-                     amount: BigDecimal = this.amount) = {
+  private def format(
+    decimalNumber: Int,
+    roundingMode: BigDecimal.RoundingMode.Value,
+    setMinFractionDigits: Int = 0,
+    amount: BigDecimal = this.amount) = {
     val formatter = NumberFormat.getNumberInstance(Locale.UK)
     formatter.setMinimumFractionDigits(decimalNumber)
     formatter.format(amount.setScale(decimalNumber, roundingMode))
@@ -38,7 +41,7 @@ case class Amount(amount: BigDecimal, currency: String) {
 
   def toTwoDecimalString = format(2, BigDecimal.RoundingMode.DOWN, 2)
 
-  def toHundredthsString = format(2, BigDecimal.RoundingMode.DOWN, amount = amount*100)
+  def toHundredthsString = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 
   def unary_-(): Amount = copy(amount = -this.amount)
 }

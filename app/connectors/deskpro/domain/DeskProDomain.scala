@@ -21,20 +21,20 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import play.api.mvc.Request
 import uk.gov.hmrc.domain._
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.http.{ HeaderCarrier, SessionKeys }
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
-case class Ticket private(name: String,
-                          email: String,
-                          subject: String,
-                          message: String,
-                          referrer: String,
-                          javascriptEnabled: String,
-                          userAgent: String,
-                          authId: String,
-                          areaOfTax: String,
-                          sessionId: String,
-                          userTaxIdentifiers: UserTaxIdentifiers)
-
+case class Ticket private (
+  name: String,
+  email: String,
+  subject: String,
+  message: String,
+  referrer: String,
+  javascriptEnabled: String,
+  userAgent: String,
+  authId: String,
+  areaOfTax: String,
+  sessionId: String,
+  userTaxIdentifiers: UserTaxIdentifiers)
 
 object UserTaxIdentifiers {
   implicit val formats = Json.format[UserTaxIdentifiers]
@@ -44,7 +44,16 @@ object Ticket extends FieldTransformer {
 
   implicit val formats = Json.format[Ticket]
 
-  def create(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, hc: HeaderCarrier, request: Request[AnyRef], accountsOption: Option[Accounts]): Ticket =
+  def create(
+    name: String,
+    email: String,
+    subject: String,
+    message: String,
+    referrer: String,
+    isJavascript: Boolean,
+    hc: HeaderCarrier,
+    request: Request[AnyRef],
+    accountsOption: Option[Accounts]): Ticket =
     Ticket(
       name.trim,
       email,
@@ -56,7 +65,8 @@ object Ticket extends FieldTransformer {
       userIdFrom(request, hc),
       areaOfTaxOf(request),
       sessionIdFrom(hc),
-      userTaxIdentifiersFromAccounts(accountsOption))
+      userTaxIdentifiersFromAccounts(accountsOption)
+    )
 }
 
 object TicketId {
@@ -65,33 +75,42 @@ object TicketId {
 
 case class TicketId(ticket_id: Int)
 
+case class UserTaxIdentifiers(
+  nino: Option[Nino],
+  ctUtr: Option[CtUtr],
+  utr: Option[SaUtr],
+  vrn: Option[Vrn],
+  empRef: Option[EmpRef])
 
-case class UserTaxIdentifiers(nino: Option[Nino],
-                              ctUtr: Option[CtUtr],
-                              utr: Option[SaUtr],
-                              vrn: Option[Vrn],
-                              empRef: Option[EmpRef])
-
-
-case class Feedback(name: String,
-                    email: String,
-                    subject: String,
-                    rating: String,
-                    message: String,
-                    referrer: String,
-                    javascriptEnabled: String,
-                    userAgent: String,
-                    authId: String,
-                    areaOfTax: String,
-                    sessionId: String,
-                    userTaxIdentifiers: UserTaxIdentifiers)
-
+case class Feedback(
+  name: String,
+  email: String,
+  subject: String,
+  rating: String,
+  message: String,
+  referrer: String,
+  javascriptEnabled: String,
+  userAgent: String,
+  authId: String,
+  areaOfTax: String,
+  sessionId: String,
+  userTaxIdentifiers: UserTaxIdentifiers)
 
 object Feedback extends FieldTransformer {
 
   implicit val formats = Json.format[Feedback]
 
-  def create(name: String, email: String, rating: String, subject: String, message: String, referrer: String, isJavascript: Boolean, hc: HeaderCarrier, request: Request[AnyRef], user: Option[User]): Feedback =
+  def create(
+    name: String,
+    email: String,
+    rating: String,
+    subject: String,
+    message: String,
+    referrer: String,
+    isJavascript: Boolean,
+    hc: HeaderCarrier,
+    request: Request[AnyRef],
+    user: Option[User]): Feedback =
     Feedback(
       name.trim,
       email,
@@ -104,9 +123,9 @@ object Feedback extends FieldTransformer {
       userIdFrom(request, hc),
       areaOfTaxOf(request),
       sessionIdFrom(hc),
-      userTaxIdentifiersOf(user))
+      userTaxIdentifiersOf(user)
+    )
 }
-
 
 trait FieldTransformer {
   val NA = "n/a"
@@ -119,31 +138,31 @@ trait FieldTransformer {
     case Some("IDA") => "paye"
     case Some("GGW") => "biztax"
     case Some("NTC") => taxCreditRenewals
-    case _ => NA
+    case _           => NA
   }
 
-  def userIdFrom(request: Request[AnyRef], hc: HeaderCarrier): String = request.session.get(SessionKeys.sensitiveUserId) match {
-    case Some("true") => NA
-    case _ => hc.userId.map(_.value).getOrElse(NA)
-  }
+  def userIdFrom(request: Request[AnyRef], hc: HeaderCarrier): String =
+    request.session.get(SessionKeys.sensitiveUserId) match {
+      case Some("true") => NA
+      case _            => hc.userId.map(_.value).getOrElse(NA)
+    }
 
   def userAgentOf(request: Request[AnyRef]) = request.headers.get("User-Agent").getOrElse("n/a")
 
   def ynValueOf(javascript: Boolean) = if (javascript) "Y" else "N"
 
-  def userTaxIdentifiersOf(userOption: Option[User]) = {
+  def userTaxIdentifiersOf(userOption: Option[User]) =
     userTaxIdentifiersFromAccounts(userOption.map(_.principal.accounts))
-  }
 
-  def userTaxIdentifiersFromAccounts(accountsOption: Option[Accounts]) = {
-    accountsOption.map {
-      accounts =>
+  def userTaxIdentifiersFromAccounts(accountsOption: Option[Accounts]) =
+    accountsOption
+      .map { accounts =>
         val nino = accounts.paye.map(paye => paye.nino)
         val saUtr = accounts.sa.map(sa => sa.utr)
         val ctUtr = accounts.ct.map(ct => ct.utr)
         val vrn = accounts.vat.map(vat => vat.vrn)
         val empRef = accounts.epaye.map(epaye => epaye.empRef)
         UserTaxIdentifiers(nino, ctUtr, saUtr, vrn, empRef)
-    }.getOrElse(UserTaxIdentifiers(None, None, None, None, None))
-  }
+      }
+      .getOrElse(UserTaxIdentifiers(None, None, None, None, None))
 }

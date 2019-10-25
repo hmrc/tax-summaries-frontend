@@ -42,7 +42,7 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val taxYear = 2014
   val request = FakeRequest("Get", s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val badRequest = FakeRequest("GET", "?taxYear=20145")
   val baseModel = TotalIncomeTax(
     year = 2014,
     utr = testUtr,
@@ -84,7 +84,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     override lazy val auditService: AuditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+    when(
+      totalIncomeTaxService
+        .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(baseModel))
   }
 
   "Calling Total Income Tax with no session" should {
@@ -99,10 +102,14 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
   "Calling Total Income Tax with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.total_income_tax.income_tax")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.total_income_tax.income_tax") + Messages(
+          "generic.to_from",
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
@@ -113,7 +120,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -157,8 +167,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
-
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -178,7 +190,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model3))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -202,19 +217,22 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5) a").attr("href") should include("/annual-tax-summary/nics?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(5) a").text should include("Your Income Tax and National Insurance")
+      document.select("#global-breadcrumb li:nth-child(5) a").attr("href") should include(
+        "/annual-tax-summary/nics?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(5) a").text should include(
+        "Your Income Tax and National Insurance")
 
       document.select("#global-breadcrumb li:nth-child(6)").toString should include("<strong>Income Tax</strong>")
     }
   }
-
 
   "Dividends section" should {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in new TestController {
@@ -245,7 +263,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         additionalRate = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model4))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -258,7 +279,6 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
       document.toString should not include "additional-rate-row"
     }
 
-
     "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in new TestController {
 
       val model5 = baseModel.copy(
@@ -266,7 +286,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         additionalRate = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model5))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -293,14 +316,16 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
       document.getElementById("other-adjustments-reducing-amount").text() should equal("minus £20 -£20")
     }
 
-
     "hide other adjustments increasing your tax section if the amount is 0.00" in new TestController {
 
       val model6 = baseModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model6))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -317,7 +342,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model7))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -334,7 +362,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model8))
 
       val result = Future.successful(show(user, request))
       status(result) shouldBe 200
@@ -354,7 +385,10 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
         totalIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model9))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -363,6 +397,5 @@ class TotalIncomeTaxControllerTest extends UnitSpec with FakeTaxsPlayApplication
     }
 
   }
-
 
 }
