@@ -33,18 +33,17 @@ object AtsYearListService extends AtsYearListService {
 trait AtsYearListService {
   def atsListService: AtsListService
 
-  def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
     atsListService.createModel(atsList)
-  }
 
-  def storeSelectedAtsTaxYear(taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Int] = {
+  def storeSelectedAtsTaxYear(
+    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Int] =
     atsListService.storeSelectedTaxYear(taxYear)
-  }
-
 
   private def atsList: AtsListData => GenericViewModel =
     (output: AtsListData) => {
-      new AtsList(output.utr,
+      new AtsList(
+        output.utr,
         output.taxPayer.get.taxpayer_name.get("forename"),
         output.taxPayer.get.taxpayer_name.get("surname"),
         output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))

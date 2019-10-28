@@ -28,19 +28,18 @@ import scala.concurrent.Future
 
 trait TaxYearRequest extends TaxsController {
 
-  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
-    Future[Either[ErrorResponse, GenericViewModel]] = {
-      TaxYearUtil.extractTaxYear match {
-        case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
-        case Left(errorResponse) => Future.successful(Left(errorResponse))
+  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
+    TaxYearUtil.extractTaxYear match {
+      case Right(taxYear)      => genericViewModel(taxYear).map(Right(_))
+      case Left(errorResponse) => Future.successful(Left(errorResponse))
     }
-  }
 
-  def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] =
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
-      case Right(result: ViewModel) => obtainResult(result)
-      case Left(InvalidTaxYear) => BadRequest(views.html.errors.generic_error())
+      case Right(result: ViewModel)     => obtainResult(result)
+      case Left(InvalidTaxYear)         => BadRequest(views.html.errors.generic_error())
     }
-  }
 }

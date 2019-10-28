@@ -33,7 +33,7 @@ object CryptoService extends CryptoService {
 
 trait CryptoService {
 
-  def key : String
+  def key: String
   def tokenMaxAge: Int
 
   protected def aesCrypto = new AesCrypto {
@@ -48,14 +48,13 @@ trait CryptoService {
     validateTimestamp(agentToken)
   }
 
-  protected def decryptToken(token: String): PlainText = {
+  protected def decryptToken(token: String): PlainText =
     try {
       aesCrypto.decrypt(Crypted(token))
     } catch {
       case exception: Exception =>
         throw AgentTokenException("Cannot decrypt token: '" + token + "'", exception)
     }
-  }
 
   protected def parseToken(decryptedToken: String): AgentToken = {
     val tokenPattern = new Regex("\\w+:\\d{10}:\\d+")
@@ -75,7 +74,8 @@ trait CryptoService {
     val timeNow = new DateTime
 
     if (!validInterval.contains(timeNow)) {
-      throw AgentTokenException(s"Expired token. Time now : $timeNow valid interval : $validInterval timestamp : $timeStamp")
+      throw AgentTokenException(
+        s"Expired token. Time now : $timeNow valid interval : $validInterval timestamp : $timeStamp")
     }
 
     agentToken

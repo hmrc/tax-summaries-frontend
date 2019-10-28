@@ -41,7 +41,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
   val taxYear = 2014
   val request = FakeRequest("GET", s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val badRequest = FakeRequest("GET", "?taxYear=20145")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/summary_json_test.json"
 
@@ -72,8 +72,8 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       surname = "surname"
     )
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
-
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
   }
 
@@ -89,10 +89,11 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
   "Calling NICs with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.nics.tax_and_nics.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
@@ -104,7 +105,8 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
@@ -124,7 +126,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       document.getElementById("employee-nic-amount").text() shouldBe "£1,200"
       document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,400"
       document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "show 'Income Tax and NICs' page with a correct breadcrumb" in new TestController {
@@ -138,13 +140,16 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include(
+        "<strong>Your Income Tax and National Insurance</strong>")
     }
   }
 }

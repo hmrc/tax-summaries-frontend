@@ -28,7 +28,6 @@ import uk.gov.hmrc.play.frontend.filters.{FrontendAuditFilter, FrontendLoggingFi
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import play.api.i18n.Lang
 
-
 object ApplicationGlobal extends DefaultFrontendGlobal {
 
   private def lang(implicit request: Request[_]): Lang =
@@ -42,17 +41,17 @@ object ApplicationGlobal extends DefaultFrontendGlobal {
 
   override def onStart(app: Application) {
     super.onStart(app)
-    new ApplicationCrypto ( Play .current.configuration.underlying) .verifyConfiguration()
+    new ApplicationCrypto(Play.current.configuration.underlying).verifyConfiguration()
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
+    implicit request: Request[_]): Html =
     views.html.errors.error_template(pageTitle, heading, message)
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
     implicit val _: Lang = lang
     views.html.errors.page_not_found_template()
   }
-
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
     app.configuration.getConfig(s"microservice.metrics")

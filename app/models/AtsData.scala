@@ -21,9 +21,17 @@ import java.text.SimpleDateFormat
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
 
-case class AtsData(taxYear: Int, utr: Option[String], income_tax: Option[DataHolder], summary_data: Option[DataHolder],
-                         income_data: Option[DataHolder], allowance_data: Option[DataHolder], capital_gains_data: Option[DataHolder],
-                         gov_spending: Option[GovernmentSpendingOutputWrapper], taxPayerData: Option[UserData], errors: Option[IncomingAtsError])
+case class AtsData(
+  taxYear: Int,
+  utr: Option[String],
+  income_tax: Option[DataHolder],
+  summary_data: Option[DataHolder],
+  income_data: Option[DataHolder],
+  allowance_data: Option[DataHolder],
+  capital_gains_data: Option[DataHolder],
+  gov_spending: Option[GovernmentSpendingOutputWrapper],
+  taxPayerData: Option[UserData],
+  errors: Option[IncomingAtsError])
 
 object AtsData {
   implicit val formats = Json.format[AtsData]

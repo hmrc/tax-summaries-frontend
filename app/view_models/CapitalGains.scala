@@ -18,29 +18,31 @@ package view_models
 
 import utils.GenericViewModel
 
-case class CapitalGains(taxYear: Int,
-    utr: String,
-    taxableGains: Amount,
-    lessTaxFreeAmount: Amount,
-    payCgTaxOn: Amount,
-    entrepreneursReliefRateBefore: Amount,
-    entrepreneursReliefRateAmount: Amount,
-    ordinaryRateBefore: Amount,
-    ordinaryRateAmount: Amount,
-    upperRateBefore: Amount,
-    upperRateAmount: Amount,
-    adjustmentsAmount: Amount,
-    totalCapitalGainsTaxAmount: Amount,
-    cgTaxPerCurrencyUnit: Amount,
-    entrepreneursReliefRateRate: Rate,
-    ordinaryRateRate: Rate,
-    upperRateRate: Rate,
-    totalCgTaxRate: Rate,
-    title: String,
-    forename: String,
-    surname: String) extends GenericViewModel {
+case class CapitalGains(
+  taxYear: Int,
+  utr: String,
+  taxableGains: Amount,
+  lessTaxFreeAmount: Amount,
+  payCgTaxOn: Amount,
+  entrepreneursReliefRateBefore: Amount,
+  entrepreneursReliefRateAmount: Amount,
+  ordinaryRateBefore: Amount,
+  ordinaryRateAmount: Amount,
+  upperRateBefore: Amount,
+  upperRateAmount: Amount,
+  adjustmentsAmount: Amount,
+  totalCapitalGainsTaxAmount: Amount,
+  cgTaxPerCurrencyUnit: Amount,
+  entrepreneursReliefRateRate: Rate,
+  ordinaryRateRate: Rate,
+  upperRateRate: Rate,
+  totalCgTaxRate: Rate,
+  title: String,
+  forename: String,
+  surname: String)
+    extends GenericViewModel {
 
-  def taxYearFrom = (taxYear-1).toString
+  def taxYearFrom = (taxYear - 1).toString
   def taxYearTo = taxYear.toString
 
   def entrepreneursReliefRate = entrepreneursReliefRateRate.percent

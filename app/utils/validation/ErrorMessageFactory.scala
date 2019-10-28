@@ -29,6 +29,7 @@ import play.api.data.validation.Invalid
   *
   */
 trait ErrorMessageFactory {
+
   /**
     * This method is used to create a new Invalid instance with the specified summary error message
     * The summary error config do not need to include a message key, and if it does not then the default key will be
@@ -84,7 +85,6 @@ trait ErrorMessageFactory {
   def createErrorMessage(ids: TargetFieldIds, fieldMsg: FieldErrorConfig): Invalid
 }
 
-
 // used to create API supported Invalid instances that can then be used in form constraints
 object ErrorMessageFactory extends ErrorMessageFactory {
 
@@ -92,19 +92,24 @@ object ErrorMessageFactory extends ErrorMessageFactory {
 
   private def argsToString(args: Any): String =
     args match {
-      case EmbeddedMessage(x, y, _) => f"${embeddedStart}%s${mkFieldErr(x, y)}%s${embeddedEnd}%s"
-      case _ => args.toString
+      case EmbeddedMessage(x, y, _) => f"$embeddedStart%s${mkFieldErr(x, y)}%s$embeddedEnd%s"
+      case _                        => args.toString
     }
 
   private def mkSummaryErr(id: Option[String], msgArgs: MessageArguments): String = id match {
     case None => msgArgs.args.toList map (arg => argsToString(arg)) mkString (paramDelimiter)
-    case _ => List[String](id.get) ::: List(msgArgs.args.toList map (param => argsToString(param)) mkString (paramDelimiter)) mkString (summaryIdMarker)
+    case _ =>
+      List[String](id.get) ::: List(msgArgs.args.toList map (param => argsToString(param)) mkString (paramDelimiter)) mkString (summaryIdMarker)
   }
 
-  private def mkFieldErr(msgkey: String, msgArgs: MessageArguments): String = List[String](msgkey) ::: msgArgs.args.toList map (param => argsToString(param)) mkString (paramDelimiter)
+  private def mkFieldErr(msgkey: String, msgArgs: MessageArguments): String =
+    List[String](msgkey) ::: msgArgs.args.toList map (param => argsToString(param)) mkString (paramDelimiter)
 
   def createErrorMessage(ids: TargetFieldIds, fieldMsg: FieldErrorConfig, summaryMsg: SummaryErrorConfig): Invalid =
-    createErrorMessage(List[String](mkSummaryErr(summaryMsg.msgKey, summaryMsg.msgArgs)) ::: List(mkFieldErr(fieldMsg.msgKey, fieldMsg.msgArgs)) mkString (fieldDelimiter), ids)
+    createErrorMessage(
+      List[String](mkSummaryErr(summaryMsg.msgKey, summaryMsg.msgArgs)) ::: List(
+        mkFieldErr(fieldMsg.msgKey, fieldMsg.msgArgs)) mkString (fieldDelimiter),
+      ids)
 
   def createErrorMessage(ids: TargetFieldIds, fieldMsg: FieldErrorConfig): Invalid =
     createErrorMessage(mkFieldErr(fieldMsg.msgKey, fieldMsg.msgArgs), ids)

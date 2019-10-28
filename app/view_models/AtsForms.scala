@@ -33,6 +33,5 @@ object AtsForms {
     compulsoryEnum(question)
   }
 
-  val atsYearFormMapping = Form(mapping(
-    "year" -> year_compulsory)(TaxYearEnd.apply)(TaxYearEnd.unapply))
+  val atsYearFormMapping = Form(mapping("year" -> year_compulsory)(TaxYearEnd.apply)(TaxYearEnd.unapply))
 }

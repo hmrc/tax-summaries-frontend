@@ -41,7 +41,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
   val taxYear = 2014
   val request = FakeRequest("GET", s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val badRequest = FakeRequest("GET", "?taxYear=20145")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
@@ -65,7 +65,8 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService: AuditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(baseModel))
 
   }
 
@@ -81,10 +82,11 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
   "Calling incomes with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.income_before_tax.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
@@ -96,7 +98,8 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
-      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
@@ -124,7 +127,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
 
       document.toString should include("Your total income")
       document.getElementById("user-info").text() should include("forename surname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
     }
 
@@ -141,8 +144,8 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(model)
-
+      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(model)
 
       val result = Future.successful(show(user, request))
 
@@ -159,7 +162,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       document.toString should not include "other_income"
       document.toString should not include "total_income_before_tax"
       document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "show 'Income Before Tax' page with a correct breadcrumb" in new TestController {
@@ -173,13 +176,16 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your total income</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include(
+        "<strong>Your total income</strong>")
     }
   }
 }

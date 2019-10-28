@@ -19,7 +19,8 @@ package view_models
 import play.api.libs.json.{Format, Json}
 import utils.GenericViewModel
 
-case class AtsList(utr: String, forename: String, surname: String, yearList: List[TaxYearEnd]) extends GenericViewModel {
+case class AtsList(utr: String, forename: String, surname: String, yearList: List[TaxYearEnd])
+    extends GenericViewModel {
   def getDescendingYearList = yearList.reverse
 }
 

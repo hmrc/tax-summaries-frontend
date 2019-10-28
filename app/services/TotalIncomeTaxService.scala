@@ -34,14 +34,15 @@ trait TotalIncomeTaxService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getIncomeData(taxYear:Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getIncomeData(
+    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
     atsService.createModel(taxYear, totalIncomeConverter)
-  }
 
   private def totalIncomeConverter: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.income_tax.get
-      TotalIncomeTax(output.taxYear,
+      TotalIncomeTax(
+        output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("starting_rate_for_savings").get,
         wrapper.payload.get.get("starting_rate_for_savings_amount").get,

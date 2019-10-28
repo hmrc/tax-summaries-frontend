@@ -19,7 +19,7 @@ package services
 import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AgentTokenException, AccountUtils, AuthorityUtils}
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.TestConstants._
 
@@ -113,7 +113,6 @@ class AuthorityUtilsTest extends UnitSpec with MockitoSugar {
       val result = getRequestedUtr(agentAccount, Some(agentToken))
       result shouldBe SaUtr(utr)
     }
-
 
     "return the client utr when agent account with invalid agent token" in new TestService {
 

@@ -35,15 +35,16 @@ trait SummaryService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getSummaryData(taxYear:Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getSummaryData(
+    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
     atsService.createModel(taxYear, summaryConverter)
-  }
 
   private def summaryConverter: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.summary_data.get
 
-      Summary(output.taxYear,
+      Summary(
+        output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("employee_nic_amount").get,
         wrapper.payload.get.get("total_income_tax_and_nics").get,

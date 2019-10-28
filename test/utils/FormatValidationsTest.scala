@@ -22,7 +22,7 @@ import utils.TaxsValidator._
 
 class FormatValidationsTest extends UnitSpec with Matchers {
 
-  private def testRegex(regExPattern:String, validData: Seq[String], invalidData: Seq[String]): Unit = {
+  private def testRegex(regExPattern: String, validData: Seq[String], invalidData: Seq[String]): Unit = {
     withClue("the regex should allow these valid cases\n") {
       for (data <- validData)
         withClue(f"$data did not pass\n") {
@@ -37,7 +37,10 @@ class FormatValidationsTest extends UnitSpec with Matchers {
     }
   }
 
-  private def testStringValidationFunction(function: (String) => Boolean, validData: Seq[String], invalidData: Seq[String]): Unit = {
+  private def testStringValidationFunction(
+    function: (String) => Boolean,
+    validData: Seq[String],
+    invalidData: Seq[String]): Unit = {
     withClue("the regex should allow these valid cases\n") {
       for (data <- validData)
         withClue(f"$data did not pass\n") {
@@ -56,7 +59,7 @@ class FormatValidationsTest extends UnitSpec with Matchers {
     "satisfy the following valid and invalid cases" in {
       val validData = Seq("0", "9", "a", "A", "z", "Z")
       val invalidData = Seq("α", "&", "*", "@", "£")
-      testRegex(alphaNumericRegex,validData, invalidData)
+      testRegex(alphaNumericRegex, validData, invalidData)
     }
   }
 

@@ -36,32 +36,29 @@ object ConstraintUtil {
 
   implicit class PostConstraintsUtil[A](c: Constraint[A]) {
     def andThen(c2: Constraint[A]): Constraint[A] =
-      Constraint[A]({
-        (a: A) =>
-          c.apply(a) match {
-            case Valid => c2(a)
-            case f: Invalid => f
-          }
+      Constraint[A]({ (a: A) =>
+        c.apply(a) match {
+          case Valid      => c2(a)
+          case f: Invalid => f
+        }
       })
 
     def compose(c2: Constraint[A]): Constraint[A] =
-      Constraint[A]({
-        (a: A) =>
-          c2.apply(a) match {
-            case Valid => c(a)
-            case f: Invalid => f
-          }
+      Constraint[A]({ (a: A) =>
+        c2.apply(a) match {
+          case Valid      => c(a)
+          case f: Invalid => f
+        }
       })
   }
 
   implicit class PreConstraintsUtil[A](cond: A => Boolean) {
     def preCondition(c: Constraint[A]): Constraint[A] =
-      Constraint[A]({
-        (a: A) =>
-          cond(a) match {
-            case true => c(a)
-            case false => Valid
-          }
+      Constraint[A]({ (a: A) =>
+        cond(a) match {
+          case true  => c(a)
+          case false => Valid
+        }
       })
   }
 
@@ -77,19 +74,17 @@ object ConstraintUtil {
       (data: FormData) => c(data) || c2(data)
   }
 
-
   // always valid is required in case an empty sequence is passed in
   def alwaysValidConstraint[A]: Constraint[A] = Constraint[A]((a: A) => Valid)
 
   def andThenSeqChain[A](seq: Seq[Constraint[A]]) = seq.foldLeft(alwaysValidConstraint[A])(_ andThen _)
 
   def preConditionToConstraint[A](cond: A => Boolean, c: Constraint[A]): Constraint[A] =
-    Constraint[A]({
-      (a: A) =>
-        cond(a) match {
-          case true => c(a)
-          case false => Valid
-        }
+    Constraint[A]({ (a: A) =>
+      cond(a) match {
+        case true  => c(a)
+        case false => Valid
+      }
     })
 
   implicit class MappingUtil[A](m: Mapping[A]) {
@@ -100,10 +95,10 @@ object ConstraintUtil {
       m.verifying(andThenSeqChain(constraints))
 
     def verifying(preCondition: Constraint[A], constraints: List[Constraint[A]]): Mapping[A] = {
-      val newConsts = constraints.map(c => Constraint[A]("") {
-        f =>
+      val newConsts = constraints.map(c =>
+        Constraint[A]("") { f =>
           preCondition.apply(f) match {
-            case Valid => c(f)
+            case Valid      => c(f)
             case f: Invalid => Valid
           }
       })
@@ -117,15 +112,15 @@ object ConstraintUtil {
   // generic validation functions
   private val fieldIsNotEmptyValidationFunction = (field: String, invalid: ValidationResult) =>
     field.isEmpty match {
-      case true => invalid
+      case true  => invalid
       case false => Valid
-    }
+  }
 
   private val fieldMaxLengthValidationFunction = (field: String, maxLength: Int, invalid: ValidationResult) =>
     field.trim.length <= maxLength match {
-      case true => Valid
+      case true  => Valid
       case false => invalid
-    }
+  }
 
   private val fieldFormatValidationFunction = (field: String, patternMatch: (String) => ValidationResult) =>
     patternMatch(field)
@@ -138,7 +133,8 @@ object ConstraintUtil {
   case class FieldFormatConstraintParameter(patternMatch: (String) => ValidationResult)
 
   object FieldFormatConstraintParameter {
-    implicit def castSingleToSeq(value: FieldFormatConstraintParameter): Seq[FieldFormatConstraintParameter] = Seq(value)
+    implicit def castSingleToSeq(value: FieldFormatConstraintParameter): Seq[FieldFormatConstraintParameter] =
+      Seq(value)
   }
 
   // used to apply on mappings
@@ -158,48 +154,60 @@ object ConstraintUtil {
     }
 
     def nonEmpty: Boolean = this match {
-      case MaxLengthConstraintDefinition(_) => true
+      case MaxLengthConstraintDefinition(_)         => true
       case MaxLengthConstraintIsHandledByTheRegEx() => false
     }
 
     def isEmpty: Boolean = this match {
-      case MaxLengthConstraintDefinition(_) => false
+      case MaxLengthConstraintDefinition(_)         => false
       case MaxLengthConstraintIsHandledByTheRegEx() => true
     }
   }
 
-  case class MaxLengthConstraintDefinition[A <: FieldMaxLengthConstraintParameter](get: A) extends MaxLengthConstraintOption[A]
+  case class MaxLengthConstraintDefinition[A <: FieldMaxLengthConstraintParameter](get: A)
+      extends MaxLengthConstraintOption[A]
 
   case class MaxLengthConstraintIsHandledByTheRegEx() extends MaxLengthConstraintOption[Nothing]
 
-  implicit def castToOption(param: FieldMaxLengthConstraintParameter): MaxLengthConstraintOption[FieldMaxLengthConstraintParameter] = MaxLengthConstraintDefinition(param)
+  implicit def castToOption(
+    param: FieldMaxLengthConstraintParameter): MaxLengthConstraintOption[FieldMaxLengthConstraintParameter] =
+    MaxLengthConstraintDefinition(param)
 
-  case class CompulsoryTextFieldMappingParameter(empty: FieldIsEmptyConstraintParameter,
-                                                 maxLengthValidation: MaxLengthConstraintOption[FieldMaxLengthConstraintParameter],
-                                                 formatValidations: Seq[FieldFormatConstraintParameter]) extends TextFieldMappingTrait[String]
+  case class CompulsoryTextFieldMappingParameter(
+    empty: FieldIsEmptyConstraintParameter,
+    maxLengthValidation: MaxLengthConstraintOption[FieldMaxLengthConstraintParameter],
+    formatValidations: Seq[FieldFormatConstraintParameter])
+      extends TextFieldMappingTrait[String]
 
-  case class OptionalTextFieldMappingParameter(maxLengthValidation: MaxLengthConstraintOption[FieldMaxLengthConstraintParameter],
-                                               formatValidations: Seq[FieldFormatConstraintParameter]) extends TextFieldMappingTrait[Option[String]]
+  case class OptionalTextFieldMappingParameter(
+    maxLengthValidation: MaxLengthConstraintOption[FieldMaxLengthConstraintParameter],
+    formatValidations: Seq[FieldFormatConstraintParameter])
+      extends TextFieldMappingTrait[Option[String]]
 
-  case class CompulsoryListMappingParameter[T](mapping: Mapping[T],
-                                               emptyErrorMsg: Invalid) extends ValidationMappingTrait[Mapping[T]]
+  case class CompulsoryListMappingParameter[T](mapping: Mapping[T], emptyErrorMsg: Invalid)
+      extends ValidationMappingTrait[Mapping[T]]
 
-  case class CompulsoryEnumMappingParameter(empty: FieldIsEmptyConstraintParameter,
-                                            enumType: TAXSEnumeration,
-                                            invalidChoices: Set[TAXSEnumeration#Value] = Set()) extends ValidationMappingTrait[String]
+  case class CompulsoryEnumMappingParameter(
+    empty: FieldIsEmptyConstraintParameter,
+    enumType: TAXSEnumeration,
+    invalidChoices: Set[TAXSEnumeration#Value] = Set())
+      extends ValidationMappingTrait[String]
 
-  private def noConstraint[A] = Constraint[A] { ignore: A => Valid }
+  private def noConstraint[A] = Constraint[A] { ignore: A =>
+    Valid
+  }
 
   // sub constraints for text fields
   private def fieldMustNotBeEmptyConstraint[A](config: FieldIsEmptyConstraintParameter): Constraint[A] =
-  Constraint {
-    case str: String =>
-      fieldIsNotEmptyValidationFunction(str, config.errorMessage)
-    case Some(str: String) =>
-      fieldIsNotEmptyValidationFunction(str, config.errorMessage)
-  }
+    Constraint {
+      case str: String =>
+        fieldIsNotEmptyValidationFunction(str, config.errorMessage)
+      case Some(str: String) =>
+        fieldIsNotEmptyValidationFunction(str, config.errorMessage)
+    }
 
-  private def fieldMustBeWithinMaxLengthConstraint[A](config: MaxLengthConstraintOption[FieldMaxLengthConstraintParameter]): Constraint[A] =
+  private def fieldMustBeWithinMaxLengthConstraint[A](
+    config: MaxLengthConstraintOption[FieldMaxLengthConstraintParameter]): Constraint[A] =
     config match {
       case MaxLengthConstraintDefinition(maxLenConfig) =>
         Constraint {
@@ -212,22 +220,23 @@ object ConstraintUtil {
     }
 
   private def fieldMustHaveValidFormatConstraint[A](config: Seq[FieldFormatConstraintParameter]): Seq[Constraint[A]] =
-    config.map(format => Constraint[A]("") {
-      case str: String =>
-        fieldFormatValidationFunction(str, format.patternMatch)
-      case Some(str: String) =>
-        fieldFormatValidationFunction(str, format.patternMatch)
+    config.map(format =>
+      Constraint[A]("") {
+        case str: String =>
+          fieldFormatValidationFunction(str, format.patternMatch)
+        case Some(str: String) =>
+          fieldFormatValidationFunction(str, format.patternMatch)
     })
 
   // generic constraints for text fields on mappings
   def compulsaryTextFieldMappingConstraints(config: CompulsoryTextFieldMappingParameter): Constraint[String] =
-  andThenSeqChain(
-    Seq[Constraint[String]](
-      fieldMustNotBeEmptyConstraint(config.empty),
-      fieldMustBeWithinMaxLengthConstraint(config.maxLengthValidation),
-      andThenSeqChain(fieldMustHaveValidFormatConstraint(config.formatValidations))
+    andThenSeqChain(
+      Seq[Constraint[String]](
+        fieldMustNotBeEmptyConstraint(config.empty),
+        fieldMustBeWithinMaxLengthConstraint(config.maxLengthValidation),
+        andThenSeqChain(fieldMustHaveValidFormatConstraint(config.formatValidations))
+      )
     )
-  )
 
   def optionalTextFieldMappingConstraints(config: OptionalTextFieldMappingParameter): Constraint[Option[String]] =
     andThenSeqChain(
@@ -240,7 +249,7 @@ object ConstraintUtil {
   def compulsaryListConstraint[T](errMsgId: => Invalid): Constraint[List[T]] =
     Constraint[List[T]]({ model: List[T] =>
       model.nonEmpty && !model.contains("") match {
-        case true => Valid
+        case true  => Valid
         case false => errMsgId
       }
     })

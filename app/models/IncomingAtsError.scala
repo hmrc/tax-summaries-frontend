@@ -20,6 +20,6 @@ import play.api.libs.json.Json
 
 case class IncomingAtsError(error: String)
 
-object IncomingAtsError{
+object IncomingAtsError {
   implicit val formats = Json.format[IncomingAtsError]
 }

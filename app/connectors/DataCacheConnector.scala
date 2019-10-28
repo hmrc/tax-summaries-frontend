@@ -17,7 +17,7 @@
 package connectors
 
 import models.{AtsListData}
-import services.{CryptoService, AgentToken}
+import services.{AgentToken, CryptoService}
 import uk.gov.hmrc.http.cache.client.{CacheMap}
 import config.TAXSSessionCache
 import models.AtsData
@@ -49,11 +49,11 @@ trait DataCacheConnector {
     }
   }
 
-  def fetchAndGetAtsListForSession(implicit hc: HeaderCarrier): Future[Option[AtsListData]] = {
+  def fetchAndGetAtsListForSession(implicit hc: HeaderCarrier): Future[Option[AtsListData]] =
     TAXSSessionCache.fetchAndGetEntry[AtsListData](sourceAtsListId)
-  }
 
-  def storeAtsListForSession(data: AtsListData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsListData]] = {
+  def storeAtsListForSession(
+    data: AtsListData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsListData]] = {
     val result = TAXSSessionCache.cache[AtsListData](sourceAtsListId, data)
     result flatMap {
       case data: CacheMap => Future.successful(data.getEntry[AtsListData](sourceAtsListId))
@@ -67,16 +67,14 @@ trait DataCacheConnector {
     }
   }
 
-  def fetchAndGetAtsTaxYearForSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Int]] = {
+  def fetchAndGetAtsTaxYearForSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Int]] =
     TAXSSessionCache.fetchAndGetEntry[Int](sourceAtsSelectedTaxYearId)
-  }
 
   def storeAgentToken(token: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AnyRef] = {
     val agentToken = cryptoService.getAgentToken(token)
     TAXSSessionCache.cache[AgentToken](Globals.TAXS_AGENT_TOKEN_KEY, agentToken)
   }
 
-  def getAgentToken(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AgentToken]] = {
+  def getAgentToken(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AgentToken]] =
     TAXSSessionCache.fetchAndGetEntry[AgentToken](Globals.TAXS_AGENT_TOKEN_KEY)
-  }
 }

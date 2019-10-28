@@ -40,12 +40,12 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
   sealed trait MockConfiguration[+A] {
     final def get = this match {
       case Configure(config) => config
-      case _ => throw new RuntimeException("This element is not to be configured")
+      case _                 => throw new RuntimeException("This element is not to be configured")
     }
 
     final def ifConfiguredThen(action: A => Unit): Unit = this match {
       case Configure(dataToReturn) => action(dataToReturn)
-      case _ =>
+      case _                       =>
     }
   }
 
@@ -63,7 +63,6 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
 
   implicit def convertToMockConfiguration5[T](err: Throwable): MockConfiguration[Future[Option[T]]] = Configure(err)
 
-
   // used to for mock setup functions to specify the location of the data,
   // CachedLocally for when the data can be found in KeyStore or Save4Later, and NotCachedLocally where
   // a call to another service is required
@@ -77,7 +76,7 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
     // util function designed for aiding verify functions
     def ifDefinedThen(action: (Int) => Unit) = someCount match {
       case Some(count) => action(count)
-      case _ =>
+      case _           =>
     }
   }
 
@@ -85,11 +84,10 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
 
   def testId(shouldExist: Boolean)(targetFieldId: String)(implicit doc: Document) = shouldExist match {
     case false => doc.getElementById(targetFieldId) shouldBe null
-    case true => doc.getElementById(targetFieldId) should not be null
+    case true  => doc.getElementById(targetFieldId) should not be null
   }
 
-  def testText(expectedText: String)(targetFieldId: String)(implicit doc: Document) = {
+  def testText(expectedText: String)(targetFieldId: String)(implicit doc: Document) =
     doc.getElementById(targetFieldId).text shouldBe expectedText
-  }
 
 }

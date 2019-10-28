@@ -41,19 +41,23 @@ trait GovernmentSpendController extends TaxYearRequest {
 
   def governmentSpendService: GovernmentSpendService
 
-  def authorisedGovernmentSpendData = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user,request)
+  def authorisedGovernmentSpendData = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    show(user, request)
   }
 
   type ViewModel = GovernmentSpend
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
-    Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(user, result.userForename, result.userSurname, result.userUtr)))
-  }
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
+    Ok(
+      views.html.government_spending(
+        result,
+        assignPercentage(result.govSpendAmountData),
+        getActingAsAttorneyFor(user, result.userForename, result.userSurname, result.userUtr)))
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
     var percentEnviron = 0.0
@@ -62,11 +66,11 @@ trait GovernmentSpendController extends TaxYearRequest {
 
     govSpendList.foreach {
       case (key, value) =>
-        if(key == "Environment") {
+        if (key == "Environment") {
           percentEnviron = value.percentage.doubleValue()
-        } else if(key == "Culture") {
+        } else if (key == "Culture") {
           percentCultural = value.percentage.doubleValue()
-        } else if(key == "HousingAndUtilities") {
+        } else if (key == "HousingAndUtilities") {
           percentHousing = value.percentage.doubleValue()
         }
 
