@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest("GET","?taxYear=2015")
+  val request = FakeRequest("GET", "?taxYear=2015")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
@@ -47,7 +47,10 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       override lazy val auditService = mock[AuditService]
       implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+      when(
+        totalIncomeTaxService
+          .getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model))
 
       val result = Future.successful(show(user, request))
 
@@ -62,7 +65,8 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -76,7 +80,8 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -90,7 +95,8 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.eq(request), Matchers.any()))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -104,7 +110,10 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(
+      capitalGainsService
+        .getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -118,7 +127,10 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(
+      governmentSpendService
+        .getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -132,7 +144,8 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 
@@ -146,7 +159,8 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
     val result = Future.successful(show(user, request))
 

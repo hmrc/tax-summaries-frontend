@@ -31,8 +31,8 @@ trait ApplicationConfig {
   val betaFeedbackUnauthenticatedUrl: String
   val analyticsToken: Option[String]
   val analyticsHost: String
-  val reportAProblemUrl:String
-  val reportAProblemPartialUrl:String
+  val reportAProblemUrl: String
+  val reportAProblemPartialUrl: String
   val externalReportProblemUrl: String
   val reportAProblemNonJSUrl: String
   val ssoUrl: Option[String]
@@ -41,7 +41,7 @@ trait ApplicationConfig {
   val loginCallback: String
   val loginUrl: String
   val ytaUrl: String
-  val portalUrl:String
+  val portalUrl: String
   val authHost: String
   val sessionCacheHost: String
   val optimizelyProjectId: String
@@ -61,8 +61,10 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   // Beta feedback config
-  override lazy val betaFeedbackUrl = (if (env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
-  override lazy val betaFeedbackUnauthenticatedUrl = (if (env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
+  override lazy val betaFeedbackUrl = (if (env == "Prod") "" else contactHost) + getConf(
+    "contact-frontend.beta-feedback-url.authenticated")
+  override lazy val betaFeedbackUnauthenticatedUrl = (if (env == "Prod") "" else contactHost) + getConf(
+    "contact-frontend.beta-feedback-url.unauthenticated")
 
   // Analytics config
   override lazy val analyticsToken: Option[String] = Some(getString(s"google-analytics.token"))
@@ -71,11 +73,13 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
 
   override lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
   override lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
-  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl =
+    s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
   // Encryption config
-  override lazy val encryptionKey = runModeConfiguration.getString("portal.clientagent.encryption.key").getOrElse("1111111111111111111111")
+  override lazy val encryptionKey =
+    runModeConfiguration.getString("portal.clientagent.encryption.key").getOrElse("1111111111111111111111")
   override lazy val encryptionTokenMaxAge = getConfInt("encryption.tokenMaxAge", 0)
 
   override lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")

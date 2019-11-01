@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
 
-object NicsController extends NicsController{
+object NicsController extends NicsController {
   override val summaryService = SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
@@ -42,16 +42,16 @@ trait NicsController extends TaxYearRequest {
 
   def summaryService: SummaryService
 
-  def authorisedNics = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user,request)
+  def authorisedNics = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    show(user, request)
   }
 
   type ViewModel = Summary
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
-  override def obtainResult(result: ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
     Ok(views.html.nics(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
-  }
 }

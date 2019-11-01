@@ -18,7 +18,11 @@ package models
 
 import play.api.libs.json.Json
 
-case class AtsListData(utr: String, taxPayer: Option[TaxpayerFrontTierData], atsYearList: Option[List[Int]], errors: Option[IncomingAtsError])
+case class AtsListData(
+  utr: String,
+  taxPayer: Option[TaxpayerFrontTierData],
+  atsYearList: Option[List[Int]],
+  errors: Option[IncomingAtsError])
 
 object AtsListData {
   implicit val formats = Json.format[AtsListData]

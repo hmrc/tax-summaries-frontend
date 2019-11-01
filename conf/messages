@@ -241,3 +241,12 @@ screen.reader.capital_gains_tax=Your Capital Gains Tax is
 #===========================================================
 ats.summary.tax.title=Your tax was calculated as
 ats.summary.nics.title=Your NICs were calculated as
+
+global.page.not.found.error.title=Page not found
+global.page.not.found.error.heading=Page not found
+global.page.not.found.error.check.web.address.correct=If you typed the web address, check it is correct.
+global.page.not.found.error.check.web.address.full=If you pasted the web address, check you copied the entire address.
+global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your annual tax summary.
+global.page.not.found.error.contact.link.text=contact the Self Assessment helpline
+global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
+

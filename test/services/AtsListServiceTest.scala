@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{MiddleConnector, DataCacheConnector}
+import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.FakeTaxsPlayApplication
 import models.AtsListData
 import org.scalatest.concurrent.ScalaFutures
@@ -24,10 +24,10 @@ import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{Uar, SaUtr}
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Account
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AgentTokenException,AccountUtils, AuthorityUtils}
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -63,12 +63,15 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
     override lazy val auditService: AuditService = mock[AuditService]
     override lazy val accountUtils: AccountUtils = mock[AccountUtils]
 
+    when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(Some(2014)))
+    when(dataCache.storeAtsTaxYearForSession(eqTo(2015))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(Some(2015)))
+    when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(Some(data)))
 
-    when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
-    when(dataCache.storeAtsTaxYearForSession(eqTo(2015))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2015)))
-    when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-
-    when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
+    when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(Some(2014)))
 
     when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(Some(data)))
 
@@ -76,7 +79,8 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
     when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
 
     when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
-    when(middleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
+    when(middleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier]))
+      .thenReturn(Future.successful(data))
 
     when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[User])).thenReturn(true)
 
@@ -95,23 +99,25 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
     "Return a failed future when None is returned from the dataCache" in new TestService {
 
-      when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+      when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(None))
 
       val result = storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a [NoSuchElementException]
+        exception shouldBe a[NoSuchElementException]
       }
     }
 
     "Return a failed future when the dataCache future has failed" in new TestService {
 
-      when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
+      when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       val result = storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
       }
     }
   }
@@ -127,19 +133,21 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
     "Return a failed future when None is returned from the dataCache" in new TestService {
 
-      when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+      when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(None))
 
       whenReady(fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe a [NoSuchElementException]
+        exception shouldBe a[NoSuchElementException]
       }
     }
 
     "Return a failed future when the dataCache future has failed" in new TestService {
 
-      when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
+      when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
       }
     }
   }
@@ -148,10 +156,11 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
     "Return a failed future when the call to the dataCache fails (fetch)" in new TestService {
 
-      when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(getAtsYearList.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
 
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
@@ -159,13 +168,14 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
       }
     }
 
-   "Return a failed future when the call to the dataCache fails (store)" in new TestService {
+    "Return a failed future when the call to the dataCache fails (store)" in new TestService {
 
       when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
-      when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
+      when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(getAtsYearList.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
 
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
@@ -176,10 +186,11 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
     "Return a failed future when the call to the MS fails" in new TestService {
 
       when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
-      when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(getAtsYearList.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
 
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
@@ -197,7 +208,9 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
           result shouldBe data
         }
 
-        verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
+        verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+          any[Request[AnyRef]],
+          any[HeaderCarrier])
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
         verify(middleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
@@ -211,7 +224,9 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
       whenReady(getAtsYearList) { result =>
         result shouldBe data
 
-        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
+        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+          any[Request[AnyRef]],
+          any[HeaderCarrier])
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
         verify(middleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
@@ -227,7 +242,9 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
       whenReady(getAtsYearList) { result =>
         result shouldBe data
 
-        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
+        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+          any[Request[AnyRef]],
+          any[HeaderCarrier])
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
         verify(middleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
@@ -286,10 +303,11 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
         override implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
 
         when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[User])).thenReturn(false)
-        when(authUtils.getRequestedUtr(any[Account], any[Option[AgentToken]])).thenThrow(new AgentTokenException("Token is empty"))
+        when(authUtils.getRequestedUtr(any[Account], any[Option[AgentToken]]))
+          .thenThrow(new AgentTokenException("Token is empty"))
 
         whenReady(getAtsYearList.failed) { exception =>
-          exception shouldBe a [AgentTokenException]
+          exception shouldBe a[AgentTokenException]
           exception.getMessage shouldBe "Token is empty"
 
           verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])

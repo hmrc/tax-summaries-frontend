@@ -35,7 +35,8 @@ class PrevalidationTest extends TaxsUnitTestTraits {
       )(DummyData.apply)(DummyData.unapply)
     )
 
-    def preprocessedForm(trims: Map[String, TrimOption] = Map(), caseRules: Map[String, CaseOption] = Map()) = PreprocessedForm(dummyForm, trims, caseRules)
+    def preprocessedForm(trims: Map[String, TrimOption] = Map(), caseRules: Map[String, CaseOption] = Map()) =
+      PreprocessedForm(dummyForm, trims, caseRules)
 
   }
 

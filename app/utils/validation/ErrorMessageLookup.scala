@@ -30,18 +30,21 @@ trait ErrorMessageLookup {
   def messageLookup(lookup: MessageLookup)(implicit messages: Messages): String
 }
 
-
 object ErrorMessageLookup extends ErrorMessageLookup {
 
-  @inline def messageLookup(lookup: MessageLookup)(implicit messages: Messages): String = messageLookup(lookup.msgKey, lookup.msgArgs)
+  @inline def messageLookup(lookup: MessageLookup)(implicit messages: Messages): String =
+    messageLookup(lookup.msgKey, lookup.msgArgs)
 
   private def messageLookup(key: String, params: MessageArguments)(implicit messages: Messages): String =
-    Messages(key, MessageArguments({
-      for (param <- params.args) yield {
-        param match {
-          case EmbeddedMessage(x: String, args: MessageArguments, _) => messageLookup(x, args)
-          case _ => param.toString
+    Messages(
+      key,
+      MessageArguments({
+        for (param <- params.args) yield {
+          param match {
+            case EmbeddedMessage(x: String, args: MessageArguments, _) => messageLookup(x, args)
+            case _                                                     => param.toString
+          }
         }
-      }
-    }: _*).args: _*)
+      }: _*).args: _*
+    )
 }

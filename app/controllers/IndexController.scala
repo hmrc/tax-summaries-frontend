@@ -31,8 +31,6 @@ import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.Future
 
-
-
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService
   override val auditService = AuditService
@@ -49,19 +47,18 @@ trait IndexController extends TaxsController {
   def atsYearListService: AtsYearListService
   def atsListService: AtsListService
 
-  def authorisedIndex = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => agentAwareShow(user, request)
+  def authorisedIndex = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    agentAwareShow(user, request)
   }
 
-  def authorisedOnSubmit = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => onSubmit(user, request)
+  def authorisedOnSubmit = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    onSubmit(user, request)
   }
 
   //FIXME add extra check - agent tries multiple ids in same session
   def agentAwareShow(implicit user: User, request: Request[AnyRef]): Future[Result] =
-
     request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) match {
-      case Some(Globals.TAXS_PORTAL_REFERENCE) =>{
+      case Some(Globals.TAXS_PORTAL_REFERENCE) => {
 
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
         val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
@@ -75,8 +72,8 @@ trait IndexController extends TaxsController {
             case _ =>
               Future.successful(None)
           }
-        } map {
-          x => Redirect(routes.IndexController.authorisedIndex()).withSession(session)
+        } map { x =>
+          Redirect(routes.IndexController.authorisedIndex()).withSession(session)
         }
       }
       case _ => {
@@ -86,54 +83,64 @@ trait IndexController extends TaxsController {
 
   type ViewModel = AtsList
 
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
+    atsYearListService.getAtsListData.map(Right(_))
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
-      atsYearListService.getAtsListData.map(Right(_))
-  }
-
-  def getViewModel(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  def getViewModel(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Future[Result] =
     result.yearList match {
       case TaxYearEnd(year) :: Nil => redirectWithYear(year.get.toInt)
-      case _ => Future.successful(Ok(views.html.taxs_index(result, atsYearFormMapping, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr))).withSession(request.session + ("atsList" -> result.toString)))
+      case _ =>
+        Future.successful(
+          Ok(
+            views.html.taxs_index(
+              result,
+              atsYearFormMapping,
+              getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
+            .withSession(request.session + ("atsList" -> result.toString)))
     }
-  }
 
-  override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  override def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] =
     extractViewModel flatMap {
       case Right(noATS: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
-      case Right(result: ViewModel) => getViewModel(result)
+      case Right(result: ViewModel)     => getViewModel(result)
     }
-  }
 
-  def onSubmit(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  def onSubmit(implicit user: User, request: Request[AnyRef]): Future[Result] =
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
-        atsListService.getAtsYearList flatMap {
-          atsListData => {
-            val atsList = new AtsList(atsListData.utr,
+        atsListService.getAtsYearList flatMap { atsListData =>
+          {
+            val atsList = new AtsList(
+              atsListData.utr,
               atsListData.taxPayer.get.taxpayer_name.get("forename"),
               atsListData.taxPayer.get.taxpayer_name.get("surname"),
-              atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))))
+              atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+            )
             Future.successful(Ok(views.html.taxs_index(atsList, formWithErrors)).withSession(session))
           }
         }
       },
       value => redirectWithYear(value.year.get.toInt)
     )
-  }
 
-  def redirectWithYear(year: Int)(implicit user: User, request: Request[AnyRef]): Future[Result] = {
-      atsListService.getAtsYearList flatMap {
-        atsListData => {
-          val taxYearListLength = atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))).length
-          Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + year).withSession(request.session + ("TaxYearListLength" -> taxYearListLength.toString)))
-        }
+  def redirectWithYear(year: Int)(implicit user: User, request: Request[AnyRef]): Future[Result] =
+    atsListService.getAtsYearList flatMap { atsListData =>
+      {
+        val taxYearListLength = atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))).length
+        Future(
+          Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + year)
+            .withSession(request.session + ("TaxYearListLength" -> taxYearListLength.toString)))
       }
-  }
+    }
 
   // This is unused, it is only implemented to adhere to the interface
-  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
-    Ok(views.html.taxs_index(result, atsYearFormMapping, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
-  }
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
+    Ok(
+      views.html.taxs_index(
+        result,
+        atsYearFormMapping,
+        getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
 }

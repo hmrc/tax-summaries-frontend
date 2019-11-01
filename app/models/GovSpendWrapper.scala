@@ -18,7 +18,10 @@ package models
 
 import play.api.libs.json.Json
 
-case class GovSpendWrapper(taxYear: Int,  govSpendAmountData: Option[Map[String, SpendData]], errors: Option[List[String]])
+case class GovSpendWrapper(
+  taxYear: Int,
+  govSpendAmountData: Option[Map[String, SpendData]],
+  errors: Option[List[String]])
 
 object GovSpendWrapper {
   implicit val formats = Json.format[GovSpendWrapper]

@@ -16,8 +16,7 @@
 
 package views.helpers
 
-case class SubmitAndNavLinkParams
-(
+case class SubmitAndNavLinkParams(
   sectionName: String,
   sectionEntryId: Option[Int] = None,
   submitText: String,

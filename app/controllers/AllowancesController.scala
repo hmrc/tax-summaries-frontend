@@ -41,18 +41,18 @@ trait AllowancesController extends TaxYearRequest {
 
   def allowanceService: AllowanceService
 
-  def authorisedAllowance = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user,request)
+  def authorisedAllowance = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    show(user, request)
   }
 
   type ViewModel = Allowances
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
     Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
-  }
 
 }

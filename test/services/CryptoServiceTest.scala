@@ -56,7 +56,6 @@ class CryptoServiceTest extends UnitSpec with FakeTaxsPlayApplication with Scala
     }
   }
 
-
   "getAgentToken" should {
 
     "return an AgentToken when the input is valid" in new TestCrypt {

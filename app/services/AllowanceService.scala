@@ -34,14 +34,15 @@ trait AllowanceService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getAllowances(taxYear: Int)(implicit user: User, request: Request[AnyRef], hc: HeaderCarrier): Future[GenericViewModel] = {
+  def getAllowances(
+    taxYear: Int)(implicit user: User, request: Request[AnyRef], hc: HeaderCarrier): Future[GenericViewModel] =
     atsService.createModel(taxYear, allowanceService)
-  }
 
   private def allowanceService: (AtsData => GenericViewModel) =
     (output: AtsData) => {
       val wrapper: DataHolder = output.allowance_data.get
-      Allowances(output.taxYear,
+      Allowances(
+        output.taxYear,
         output.utr.get,
         wrapper.payload.get.get("personal_tax_free_amount").get,
         wrapper.payload.get.get("marriage_allowance_transferred_amount").get,
@@ -52,6 +53,5 @@ trait AllowanceService {
         output.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
-
 
 }

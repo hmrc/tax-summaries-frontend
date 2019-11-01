@@ -56,7 +56,6 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     }
   }
 
-
   "ErrorController" should {
 
     "Show No ATS page" in new TestErrorController {

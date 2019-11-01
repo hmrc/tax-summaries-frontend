@@ -42,17 +42,17 @@ trait TotalIncomeTaxController extends TaxYearRequest {
 
   def totalIncomeTaxService: TotalIncomeTaxService
 
-  def authorisedTotalIncomeTax = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user, request)
+  def authorisedTotalIncomeTax = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
+    show(user, request)
   }
 
   type ViewModel = TotalIncomeTax
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit user: User,
+    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
-  }
 
-  override def obtainResult(result:ViewModel)(implicit user:User, request: Request[AnyRef]): Result = {
+  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
     Ok(views.html.total_income_tax(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
-  }
 }

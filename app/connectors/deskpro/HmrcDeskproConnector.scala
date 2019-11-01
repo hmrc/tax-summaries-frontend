@@ -44,18 +44,55 @@ trait HmrcDeskproConnector {
 
   def http: HttpPost
 
-  def createTicket(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, request: Request[AnyRef], userOption: Option[User])(implicit hc: HeaderCarrier): Future[Option[TicketId]] = {
+  def createTicket(
+    name: String,
+    email: String,
+    subject: String,
+    message: String,
+    referrer: String,
+    isJavascript: Boolean,
+    request: Request[AnyRef],
+    userOption: Option[User])(implicit hc: HeaderCarrier): Future[Option[TicketId]] =
+    createDeskProTicket(
+      name,
+      email,
+      subject,
+      message,
+      referrer,
+      isJavascript,
+      request,
+      userOption.map(_.principal.accounts))
 
-    createDeskProTicket(name, email, subject, message, referrer, isJavascript, request, userOption.map(_.principal.accounts))
-  }
+  def createDeskProTicket(
+    name: String,
+    email: String,
+    subject: String,
+    message: String,
+    referrer: String,
+    isJavascript: Boolean,
+    request: Request[AnyRef],
+    accountsOption: Option[Accounts])(implicit hc: HeaderCarrier): Future[Option[TicketId]] =
+    http
+      .POST[Ticket, TicketId](
+        requestUrl("/deskpro/ticket"),
+        Ticket.create(name, email, subject, message, referrer, isJavascript, hc, request, accountsOption))
+      .map(Some(_))
 
-  def createDeskProTicket(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, request: Request[AnyRef], accountsOption: Option[Accounts])(implicit hc: HeaderCarrier): Future[Option[TicketId]] = {
-    http.POST[Ticket, TicketId](requestUrl("/deskpro/ticket"), Ticket.create(name, email, subject, message, referrer, isJavascript, hc, request, accountsOption)).map(Some(_))
-  }
-
-  def createFeedback(name: String, email: String, rating: String, subject: String, message: String, referrer: String, isJavascript: Boolean, request: Request[AnyRef], userOption: Option[User])(implicit hc: HeaderCarrier): Future[Option[TicketId]] = {
-    http.POST[Feedback, TicketId](requestUrl("/deskpro/feedback"), Feedback.create(name, email, rating, subject, message, referrer, isJavascript, hc, request, userOption)).map(Some(_))
-  }
+  def createFeedback(
+    name: String,
+    email: String,
+    rating: String,
+    subject: String,
+    message: String,
+    referrer: String,
+    isJavascript: Boolean,
+    request: Request[AnyRef],
+    userOption: Option[User])(implicit hc: HeaderCarrier): Future[Option[TicketId]] =
+    http
+      .POST[Feedback, TicketId](
+        requestUrl("/deskpro/feedback"),
+        Feedback.create(name, email, rating, subject, message, referrer, isJavascript, hc, request, userOption))
+      .map(Some(_))
 
   private def requestUrl[B, A](uri: String): String = s"$serviceUrl$uri"
 }

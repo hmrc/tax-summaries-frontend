@@ -38,13 +38,11 @@ import view_models._
 
 import scala.concurrent.Future
 
-
 class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
   val taxYear = 2014
-  val request = FakeRequest("GET","?taxYear="+taxYear)
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val request = FakeRequest("GET", "?taxYear=" + taxYear)
+  val badRequest = FakeRequest("GET", "?taxYear=20145")
   val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
 
   trait TestController extends GovernmentSpendController {
 
@@ -53,7 +51,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
     lazy val atsService: AtsService = mock[AtsService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-    val genericViewModel: GenericViewModel =  AtsList(
+    val genericViewModel: GenericViewModel = AtsList(
       utr = "3000024376",
       forename = "forename",
       surname = "surname",
@@ -90,7 +88,10 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(
+      governmentSpendService
+        .getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
 
   }
 
@@ -105,11 +106,15 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
   "Calling government spend with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result = Future.successful(show(user, request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.treasury_spending.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
-   }
+      document.title should include(
+        Messages("ats.treasury_spending.html.title") + Messages(
+          "generic.to_from",
+          (taxYear - 1).toString,
+          taxYear.toString))
+    }
 
     "display an error page for an invalid request" in new TestController {
       val result = Future.successful(show(user, badRequest))
@@ -119,7 +124,10 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(
+        governmentSpendService
+          .getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(show(user, request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -163,12 +171,14 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       document.getElementById("user-info").text() should include("userForename userSurname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
+      document
+        .select(".page-header h1")
+        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 
     "have correct data for 2015" in new TestController {
 
-        val model2 = new GovernmentSpend(
+      val model2 = new GovernmentSpend(
         taxYear = 2015,
         userUtr = testUtr,
         govSpendAmountData = List(
@@ -196,8 +206,10 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         scottishIncomeTax = new Amount(2000.00, "GBP")
       )
 
-      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
-
+      when(
+        governmentSpendService
+          .getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model2))
 
       val result = Future.successful(show(user, request))
       val document = Jsoup.parse(contentAsString(result))
@@ -249,10 +261,12 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
+        "<strong>Your taxes and public spending</strong>")
     }
 
     "return zero percentage for Housing, Cultural and Environment when they are not same" in new TestController {
@@ -277,7 +291,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
       val result = assignPercentage(govSpendAmountData)
 
-      result shouldBe(1.7, 1.8, 1.6)
+      result shouldBe (1.7, 1.8, 1.6)
 
     }
 
@@ -303,7 +317,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
       val result = assignPercentage(govSpendAmountData)
 
-      result shouldBe(1.8, 1.8, 1.8)
+      result shouldBe (1.8, 1.8, 1.8)
 
     }
 

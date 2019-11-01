@@ -56,7 +56,6 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
       timestamp = 0
     )
 
-
     override val atsListService = mock[AtsListService]
     val atsService = mock[AtsService]
   }
@@ -65,7 +64,8 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
     "Return a successful future upon success" in new TestService {
 
-      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[User], any[HeaderCarrier])).thenReturn(Future.successful(2014))
+      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[User], any[HeaderCarrier]))
+        .thenReturn(Future.successful(2014))
 
       val result = storeSelectedAtsTaxYear(2014)
 
@@ -76,17 +76,17 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
     "Return a failed future when None is returned from the dataCache" in new TestService {
 
-      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[User], any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[User], any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       val result = storeSelectedAtsTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
       }
     }
 
   }
-
 
   "getAtsListData" should {
 
@@ -102,13 +102,16 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
         )
       )
 
-      override def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+      override def getAtsListData(
+        implicit user: User,
+        hc: HeaderCarrier,
+        request: Request[AnyRef]): Future[GenericViewModel] =
         atsListService.createModel(atsList)
-      }
 
       def atsList: AtsListData => GenericViewModel =
         (output: AtsListData) => {
-          new AtsList(output.utr,
+          new AtsList(
+            output.utr,
             output.taxPayer.get.taxpayer_name.get("forename"),
             output.taxPayer.get.taxpayer_name.get("surname"),
             output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
@@ -123,13 +126,8 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
       result.toString().trim mustEqual Future.successful(model).toString().trim()
 
-
     }
 
   }
 
-
-
-
-
-  }
+}

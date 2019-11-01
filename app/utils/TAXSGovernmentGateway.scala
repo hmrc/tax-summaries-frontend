@@ -18,7 +18,7 @@ package utils
 
 import config.ApplicationConfig
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
-import uk.gov.hmrc.play.frontend.auth.{TaxRegime, GovernmentGateway}
+import uk.gov.hmrc.play.frontend.auth.{GovernmentGateway, TaxRegime}
 
 object TAXSGovernmentGateway extends GovernmentGateway {
   override def continueURL: String = ApplicationConfig.loginCallback
