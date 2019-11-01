@@ -44,6 +44,7 @@ trait ApplicationConfig {
   val portalUrl: String
   val authHost: String
   val sessionCacheHost: String
+  val optimizelyProjectId: String
 }
 
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
@@ -88,4 +89,5 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val loginUrl = getConf("login.url")
   override lazy val ytaUrl = getConf("yta.url")
   override lazy val portalUrl = getConf("portal.url")
+  override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
 }
