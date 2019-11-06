@@ -17,3 +17,5 @@ GET     /no-ats                                                 controllers.Erro
 
 GET     /switch-to-welsh                                       controllers.TaxsLanguageController.switchLanguage(lang = "cy")
 GET     /switch-to-english                                     controllers.TaxsLanguageController.switchLanguage(lang = "en")
+
+GET     /sign-out                                              controllers.AccountController.signOut
