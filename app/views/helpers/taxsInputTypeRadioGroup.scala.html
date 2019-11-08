@@ -119,42 +119,42 @@
 }
 
 <fieldset @fieldSetClass @fieldSetAttributes role="radiogroup" aria-required="true" @if(fieldErrors.nonEmpty) {aria-labelledby="@params.field.name-error-0"}>
-    <div>
         @legend
         @formHint
         @commonHelper(params.field, fieldErrors)
-        <div>
             @params.radioOptions.map { case (value, label) =>
                 @defining(s"${params.field.name}-${value.toLowerCase.replace(" ", "_")}") { inputId =>
-                    <label id="@inputId-label" for="@inputId" class="block-label @labelClass @params.field.value.filter(_ == value).map { _ => selected }">
-                        @if(!labelAfter)@{addLabelIfSpecified(label, params)}
-                        <input type="radio"
-                               id="@inputId"
-                               data-journey-click="radio - select:@Messages("ats.select_tax_year.title"):@value"
-                               @if(params.ariaDescribedBy){
-                                    @if(params.ariaDescribedByForYesOptionOnly && (value == "Yes")) {
-                                        aria-describedby="@{params.ariaDescribedBy}"
-                                    } else {
-                                        @if(!params.ariaDescribedByForYesOptionOnly) {
+                    <div class="multiple-choice">
+
+                            <input type="radio"
+                                   id="@inputId"
+                                   data-journey-click="radio - select:@Messages("ats.select_tax_year.title"):@value"
+                                   @if(params.ariaDescribedBy){
+                                        @if(params.ariaDescribedByForYesOptionOnly && (value == "Yes")) {
                                             aria-describedby="@{params.ariaDescribedBy}"
                                         } else {
-                                            aria-describedby="@{inputTypeId}"
+                                            @if(!params.ariaDescribedByForYesOptionOnly) {
+                                                aria-describedby="@{params.ariaDescribedBy}"
+                                            } else {
+                                                aria-describedby="@{inputTypeId}"
+                                            }
                                         }
-                                    }
-                               } else {
-                                    aria-describedby="@{inputTypeId}"
-                               }
-                               name="@params.field.name"
-                               value="@value" @inputClass @dataAttributes @params.field.value.filter(_ == value).map { _ => checked="checked"}>
-                        @if(labelAfter)@{addLabelIfSpecified(label, params)}
-                        @if(!optionMessages.isEmpty){
-                            @optionMessages.get.filter(c=>c._1 == inputId).map( item =>
-                                Html(s"<span ${legendClass}>${item._2}</span>")
-                            )
-                        }
-                    </label>
+                                   } else {
+                                        aria-describedby="@{inputTypeId}"
+                                   }
+                                   name="@params.field.name"
+                                   value="@value" @inputClass @dataAttributes @params.field.value.filter(_ == value).map { _ => checked="checked"}>
+
+                        <label id="@inputId-label" for="@inputId" class="@labelClass @params.field.value.filter(_ == value).map { _ => selected }">
+                            @if(!labelAfter)@{addLabelIfSpecified(label, params)}
+                            @if(labelAfter)@{addLabelIfSpecified(label, params)}
+                            @if(!optionMessages.isEmpty){
+                                @optionMessages.get.filter(c=>c._1 == inputId).map( item =>
+                                    Html(s"<span ${legendClass}>${item._2}</span>")
+                                )
+                            }
+                        </label>
+                    </div>
                 }
             }
-        </div>
-    </div>
 </fieldset>

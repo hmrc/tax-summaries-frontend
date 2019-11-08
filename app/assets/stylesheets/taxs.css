@@ -276,6 +276,11 @@ main, section, article, aside {
 #wrapper #content .page-header h1 {
   clear: right; }
 
+.selectYear#wrapper #content .page-header #user-info {
+  float: none;}
+.selectYear #errors h2.heading-medium.error-summary-heading {
+    margin-top: 0;
+}
 /*= Footer styles
 ----------------------------------------------*/
 #footer {
@@ -770,7 +775,6 @@ a, a:visited {color:#005ea5;}
 
 
 #total-income-tax-amount, #total-capital-gains-tax-amount {
-    padding-right: 30px;
     text-align: right;
     border-bottom: 0 none;
 }
