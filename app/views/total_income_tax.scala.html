@@ -33,20 +33,18 @@
   @if(!actingAsAttorney.isDefined){
     <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }
-@helpers.back_link(Messages("generic.back"))
-  <h1 aria-level="1" role="heading">
-    <span class="gray heading-medium block-heading">
-      @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear))
-    </span>
-    @Html(Messages("ats.total_income_tax.income_tax"))
-  </h1>
+
 }
 
 @includes.taxs_main(title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
-<article class="content__body">
-  <div class="grid grid-2-3">
-
+    @helpers.back_link(Messages("generic.back"))
+    <h1 aria-level="1" role="heading">
+        <span class="gray heading-medium block-heading">
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear))
+        </span>
+      @Html(Messages("ats.total_income_tax.income_tax"))
+    </h1>
     <table id="income-tax">
       <thead>
         <tr>
@@ -193,8 +191,5 @@
       <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYear"
          data-journey-click="link - click:@Html(Messages("ats.total_income_tax.income_tax")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
     </div>
-
-  </div>
-</article>
 
 }

@@ -33,21 +33,21 @@
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
     }
-    @helpers.back_link(Messages("generic.back"))
-    <h1 aria-level="1" role="heading">
-        <span class="gray heading-medium block-heading">
-            @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-        </span>
-        @Html(Messages("ats.summary.title"))
-    </h1>
-    <p class="lede">@Html(Messages("ats.summary.lede"))</p>
 }
 
 @includes.taxs_main(title = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+    @helpers.back_link(Messages("generic.back"))
+    <h1>
+            <span class="gray heading-medium block-heading">
+                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+            </span>
+        @Html(Messages("ats.summary.title"))
+    </h1>
+    <p class="lede">@Html(Messages("ats.summary.lede"))</p>
 
     <section id="taxable-income">
 
-        <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.total_income.title"))</h2>
+        <h2>@Html(Messages("ats.summary.total_income.title"))</h2>
 
         <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.total_income.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.total_income")) </span>

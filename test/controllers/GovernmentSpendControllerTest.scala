@@ -172,7 +172,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
       document
-        .select(".page-header h1")
+        .select("h1")
         .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 

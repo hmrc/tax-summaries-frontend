@@ -812,9 +812,6 @@ a, a:visited {color:#005ea5;}
     font-size: 1em;
     font-weight: 700;
 }
-.content__body {
-    width: 100%;
-}
 #errors:focus {outline: 3px solid #ffbf47;}
 
 .scottish-income-tax {padding-top:0; border-width:0;}

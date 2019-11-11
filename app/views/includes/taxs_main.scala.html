@@ -74,21 +74,6 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 @afterHeader = {}
 
-@*content = {
-    @includes.taxs_main_content(
-        mainContent,
-        mainClasses,
-        articleClasses,
-        userLoggedIn,
-        sidebarLinks,
-        supportLinkEnabled,
-        contentHeader,
-        includeGridWrapper,
-        serviceInfo,
-        actingAttorney
-    )
-}*@
-
 @getHelpForm = {
     @formPartialRetriever.getPartialContent(ApplicationConfig.reportAProblemPartialUrl)
 }
@@ -101,7 +86,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 @content = {
         @uiLayouts.main_content(
-        article = mainContent,
+        article = uiLayouts.article(mainContent),
         mainClass = mainClasses,
         mainDataAttributes = mainDataAttributes,
         mainContentHeader = mainContentHeader,

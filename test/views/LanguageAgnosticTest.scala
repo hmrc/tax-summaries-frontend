@@ -158,7 +158,7 @@ class LanguageAgnosticTest
         .government_spending(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#content header h1").text should include("Eich trethi a gwariant cyhoeddus")
+      document.select("#content h1").text should include("Eich trethi a gwariant cyhoeddus")
       document
         .select(".lede")
         .text shouldBe "Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario."
@@ -198,7 +198,7 @@ class LanguageAgnosticTest
         formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select(".page-header h1").text should include("Eich incwm a’ch trethi")
+      document.select("h1").text should include("Eich incwm a’ch trethi")
       document.select(".link-back").text shouldBe "Yn ôl"
       document
         .select("#agent-banner")

@@ -33,18 +33,16 @@
   @if(!actingAsAttorney.isDefined){
     <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }
-@helpers.back_link(Messages("generic.back"))
-  <h1 aria-level="1" role="heading">
-    <span class="gray heading-medium block-heading">
-      @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-    </span>
-    @Html(Messages("ats.nics.tax_and_nics.title"))
-  </h1>
 }
 
 @includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
-<article class="content__body">
-  <div class="grid grid-2-3">
+    @helpers.back_link(Messages("generic.back"))
+    <h1 aria-level="1" role="heading">
+        <span class="gray heading-medium block-heading">
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        </span>
+        @Html(Messages("ats.nics.tax_and_nics.title"))
+    </h1>
   <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
     <p>@Html(Messages("ats.nics.tax_and_nics.description",
       "<span id=\"total-cg-tax-rate\">"+viewModel.nicsAndTaxRate.percent+"</span>"))</p>
@@ -83,7 +81,4 @@
     <div class="back">
       <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
     </div>
-</div>
-</article>
-
 }

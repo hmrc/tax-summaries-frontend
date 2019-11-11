@@ -128,7 +128,7 @@ class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       document.toString should include("Your total income")
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
+      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
     }
 
     "have zero-value fields hidden in the view" in new TestController {

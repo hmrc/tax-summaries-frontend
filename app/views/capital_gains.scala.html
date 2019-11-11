@@ -28,19 +28,17 @@
   @if(!actingAsAttorney.isDefined){
     <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }
-@helpers.back_link(Messages("generic.back"))
-  <h1 aria-level="1" role="heading">
-    <span class="gray heading-medium block-heading">
-      @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-    </span>
-    @Html(Messages("ats.capital_gains_tax.subtitle"))
-  </h1>
+
 }
 
 @includes.taxs_main(title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
-<article class="content__body">
-  <div class="grid grid-2-3">
-
+    @helpers.back_link(Messages("generic.back"))
+    <h1 aria-level="1" role="heading">
+        <span class="gray heading-medium block-heading">
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        </span>
+      @Html(Messages("ats.capital_gains_tax.subtitle"))
+    </h1>
     <p class="lede">@Html(Messages("ats.capital_gains_tax.lede"))</p>
     @if(!viewModel.totalCapitalGainsTaxAmount.isZero) {
       <p id="total-cg-description">@Html(Messages("ats.capital_gains_tax.description",
@@ -141,7 +139,5 @@
          data-journey-click="link - click:@Html(Messages("ats.capital_gains_tax.subtitle")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
     </div>
 
-  </div>
-</article>
 
 }

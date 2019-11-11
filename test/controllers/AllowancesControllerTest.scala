@@ -106,7 +106,7 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
       document.toString should include("tax-free-allowance")
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
