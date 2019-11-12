@@ -15,7 +15,6 @@
  *@
 
 @(field: Field, fieldErrors: Seq[_root_.utils.validation.FieldError])(implicit lang: Lang, message: Messages)
-@import _root_.utils.validation.ErrorMessageInterpreter._
 @import _root_.utils.validation.ErrorMessageLookup._
 @fieldErrors.zipWithIndex.map { case (fieldError, index) =>
     <span class="error-notification"

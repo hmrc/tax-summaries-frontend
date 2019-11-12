@@ -16,12 +16,10 @@
 
 package connectors.deskpro.domain
 
+import controllers.auth.AuthenticatedRequest
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
-import play.api.mvc.Request
 import uk.gov.hmrc.domain._
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.http.{ HeaderCarrier, SessionKeys }
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 case class Ticket private(name: String,
                           email: String,
@@ -44,7 +42,7 @@ object Ticket extends FieldTransformer {
 
   implicit val formats = Json.format[Ticket]
 
-  def create(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, hc: HeaderCarrier, request: Request[AnyRef], accountsOption: Option[Accounts]): Ticket =
+  def create(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, hc: HeaderCarrier, request: AuthenticatedRequest[_]): Ticket =
     Ticket(
       name.trim,
       email,
@@ -56,7 +54,7 @@ object Ticket extends FieldTransformer {
       userIdFrom(request, hc),
       areaOfTaxOf(request),
       sessionIdFrom(hc),
-      userTaxIdentifiersFromAccounts(accountsOption))
+      UserTaxIdentifiers(request.nino, request.ctUtr, request.saUtr, request.vrn, request.payeEmpRef))
 }
 
 object TicketId {
@@ -91,7 +89,7 @@ object Feedback extends FieldTransformer {
 
   implicit val formats = Json.format[Feedback]
 
-  def create(name: String, email: String, rating: String, subject: String, message: String, referrer: String, isJavascript: Boolean, hc: HeaderCarrier, request: Request[AnyRef], user: Option[User]): Feedback =
+  def create(name: String, email: String, rating: String, subject: String, message: String, referrer: String, isJavascript: Boolean, hc: HeaderCarrier, request: AuthenticatedRequest[_]): Feedback =
     Feedback(
       name.trim,
       email,
@@ -104,7 +102,7 @@ object Feedback extends FieldTransformer {
       userIdFrom(request, hc),
       areaOfTaxOf(request),
       sessionIdFrom(hc),
-      userTaxIdentifiersOf(user))
+      UserTaxIdentifiers(request.nino, request.ctUtr, request.saUtr, request.vrn, request.payeEmpRef))
 }
 
 
@@ -114,7 +112,7 @@ trait FieldTransformer {
 
   def sessionIdFrom(hc: HeaderCarrier) = hc.sessionId.map(_.value).getOrElse("n/a")
 
-  def areaOfTaxOf(request: Request[AnyRef]) = request.session.get(SessionKeys.authProvider) match {
+  def areaOfTaxOf(request:AuthenticatedRequest[_]) = request.session.get(SessionKeys.authProvider) match {
     // TODO IDA in the future will not only be for PAYE so another way will be required to map to area of tax
     case Some("IDA") => "paye"
     case Some("GGW") => "biztax"
@@ -122,28 +120,13 @@ trait FieldTransformer {
     case _ => NA
   }
 
-  def userIdFrom(request: Request[AnyRef], hc: HeaderCarrier): String = request.session.get(SessionKeys.sensitiveUserId) match {
+  def userIdFrom(request: AuthenticatedRequest[_], hc: HeaderCarrier): String = request.session.get(SessionKeys.sensitiveUserId) match {
     case Some("true") => NA
     case _ => hc.userId.map(_.value).getOrElse(NA)
   }
 
-  def userAgentOf(request: Request[AnyRef]) = request.headers.get("User-Agent").getOrElse("n/a")
+  def userAgentOf(request: AuthenticatedRequest[_]) = request.headers.get("User-Agent").getOrElse("n/a")
 
   def ynValueOf(javascript: Boolean) = if (javascript) "Y" else "N"
 
-  def userTaxIdentifiersOf(userOption: Option[User]) = {
-    userTaxIdentifiersFromAccounts(userOption.map(_.principal.accounts))
-  }
-
-  def userTaxIdentifiersFromAccounts(accountsOption: Option[Accounts]) = {
-    accountsOption.map {
-      accounts =>
-        val nino = accounts.paye.map(paye => paye.nino)
-        val saUtr = accounts.sa.map(sa => sa.utr)
-        val ctUtr = accounts.ct.map(ct => ct.utr)
-        val vrn = accounts.vat.map(vat => vat.vrn)
-        val empRef = accounts.epaye.map(epaye => epaye.empRef)
-        UserTaxIdentifiers(nino, ctUtr, saUtr, vrn, empRef)
-    }.getOrElse(UserTaxIdentifiers(None, None, None, None, None))
-  }
 }

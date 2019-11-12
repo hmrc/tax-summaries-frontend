@@ -17,16 +17,15 @@
 package connectors
 
 import config.WSHttp
-import models.AtsData
 import models.{AtsData, AtsListData}
-import play.api.{Configuration, Play}
 import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 
 object MiddleConnector extends MiddleConnector with ServicesConfig {
 

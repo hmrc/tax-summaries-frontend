@@ -14,8 +14,7 @@
  * limitations under the License.
  *@
 
-@import config.{ApplicationConfig, CachedStaticHtmlPartialProvider}
-@import controllers.TaxsLanguageController
+@import config.ApplicationConfig
 
 @(content: Html,
 mainClasses: Option[String] = None,
@@ -26,7 +25,7 @@ supportLinkEnabled: Boolean = true,
 contentHeader: Option[Html] = None,
 includeGridWrapper: Boolean = false,
 serviceInfo: Html = HtmlFormat.empty,
-actingAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit request: Request[_], lang: Lang, messages: Messages)
+actingAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: Request[_], lang: Lang, messages: Messages)
 
 
 <main id="wrapper" role="main" @if(mainClasses.isDefined) {class="@mainClasses.get"}

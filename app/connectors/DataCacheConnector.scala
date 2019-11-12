@@ -16,15 +16,15 @@
 
 package connectors
 
-import models.{AtsListData}
-import services.{CryptoService, AgentToken}
-import uk.gov.hmrc.http.cache.client.{CacheMap}
 import config.TAXSSessionCache
-import models.AtsData
+import models.{AtsData, AtsListData}
+import services.{AgentToken, CryptoService}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Globals
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
 
 object DataCacheConnector extends DataCacheConnector {
   lazy val cryptoService = CryptoService

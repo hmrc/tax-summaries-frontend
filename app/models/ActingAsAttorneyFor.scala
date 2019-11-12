@@ -14,24 +14,6 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-
-import controllers.auth.AuthenticatedRequest
-import models.{ErrorResponse, InvalidTaxYear}
-
-object TaxYearUtil {
-
-  private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
-
-  def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] = {
-    request.getQueryString("taxYear") match {
-      case Some(taxYearPattern(year, _)) => {
-        Right(year.toInt)
-      }
-      case _ => {
-        Left(InvalidTaxYear)
-      }
-    }
-  }
-}
+case class ActingAsAttorneyFor(name:Option[String], identifiers:Map[String, String])

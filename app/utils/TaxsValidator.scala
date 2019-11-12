@@ -16,8 +16,6 @@
 
 package utils
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
-
 object TaxsValidator extends TaxsValidator
 
 trait TaxsValidator {

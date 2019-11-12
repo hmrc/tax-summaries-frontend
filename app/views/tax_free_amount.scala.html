@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
+@import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-
-@(viewModel: view_models.Allowances, actingAsAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None)(implicit lang: Lang, request: Request[AnyRef], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@(viewModel: view_models.Allowances, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
   @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.tax_free_amount.subtitle", viewModel.year)

@@ -17,43 +17,47 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.mvc.{Request, Result}
+import play.api.Play
+import play.api.mvc.Result
 import services.{AuditService, SummaryService}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import utils.{GenericViewModel, TaxSummariesRegime, TaxYearUtil, TaxsController}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils.GenericViewModel
 import view_models.Summary
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 object AtsMainController extends AtsMainController {
 
   override val summaryService = SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
+  override val authAction = Play.current.injector.instanceOf[AuthAction]
 }
 
 trait AtsMainController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
+  val authAction: AuthAction
+
   def summaryService: SummaryService
 
-  def authorisedAtsMain = AuthorisedFor(TaxSummariesRegime, GGConfidence).async {
-    user => request => show(user, request)
+  def authorisedAtsMain = authAction.async {
+    request => show(request)
   }
 
   type ViewModel = Summary
 
 
-  override def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
 
-  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result = {
-    Ok(views.html.taxs_main(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    Ok(views.html.taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

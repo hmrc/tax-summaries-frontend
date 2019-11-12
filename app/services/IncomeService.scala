@@ -16,10 +16,9 @@
 
 package services
 
+import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
-import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.IncomeBeforeTax
 
@@ -34,7 +33,7 @@ trait IncomeService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getIncomeData(taxYear:Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getIncomeData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     atsService.createModel(taxYear, createIncomeConverter)
   }
 

@@ -33,8 +33,8 @@ object CaseOption extends Enumeration {
 // the type of trim is defaulted to both head and tail
 trait PrevalidationAPI[T] {
 
-  import TrimOption._
   import CaseOption._
+  import TrimOption._
 
   type PreprocessFunction = Map[String, String] => Map[String, String]
 

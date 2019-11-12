@@ -16,9 +16,9 @@
 
 package utils.validation
 
+import play.api.data.validation.Valid
 import utils.validation.ConstraintUtil.{FieldFormatConstraintParameter, FieldIsEmptyConstraintParameter, FieldMaxLengthConstraintParameter}
 import utils.validation.ErrorMessageFactory._
-import play.api.data.validation.Valid
 
 
 object ErrorMessagesUtilAPI {

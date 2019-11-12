@@ -18,9 +18,10 @@ package services
 
 import connectors.AuthenticationConnector
 import play.api.mvc.Request
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.play.audit.model.DataEvent
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import uk.gov.hmrc.http.{ HeaderCarrier, HeaderNames }
 
 
 object AuditTypes {

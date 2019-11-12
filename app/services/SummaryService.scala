@@ -16,10 +16,9 @@
 
 package services
 
+import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
-import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.Summary
 
@@ -35,7 +34,7 @@ trait SummaryService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getSummaryData(taxYear:Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+  def getSummaryData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     atsService.createModel(taxYear, summaryConverter)
   }
 

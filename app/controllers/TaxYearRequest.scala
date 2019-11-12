@@ -16,19 +16,18 @@
 
 package controllers
 
+import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
-import play.api.mvc.{Request, Result}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import play.api.mvc.Result
 import utils.{GenericViewModel, TaxYearUtil, TaxsController}
 import view_models.NoATSViewModel
-import play.api.i18n.Messages.Implicits._
-
 import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import scala.concurrent.Future
 
 trait TaxYearRequest extends TaxsController {
 
-  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(implicit user: User, request: Request[AnyRef]):
+  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(implicit request: AuthenticatedRequest[_]):
     Future[Either[ErrorResponse, GenericViewModel]] = {
       TaxYearUtil.extractTaxYear match {
         case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
@@ -36,7 +35,7 @@ trait TaxYearRequest extends TaxsController {
     }
   }
 
-  def transformation(implicit user: User, request: Request[AnyRef]): Future[Result] = {
+  def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
       case Right(result: ViewModel) => obtainResult(result)

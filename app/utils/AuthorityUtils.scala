@@ -16,9 +16,9 @@
 
 package utils
 
-import services.{AgentToken, CryptoService}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User, NonNegotiableIdentityConfidencePredicate}
-import uk.gov.hmrc.domain.{Uar, SaUtr}
+import controllers.auth.AuthenticatedRequest
+import services.AgentToken
+import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 
 object AuthorityUtils extends AuthorityUtils
@@ -57,25 +57,25 @@ trait AuthorityUtils {
       ""
     )
 
-  def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit user: User): Boolean = {
-    (AccountUtils.getAccount(user), agentToken) match {
-      case (agentAccount, None) if (AccountUtils.isAgent(user)) =>
+  def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
+    (AccountUtils.getAccount(request), agentToken) match {
+      case (agentAccount, None) if (AccountUtils.isAgent(request)) =>
         true
-      case (agentAccount, Some(agentToken)) if (AccountUtils.isAgent(user)) =>
+      case (agentAccount, Some(agentToken)) if (AccountUtils.isAgent(request)) =>
         SaUtr(utr) == SaUtr(agentToken.clientUtr)
       case (account: SaAccount, _) =>
         SaUtr(utr) == account.utr
     }
   }
 
-  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit user: User): Boolean = {
+  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
     utr.fold { false } { checkUtr(_, agentToken) }
   }
 
-  def getRequestedUtr(account: Account, agentToken: Option[AgentToken] = None): SaUtr = {
+  def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr = {
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
-      case taxsAgent: TaxSummariesAgentAccount =>
+      case taxsAgent: Uar =>
         agentToken.fold {
           throw AgentTokenException("Token is empty")
         } { agentToken =>
@@ -85,7 +85,7 @@ trait AuthorityUtils {
             throw AgentTokenException(s"Incorrect agent UAR: ${taxsAgent.uar}, ${agentToken.agentUar}")
           }
         }
-      case sa: SaAccount => sa.utr
+      case sa: SaUtr => sa
     }
   }
 }
