@@ -14,7 +14,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "frontend-bootstrap"   % "12.4.0",
     "uk.gov.hmrc"       %% "play-partials"        % "6.5.0",
     "uk.gov.hmrc"       %% "domain"               % "5.3.0",
-    "uk.gov.hmrc"       %% "auth-client"          % "2.22.0-play-25",
+    "uk.gov.hmrc"       %% "auth-client"          % "2.31.0-play-25",
     "uk.gov.hmrc"       %% "json-encryption"      % "4.1.0",
     "com.mohiva"        %% "play-html-compressor" % "0.6.3" // used to pretty print html by stripping out all the whitespaces added by the playframework
   )

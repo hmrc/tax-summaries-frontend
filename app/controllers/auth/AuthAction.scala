@@ -38,9 +38,9 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50)
-      .retrieve(Retrievals.affinityGroup) {
-        ???
+    authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
+      .retrieve(Retrievals.affinityGroup and Retrievals.allEnrolments) {
+        case affinityGroup ~ Enrolments(enrolments) =>
       }
   } recover {
     case _: NoActiveSession => ???
