@@ -17,27 +17,26 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
-import utils.TestConstants._
 import view_models.NoATSViewModel
+
 import scala.concurrent.Future
 
 class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = FakeRequest("GET","?taxYear=2015")
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+  val taxYear = 2015
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
-  val taxYear = 2015
 
   "Opening link if user has no income tax or cg tax liability" should {
 
@@ -46,10 +45,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
       override lazy val totalIncomeTaxService = mock[TotalIncomeTaxService]
       override lazy val auditService = mock[AuditService]
       implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -61,10 +61,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val incomeService = mock[IncomeService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -75,10 +76,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val incomeService = mock[IncomeService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -89,10 +91,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val allowanceService = mock[AllowanceService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
+    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -103,10 +106,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val capitalGainsService = mock[CapitalGainsService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -117,10 +121,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val governmentSpendService = mock[GovernmentSpendService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -131,10 +136,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -145,10 +151,11 @@ class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with Mo
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
-    val result = Future.successful(show(user, request))
+    val result = Future.successful(show(request))
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")

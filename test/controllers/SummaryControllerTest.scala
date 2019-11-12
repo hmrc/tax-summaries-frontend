@@ -17,18 +17,19 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
@@ -66,9 +67,8 @@ object SummaryControllerTest {
 class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2014
-  val request = FakeRequest("Get", s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = SummaryControllerTest.baseModel
 
   trait TestController extends SummaryController {
@@ -76,8 +76,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
   }
 
@@ -93,29 +94,29 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
   "Calling Summary with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result =  Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.summary.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(user, badRequest))
+      val result = Future.successful(show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(show(user, request))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "have the right user data in the view" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -127,7 +128,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "have the correct tax free amount" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -140,9 +141,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalTaxFreeAllowance = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -151,7 +152,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show total income tax and NICs value on the summary page" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -160,7 +161,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show capital gains (and description) on the summary if capital gains is not 0" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -173,9 +174,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         taxableGains = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -185,7 +186,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Total Capital Gains Tax value" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-capital-gains-tax").text() should equal("£5,500")
@@ -193,7 +194,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show capital gains description on the summary if total capital gains tax is not 0" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -206,9 +207,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -222,9 +223,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAndNics = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -233,7 +234,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Tax and Nics description having (income tax and employee nics)" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Income Tax and National Insurance")
@@ -246,9 +247,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your tax was calculated as")
@@ -261,9 +262,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your tax was calculated as")
@@ -276,9 +277,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your NICs were calculated as")
@@ -290,9 +291,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Income Tax and National Insurance")
@@ -304,9 +305,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model10))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model10))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your NICs were calculated as")
@@ -314,7 +315,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax as sum of Income Tax, capital gains and employee nics)" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-amount").text() shouldBe "£1,800"
@@ -322,9 +323,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show Your Total Tax description having (total income tax, capital gains, employee nics)" in new TestController {
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your total Income Tax, National Insurance and Capital Gains Tax.")
@@ -337,9 +338,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model11))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model11))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your total Income Tax.")
@@ -352,10 +353,10 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model12))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model12))
 
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your Capital Gains Tax.")
@@ -368,9 +369,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model13))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model13))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your National Insurance.")
@@ -382,10 +383,10 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model14))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model14))
 
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your total Income Tax and Capital Gains Tax.")
@@ -397,10 +398,10 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model15))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model15))
 
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your total Income Tax and National Insurance.")
@@ -412,10 +413,10 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model16))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model16))
 
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your National Insurance and Capital Gains Tax.")
@@ -423,7 +424,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "show 'Summary' page with a correct breadcrumb" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
@@ -442,9 +443,9 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
       val model17 = new NoATSViewModel
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model17))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model17))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")

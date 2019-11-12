@@ -17,22 +17,23 @@
 package services
 
 import controllers.FakeTaxsPlayApplication
+import controllers.auth.AuthenticatedRequest
 import models.AtsListData
 import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
-import play.api.mvc.Request
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.GenericViewModel
 import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
+
 import scala.concurrent.Future
 import scala.io.Source
 
@@ -46,8 +47,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
   class TestService extends AtsYearListService {
 
-    implicit val request = FakeRequest()
-    implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
     implicit val hc = new HeaderCarrier
 
     val agentToken = AgentToken(
@@ -65,7 +65,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
     "Return a successful future upon success" in new TestService {
 
-      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[User], any[HeaderCarrier])).thenReturn(Future.successful(2014))
+      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(2014))
 
       val result = storeSelectedAtsTaxYear(2014)
 
@@ -76,7 +76,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
     "Return a failed future when None is returned from the dataCache" in new TestService {
 
-      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[User], any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
 
       val result = storeSelectedAtsTaxYear(2014)
 
@@ -102,7 +102,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
         )
       )
 
-      override def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] = {
+      override def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
         atsListService.createModel(atsList)
       }
 
@@ -117,9 +117,9 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
       val model: GenericViewModel = atsListModel
 
-      when(atsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(model)
+      when(atsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(model)
 
-      val result = getAtsListData(user, hc, request)
+      val result = getAtsListData(hc, request)
 
       result.toString().trim mustEqual Future.successful(model).toString().trim()
 

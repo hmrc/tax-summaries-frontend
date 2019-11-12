@@ -17,26 +17,27 @@
 package views
 
 import config.AppFormPartialRetriever
+import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
 import view_models.{Amount, Rate}
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite, PlaySpec}
+import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
+class GenericErrorViewTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
-  val request = FakeRequest()
+  val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")
   val languageCy = Lang("cy")
   val utr = testUtr
-  val user = User(AuthorityUtils.saAuthority(testOid, utr))
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
 
@@ -49,7 +50,7 @@ class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrows
 
     "show the correct contents of the generic error page in English" in  {
 
-      val resultEn = views.html.errors.generic_error()(languageEn, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messagesEn, formPartialRetriever)
+      val resultEn = views.html.errors.generic_error()(languageEn, requestWithSession, messagesEn, formPartialRetriever)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include("Sorry, there is a problem with the service")
       documentEn.toString should include("Try again later.")
@@ -57,7 +58,7 @@ class GenericErrorViewTest extends UnitSpec with OneServerPerSuite with OneBrows
 
     "show the correct contents of the generic error page in Welsh" in  {
 
-      val resultCy = views.html.errors.generic_error()(languageCy, request.withSession("TAXS_USER_TYPE" -> "PORTAL"), user, messagesCy, formPartialRetriever)
+      val resultCy = views.html.errors.generic_error()(languageCy, requestWithSession, messagesCy, formPartialRetriever)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
       documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")

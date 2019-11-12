@@ -16,11 +16,12 @@
 
 package services
 
-import org.scalatest.mock.MockitoSugar
-import uk.gov.hmrc.domain.SaUtr
+import controllers.auth.AuthenticatedRequest
+import org.scalatest.mockito.MockitoSugar
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AgentTokenException, AccountUtils, AuthorityUtils}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import utils.TestConstants._
 
 class AuthorityUtilsTest extends UnitSpec with MockitoSugar {
@@ -30,10 +31,12 @@ class AuthorityUtilsTest extends UnitSpec with MockitoSugar {
     val utr = testUtr
     val uar = testUar
     val nonMatchingUtr = testNonMatchingUtr
-    val user = User(AuthorityUtils.saAuthority(testOid, utr))
-    val agentUser = User(AuthorityUtils.taxsAgentAuthority(testOid, uar))
-    val account = AccountUtils.getAccount(user)
-    val agentAccount = AccountUtils.getAccount(agentUser)
+
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest())
+    val agentRequest = AuthenticatedRequest("userId", Some(Uar(uar)), Some(SaUtr(utr)), None, None, None, None, FakeRequest())
+
+    val account = AccountUtils.getAccount(request)
+    val agentAccount = AccountUtils.getAccount(agentRequest)
 
     val agentToken = AgentToken(
       agentUar = uar,
@@ -45,47 +48,47 @@ class AuthorityUtilsTest extends UnitSpec with MockitoSugar {
   "checkUtr" should {
 
     "return true when an SA User has a matching utr and no agent token is passed" in new TestService {
-      val result = checkUtr(utr, None)(user)
+      val result = checkUtr(utr, None)(request)
       result shouldBe true
     }
 
     "return true when an SA User has a matching utr and an agent token is passed" in new TestService {
-      val result = checkUtr(utr, Some(agentToken))(user)
+      val result = checkUtr(utr, Some(agentToken))(request)
       result shouldBe true
     }
 
     "return false when an SA User has a non-matching utr and no agent token is passed" in new TestService {
-      val result = checkUtr(nonMatchingUtr, Some(agentToken))(user)
+      val result = checkUtr(nonMatchingUtr, None)(request)
       result shouldBe false
     }
 
     "return false when an SA User has a non-matching utr and an agent token is passed" in new TestService {
-      val result = checkUtr(nonMatchingUtr, Some(agentToken))(user)
+      val result = checkUtr(nonMatchingUtr, Some(agentToken))(request)
       result shouldBe false
     }
 
     "return true when the user is an Agent user and the agentToken.clientUtr matches" in new TestService {
-      val result = checkUtr(utr, Some(agentToken))(agentUser)
+      val result = checkUtr(utr, Some(agentToken))(agentRequest)
       result shouldBe true
     }
 
     "return true when the user is an Agent user and there is no agentToken" in new TestService {
-      val result = checkUtr(utr, None)(agentUser)
+      val result = checkUtr(utr, None)(agentRequest)
       result shouldBe true
     }
 
     "return false when the user is an Agent and the agentToken.clientUtr does not match" in new TestService {
-      val result = checkUtr(nonMatchingUtr, Some(agentToken))(agentUser)
+      val result = checkUtr(nonMatchingUtr, Some(agentToken))(agentRequest)
       result shouldBe false
     }
 
     "return false when the utr is None" in new TestService {
-      val result = checkUtr(None, None)(user)
+      val result = checkUtr(None, None)(request)
       result shouldBe false
     }
 
     "return true when the utr is Some(_) and the criteria should match" in new TestService {
-      val result = checkUtr(Some(utr), None)(user)
+      val result = checkUtr(Some(utr), None)(request)
       result shouldBe true
     }
   }

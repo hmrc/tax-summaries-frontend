@@ -17,25 +17,24 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.UnitSpec
 import play.api.test.Helpers._
-import utils.AuthorityUtils
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.TestConstants._
+import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
 class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val request = FakeRequest()
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
 
   trait TestErrorController extends ErrorController {
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
   }
 
   "Calling ErrorController with no session" should {
@@ -61,7 +60,7 @@ class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "Show No ATS page" in new TestErrorController {
 
-      val result = noAts(user, request)
+      val result = noAts(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200

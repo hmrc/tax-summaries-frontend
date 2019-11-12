@@ -17,18 +17,19 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AuthorityUtils
@@ -39,10 +40,9 @@ import scala.concurrent.Future
 
 class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
   val taxYear = 2014
-  val request = FakeRequest("GET",s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,
@@ -72,10 +72,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     override lazy val capitalGainsService = mock[CapitalGainsService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
-    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(baseModel))
-
-
+    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
   }
 
   "Calling Capital Gains with no session" should {
@@ -90,29 +89,29 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
   "Calling Capital Gains with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result =  Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.capital_gains_tax.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request " in new TestController {
-      val result = Future.successful(show(user, badRequest))
+      val result = Future.successful(show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(show(user, request))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "show Your Capital Gains section with the right user data" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -128,7 +127,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -143,9 +142,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         taxableGains = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -155,7 +154,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show Capital Gains Tax section with correct user data" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -178,9 +177,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -194,9 +193,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -210,9 +209,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -222,7 +221,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show Adjustments section with correct user data" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -231,7 +230,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show Total Capital Gains Tax with correct user data" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -244,9 +243,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -256,7 +255,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     
     "show capital gains description if total capital gains tax is not 0" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-cg-description") should not be null
@@ -269,9 +268,9 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.toString should not include("Technical Difficulties")
@@ -280,7 +279,7 @@ class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "show 'Capital Gains tax' page with a correct breadcrumb" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")

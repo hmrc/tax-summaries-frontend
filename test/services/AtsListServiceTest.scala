@@ -16,22 +16,22 @@
 
 package services
 
-import connectors.{MiddleConnector, DataCacheConnector}
+import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.FakeTaxsPlayApplication
+import controllers.auth.AuthenticatedRequest
 import models.AtsListData
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{Uar, SaUtr}
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.Account
+import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AgentTokenException,AccountUtils, AuthorityUtils}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
 import utils.TestConstants._
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,8 +46,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
   class TestService extends AtsListService {
 
-    implicit val request = FakeRequest()
-    implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
     implicit val hc = new HeaderCarrier
 
     val agentToken = AgentToken(
@@ -78,7 +77,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
     when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
     when(middleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
-    when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[User])).thenReturn(true)
+    when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
 
   }
 
@@ -191,7 +190,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
       "Return the ats year list data for a user from the cache" in new TestService {
 
-        when(accountUtils.isAgent(user)).thenReturn(true)
+        when(accountUtils.isAgent(request)).thenReturn(true)
 
         whenReady(getAtsYearList) { result =>
           result shouldBe data
@@ -222,7 +221,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in new TestService {
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
-      when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[User])).thenReturn(false)
+      when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       whenReady(getAtsYearList) { result =>
         result shouldBe data
@@ -238,9 +237,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
       "Return the ats year list data for a user from the cache" in new TestService {
 
-        override implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
-
-        when(accountUtils.isAgent(user)).thenReturn(true)
+        when(accountUtils.isAgent(request)).thenReturn(true)
 
         whenReady(getAtsYearList) { result =>
           result shouldBe data
@@ -252,8 +249,6 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
       }
 
       "Return the ats year list data for a user from the MS" in new TestService {
-
-        override implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
 
         when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
@@ -268,9 +263,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
       "Return the ats year list data for a user when the agent token doesn't match the user" in new TestService {
 
-        override implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
-
-        when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[User])).thenReturn(false)
+        when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
         whenReady(getAtsYearList) { result =>
           result shouldBe data
@@ -283,10 +276,8 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
       "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in new TestService {
 
-        override implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
-
-        when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[User])).thenReturn(false)
-        when(authUtils.getRequestedUtr(any[Account], any[Option[AgentToken]])).thenThrow(new AgentTokenException("Token is empty"))
+        when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
+        when(authUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])).thenThrow(new AgentTokenException("Token is empty"))
 
         whenReady(getAtsYearList.failed) { exception =>
           exception shouldBe a [AgentTokenException]

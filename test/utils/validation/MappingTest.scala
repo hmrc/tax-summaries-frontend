@@ -16,7 +16,7 @@
 
 package test.utils.validation
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import utils.validation.ConstraintUtil.{CompulsoryTextFieldMappingParameter, _}
 import utils.validation.ErrorMessagesUtilAPI._
 import utils.validation.MappingUtilAPI.{MappingUtil, _}

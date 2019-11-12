@@ -18,19 +18,20 @@ package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.FakeTaxsPlayApplication
+import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{Uar, SaUtr}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AuthorityUtils}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import scala.concurrent.{Future, ExecutionContext}
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import utils.TestConstants._
 import utils.JsonUtil._
@@ -58,17 +59,16 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
     )
 
     implicit val hc = new HeaderCarrier
-    implicit val request = FakeRequest()
+    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
   }
 
   "AtsService checkUtrAgainstCache" should {
 
     "not write data to the cache when the retrieved cached utr equals the requested utr " in new TestService {
 
-      implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
 
-      when(accountUtils.isAgent(user)).thenReturn(true)
-      when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(None))(any[User])).thenReturn(true)
+      when(accountUtils.isAgent(request)).thenReturn(true)
+      when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(true)
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
@@ -87,9 +87,7 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
     "write data to the cache when the retrieved cached utr is different to the requested utr " in new TestService {
 
-      implicit val user = User(AuthorityUtils.saAuthority(testOid, testNonMatchingUtr))
-
-      when(authUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[User])).thenReturn(false)
+      when(authUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
@@ -107,9 +105,7 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
     "write data to the cache when the retrieved cached utr is different to the requested utr - AGENT" in new TestService {
 
-      implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testNonMatchingUtr))
-
-      when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[User])).thenReturn(false)
+      when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
@@ -126,8 +122,6 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
     }
 
     "not write data to the cache if an agent with no token" in new TestService {
-
-      implicit val user = User(AuthorityUtils.taxsAgentAuthority(testOid, testUtr))
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))

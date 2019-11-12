@@ -18,6 +18,7 @@ package controllers
 
 import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import models.{AtsListData, InvalidTaxYear}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -25,15 +26,15 @@ import org.mockito.Matchers._
 import org.mockito.Mockito.{when, _}
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
@@ -48,10 +49,9 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   val taxYear = 2015
-  val request = FakeRequest("Get", s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20155")
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-  val agentUser = User(AuthorityUtils.taxsAgentAuthority(testOid, testUar))
+
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
+  val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -66,6 +66,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     override lazy val auditService = mock[AuditService]
     override lazy val atsListService = mock[AtsListService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
     val model: GenericViewModel = AtsList(
       utr = testUtr,
@@ -77,7 +78,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       )
     )
 
-    when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model)
+    when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model)
     when(dataCache.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
   }
 
@@ -104,8 +105,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "return a 303 response when called with '?ref=PORTAL'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
-      val result = Future.successful(agentAwareShow(user, requestWithQuery))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr("1111111111")),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
+      )
+
+      val result = Future.successful(agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -118,8 +129,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
-      val result = Future.successful(agentAwareShow(user, requestWithQuery))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr("1111111111")),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
+      )
+
+      val result = Future.successful(agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -129,8 +150,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "put TAXS_USER_TYPE into session and Agent token into dataCache when called with '/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
-      val result = Future.successful(agentAwareShow(user, requestWithQuery))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr("1111111111")),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+      )
+
+      val result = Future.successful(agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -140,8 +171,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
-      val result = Future.successful(agentAwareShow(user, requestWithQuery))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr("1111111111")),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
+      )
+
+      val result = Future.successful(agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe None
@@ -159,11 +200,10 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
         )
       )
 
-      when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(model2)
-      when(atsListService.getAtsYearList(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(data)
+      when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
+      when(atsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
 
-
-      val result = agentAwareShow(user, request)
+      val result = agentAwareShow(request)
 
       whenReady(result) { result =>
         status(result) shouldBe 303
@@ -177,8 +217,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
-      val result = Future.successful(agentAwareShow(agentUser, requestWithQuery))
+      val agentRequestWithQuery = AuthenticatedRequest(
+        "userId",
+        Some(Uar(testUar)),
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
+      )
+
+      val result = Future.successful(agentAwareShow(agentRequestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -188,8 +238,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "put TAXS_USER_TYPE and TAXS_AGENT_TOKEN into store when called with '/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
-      val result = Future.successful(agentAwareShow(agentUser, requestWithQuery))
+      val agentRequestWithQuery = AuthenticatedRequest(
+        "userId",
+        Some(Uar(testUar)),
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+      )
+
+      val result = Future.successful(agentAwareShow(agentRequestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -199,8 +259,18 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
 
-      val requestWithQuery = FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
-      val result = Future.successful(agentAwareShow(agentUser, requestWithQuery))
+      val agentRequestWithQuery = AuthenticatedRequest(
+        "userId",
+        Some(Uar(testUar)),
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
+      )
+
+      val result = Future.successful(agentAwareShow(agentRequestWithQuery))
 
       session(result).get("TAXS_USER_TYPE") shouldBe None
       verify(dataCache, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
@@ -211,13 +281,13 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "return a 200 response" in new TestController {
 
-      val result = Future.successful(agentAwareShow(user, request))
+      val result = Future.successful(agentAwareShow(request))
       status(result) shouldBe 200
     }
 
     "return a Tax Year list" in new TestController {
 
-      val result = Future.successful(agentAwareShow(user, request))
+      val result = Future.successful(agentAwareShow(request))
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -229,11 +299,21 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "give a Ok status and stay on the same page if form errors and display the error" in new TestController {
 
-      when(atsListService.getAtsYearList(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(data)
+      when(atsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
       val atsYear = Map("atsYear" -> "")
       val form = atsYearFormMapping.bind(atsYear)
-      val requestWithQuery = FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
-      val result = Future.successful(onSubmit(user, requestWithQuery))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr("1111111111")),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
+
+      val result = Future.successful(onSubmit(requestWithQuery))
       status(result) shouldBe OK
 
     }
@@ -241,9 +321,9 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
-      when(atsYearListService.getAtsListData(any[User], any[HeaderCarrier], any[Request[AnyRef]])).thenReturn(new NoATSViewModel)
+      when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(new NoATSViewModel)
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -251,6 +331,4 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
     }
 
   }
-
-
 }

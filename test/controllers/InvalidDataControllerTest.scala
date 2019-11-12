@@ -17,27 +17,26 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel}
+import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.Future
 
 class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  implicit val request = FakeRequest("GET","?taxYear=2015")
-  implicit val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   val taxYear = 2014
@@ -59,10 +58,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val allowanceService = mock[AllowanceService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(allowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
+      when(allowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -74,10 +74,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val capitalGainsService = mock[CapitalGainsService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(capitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(capitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -89,10 +90,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val governmentSpendService = mock[GovernmentSpendService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(governmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(governmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -104,10 +106,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val incomeService = mock[IncomeService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(incomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(incomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -119,10 +122,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val totalIncomeTaxService = mock[TotalIncomeTaxService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(totalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -134,10 +138,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val summaryService = mock[SummaryService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(summaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(summaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -149,10 +154,11 @@ class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       override lazy val summaryService = mock[SummaryService]
       override lazy val auditService = mock[AuditService]
       implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+      override val authAction: AuthAction = FakeAuthAction
 
-      when(summaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(summaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-      val result = show(user, request)
+      val result = show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200

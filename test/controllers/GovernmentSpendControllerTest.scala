@@ -17,19 +17,20 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, _}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
@@ -41,10 +42,8 @@ import scala.concurrent.Future
 
 class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
   val taxYear = 2014
-  val request = FakeRequest("GET","?taxYear="+taxYear)
-  val badRequest = FakeRequest("GET","?taxYear=20145")
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
-
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
   trait TestController extends GovernmentSpendController {
 
@@ -52,6 +51,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
     override lazy val auditService: AuditService = mock[AuditService]
     lazy val atsService: AtsService = mock[AtsService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+    override val authAction: AuthAction = FakeAuthAction
 
     val genericViewModel: GenericViewModel =  AtsList(
       utr = "3000024376",
@@ -90,7 +90,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
 
   }
 
@@ -105,29 +105,29 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
   "Calling government spend with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result =  Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.treasury_spending.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
    }
 
     "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(user, badRequest))
+      val result = Future.successful(show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(show(user, request))
+      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "have correct data for 2014" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
       document.select("#welfare + td").text() shouldBe "£5,863.22"
       document.select("#welfare").text() should include("24.52%")
@@ -196,10 +196,10 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
         scottishIncomeTax = new Amount(2000.00, "GBP")
       )
 
-      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.eq(user),Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#welfare + td").text() shouldBe "£2,530.00"
@@ -240,7 +240,7 @@ class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplicatio
 
     "show 'Government spend' page with a correct breadcrumb" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")

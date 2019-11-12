@@ -17,28 +17,27 @@
 package views
 
 import config.AppFormPartialRetriever
+import controllers.FakeTaxsPlayApplication
+import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
-import view_models._
-import controllers.FakeTaxsPlayApplication
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
+import view_models._
 
 class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val language = Lang("en")
   val messages: Messages = Messages(language, messagesApi)
-  val request = FakeRequest()
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
   val utr = testUtr
-  val user = User(AuthorityUtils.saAuthority(testOid, utr))
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
   implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
