@@ -61,7 +61,7 @@
 
     <section id="tax-free-amount">
 
-        <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.tax_free.title"))</h2>
+        <h2>@Html(Messages("ats.summary.tax_free.title"))</h2>
 
         <a href="@controllers.routes.AllowancesController.authorisedAllowance()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_free.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.tax_free_amount")) </span>
@@ -75,7 +75,7 @@
 
     <section id="tax-calculated-as">
 
-        <h2 id="tax-and-nics-title" aria-level="2" role="heading">@Html(Messages(viewModel.yourTotalTaxTextKey))</h2>
+        <h2 id="tax-and-nics-title">@Html(Messages(viewModel.yourTotalTaxTextKey))</h2>
 
         <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.income_tax_and_ni")) </span>
@@ -91,7 +91,7 @@
     @if(viewModel.hasTaxableGains) {
     <section id="capital-gains">
 
-        <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.capital_gains.title"))</h2>
+        <h2>@Html(Messages("ats.summary.capital_gains.title"))</h2>
 
         <a href="@controllers.routes.CapitalGainsTaxController.authorisedCapitalGains()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.capital_gains.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.capital_gains_tax")) </span>
@@ -108,7 +108,7 @@
 
     <section id="your-total-tax">
 
-        <h2 aria-level="2" role="heading">@Html(Messages("ats.summary.total_tax.your_total_tax"))</h2>
+        <h2>@Html(Messages("ats.summary.total_tax.your_total_tax"))</h2>
 
         <p class="bold-xlarge">
             <span class="visuallyhidden" id="total-tax-amount-description">

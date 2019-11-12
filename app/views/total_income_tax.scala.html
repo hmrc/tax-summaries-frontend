@@ -39,7 +39,7 @@
 @includes.taxs_main(title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     @helpers.back_link(Messages("generic.back"))
-    <h1 aria-level="1" role="heading">
+    <h1>
         <span class="gray heading-medium block-heading">
           @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear))
         </span>

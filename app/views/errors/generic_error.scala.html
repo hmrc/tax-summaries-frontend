@@ -26,7 +26,7 @@
 } else {
 <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
 }
-<h1 id="generic-error-page-heading" aria-level="1" role="heading">@Html(Messages("generic.error.title"))</h1>
+<h1 id="generic-error-page-heading">@Html(Messages("generic.error.title"))</h1>
 }
 
 @includes.taxs_main(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {

@@ -21,7 +21,7 @@
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.index"), "token_error.html.title", 0)
-    <h1 id="error-page-heading" aria-level="1" role="heading">@Html(Messages("token_error.title"))</h1>
+    <h1 id="error-page-heading">@Html(Messages("token_error.title"))</h1>
 }
 
 @includes.taxs_main(title = Messages("token_error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
