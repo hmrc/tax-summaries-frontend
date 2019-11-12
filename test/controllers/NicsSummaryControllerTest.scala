@@ -17,21 +17,21 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
 
@@ -40,9 +40,8 @@ import scala.concurrent.Future
 class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2014
-  val request = FakeRequest("GET", s"?taxYear=$taxYear")
-  val badRequest = FakeRequest("GET","?taxYear=20145")
-  val user = User(AuthorityUtils.saAuthority(testOid, testUtr))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val dataPath = "/summary_json_test.json"
 
   trait TestController extends NicsController {
@@ -50,7 +49,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
     override lazy val auditService = mock[AuditService]
     override lazy val summaryService = mock[SummaryService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
+    override val authAction = FakeAuthAction
     val model = Summary(
       year = 2014,
       utr = testUtr,
@@ -72,7 +71,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
       surname = "surname"
     )
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
+    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
 
   }
@@ -89,14 +88,14 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
   "Calling NICs with session" should {
 
     "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(user, request))
+      val result =  Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.nics.tax_and_nics.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(user, badRequest))
+      val result = Future.successful(show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
@@ -104,9 +103,9 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.eq(user), Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -115,7 +114,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
     "have the right user data in the view" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -129,7 +128,7 @@ class NicsSummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication wi
 
     "show 'Income Tax and NICs' page with a correct breadcrumb" in new TestController {
 
-      val result = Future.successful(show(user, request))
+      val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
