@@ -21,20 +21,18 @@ import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Helpers._
-import play.api.test.FakeRequest
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
-import view_models.{Amount, Rate}
-import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite, PlaySpec}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants._
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestConstants._
+import view_models.{Amount, Rate}
 
 class GenericErrorViewTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
-  val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")
   val languageCy = Lang("cy")
   val utr = testUtr

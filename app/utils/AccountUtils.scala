@@ -42,7 +42,7 @@ trait AttorneyUtils{
 }
 
 trait Analytics{
-  def getAnalyticsAttribute(request: Request[_], actingAttorney: Option[ActingAsAttorneyFor]): String = {
+  def getAnalyticsAttribute(request: AuthenticatedRequest[_], actingAttorney: Option[ActingAsAttorneyFor]): String = {
     actingAttorney.isDefined match {
       case true => Globals.TAXS_ANALYTICS_AGENT_ATTRIBUTE
       case false => if(AccountUtils.isPortalUser(request)) Globals.TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE else Globals.TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE

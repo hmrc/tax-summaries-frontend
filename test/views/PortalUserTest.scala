@@ -20,9 +20,7 @@ import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.HtmlUnitFactory
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -33,9 +31,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class PortalUserTest extends UnitSpec with GuiceOneAppPerSuite with HtmlUnitFactory with MockitoSugar  {
+class PortalUserTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
-  val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val language = Lang("en")
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
