@@ -23,7 +23,6 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsListData, IncomingAtsError}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{SaAccount, TaxSummariesAgentAccount}
 import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -143,13 +142,13 @@ trait AtsListService {
 
   private def sendAuditEvent(account: TaxIdentifier, data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
     (account: @unchecked) match {
-      case _: TaxSummariesAgentAccount =>
+      case _: Uar =>
         auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
           "agentId" -> AccountUtils.getAccountId(request),
           "clientUtr" -> data.utr,
           "time" -> new Date().toString
         ))
-      case _: SaAccount =>
+      case _: SaUtr =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
           "userId" -> request.userId,

@@ -19,43 +19,10 @@ package utils
 import controllers.auth.AuthenticatedRequest
 import services.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
-import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 
 object AuthorityUtils extends AuthorityUtils
 
 trait AuthorityUtils {
-
-  def saAuthority(id: String, utr: String): Authority =
-    Authority(
-      s"/auth/oid/$id",
-      Accounts(
-        sa = Some(SaAccount(s"/sa/individual/$utr", SaUtr(utr)))
-      ),
-      None,
-      None,
-      CredentialStrength.Weak, //this class may need to be refactored as these methods are only used in test only
-      ConfidenceLevel.L50,
-      None,
-      None,
-      None,
-      ""
-    )
-
-  def taxsAgentAuthority(id: String, uar: String): Authority =
-    Authority(
-      s"/auth/oid/$id",
-      Accounts(
-        taxsAgent = Some(TaxSummariesAgentAccount(s"/taxsagent/$uar", Uar(uar)))
-      ),
-      None,
-      None,
-      CredentialStrength.Weak,////this class may need to be refactored as these methods are only used in test only
-      ConfidenceLevel.L50,
-      None,
-      None,
-      None,
-      ""
-    )
 
   def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
     (AccountUtils.getAccount(request), agentToken) match {
@@ -63,8 +30,8 @@ trait AuthorityUtils {
         true
       case (agentAccount, Some(agentToken)) if (AccountUtils.isAgent(request)) =>
         SaUtr(utr) == SaUtr(agentToken.clientUtr)
-      case (account: SaAccount, _) =>
-        SaUtr(utr) == account.utr
+      case (account: SaUtr, _) =>
+        SaUtr(utr) == account
     }
   }
 
@@ -79,7 +46,7 @@ trait AuthorityUtils {
         agentToken.fold {
           throw AgentTokenException("Token is empty")
         } { agentToken =>
-          if (taxsAgent.uar == Uar(agentToken.agentUar)) {
+          if (taxsAgent == Uar(agentToken.agentUar)) {
             SaUtr(agentToken.clientUtr)
           } else {
             throw AgentTokenException(s"Incorrect agent UAR: ${taxsAgent.uar}, ${agentToken.agentUar}")

@@ -22,9 +22,8 @@ import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import uk.gov.hmrc.domain.TaxIdentifier
+import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{SaAccount, TaxSummariesAgentAccount}
 import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
 import view_models.NoATSViewModel
 
@@ -106,8 +105,8 @@ trait AtsService {
 
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     val gotData = (account: @unchecked) match {
-      case agent: TaxSummariesAgentAccount => middleConnector.connectToAtsOnBehalfOf(agent.uar, requestedUTR, taxYear)
-      case individual: SaAccount => middleConnector.connectToAts(individual.utr, taxYear)
+      case agentUar: Uar => middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
+      case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
     }
 
     for (data <- gotData) yield {
@@ -131,14 +130,14 @@ trait AtsService {
 
   private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
     (account: @unchecked) match {
-      case _: TaxSummariesAgentAccount =>
+      case _: Uar =>
         auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
           "agentId" -> AccountUtils.getAccountId(request),
           "clientUtr" -> data.utr.get,
           "taxYear" -> data.taxYear.toString,
           "time" -> new Date().toString
         ))
-      case _: SaAccount =>
+      case _: SaUtr =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
           "userId" -> request.userId,

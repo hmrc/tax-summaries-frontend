@@ -20,7 +20,6 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsListData
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
 
@@ -37,14 +36,14 @@ trait AtsYearListService {
     atsListService.createModel(atsList)
   }
 
-  def storeSelectedAtsTaxYear(taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Int] = {
+  def storeSelectedAtsTaxYear(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Int] = {
     atsListService.storeSelectedTaxYear(taxYear)
   }
 
 
   private def atsList: AtsListData => GenericViewModel =
     (output: AtsListData) => {
-      new AtsList(output.utr,
+      AtsList(output.utr,
         output.taxPayer.get.taxpayer_name.get("forename"),
         output.taxPayer.get.taxpayer_name.get("surname"),
         output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))

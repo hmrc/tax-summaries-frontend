@@ -17,11 +17,9 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import connectors.AuthenticationConnector
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import play.api.Play
 import play.api.mvc.Result
-import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import play.api.Play.current
@@ -34,9 +32,7 @@ object ErrorController extends ErrorController {
 }
 
 trait ErrorController extends FrontendController
-        with Actions
-        with AccountUtils
-        with AuthenticationConnector {
+        with AccountUtils {
 
   implicit val formPartialRetriever: FormPartialRetriever
 

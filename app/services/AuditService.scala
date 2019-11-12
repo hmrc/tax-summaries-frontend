@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.AuthenticationConnector
+import config.TAXSAuditConnector
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.play.audit.model.DataEvent
@@ -31,8 +31,9 @@ object AuditTypes {
 
 object AuditService extends AuditService
 
-trait AuditService extends AuthenticationConnector {
+trait AuditService {
 
+  lazy val auditConnector = TAXSAuditConnector
   val taxsAuditSource = "tax-summaries-frontend"
 
   def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(implicit request: Request[_], hc: HeaderCarrier) =
