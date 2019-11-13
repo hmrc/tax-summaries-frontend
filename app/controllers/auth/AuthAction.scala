@@ -17,8 +17,9 @@
 package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
-import config.WSHttp
+import config.{ApplicationConfig, WSHttp}
 import play.api.Mode.Mode
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Play}
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, Enrolment, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession, PlayAuthConnector}
@@ -94,9 +95,29 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
         case _ => throw new RuntimeException("Can't find credentials for user")
       }
   } recover {
-    case _: NoActiveSession => ???
-    case _: InsufficientEnrolments => ???
-    case _: InsufficientConfidenceLevel => ???
+    case _: NoActiveSession => {
+      lazy val ggSignIn = ApplicationConfig.loginUrl
+      lazy val callbackUrl = ApplicationConfig.loginCallback
+      Redirect(
+        ggSignIn,
+        Map(
+          "continue"    -> Seq(callbackUrl),
+          "origin"      -> Seq(ApplicationConfig.appName)
+        )
+      )
+    }
+    case _: InsufficientConfidenceLevel => {
+      lazy val ggSignIn = ApplicationConfig.loginUrl
+      lazy val callbackUrl = ApplicationConfig.loginCallback
+      Redirect(
+        ggSignIn,
+        Map(
+          "continue"    -> Seq(callbackUrl),
+          "origin"      -> Seq(ApplicationConfig.appName)
+        )
+      )
+    }
+    case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
 }
 

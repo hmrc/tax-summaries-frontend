@@ -26,6 +26,7 @@ trait ApplicationConfig {
 
   protected def runModeConfiguration: Configuration = Play.current.configuration
 
+  val appName: String
   val assetsPrefix: String
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
@@ -84,4 +85,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val loginUrl = getConf("login.url")
   override lazy val ytaUrl = getConf("yta.url")
   override lazy val portalUrl = getConf("portal.url")
+
+  //Application name
+  override lazy val appName = getString("appName")
 }

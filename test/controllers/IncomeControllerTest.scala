@@ -32,7 +32,6 @@ import services.{AuditService, IncomeService}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, IncomeBeforeTax, NoATSViewModel}
 
