@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class NonPortalUserSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val language = Lang("en")

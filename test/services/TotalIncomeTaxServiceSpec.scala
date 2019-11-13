@@ -28,14 +28,13 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.GenericViewModel
+import view_models.{AtsList, TaxYearEnd}
 import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
-
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class TotalIncomeTaxServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
   val genericViewModel: GenericViewModel =  AtsList(
     utr = "3000024376",
@@ -46,25 +45,20 @@ class AllowanceServiceTest extends UnitSpec with FakeTaxsPlayApplication with Sc
     )
   )
 
-  val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
-
-  class TestService extends AllowanceService with MockitoSugar {
+  class TestService extends TotalIncomeTaxService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
     val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
   }
 
-  "AllowanceService getAllowances" should {
+  "TotalIncomeTaxService getIncomeData" should {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
       when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getAllowances(taxYear)(request, hc), 1500 millis)
+      val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
-
-
-
   }
 }

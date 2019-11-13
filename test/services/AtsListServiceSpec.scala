@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import uk.gov.hmrc.http.HeaderCarrier
 
-class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
+class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -235,11 +235,13 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
     "Agent" should {
 
+      val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+
       "Return the ats year list data for a user from the cache" in new TestService {
 
-        when(accountUtils.isAgent(request)).thenReturn(true)
+        when(accountUtils.isAgent(agentRequest)).thenReturn(true)
 
-        whenReady(getAtsYearList) { result =>
+        whenReady(getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe data
 
           verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -252,7 +254,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
         when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
-        whenReady(getAtsYearList) { result =>
+        whenReady(getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe data
 
           verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -265,7 +267,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
         when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
-        whenReady(getAtsYearList) { result =>
+        whenReady(getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe data
 
           verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])

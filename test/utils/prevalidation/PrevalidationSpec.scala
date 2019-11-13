@@ -23,7 +23,7 @@ import utils.prevalidation.TrimOption.TrimOption
 import utils.prevalidation.CaseOption.CaseOption
 import utils.prevalidation.prevalidation._
 
-class PrevalidationTest extends TaxsUnitTestTraits {
+class PrevalidationSpec extends TaxsUnitTestTraits {
 
   case class DummyData(string1: String)
 

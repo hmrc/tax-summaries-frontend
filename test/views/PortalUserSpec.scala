@@ -31,14 +31,13 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class PortalUserTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
+class PortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
-  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  val utr = testUtr
+  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val language = Lang("en")
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
-
-  val utr = testUtr
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages = Messages(language, messagesApi)

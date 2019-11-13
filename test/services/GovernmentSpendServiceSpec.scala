@@ -34,7 +34,7 @@ import utils.TestConstants._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class GovernmentSpendServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
   val genericViewModel: GenericViewModel =  AtsList(
     utr = "3000024376",
@@ -45,7 +45,7 @@ class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication wi
     )
   )
 
-  class TestService extends TotalIncomeTaxService with MockitoSugar {
+  class TestService extends GovernmentSpendService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
@@ -53,12 +53,13 @@ class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication wi
     val taxYear = 2015
   }
 
-  "TotalIncomeTaxService getIncomeData" should {
+  "GovernmentSpendService getGovernmentSpendData" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
+    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
       when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
+
   }
 }

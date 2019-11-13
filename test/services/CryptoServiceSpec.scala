@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.AgentTokenException
 import utils.TestConstants._
 
-class CryptoServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures {
+class CryptoServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures {
 
   class TestCrypt extends CryptoService {
 

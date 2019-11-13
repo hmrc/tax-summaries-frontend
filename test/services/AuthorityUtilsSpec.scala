@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import utils.TestConstants._
 
-class AuthorityUtilsTest extends UnitSpec with MockitoSugar {
+class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
 
   class TestService extends AuthorityUtils {
 

@@ -33,8 +33,8 @@ import services.{AuditService, _}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.GenericViewModel
 import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
@@ -94,15 +94,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with FakeTaxsPlayApplicatio
 
   }
 
-  "Calling government spend with no session" should {
-
-    "return a 303 response" in new TestController {
-      val result = Future.successful(authorisedGovernmentSpendData(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling government spend with session" should {
+  "Calling government spend" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))

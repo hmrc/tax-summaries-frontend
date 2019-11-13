@@ -32,7 +32,6 @@ import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, CapitalGains, NoATSViewModel, Rate}
 
@@ -77,16 +76,7 @@ class CapitalGainsTaxSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
     when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
   }
 
-  "Calling Capital Gains with no session" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedCapitalGains(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling Capital Gains with session" should {
+  "Calling Capital Gains" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))

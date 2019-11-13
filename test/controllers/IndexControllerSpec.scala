@@ -82,25 +82,6 @@ class IndexControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
     when(dataCache.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
   }
 
-  "Calling Index Page with no session" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedIndex(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling Index Page submit" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedOnSubmit(request))
-      status(result) shouldBe 303
-    }
-  }
-
-
   "Calling with request param" should {
 
     "return a 303 response when called with '?ref=PORTAL'" in new TestController {

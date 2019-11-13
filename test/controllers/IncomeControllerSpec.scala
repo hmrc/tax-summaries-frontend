@@ -69,16 +69,7 @@ class IncomeControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Mo
 
   }
 
-  "Calling incomes with no session" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedIncomeBeforeTax(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling incomes with session" should {
+  "Calling incomes" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))

@@ -37,25 +37,6 @@ class ErrorControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
     override val authAction: AuthAction = FakeAuthAction
   }
 
-  "Calling ErrorController with no session" should {
-
-    "return a 303 response" in new TestErrorController {
-
-      val result = notAuthorised(request)
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling ErrorController authorised noATS" should {
-
-    "return a 303 response" in new TestErrorController {
-
-      val result = Future.successful(authorisedNoAts(request))
-      status(result) shouldBe 303
-    }
-  }
-
-
   "ErrorController" should {
 
     "Show No ATS page" in new TestErrorController {

@@ -37,7 +37,7 @@ import view_models.{AtsList, TaxYearEnd}
 import scala.concurrent.Future
 import scala.io.Source
 
-class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
+class AtsYearListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString

@@ -32,7 +32,6 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
 
@@ -82,16 +81,7 @@ class SummaryControllerSpec extends UnitSpec with FakeTaxsPlayApplication with M
 
   }
 
-  "Calling Summary with no session" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedSummaries(FakeRequest("GET", s"?taxYear=$taxYear")))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling Summary with session" should {
+  "Calling Summary" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))

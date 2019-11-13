@@ -21,6 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -28,13 +29,14 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
-import view_models.{AtsList, TaxYearEnd}
 import utils.TestConstants._
+import utils.{AuthorityUtils, GenericViewModel}
+import view_models.{AtsList, TaxYearEnd}
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class GovernmentSpendServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class SummaryServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar with MockFactory{
 
   val genericViewModel: GenericViewModel =  AtsList(
     utr = "3000024376",
@@ -45,21 +47,22 @@ class GovernmentSpendServiceTest extends UnitSpec with FakeTaxsPlayApplication w
     )
   )
 
-  class TestService extends GovernmentSpendService with MockitoSugar {
+  class TestService extends SummaryService with MockitoSugar {
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
     val taxYear = 2015
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
   }
 
-  "GovernmentSpendService getGovernmentSpendData" should {
+  "SummaryService getSummaryData" should {
 
-    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
       when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(getSummaryData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
+
 
   }
 }

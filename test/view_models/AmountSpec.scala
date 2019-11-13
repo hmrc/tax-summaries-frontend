@@ -22,7 +22,7 @@ import controllers.FakeTaxsPlayApplication
 
 
 
-class AmountTest extends UnitSpec with FakeTaxsPlayApplication  {
+class AmountSpec extends UnitSpec with FakeTaxsPlayApplication  {
   "Amount" should {
 
     "not change constructor parameter values" in {

@@ -28,7 +28,7 @@ import utils.validation.ErrorMessageLookup._
 import utils.validation.ErrorMessageFactory._
 import utils.validation.ErrorMessageInterpreter._
 
-class ErrorMessageLookupTest extends UnitSpec with Matchers with OneServerPerSuite {
+class ErrorMessageLookupSpec extends UnitSpec with Matchers with OneServerPerSuite {
 
   implicit override lazy val app: FakeApplication = FakeApplication()
 

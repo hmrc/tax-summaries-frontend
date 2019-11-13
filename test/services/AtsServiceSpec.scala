@@ -20,24 +20,23 @@ import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.AtsData
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.JsonUtil._
+import utils.TestConstants._
 import utils.{AccountUtils, AuthorityUtils}
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.io.Source
-import utils.TestConstants._
-import utils.JsonUtil._
-import uk.gov.hmrc.http.HeaderCarrier
 
-class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class AtsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
   val data = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
@@ -105,6 +104,8 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
     "write data to the cache when the retrieved cached utr is different to the requested utr - AGENT" in new TestService {
 
+      val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+
       when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
@@ -112,7 +113,7 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
       when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
       when(middleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
-      val result = getAts(2014)
+      val result = getAts(2014)(hc, agentRequest)
 
       whenReady(result) { result =>
         result shouldBe data

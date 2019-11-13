@@ -28,7 +28,7 @@ import play.api.data.{Form, FormError}
 import utils.TaxsValidator._
 
 
-class MappingTest extends WordSpecLike with Matchers with MockitoSugar with OneAppPerSuite {
+class MappingSpec extends WordSpecLike with Matchers with MockitoSugar with OneAppPerSuite {
 
   val defaultMaxLength = 10
 

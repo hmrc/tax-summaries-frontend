@@ -19,7 +19,7 @@ package view_models
 import uk.gov.hmrc.play.test.UnitSpec
 import controllers.FakeTaxsPlayApplication
 
-class RateTest extends UnitSpec with FakeTaxsPlayApplication  {
+class RateSpec extends UnitSpec with FakeTaxsPlayApplication  {
   "Rate" should {
     "not change constructor parameter values" in {
       Rate("10%").percent shouldBe "10%"

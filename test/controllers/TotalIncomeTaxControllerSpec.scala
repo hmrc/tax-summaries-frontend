@@ -32,7 +32,6 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, TotalIncomeTax}
 
@@ -88,16 +87,7 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with FakeTaxsPlayApplication
     when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
   }
 
-  "Calling Total Income Tax with no session" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedTotalIncomeTax(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling Total Income Tax with session" should {
+  "Calling Total Income Tax" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))

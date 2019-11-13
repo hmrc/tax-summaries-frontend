@@ -72,20 +72,9 @@ class NicsSummaryControllerSpec extends UnitSpec with FakeTaxsPlayApplication wi
     )
 
     when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
-
-
   }
 
-  "Calling NICs with no session" should {
-
-    "return a 303 response" in new TestController {
-
-      val result = Future.successful(authorisedNics(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling NICs with session" should {
+  "Calling NICs" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))

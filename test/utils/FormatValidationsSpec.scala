@@ -20,7 +20,7 @@ import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TaxsValidator._
 
-class FormatValidationsTest extends UnitSpec with Matchers {
+class FormatValidationsSpec extends UnitSpec with Matchers {
 
   private def testRegex(regExPattern:String, validData: Seq[String], invalidData: Seq[String]): Unit = {
     withClue("the regex should allow these valid cases\n") {

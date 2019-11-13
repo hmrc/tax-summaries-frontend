@@ -35,11 +35,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel, TaxsController}
+import utils.{GenericViewModel, TaxsController}
 import view_models._
 
 import scala.concurrent.Future
-
 
 class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
@@ -84,15 +83,7 @@ class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication wit
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
   }
 
-  "Calling allowances with no session" should {
-    "return a 303 response" in new TestController {
-      val result = Future.successful(authorisedAllowance(request))
-      status(result) shouldBe 303
-    }
-
-  }
-
-"Calling allowances with session" should {
+"Calling allowances" should {
 
   "have the right user data in the view when a valid request is sent" in new TestController {
 

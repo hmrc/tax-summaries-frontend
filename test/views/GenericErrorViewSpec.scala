@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, Rate}
 
-class GenericErrorViewTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
+class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
   lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")

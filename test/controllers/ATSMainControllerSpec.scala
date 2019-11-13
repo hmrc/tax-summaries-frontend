@@ -54,15 +54,7 @@ class ATSMainControllerSpec extends UnitSpec with FakeTaxsPlayApplication with M
 
   }
 
-  "Calling Index Page with no session" should {
-
-    "return a 303 response" in new TestController {
-      val result = Future.successful(authorisedAtsMain(request))
-      status(result) shouldBe 303
-    }
-  }
-
-  "Calling Index Page with session" should {
+  "Calling Index Page" should {
 
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))
