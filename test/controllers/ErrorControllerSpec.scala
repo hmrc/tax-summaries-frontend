@@ -25,12 +25,12 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-
+import utils.TestConstants._
 import scala.concurrent.Future
 
-class ErrorControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class ErrorControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
   trait TestErrorController extends ErrorController {
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever

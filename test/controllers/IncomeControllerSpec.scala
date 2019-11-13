@@ -37,11 +37,11 @@ import view_models.{Amount, IncomeBeforeTax, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class IncomeControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class IncomeControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,

@@ -33,7 +33,7 @@ import view_models._
 
 class PortalUserTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
-  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val language = Lang("en")
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")

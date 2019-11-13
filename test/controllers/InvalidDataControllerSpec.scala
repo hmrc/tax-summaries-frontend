@@ -31,12 +31,12 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
-
+import utils.TestConstants._
 import scala.concurrent.Future
 
-class InvalidDataControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class InvalidDataControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   val taxYear = 2014

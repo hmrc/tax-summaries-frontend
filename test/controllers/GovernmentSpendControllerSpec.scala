@@ -40,10 +40,10 @@ import view_models._
 import scala.concurrent.Future
 
 
-class GovernmentSpendControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class GovernmentSpendControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
   trait TestController extends GovernmentSpendController {
 

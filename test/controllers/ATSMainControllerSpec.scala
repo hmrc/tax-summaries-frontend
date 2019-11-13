@@ -38,12 +38,12 @@ import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
-class ATSMainControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class ATSMainControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear  =2014
-  val baseModel = SummaryControllerTest.baseModel
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val baseModel = SummaryControllerSpec.baseModel
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
   trait TestController extends AtsMainController {
     override lazy val summaryService = mock[SummaryService]

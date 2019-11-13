@@ -28,13 +28,13 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import view_models.NoATSViewModel
-
+import utils.TestConstants._
 import scala.concurrent.Future
 
-class ZeroTaxLiabilityTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class ZeroTaxLiabilitySpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2015
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
 

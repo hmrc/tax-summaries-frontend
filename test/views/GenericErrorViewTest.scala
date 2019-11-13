@@ -32,7 +32,7 @@ import view_models.{Amount, Rate}
 
 class GenericErrorViewTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
-  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")
   val languageCy = Lang("cy")
   val utr = testUtr

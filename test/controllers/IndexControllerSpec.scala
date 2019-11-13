@@ -45,12 +45,12 @@ import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
+class IndexControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   val taxYear = 2015
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
   val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
 
   val data = {
@@ -108,7 +108,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
-        Some(SaUtr("1111111111")),
+        Some(SaUtr(testUtr)),
         None,
         None,
         None,
@@ -132,7 +132,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
-        Some(SaUtr("1111111111")),
+        Some(SaUtr(testUtr)),
         None,
         None,
         None,
@@ -153,7 +153,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
-        Some(SaUtr("1111111111")),
+        Some(SaUtr(testUtr)),
         None,
         None,
         None,
@@ -174,7 +174,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
-        Some(SaUtr("1111111111")),
+        Some(SaUtr(testUtr)),
         None,
         None,
         None,
@@ -305,7 +305,7 @@ class IndexControllerTest extends UnitSpec with FakeTaxsPlayApplication with Moc
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
-        Some(SaUtr("1111111111")),
+        Some(SaUtr(testUtr)),
         None,
         None,
         None,

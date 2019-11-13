@@ -59,7 +59,7 @@ class AtsServiceTest extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
     )
 
     implicit val hc = new HeaderCarrier
-    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
+    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   }
 
   "AtsService checkUtrAgainstCache" should {
