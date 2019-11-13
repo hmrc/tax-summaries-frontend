@@ -46,7 +46,7 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
         case Enrolments(enrolments) ~ Some(externalId) ~ nino => {
           val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
             enrolment.identifiers
-              .find(id => id.key == "UAR")
+              .find(id => id.key == "IRAgentReference")
               .map(key => Uar(key.value))
           }
           val saUtr: Option[SaUtr] = enrolments.find(_.key == "IR-SA").flatMap { enrolment =>
