@@ -40,7 +40,7 @@ import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 
 
-object SummaryControllerTest {
+object SummaryControllerSpec {
 
   val baseModel = Summary(
     year = 2014,
@@ -64,12 +64,12 @@ object SummaryControllerTest {
   )
 }
 
-class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class SummaryControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
-  val baseModel = SummaryControllerTest.baseModel
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val baseModel = SummaryControllerSpec.baseModel
 
   trait TestController extends SummaryController {
 
@@ -86,7 +86,7 @@ class SummaryControllerTest extends UnitSpec with FakeTaxsPlayApplication with M
 
     "return a 303 response" in new TestController {
 
-      val result = Future.successful(authorisedSummaries(request))
+      val result = Future.successful(authorisedSummaries(FakeRequest("GET", s"?taxYear=$taxYear")))
       status(result) shouldBe 303
     }
   }

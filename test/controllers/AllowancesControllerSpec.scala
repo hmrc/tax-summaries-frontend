@@ -41,7 +41,7 @@ import view_models._
 import scala.concurrent.Future
 
 
-class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2014
 
@@ -78,8 +78,8 @@ class AllowancesControllerTest extends UnitSpec with FakeTaxsPlayApplication wit
     override val authAction: AuthAction = FakeAuthAction
     val model = baseModel
     val taxYear = 2014
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-    val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20155"))
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+    val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20155"))
     implicit val hc = new HeaderCarrier
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
   }

@@ -52,7 +52,7 @@ class SummaryServiceTest extends UnitSpec with FakeTaxsPlayApplication with Scal
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
   }
 
   "SummaryService getSummaryData" should {

@@ -21,7 +21,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 import scala.concurrent.Future
 
-class LanguageControllerTest extends UnitSpec with FakeTaxsPlayApplication {
+class LanguageControllerSpec extends UnitSpec with FakeTaxsPlayApplication {
 
   "switchLanguage" should {
 

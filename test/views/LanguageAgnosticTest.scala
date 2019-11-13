@@ -35,7 +35,7 @@ import utils.TestConstants._
 
 class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val language = Lang("en")
   val utr = testUtr
 
@@ -89,7 +89,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
-      val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+      val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
@@ -124,7 +124,7 @@ class LanguageAgnosticTest extends UnitSpec with OneServerPerSuite with OneBrows
       implicit val messages = Messages(language, messagesApi)
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
-      val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar("1111111111")), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+      val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar(testUar)), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
       val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))

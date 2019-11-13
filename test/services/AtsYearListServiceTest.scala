@@ -47,7 +47,7 @@ class AtsYearListServiceTest extends UnitSpec with FakeTaxsPlayApplication with 
 
   class TestService extends AtsYearListService {
 
-    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
+    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
     implicit val hc = new HeaderCarrier
 
     val agentToken = AgentToken(

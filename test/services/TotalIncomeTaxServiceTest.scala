@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
-
+import utils.TestConstants._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -49,7 +49,7 @@ class TotalIncomeTaxServiceTest extends UnitSpec with FakeTaxsPlayApplication wi
     override lazy val atsService: AtsService = mock[AtsService]
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
     val taxYear = 2015
   }
 

@@ -36,7 +36,7 @@ class NonPortalUserTest extends UnitSpec with FakeTaxsPlayApplication with Mocki
   val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val language = Lang("en")
   val messages: Messages = Messages(language, messagesApi)
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")

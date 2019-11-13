@@ -38,11 +38,11 @@ import view_models.{Amount, CapitalGains, NoATSViewModel, Rate}
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class CapitalGainsTaxSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = CapitalGains(
     taxYear = 2014,
     utr = testUtr,

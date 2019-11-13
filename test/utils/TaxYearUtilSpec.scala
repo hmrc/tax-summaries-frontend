@@ -21,6 +21,7 @@ import models.InvalidTaxYear
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestConstants._
 
 class TaxYearUtilSpec extends UnitSpec {
 
@@ -29,7 +30,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
       val taxYear = 2019
 
-      implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+      implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
 
       val result = TaxYearUtil.extractTaxYear
 
@@ -41,7 +42,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
       " taxYear is more than 4 digits long " in {
 
-        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", "?taxYear=20192"))
+        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", "?taxYear=20192"))
 
         val result = TaxYearUtil.extractTaxYear
 
@@ -50,7 +51,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
       " taxYear is less than 4 digits long " in {
 
-        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", "?taxYear=201"))
+        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", "?taxYear=201"))
 
         val result = TaxYearUtil.extractTaxYear
 
@@ -59,7 +60,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
       "request has no taxYear field " in {
 
-        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", "?"))
+        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", "?"))
 
         val result = TaxYearUtil.extractTaxYear
 
@@ -69,7 +70,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
       "taxYear is not numeric " in {
 
-        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest("GET", "?taxYear=ABCD"))
+        implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", "?taxYear=ABCD"))
 
         val result = TaxYearUtil.extractTaxYear
 

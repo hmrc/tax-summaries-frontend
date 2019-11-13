@@ -17,13 +17,13 @@
 package controllers.auth
 
 import play.api.mvc.{Request, Result}
-import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
+import utils.TestConstants._
 
 import scala.concurrent.Future
 
 object FakeAuthAction extends AuthAction {
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    block(AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, request))
+    block(AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, request))
   }
 }

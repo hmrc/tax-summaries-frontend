@@ -46,7 +46,7 @@ class AtsListServiceTest extends UnitSpec with FakeTaxsPlayApplication with Mock
 
   class TestService extends AtsListService {
 
-    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr("1111111111")), None, None, None, None, FakeRequest())
+    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
     implicit val hc = new HeaderCarrier
 
     val agentToken = AgentToken(
