@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction, MinAuthAction}
+import controllers.auth._
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
@@ -36,7 +36,7 @@ class ErrorControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
   trait TestErrorController extends ErrorController {
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
     override val authAction: AuthAction = FakeAuthAction
-    override val minAuthAction: MinAuthAction =
+    override val minAuthAction: MinAuthAction = FakeMinAuthAction
   }
 
   "ErrorController" should {

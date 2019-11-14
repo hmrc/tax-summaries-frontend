@@ -16,11 +16,11 @@
 
 package controllers.auth
 
-import com.google.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import play.api.Configuration
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MinAuthAction @Inject()(override val authConnector: AuthConnector,
+class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
                                configuration: Configuration)(implicit ec: ExecutionContext)
   extends AuthAction with AuthorisedFunctions {
 
@@ -69,3 +69,6 @@ class MinAuthAction @Inject()(override val authConnector: AuthConnector,
     case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
   }
+
+@ImplementedBy(classOf[MinAuthActionImpl])
+trait MinAuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
