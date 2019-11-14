@@ -22,15 +22,15 @@ import play.api.Configuration
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
-                               configuration: Configuration)(implicit ec: ExecutionContext)
-  extends AuthAction with AuthorisedFunctions {
+                                  configuration: Configuration)(implicit ec: ExecutionContext)
+  extends MinAuthAction with AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
 
@@ -50,8 +50,8 @@ class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       Redirect(
         ggSignIn,
         Map(
-          "continue"    -> Seq(callbackUrl),
-          "origin"      -> Seq(ApplicationConfig.appName)
+          "continue" -> Seq(callbackUrl),
+          "origin" -> Seq(ApplicationConfig.appName)
         )
       )
     }
@@ -61,14 +61,14 @@ class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       Redirect(
         ggSignIn,
         Map(
-          "continue"    -> Seq(callbackUrl),
-          "origin"      -> Seq(ApplicationConfig.appName)
+          "continue" -> Seq(callbackUrl),
+          "origin" -> Seq(ApplicationConfig.appName)
         )
       )
     }
     case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
-  }
+}
 
 @ImplementedBy(classOf[MinAuthActionImpl])
 trait MinAuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]

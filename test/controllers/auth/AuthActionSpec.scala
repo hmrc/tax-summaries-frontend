@@ -82,16 +82,14 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   }
 
   "A user with insufficient enrolments" should {
-    "be redirected to the Sorry there is a problem page" in {
+    "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
       val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
-      whenReady(result.failed) { ex =>
-        ex shouldBe an[InsufficientEnrolments]
-      }
+      redirectLocation(result) shouldBe Some("/annual-tax-summary/not-authorised")
     }
   }
 
