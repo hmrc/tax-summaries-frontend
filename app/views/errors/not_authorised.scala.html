@@ -14,8 +14,9 @@
  * limitations under the License.
  *@
 
-@import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import controllers.auth.AuthenticatedRequest
+
 @()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {

@@ -117,7 +117,7 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
         )
       )
     }
-    case _: InsufficientEnrolments => throw InsufficientEnrolments("")
+    case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
   }
 }
 

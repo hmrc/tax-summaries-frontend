@@ -130,7 +130,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
         Future.successful(
             new ~(
               new ~(
-                Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("UAR", uar)), ""))),
+                Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))),
                 Some("")),
                 None
             )
