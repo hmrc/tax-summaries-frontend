@@ -19,7 +19,7 @@ package controllers
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest, MinAuthAction}
 import play.api.Play
-import play.api.mvc.{Action, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import play.api.Play.current
@@ -40,16 +40,11 @@ trait ErrorController extends FrontendController
   val authAction: AuthAction
   val minAuthAction: MinAuthAction
 
-  def authorisedNoAts = authAction {
-    implicit request => noAts
+  def authorisedNoAts: Action[AnyContent] = authAction {
+    implicit request => Ok(views.html.errors.no_ats_error())
   }
 
-  //TODO Check if this is correct to use auth
-  def notAuthorised = minAuthAction {
+  def notAuthorised: Action[AnyContent] = minAuthAction {
     implicit request => Ok(views.html.errors.not_authorised())
-  }
-
-  def noAts(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.errors.no_ats_error())
   }
 }

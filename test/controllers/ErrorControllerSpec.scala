@@ -20,6 +20,9 @@ import config.AppFormPartialRetriever
 import controllers.auth._
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Play
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
@@ -27,11 +30,9 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
-import scala.concurrent.Future
+class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
 
-class ErrorControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
-
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  override def messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   trait TestErrorController extends ErrorController {
     implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
@@ -43,20 +44,27 @@ class ErrorControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     "Show No ATS page" in new TestErrorController {
 
-      val result = noAts(request)
-      val document = Jsoup.parse(contentAsString(result))
+      implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+
+      val result = authorisedNoAts()(request)
+      val document = contentAsString(result)
 
       status(result) shouldBe 200
-      document.title shouldBe "No ATS - Annual tax summary - GOV.UK"
 
-      // Make sure that breadcrumbs are correct
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
-      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
-
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
-
-      document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>No ATS available</strong>")
+      document shouldBe contentAsString(views.html.errors.no_ats_error())
     }
+
+    "show not authorised page" in new TestErrorController {
+
+      implicit val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
+
+      val result = notAuthorised()(request)
+      val document = contentAsString(result)
+
+      status(result) shouldBe 200
+
+      document shouldBe contentAsString(views.html.errors.not_authorised())
+    }
+
   }
 }
