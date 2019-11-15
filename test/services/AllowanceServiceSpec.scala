@@ -18,19 +18,20 @@ package services
 
 import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
-import models.AtsData
+import models.{AtsData, DataHolder, UserData}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.GenericViewModel
 import utils.TestConstants._
-import utils.{AuthorityUtils, GenericViewModel}
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{Allowances, Amount, AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -56,15 +57,32 @@ class AllowanceServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Sc
     val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
   }
 
-  "AllowanceService getAllowances" should {
+  "AllowanceService.getAllowances" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
       when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(getAllowances(taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
+  }
 
+  "AllowanceService.allowanceDataConverter" should {
+    "return a complete AllowancesData when given complete AtsData" in new TestService {
 
+      val atsData = AtsTestData.atsAllowancesData
+      val result = allowanceDataConverter(atsData)
 
+      result shouldBe Allowances(
+        2019,
+        "1111111111",
+        Amount(100, "GBP"),
+        Amount(200, "GBP"),
+        Amount(300, "GBP"),
+        Amount(400, "GBP"),
+        "Mr",
+        "John",
+        "Smith"
+      )
+    }
   }
 }

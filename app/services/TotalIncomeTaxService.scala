@@ -37,8 +37,7 @@ trait TotalIncomeTaxService {
     atsService.createModel(taxYear, totalIncomeConverter)
   }
 
-  private def totalIncomeConverter: (AtsData => GenericViewModel) =
-    (output: AtsData) => {
+  private def totalIncomeConverter(output: AtsData): TotalIncomeTax = {
       val wrapper: DataHolder = output.income_tax.get
       TotalIncomeTax(output.taxYear,
         output.utr.get,
