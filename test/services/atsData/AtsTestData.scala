@@ -17,7 +17,7 @@
 package services.atsData
 
 import models.{AtsData, DataHolder, UserData}
-import view_models.Amount
+import view_models.{Amount, IncomeBeforeTax}
 
 object AtsTestData {
 
@@ -56,5 +56,23 @@ object AtsTestData {
     ),
     None
   )
+
+
+  val incomeData = IncomeBeforeTax(
+    2019,
+    "1111111111",
+    Amount(100, "GBP"),
+    Amount(200, "GBP"),
+    Amount(300, "GBP"),
+    Amount(400, "GBP"),
+    Amount(500, "GBP"),
+    Amount(600, "GBP"),
+    Amount(700, "GBP"),
+    Amount(800, "GBP"),
+    "Mr",
+    "John",
+    "Smith"
+  )
+
 
 }

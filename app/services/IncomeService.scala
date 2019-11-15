@@ -37,23 +37,23 @@ trait IncomeService {
     atsService.createModel(taxYear, createIncomeConverter)
   }
 
-  private def createIncomeConverter:
-  (AtsData => GenericViewModel) =
-    (output: AtsData) => {
-      val wrapper: DataHolder = output.income_data.get
-      IncomeBeforeTax(output.taxYear,
-        output.utr.get,
-        wrapper.payload.get.get("self_employment_income").get,
-        wrapper.payload.get.get("income_from_employment").get,
-        wrapper.payload.get.get("state_pension").get,
-        wrapper.payload.get.get("other_pension_income").get,
-        wrapper.payload.get.get("taxable_state_benefits").get,
-        wrapper.payload.get.get("other_income").get,
-        wrapper.payload.get.get("benefits_from_employment").get,
-        wrapper.payload.get.get("total_income_before_tax").get,
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
+  private[services] def createIncomeConverter(atsData: AtsData): IncomeBeforeTax = {
+      val incomeData: DataHolder = atsData.income_data.get
+
+
+      IncomeBeforeTax(atsData.taxYear,
+        atsData.utr.get,
+        incomeData.payload.get("self_employment_income"),
+        incomeData.payload.get("income_from_employment"),
+        incomeData.payload.get("state_pension"),
+        incomeData.payload.get("other_pension_income"),
+        incomeData.payload.get("taxable_state_benefits"),
+        incomeData.payload.get("other_income"),
+        incomeData.payload.get("benefits_from_employment"),
+        incomeData.payload.get("total_income_before_tax"),
+        atsData.taxPayerData.get.taxpayer_name.get("title"),
+        atsData.taxPayerData.get.taxpayer_name.get("forename"),
+        atsData.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
 }

@@ -25,8 +25,8 @@ import view_models.TotalIncomeTax
 import scala.concurrent.Future
 
 object TotalIncomeTaxService extends TotalIncomeTaxService {
-  override val atsService = AtsService
-  override val atsYearListService = AtsYearListService
+  override val atsService: AtsService.type = AtsService
+  override val atsYearListService: AtsYearListService.type = AtsYearListService
 }
 
 trait TotalIncomeTaxService {
@@ -37,40 +37,40 @@ trait TotalIncomeTaxService {
     atsService.createModel(taxYear, totalIncomeConverter)
   }
 
-  private def totalIncomeConverter(output: AtsData): TotalIncomeTax = {
-      val wrapper: DataHolder = output.income_tax.get
-      TotalIncomeTax(output.taxYear,
-        output.utr.get,
-        wrapper.payload.get.get("starting_rate_for_savings").get,
-        wrapper.payload.get.get("starting_rate_for_savings_amount").get,
-        wrapper.payload.get.get("basic_rate_income_tax").get,
-        wrapper.payload.get.get("basic_rate_income_tax_amount").get,
-        wrapper.payload.get.get("higher_rate_income_tax").get,
-        wrapper.payload.get.get("higher_rate_income_tax_amount").get,
-        wrapper.payload.get.get("additional_rate_income_tax").get,
-        wrapper.payload.get.get("additional_rate_income_tax_amount").get,
-        wrapper.payload.get.get("ordinary_rate").get,
-        wrapper.payload.get.get("ordinary_rate_amount").get,
-        wrapper.payload.get.get("upper_rate").get,
-        wrapper.payload.get.get("upper_rate_amount").get,
-        wrapper.payload.get.get("additional_rate").get,
-        wrapper.payload.get.get("additional_rate_amount").get,
-        wrapper.payload.get.get("other_adjustments_increasing").get,
-        wrapper.payload.get.get("marriage_allowance_received_amount").get,
-        wrapper.payload.get.get("other_adjustments_reducing").get,
-        wrapper.payload.get.get("total_income_tax").get,
-        wrapper.payload.get.get("scottish_income_tax").get,
-        wrapper.incomeTaxStatus.get,
-        wrapper.rates.get("starting_rate_for_savings_rate"),
-        wrapper.rates.get("basic_rate_income_tax_rate"),
-        wrapper.rates.get("higher_rate_income_tax_rate"),
-        wrapper.rates.get("additional_rate_income_tax_rate"),
-        wrapper.rates.get("ordinary_rate_tax_rate"),
-        wrapper.rates.get("upper_rate_rate"),
-        wrapper.rates.get("additional_rate_rate"),
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
+  private def totalIncomeConverter(atsData: AtsData): TotalIncomeTax = {
+      val totalIncomeTaxData: DataHolder = atsData.income_tax.get
+      TotalIncomeTax(atsData.taxYear,
+        atsData.utr.get,
+        totalIncomeTaxData.payload.get("starting_rate_for_savings"),
+        totalIncomeTaxData.payload.get("starting_rate_for_savings_amount"),
+        totalIncomeTaxData.payload.get("basic_rate_income_tax"),
+        totalIncomeTaxData.payload.get("basic_rate_income_tax_amount"),
+        totalIncomeTaxData.payload.get("higher_rate_income_tax"),
+        totalIncomeTaxData.payload.get("higher_rate_income_tax_amount"),
+        totalIncomeTaxData.payload.get("additional_rate_income_tax"),
+        totalIncomeTaxData.payload.get("additional_rate_income_tax_amount"),
+        totalIncomeTaxData.payload.get("ordinary_rate"),
+        totalIncomeTaxData.payload.get("ordinary_rate_amount"),
+        totalIncomeTaxData.payload.get("upper_rate"),
+        totalIncomeTaxData.payload.get("upper_rate_amount"),
+        totalIncomeTaxData.payload.get("additional_rate"),
+        totalIncomeTaxData.payload.get("additional_rate_amount"),
+        totalIncomeTaxData.payload.get("other_adjustments_increasing"),
+        totalIncomeTaxData.payload.get("marriage_allowance_received_amount"),
+        totalIncomeTaxData.payload.get("other_adjustments_reducing"),
+        totalIncomeTaxData.payload.get("total_income_tax"),
+        totalIncomeTaxData.payload.get("scottish_income_tax"),
+        totalIncomeTaxData.incomeTaxStatus.get,
+        totalIncomeTaxData.rates.get("starting_rate_for_savings_rate"),
+        totalIncomeTaxData.rates.get("basic_rate_income_tax_rate"),
+        totalIncomeTaxData.rates.get("higher_rate_income_tax_rate"),
+        totalIncomeTaxData.rates.get("additional_rate_income_tax_rate"),
+        totalIncomeTaxData.rates.get("ordinary_rate_tax_rate"),
+        totalIncomeTaxData.rates.get("upper_rate_rate"),
+        totalIncomeTaxData.rates.get("additional_rate_rate"),
+        atsData.taxPayerData.get.taxpayer_name.get("title"),
+        atsData.taxPayerData.get.taxpayer_name.get("forename"),
+        atsData.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
 }

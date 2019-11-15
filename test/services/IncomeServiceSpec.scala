@@ -25,19 +25,21 @@ import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
-import view_models.{AtsList, TaxYearEnd}
 import utils.TestConstants._
+import view_models.{Amount, AtsList, IncomeBeforeTax, TaxYearEnd}
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class IncomeServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
 
 
-  val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
@@ -51,15 +53,37 @@ class IncomeServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Scala
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
+    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   }
 
   "IncomeService getIncomeData" should {
 
-    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
-      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService {
+      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
+    }
+
+
+    "return complete IncomeData when given complete IncomeService data" in new TestService {
+
+      val incomeData = AtsTestData.incomeData
+      val result = createIncomeConverter(incomeData)
+      result mustEqual IncomeBeforeTax(
+        2019,
+        "1111111111",
+        Amount(100, "GBP"),
+        Amount(200, "GBP"),
+        Amount(300, "GBP"),
+        Amount(400, "GBP"),
+        Amount(500, "GBP"),
+        Amount(600, "GBP"),
+        Amount(700, "GBP"),
+        Amount(800, "GBP"),
+        "Mr",
+        "John",
+        "Smith"
+      )
     }
 
 
