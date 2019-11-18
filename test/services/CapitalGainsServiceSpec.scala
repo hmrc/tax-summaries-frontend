@@ -25,12 +25,14 @@ import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
-import view_models.{AtsList, TaxYearEnd}
+import view_models.{Amount, AtsList, CapitalGains, Rate, TaxYearEnd}
 import utils.TestConstants._
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -56,10 +58,42 @@ class CapitalGainsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with
 
   "CapitalGainsService getCapitalGains" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
-      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
+      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(getCapitalGains(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
+    }
+  }
+
+  "CapitalGainsService capitalGains" should {
+
+    "return a complete CapitalGains when given complete AtsData" in new TestService {
+      val atsData = AtsTestData.capitalGainsData
+      val result = capitalGains(atsData)
+
+      result shouldBe CapitalGains(
+        2019,
+        "1111111111",
+        Amount(100, "GBP"),
+        Amount(200, "GBP"),
+        Amount(300, "GBP"),
+        Amount(400, "GBP"),
+        Amount(500, "GBP"),
+        Amount(600, "GBP"),
+        Amount(700, "GBP"),
+        Amount(800, "GBP"),
+        Amount(900, "GBP"),
+        Amount(1000, "GBP"),
+        Amount(1100, "GBP"),
+        Amount(1200, "GBP"),
+        Rate("10%"),
+        Rate("20%"),
+        Rate("30%"),
+        Rate("40%"),
+        "Mr",
+        "John",
+        "Smith"
+      )
     }
 
 

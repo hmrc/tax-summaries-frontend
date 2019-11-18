@@ -16,7 +16,7 @@
 
 package services.atsData
 
-import models.{AtsData, DataHolder, GovernmentSpendingOutputWrapper, SpendData, UserData}
+import models.{AtsData, AtsListData, DataHolder, GovernmentSpendingOutputWrapper, SpendData, TaxpayerFrontTierData, UserData}
 import view_models.{Amount, Rate}
 
 object AtsTestData {
@@ -245,6 +245,78 @@ object AtsTestData {
             "surname" -> "Smith"
           )
         )
+      )
+    ),
+    None
+  )
+
+  val capitalGainsData = AtsData(
+    2019,
+    Some("1111111111"),
+    None,
+    None,
+    None,
+    None,
+    Some(
+      DataHolder(
+        Some(
+          Map(
+             "taxable_gains" -> Amount(100, "GBP"),
+             "less_tax_free_amount" -> Amount(200, "GBP"),
+             "pay_cg_tax_on" -> Amount(300, "GBP"),
+             "amount_at_entrepreneurs_rate" -> Amount(400, "GBP"),
+             "amount_due_at_entrepreneurs_rate" -> Amount(500, "GBP"),
+             "amount_at_ordinary_rate" -> Amount(600, "GBP"),
+             "amount_due_at_ordinary_rate" -> Amount(700, "GBP"),
+             "amount_at_higher_rate" -> Amount(800, "GBP"),
+             "amount_due_at_higher_rate" -> Amount(900, "GBP"),
+             "adjustments" -> Amount(1000, "GBP"),
+             "total_cg_tax" -> Amount(1100, "GBP"),
+             "cg_tax_per_currency_unit" -> Amount(1200, "GBP")
+          )
+        ),
+        Some(
+          Map(
+          "cg_entrepreneurs_rate" -> Rate("10%"),
+          "cg_ordinary_rate" -> Rate("20%"),
+          "cg_upper_rate" -> Rate("30%"),
+          "total_cg_tax_rate" -> Rate("40%")
+          )
+        ),
+        None
+        )
+    ),
+    None,
+    Some(
+      UserData(
+        Some(
+          Map(
+            "title" -> "Mr",
+            "forename" -> "John",
+            "surname" -> "Smith"
+          )
+        )
+      )
+    ),
+    None
+  )
+
+  val atsListData = AtsListData(
+    "1111111111",
+    Some(
+      TaxpayerFrontTierData(
+        Some(
+          Map(
+            "forename" -> "John",
+            "surname" -> "Smith"
+          )
+        ),
+        None
+      )
+    ),
+    Some(
+      List(
+        2018
       )
     ),
     None

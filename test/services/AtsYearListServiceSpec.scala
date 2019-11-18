@@ -27,6 +27,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
@@ -128,8 +129,22 @@ class AtsYearListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with 
 
   }
 
+  "AtsYearListService.atsListDataConverter" should {
+    "return an AtsList when given complete AtsListData" in new TestService {
+      val atsListData = AtsTestData.atsListData
+      val result = atsListDataConverter(atsListData)
 
-
-
-
+      result shouldBe AtsList(
+        "1111111111",
+        "John",
+        "Smith",
+        List(
+          TaxYearEnd(
+            Some("2018")
+          )
+        )
+      )
+    }
   }
+
+}
