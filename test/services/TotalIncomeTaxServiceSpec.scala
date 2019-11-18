@@ -25,12 +25,14 @@ import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
-import view_models.{AtsList, TaxYearEnd}
 import utils.TestConstants._
+import view_models._
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -55,10 +57,54 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with FakeTaxsPlayApplication wi
 
   "TotalIncomeTaxService getIncomeData" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService{
-      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
+      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
+  }
+
+    "TotalIncomeTaxService.totalIncomeConverter" should {
+
+
+    "return complete TotalIncomeTax data when given complete AtsData" in new TestService {
+      val incomeData: AtsData = AtsTestData.totalIncomeTaxData
+      val result: TotalIncomeTax = totalIncomeConverter(incomeData)
+      result mustEqual TotalIncomeTax(
+        2019,
+        "1111111111",
+        Amount(100, "GBP"),
+        Amount(200, "GBP"),
+        Amount(300, "GBP"),
+        Amount(400, "GBP"),
+        Amount(500, "GBP"),
+        Amount(600, "GBP"),
+        Amount(700, "GBP"),
+        Amount(800, "GBP"),
+        Amount(900, "GBP"),
+        Amount(1000, "GBP"),
+        Amount(1100, "GBP"),
+        Amount(1200, "GBP"),
+        Amount(1300, "GBP"),
+        Amount(1400, "GBP"),
+        Amount(1500, "GBP"),
+        Amount(1600, "GBP"),
+        Amount(1700, "GBP"),
+        Amount(1800, "GBP"),
+        Amount(1900, "GBP"),
+        "0002",
+        Rate("10%"),
+        Rate("20%"),
+        Rate("30%"),
+        Rate("40%"),
+        Rate("50%"),
+        Rate("60%"),
+        Rate("70%"),
+        "Mr",
+        "John",
+        "Smith"
+      )
+    }
+
   }
 }

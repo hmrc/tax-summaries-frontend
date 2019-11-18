@@ -40,7 +40,6 @@ trait IncomeService {
   private[services] def createIncomeConverter(atsData: AtsData): IncomeBeforeTax = {
       val incomeData: DataHolder = atsData.income_data.get
 
-
       IncomeBeforeTax(atsData.taxYear,
         atsData.utr.get,
         incomeData.payload.get("self_employment_income"),

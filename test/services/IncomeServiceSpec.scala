@@ -64,11 +64,14 @@ class IncomeServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Scala
       result mustEqual genericViewModel
     }
 
+  }
 
-    "return complete IncomeData when given complete IncomeService data" in new TestService {
+  "IncomeService.createIncomeConverter" should {
 
-      val incomeData = AtsTestData.incomeData
-      val result = createIncomeConverter(incomeData)
+    "return complete IncomeBeforeTaxData when given complete AtsData" in new TestService {
+
+      val incomeData: AtsData = AtsTestData.incomeData
+      val result: IncomeBeforeTax = createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
         2019,
         "1111111111",
