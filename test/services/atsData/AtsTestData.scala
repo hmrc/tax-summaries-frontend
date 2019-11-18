@@ -16,7 +16,7 @@
 
 package services.atsData
 
-import models.{AtsData, DataHolder, UserData}
+import models.{AtsData, DataHolder, GovernmentSpendingOutputWrapper, SpendData, UserData}
 import view_models.{Amount, Rate}
 
 object AtsTestData {
@@ -140,6 +140,98 @@ object AtsTestData {
       )
     ),
     None,
+    None,
+    None,
+    None,
+    None,
+    Some(
+      UserData(
+        Some(
+          Map(
+            "title" -> "Mr",
+            "forename" -> "John",
+            "surname" -> "Smith"
+          )
+        )
+      )
+    ),
+    None
+  )
+
+  val govSpendingData = AtsData(
+    2019,
+    Some("1111111111"),
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "scottish_income_tax" -> Amount(500, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    None,
+    None,
+    None,
+    None,
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        Some(
+          Map(
+            "welfare" -> SpendData(Amount(100, "GBP"), 10)
+          )
+        ),
+        Amount(200,"GBP"),
+        None
+      )
+    ),
+    Some(
+      UserData(
+        Some(
+          Map(
+            "title" -> "Mr",
+            "forename" -> "John",
+            "surname" -> "Smith"
+          )
+        )
+      )
+    ),
+    None
+  )
+
+  val summaryData = AtsData(
+    2019,
+    Some("1111111111"),
+    None,
+    Some(
+      DataHolder(
+        Some(
+          Map(
+          "employee_nic_amount" -> Amount(100, "GBP"),
+          "total_income_tax_and_nics" -> Amount(200, "GBP"),
+          "your_total_tax" -> Amount(300, "GBP"),
+          "personal_tax_free_amount" -> Amount(400, "GBP"),
+          "total_tax_free_amount" -> Amount(400, "GBP"),
+          "total_income_before_tax" -> Amount(500, "GBP"),
+          "total_income_tax" -> Amount(600, "GBP"),
+          "total_cg_tax" -> Amount(700, "GBP"),
+          "taxable_gains" -> Amount(800, "GBP"),
+          "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
+          "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP")
+          )
+        ),
+        Some(
+          Map(
+            "total_cg_tax_rate" -> Rate("10%"),
+            "nics_and_tax_rate" -> Rate("20%")
+          )
+        ),
+        None
+      )
+    ),
     None,
     None,
     None,

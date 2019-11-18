@@ -36,18 +36,18 @@ trait GovernmentSpendService {
   def getGovernmentSpendData(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
-  private def govSpend: AtsData => GenericViewModel =
-    (output: AtsData) => {
-      val wrapper: GovernmentSpendingOutputWrapper = output.gov_spending.get
-      new GovernmentSpend(output.taxYear,
-        output.utr.get,
-        wrapper.govSpendAmountData.get.toList,
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname"),
-        wrapper.totalAmount,
-        output.income_tax.get.incomeTaxStatus.getOrElse(""),
-        output.income_tax.get.payload.get("scottish_income_tax")
-      )
-    }
+  private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
+    val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
+
+    GovernmentSpend(atsData.taxYear,
+      atsData.utr.get,
+      govSpendingData.govSpendAmountData.get.toList,
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname"),
+      govSpendingData.totalAmount,
+      atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
+      atsData.income_tax.get.payload.get("scottish_income_tax")
+    )
+  }
 }

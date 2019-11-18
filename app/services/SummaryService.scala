@@ -38,28 +38,27 @@ trait SummaryService {
     atsService.createModel(taxYear, summaryConverter)
   }
 
-  private def summaryConverter: (AtsData => GenericViewModel) =
-    (output: AtsData) => {
-      val wrapper: DataHolder = output.summary_data.get
+  private[services] def summaryConverter(atsData: AtsData): Summary = {
+      val summaryData: DataHolder = atsData.summary_data.get
 
-      Summary(output.taxYear,
-        output.utr.get,
-        wrapper.payload.get.get("employee_nic_amount").get,
-        wrapper.payload.get.get("total_income_tax_and_nics").get,
-        wrapper.payload.get.get("your_total_tax").get,
-        wrapper.payload.get.get("personal_tax_free_amount").get,
-        wrapper.payload.get.get("total_tax_free_amount").get,
-        wrapper.payload.get.get("total_income_before_tax").get,
-        wrapper.payload.get.get("total_income_tax").get,
-        wrapper.payload.get.get("total_cg_tax").get,
-        wrapper.payload.get.get("taxable_gains").get,
-        wrapper.payload.get.get("cg_tax_per_currency_unit").get,
-        wrapper.payload.get.get("nics_and_tax_per_currency_unit").get,
-        wrapper.rates.get.get("total_cg_tax_rate").get,
-        wrapper.rates.get.get("nics_and_tax_rate").get,
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
+      Summary(atsData.taxYear,
+        atsData.utr.get,
+        summaryData.payload.get("employee_nic_amount"),
+        summaryData.payload.get("total_income_tax_and_nics"),
+        summaryData.payload.get("your_total_tax"),
+        summaryData.payload.get("personal_tax_free_amount"),
+        summaryData.payload.get("total_tax_free_amount"),
+        summaryData.payload.get("total_income_before_tax"),
+        summaryData.payload.get("total_income_tax"),
+        summaryData.payload.get("total_cg_tax"),
+        summaryData.payload.get("taxable_gains"),
+        summaryData.payload.get("cg_tax_per_currency_unit"),
+        summaryData.payload.get("nics_and_tax_per_currency_unit"),
+        summaryData.rates.get("total_cg_tax_rate"),
+        summaryData.rates.get("nics_and_tax_rate"),
+        atsData.taxPayerData.get.taxpayer_name.get("title"),
+        atsData.taxPayerData.get.taxpayer_name.get("forename"),
+        atsData.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
 }

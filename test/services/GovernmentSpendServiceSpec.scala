@@ -18,19 +18,21 @@ package services
 
 import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
-import models.AtsData
+import models.{AtsData, SpendData}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
-import view_models.{AtsList, TaxYearEnd}
+import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
 import utils.TestConstants._
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -59,6 +61,27 @@ class GovernmentSpendServiceSpec extends UnitSpec with FakeTaxsPlayApplication w
       when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
+    }
+
+  }
+
+  "GovernmentSpendService govSpend" should {
+
+    "return a complete GovernmentSpend when given complete AtsData" in new TestService{
+      val atsData = AtsTestData.govSpendingData
+      val result = govSpend(atsData)
+
+      result shouldBe GovernmentSpend(
+       2019,
+        "1111111111",
+        List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
+        "Mr",
+        "John",
+        "Smith",
+        Amount(200,"GBP"),
+        "",
+        Amount(500,"GBP")
+      )
     }
 
   }
