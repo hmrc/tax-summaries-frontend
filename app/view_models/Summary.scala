@@ -18,33 +18,47 @@ package view_models
 
 import utils.{GenericViewModel, TextGenerator}
 
-case class Summary(year: Int, utr: String, employeeNicAmount: Amount, totalIncomeTaxAndNics: Amount, yourTotalTax: Amount,
-              totalTaxFree: Amount, totalTaxFreeAllowance: Amount, yourIncomeBeforeTax: Amount, totalIncomeTaxAmount: Amount,
-              totalCapitalGainsTax: Amount, taxableGains: Amount, cgTaxPerCurrencyUnit: Amount, nicsAndTaxPerCurrencyUnit: Amount,
-              totalCgTaxRate: Rate, nicsAndTaxRate: Rate, title: String, forename: String, surname: String) extends GenericViewModel {
+case class Summary(
+  year: Int,
+  utr: String,
+  employeeNicAmount: Amount,
+  totalIncomeTaxAndNics: Amount,
+  yourTotalTax: Amount,
+  totalTaxFree: Amount,
+  totalTaxFreeAllowance: Amount,
+  yourIncomeBeforeTax: Amount,
+  totalIncomeTaxAmount: Amount,
+  totalCapitalGainsTax: Amount,
+  taxableGains: Amount,
+  cgTaxPerCurrencyUnit: Amount,
+  nicsAndTaxPerCurrencyUnit: Amount,
+  totalCgTaxRate: Rate,
+  nicsAndTaxRate: Rate,
+  title: String,
+  forename: String,
+  surname: String)
+    extends GenericViewModel {
 
   def taxYearInterval = taxYearFrom + "-" + taxYearTo.substring(2)
   def taxYearIntervalTo = taxYearFrom + " to " + taxYearTo
-    
+
   def hasTotalIncomeTaxAmount = !totalIncomeTaxAmount.isZero
   def hasTotalCapitalGains = !totalCapitalGainsTax.isZero
   def hasEmployeeNicAmount = !employeeNicAmount.isZero
 
-  def yourTotalTaxTextKey = {
-    if (hasTotalIncomeTaxAmount && hasEmployeeNicAmount){
+  def yourTotalTaxTextKey =
+    if (hasTotalIncomeTaxAmount && hasEmployeeNicAmount) {
       "ats.summary.tax_and_nics.title"
-    }
-    else if (!hasTotalIncomeTaxAmount && hasEmployeeNicAmount){
+    } else if (!hasTotalIncomeTaxAmount && hasEmployeeNicAmount) {
       "ats.summary.nics.title"
-    }
-    else {
+    } else {
       "ats.summary.tax.title"
     }
-  }
 
-  def yourTotalTaxTextKeys: (String, List[String]) = TextGenerator.createOnScreenText(hasTotalIncomeTaxAmount, hasTotalCapitalGains, hasEmployeeNicAmount)
+  def yourTotalTaxTextKeys: (String, List[String]) =
+    TextGenerator.createOnScreenText(hasTotalIncomeTaxAmount, hasTotalCapitalGains, hasEmployeeNicAmount)
 
-  def hasTaxableGains:Boolean = !taxableGains.isZero
+  def hasTaxableGains: Boolean = !taxableGains.isZero
   def taxYearTo = year.toString
-  def taxYearFrom = (year-1).toString
+  def taxYearFrom = (year - 1).toString
 }

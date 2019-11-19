@@ -117,7 +117,6 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
       result shouldBe SaUtr(utr)
     }
 
-
     "return the client utr when agent account with invalid agent token" in new TestService {
 
       override val agentToken = AgentToken(

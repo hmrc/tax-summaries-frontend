@@ -21,18 +21,18 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.domain._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
-case class Ticket private(name: String,
-                          email: String,
-                          subject: String,
-                          message: String,
-                          referrer: String,
-                          javascriptEnabled: String,
-                          userAgent: String,
-                          authId: String,
-                          areaOfTax: String,
-                          sessionId: String,
-                          userTaxIdentifiers: UserTaxIdentifiers)
-
+case class Ticket private (
+  name: String,
+  email: String,
+  subject: String,
+  message: String,
+  referrer: String,
+  javascriptEnabled: String,
+  userAgent: String,
+  authId: String,
+  areaOfTax: String,
+  sessionId: String,
+  userTaxIdentifiers: UserTaxIdentifiers)
 
 object UserTaxIdentifiers {
   implicit val formats = Json.format[UserTaxIdentifiers]
@@ -63,27 +63,26 @@ object TicketId {
 
 case class TicketId(ticket_id: Int)
 
+case class UserTaxIdentifiers(
+  nino: Option[Nino],
+  ctUtr: Option[CtUtr],
+  utr: Option[SaUtr],
+  vrn: Option[Vrn],
+  empRef: Option[EmpRef])
 
-case class UserTaxIdentifiers(nino: Option[Nino],
-                              ctUtr: Option[CtUtr],
-                              utr: Option[SaUtr],
-                              vrn: Option[Vrn],
-                              empRef: Option[EmpRef])
-
-
-case class Feedback(name: String,
-                    email: String,
-                    subject: String,
-                    rating: String,
-                    message: String,
-                    referrer: String,
-                    javascriptEnabled: String,
-                    userAgent: String,
-                    authId: String,
-                    areaOfTax: String,
-                    sessionId: String,
-                    userTaxIdentifiers: UserTaxIdentifiers)
-
+case class Feedback(
+  name: String,
+  email: String,
+  subject: String,
+  rating: String,
+  message: String,
+  referrer: String,
+  javascriptEnabled: String,
+  userAgent: String,
+  authId: String,
+  areaOfTax: String,
+  sessionId: String,
+  userTaxIdentifiers: UserTaxIdentifiers)
 
 object Feedback extends FieldTransformer {
 
@@ -105,7 +104,6 @@ object Feedback extends FieldTransformer {
       UserTaxIdentifiers(request.nino, request.ctUtr, request.saUtr, request.vrn, request.payeEmpRef))
 }
 
-
 trait FieldTransformer {
   val NA = "n/a"
   val taxCreditRenewals = "taxcreditrenewals"
@@ -117,7 +115,7 @@ trait FieldTransformer {
     case Some("IDA") => "paye"
     case Some("GGW") => "biztax"
     case Some("NTC") => taxCreditRenewals
-    case _ => NA
+    case _           => NA
   }
 
   def userIdFrom(request: AuthenticatedRequest[_], hc: HeaderCarrier): String = request.session.get(SessionKeys.sensitiveUserId) match {

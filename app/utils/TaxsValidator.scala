@@ -25,9 +25,9 @@ trait TaxsValidator {
 
   val emailRegex = """(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"""
 
-  val dateRegex =  """^\d{2}/\d{2}/\d{4}$"""
+  val dateRegex = """^\d{2}/\d{2}/\d{4}$"""
 
-  val asciiRegex =  """^[\x00-\x7F]*$"""
+  val asciiRegex = """^[\x00-\x7F]*$"""
 
   val alphaRegex = """^(?i)[A-Z ]+$"""
 
@@ -42,9 +42,8 @@ trait TaxsValidator {
   val asciiChar160 = 160
   val asciiChar255 = 255
 
-  def validText(input: String): Boolean = {
+  def validText(input: String): Boolean =
     validateISO88591(input)
-  }
 
   def validateISO88591(input: String): Boolean = {
     val inputList: List[Char] = input.toList

@@ -39,7 +39,7 @@ import scala.concurrent.duration._
 
 class SummaryServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar with MockFactory{
 
-  val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
@@ -92,7 +92,6 @@ class SummaryServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Scal
         "Smith"
       )
     }
-
 
   }
 }

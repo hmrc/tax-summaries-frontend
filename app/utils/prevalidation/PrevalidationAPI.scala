@@ -47,7 +47,7 @@ trait PrevalidationAPI[T] {
   private def removeKeyPrefix(key: String): String =
     key.lastIndexOf(".") match {
       case -1 => key
-      case v => key.substring(v + 1)
+      case v  => key.substring(v + 1)
     }
 
   def addNewPreprocessFunction(preprocessFunction: PreprocessFunction): PrevalidationAPI[T] = {
@@ -68,15 +68,15 @@ trait PrevalidationAPI[T] {
 
   private def preprocess(key: String, value: String): String = {
     val trimmedField: String = trimRules.getOrElse(removeKeyPrefix(key), TrimOption.bothAndCompress) match {
-      case TrimOption.both => trimBothFunc(value)
+      case TrimOption.both            => trimBothFunc(value)
       case TrimOption.bothAndCompress => trimBothAndCompressFunc(value)
-      case TrimOption.all => trimAllFunc(value)
-      case TrimOption.none => value
+      case TrimOption.all             => trimAllFunc(value)
+      case TrimOption.none            => value
     }
-   caseRules.getOrElse(removeKeyPrefix(key), CaseOption.none) match {
+    caseRules.getOrElse(removeKeyPrefix(key), CaseOption.none) match {
       case CaseOption.upper => trimmedField.toUpperCase
       case CaseOption.lower => trimmedField.toLowerCase
-      case CaseOption.none => trimmedField
+      case CaseOption.none  => trimmedField
     }
   }
 
@@ -98,24 +98,27 @@ trait PrevalidationAPI[T] {
   // copied the source from play 2.4 to convert a Request object into Map[String, Seq[String]] then call our trimmed
   // bindFromRequest function
   def bindFromRequest()(implicit request: play.api.mvc.Request[_]): Form[T] =
-  bindFromRequest {
-    (request.body match {
-      case body: play.api.mvc.AnyContent if body.asFormUrlEncoded.isDefined => body.asFormUrlEncoded.get
-      case body: play.api.mvc.AnyContent if body.asMultipartFormData.isDefined => body.asMultipartFormData.get.asFormUrlEncoded
-      case body: play.api.mvc.AnyContent if body.asJson.isDefined => FormUtils.fromJson(js = body.asJson.get).mapValues(Seq(_))
-      case body: Map[_, _] => body.asInstanceOf[Map[String, Seq[String]]]
-      case body: play.api.mvc.MultipartFormData[_] => body.asFormUrlEncoded
-      case body: play.api.libs.json.JsValue => FormUtils.fromJson(js = body).mapValues(Seq(_))
-      case _ => Map.empty[String, Seq[String]]
-    }) ++ request.queryString
-  }
+    bindFromRequest {
+      (request.body match {
+        case body: play.api.mvc.AnyContent if body.asFormUrlEncoded.isDefined => body.asFormUrlEncoded.get
+        case body: play.api.mvc.AnyContent if body.asMultipartFormData.isDefined =>
+          body.asMultipartFormData.get.asFormUrlEncoded
+        case body: play.api.mvc.AnyContent if body.asJson.isDefined =>
+          FormUtils.fromJson(js = body.asJson.get).mapValues(Seq(_))
+        case body: Map[_, _]                         => body.asInstanceOf[Map[String, Seq[String]]]
+        case body: play.api.mvc.MultipartFormData[_] => body.asFormUrlEncoded
+        case body: play.api.libs.json.JsValue        => FormUtils.fromJson(js = body).mapValues(Seq(_))
+        case _                                       => Map.empty[String, Seq[String]]
+      }) ++ request.queryString
+    }
 
   // extracted from the source of play 2.4 ( def bindFromRequest(data: Map[String, Seq[String]]): Form[T] )
   implicit def conv(data: Map[String, Seq[String]]): Map[String, String] =
-  data.foldLeft(Map.empty[String, String]) {
-    case (s, (key, values)) if key.endsWith("[]") => s ++ values.zipWithIndex.map { case (v, i) => (key.dropRight(2) + "[" + i + "]") -> v }
-    case (s, (key, values)) => s + (key -> values.headOption.getOrElse(""))
-  }
+    data.foldLeft(Map.empty[String, String]) {
+      case (s, (key, values)) if key.endsWith("[]") =>
+        s ++ values.zipWithIndex.map { case (v, i) => (key.dropRight(2) + "[" + i + "]") -> v }
+      case (s, (key, values)) => s + (key -> values.headOption.getOrElse(""))
+    }
 
   def form: play.api.data.Form[T] = formValidation
 
@@ -128,13 +131,19 @@ private object FormUtils {
 
   def fromJson(prefix: String = "", js: JsValue): Map[String, String] = js match {
     case JsObject(fields) =>
-      fields.map { case (key, value) => fromJson(Option(prefix).filterNot(_.isEmpty).map(_ + ".").getOrElse("") + key, value) }.foldLeft(Map.empty[String, String])(_ ++ _)
+      fields
+        .map {
+          case (key, value) => fromJson(Option(prefix).filterNot(_.isEmpty).map(_ + ".").getOrElse("") + key, value)
+        }
+        .foldLeft(Map.empty[String, String])(_ ++ _)
     case JsArray(values) =>
-      values.zipWithIndex.map { case (value, i) => fromJson(prefix + "[" + i + "]", value) }.foldLeft(Map.empty[String, String])(_ ++ _)
-    case JsNull => Map.empty
-    case JsUndefined() => Map.empty
+      values.zipWithIndex
+        .map { case (value, i) => fromJson(prefix + "[" + i + "]", value) }
+        .foldLeft(Map.empty[String, String])(_ ++ _)
+    case JsNull           => Map.empty
+    case JsUndefined()    => Map.empty
     case JsBoolean(value) => Map(prefix -> value.toString)
-    case JsNumber(value) => Map(prefix -> value.toString)
-    case JsString(value) => Map(prefix -> value.toString)
+    case JsNumber(value)  => Map(prefix -> value.toString)
+    case JsString(value)  => Map(prefix -> value.toString)
   }
 }

@@ -37,7 +37,7 @@ trait TaxsLanguageController extends FrontendController with I18nSupport {
   def switchLanguage(lang: String) = Action { implicit request =>
     request.headers.get(REFERER) match {
       case Some(referrer) => Redirect(referrer).withLang(Lang(lang))
-      case _ => Redirect(routes.IndexController.authorisedIndex()).withLang(Lang(lang))
+      case _              => Redirect(routes.IndexController.authorisedIndex()).withLang(Lang(lang))
     }
   }
 }

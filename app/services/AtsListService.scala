@@ -34,7 +34,7 @@ object AtsListService extends AtsListService {
   override lazy val cryptoService = CryptoService
   override lazy val authUtils = AuthorityUtils
   override lazy val auditService: AuditService = AuditService
-  override lazy val accountUtils:AccountUtils = AccountUtils
+  override lazy val accountUtils: AccountUtils = AccountUtils
 }
 
 trait AtsListService {
@@ -44,7 +44,7 @@ trait AtsListService {
   def dataCache: DataCacheConnector
   def cryptoService: CryptoService
   def authUtils: AuthorityUtils
-  def accountUtils : AccountUtils
+  def accountUtils: AccountUtils
 
   def createModel(converter: (AtsListData => GenericViewModel))(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     getAtsYearList map {
@@ -96,10 +96,10 @@ trait AtsListService {
       if (authUtils.checkUtr(data.utr, token)) {
         Future.successful(data)
       } else {
-         getAtsListAndStore(token)
+        getAtsListAndStore(token)
       }
     }
-  } flatMap(identity)
+  } flatMap (identity)
 
   private def getAtsListAndStore(agentToken: Option[AgentToken]=None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
     val account = utils.AccountUtils.getAccount(request)
@@ -117,7 +117,7 @@ trait AtsListService {
           sendAuditEvent(account, data)
           storeAtsListData(data)
         case Some(IncomingAtsError("NoAtsError")) => storeAtsListData(data)
-        case Some(_) => Future(data)
+        case Some(_)                              => Future(data)
       }
     }
   } flatMap { identity }

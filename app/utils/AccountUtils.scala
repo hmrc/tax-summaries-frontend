@@ -31,11 +31,11 @@ trait AccountUtils {
     case sa: SaUtr => sa.utr
     case ta: Uar => ta.uar
   }
-  def isPortalUser(request: Request[_]): Boolean = request.session.get(utils.Globals.TAXS_USER_TYPE_KEY) == Some(utils.Globals.TAXS_PORTAL_REFERENCE)
+  def isPortalUser(request: Request[_]): Boolean = request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)
   def isAgent(request: AuthenticatedRequest[_]): Boolean = request.agentRef.isDefined
 }
 
-trait AttorneyUtils{
+trait AttorneyUtils {
   def getActingAsAttorneyFor(request: AuthenticatedRequest[_], forename: String, surname: String, utr: String): Option[ActingAsAttorneyFor] = {
     if(AccountUtils.isAgent(request)) Some(ActingAsAttorneyFor(Some(s"$forename $surname (${Messages("generic.utr_abbrev")}: $utr)"), Map())) else None
   }
@@ -45,7 +45,9 @@ trait Analytics{
   def getAnalyticsAttribute(request: AuthenticatedRequest[_], actingAttorney: Option[ActingAsAttorneyFor]): String = {
     actingAttorney.isDefined match {
       case true => Globals.TAXS_ANALYTICS_AGENT_ATTRIBUTE
-      case false => if(AccountUtils.isPortalUser(request)) Globals.TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE else Globals.TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE
+      case false =>
+        if (AccountUtils.isPortalUser(request)) Globals.TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE
+        else Globals.TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE
     }
   }
 }

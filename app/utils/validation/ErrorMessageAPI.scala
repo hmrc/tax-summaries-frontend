@@ -93,7 +93,8 @@ trait MessageConfig[T] {
   * @param msgKey  the key in the conf/messages file
   * @param msgArgs any arguments expected by the message in the conf/messages file
   */
-case class FieldErrorConfig(msgKey: String, msgArgs: MessageArguments = MessageArguments()) extends MessageConfig[String]
+case class FieldErrorConfig(msgKey: String, msgArgs: MessageArguments = MessageArguments())
+    extends MessageConfig[String]
 
 /**
   * SummaryErrorConfig is an optional parameter in the ErrorMessageFactory API used to specify the summary error message.
@@ -112,7 +113,8 @@ case class FieldErrorConfig(msgKey: String, msgArgs: MessageArguments = MessageA
   *                be used based on the field error configuration
   * @param msgArgs any arguments expected by the message in the conf/messages file
   */
-case class SummaryErrorConfig(msgKey: Option[String], msgArgs: MessageArguments = MessageArguments()) extends MessageConfig[Option[String]] {
+case class SummaryErrorConfig(msgKey: Option[String], msgArgs: MessageArguments = MessageArguments())
+    extends MessageConfig[Option[String]] {
   def this(msgArgs: MessageArguments) = this(None, msgArgs)
 
   def this(msgKey: String, msgArgs: MessageArguments) = this(Some(msgKey), msgArgs)
@@ -147,7 +149,6 @@ object SummaryErrorConfig {
   */
 case class TargetFieldIds(anchor: String, otherIds: String*)
 
-
 /**
   * MessageLookup is a trait used to specify the types designed to be used by the ErrorMessageLookup API.
   * All types inheriting this trait must contain a message key.
@@ -180,7 +181,11 @@ trait MessageLookup extends MessageConfig[String] with I18nSupport {
   * @param msgKey  the key in the conf/messages file
   * @param msgArgs any arguments expected by the message in the conf/messages file
   */
-case class EmbeddedMessage @Inject()(msgKey: String, msgArgs: MessageArguments = MessageArguments(), messagesApi: MessagesApi) extends MessageLookup
+case class EmbeddedMessage @Inject()(
+  msgKey: String,
+  msgArgs: MessageArguments = MessageArguments(),
+  messagesApi: MessagesApi)
+    extends MessageLookup
 
 object EmbeddedMessage {
   def apply(msgKey: String, msgArgs: MessageArguments)(implicit messages: Messages) =
@@ -198,8 +203,14 @@ object EmbeddedMessage {
   * @param msgArgs any arguments expected by the message in the conf/messages file
   * @param anchor  where the summary error message will hyper link to
   */
-case class SummaryError @Inject()(msgKey: String, msgArgs: MessageArguments = MessageArguments(), anchor: String, messagesApi: MessagesApi) extends MessageLookup {
-  def this(msgKey: String, anchor: String)(implicit messagesApi: MessagesApi) = this(msgKey, MessageArguments(), anchor, messagesApi)
+case class SummaryError @Inject()(
+  msgKey: String,
+  msgArgs: MessageArguments = MessageArguments(),
+  anchor: String,
+  messagesApi: MessagesApi)
+    extends MessageLookup {
+  def this(msgKey: String, anchor: String)(implicit messagesApi: MessagesApi) =
+    this(msgKey, MessageArguments(), anchor, messagesApi)
 
   override def hashCode(): Int = {
     var code = this.productPrefix.hashCode()
@@ -213,13 +224,12 @@ case class SummaryError @Inject()(msgKey: String, msgArgs: MessageArguments = Me
     code
   }
 
-  override def equals(that: Any): Boolean = {
+  override def equals(that: Any): Boolean =
     that match {
       case errThat: SummaryError =>
         this.toString().equals(errThat.toString()) && this.anchor.equals(errThat.anchor)
       case _ => false
     }
-  }
 }
 
 object SummaryError {
@@ -232,8 +242,13 @@ object SummaryError {
   def apply(fieldError: FieldError, anchor: String)(implicit messages: Messages): SummaryError =
     new SummaryError(ErrorMessageInterpreter.defaultSummaryId(fieldError.msgKey), anchor)(messages.messages)
 
-  def apply(fieldError: FieldError, summaryArgs: MessageArguments, anchor: String)(implicit messages: Messages): SummaryError =
-    new SummaryError(ErrorMessageInterpreter.defaultSummaryId(fieldError.msgKey), summaryArgs, anchor, messages.messages)
+  def apply(fieldError: FieldError, summaryArgs: MessageArguments, anchor: String)(
+    implicit messages: Messages): SummaryError =
+    new SummaryError(
+      ErrorMessageInterpreter.defaultSummaryId(fieldError.msgKey),
+      summaryArgs,
+      anchor,
+      messages.messages)
 }
 
 /**
@@ -243,7 +258,11 @@ object SummaryError {
   * @param msgKey  the key in the conf/messages file
   * @param msgArgs any arguments expected by the message in the conf/messages file
   */
-case class FieldError @Inject()(msgKey: String, msgArgs: MessageArguments = MessageArguments(), messagesApi: MessagesApi) extends MessageLookup {
+case class FieldError @Inject()(
+  msgKey: String,
+  msgArgs: MessageArguments = MessageArguments(),
+  messagesApi: MessagesApi)
+    extends MessageLookup {
   override def hashCode(): Int = {
     var code = this.productPrefix.hashCode()
     val arr = this.productArity

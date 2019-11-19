@@ -62,7 +62,7 @@ trait IndexController extends TaxsController {
   def agentAwareShow(implicit request: AuthenticatedRequest[_]): Future[Result] =
 
     request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) match {
-      case Some(Globals.TAXS_PORTAL_REFERENCE) =>{
+      case Some(Globals.TAXS_PORTAL_REFERENCE) => {
 
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
         val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)

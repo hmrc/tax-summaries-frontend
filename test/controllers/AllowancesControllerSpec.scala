@@ -56,7 +56,7 @@ class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication wit
     surname = "surname"
   )
 
-  val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
@@ -65,10 +65,9 @@ class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication wit
     )
   )
 
-  val noATSViewModel:NoATSViewModel = new NoATSViewModel()
+  val noATSViewModel: NoATSViewModel = new NoATSViewModel()
 
   lazy val taxsController = mock[TaxsController]
-  
 
   trait TestController extends AllowancesController {
     override lazy val allowanceService = mock[AllowanceService]
@@ -158,6 +157,6 @@ class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication wit
     redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
   }
 
-}
+  }
 
 }

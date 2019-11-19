@@ -99,7 +99,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       val result = storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a [NoSuchElementException]
+        exception shouldBe an [NoSuchElementException]
       }
     }
 
@@ -110,7 +110,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       val result = storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe an [Exception]
       }
     }
   }
@@ -129,7 +129,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
 
       whenReady(fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe a [NoSuchElementException]
+        exception shouldBe an [NoSuchElementException]
       }
     }
 
@@ -138,7 +138,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe an [Exception]
       }
     }
   }
@@ -150,7 +150,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(getAtsYearList.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe an [Exception]
 
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
@@ -164,7 +164,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(getAtsYearList.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe an [Exception]
 
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
@@ -175,10 +175,11 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
     "Return a failed future when the call to the MS fails" in new TestService {
 
       when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
-      when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(getAtsYearList.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe an [Exception]
 
         verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])

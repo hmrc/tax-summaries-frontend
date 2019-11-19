@@ -27,7 +27,6 @@ serviceInfoContent: Option[Html] = None,
 contentHeader: Option[Html] = None,
 showFeedbackLinkInBetaBanner: Boolean = false,
 linkElement: Option[Html] = None,
-headScripts: Option[Html] = None,
 scriptElement: Option[Html] = None,
 bodyClasses: Option[String] = None,
 mainClasses: Option[String] = None,
@@ -58,8 +57,12 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     <script type="text/javascript" src='@routes.Assets.at("javascripts/details.polyfill.js")'></script>
 }
 
+@headScript = {
+    <script src="https://cdn.optimizely.com/js/@{ApplicationConfig.optimizelyProjectId}.js"></script>
+}
+
 @head = {
-    @uiLayouts.head(Option(linkElement), headScripts)
+    @uiLayouts.head(Option(linkElement), Some(headScript))
 }
 
 @insideHeader = {

@@ -299,7 +299,6 @@ class IndexControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
 
     }
 
-
     "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
       when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(new NoATSViewModel)
@@ -308,8 +307,6 @@ class IndexControllerSpec extends UnitSpec with FakeTaxsPlayApplication with Moc
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
-
     }
-
   }
 }

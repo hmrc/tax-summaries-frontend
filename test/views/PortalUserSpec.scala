@@ -269,7 +269,7 @@ class PortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
 
   "Logging into the portal as an agent" should {
 
-    "show the 'back to the Portal' link containing the client's UTR" in  {
+    "show the 'back to the Portal' link containing the client's UTR" in {
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")

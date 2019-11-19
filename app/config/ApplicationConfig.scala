@@ -32,8 +32,8 @@ trait ApplicationConfig {
   val betaFeedbackUnauthenticatedUrl: String
   val analyticsToken: Option[String]
   val analyticsHost: String
-  val reportAProblemUrl:String
-  val reportAProblemPartialUrl:String
+  val reportAProblemUrl: String
+  val reportAProblemPartialUrl: String
   val externalReportProblemUrl: String
   val reportAProblemNonJSUrl: String
   val ssoUrl: Option[String]
@@ -42,9 +42,11 @@ trait ApplicationConfig {
   val loginCallback: String
   val loginUrl: String
   val ytaUrl: String
-  val portalUrl:String
+  val portalUrl: String
   val authHost: String
   val sessionCacheHost: String
+  val optimizelyProjectId: String
+  val feedbackUrl: String
 }
 
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
@@ -85,6 +87,8 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val loginUrl = getConf("login.url")
   override lazy val ytaUrl = getConf("yta.url")
   override lazy val portalUrl = getConf("portal.url")
+  override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
+  override lazy val feedbackUrl: String = getConf("feedback.url")
 
   //Application name
   override lazy val appName = getString("appName")

@@ -22,4 +22,4 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 
 @Singleton
-class AssetsController @Inject() (errorHandler: HttpErrorHandler) extends AssetsBuilder(errorHandler)
+class AssetsController @Inject()(errorHandler: HttpErrorHandler) extends AssetsBuilder(errorHandler)

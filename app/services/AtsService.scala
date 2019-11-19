@@ -68,7 +68,7 @@ trait AtsService {
         case Some(data) => {
           accountUtils.isAgent(request) match {
             case true =>
-              fetchAgentInfo(data,taxYear)
+              fetchAgentInfo(data, taxYear)
             case false =>
               getAtsAndStore(taxYear)
           }
@@ -83,7 +83,7 @@ trait AtsService {
         }
       }
     }
-  }  flatMap { identity }
+  } flatMap { identity }
 
 
   private def fetchAgentInfo (data :AtsData, taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsData] = {

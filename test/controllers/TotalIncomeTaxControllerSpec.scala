@@ -206,7 +206,6 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with FakeTaxsPlayApplication
     }
   }
 
-
   "Dividends section" should {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in new TestController {
 
@@ -249,7 +248,6 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with FakeTaxsPlayApplication
       document.toString should not include "additional-rate-row"
     }
 
-
     "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in new TestController {
 
       val model5 = baseModel.copy(
@@ -283,7 +281,6 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with FakeTaxsPlayApplication
       document.getElementById("other-adjustments-increasing-amount").text() should equal("£90")
       document.getElementById("other-adjustments-reducing-amount").text() should equal("minus £20 -£20")
     }
-
 
     "hide other adjustments increasing your tax section if the amount is 0.00" in new TestController {
 
@@ -354,6 +351,5 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with FakeTaxsPlayApplication
     }
 
   }
-
 
 }

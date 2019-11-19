@@ -22,27 +22,30 @@ import play.api.data.validation.{Invalid, Valid, ValidationResult}
 import play.api.data.{FieldMapping, FormError, Mapping}
 import utils.TAXSEnums.TAXSEnumeration
 
-
 object MappingUtilAPI {
 
   import ConstraintUtil._
 
-  def compulsoryText(config: CompulsoryTextFieldMappingParameter): FieldMapping[Option[String]] = of(CompulsoryTextFieldFormatter(config))
+  def compulsoryText(config: CompulsoryTextFieldMappingParameter): FieldMapping[Option[String]] =
+    of(CompulsoryTextFieldFormatter(config))
 
-  def optionalText(config: OptionalTextFieldMappingParameter): FieldMapping[Option[String]] = of(OptionalTextFieldMapping(config))
+  def optionalText(config: OptionalTextFieldMappingParameter): FieldMapping[Option[String]] =
+    of(OptionalTextFieldMapping(config))
 
   def compulsoryList[T](config: CompulsoryListMappingParameter[T]): Mapping[List[T]] =
     list(config.mapping).verifying(compulsaryListConstraint(config.emptyErrorMsg))
 
-  def compulsoryEnum(config: CompulsoryEnumMappingParameter): FieldMapping[Option[String]] = of(CompulsoryEnumOptionFormatter(config))
+  def compulsoryEnum(config: CompulsoryEnumMappingParameter): FieldMapping[Option[String]] =
+    of(CompulsoryEnumOptionFormatter(config))
 
   implicit class MappingUtil(mapping: Mapping[Option[String]]) {
+
     /**
       * used to convert Option[String] formatters to String formatters, this so we can reuse the compulsory text
       * formatter on String fields instead of the default Option[String] fields
       */
     def toStringFormatter: Mapping[String] =
-    mapping.transform[String]((value: Option[String]) => value.fold("")(x => x), (value: String) => Some(value))
+      mapping.transform[String]((value: Option[String]) => value.fold("")(x => x), (value: String) => Some(value))
   }
 
   implicit class MappingUtil_AddPreconditionToOptionMapping[T](mapping: Mapping[Option[T]]) {
@@ -58,48 +61,52 @@ object MappingUtilAPI {
       }
     }
 
-    private val iffBind = (key: String, data: Map[String, String]) => (preCondition: Boolean) =>
-      (preCondition match {
-        case false => Right(None)
-        case true =>
-          val validated: Either[Seq[FormError], Option[T]] = checkKey(key, mapping).bind(data)
-          validated match {
-            case Left(errors) => Left(errors)
-            case Right(ostring) => Right(ostring)
-          }
-      }): Either[Seq[FormError], Option[T]]
+    private val iffBind = (key: String, data: Map[String, String]) =>
+      (preCondition: Boolean) =>
+        (preCondition match {
+          case false => Right(None)
+          case true =>
+            val validated: Either[Seq[FormError], Option[T]] = checkKey(key, mapping).bind(data)
+            validated match {
+              case Left(errors)   => Left(errors)
+              case Right(ostring) => Right(ostring)
+            }
+        }): Either[Seq[FormError], Option[T]]
 
     private val iffUnbind = (key: String, value: Option[T]) => checkKey(key, mapping).unbind(value): Map[String, String]
 
-    def iff(preCondition: Option[FormQuery]): Mapping[Option[T]] = of(new Formatter[Option[T]] {
+    def iff(preCondition: Option[FormQuery]): Mapping[Option[T]] =
+      of(new Formatter[Option[T]] {
 
-      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[T]] =
-        iffBind(key, data)(preCondition.isEmpty || preCondition.get(data))
+        def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[T]] =
+          iffBind(key, data)(preCondition.isEmpty || preCondition.get(data))
 
-      def unbind(key: String, value: Option[T]): Map[String, String] =
-        iffUnbind(key, value)
+        def unbind(key: String, value: Option[T]): Map[String, String] =
+          iffUnbind(key, value)
 
-    })
+      })
 
-    def iff(preCondition: FormQuery): Mapping[Option[T]] = of(new Formatter[Option[T]] {
+    def iff(preCondition: FormQuery): Mapping[Option[T]] =
+      of(new Formatter[Option[T]] {
 
-      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[T]] =
-        iffBind(key, data)(preCondition.get(data))
+        def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[T]] =
+          iffBind(key, data)(preCondition.get(data))
 
-      def unbind(key: String, value: Option[T]): Map[String, String] =
-        iffUnbind(key, value)
+        def unbind(key: String, value: Option[T]): Map[String, String] =
+          iffUnbind(key, value)
 
-    })
+      })
 
-    def iff(preCondition: Boolean): Mapping[Option[T]] = of(new Formatter[Option[T]] {
+    def iff(preCondition: Boolean): Mapping[Option[T]] =
+      of(new Formatter[Option[T]] {
 
-      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[T]] =
-        iffBind(key, data)(preCondition)
+        def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[T]] =
+          iffBind(key, data)(preCondition)
 
-      def unbind(key: String, value: Option[T]): Map[String, String] =
-        iffUnbind(key, value)
+        def unbind(key: String, value: Option[T]): Map[String, String] =
+          iffUnbind(key, value)
 
-    })
+      })
 
   }
 
@@ -117,44 +124,49 @@ object MappingUtilAPI {
     }
 
     // used to attach a constraint to an existing mapping
-    def `+`(additionalValidation: CrossFieldConstraint): Mapping[T] = of(new Formatter[T] {
+    def `+`(additionalValidation: CrossFieldConstraint): Mapping[T] =
+      of(new Formatter[T] {
 
-      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], T] = {
-        val first: Either[Seq[FormError], T] = checkKey(key, mapping).bind(data)
+        def bind(key: String, data: Map[String, String]): Either[Seq[FormError], T] = {
+          val first: Either[Seq[FormError], T] = checkKey(key, mapping).bind(data)
 
-        val second: ValidationResult = additionalValidation.bind(data)
+          val second: ValidationResult = additionalValidation.bind(data)
 
-        def processErr(err: Invalid): Seq[FormError] =
-          err.errors.toSeq.flatten.foldLeft(Seq[FormError]())((seq, ve) => seq ++ FormError(key, ve.message, ve.args))
+          def processErr(err: Invalid): Seq[FormError] =
+            err.errors.toSeq.flatten.foldLeft(Seq[FormError]())((seq, ve) => seq ++ FormError(key, ve.message, ve.args))
 
-        first match {
-          case Left(ferrors) => Left(ferrors)
-          case Right(fr) => second match {
-            case inv: Invalid => Left(processErr(inv))
-            case Valid => Right(fr)
+          first match {
+            case Left(ferrors) => Left(ferrors)
+            case Right(fr) =>
+              second match {
+                case inv: Invalid => Left(processErr(inv))
+                case Valid        => Right(fr)
+              }
           }
         }
-      }
 
-      def unbind(key: String, value: T): Map[String, String] =
-        checkKey(key, mapping).unbind(value)
-    })
+        def unbind(key: String, value: T): Map[String, String] =
+          checkKey(key, mapping).unbind(value)
+      })
 
   }
 
-  class CrossFieldConstraint(val condition: FormQuery, val errorMessage: Invalid, val booleanValueOfInvalid: Boolean = true) {
+  class CrossFieldConstraint(
+    val condition: FormQuery,
+    val errorMessage: Invalid,
+    val booleanValueOfInvalid: Boolean = true) {
 
     def bind(data: Map[String, String]) =
       condition(data) match {
         case `booleanValueOfInvalid` => errorMessage
-        case _ => Valid
+        case _                       => Valid
       }
 
     def xiff(preCondition: FormQuery): CrossFieldConstraint =
       new CrossFieldConstraint(condition, errorMessage, booleanValueOfInvalid) {
         override def bind(data: Map[String, String]) =
           preCondition(data) match {
-            case true => super.bind(data)
+            case true  => super.bind(data)
             case false => Valid
           }
       }
@@ -171,7 +183,10 @@ object MappingUtilAPI {
       val value: String = data.getOrElse(key, "")
       val isEnum = config.enumType.isEnumValue(value)
 
-      def error = Left(config.empty.errorMessage.errors.map { e => FormError(key, e.message, e.args) })
+      def error =
+        Left(config.empty.errorMessage.errors.map { e =>
+          FormError(key, e.message, e.args)
+        })
 
       isEnum match {
         case false => error
@@ -179,7 +194,7 @@ object MappingUtilAPI {
           val enumValue: TAXSEnumeration#Value = config.enumType.withName(value)
           val invalidChoices = config.invalidChoices
           invalidChoices.nonEmpty && invalidChoices.contains(enumValue) match {
-            case true => error
+            case true  => error
             case false => Right(Some(enumValue.toString))
           }
       }
@@ -189,12 +204,11 @@ object MappingUtilAPI {
       Map(key -> value.getOrElse(""))
   }
 
-
   def CompulsoryTextFieldFormatter(config: CompulsoryTextFieldMappingParameter) = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
       val value = data.getOrElse(key, "").trim
       compulsaryTextFieldMappingConstraints(config)(value) match {
-        case Valid => Right(Some(value))
+        case Valid      => Right(Some(value))
         case e: Invalid => Left(e.errors.map(ve => FormError(key, ve.message, ve.args)))
       }
     }
@@ -209,10 +223,11 @@ object MappingUtilAPI {
       val value = data.getOrElse(key, "").trim
       value match {
         case "" => Right(None)
-        case _ => optionalTextFieldMappingConstraints(config)(Some(value)) match {
-          case Valid => Right(Some(value))
-          case e: Invalid => Left(e.errors.map(ve => FormError(key, ve.message, ve.args)))
-        }
+        case _ =>
+          optionalTextFieldMappingConstraints(config)(Some(value)) match {
+            case Valid      => Right(Some(value))
+            case e: Invalid => Left(e.errors.map(ve => FormError(key, ve.message, ve.args)))
+          }
       }
     }
 

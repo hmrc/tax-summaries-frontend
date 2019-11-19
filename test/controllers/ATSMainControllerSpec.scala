@@ -40,7 +40,7 @@ import scala.concurrent.Future
 
 class ATSMainControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
 
-  val taxYear  =2014
+  val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))

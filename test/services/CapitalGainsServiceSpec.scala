@@ -96,6 +96,5 @@ class CapitalGainsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with
       )
     }
 
-
   }
 }
