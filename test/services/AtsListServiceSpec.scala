@@ -99,7 +99,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       val result = storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe an [NoSuchElementException]
+        exception shouldBe a [NoSuchElementException]
       }
     }
 
@@ -129,7 +129,7 @@ class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with Mock
       when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
 
       whenReady(fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe an [NoSuchElementException]
+        exception shouldBe a [NoSuchElementException]
       }
     }
 

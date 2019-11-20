@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import org.mockito.Matchers._
 import play.api.test.FakeRequest
 import org.scalatest.concurrent.ScalaFutures._
-
+import utils.RetrievalOps._
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status, _}
@@ -69,18 +69,6 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     }
   }
 
-  "A user with confidence level below 50" should {
-    "return 303 and be redirected to GG sign in page" in {
-      when(mockAuthConnector.authorise(any(), any())(any(), any()))
-        .thenReturn(Future.failed(new InsufficientConfidenceLevel))
-      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
-      val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
-    }
-  }
-
   "A user with insufficient enrolments" should {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
@@ -99,12 +87,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val retrievalResult: Future[
         Enrolments ~ Option[String] ~ Option[String]] =
         Future.successful(
-            new ~(
-              new ~(
-                Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))),
-                Some("")),
-                None
-            )
+           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ None
           )
 
       when(mockAuthConnector
@@ -126,12 +109,9 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val retrievalResult: Future[
         Enrolments ~ Option[String] ~ Option[String]] =
         Future.successful(
-            new ~(
-              new ~(
-                Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))),
-                Some("")),
-                None
-            )
+          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
+            Some("") ~
+            None
           )
 
       when(mockAuthConnector

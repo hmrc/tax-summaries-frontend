@@ -61,42 +61,35 @@ trait AtsService {
   }
 
   def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] = {
-    for {
-      data <- dataCache.fetchAndGetAtsForSession(taxYear)
-    } yield {
-      data match {
-        case Some(data) => {
-          accountUtils.isAgent(request) match {
-            case true =>
-              fetchAgentInfo(data, taxYear)
-            case false =>
-              getAtsAndStore(taxYear)
-          }
+    dataCache.fetchAndGetAtsForSession(taxYear) flatMap {
+      case Some(data) =>
+        if (accountUtils.isAgent(request)) {
+          fetchAgentInfo(data, taxYear)
+        } else {
+          getAtsAndStore(taxYear)
         }
-        case _ =>
-          if (accountUtils.isAgent(request)) {
-            dataCache.getAgentToken.flatMap {
-            token => getAtsAndStore(taxYear,token)
+      case None =>
+        if (accountUtils.isAgent(request)) {
+          dataCache.getAgentToken.flatMap {
+            token => getAtsAndStore(taxYear, token)
           }
         } else {
           getAtsAndStore(taxYear)
         }
-      }
     }
-  } flatMap { identity }
+  }
 
 
   private def fetchAgentInfo (data :AtsData, taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsData] = {
-    for {
-      token <- dataCache.getAgentToken
-    } yield {
-      if (authUtils.checkUtr(data.utr, token)) {
-        Future.successful(data)
-      } else {
-        getAtsAndStore(taxYear, token)
-      }
+    dataCache.getAgentToken.flatMap {
+      token =>
+        if (authUtils.checkUtr(data.utr, token)) {
+          Future.successful(data)
+        } else {
+          getAtsAndStore(taxYear, token)
+        }
     }
-  } flatMap(identity)
+  }
   
 
   private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] = {
@@ -109,7 +102,7 @@ trait AtsService {
       case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
     }
 
-    for (data <- gotData) yield {
+    gotData flatMap { data =>
       data.errors match {
         case None =>
           sendAuditEvent(account, data)
@@ -120,7 +113,7 @@ trait AtsService {
           Future.successful(data)
       }
     }
-  } flatMap { identity }
+  }
 
   private def storeAtsData(dataWithUser: AtsData)(implicit hc: HeaderCarrier) = {
     dataCache.storeAtsForSession(dataWithUser) map {

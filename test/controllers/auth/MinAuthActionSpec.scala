@@ -66,18 +66,6 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     }
   }
 
-  "A user with confidence level below 50" should {
-    "return 303 and be redirected to GG sign in page" in {
-      when(mockAuthConnector.authorise(any(), any())(any(), any()))
-        .thenReturn(Future.failed(new InsufficientConfidenceLevel))
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration)
-      val controller = new Harness(minAuthAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
-    }
-  }
-
   "A user with insufficient enrolments" should {
     "be redirected to the Sorry there is a problem page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))

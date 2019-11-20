@@ -70,11 +70,10 @@ trait IndexController extends TaxsController {
         agentToken.fold[Future[_]] {
           Future.successful(None)
         } { token =>
-          AccountUtils.isAgent(request) match {
-            case true =>
-              dataCache.storeAgentToken(token) recover { case e: Throwable => throw e }
-            case _ =>
-              Future.successful(None)
+          if (AccountUtils.isAgent(request)) {
+            dataCache.storeAgentToken(token) recover { case e: Throwable => throw e }
+          } else {
+            Future.successful(None)
           }
         } map {
           x => Redirect(routes.IndexController.authorisedIndex()).withSession(session)

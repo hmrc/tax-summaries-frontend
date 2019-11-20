@@ -25,8 +25,8 @@ import view_models.TotalIncomeTax
 import scala.concurrent.Future
 
 object TotalIncomeTaxService extends TotalIncomeTaxService {
-  override val atsService: AtsService.type = AtsService
-  override val atsYearListService: AtsYearListService.type = AtsYearListService
+  override val atsService = AtsService
+  override val atsYearListService = AtsYearListService
 }
 
 trait TotalIncomeTaxService {
