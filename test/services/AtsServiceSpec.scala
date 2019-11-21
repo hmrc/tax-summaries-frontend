@@ -63,73 +63,93 @@ class AtsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
 
   "AtsService checkUtrAgainstCache" should {
 
-    "not write data to the cache when the retrieved cached utr equals the requested utr " in new TestService {
+    "not write data to the cache" when {
 
+      "the user is an agent and the retrieved cached utr equals the requested utr" in new TestService {
 
-      when(accountUtils.isAgent(request)).thenReturn(true)
-      when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(true)
+        when(accountUtils.isAgent(request)).thenReturn(true)
+        when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(true)
 
-      when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
-      when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-      when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+        when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
+        when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
+        when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
 
-      val result = getAts(2014)
+        val result = getAts(2014)
 
-      whenReady(result) { result =>
-        result shouldBe data
+        whenReady(result) { result =>
+          result shouldBe data
+        }
+
+        verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+        verify(dataCache, never()).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
       }
-
-      verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-      verify(dataCache, never()).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "write data to the cache when the retrieved cached utr is different to the requested utr " in new TestService {
+   "write data to the cache" when {
+     "user is not an agent and the retrieved cached utr is different to the requested utr " in new TestService {
 
-      when(authUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(false)
+       when(authUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(false)
 
-      when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
-      when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-      when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
+       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
+       when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
+       when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
-      val result = getAts(2014)
+       val result = getAts(2014)
 
-      whenReady(result) { result =>
-        result shouldBe data
-      }
-      verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-      verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-    }
+       whenReady(result) { result =>
+         result shouldBe data
+       }
 
-    "write data to the cache when the retrieved cached utr is different to the requested utr - AGENT" in new TestService {
+       verify(middleConnector, times(1)).connectToAts(any[SaUtr], any[Int])(any[HeaderCarrier])
+       verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+       verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+     }
 
-      val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+     "user is an agent and the retrieved cached utr is different to the requested utr" in new TestService {
+       val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
-      when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
+       when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
 
-      when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
-      when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-      when(middleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
+       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
+       when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
+       when(middleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
-      val result = getAts(2014)(hc, agentRequest)
+       val result = getAts(2014)(hc, agentRequest)
 
-      whenReady(result) { result =>
-        result shouldBe data
-      }
-      verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-      verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-    }
+       whenReady(result) { result =>
+         result shouldBe data
+       }
 
-    "not write data to the cache if an agent with no token" in new TestService {
+       verify(middleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
+       verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+       verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+     }
+     
+     "there is no data in the cache and user is an agent" in new TestService {
+       val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
-      when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
-      when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-      when(middleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+       when(dataCache.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(None)
+       when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
 
-      verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-      verify(dataCache, never()).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-    }
+       when(authUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
+
+
+       when(dataCache.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
+       when(middleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+
+       val result = getAts(2014)(hc, agentRequest)
+
+       whenReady(result) { result =>
+         result shouldBe data
+       }
+
+       verify(middleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
+       verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+       verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+     }
+   }
+
   }
 }
