@@ -55,17 +55,7 @@ class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
         )
       )
     }
-    case _: InsufficientConfidenceLevel => {
-      lazy val ggSignIn = ApplicationConfig.loginUrl
-      lazy val callbackUrl = ApplicationConfig.loginCallback
-      Redirect(
-        ggSignIn,
-        Map(
-          "continue" -> Seq(callbackUrl),
-          "origin" -> Seq(ApplicationConfig.appName)
-        )
-      )
-    }
+      
     case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
 }

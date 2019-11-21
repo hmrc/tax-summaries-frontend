@@ -126,7 +126,7 @@ class AtsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFut
        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
        verify(dataCache, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
      }
-     
+
      "there is no data in the cache and user is an agent" in new TestService {
        val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
