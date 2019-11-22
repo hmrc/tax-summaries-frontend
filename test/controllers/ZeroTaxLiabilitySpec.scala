@@ -21,6 +21,7 @@ import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
@@ -29,9 +30,10 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import view_models.NoATSViewModel
 import utils.TestConstants._
+
 import scala.concurrent.Future
 
-class ZeroTaxLiabilitySpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))

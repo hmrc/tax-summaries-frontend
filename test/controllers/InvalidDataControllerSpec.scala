@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
@@ -32,9 +33,10 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
 import utils.TestConstants._
+
 import scala.concurrent.Future
 
-class InvalidDataControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"

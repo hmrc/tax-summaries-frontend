@@ -16,7 +16,6 @@
 
 package services
 
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.AtsListData
 import org.mockito.Matchers
@@ -25,6 +24,7 @@ import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -38,7 +38,7 @@ import view_models.{AtsList, TaxYearEnd}
 import scala.concurrent.Future
 import scala.io.Source
 
-class AtsYearListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
+class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString

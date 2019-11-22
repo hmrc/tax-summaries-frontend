@@ -17,11 +17,11 @@
 package views
 
 import config.AppFormPartialRetriever
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class NonPortalUserSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val language = Lang("en")

@@ -16,13 +16,13 @@
 
 package view_models
 
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
-import controllers.FakeTaxsPlayApplication
 
 
 
-class AmountSpec extends UnitSpec with FakeTaxsPlayApplication  {
+class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
   "Amount" should {
 
     "not change constructor parameter values" in {

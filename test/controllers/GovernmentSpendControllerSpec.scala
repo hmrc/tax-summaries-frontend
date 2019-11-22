@@ -24,8 +24,9 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Play.current
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
@@ -40,7 +41,10 @@ import view_models._
 import scala.concurrent.Future
 
 
-class GovernmentSpendControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+
+  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+
   val taxYear = 2014
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))

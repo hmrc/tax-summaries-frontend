@@ -17,7 +17,6 @@
 package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.AtsListData
 import org.scalatest.concurrent.ScalaFutures
@@ -30,13 +29,14 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import uk.gov.hmrc.http.HeaderCarrier
 
-class AtsListServiceSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
+class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString

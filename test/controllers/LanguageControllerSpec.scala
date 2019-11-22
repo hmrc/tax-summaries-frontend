@@ -16,12 +16,14 @@
 
 package controllers
 
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
+
 import scala.concurrent.Future
 
-class LanguageControllerSpec extends UnitSpec with FakeTaxsPlayApplication {
+class LanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
 
   "switchLanguage" should {
 
