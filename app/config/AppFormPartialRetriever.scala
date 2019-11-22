@@ -21,8 +21,8 @@ import uk.gov.hmrc.http.CoreGet
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 object AppFormPartialRetriever extends AppFormPartialRetriever {
-  override val httpGet: CoreGet = WSGet
-  override val sessionCrypto: CompositeSymmetricCrypto = TAXSSessionCookieCrypto.crypto
+  override lazy val httpGet: CoreGet = WSGet
+  override lazy val sessionCrypto: CompositeSymmetricCrypto = TAXSSessionCookieCrypto.crypto
 }
 
 trait AppFormPartialRetriever extends FormPartialRetriever {
@@ -30,6 +30,6 @@ trait AppFormPartialRetriever extends FormPartialRetriever {
   val httpGet: CoreGet
   val sessionCrypto: CompositeSymmetricCrypto
 
-  override val crypto: String => String =
+  override lazy val crypto: String => String =
     str => sessionCrypto.encrypt(PlainText(str)).value
 }
