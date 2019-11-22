@@ -17,32 +17,34 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import connectors.AuthenticationConnector
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Request, Result}
-import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
+import controllers.auth.{AuthAction, AuthenticatedRequest, MinAuthAction}
+import play.api.Play
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.{AccountUtils, TAXSGovernmentGateway, TaxSummariesRegime}
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import utils.AccountUtils
 
 object ErrorController extends ErrorController {
   override val formPartialRetriever = AppFormPartialRetriever
+  override val authAction = Play.current.injector.instanceOf[AuthAction]
+  override val minAuthAction = Play.current.injector.instanceOf[MinAuthAction]
 }
 
-trait ErrorController extends FrontendController with Actions with AccountUtils with AuthenticationConnector {
+trait ErrorController extends FrontendController
+        with AccountUtils {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
-  def authorisedNoAts = AuthorisedFor(TaxSummariesRegime, GGConfidence) { implicit user => implicit request =>
-    noAts
+  val authAction: AuthAction
+  val minAuthAction: MinAuthAction
+
+  def authorisedNoAts: Action[AnyContent] = authAction {
+    implicit request => Ok(views.html.errors.no_ats_error())
   }
 
-  def notAuthorised = AuthenticatedBy(TAXSGovernmentGateway, GGConfidence) { implicit user => implicit request =>
-    Ok(views.html.errors.not_authorised())
+  def notAuthorised: Action[AnyContent] = minAuthAction {
+    implicit request => Ok(views.html.errors.not_authorised())
   }
-
-  def noAts(implicit user: User, request: Request[AnyRef]): Result =
-    Ok(views.html.errors.no_ats_error())
-
 }

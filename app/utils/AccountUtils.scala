@@ -16,40 +16,40 @@
 
 package utils
 
-import play.api.i18n.Messages
-import play.api.mvc.Request
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Account, SaAccount, TaxSummariesAgentAccount}
-import uk.gov.hmrc.play.frontend.auth.{ActingAsAttorneyFor, AuthContext => User}
-import play.api.i18n.Messages.Implicits._
+import controllers.auth.AuthenticatedRequest
+import models.ActingAsAttorneyFor
 import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Request
+import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
 trait AccountUtils {
-  def getAccount(user: User): Account = user.principal.accounts.taxsAgent.getOrElse(user.principal.accounts.sa.get)
+  def getAccount(request: AuthenticatedRequest[_]): TaxIdentifier = request.agentRef.getOrElse(request.saUtr.get)
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-  def getAccountId(user: User): String = (getAccount(user): @unchecked) match {
-    case sa: SaAccount                => sa.utr.utr
-    case ta: TaxSummariesAgentAccount => ta.uar.uar
+  def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
+    case sa: SaUtr => sa.utr
+    case ta: Uar => ta.uar
   }
-  def isPortalUser(request: Request[_]): Boolean =
-    request.session.get(utils.Globals.TAXS_USER_TYPE_KEY) == Some(utils.Globals.TAXS_PORTAL_REFERENCE)
-  def isAgent(user: User): Boolean = user.principal.accounts.taxsAgent.isDefined
+  def isPortalUser(request: Request[_]): Boolean = request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)
+  def isAgent(request: AuthenticatedRequest[_]): Boolean = request.agentRef.isDefined
 }
 
 trait AttorneyUtils {
-  def getActingAsAttorneyFor(user: User, forename: String, surname: String, utr: String): Option[ActingAsAttorneyFor] =
-    if (AccountUtils.isAgent(user))
-      Some(ActingAsAttorneyFor(Some(s"$forename $surname (${Messages("generic.utr_abbrev")}: $utr)"), Map()))
-    else None
+  def getActingAsAttorneyFor(request: AuthenticatedRequest[_], forename: String, surname: String, utr: String): Option[ActingAsAttorneyFor] = {
+    if(AccountUtils.isAgent(request)) Some(ActingAsAttorneyFor(Some(s"$forename $surname (${Messages("generic.utr_abbrev")}: $utr)"), Map())) else None
+  }
 }
 
-trait Analytics {
-  def getAnalyticsAttribute(request: Request[_], actingAttorney: Option[ActingAsAttorneyFor]): String =
+trait Analytics{
+  def getAnalyticsAttribute(request: AuthenticatedRequest[_], actingAttorney: Option[ActingAsAttorneyFor]): String = {
     actingAttorney.isDefined match {
       case true => Globals.TAXS_ANALYTICS_AGENT_ATTRIBUTE
       case false =>
         if (AccountUtils.isPortalUser(request)) Globals.TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE
         else Globals.TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE
     }
+  }
 }
 
 object AccountUtils extends AccountUtils

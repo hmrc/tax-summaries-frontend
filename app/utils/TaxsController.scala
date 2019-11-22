@@ -18,21 +18,21 @@ package utils
 
 import java.util.Date
 
-import connectors.AuthenticationConnector
+import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, Request, Result}
 import services._
-import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext => User}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
 
-abstract class TaxsController
-    extends FrontendController with Actions with AccountUtils with AttorneyUtils with AuthenticationConnector {
+abstract class TaxsController extends FrontendController
+          with AccountUtils
+          with AttorneyUtils {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -40,31 +40,24 @@ abstract class TaxsController
 
   type ViewModel <: GenericViewModel
 
-  def obtainResult(data: ViewModel)(implicit user: User, request: Request[AnyRef]): Result
+  def obtainResult(data:ViewModel)(implicit request: AuthenticatedRequest[_]): Result
 
-  def extractViewModel()(implicit user: User, request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]]
+  def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
-  def transformation(implicit user: User, request: Request[AnyRef]): Future[Result]
+  def transformation(implicit request: AuthenticatedRequest[_]): Future[Result]
 
-  def show(implicit user: User, request: Request[AnyRef]): Future[Result] =
+  def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     transformation recover {
       case error =>
         Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
         error match {
           case token_error: AgentTokenException =>
-            auditService.sendEvent(
-              AuditTypes.Tx_FAILED,
-              Map(
-                "userId"         -> getAccountId(user),
-                "error"          -> token_error.message,
-                "time"           -> new Date().toString,
-                "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")
-              )
-            )
+            auditService.sendEvent(AuditTypes.Tx_FAILED, Map("userId" -> getAccountId(request), "error" -> token_error.message, "time" -> new Date().toString, "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")))
             Ok(views.html.errors.token_error())
           case _ => Ok(views.html.errors.generic_error())
         }
     }
+  }
 
   def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]) = {
     val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)

@@ -16,10 +16,9 @@
 
 package services
 
+import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
-import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.CapitalGains
 
@@ -34,35 +33,33 @@ trait CapitalGainsService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getCapitalGains(
-    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
+  def getCapitalGains(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     atsService.createModel(taxYear, capitalGains)
+  }
 
-  private def capitalGains: (AtsData => GenericViewModel) =
-    (output: AtsData) => {
-      val wrapper: DataHolder = output.capital_gains_data.get
-      CapitalGains(
-        output.taxYear,
-        output.utr.get,
-        wrapper.payload.get.get("taxable_gains").get,
-        wrapper.payload.get.get("less_tax_free_amount").get,
-        wrapper.payload.get.get("pay_cg_tax_on").get,
-        wrapper.payload.get.get("amount_at_entrepreneurs_rate").get,
-        wrapper.payload.get.get("amount_due_at_entrepreneurs_rate").get,
-        wrapper.payload.get.get("amount_at_ordinary_rate").get,
-        wrapper.payload.get.get("amount_due_at_ordinary_rate").get,
-        wrapper.payload.get.get("amount_at_higher_rate").get,
-        wrapper.payload.get.get("amount_due_at_higher_rate").get,
-        wrapper.payload.get.get("adjustments").get,
-        wrapper.payload.get.get("total_cg_tax").get,
-        wrapper.payload.get.get("cg_tax_per_currency_unit").get,
-        wrapper.rates.get("cg_entrepreneurs_rate"),
-        wrapper.rates.get("cg_ordinary_rate"),
-        wrapper.rates.get("cg_upper_rate"),
-        wrapper.rates.get("total_cg_tax_rate"),
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
+  private[services] def capitalGains(atsData: AtsData): CapitalGains = {
+      val capitalGainsData: DataHolder = atsData.capital_gains_data.get
+      CapitalGains(atsData.taxYear,
+        atsData.utr.get,
+        capitalGainsData.payload.get("taxable_gains"),
+        capitalGainsData.payload.get("less_tax_free_amount"),
+        capitalGainsData.payload.get("pay_cg_tax_on"),
+        capitalGainsData.payload.get("amount_at_entrepreneurs_rate"),
+        capitalGainsData.payload.get("amount_due_at_entrepreneurs_rate"),
+        capitalGainsData.payload.get("amount_at_ordinary_rate"),
+        capitalGainsData.payload.get("amount_due_at_ordinary_rate"),
+        capitalGainsData.payload.get("amount_at_higher_rate"),
+        capitalGainsData.payload.get("amount_due_at_higher_rate"),
+        capitalGainsData.payload.get("adjustments"),
+        capitalGainsData.payload.get("total_cg_tax"),
+        capitalGainsData.payload.get("cg_tax_per_currency_unit"),
+        capitalGainsData.rates.get("cg_entrepreneurs_rate"),
+        capitalGainsData.rates.get("cg_ordinary_rate"),
+        capitalGainsData.rates.get("cg_upper_rate"),
+        capitalGainsData.rates.get("total_cg_tax_rate"),
+        atsData.taxPayerData.get.taxpayer_name.get("title"),
+        atsData.taxPayerData.get.taxpayer_name.get("forename"),
+        atsData.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
 }

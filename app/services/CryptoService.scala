@@ -21,7 +21,6 @@ import org.joda.time.{DateTime, Interval}
 import play.api.libs.json.Json
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
-import uk.gov.hmrc.domain.{SaUtr, Uar}
 import utils.AgentTokenException
 
 import scala.util.matching.Regex

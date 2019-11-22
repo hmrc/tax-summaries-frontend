@@ -15,12 +15,9 @@
  *@
 
 @import config.ApplicationConfig
-@import play.api.Play.current
-@import play.api.Play
 @import layouts.{govuk_template => hmrcGovUkTemplate}
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
-@import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 
 @(title: String,
 utr: String,
@@ -36,7 +33,7 @@ mainClasses: Option[String] = None,
 mainDataAttributes: Option[Html] = None,
 articleClasses: Option[String] = None,
 includeGridWrapper: Boolean = false,
-actingAttorney: Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor] = None,
+actingAttorney: Option[ActingAsAttorneyFor] = None,
 gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @sidebarLinks = {@HtmlFormat.empty}
