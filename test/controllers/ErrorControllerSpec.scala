@@ -18,10 +18,9 @@ package controllers
 
 import config.AppFormPartialRetriever
 import controllers.auth._
-import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
-import play.api.Play
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
@@ -29,7 +28,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
-class ErrorControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with I18nSupport {
+class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 

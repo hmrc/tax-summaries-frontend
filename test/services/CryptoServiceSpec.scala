@@ -18,15 +18,15 @@ package services
 
 import java.util.Date
 
-import controllers.FakeTaxsPlayApplication
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.AgentTokenException
 import utils.TestConstants._
 
-class CryptoServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures {
+class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures {
 
   class TestCrypt extends CryptoService {
 

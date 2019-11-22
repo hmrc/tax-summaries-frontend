@@ -23,9 +23,8 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
-import play.api.Play.current
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,7 +39,9 @@ import view_models._
 
 import scala.concurrent.Future
 
-class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+
+  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
 
@@ -158,5 +159,4 @@ class AllowancesControllerSpec extends UnitSpec with FakeTaxsPlayApplication wit
   }
 
   }
-
 }

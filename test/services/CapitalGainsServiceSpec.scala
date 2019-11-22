@@ -16,7 +16,6 @@
 
 package services
 
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers
@@ -24,19 +23,20 @@ import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
-import view_models.{Amount, AtsList, CapitalGains, Rate, TaxYearEnd}
 import utils.TestConstants._
+import view_models._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class CapitalGainsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
 
   val genericViewModel: GenericViewModel =  AtsList(

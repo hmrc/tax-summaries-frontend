@@ -17,10 +17,10 @@
 package views
 
 import config.AppFormPartialRetriever
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, Rate}
 
-class GenericErrorViewSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar  {
+class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
 
   lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")

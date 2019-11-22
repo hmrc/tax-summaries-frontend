@@ -85,13 +85,13 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[String]] =
+        Enrolments ~ Option[String]] =
         Future.successful(
-           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ None
+           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("")
           )
 
       when(mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[String]](any(), any())(any(), any()))
+        .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
@@ -107,15 +107,14 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "create an authenticated request" in {
       val uar = testUar
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[String]] =
+        Enrolments ~ Option[String]] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("") ~
-            None
+            Some("")
           )
 
       when(mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[String]](any(), any())(any(), any()))
+        .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)

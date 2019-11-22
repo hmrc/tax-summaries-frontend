@@ -23,22 +23,22 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
-import play.api.Play.current
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.AuthorityUtils
 import utils.TestConstants._
 import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
-class ATSMainControllerSpec extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar {
+class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+
+  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel

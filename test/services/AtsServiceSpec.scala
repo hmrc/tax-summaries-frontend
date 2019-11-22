@@ -17,13 +17,13 @@
 package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -36,7 +36,7 @@ import utils.{AccountUtils, AuthorityUtils}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
   val data = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test.json")

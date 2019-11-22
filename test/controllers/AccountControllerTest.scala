@@ -20,11 +20,12 @@ import config.ApplicationConfig
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 
-class AccountControllerTest extends UnitSpec with FakeTaxsPlayApplication with MockitoSugar with ScalaFutures {
+class AccountControllerTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
 
   val feedbackUrl = "/test-feedback-url"
   val controller: AccountController = new AccountController {

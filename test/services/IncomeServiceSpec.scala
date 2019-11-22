@@ -16,7 +16,6 @@
 
 package services
 
-import controllers.FakeTaxsPlayApplication
 import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers
@@ -24,6 +23,7 @@ import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
@@ -36,7 +36,7 @@ import view_models.{Amount, AtsList, IncomeBeforeTax, TaxYearEnd}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class IncomeServiceSpec extends UnitSpec with FakeTaxsPlayApplication with ScalaFutures with MockitoSugar {
+class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
 
   val genericViewModel: GenericViewModel = AtsList(
