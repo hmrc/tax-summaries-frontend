@@ -53,11 +53,11 @@ trait MiddleConnector {
     http.GET[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
   def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
-    http.GET[AtsData](agentUrl("/taxsagent/" + uar + "/" + taxYear + "/ats-data/obo/" + requestedUTR))
+    connectToAts(requestedUTR, taxYear)
 
   def connectToAtsList(UTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
     http.GET[AtsListData](url("/taxs/" + UTR + "/ats-list"))
 
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
-    http.GET[AtsListData](agentUrl("/taxsagent/" + uar + "/ats-list/obo/" + requestedUTR))
+    connectToAtsList(requestedUTR)
 }
