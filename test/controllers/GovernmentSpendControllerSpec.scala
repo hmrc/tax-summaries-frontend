@@ -159,7 +159,9 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.getElementById("user-info").text() should include("userForename userSurname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
-      document.select(".page-header h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
+      document
+        .select("h1")
+        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 
     "have correct data for 2015" in new TestController {

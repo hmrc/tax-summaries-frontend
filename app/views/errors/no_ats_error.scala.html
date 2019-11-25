@@ -21,7 +21,7 @@
 @headerContent = {
 @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.no_ats", 0)
 
-<h1 id="zero-income-page-heading" aria-level="1" role="heading">@Html(Messages("no.ats.title"))</h1>
+<h1 id="zero-income-page-heading">@Html(Messages("no.ats.title"))</h1>
 }
 
 @includes.taxs_main(title = Messages("no.ats.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent)) {
