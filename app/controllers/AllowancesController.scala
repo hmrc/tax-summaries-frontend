@@ -17,14 +17,15 @@
 package controllers
 
 import config.AppFormPartialRetriever
+import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
+import play.api.Play
+import play.api.mvc.Result
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Request, Result}
 import services.{AllowanceService, AuditService}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.{GenericViewModel, TaxSummariesRegime, TaxsController}
+import utils.GenericViewModel
 import view_models.Allowances
 
 import scala.concurrent.Future
@@ -33,26 +34,29 @@ object AllowancesController extends AllowancesController {
   override val allowanceService = AllowanceService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
+  override val authAction = Play.current.injector.instanceOf[AuthAction]
 }
 
 trait AllowancesController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
+  val authAction: AuthAction
+
   def allowanceService: AllowanceService
 
-  def authorisedAllowance = AuthorisedFor(TaxSummariesRegime, GGConfidence).async { user => request =>
-    show(user, request)
+  def authorisedAllowance = authAction.async {
+    request => show(request)
   }
 
   type ViewModel = Allowances
 
-  override def extractViewModel()(
-    implicit user: User,
-    request: Request[AnyRef]): Future[Either[ErrorResponse, GenericViewModel]] =
+  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
+  }
 
-  override def obtainResult(result: ViewModel)(implicit user: User, request: Request[AnyRef]): Result =
-    Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(user, result.forename, result.surname, result.utr)))
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+  }
 
 }

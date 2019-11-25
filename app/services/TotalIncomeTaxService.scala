@@ -16,10 +16,9 @@
 
 package services
 
+import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
-import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.TotalIncomeTax
 
@@ -34,46 +33,45 @@ trait TotalIncomeTaxService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getIncomeData(
-    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
+  def getIncomeData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     atsService.createModel(taxYear, totalIncomeConverter)
+  }
 
-  private def totalIncomeConverter: (AtsData => GenericViewModel) =
-    (output: AtsData) => {
-      val wrapper: DataHolder = output.income_tax.get
-      TotalIncomeTax(
-        output.taxYear,
-        output.utr.get,
-        wrapper.payload.get.get("starting_rate_for_savings").get,
-        wrapper.payload.get.get("starting_rate_for_savings_amount").get,
-        wrapper.payload.get.get("basic_rate_income_tax").get,
-        wrapper.payload.get.get("basic_rate_income_tax_amount").get,
-        wrapper.payload.get.get("higher_rate_income_tax").get,
-        wrapper.payload.get.get("higher_rate_income_tax_amount").get,
-        wrapper.payload.get.get("additional_rate_income_tax").get,
-        wrapper.payload.get.get("additional_rate_income_tax_amount").get,
-        wrapper.payload.get.get("ordinary_rate").get,
-        wrapper.payload.get.get("ordinary_rate_amount").get,
-        wrapper.payload.get.get("upper_rate").get,
-        wrapper.payload.get.get("upper_rate_amount").get,
-        wrapper.payload.get.get("additional_rate").get,
-        wrapper.payload.get.get("additional_rate_amount").get,
-        wrapper.payload.get.get("other_adjustments_increasing").get,
-        wrapper.payload.get.get("marriage_allowance_received_amount").get,
-        wrapper.payload.get.get("other_adjustments_reducing").get,
-        wrapper.payload.get.get("total_income_tax").get,
-        wrapper.payload.get.get("scottish_income_tax").get,
-        wrapper.incomeTaxStatus.get,
-        wrapper.rates.get("starting_rate_for_savings_rate"),
-        wrapper.rates.get("basic_rate_income_tax_rate"),
-        wrapper.rates.get("higher_rate_income_tax_rate"),
-        wrapper.rates.get("additional_rate_income_tax_rate"),
-        wrapper.rates.get("ordinary_rate_tax_rate"),
-        wrapper.rates.get("upper_rate_rate"),
-        wrapper.rates.get("additional_rate_rate"),
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
+  private[services] def totalIncomeConverter(atsData: AtsData): TotalIncomeTax = {
+      val incomeTaxData: DataHolder = atsData.income_tax.get
+
+      TotalIncomeTax(atsData.taxYear,
+        atsData.utr.get,
+        incomeTaxData.payload.get("starting_rate_for_savings"),
+        incomeTaxData.payload.get("starting_rate_for_savings_amount"),
+        incomeTaxData.payload.get("basic_rate_income_tax"),
+        incomeTaxData.payload.get("basic_rate_income_tax_amount"),
+        incomeTaxData.payload.get("higher_rate_income_tax"),
+        incomeTaxData.payload.get("higher_rate_income_tax_amount"),
+        incomeTaxData.payload.get("additional_rate_income_tax"),
+        incomeTaxData.payload.get("additional_rate_income_tax_amount"),
+        incomeTaxData.payload.get("ordinary_rate"),
+        incomeTaxData.payload.get("ordinary_rate_amount"),
+        incomeTaxData.payload.get("upper_rate"),
+        incomeTaxData.payload.get("upper_rate_amount"),
+        incomeTaxData.payload.get("additional_rate"),
+        incomeTaxData.payload.get("additional_rate_amount"),
+        incomeTaxData.payload.get("other_adjustments_increasing"),
+        incomeTaxData.payload.get("marriage_allowance_received_amount"),
+        incomeTaxData.payload.get("other_adjustments_reducing"),
+        incomeTaxData.payload.get("total_income_tax"),
+        incomeTaxData.payload.get("scottish_income_tax"),
+        incomeTaxData.incomeTaxStatus.get,
+        incomeTaxData.rates.get("starting_rate_for_savings_rate"),
+        incomeTaxData.rates.get("basic_rate_income_tax_rate"),
+        incomeTaxData.rates.get("higher_rate_income_tax_rate"),
+        incomeTaxData.rates.get("additional_rate_income_tax_rate"),
+        incomeTaxData.rates.get("ordinary_rate_tax_rate"),
+        incomeTaxData.rates.get("upper_rate_rate"),
+        incomeTaxData.rates.get("additional_rate_rate"),
+        atsData.taxPayerData.get.taxpayer_name.get("title"),
+        atsData.taxPayerData.get.taxpayer_name.get("forename"),
+        atsData.taxPayerData.get.taxpayer_name.get("surname")
       )
     }
 }

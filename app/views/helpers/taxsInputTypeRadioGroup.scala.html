@@ -16,9 +16,9 @@
 
 @(params: views.helpers.InputTypeRadioGroupParams)(implicit message : Messages, formInstance: Option[Form[_]] = None)
 
-@import views.html.helpers._
-@import views.helpers._
 @import utils.validation._
+@import views.helpers._
+@import views.html.helpers._
 
 @fieldErrors = @{
     ErrorMessageInterpreter.getFieldErrors(params.field)

@@ -16,12 +16,12 @@
 
 package view_models
 
+import play.api.data.Form
+import play.api.data.Forms._
 import utils.TAXSEnums.YearEnum
 import utils.validation.ConstraintUtil.CompulsoryEnumMappingParameter
 import utils.validation.ErrorMessagesUtilAPI._
 import utils.validation.MappingUtilAPI._
-import play.api.data.Forms._
-import play.api.data.Form
 
 object AtsForms {
 

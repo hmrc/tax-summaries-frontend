@@ -49,7 +49,6 @@
 package utils.validation
 
 import javax.inject.Inject
-
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 
 /**

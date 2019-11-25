@@ -16,10 +16,9 @@
 
 package services
 
+import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
-import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
 import utils.GenericViewModel
 import view_models.Allowances
 
@@ -34,24 +33,23 @@ trait AllowanceService {
   def atsService: AtsService
   def atsYearListService: AtsYearListService
 
-  def getAllowances(
-    taxYear: Int)(implicit user: User, request: Request[AnyRef], hc: HeaderCarrier): Future[GenericViewModel] =
-    atsService.createModel(taxYear, allowanceService)
+  def getAllowances(taxYear: Int)(implicit request: AuthenticatedRequest[_], hc: HeaderCarrier): Future[GenericViewModel] = {
+    atsService.createModel(taxYear, allowanceDataConverter)
+  }
 
-  private def allowanceService: (AtsData => GenericViewModel) =
-    (output: AtsData) => {
-      val wrapper: DataHolder = output.allowance_data.get
-      Allowances(
-        output.taxYear,
-        output.utr.get,
-        wrapper.payload.get.get("personal_tax_free_amount").get,
-        wrapper.payload.get.get("marriage_allowance_transferred_amount").get,
-        wrapper.payload.get.get("other_allowances_amount").get,
-        wrapper.payload.get.get("total_tax_free_amount").get,
-        output.taxPayerData.get.taxpayer_name.get("title"),
-        output.taxPayerData.get.taxpayer_name.get("forename"),
-        output.taxPayerData.get.taxpayer_name.get("surname")
-      )
-    }
+  private[services] def allowanceDataConverter(atsData: AtsData): Allowances = {
+    val allowanceData: DataHolder = atsData.allowance_data.get
 
+    Allowances(
+      atsData.taxYear,
+      atsData.utr.get,
+      allowanceData.payload.get("personal_tax_free_amount"),
+      allowanceData.payload.get("marriage_allowance_transferred_amount"),
+      allowanceData.payload.get("other_allowances_amount"),
+      allowanceData.payload.get("total_tax_free_amount"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
+    )
+  }
 }

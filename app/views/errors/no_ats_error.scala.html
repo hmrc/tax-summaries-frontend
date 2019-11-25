@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-
+@import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-
-@()(implicit lang: Lang, request: Request[AnyRef], user: User, messages: Messages, formPartialRetriever: FormPartialRetriever)
+@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.no_ats", 0)
@@ -26,7 +24,7 @@
 <h1 id="zero-income-page-heading">@Html(Messages("no.ats.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("no.ats.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
+@includes.taxs_main(title = Messages("no.ats.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent)) {
   <p>@Html(Messages("no.ats.line1"))</p>
   <p>@Html(Messages("no.ats.line2"))</p>
 }

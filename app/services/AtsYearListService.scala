@@ -16,15 +16,14 @@
 
 package services
 
+import controllers.auth.AuthenticatedRequest
 import models.AtsListData
 import play.api.mvc.Request
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.Future
-import scala.util.Try
 
 object AtsYearListService extends AtsYearListService {
   override val atsListService = AtsListService
@@ -33,20 +32,21 @@ object AtsYearListService extends AtsYearListService {
 trait AtsYearListService {
   def atsListService: AtsListService
 
-  def getAtsListData(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[GenericViewModel] =
-    atsListService.createModel(atsList)
+  def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+    atsListService.createModel(atsListDataConverter)
+  }
 
-  def storeSelectedAtsTaxYear(
-    taxYear: Int)(implicit user: User, hc: HeaderCarrier, request: Request[AnyRef]): Future[Int] =
+  def storeSelectedAtsTaxYear(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Int] = {
     atsListService.storeSelectedTaxYear(taxYear)
+  }
 
-  private def atsList: AtsListData => GenericViewModel =
-    (output: AtsListData) => {
-      new AtsList(
-        output.utr,
-        output.taxPayer.get.taxpayer_name.get("forename"),
-        output.taxPayer.get.taxpayer_name.get("surname"),
-        output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+
+  private[services] def atsListDataConverter(atsListData: AtsListData): AtsList = {
+      AtsList(
+        atsListData.utr,
+        atsListData.taxPayer.get.taxpayer_name.get("forename"),
+        atsListData.taxPayer.get.taxpayer_name.get("surname"),
+        atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
       )
     }
 }

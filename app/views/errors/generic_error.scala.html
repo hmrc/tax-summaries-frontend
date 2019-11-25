@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-
+@import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-
-@()(implicit lang: Lang, request: Request[AnyRef], user: User, messages: Messages, formPartialRetriever: FormPartialRetriever)
+@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 @if(lang.language == "cy"){
@@ -29,7 +27,7 @@
 <h1 id="generic-error-page-heading">@Html(Messages("generic.error.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(user), contentHeader = Option(headerContent)) {
+@includes.taxs_main(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent)) {
 
 <p>@Html(Messages("generic.error.try.later"))</p>
 

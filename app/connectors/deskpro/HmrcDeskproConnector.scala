@@ -18,16 +18,14 @@ package connectors.deskpro
 
 import config.WSHttp
 import connectors.deskpro.domain.{Feedback, Ticket, TicketId}
-import play.api.{Configuration, Play}
+import controllers.auth.AuthenticatedRequest
 import play.api.Mode.Mode
-import play.api.mvc.Request
+import play.api.{Configuration, Play}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
-import uk.gov.hmrc.play.frontend.auth.{AuthContext => User}
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 
 object HmrcDeskproConnector extends HmrcDeskproConnector with ServicesConfig {
   override lazy val serviceUrl = baseUrl("hmrc-deskpro")
@@ -44,55 +42,18 @@ trait HmrcDeskproConnector {
 
   def http: HttpPost
 
-  def createTicket(
-    name: String,
-    email: String,
-    subject: String,
-    message: String,
-    referrer: String,
-    isJavascript: Boolean,
-    request: Request[AnyRef],
-    userOption: Option[User])(implicit hc: HeaderCarrier): Future[Option[TicketId]] =
-    createDeskProTicket(
-      name,
-      email,
-      subject,
-      message,
-      referrer,
-      isJavascript,
-      request,
-      userOption.map(_.principal.accounts))
+  def createTicket(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, request: AuthenticatedRequest[_])(implicit hc: HeaderCarrier): Future[Option[TicketId]] = {
 
-  def createDeskProTicket(
-    name: String,
-    email: String,
-    subject: String,
-    message: String,
-    referrer: String,
-    isJavascript: Boolean,
-    request: Request[AnyRef],
-    accountsOption: Option[Accounts])(implicit hc: HeaderCarrier): Future[Option[TicketId]] =
-    http
-      .POST[Ticket, TicketId](
-        requestUrl("/deskpro/ticket"),
-        Ticket.create(name, email, subject, message, referrer, isJavascript, hc, request, accountsOption))
-      .map(Some(_))
+    createDeskProTicket(name, email, subject, message, referrer, isJavascript, request)
+  }
 
-  def createFeedback(
-    name: String,
-    email: String,
-    rating: String,
-    subject: String,
-    message: String,
-    referrer: String,
-    isJavascript: Boolean,
-    request: Request[AnyRef],
-    userOption: Option[User])(implicit hc: HeaderCarrier): Future[Option[TicketId]] =
-    http
-      .POST[Feedback, TicketId](
-        requestUrl("/deskpro/feedback"),
-        Feedback.create(name, email, rating, subject, message, referrer, isJavascript, hc, request, userOption))
-      .map(Some(_))
+  def createDeskProTicket(name: String, email: String, subject: String, message: String, referrer: String, isJavascript: Boolean, request: AuthenticatedRequest[_])(implicit hc: HeaderCarrier): Future[Option[TicketId]] = {
+    http.POST[Ticket, TicketId](requestUrl("/deskpro/ticket"), Ticket.create(name, email, subject, message, referrer, isJavascript, hc, request)).map(Some(_))
+  }
+
+  def createFeedback(name: String, email: String, rating: String, subject: String, message: String, referrer: String, isJavascript: Boolean, request: AuthenticatedRequest[_])(implicit hc: HeaderCarrier): Future[Option[TicketId]] = {
+    http.POST[Feedback, TicketId](requestUrl("/deskpro/feedback"), Feedback.create(name, email, rating, subject, message, referrer, isJavascript, hc, request)).map(Some(_))
+  }
 
   private def requestUrl[B, A](uri: String): String = s"$serviceUrl$uri"
 }

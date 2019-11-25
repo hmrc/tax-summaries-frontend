@@ -16,11 +16,11 @@
 
 package utils.validation
 
-import utils.TAXSEnums.TAXSEnumeration
 import play.api.data.Forms._
 import play.api.data.format._
 import play.api.data.validation.{Invalid, Valid, ValidationResult}
 import play.api.data.{FieldMapping, FormError, Mapping}
+import utils.TAXSEnums.TAXSEnumeration
 
 object MappingUtilAPI {
 

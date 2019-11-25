@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(actingAttorney : Option[uk.gov.hmrc.play.frontend.auth.ActingAsAttorneyFor])(implicit lang: Lang, messages: Messages)
+@(actingAttorney : Option[ActingAsAttorneyFor])(implicit lang: Lang, messages: Messages)
 
 @if(actingAttorney.isDefined) {
 <div class="nested-banner">

@@ -15,9 +15,9 @@
  *@
 
 @import config.ApplicationConfig
+@import controllers.auth.AuthenticatedRequest
 @import utils.TaxsBreadcrumbLinks
-
-@(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit lang: Lang, request: Request[AnyRef], messages: Messages)
+@(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages)
 
 <div id="global-breadcrumb" class="header-context">
       <ol class="group">
