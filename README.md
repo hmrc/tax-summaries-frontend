@@ -21,7 +21,7 @@ This service is written in [Scala] and [Play], so needs the latest [JRE] to run.
 Authentication
 ------------
 
-This user logs into this service using the [Government Gateway]
+This user logs into this service using [Government Gateway]
 
 
 ### License
