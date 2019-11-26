@@ -50,8 +50,19 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   class Harness(authAction: AuthAction) extends Controller {
-    def onPageLoad(): Action[AnyContent] = authAction { request => Ok(s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail").toString}," +
-      s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail").toString}") }
+    def onPageLoad(): Action[AnyContent] = authAction { request => Ok(
+      s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail").toString}," +
+        s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail").toString},"
+    ) }
+  }
+
+  class ATSHarness(authAction: ATSAuthAction) extends Controller {
+    def onPageLoad(): Action[AnyContent] = authAction { request => Ok(
+      s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("saUtr fail").toString}," +
+        s"Nino: ${request.nino.map(_.nino).getOrElse("nino fail").toString}," +
+        s"TaxOfficeNumber: ${request.payeEmpRef.map(_.taxOfficeNumber).getOrElse("taxOfficeNumber fail").toString}," +
+        s"TaxOfficeReference: ${request.payeEmpRef.map(_.taxOfficeReference).getOrElse("taxOfficeReference fail").toString},"
+    ) }
   }
 
   val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
@@ -124,6 +135,37 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
       contentAsString(result) should include(uar)
+    }
+  }
+
+  "A user with SA and IR-PAYE enrolments" should {
+    "create an authenticated request" in {
+      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val retrievalResult: Future[
+        Enrolments ~ Option[String] ~ Option[String]] =
+        Future.successful(
+          Enrolments(
+            Set(
+              Enrolment("IR-PAYE", Seq(EnrolmentIdentifier("TaxOfficeNumber", "123123"),EnrolmentIdentifier("TaxOfficeReference", "919191")), "")
+              ,Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
+            )) ~
+            Some("") ~
+            None
+        )
+      when(mockAuthConnector
+        .authorise[Enrolments ~ Option[String] ~ Option[String]](any(), any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      println("Return enrolment ============> " + retrievalResult)
+
+      val authAction = new ATSAuthActionImpl(mockAuthConnector, app.configuration)
+      val controller = new ATSHarness(authAction)
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe OK
+      contentAsString(result) should include("SaUtr: ")
+      contentAsString(result) should include("TaxOfficeNumber: 123123")
+      contentAsString(result) should include("TaxOfficeReference: 919191")
+      println("Distinguish SA and IR-PAYE enrolment ============> " + contentAsString(result))
     }
   }
 }
