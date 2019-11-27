@@ -119,7 +119,7 @@ class ATSAuthActionImpl @Inject()(override val authConnector: AuthConnector,
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(AuthProviders(GovernmentGateway) and (Enrolment("IR-SA") or Enrolment("IR-PAYE")))
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L200 and (Enrolment("IR-SA") or Enrolment("IR-PAYE")))
       .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.nino) {
         case Enrolments(enrolments) ~  Some(externalId) ~ nino => {
           val saUtr: Option[SaUtr] = enrolments.find(_.key == "IR-SA").flatMap { enrolment =>
@@ -129,7 +129,6 @@ class ATSAuthActionImpl @Inject()(override val authConnector: AuthConnector,
           }
           val payeEmpRef: Option[EmpRef] = enrolments.find(_.key == "IR-PAYE")
             .map { enrolment =>
-              println("payeEmpRef:  " + enrolment)
               val taxOfficeNumber = enrolment.identifiers.find(id => id.key == "TaxOfficeNumber").map(_.value)
               val taxOfficeReference = enrolment.identifiers.find(id => id.key == "TaxOfficeReference").map(_.value)
               (taxOfficeNumber, taxOfficeReference) match {

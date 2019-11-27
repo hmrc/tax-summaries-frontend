@@ -156,8 +156,6 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
         .authorise[Enrolments ~ Option[String] ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      println("Return enrolment ============> " + retrievalResult)
-
       val authAction = new ATSAuthActionImpl(mockAuthConnector, app.configuration)
       val controller = new ATSHarness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -165,7 +163,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       contentAsString(result) should include("SaUtr: ")
       contentAsString(result) should include("TaxOfficeNumber: 123123")
       contentAsString(result) should include("TaxOfficeReference: 919191")
-      println("Distinguish SA and IR-PAYE enrolment ============> " + contentAsString(result))
     }
   }
+
 }
