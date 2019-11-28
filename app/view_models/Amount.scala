@@ -48,4 +48,6 @@ case class Amount(amount: BigDecimal, currency: String) {
 
 object Amount {
   implicit val formats = Json.format[Amount]
+
+  val empty: Amount = Amount(0, "GBP")
 }

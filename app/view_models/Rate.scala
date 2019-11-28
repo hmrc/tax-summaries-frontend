@@ -22,4 +22,6 @@ case class Rate(percent: String)
 
 object Rate {
   implicit val formats = Json.format[Rate]
+
+  val empty: Rate = Rate("0%")
 }
