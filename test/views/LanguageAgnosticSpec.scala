@@ -112,9 +112,11 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
         ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
       val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
+      document.select("#content h1").text should include("Eich trethi a gwariant cyhoeddus")
+      document
+        .select(".lede")
+        .text shouldBe "Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario."
 
-      document.select("#content header h1").text should include ("Eich trethi a gwariant cyhoeddus")
-      document.select(".lede").text shouldBe "Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario."
     }
 
     "show the summary page in welsh language" in  {
@@ -128,8 +130,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
       val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
-
-      document.select(".page-header h1").text should include ("Eich incwm a’ch trethi")
+      document.select("h1").text should include("Eich incwm a’ch trethi")
       document.select(".link-back").text shouldBe "Yn ôl"
       document.select("#agent-banner").text shouldBe "Rydych yn gweithredu ar ran Forename Surname (UTR: "+testUtr+")."
       document.select("#total-tax-description").text shouldBe "Cyfanswm eich Treth Incwm, Yswiriant Gwladol a, lle’n briodol, Treth Enillion Cyfalaf"

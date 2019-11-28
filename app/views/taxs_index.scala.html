@@ -35,11 +35,14 @@
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@atsList.forename @atsList.surname</strong> <br>@Html(Messages("generic.utr")) @atsList.utr</p>
     }
-    <h1 aria-level="1" role="heading">@Html(Messages("ats.select_tax_year.title"))</h1>
 }
 
-@includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
+
     @helpers.errorSummaryTemplate(atsYear)
+
+    <h1 role="heading">@Html(Messages("ats.select_tax_year.title"))</h1>
+
     @form(action = controllers.routes.IndexController.authorisedOnSubmit){
         <div class="form-group">
             @helpers.taxsInputTypeRadioGroup(

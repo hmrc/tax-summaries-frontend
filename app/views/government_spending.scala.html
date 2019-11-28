@@ -40,22 +40,24 @@
         <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
     }
 
+
+}
+
+@includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+
+    @helpers.back_link(Messages("generic.back"))
+
     <div class="print-this">
         <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
         <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("ats.treasury_spending.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
     </div>
-@helpers.back_link(Messages("generic.back"))
-    <h1 aria-level="1" role="heading">
-        <span class="gray heading-medium block-heading">
-            @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-        </span>
+
+    <h1>
+            <span class="gray heading-medium block-heading">
+                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+            </span>
         @Html(Messages("ats.treasury_spending.title"))
     </h1>
-}
-
-@includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
-    <article class="content__body">
-        <div class="grid grid-2-3">
             @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
@@ -125,6 +127,4 @@
                 var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];
                 var chart_toggle_text_ga = ['View this information as a table', 'View this information as a chart'];
             </script>
-        </div>
-    </article>
 }
