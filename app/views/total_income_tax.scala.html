@@ -49,9 +49,9 @@
 
     @if(
         viewModel.startingRateForSavings.nonZero ||
-        viewModel.basicRateIncomeTax.nonZero ||
-        viewModel.basicRateIncomeTax.nonZero ||
-        viewModel.additionalRateIncomeTax.nonZero
+        viewModel.basicRateIncomeTaxAmount.nonZero ||
+        viewModel.higherRateIncomeTaxAmount.nonZero ||
+        viewModel.additionalRateIncomeTaxAmount.nonZero
     ) {
     <table id="income-tax">
       <thead>
