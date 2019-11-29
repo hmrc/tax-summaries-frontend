@@ -144,6 +144,21 @@ ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Inc
 ats.total_income_tax.table.marriage_allowance_received=Less Your Marriage Allowance Received
 ats.total_income_tax.table.scottish_income_tax=This includes Scottish Income Tax of
 
+# View ATS - scottish income tax
+#============================================================
+ats.total_income_tax.scottish_income_tax.table.starter=Starter rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.basic=Basic rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.intermediate=Intermediate rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.higher=Higher rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.additional=Top rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.total=Total Scottish income tax
+
+# View ATS - savings income tax
+#============================================================
+ats.total_income_tax.scottish_income_tax=Savings Income Tax
+ats.total_income_tax.savings_income_tax.table.lower=Basic rate ({0} at {1})
+ats.total_income_tax.savings_income_tax.table.higher=Higher rate ({0} at {1})
+ats.total_income_tax.savings_income_tax.table.additional=Top rate ({0} at {1})
 
 # View ATS - capital gains tax (IND)
 #============================================================

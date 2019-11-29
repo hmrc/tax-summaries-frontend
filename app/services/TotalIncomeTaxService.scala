@@ -20,7 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.{Amount, Rate, TotalIncomeTax}
+import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
 
 import scala.concurrent.Future
 
@@ -47,6 +47,43 @@ trait TotalIncomeTaxService {
       def taxpayerName(key: String): String =
         atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
+      val scottishTax = ScottishTax(
+        payload("scottish_starter_rate_tax"),
+        payload("scottish_starter_income"),
+        payload("scottish_basic_rate_tax"),
+        payload("scottish_basic_income"),
+        payload("scottish_intermediate_rate_tax"),
+        payload("scottish_intermediate_income"),
+        payload("scottish_higher_rate_tax"),
+        payload("scottish_higher_income"),
+        payload("scottish_additional_rate_tax"),
+        payload("scottish_additional_income"),
+        payload("scottish_total_tax")
+      )
+
+      val savingsTax = SavingsTax(
+        payload("savings_lower_rate_tax"),
+        payload("savings_lower_income"),
+        payload("savings_higher_rate_tax"),
+        payload("savings_higher_income"),
+        payload("savings_additional_rate_tax"),
+        payload("savings_additional_income")
+      )
+
+      val scottishRates = ScottishRates(
+        rates("scottish_starter_rate"),
+        rates("scottish_basic_rate"),
+        rates("scottish_intermediate_rate"),
+        rates("scottish_higher_rate"),
+        rates("scottish_additional_rate")
+      )
+
+      val savingsRates = SavingsRates(
+        rates("savings_lower_rate"),
+        rates("savings_higher_rate"),
+        rates("savings_additional_rate")
+      )
+
       TotalIncomeTax(
         atsData.taxYear,
         atsData.utr.getOrElse(""),
@@ -67,8 +104,10 @@ trait TotalIncomeTaxService {
         payload("other_adjustments_increasing"),
         payload("marriage_allowance_received_amount"),
         payload("other_adjustments_reducing"),
+        scottishTax,
         payload("total_income_tax"),
         payload("scottish_income_tax"),
+        savingsTax,
         atsData.income_tax.flatMap(_.incomeTaxStatus).getOrElse(""),
         rates("starting_rate_for_savings_rate"),
         rates("basic_rate_income_tax_rate"),
@@ -77,6 +116,8 @@ trait TotalIncomeTaxService {
         rates("ordinary_rate_tax_rate"),
         rates("upper_rate_rate"),
         rates("additional_rate_rate"),
+        scottishRates,
+        savingsRates,
         taxpayerName("title"),
         taxpayerName("forename"),
         taxpayerName("surname")

@@ -95,6 +95,10 @@
       </tbody>
     </table>
 
+    @total_income_tax_includes.scottish_table(viewModel.scottishTax, viewModel.scottishRates)
+
+    @total_income_tax_includes.savings_table(viewModel.savingsTax, viewModel.savingsRates)
+
     @if(!(viewModel.ordinaryRate.isZero && viewModel.upperRate.isZero && viewModel.additionalRate.isZero)) {
     <table id="dividends">
       <thead>
