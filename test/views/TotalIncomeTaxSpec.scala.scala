@@ -24,6 +24,7 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
@@ -37,12 +38,10 @@ class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants w
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  val taxData = TotalIncomeTax.empty
-
   def view(tax: TotalIncomeTax): String =
     views.html.total_income_tax(tax).body
 
-  def view: String = view(taxData)
+  def view: String = view(testTotalIncomeTax)
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate]     = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))

@@ -68,49 +68,6 @@ case class TotalIncomeTax(
   def taxYearFrom = (year - 1).toString
 }
 
-object TotalIncomeTax {
-
-  val empty: TotalIncomeTax =
-    TotalIncomeTax(
-      0,
-      "",
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      ScottishTax.empty,
-      Amount.empty,
-      Amount.empty,
-      SavingsTax.empty,
-      "",
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      ScottishRates.empty,
-      SavingsRates.empty,
-      "",
-      "",
-      ""
-    )
-}
-
 case class ScottishTax(
   scottishStarterIncomeTax: Amount,
   scottishStarterIncomeTaxAmount: Amount,
