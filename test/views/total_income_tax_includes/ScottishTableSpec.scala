@@ -98,8 +98,14 @@ class ScottishTableSpec extends UnitSpec with OneAppPerSuite with TestConstants 
         val taxData = scottishTaxData.copy(scottishTotalTax = total)
         val result = view(taxData)
 
-        result should include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
-        result should include(toCurrency(total))
+        total match {
+          case Amount.empty =>
+            result should not include messages("ats.total_income_tax.scottish_income_tax.table.total")
+
+          case _ =>
+            result should include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
+            result should include(toCurrency(total))
+        }
       }
     }
   }

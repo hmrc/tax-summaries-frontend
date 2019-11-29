@@ -46,6 +46,13 @@
         </span>
       @Html(Messages("ats.total_income_tax.income_tax"))
     </h1>
+
+    @if(
+        viewModel.startingRateForSavings.nonZero ||
+        viewModel.basicRateIncomeTax.nonZero ||
+        viewModel.basicRateIncomeTax.nonZero ||
+        viewModel.additionalRateIncomeTax.nonZero
+    ) {
     <table id="income-tax">
       <thead>
         <tr>
@@ -94,6 +101,7 @@
 
       </tbody>
     </table>
+    }
 
     @total_income_tax_includes.scottish_table(viewModel.scottishTax, viewModel.scottishRates)
 
