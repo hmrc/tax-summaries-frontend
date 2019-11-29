@@ -47,11 +47,11 @@
     </table>
 
     <table>
-        <tbody>
+        <thead>
             <tr>
                 <th scope="col">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
-                <td>@Html(toCurrency(taxModel.scottishTotalTax))</td>
+                <th>@Html(toCurrency(taxModel.scottishTotalTax))</th>
             </tr>
-        </tbody>
+        </thead>
     </table>
 }
