@@ -160,6 +160,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val controller = new ATSHarness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
+      println(contentAsString(result))
       contentAsString(result) should include("SaUtr: ")
       contentAsString(result) should include("TaxOfficeNumber: 123123")
       contentAsString(result) should include("TaxOfficeReference: 919191")
