@@ -22,10 +22,10 @@ import play.api.Mode.Mode
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Play}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, Enrolment, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession, PlayAuthConnector}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Nino => AuthNino, ConfidenceLevel, Enrolment, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession, PlayAuthConnector}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain.{CtUtr, EmpRef, SaUtr, Uar, Vrn}
+import uk.gov.hmrc.domain.{CtUtr, EmpRef, SaUtr, Uar, Vrn, Nino}
 import uk.gov.hmrc.http.{CorePost, HeaderCarrier}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -41,9 +41,9 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
-      .retrieve(Retrievals.allEnrolments and Retrievals.externalId) {
-        case Enrolments(enrolments) ~ Some(externalId) => {
+    authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
+      .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.nino) {
+        case Enrolments(enrolments) ~ Some(externalId) ~ nino => {
           val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
             enrolment.identifiers
               .find(id => id.key == "IRAgentReference")
@@ -84,7 +84,7 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
               externalId,
               agentRef,
               saUtr,
-              None,
+              nino.map(Nino),
               payeEmpRef,
               ctUtr,
               vrn,
