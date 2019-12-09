@@ -66,6 +66,15 @@ case class TotalIncomeTax(
   def upperRateRate = upperRateRateRate.percent
   def additionalRateRate = additionalRateRateRate.percent
   def taxYearFrom = (year - 1).toString
+
+  def showIncomeTaxTable = startingRateForSavings.nonZero ||
+    basicRateIncomeTaxAmount.nonZero ||
+    higherRateIncomeTaxAmount.nonZero ||
+    additionalRateIncomeTaxAmount.nonZero
+
+  def showDividendsTable = ordinaryRate.nonZero || upperRate.nonZero || additionalRate.nonZero
+
+  def showAdjustmentsTable = otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
 }
 
 case class ScottishTax(
