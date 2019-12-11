@@ -42,7 +42,7 @@ trait AllowanceService {
 
     Allowances(
       atsData.taxYear,
-      atsData.utr.get,
+      atsData.utr.getOrElse(atsData.nino.getOrElse("")),
       allowanceData.payload.get("personal_tax_free_amount"),
       allowanceData.payload.get("marriage_allowance_transferred_amount"),
       allowanceData.payload.get("other_allowances_amount"),

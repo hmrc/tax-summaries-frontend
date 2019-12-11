@@ -40,7 +40,7 @@ trait GovernmentSpendService {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
     GovernmentSpend(atsData.taxYear,
-      atsData.utr.get,
+      atsData.utr.getOrElse(""),
       govSpendingData.govSpendAmountData.get.toList,
       atsData.taxPayerData.get.taxpayer_name.get("title"),
       atsData.taxPayerData.get.taxpayer_name.get("forename"),

@@ -27,6 +27,7 @@ object AtsTestData {
     None,
     None,
     None,
+    None,
     Some(
       DataHolder(
         Some(
@@ -60,6 +61,7 @@ object AtsTestData {
   val incomeData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     None,
     None,
     Some(
@@ -100,6 +102,7 @@ object AtsTestData {
   val totalIncomeTaxData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     Some(
       DataHolder(
         Some(
@@ -161,6 +164,7 @@ object AtsTestData {
   val govSpendingData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     Some(
       DataHolder(
         Some(
@@ -205,6 +209,7 @@ object AtsTestData {
   val summaryData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     None,
     Some(
       DataHolder(
@@ -253,6 +258,7 @@ object AtsTestData {
   val capitalGainsData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     None,
     None,
     None,

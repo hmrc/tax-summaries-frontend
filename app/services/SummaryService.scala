@@ -20,7 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.Summary
+import view_models.{Amount, Rate, Summary}
 
 import scala.concurrent.Future
 
@@ -39,10 +39,12 @@ trait SummaryService {
   }
 
   private[services] def summaryConverter(atsData: AtsData): Summary = {
-      val summaryData: DataHolder = atsData.summary_data.get
 
+
+    if(atsData.summary_data.isDefined){
+      val summaryData: DataHolder = atsData.summary_data.get
       Summary(atsData.taxYear,
-        atsData.utr.get,
+        atsData.utr.getOrElse(""),
         summaryData.payload.get("employee_nic_amount"),
         summaryData.payload.get("total_income_tax_and_nics"),
         summaryData.payload.get("your_total_tax"),
@@ -60,5 +62,26 @@ trait SummaryService {
         atsData.taxPayerData.get.taxpayer_name.get("forename"),
         atsData.taxPayerData.get.taxpayer_name.get("surname")
       )
+    } else {
+      Summary(atsData.taxYear,
+        atsData.utr.getOrElse(""),
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Amount(0.0, "GBP") ,
+        Rate("0"),
+        Rate("0"),
+        "Mr",
+        "Joe",
+        "Blogs"
+      )
     }
+  }
 }

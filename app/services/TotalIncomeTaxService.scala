@@ -41,7 +41,7 @@ trait TotalIncomeTaxService {
       val incomeTaxData: DataHolder = atsData.income_tax.get
 
       TotalIncomeTax(atsData.taxYear,
-        atsData.utr.get,
+        atsData.utr.getOrElse(""),
         incomeTaxData.payload.get("starting_rate_for_savings"),
         incomeTaxData.payload.get("starting_rate_for_savings_amount"),
         incomeTaxData.payload.get("basic_rate_income_tax"),

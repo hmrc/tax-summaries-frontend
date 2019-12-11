@@ -18,7 +18,7 @@ package utils
 
 import controllers.auth.AuthenticatedRequest
 import services.AgentToken
-import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
 
 object AuthorityUtils extends AuthorityUtils
 
@@ -37,6 +37,17 @@ trait AuthorityUtils {
 
   def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
     utr.fold { false } { checkUtr(_, agentToken) }
+  }
+
+  def checkNino(nino: String)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    AccountUtils.getAccount(request) match {
+        case  account: Nino =>  Nino(nino) == account
+        case _ => false
+    }
+  }
+
+  def checkNino(nino: Option[String])(implicit request: AuthenticatedRequest[_]): Boolean = {
+    nino.fold { false } { checkNino(_)(request) }
   }
 
   def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr = {

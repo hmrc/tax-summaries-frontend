@@ -24,6 +24,7 @@ import play.api.libs.json.Json
 case class AtsData(
   taxYear: Int,
   utr: Option[String],
+  nino: Option[String],
   income_tax: Option[DataHolder],
   summary_data: Option[DataHolder],
   income_data: Option[DataHolder],
