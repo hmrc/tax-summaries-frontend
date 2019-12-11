@@ -24,7 +24,7 @@
 @if(tax.nonZero) {
     <tr>
         <td>@Html(messages(s"ats.total_income_tax.savings_income_tax.table.$id", toCurrency(total), rate.percent))</td>
-        <td id="scottish-savings-rate-@id">@Html(toCurrency(tax))</td>
+        <td id="savings-rate-@id">@Html(toCurrency(tax))</td>
     </tr>
 }
 }
