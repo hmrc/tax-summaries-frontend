@@ -75,6 +75,15 @@ case class TotalIncomeTax(
   def showDividendsTable = ordinaryRate.nonZero || upperRate.nonZero || additionalRate.nonZero
 
   def showAdjustmentsTable = otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
+
+  def restOfUkTotal: Amount = {
+    Amount(savingsTax.savingsLowerRateTax.amount
+      + savingsTax.savingsHigherRateTax.amount
+      + savingsTax.savingsAdditionalRateTax.amount
+      + ordinaryRateAmount.amount
+      + upperRateAmount.amount
+      + additionalRateAmount.amount, savingsTax.savingsLowerRateTaxAmount.currency)
+  }
 }
 
 case class ScottishTax(

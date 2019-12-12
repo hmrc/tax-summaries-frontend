@@ -142,6 +142,17 @@
     </table>
     }
 
+    @if(viewModel.incomeTaxStatus == "0002") {
+        <table id="total-uk-income-tax">
+            <tbody>
+            <tr>
+                <th scope="row">@Html(Messages("ats.total_income_tax.scottish_income_uk_income_tax.table.total"))</th>
+                <td id="total-uk-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.restOfUkTotal)</td>
+            </tr>
+            </tbody>
+        </table>
+    }
+
     @if(viewModel.showAdjustmentsTable) {
     <table id="adjustments">
       <thead>
