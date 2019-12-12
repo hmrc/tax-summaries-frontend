@@ -38,78 +38,63 @@
 @includes.taxs_main(title = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
     <h1>
-            <span class="gray heading-medium block-heading">
-                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-            </span>
-        @Html(Messages("ats.summary.title"))
+        @Messages("ats.summary.title")<br>
+        @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
     </h1>
-    <p class="lede">@Html(Messages("ats.summary.lede"))</p>
 
     <section id="taxable-income">
-
-        <h2>@Html(Messages("ats.summary.total_income.title"))</h2>
-
-        <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.total_income.link")">
-            <span class="visuallyhidden">@Html(Messages("screen.reader.total_income")) </span>
-            <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.yourIncomeBeforeTax)</span><br>
-            <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.total_income.link"))</span>
-        </a>
-
+        <h2>@Messages("ats.summary.total_income.title")</h2>
         <p class="text">@Html(Messages("ats.summary.total_income.description"))</p>
-
+        <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.total_income.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.total_income.link"))</span><br>
+            <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.yourIncomeBeforeTax)</span>
+        </a>
     </section>
 
     <section id="tax-free-amount">
-
         <h2>@Html(Messages("ats.summary.tax_free.title"))</h2>
-
-        <a href="@controllers.routes.AllowancesController.authorisedAllowance()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_free.link")">
-            <span class="visuallyhidden">@Html(Messages("screen.reader.tax_free_amount")) </span>
-            <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.totalTaxFreeAllowance)</span><br>
-            <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.tax_free.link"))</span>
-        </a>
-
         <p class="text">@Html(Messages("ats.summary.tax_free.description"))</p>
-
+        <a href="@controllers.routes.AllowancesController.authorisedAllowance()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_free.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.tax_free.link"))</span><br>
+            <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.totalTaxFreeAllowance)</span>
+        </a>
     </section>
 
     <section id="tax-calculated-as">
-
         <h2 id="tax-and-nics-title">@Html(Messages(viewModel.yourTotalTaxTextKey))</h2>
-
-        <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">
-            <span class="visuallyhidden">@Html(Messages("screen.reader.income_tax_and_ni")) </span>
-            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</span><br>
-            <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.tax_and_nics.link"))</span>
-        </a>
-
         <p class="text">@Html(Messages("ats.summary.tax_and_nics.description"))</p>
-
+        <p class="text">@Html(Messages("ats.summary.tax_and_nics.description-2"))</p>
+        <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.tax_and_nics.link"))</span><br>
+            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</span>
+        </a>
     </section>
 
 
     @if(viewModel.hasTaxableGains) {
     <section id="capital-gains">
-
         <h2>@Html(Messages("ats.summary.capital_gains.title"))</h2>
-
+        @if(!viewModel.totalCapitalGainsTax.isZero) {
+            <p id="total-cg-description" class="text">@Html(Messages("ats.summary.capital_gains.description"))</p>
+        }
         <a href="@controllers.routes.CapitalGainsTaxController.authorisedCapitalGains()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.capital_gains.link")">
-            <span class="visuallyhidden">@Html(Messages("screen.reader.capital_gains_tax")) </span>
-            <span class="bold-xlarge" id="total-capital-gains-tax">@includes.currency_amount(viewModel.totalCapitalGainsTax)</span><br>
-            <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.capital_gains.link"))</span>
+            <span class="bold-small">@Html(Messages("ats.summary.capital_gains.link"))</span><br>
+            <span class="bold-xlarge" id="total-capital-gains-tax">@includes.currency_amount(viewModel.totalCapitalGainsTax)</span>
         </a>
-
-      @if(!viewModel.totalCapitalGainsTax.isZero) {
-		<p id="total-cg-description" class="text">@Html(Messages("ats.summary.capital_gains.description"))</p>
-      }
 
     </section>
     }
 
     <section id="your-total-tax">
-
         <h2>@Html(Messages("ats.summary.total_tax.your_total_tax"))</h2>
-
+        <p id="total-tax-description" class="bold-small" aria-hidden="true">
+            @if(lang.code == "cy-GB"){
+            @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
+            } else {
+            @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+            (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*))
+            }
+        </p>
         <p class="bold-xlarge">
             <span class="visuallyhidden" id="total-tax-amount-description">
             @if(lang.code == "cy-GB"){
@@ -119,16 +104,6 @@
             (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*)) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.yourTotalTax)}</span>
             <span id="total-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.yourTotalTax)</span>
         </p>
-
-        <p id="total-tax-description" class="bold-small" aria-hidden="true">
-            @if(lang.code == "cy-GB"){
-            @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
-            } else {
-            @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-            (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*))
-            }
-        </p>
-
     </section>
 
 
