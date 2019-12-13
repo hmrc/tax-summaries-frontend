@@ -125,5 +125,22 @@ class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants w
         view(data) should include(savings_table(tax, rates).body)
       }
     }
+
+    "include total uk income tax if there are any values (and scottish)" in {
+      val data = testTotalIncomeTax.copy(savingsTax = SavingsTax(Amount(BigDecimal(100.11), "GBP"), Amount.empty,
+        Amount.empty, Amount.empty, Amount.empty, Amount.empty), incomeTaxStatus = "0002")
+      view(data) should include("total-uk-income-tax-amount")
+    }
+
+    "not show total uk income tax if there no values (and scottish)" in {
+      val data = testTotalIncomeTax
+      view(data) shouldNot include("total-uk-income-tax-amount")
+    }
+
+    "not show total uk income tax if there any values (and not scottish)" in {
+      val data = testTotalIncomeTax.copy(savingsTax = SavingsTax(Amount(BigDecimal(100.11), "GBP"), Amount.empty,
+        Amount.empty, Amount.empty, Amount.empty, Amount.empty))
+      view(data) shouldNot include("total-uk-income-tax-amount")
+    }
   }
 }

@@ -142,7 +142,7 @@
     </table>
     }
 
-    @if(viewModel.incomeTaxStatus == "0002") {
+    @if(viewModel.incomeTaxStatus == "0002" && viewModel.restOfUkTotal.nonZero) {
         <table id="total-uk-income-tax">
             <tbody>
             <tr>
