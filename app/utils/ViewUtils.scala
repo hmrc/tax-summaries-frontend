@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package view_models
+package utils
+import view_models.Amount
 
-import play.api.libs.json.Json
+object ViewUtils {
 
-case class Rate(percent: String)
-
-object Rate {
-  implicit val formats = Json.format[Rate]
-
-  val empty: Rate = Rate("0%")
+  def toCurrency(amount: Amount, twoDecimalPlaces: Boolean = false): String =
+    s"&pound;${if(twoDecimalPlaces) amount.toTwoDecimalString else amount}"
 }

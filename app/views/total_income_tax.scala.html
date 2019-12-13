@@ -46,6 +46,8 @@
         </span>
       @Html(Messages("ats.total_income_tax.income_tax"))
     </h1>
+
+    @if(viewModel.showIncomeTaxTable) {
     <table id="income-tax">
       <thead>
         <tr>
@@ -94,8 +96,13 @@
 
       </tbody>
     </table>
+    }
 
-    @if(!(viewModel.ordinaryRate.isZero && viewModel.upperRate.isZero && viewModel.additionalRate.isZero)) {
+    @total_income_tax_includes.scottish_table(viewModel.scottishTax, viewModel.scottishRates)
+
+    @total_income_tax_includes.savings_table(viewModel.savingsTax, viewModel.savingsRates)
+
+    @if(viewModel.showDividendsTable) {
     <table id="dividends">
       <thead>
         <tr id="dividends-section-row">
@@ -135,7 +142,18 @@
     </table>
     }
 
-    @if(!viewModel.otherAdjustmentsIncreasing.isZero || !viewModel.otherAdjustmentsReducing.isZero || !viewModel.marriageAllowanceReceivedAmount.isZero ) {
+    @if(viewModel.incomeTaxStatus == "0002") {
+        <table id="total-uk-income-tax">
+            <tbody>
+            <tr>
+                <th scope="row">@Html(Messages("ats.total_income_tax.scottish_income_uk_income_tax.table.total"))</th>
+                <td id="total-uk-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.restOfUkTotal)</td>
+            </tr>
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.showAdjustmentsTable) {
     <table id="adjustments">
       <thead>
         <tr id="adjustments-section">

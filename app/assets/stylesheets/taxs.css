@@ -774,12 +774,12 @@ a, a:visited {color:#005ea5;}
 #global-breadcrumb {border-bottom:none;}
 
 
-#total-income-tax-amount, #total-capital-gains-tax-amount {
+#total-income-tax-amount, #total-capital-gains-tax-amount, #total-uk-income-tax-amount {
     text-align: right;
     border-bottom: 0 none;
 }
 
-#total-income-tax tbody th, #total-capital-gains-tax tbody th {
+#total-income-tax tbody th, #total-uk-income-tax tbody th, #total-capital-gains-tax tbody th {
     border-bottom: 0 none;
 }
 

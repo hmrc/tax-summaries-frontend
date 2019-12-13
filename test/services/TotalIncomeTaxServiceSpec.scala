@@ -70,6 +70,44 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
     "return complete TotalIncomeTax data when given complete AtsData" in new TestService {
       val incomeData: AtsData = AtsTestData.totalIncomeTaxData
       val result: TotalIncomeTax = totalIncomeConverter(incomeData)
+
+      val scottishTax = ScottishTax(
+        Amount.gbp(1800),
+        Amount.gbp(1900),
+        Amount.gbp(2000),
+        Amount.gbp(2100),
+        Amount.gbp(2200),
+        Amount.gbp(2300),
+        Amount.gbp(2400),
+        Amount.gbp(2500),
+        Amount.gbp(2600),
+        Amount.gbp(2700),
+        Amount.gbp(2800)
+      )
+
+      val savingsTax = SavingsTax(
+        Amount.gbp(2900),
+        Amount.gbp(3000),
+        Amount.gbp(3100),
+        Amount.gbp(3200),
+        Amount.gbp(3300),
+        Amount.gbp(3400)
+      )
+
+      val scottishRates = ScottishRates(
+        Rate("80%"),
+        Rate("90%"),
+        Rate("100%"),
+        Rate("110%"),
+        Rate("120%")
+      )
+
+      val savingsRates = SavingsRates(
+        Rate("130%"),
+        Rate("140%"),
+        Rate("150%")
+      )
+
       result mustEqual TotalIncomeTax(
         2019,
         "1111111111",
@@ -90,8 +128,10 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Amount(1500, "GBP"),
         Amount(1600, "GBP"),
         Amount(1700, "GBP"),
-        Amount(1800, "GBP"),
-        Amount(1900, "GBP"),
+        scottishTax,
+        Amount.gbp(3500),
+        Amount.gbp(3600),
+        savingsTax,
         "0002",
         Rate("10%"),
         Rate("20%"),
@@ -100,6 +140,8 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Rate("50%"),
         Rate("60%"),
         Rate("70%"),
+        scottishRates,
+        savingsRates,
         "Mr",
         "John",
         "Smith"

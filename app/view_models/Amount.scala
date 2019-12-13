@@ -37,6 +37,8 @@ case class Amount(amount: BigDecimal, currency: String) {
 
   def isZero = amount == BigDecimal(0)
 
+  val nonZero: Boolean = !isZero
+
   def toCreditString = format(0, BigDecimal.RoundingMode.UP)
 
   def toTwoDecimalString = format(2, BigDecimal.RoundingMode.DOWN, 2)
@@ -48,4 +50,7 @@ case class Amount(amount: BigDecimal, currency: String) {
 
 object Amount {
   implicit val formats = Json.format[Amount]
+
+  val empty: Amount = gbp(0)
+  def gbp(value: BigDecimal): Amount = Amount(value, "GBP")
 }

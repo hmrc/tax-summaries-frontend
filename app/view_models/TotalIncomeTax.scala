@@ -38,8 +38,10 @@ case class TotalIncomeTax(
   otherAdjustmentsIncreasing: Amount,
   marriageAllowanceReceivedAmount: Amount,
   otherAdjustmentsReducing: Amount,
+  scottishTax: ScottishTax,
   totalIncomeTax: Amount,
   scottishIncomeTax: Amount,
+  savingsTax: SavingsTax,
   incomeTaxStatus: String,
   startingRateForSavingsRateRate: Rate,
   basicRateIncomeTaxRateRate: Rate,
@@ -48,6 +50,8 @@ case class TotalIncomeTax(
   ordinaryRateTaxRateRate: Rate,
   upperRateRateRate: Rate,
   additionalRateRateRate: Rate,
+  scottishRates: ScottishRates,
+  savingsRates: SavingsRates,
   title: String,
   forename: String,
   surname: String)
@@ -62,4 +66,127 @@ case class TotalIncomeTax(
   def upperRateRate = upperRateRateRate.percent
   def additionalRateRate = additionalRateRateRate.percent
   def taxYearFrom = (year - 1).toString
+
+  def showIncomeTaxTable = startingRateForSavings.nonZero ||
+    basicRateIncomeTaxAmount.nonZero ||
+    higherRateIncomeTaxAmount.nonZero ||
+    additionalRateIncomeTaxAmount.nonZero
+
+  def showDividendsTable = ordinaryRate.nonZero || upperRate.nonZero || additionalRate.nonZero
+
+  def showAdjustmentsTable = otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
+
+  def restOfUkTotal: Amount = {
+    Amount(savingsTax.savingsLowerRateTax.amount
+      + savingsTax.savingsHigherRateTax.amount
+      + savingsTax.savingsAdditionalRateTax.amount
+      + ordinaryRateAmount.amount
+      + upperRateAmount.amount
+      + additionalRateAmount.amount, savingsTax.savingsLowerRateTaxAmount.currency)
+  }
+}
+
+case class ScottishTax(
+  scottishStarterIncomeTax: Amount,
+  scottishStarterIncomeTaxAmount: Amount,
+  scottishBasicIncomeTax: Amount,
+  scottishBasicIncomeTaxAmount: Amount,
+  scottishIntermediateIncomeTax: Amount,
+  scottishIntermediateIncomeTaxAmount: Amount,
+  scottishHigherIncomeTax: Amount,
+  scottishHigherIncomeTaxAmount: Amount,
+  scottishAdditionalIncomeTax: Amount,
+  scottishAdditionalIncomeTaxAmount: Amount,
+  scottishTotalTax: Amount
+) {
+
+  def hasTax: Boolean =
+    scottishStarterIncomeTax.nonZero ||
+      scottishBasicIncomeTax.nonZero ||
+      scottishIntermediateIncomeTax.nonZero ||
+      scottishHigherIncomeTax.nonZero ||
+      scottishAdditionalIncomeTax.nonZero ||
+      scottishTotalTax.nonZero
+}
+
+object ScottishTax {
+
+  val empty: ScottishTax =
+    ScottishTax(
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty
+    )
+}
+
+case class SavingsTax(
+  savingsLowerRateTax: Amount,
+  savingsLowerRateTaxAmount: Amount,
+  savingsHigherRateTax: Amount,
+  savingsHigherRateTaxAmount: Amount,
+  savingsAdditionalRateTax: Amount,
+  savingsAdditionalRateTaxAmount: Amount
+) {
+
+  val hasTax: Boolean =
+    savingsLowerRateTax.nonZero ||
+    savingsHigherRateTax.nonZero ||
+    savingsAdditionalRateTax.nonZero
+}
+
+object SavingsTax {
+
+  val empty: SavingsTax =
+    SavingsTax(
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty,
+      Amount.empty
+    )
+}
+
+case class ScottishRates(
+  scottishStarterRate: Rate,
+  scottishBasicRate: Rate,
+  scottishIntermediateRate: Rate,
+  scottishHigherRate: Rate,
+  scottishAdditionalRate: Rate
+)
+
+object ScottishRates {
+
+  val empty: ScottishRates =
+    ScottishRates(
+      Rate.empty,
+      Rate.empty,
+      Rate.empty,
+      Rate.empty,
+      Rate.empty
+    )
+}
+
+case class SavingsRates(
+  savingsLowerRate: Rate,
+  savingsHigherRate: Rate,
+  savingsAdditionalRate: Rate
+)
+
+object SavingsRates {
+
+  val empty: SavingsRates =
+    SavingsRates(
+      Rate.empty,
+      Rate.empty,
+      Rate.empty
+    )
 }
