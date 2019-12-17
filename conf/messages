@@ -15,7 +15,7 @@ generic.english=English
 generic.welsh=Cymraeg
 generic.acting_for=You are acting for
 generic.name_not_defined=Name Not Defined
-generic.tax_year_heading=Tax year: April 6 {0} to April 5 {1}
+generic.tax_year_heading=6 April {0} to 5 April {1}
 generic.to_from=: {0} to {1}
 generic.sign_out=Sign out
 generic.errors_heading=There is a problem with the form
@@ -58,26 +58,27 @@ ats.select_tax_year.required=Select an option for the tax year
 # View ATS - Landing page
 #============================================================
 ats.index.html.title=Your annual tax summary
-ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
+ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
 ats.index.html.tax_calc_link=Your income and taxes
-ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you have paid or will pay.
-ats.index.html.tax_spend_link=Your taxes and public spending
-ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
+ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount, and how much tax and National Insurance you have paid.
+ats.index.html.tax_spend_link=How your tax was spent
+ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
 
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
-ats.summary.total_income.title=Total income
-ats.summary.total_income.link=Your total income
-ats.summary.total_income.description=This is your total income for the year.
+ats.summary.total_income.title=Taxable income
+ats.summary.total_income.link=Your taxable income
+ats.summary.total_income.description=This is your total taxable income for the year.
 ats.summary.tax_free.title=Tax-free amount
 ats.summary.tax_free.link=Your tax-free amount
-ats.summary.tax_free.description=This is how much you can earn before you start paying Income Tax.
+ats.summary.tax_free.description=This is the amount you recieved without paying tax.
+
 ats.summary.tax_and_nics.title=Income Tax and National Insurance
 ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
-ats.summary.tax_and_nics.description=This is how much you pay on all your income above your tax-free amount.
+ats.summary.tax_and_nics.description=This is a percentage of your taxable income. For every £1 of income, you paid p in Income Tax and National Insurance contributions.
+ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
 ats.summary.capital_gains.title=Capital Gains Tax
 ats.summary.capital_gains.link=Your Capital Gains Tax
 ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
@@ -92,17 +93,16 @@ ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
-ats.nics.tax_and_nics.lede=This is how much you pay on income above your tax-free amount.
-ats.nics.tax_and_nics.description=Your Income Tax and National Insurance is {0} of your total income.
+ats.nics.tax_and_nics.lede=This shows how your tax was calculated.
 ats.nics.tax_and_nics.income_tax=Income Tax
 ats.nics.tax_and_nics_explained=National Insurance
 ats.nics.tax_and_nics.total=Income Tax and National Insurance
 
 # View ATS - your income before tax (IND)
 #============================================================
-ats.income_before_tax.html.title=Your total income
-ats.income_before_tax.title=Your total income
-ats.income_before_tax.intro=This is your total income for the year.
+ats.income_before_tax.html.title=Taxable income
+ats.income_before_tax.title=Taxable income
+ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
 
 ats.income_before_tax.table_header=Source of income
 ats.income_before_tax.table.line1=Self-employment
@@ -115,12 +115,10 @@ ats.income_before_tax.table.line7=Benefits from employment
 
 # View ATS - tax free amount (IND)
 #============================================================
-ats.tax_free_amount.html.title=Your tax-free amount
+ats.tax_free_amount.html.title=Tax free amount
 ats.tax_free_amount.subtitle=Your tax-free amount
-ats.tax_free_amount.lede=This is how much you can earn before you start paying Income Tax.
-ats.tax_free_amount.description=This includes your Personal Allowance and any other allowances, deductions and expenses.
 
-ats.tax_free_amount.tax_free_amount=Your tax-free amount
+ats.tax_free_amount.tax_free_amount=Tax free amount
 ats.tax_free_amount.table.line1=Personal Allowance
 ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
 ats.tax_free_amount.table.line3=Less Marriage Allowance Transferred
@@ -229,13 +227,6 @@ client_agent.notice.line2=The annual tax summary will provide a breakdown of how
 token_error.html.title=Technical problem
 token_error.title=Sorry, there was a technical problem
 token_error.lede=We couldn’t retrieve your client’s summary. Please try again.
-
-# Screen reader - visually hidden
-#============================================================
-screen.reader.total_income=Your total income is
-screen.reader.tax_free_amount=Your tax-free amount is
-screen.reader.income_tax_and_ni=Your Income Tax and National Insurance is
-screen.reader.capital_gains_tax=Your Capital Gains Tax is
 
 # Misc
 #===========================================================
