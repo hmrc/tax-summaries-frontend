@@ -69,6 +69,7 @@ class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
       totalCgTaxRate = Rate("12.34%"),
       nicsAndTaxRate = Rate("56.78%"),
+      incomeAfterTaxAndNics = Amount(0.5678, "GBP"),
       title = "Mr",
       forename = "forename",
       surname = "surname"

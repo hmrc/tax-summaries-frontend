@@ -17,7 +17,7 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, DataHolder}
+import models.{AtsData, DataHolder, UserData}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.{Amount, Rate, Summary}
@@ -40,48 +40,32 @@ trait SummaryService {
 
   private[services] def summaryConverter(atsData: AtsData): Summary = {
 
+    val emptyAmount = Amount(0.0, "GBP")
+    val emptyRate = Rate("0")
+    val emptyUserData = UserData(Some(Map("title" -> "", "forename" -> "", "surname" ->" ")))
 
-    if(atsData.summary_data.isDefined){
-      val summaryData: DataHolder = atsData.summary_data.get
-      Summary(atsData.taxYear,
-        atsData.utr.getOrElse(""),
-        summaryData.payload.get("employee_nic_amount"),
-        summaryData.payload.get("total_income_tax_and_nics"),
-        summaryData.payload.get("your_total_tax"),
-        summaryData.payload.get("personal_tax_free_amount"),
-        summaryData.payload.get("total_tax_free_amount"),
-        summaryData.payload.get("total_income_before_tax"),
-        summaryData.payload.get("total_income_tax"),
-        summaryData.payload.get("total_cg_tax"),
-        summaryData.payload.get("taxable_gains"),
-        summaryData.payload.get("cg_tax_per_currency_unit"),
-        summaryData.payload.get("nics_and_tax_per_currency_unit"),
-        summaryData.rates.get("total_cg_tax_rate"),
-        summaryData.rates.get("nics_and_tax_rate"),
-        atsData.taxPayerData.get.taxpayer_name.get("title"),
-        atsData.taxPayerData.get.taxpayer_name.get("forename"),
-        atsData.taxPayerData.get.taxpayer_name.get("surname")
-      )
-    } else {
-      Summary(atsData.taxYear,
-        atsData.utr.getOrElse(""),
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Amount(0.0, "GBP") ,
-        Rate("0"),
-        Rate("0"),
-        "Mr",
-        "Joe",
-        "Blogs"
-      )
-    }
+    val summaryData: DataHolder = atsData.summary_data.get
+    val taxPayerData: UserData  = atsData.taxPayerData.getOrElse(emptyUserData)
+    val rates: Map[String, Rate] = summaryData.rates.getOrElse(Map())
+    Summary(atsData.taxYear,
+      atsData.utr.getOrElse(""),
+      summaryData.payload.get.getOrElse("employee_nic_amount", emptyAmount),
+      summaryData.payload.get.getOrElse("total_income_tax_and_nics", emptyAmount),
+      summaryData.payload.get.getOrElse("your_total_tax", emptyAmount),
+      summaryData.payload.get.getOrElse("personal_tax_free_amount", emptyAmount),
+      summaryData.payload.get.getOrElse("total_tax_free_amount", emptyAmount),
+      summaryData.payload.get.getOrElse("total_income_before_tax", emptyAmount),
+      summaryData.payload.get.getOrElse("total_income_tax", emptyAmount),
+      summaryData.payload.get.getOrElse("total_cg_tax", emptyAmount),
+      summaryData.payload.get.getOrElse("taxable_gains", emptyAmount),
+      summaryData.payload.get.getOrElse("cg_tax_per_currency_unit", emptyAmount),
+      summaryData.payload.get.getOrElse("nics_and_tax_per_currency_unit", emptyAmount),
+      summaryData.payload.get.getOrElse("income_after_tax_and_nics", emptyAmount),
+      rates.getOrElse("total_cg_tax_rate", emptyRate),
+      rates.getOrElse("nics_and_tax_rate", emptyRate),
+      taxPayerData.taxpayer_name.get("title"),
+      taxPayerData.taxpayer_name.get("forename"),
+      taxPayerData.taxpayer_name.get("surname")
+    )
   }
 }

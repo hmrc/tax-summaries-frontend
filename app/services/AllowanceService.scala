@@ -17,10 +17,10 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, DataHolder}
+import models.{AtsData, DataHolder, UserData}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.Allowances
+import view_models.{Allowances, Amount}
 
 import scala.concurrent.Future
 
@@ -38,18 +38,21 @@ trait AllowanceService {
   }
 
   private[services] def allowanceDataConverter(atsData: AtsData): Allowances = {
+    val emptyAmount = Amount(0.0, "GBP")
+    val emptyUserData = UserData(Some(Map("title" -> "", "forename" -> "", "surname" ->" ")))
     val allowanceData: DataHolder = atsData.allowance_data.get
+    val taxPayerData: UserData  = atsData.taxPayerData.getOrElse(emptyUserData)
 
     Allowances(
       atsData.taxYear,
       atsData.utr.getOrElse(atsData.nino.getOrElse("")),
-      allowanceData.payload.get("personal_tax_free_amount"),
-      allowanceData.payload.get("marriage_allowance_transferred_amount"),
-      allowanceData.payload.get("other_allowances_amount"),
-      allowanceData.payload.get("total_tax_free_amount"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      allowanceData.payload.get.getOrElse("personal_tax_free_amount", emptyAmount),
+      allowanceData.payload.get.getOrElse("marriage_allowance_transferred_amount", emptyAmount),
+      allowanceData.payload.get.getOrElse("other_allowances_amount", emptyAmount),
+      allowanceData.payload.get.getOrElse("total_tax_free_amount", emptyAmount),
+      taxPayerData.taxpayer_name.get("title"),
+      taxPayerData.taxpayer_name.get("forename"),
+      taxPayerData.taxpayer_name.get("surname")
     )
   }
 }

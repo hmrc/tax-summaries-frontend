@@ -225,7 +225,8 @@ object AtsTestData {
           "total_cg_tax" -> Amount(700, "GBP"),
           "taxable_gains" -> Amount(800, "GBP"),
           "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
-          "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP")
+          "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP"),
+            "income_after_tax_and_nics" -> Amount(1100, "GBP")
           )
         ),
         Some(

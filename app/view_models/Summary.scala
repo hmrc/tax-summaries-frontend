@@ -32,12 +32,15 @@ case class Summary(
   taxableGains: Amount,
   cgTaxPerCurrencyUnit: Amount,
   nicsAndTaxPerCurrencyUnit: Amount,
+  incomeAfterTaxAndNics: Amount,
   totalCgTaxRate: Rate,
   nicsAndTaxRate: Rate,
   title: String,
   forename: String,
   surname: String)
     extends GenericViewModel {
+
+  def isPaye = utr.isEmpty
 
   def taxYearInterval = taxYearFrom + "-" + taxYearTo.substring(2)
   def taxYearIntervalTo = taxYearFrom + " to " + taxYearTo

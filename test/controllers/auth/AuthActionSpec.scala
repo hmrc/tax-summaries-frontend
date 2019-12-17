@@ -38,6 +38,7 @@ import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import utils.TestConstants._
 
