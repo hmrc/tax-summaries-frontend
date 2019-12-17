@@ -100,7 +100,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your total income</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Taxable income</strong>")
     }
 
     "show the 'exit tax summaries' link on the nics page" in  {

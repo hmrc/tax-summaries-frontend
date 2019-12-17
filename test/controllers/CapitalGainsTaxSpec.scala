@@ -115,7 +115,7 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("total-cg-tax-rate").text() shouldBe "12.34%"
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Capital Gains Tax"
+      document.select("h1").text shouldBe "Capital Gains Tax 6 April 2013 to 5 April 2014"
     }
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in new TestController {

@@ -116,10 +116,10 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       document.getElementById("taxable-state-benefits").text() shouldBe "£3,000"
       document.getElementById("other-income-amount").text() shouldBe "£1,500"
 
-      document.toString should include("Your total income")
+      document.toString should include("Taxable income")
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
+      document.select("h1").text shouldBe "Taxable income 6 April 2013 to 5 April 2014"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
@@ -172,8 +172,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
       document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
-
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your total income</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Taxable income</strong>")
     }
   }
 }
