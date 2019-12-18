@@ -85,27 +85,45 @@
     </section>
     }
 
-    <section id="your-total-tax">
-        <h2>@Html(Messages("ats.summary.total_tax.your_total_tax"))</h2>
-        <p id="total-tax-description" class="bold-small" aria-hidden="true">
-            @if(lang.code == "cy-GB"){
-            @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
+    @if(!viewModel.isPaye) {
+        <section id="your-total-tax">
+            <h2>@Html(Messages("ats.summary.total_tax.your_total_tax"))</h2>
+            <p id="total-tax-description" class="bold-small" aria-hidden="true">
+            @if(lang.code == "cy-GB") {
+                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
             } else {
-            @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-            (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*))
+                @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+                    (viewModel.yourTotalTaxTextKeys._2 map { key: String => Html(Messages(key)) }): _*))
             }
-        </p>
-        <p class="bold-xlarge">
-            <span class="visuallyhidden" id="total-tax-amount-description">
-            @if(lang.code == "cy-GB"){
-            @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.yourTotalTax)
-            } else {
-            @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-            (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*)) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.yourTotalTax)}</span>
-            <span id="total-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.yourTotalTax)</span>
-        </p>
-    </section>
-
+            </p>
+            <p class="bold-xlarge">
+                <span class="visuallyhidden" id="total-tax-amount-description">
+                @if(lang.code == "cy-GB") {
+                    @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.yourTotalTax)
+                } else {
+                    @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+                        (viewModel.yourTotalTaxTextKeys._2 map { key: String => Html(Messages(key)) }): _*)) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.yourTotalTax)
+                }</span>
+                <span id="total-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.yourTotalTax)</span>
+            </p>
+        </section>
+    }
+    @if(viewModel.isPaye) {
+        <section id="income_after_tax_and_nics">
+            <h2>@Html(Messages("ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
+        
+            <p class="bold-xlarge">
+                <span class="visuallyhidden" id="income-after-tax-and-nics-description">
+                @if(lang.code == "cy-GB") {
+                    @Html(Messages("ats.summary.taxable_income.income_after_tax_and_nics_msg")) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.incomeAfterTaxAndNics)
+                } else {
+                    @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+                        (viewModel.yourTotalTaxTextKeys._2 map { key: String => Html(Messages(key)) }): _*)) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.incomeAfterTaxAndNics)
+                }</span>
+                <span id="income-after-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.incomeAfterTaxAndNics)</span>
+            </p>
+        </section>
+    }
 
     <div class="back">
         <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("generic.back")">@Html(Messages("generic.back"))</a>
