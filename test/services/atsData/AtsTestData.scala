@@ -124,8 +124,25 @@ object AtsTestData {
             "other_adjustments_increasing" -> Amount(1500, "GBP"),
             "marriage_allowance_received_amount" -> Amount(1600, "GBP"),
             "other_adjustments_reducing" -> Amount(1700, "GBP"),
-            "total_income_tax" -> Amount(1800, "GBP"),
-            "scottish_income_tax" -> Amount(1900, "GBP")
+            "scottish_starter_rate_tax" -> Amount.gbp(1800),
+            "scottish_starter_income" -> Amount.gbp(1900),
+            "scottish_basic_rate_tax" -> Amount.gbp(2000),
+            "scottish_basic_income" -> Amount.gbp(2100),
+            "scottish_intermediate_rate_tax" -> Amount.gbp(2200),
+            "scottish_intermediate_income" -> Amount.gbp(2300),
+            "scottish_higher_rate_tax" -> Amount.gbp(2400),
+            "scottish_higher_income" -> Amount.gbp(2500),
+            "scottish_additional_rate_tax" -> Amount.gbp(2600),
+            "scottish_additional_income" -> Amount.gbp(2700),
+            "scottish_total_tax" -> Amount.gbp(2800),
+            "savings_lower_rate_tax" -> Amount.gbp(2900),
+            "savings_lower_income" -> Amount.gbp(3000),
+            "savings_higher_rate_tax" -> Amount.gbp(3100),
+            "savings_higher_income" -> Amount.gbp(3200),
+            "savings_additional_rate_tax" -> Amount.gbp(3300),
+            "savings_additional_income" -> Amount.gbp(3400),
+            "total_income_tax" -> Amount(3500, "GBP"),
+            "scottish_income_tax" -> Amount(3600, "GBP")
           )
         ),
         Some(
@@ -136,7 +153,15 @@ object AtsTestData {
             "additional_rate_income_tax_rate" -> Rate("40%"),
             "ordinary_rate_tax_rate" -> Rate("50%"),
             "upper_rate_rate" -> Rate("60%"),
-            "additional_rate_rate" -> Rate("70%")
+            "additional_rate_rate" -> Rate("70%"),
+            "scottish_starter_rate" -> Rate("80%"),
+            "scottish_basic_rate" -> Rate("90%"),
+            "scottish_intermediate_rate" -> Rate("100%"),
+            "scottish_higher_rate" -> Rate("110%"),
+            "scottish_additional_rate" -> Rate("120%"),
+            "savings_lower_rate" -> Rate("130%"),
+            "savings_higher_rate" -> Rate("140%"),
+            "savings_additional_rate" -> Rate("150%")
           )
         ),
         Some("0002")

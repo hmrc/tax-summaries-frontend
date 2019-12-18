@@ -187,8 +187,10 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
     "show the 'exit tax summaries' link on the total income tax page" in  {
 
       val fakeViewModel = new TotalIncomeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, "", rate, rate, rate, rate, rate,
-        rate, rate, "", "", "")
+        amount, amount, amount, amount, amount, amount, amount, amount, amount, ScottishTax.empty, amount, amount, SavingsTax.empty,
+        "", rate, rate, rate, rate, rate, rate, rate, ScottishRates.empty, SavingsRates.empty,
+        "", "", "")
+
       val result = views.html.total_income_tax(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 

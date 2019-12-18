@@ -17,11 +17,12 @@
 package utils
 
 import uk.gov.hmrc.domain.{ Generator, SaUtrGenerator }
-
+import uk.gov.hmrc.domain.SaUtrGenerator
+import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
 
 import scala.util.Random
 
-object TestConstants {
+trait TestConstants {
 
   // We only want one test nino and utr throughout, therefore assign a value in the object declaration
   lazy val testUtr = new SaUtrGenerator().nextSaUtr.utr
@@ -34,4 +35,44 @@ object TestConstants {
 
   def genRandNumString(length: Int) = Random.nextInt(9).toString * length
 
+  val testTotalIncomeTax = TotalIncomeTax(
+    year = 2014,
+    utr = "",
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    Amount.empty,
+    ScottishTax.empty,
+    Amount.empty,
+    Amount.empty,
+    SavingsTax.empty,
+    "",
+    Rate.empty,
+    Rate.empty,
+    Rate.empty,
+    Rate.empty,
+    Rate.empty,
+    Rate.empty,
+    Rate.empty,
+    ScottishRates.empty,
+    SavingsRates.empty,
+    "Mr",
+    "forename",
+    "surname"
+  )
 }
+
+object TestConstants extends TestConstants

@@ -34,7 +34,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import view_models.{Amount, NoATSViewModel, Rate, TotalIncomeTax}
+import view_models.{Amount, NoATSViewModel, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
 
 import scala.concurrent.Future
 
@@ -65,8 +65,10 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
     otherAdjustmentsIncreasing = Amount(90, "GBP"),
     marriageAllowanceReceivedAmount = Amount(0, "GBP"),
     otherAdjustmentsReducing = Amount(20, "GBP"),
+    ScottishTax.empty,
     totalIncomeTax = Amount(372, "GBP"),
     scottishIncomeTax = Amount(100, "GBP"),
+    SavingsTax.empty,
     incomeTaxStatus = "0002",
     startingRateForSavingsRateRate = Rate("10%"),
     basicRateIncomeTaxRateRate = Rate("20%"),
@@ -75,6 +77,8 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
     ordinaryRateTaxRateRate = Rate("10%"),
     upperRateRateRate = Rate("32.5%"),
     additionalRateRateRate = Rate("37.5%"),
+    ScottishRates.empty,
+    SavingsRates.empty,
     "Mr",
     "forename",
     "surname"
