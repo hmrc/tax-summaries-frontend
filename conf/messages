@@ -68,7 +68,8 @@ ats.index.html.tax_spend_description=This shows a breakdown of how your taxes ha
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.total_income.title=Taxable income
+ats.summary.total_income.sa.title=Total income
+ats.summary.total_income.paye.title=Taxable income
 ats.summary.total_income.link=Your taxable income
 ats.summary.total_income.description=This is your total taxable income for the year.
 ats.summary.tax_free.title=Tax-free amount

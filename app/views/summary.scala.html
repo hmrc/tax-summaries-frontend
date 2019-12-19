@@ -43,7 +43,11 @@
     </h1>
 
     <section id="taxable-income">
-        <h2>@Messages("ats.summary.total_income.title")</h2>
+    @if(viewModel.isPaye) {
+        <h2>@Messages("ats.summary.total_income.paye.title")</h2>
+    } else {
+        <h2>@Messages("ats.summary.total_income.sa.title")</h2>
+    }
         <p class="text">@Html(Messages("ats.summary.total_income.description"))</p>
         <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.total_income.link")">
             <span class="bold-small">@Html(Messages("ats.summary.total_income.link"))</span><br>
