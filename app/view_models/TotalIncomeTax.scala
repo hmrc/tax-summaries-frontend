@@ -56,6 +56,7 @@ case class TotalIncomeTax(
   forename: String,
   surname: String)
     extends GenericViewModel {
+  def isPaye = utr.isEmpty
   def taxYear = year.toString
 
   def startingRateForSavingsRate = startingRateForSavingsRateRate.percent

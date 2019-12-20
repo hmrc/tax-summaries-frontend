@@ -29,6 +29,7 @@ case class Allowances(
   forename: String,
   surname: String)
     extends GenericViewModel {
+  def isPaye = utr.isEmpty
   def year = taxYear
   def taxYearTo = taxYear.toString
   def taxYearFrom = (taxYear - 1).toString

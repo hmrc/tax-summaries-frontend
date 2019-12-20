@@ -41,7 +41,7 @@ case class CapitalGains(
   forename: String,
   surname: String)
     extends GenericViewModel {
-
+  def isPaye = utr.isEmpty
   def taxYearFrom = (taxYear - 1).toString
   def taxYearTo = taxYear.toString
 
