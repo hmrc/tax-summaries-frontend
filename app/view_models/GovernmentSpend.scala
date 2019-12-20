@@ -30,7 +30,7 @@ case class GovernmentSpend(
   incomeTaxStatus: String,
   scottishIncomeTax: Amount)
     extends GenericViewModel {
-
+  def isPaye = userUtr.isEmpty
   def taxYearInterval = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
   def taxYearFrom = (taxYear - 1).toString
   def taxYearTo = taxYear.toString
