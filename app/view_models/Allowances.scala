@@ -24,6 +24,7 @@ case class Allowances(
   taxFreeAllowance: Amount,
   marriageAllowanceTransferred: Amount,
   otherAllowances: Amount,
+  youPayTaxOn: Amount,
   totalTaxFree: Amount,
   title: String,
   forename: String,

@@ -35,7 +35,8 @@ object AtsTestData {
             "personal_tax_free_amount" -> Amount(100, "GBP"),
             "marriage_allowance_transferred_amount" -> Amount(200, "GBP"),
             "other_allowances_amount" -> Amount(300, "GBP"),
-            "total_tax_free_amount" -> Amount(400, "GBP")
+            "you_pay_tax_on" -> Amount(400, "GBP"),
+            "total_tax_free_amount" -> Amount(500, "GBP")
           )
         ),
         None,

@@ -49,6 +49,7 @@ trait AllowanceService {
       allowanceData.payload.get.getOrElse("personal_tax_free_amount", emptyAmount),
       allowanceData.payload.get.getOrElse("marriage_allowance_transferred_amount", emptyAmount),
       allowanceData.payload.get.getOrElse("other_allowances_amount", emptyAmount),
+      allowanceData.payload.get.getOrElse("you_pay_tax_on", emptyAmount),
       allowanceData.payload.get.getOrElse("total_tax_free_amount", emptyAmount),
       taxPayerData.taxpayer_name.get("title"),
       taxPayerData.taxpayer_name.get("forename"),
