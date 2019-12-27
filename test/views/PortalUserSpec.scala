@@ -189,7 +189,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val fakeViewModel = new TotalIncomeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, amount, amount, amount, ScottishTax.empty, amount, amount, SavingsTax.empty,
         "", rate, rate, rate, rate, rate, rate, rate, ScottishRates.empty, SavingsRates.empty,
-        "", "", "")
+        amount, amount, "", "", "")
 
       val result = views.html.total_income_tax(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))

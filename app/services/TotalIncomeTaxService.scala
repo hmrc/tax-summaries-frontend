@@ -119,6 +119,8 @@ trait TotalIncomeTaxService {
       rates("additional_rate_rate"),
       scottishRates,
       savingsRates,
+      payload("less_tax_adjustment_previous_year"),
+      payload("tax_underpaid_previous_year"),
       taxpayerName("title"),
       taxpayerName("forename"),
       taxpayerName("surname")

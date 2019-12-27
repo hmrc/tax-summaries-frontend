@@ -107,7 +107,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Rate("140%"),
         Rate("150%")
       )
-
+         println(result)
       result mustEqual TotalIncomeTax(
         2019,
         "1111111111",
@@ -142,6 +142,8 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Rate("70%"),
         scottishRates,
         savingsRates,
+        Amount(3700, "GBP"),
+        Amount(3800, "GBP"),
         "Mr",
         "John",
         "Smith"

@@ -142,7 +142,9 @@ object AtsTestData {
             "savings_additional_rate_tax" -> Amount.gbp(3300),
             "savings_additional_income" -> Amount.gbp(3400),
             "total_income_tax" -> Amount(3500, "GBP"),
-            "scottish_income_tax" -> Amount(3600, "GBP")
+            "scottish_income_tax" -> Amount(3600, "GBP"),
+            "less_tax_adjustment_previous_year" ->  Amount(3700, "GBP"),
+            "tax_underpaid_previous_year" -> Amount(3800, "GBP")
           )
         ),
         Some(

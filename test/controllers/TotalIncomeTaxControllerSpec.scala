@@ -79,6 +79,8 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
     additionalRateRateRate = Rate("37.5%"),
     ScottishRates.empty,
     SavingsRates.empty,
+    lessTaxAdjustmentPreviousYear = Amount(110, "GBP"),
+    taxUnderpaidPreviousYear = Amount(120, "GBP"),
     "Mr",
     "forename",
     "surname"
