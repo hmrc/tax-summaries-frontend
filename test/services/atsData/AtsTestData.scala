@@ -295,9 +295,13 @@ object AtsTestData {
              "amount_due_at_ordinary_rate" -> Amount(700, "GBP"),
              "amount_at_higher_rate" -> Amount(800, "GBP"),
              "amount_due_at_higher_rate" -> Amount(900, "GBP"),
-             "adjustments" -> Amount(1000, "GBP"),
-             "total_cg_tax" -> Amount(1100, "GBP"),
-             "cg_tax_per_currency_unit" -> Amount(1200, "GBP")
+             "amount_due_rpci_lower_rate" -> Amount.gbp(1000),
+             "amount_at_rpci_lower_rate" -> Amount.gbp(1100),
+             "amount_due_rpci_higher_rate" -> Amount.gbp(1200),
+             "amount_at_rpci_higher_rate" -> Amount.gbp(1300),
+             "adjustments" -> Amount(1400, "GBP"),
+             "total_cg_tax" -> Amount(1500, "GBP"),
+             "cg_tax_per_currency_unit" -> Amount(1600, "GBP")
           )
         ),
         Some(
@@ -305,7 +309,9 @@ object AtsTestData {
           "cg_entrepreneurs_rate" -> Rate("10%"),
           "cg_ordinary_rate" -> Rate("20%"),
           "cg_upper_rate" -> Rate("30%"),
-          "total_cg_tax_rate" -> Rate("40%")
+          "prop_interest_rate_lower_rate" -> Rate("40%"),
+          "prop_interest_rate_higher_rate" -> Rate("50%"),
+          "total_cg_tax_rate" -> Rate("60%")
           )
         ),
         None

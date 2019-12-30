@@ -16,6 +16,8 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import utils.ViewUtils._
+
 @(viewModel: view_models.CapitalGains, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
@@ -82,6 +84,21 @@
           </tr>
         </thead>
         <tbody>
+
+          @if(viewModel.rpciLowerTax.nonZero) {
+          <tr>
+            <td>@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
+            <td>@includes.currency_amount(viewModel.rpciLowerTax)</td>
+          </tr>
+          }
+
+          @if(viewModel.rpciHigherTax.nonZero) {
+            <tr>
+                <td>@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
+                <td>@includes.currency_amount(viewModel.rpciHigherTax)</td>
+            </tr>
+          }
+
 
           @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
           <tr id="entrepreneurs-relief-rate-section">

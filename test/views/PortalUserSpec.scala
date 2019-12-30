@@ -60,7 +60,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
     "show the 'exit tax summaries' link on the capital gains page" in  {
 
       val fakeViewModel = new CapitalGains(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, rate, rate, rate, rate, "", "", "")
+        amount, amount, amount, amount, amount, amount, amount, amount, rate, rate, rate, rate, rate, rate, "", "", "")
       val result = views.html.capital_gains(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
