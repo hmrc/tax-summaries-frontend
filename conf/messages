@@ -161,7 +161,7 @@ ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK income t
 ats.total_income_tax.savings_income_tax=Savings Income Tax
 ats.total_income_tax.savings_income_tax.table.lower=Basic rate ({0} at {1})
 ats.total_income_tax.savings_income_tax.table.higher=Higher rate ({0} at {1})
-ats.total_income_tax.savings_income_tax.table.additional=Top rate ({0} at {1})
+ats.total_income_tax.savings_income_tax.table.additional=Additional rate ({0} at {1})
 
 # View ATS - capital gains tax (IND)
 #============================================================
