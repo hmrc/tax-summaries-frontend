@@ -159,7 +159,6 @@ ats.capital_gains_tax.table.line4=Cyfradd Rhyddhad Mentrwr ({0} ar {1})
 ats.capital_gains_tax.table.line5=Cyfradd gyffredin ({0} ar {1})
 ats.capital_gains_tax.table.line6=Cyfradd uwch ({0} ar {1})
 ats.capital_gains_tax.table.line7=Addasiad i Dreth Enillion Cyfalaf
-
 ats.capital_gains_tax.tax_year_period={0} i {1}
 
 # View ATS - treasury spending (IND)
