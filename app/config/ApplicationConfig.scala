@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,9 @@ trait ApplicationConfig {
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
 
   def getConf(key: String) = getConfString(key, throw new Exception(s"Could not find config '$key'"))
+
+  // PAYE tax year
+  lazy val payeTaxYear =  getConf("paye-tax-year")
 
   // Services url config
   private val contactHost = baseUrl("contact-frontend")

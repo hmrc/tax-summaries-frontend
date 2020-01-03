@@ -30,5 +30,4 @@ object Globals {
   val TAXS_ANALYTICS_AGENT_ATTRIBUTE = "annual-tax-summary:agent:start"
   val TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE = "annual-tax-summary:portal-user:start"
   val TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE = "annual-tax-summary:transitioned-user:start"
-  val TAXS_PAYE_YEAR = 2019
 }
