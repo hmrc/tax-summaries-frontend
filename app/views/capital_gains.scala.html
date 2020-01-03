@@ -88,14 +88,14 @@
           @if(viewModel.rpciLowerTax.nonZero) {
           <tr>
             <td>@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
-            <td>@includes.currency_amount(viewModel.rpciLowerTax)</td>
+            <td id="rpci-lower-rate-amount">@includes.currency_amount(viewModel.rpciLowerTax)</td>
           </tr>
           }
 
           @if(viewModel.rpciHigherTax.nonZero) {
             <tr>
                 <td>@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
-                <td>@includes.currency_amount(viewModel.rpciHigherTax)</td>
+                <td id="rpci-higher-rate-amount">@includes.currency_amount(viewModel.rpciHigherTax)</td>
             </tr>
           }
 
