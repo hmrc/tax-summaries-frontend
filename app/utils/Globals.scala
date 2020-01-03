@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,4 +30,5 @@ object Globals {
   val TAXS_ANALYTICS_AGENT_ATTRIBUTE = "annual-tax-summary:agent:start"
   val TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE = "annual-tax-summary:portal-user:start"
   val TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE = "annual-tax-summary:transitioned-user:start"
+  val TAXS_PAYE_YEAR = 2019
 }

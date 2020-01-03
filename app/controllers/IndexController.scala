@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ trait IndexController extends TaxsController {
 
   override def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     (request.saUtr, request.nino) match {
-      case (None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=2019"))
+      case (None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + Globals.TAXS_PAYE_YEAR))
       case (Some(_), _)   =>  showAvailableTaxYears(request)
     }
   }
