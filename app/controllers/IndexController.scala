@@ -34,6 +34,7 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
+import config.ApplicationConfig
 
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService
@@ -90,7 +91,7 @@ trait IndexController extends TaxsController {
 
   override def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     (request.saUtr, request.nino) match {
-      case (None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + Globals.TAXS_PAYE_YEAR))
+      case (None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + ApplicationConfig.payeTaxYear))
       case (Some(_), _)   =>  showAvailableTaxYears(request)
     }
   }
