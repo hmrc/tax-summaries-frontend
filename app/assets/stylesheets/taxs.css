@@ -878,3 +878,10 @@ a, a:visited {color:#005ea5;}
     top: 50%;
     margin-top: -6px
 }
+
+.width80 {
+    width: 80%;
+}
+.width20 {
+    width: 20%;
+}

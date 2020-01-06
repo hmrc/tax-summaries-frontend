@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,18 @@ case class CapitalGains(
   ordinaryRateAmount: Amount,
   upperRateBefore: Amount,
   upperRateAmount: Amount,
+  rpciLowerTax: Amount,
+  rpciLowerTotalAmount: Amount,
+  rpciHigherTax: Amount,
+  rpciHigherTotalAmount: Amount,
   adjustmentsAmount: Amount,
   totalCapitalGainsTaxAmount: Amount,
   cgTaxPerCurrencyUnit: Amount,
   entrepreneursReliefRateRate: Rate,
   ordinaryRateRate: Rate,
   upperRateRate: Rate,
+  rpciLowerRate: Rate,
+  rpciHigherRate: Rate,
   totalCgTaxRate: Rate,
   title: String,
   forename: String,

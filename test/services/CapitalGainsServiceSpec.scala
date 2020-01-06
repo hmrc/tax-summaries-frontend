@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,22 +74,28 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
       result shouldBe CapitalGains(
         2019,
         "1111111111",
-        Amount(100, "GBP"),
-        Amount(200, "GBP"),
-        Amount(300, "GBP"),
-        Amount(400, "GBP"),
-        Amount(500, "GBP"),
-        Amount(600, "GBP"),
-        Amount(700, "GBP"),
-        Amount(800, "GBP"),
-        Amount(900, "GBP"),
-        Amount(1000, "GBP"),
-        Amount(1100, "GBP"),
-        Amount(1200, "GBP"),
+        Amount.gbp(100),
+        Amount.gbp(200),
+        Amount.gbp(300),
+        Amount.gbp(400),
+        Amount.gbp(500),
+        Amount.gbp(600),
+        Amount.gbp(700),
+        Amount.gbp(800),
+        Amount.gbp(900),
+        Amount.gbp(1000),
+        Amount.gbp(1100),
+        Amount.gbp(1200),
+        Amount.gbp(1300),
+        Amount.gbp(1400),
+        Amount.gbp(1500),
+        Amount.gbp(1600),
         Rate("10%"),
         Rate("20%"),
         Rate("30%"),
         Rate("40%"),
+        Rate("50%"),
+        Rate("60%"),
         "Mr",
         "John",
         "Smith"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package utils
 
 import uk.gov.hmrc.domain.SaUtrGenerator
-import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import utils.TestConstants.testUtr
+import view_models.{Amount, CapitalGains, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
 
 import scala.util.Random
 
@@ -70,6 +71,36 @@ trait TestConstants {
     "Mr",
     "forename",
     "surname"
+  )
+
+  val capitalGains = CapitalGains(
+    taxYear = 2014,
+    utr = testUtr,
+    taxableGains = Amount(20000, "GBP"),
+    lessTaxFreeAmount = Amount(10600, "GBP"),
+    payCgTaxOn = Amount(9400, "GBP"),
+    entrepreneursReliefRateBefore = Amount(1111, "GBP"),
+    entrepreneursReliefRateAmount = Amount(1000, "GBP"),
+    ordinaryRateBefore = Amount(2222, "GBP"),
+    ordinaryRateAmount = Amount(2000, "GBP"),
+    upperRateBefore = Amount(3333, "GBP"),
+    upperRateAmount = Amount(3000, "GBP"),
+    rpciLowerTax = Amount.gbp(1000),
+    rpciLowerTotalAmount = Amount.gbp(4000),
+    rpciHigherTax = Amount.gbp(1500),
+    rpciHigherTotalAmount = Amount.gbp(4500),
+    adjustmentsAmount = Amount(500, "GBP"),
+    totalCapitalGainsTaxAmount = Amount(5500, "GBP"),
+    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
+    entrepreneursReliefRateRate = Rate("10%"),
+    ordinaryRateRate = Rate("18%"),
+    upperRateRate = Rate("28%"),
+    rpciLowerRate = Rate("15%"),
+    rpciHigherRate = Rate("25%"),
+    totalCgTaxRate = Rate("12.34%"),
+    title = "Mr",
+    forename = "forename",
+    surname = "surname"
   )
 }
 
