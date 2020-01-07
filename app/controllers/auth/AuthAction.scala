@@ -22,10 +22,11 @@ import play.api.Mode.Mode
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Play}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Nino => AuthNino, ConfidenceLevel, Enrolment, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession, PlayAuthConnector}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, Enrolment, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession, PlayAuthConnector, Nino => AuthNino}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain.{CtUtr, EmpRef, SaUtr, Uar, Vrn, Nino}
+import uk.gov.hmrc.domain.{CtUtr, EmpRef, Nino, SaUtr, Uar, Vrn}
 import uk.gov.hmrc.http.{CorePost, HeaderCarrier}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -36,12 +37,18 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
                                configuration: Configuration)(implicit ec: ExecutionContext)
   extends AuthAction with AuthorisedFunctions {
 
+  lazy val payeSaAuth: Predicate = ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true)
+
+  lazy val saOnlyAuth: Predicate = ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT"))
+
+  lazy val auth: Predicate = if(ApplicationConfig.saAuthOnly) saOnlyAuth  else  payeSaAuth
+
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
+    authorised(auth)
       .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.nino) {
         case Enrolments(enrolments) ~ Some(externalId) ~ nino => {
           val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
