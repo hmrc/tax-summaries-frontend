@@ -161,7 +161,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
       document
         .select("h1")
-        .text shouldBe "6 April 2013 to 5 April 2014 Your taxes and public spending"
+        .text shouldBe "Your taxes and public spending 6 April 2013 to 5 April 2014"
     }
 
     "have correct data for 2015" in new TestController {

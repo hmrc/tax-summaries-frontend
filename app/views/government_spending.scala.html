@@ -53,10 +53,8 @@
     </div>
 
     <h1>
-            <span class="gray heading-medium block-heading">
-                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-            </span>
-        @Html(Messages("ats.treasury_spending.title"))
+        @Html(Messages("ats.treasury_spending.title"))<br>
+        @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
     </h1>
             @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
