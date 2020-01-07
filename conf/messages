@@ -64,6 +64,12 @@ ats.index.html.tax_calc_description=This shows a breakdown of your taxable incom
 ats.index.html.tax_spend_link=How your tax was spent
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
 
+# SA variations
+ats.sa.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
+ats.sa.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you have paid or will pay.
+ats.sa.index.html.tax_spend_link=Your taxes and public spending
+ats.sa.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
+
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Your income and taxes

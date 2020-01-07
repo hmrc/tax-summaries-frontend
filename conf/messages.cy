@@ -59,6 +59,12 @@ ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm ei
 ats.index.html.tax_spend_link=Eich trethi a gwariant cyhoeddus
 ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
 
+# SA variations
+ats.sa.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn.
+ats.sa.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich swm yn rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
+ats.sa.index.html.tax_spend_link=Eich trethi a gwariant cyhoeddus
+ats.sa.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
+
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Eich incwm a’ch trethi

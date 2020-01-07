@@ -88,9 +88,9 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
 
       status(result) shouldBe 200
       document.getElementById("tax-calc-link").text shouldBe "Your income and taxes"
-      document.getElementById("tax-services-link").text shouldBe "How your tax was spent"
+      document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
       document.getElementById("index-page-header").text shouldBe "Your annual tax summary 6 April 2013 to 5 April 2014"
-      document.getElementById("index-page-description").text shouldBe "This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government."
+      document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
       document.getElementById("tax-calc-link").tagName shouldBe "a"
       document.getElementById("tax-services-link").tagName shouldBe "a"
       document.getElementById("user-info").text should include("forename surname")
