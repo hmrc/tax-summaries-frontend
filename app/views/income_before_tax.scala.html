@@ -39,11 +39,20 @@
 @includes.taxs_main(title = Messages("ats.income_before_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     @helpers.back_link(Messages("generic.back"))
-    <h1>
-      @Messages("ats.income_before_tax.title")<br>
-      @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
-    </h1>
-    <p>@Html(Messages("ats.income_before_tax.intro"))</p>
+
+    @if(!viewModel.isPaye){
+      <h1>
+        <span class="gray heading-medium block-heading">@Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)</span>
+        @Messages("ats.sa.income_before_tax.title")
+      </h1>
+      <p>@Html(Messages("ats.sa.income_before_tax.intro"))</p>
+    } else {
+      <h1>
+        @Messages("ats.income_before_tax.title")<br>
+        @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+      </h1>
+      <p>@Html(Messages("ats.income_before_tax.intro"))</p>
+    }
 
     <table>
       <thead>
@@ -107,7 +116,13 @@
       @if(!viewModel.getIncomeBeforeTaxTotal.isZero) {
       <tfoot id="income-before-tax-foot">
         <tr>
-          <th scope="row">@Html(Messages("ats.income_before_tax.html.title"))</th>
+          <th scope="row">
+            @if(viewModel.isPaye){
+              @Html(Messages("ats.income_before_tax.html.title"))
+            } else {
+              @Messages("ats.sa.income_before_tax.title")
+            }
+          </th>
           <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.getIncomeBeforeTaxTotal)</td>
         </tr>
       </tfoot>

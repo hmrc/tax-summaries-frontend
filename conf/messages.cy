@@ -107,6 +107,10 @@ ats.income_before_tax.html.title=Cyfanswm yr incwm
 ats.income_before_tax.title=Cyfanswm yr incwm
 ats.income_before_tax.intro=Dyma gyfanswm eich incwm am y flwyddyn.
 
+# SA variations
+ats.sa.income_before_tax.title=Cyfanswm yr incwm
+ats.sa.income_before_tax.intro=Dyma gyfanswm eich incwm am y flwyddyn.
+
 ats.income_before_tax.table_header=Ffynhonnell yr incwm
 ats.income_before_tax.table.line1=Hunangyflogaeth
 ats.income_before_tax.table.line2=Cyflogaeth

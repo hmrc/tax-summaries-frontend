@@ -119,7 +119,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       document.toString should include("Taxable income")
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text shouldBe "Taxable income 6 April 2013 to 5 April 2014"
+      document.select("h1").text shouldBe "6 April 2013 to 5 April 2014 Your total income"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
