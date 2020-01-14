@@ -20,7 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.CapitalGains
+import view_models.{Amount, CapitalGains, Rate}
 
 import scala.concurrent.Future
 
@@ -50,12 +50,18 @@ trait CapitalGainsService {
         capitalGainsData.payload.get("amount_due_at_ordinary_rate"),
         capitalGainsData.payload.get("amount_at_higher_rate"),
         capitalGainsData.payload.get("amount_due_at_higher_rate"),
+        capitalGainsData.payload.get("amount_due_rpci_lower_rate"),
+        capitalGainsData.payload.get("amount_at_rpci_lower_rate"),
+        capitalGainsData.payload.get("amount_due_rpci_higher_rate"),
+        capitalGainsData.payload.get("amount_at_rpci_higher_rate"),
         capitalGainsData.payload.get("adjustments"),
         capitalGainsData.payload.get("total_cg_tax"),
         capitalGainsData.payload.get("cg_tax_per_currency_unit"),
         capitalGainsData.rates.get("cg_entrepreneurs_rate"),
         capitalGainsData.rates.get("cg_ordinary_rate"),
         capitalGainsData.rates.get("cg_upper_rate"),
+        capitalGainsData.rates.get("prop_interest_rate_lower_rate"),
+        capitalGainsData.rates.get("prop_interest_rate_higher_rate"),
         capitalGainsData.rates.get("total_cg_tax_rate"),
         atsData.taxPayerData.get.taxpayer_name.get("title"),
         atsData.taxPayerData.get.taxpayer_name.get("forename"),

@@ -107,6 +107,10 @@ ats.income_before_tax.html.title=Cyfanswm yr incwm
 ats.income_before_tax.title=Cyfanswm yr incwm
 ats.income_before_tax.intro=Dyma gyfanswm eich incwm am y flwyddyn.
 
+# SA variations
+ats.sa.income_before_tax.title=Cyfanswm yr incwm
+ats.sa.income_before_tax.intro=Dyma gyfanswm eich incwm am y flwyddyn.
+
 ats.income_before_tax.table_header=Ffynhonnell yr incwm
 ats.income_before_tax.table.line1=Hunangyflogaeth
 ats.income_before_tax.table.line2=Cyflogaeth
@@ -165,7 +169,7 @@ ats.capital_gains_tax.table.line4=Cyfradd Rhyddhad Mentrwr ({0} ar {1})
 ats.capital_gains_tax.table.line5=Cyfradd gyffredin ({0} ar {1})
 ats.capital_gains_tax.table.line6=Cyfradd uwch ({0} ar {1})
 ats.capital_gains_tax.table.line7=Addasiad i Dreth Enillion Cyfalaf
-
+ats.capital_gains_tax.table.rcpi=Unigolion am eiddo preswyl a budd a drosglwyddir ({0} ar {1})
 ats.capital_gains_tax.tax_year_period={0} i {1}
 
 # View ATS - treasury spending (IND)

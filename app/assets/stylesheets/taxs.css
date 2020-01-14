@@ -883,3 +883,9 @@ a, a:visited {color:#005ea5;}
 article table thead tr th[scope=col] {
   font-weight: bold;
 }
+.width80 {
+    width: 80%;
+}
+.width20 {
+    width: 20%;
+}

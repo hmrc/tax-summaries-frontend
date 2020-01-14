@@ -109,14 +109,21 @@ ats.nics.tax_and_nics.total=Income Tax and National Insurance
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Taxable income
+ats.income_before_tax.html.total=Total taxable income
 ats.income_before_tax.title=Taxable income
 ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
+
+# SA variations
+ats.sa.income_before_tax.title=Your total income
+ats.income_before_tax.html.sa.total=Your total income
+ats.sa.income_before_tax.intro=This is your total income for the year.
 
 ats.income_before_tax.table_header=Source of income
 ats.income_before_tax.table.line1=Self-employment
 ats.income_before_tax.table.line2=Employment
 ats.income_before_tax.table.line3=State pension
 ats.income_before_tax.table.line4=Other pension income
+ats.income_before_tax.table.line4-alternative=Personal pension income
 ats.income_before_tax.table.line5=Taxable state benefits
 ats.income_before_tax.table.line6=Other income
 ats.income_before_tax.table.line7=Benefits from employment
@@ -167,7 +174,7 @@ ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK income t
 ats.total_income_tax.savings_income_tax=Savings Income Tax
 ats.total_income_tax.savings_income_tax.table.lower=Basic rate ({0} at {1})
 ats.total_income_tax.savings_income_tax.table.higher=Higher rate ({0} at {1})
-ats.total_income_tax.savings_income_tax.table.additional=Top rate ({0} at {1})
+ats.total_income_tax.savings_income_tax.table.additional=Additional rate ({0} at {1})
 
 # View ATS - capital gains tax (IND)
 #============================================================
@@ -187,7 +194,7 @@ ats.capital_gains_tax.table.line4=Entrepreneurs&apos; Relief rate ({0} at {1})
 ats.capital_gains_tax.table.line5=Ordinary rate ({0} at {1})
 ats.capital_gains_tax.table.line6=Upper rate ({0} at {1})
 ats.capital_gains_tax.table.line7=Adjustment to Capital Gains Tax
-
+ats.capital_gains_tax.table.rcpi=Individuals for residential property and carried interest ({0} at {1})
 ats.capital_gains_tax.tax_year_period={0} to {1}
 
 # View ATS - treasury spending (IND)
