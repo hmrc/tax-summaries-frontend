@@ -33,41 +33,20 @@ import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestConstants
 import utils.TestConstants._
 import view_models.{Amount, CapitalGains, NoATSViewModel, Rate}
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with TestConstants {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
-  val baseModel = CapitalGains(
-    taxYear = 2014,
-    utr = testUtr,
-    taxableGains = Amount(20000, "GBP"),
-    lessTaxFreeAmount = Amount(10600, "GBP"),
-    payCgTaxOn = Amount(9400, "GBP"),
-    entrepreneursReliefRateBefore = Amount(1111, "GBP"),
-    entrepreneursReliefRateAmount = Amount(1000, "GBP"),
-    ordinaryRateBefore = Amount(2222, "GBP"),
-    ordinaryRateAmount = Amount(2000, "GBP"),
-    upperRateBefore = Amount(3333, "GBP"),
-    upperRateAmount = Amount(3000, "GBP"),
-    adjustmentsAmount = Amount(500, "GBP"),
-    totalCapitalGainsTaxAmount = Amount(5500, "GBP"),
-    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
-    entrepreneursReliefRateRate = Rate("10%"),
-    ordinaryRateRate = Rate("18%"),
-    upperRateRate = Rate("28%"),
-    totalCgTaxRate = Rate("12.34%"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
-  )
+  val baseModel = capitalGains
 
   class TestController extends CapitalGainsTaxController {
 
