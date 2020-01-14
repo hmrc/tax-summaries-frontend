@@ -122,9 +122,9 @@
         <tr>
           <th scope="row">
             @if(viewModel.isPaye){
-              @Html(Messages("ats.income_before_tax.html.title"))
+              @Html(Messages("ats.income_before_tax.html.total"))
             } else {
-              @Messages("ats.sa.income_before_tax.title")
+              @Messages("ats.income_before_tax.html.sa.total")
             }
           </th>
           <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.getIncomeBeforeTaxTotal)</td>

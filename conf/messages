@@ -109,11 +109,13 @@ ats.nics.tax_and_nics.total=Income Tax and National Insurance
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Taxable income
+ats.income_before_tax.html.total=Total taxable income
 ats.income_before_tax.title=Taxable income
 ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
 
 # SA variations
 ats.sa.income_before_tax.title=Your total income
+ats.income_before_tax.html.sa.total=Your total income
 ats.sa.income_before_tax.intro=This is your total income for the year.
 
 ats.income_before_tax.table_header=Source of income
