@@ -166,6 +166,25 @@ ats.total_income_tax.table.other.reducing=Addasiadau eraill sy’n gostwng eich 
 ats.total_income_tax.table.marriage_allowance_received=Llai’r Lwfans Priodasol yr ydych wedi’i gael
 ats.total_income_tax.table.scottish_income_tax=Mae hyn yn cynnwys Treth Incwm yn yr Alban o
 
+# View ATS - scottish income tax
+#============================================================
+ats.total_income_tax.scottish_income_tax=Treth Incwm yn yr Alban
+ats.total_income_tax.scottish_income_tax.table.starter=Cyfradd cychwyn ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.basic=Cyfradd sylfaenol ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.intermediate=Cyfradd ganolradd ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.additional=Cyfradd uchaf ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.total=Cyfanswm treth incwm yn yr Alban
+
+ats.total_income_tax.scottish_income_uk_income_tax.table.total=Cyfanswm treth incwm yn y DU
+
+# View ATS - savings income tax
+#============================================================
+ats.total_income_tax.savings_income_tax=Treth incwm ar gynilion
+ats.total_income_tax.savings_income_tax.table.lower=Cyfradd sylfaenol ({0} ar {1})
+ats.total_income_tax.savings_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
+ats.total_income_tax.savings_income_tax.table.additional=Cyfradd uchaf ({0} ar {1})
+
 # View ATS - capital gains tax (IND)
 #============================================================
 ats.capital_gains_tax.html.title=Treth Enillion Cyfalaf
