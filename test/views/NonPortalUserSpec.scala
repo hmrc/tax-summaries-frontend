@@ -105,7 +105,7 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         amount,
         amount,
         rate,
-        rate,
+        amount,
         "",
         "",
         "")

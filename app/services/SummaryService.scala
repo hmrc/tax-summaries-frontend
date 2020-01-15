@@ -62,7 +62,7 @@ trait SummaryService {
       summaryData.payload.get.getOrElse("nics_and_tax_per_currency_unit", emptyAmount),
       summaryData.payload.get.getOrElse("income_after_tax_and_nics", emptyAmount),
       rates.getOrElse("total_cg_tax_rate", emptyRate),
-      rates.getOrElse("nics_and_tax_rate", emptyRate),
+      summaryData.payload.get.getOrElse("nics_and_tax_rate", emptyAmount),
       taxPayerData.taxpayer_name.get("title"),
       taxPayerData.taxpayer_name.get("forename"),
       taxPayerData.taxpayer_name.get("surname")

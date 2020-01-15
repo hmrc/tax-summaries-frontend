@@ -254,13 +254,13 @@ object AtsTestData {
           "taxable_gains" -> Amount(800, "GBP"),
           "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
           "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP"),
-            "income_after_tax_and_nics" -> Amount(1100, "GBP")
+            "income_after_tax_and_nics" -> Amount(1100, "GBP"),
+            "nics_and_tax_rate" -> Amount(20, "PERCENT")
           )
         ),
         Some(
           Map(
-            "total_cg_tax_rate" -> Rate("10%"),
-            "nics_and_tax_rate" -> Rate("20%")
+            "total_cg_tax_rate" -> Rate("10%")
           )
         ),
         None
