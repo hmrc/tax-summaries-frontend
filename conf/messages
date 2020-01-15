@@ -76,6 +76,7 @@ ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
 ats.summary.total_income.paye.title=Taxable income
 ats.summary.total_income.link=Your taxable income
+ats.summary.nicsheading=Income Tax and National Insurance
 ats.summary.total_income.description=This is your total taxable income for the year.
 ats.summary.tax_free.title=Tax-free amount
 ats.summary.tax_free.link=Your tax-free amount
@@ -108,11 +109,16 @@ ats.summary.tax_and_nics.sa.description=This is how much you pay on all your inc
 
 # View NICS page
 #=============================================================
-ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
+ats.nics.tax_and_nics.title=Income Tax and National Insurance contributions
 ats.nics.tax_and_nics.lede=This shows how your tax was calculated.
 ats.nics.tax_and_nics.income_tax=Income Tax
 ats.nics.tax_and_nics_explained=National Insurance
 ats.nics.tax_and_nics.total=Income Tax and National Insurance
+
+# SA variations
+ats.nics.tax_and_nics.sa.title=Your Income Tax and National Insurance contributions
+ats.nics.tax_and_nics.sa.intro1=This is how much you pay on income above your tax-free amount.
+ats.nics.tax_and_nics.sa.intro2=Your Income Tax and National Insurance is {0}% of your total income.
 
 # View ATS - your income before tax (IND)
 #============================================================

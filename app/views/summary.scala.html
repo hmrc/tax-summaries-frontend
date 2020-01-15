@@ -61,7 +61,7 @@
         </section>
 
         <section id="tax-calculated-as">
-            <h2 id="tax-and-nics-title">@Html(Messages(viewModel.yourTotalTaxTextKey))</h2>
+            <h2 id="tax-and-nics-title">@Messages("ats.summary.nicsheading")</h2>
             <p class="text">@Messages("ats.summary.tax_and_nics.description", viewModel.nicsAndTaxRate)</p>
             <p class="text">@Html(Messages("ats.summary.tax_and_nics.description-2"))</p>
             <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">

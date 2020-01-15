@@ -37,11 +37,20 @@
 
 @includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
-    <h1>
-        @Html(Messages("ats.nics.tax_and_nics.title"))<br>
-        @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-    </h1>
-    <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+    @if(viewModel.isPaye){
+      <h1>
+          @Html(Messages("ats.nics.tax_and_nics.title"))<br>
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+      </h1>
+      <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+    } else {
+      <h1>
+        <span class="gray heading-medium block-heading">@Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))</span>
+        @Html(Messages("ats.nics.tax_and_nics.sa.title"))
+      </h1>
+      <p>@Messages("ats.nics.tax_and_nics.sa.intro1")</p>
+      <p>@Messages("ats.nics.tax_and_nics.sa.intro2")</p>
+    }
 
     <table id="total-income-tax">
       <thead>

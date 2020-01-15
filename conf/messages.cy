@@ -110,6 +110,12 @@ ats.nics.tax_and_nics.income_tax=Treth Incwm
 ats.nics.tax_and_nics_explained=Yswiriant Gwladol
 ats.nics.tax_and_nics.total=Treth Incwm ac Yswiriant Gwladol
 
+# SA variations
+ats.nics.tax_and_nics.sa.title=Treth Incwm a chyfraniadau Yswiriant Gwladol
+ats.nics.tax_and_nics.sa.intro1=Dyma faint y talwch ar incwm uwchlaw eich swm yn rhydd o dreth.
+ats.nics.tax_and_nics.sa.intro2=Mae eich Treth Incwm ac Yswiriant Gwladol yn {0}% o gyfanswm eich incwm.
+
+
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Cyfanswm yr incwm
