@@ -81,7 +81,7 @@ ats.summary.nicsheading=Income Tax and National Insurance
 ats.summary.total_income.description=This is your total taxable income for the year.
 ats.summary.tax_free.title=Tax-free amount
 ats.summary.tax_free.link=Your tax-free amount
-ats.summary.tax_free.description=This is the amount you recieved without paying tax.
+ats.summary.tax_free.description=This is the amount you received without paying tax.
 
 ats.summary.tax_and_nics.title=Income Tax and National Insurance
 ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
