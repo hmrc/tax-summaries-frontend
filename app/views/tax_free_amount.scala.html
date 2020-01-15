@@ -38,10 +38,19 @@
 @includes.taxs_main(title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     @helpers.back_link(Messages("generic.back"))
-    <h1>
+    @if(viewModel.isPaye) {
+      <h1>
         @Messages("ats.tax_free_amount.tax_free_amount")<br>
         @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
-    </h1>
+      </h1>
+    } else {
+      <h1>
+        <span class="gray heading-medium block-heading">@Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)</span>
+        @Messages("ats.tax_free_amount.sa.tax_free_amount")
+      </h1>
+      <p>@Messages("ats.tax_free_amount.sa.intro")</p>
+      <p>@Messages("ats.tax_free_amount.sa.para2")</p>
+    }
 
     <table id="tax-free-allowance">
       <thead>
@@ -72,14 +81,42 @@
       </tbody>
       <tfoot>
         <tr>
-          <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
+          <th scope="row">@Html(Messages("ats.tax_free_amount.table.sa.total", viewModel.year.toString))</th>
           <td id="tax-free-total" class="no-bold">@includes.currency_amount(viewModel.totalTaxFree)</td>
         </tr>
       </tfoot>
     </table>
 
-      <div class="back">
-        <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.tax_free_amount.tax_free_amount")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
-      </div>
+
+    @if(viewModel.isPaye) {
+      <table id="tax-free-allowance">
+        <thead>
+          <tr>
+            <th scope="col">@Html(Messages("generic.description"))</th>
+            <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td scope="row">@Messages("ats.tax_free_amount.table.incomeBeforeTax")</td>
+            <td id="tax-free-allowance-amount">money y'all</td>
+          </tr>
+          <tr>
+            <td scope="row">@Messages("ats.tax_free_amount.table.totalTaxFreeAmount")</td>
+            <td id="marriage_allowance_transferred_amount">money y'all</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
+            <td id="tax-free-total" class="no-bold">@includes.currency_amount(viewModel.youPayTaxOn)</td>
+          </tr>
+        </tfoot>
+      </table>
+    }
+
+    <div class="back">
+      <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.tax_free_amount.tax_free_amount")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
+    </div>
 
 }

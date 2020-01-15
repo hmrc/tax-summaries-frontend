@@ -153,7 +153,16 @@ ats.tax_free_amount.tax_free_amount=Tax free amount
 ats.tax_free_amount.table.line1=Personal Allowance
 ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
 ats.tax_free_amount.table.line3=Less Marriage Allowance Transferred
-ats.tax_free_amount.table.total=Total tax-free amount
+ats.tax_free_amount.table.incomeBeforeTax=Income before tax
+ats.tax_free_amount.table.totalTaxFreeAmount=Total tax-free amount
+ats.tax_free_amount.table.total=You pay tax on
+
+# SA variations
+ats.tax_free_amount.sa.tax_free_amount=Your tax-free amount
+ats.tax_free_amount.sa.intro=This is how much you can earn before you start paying Income Tax.
+ats.tax_free_amount.sa.para2=This includes your Personal Allowance and any other allowances, deductions and expenses.
+ats.tax_free_amount.table.sa.total=Total tax-free amount
+
 
 # View ATS - total income tax (IND)
 #============================================================
