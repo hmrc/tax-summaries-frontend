@@ -74,7 +74,6 @@ ats.sa.index.html.tax_spend_description=This shows a breakdown of how your taxes
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.total_income.sa.title=Total income
 ats.summary.total_income.paye.title=Taxable income
 ats.summary.total_income.link=Your taxable income
 ats.summary.total_income.description=This is your total taxable income for the year.
@@ -84,8 +83,8 @@ ats.summary.tax_free.description=This is the amount you recieved without paying 
 
 ats.summary.tax_and_nics.title=Income Tax and National Insurance
 ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
-ats.summary.tax_and_nics.description=This is a percentage of your taxable income. For every £1 of income, you paid p in Income Tax and National Insurance contributions.
-ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
+ats.summary.tax_and_nics.description=This is {0}% of your taxable income. For every £1 of income, you paid {0}p in Income Tax and National Insurance contributions.
+ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments and therefore may be a different figure to the calculated tax shown in your breakdown.
 ats.summary.capital_gains.title=Capital Gains Tax
 ats.summary.capital_gains.link=Your Capital Gains Tax
 ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
@@ -97,6 +96,15 @@ ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
 ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Income Tax
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
+
+# SA variations
+ats.summary.total_income.sa.intro=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
+ats.summary.total_income.sa.title=Total income
+ats.summary.total_income.sa.description=This is your total income for the year.
+ats.summary.total_income.sa.link=Your total income
+ats.summary.tax_free.sa.description=This is how much you can earn before you start paying Income Tax.
+ats.summary.tax_and_nics.sa.description=This is how much you pay on all your income above your tax-free amount.
+
 
 # View NICS page
 #=============================================================
