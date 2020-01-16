@@ -15,6 +15,7 @@ generic.english=English
 generic.welsh=Cymraeg
 generic.acting_for=You are acting for
 generic.name_not_defined=Name Not Defined
+generic.taxYearPrefix=Tax Year:
 generic.tax_year_heading=6 April {0} to 5 April {1}
 generic.to_from=: {0} to {1}
 generic.sign_out=Sign out
