@@ -22,6 +22,7 @@ case class Summary(
   year: Int,
   utr: String,
   employeeNicAmount: Amount,
+  employerNicAmount: Amount,
   totalIncomeTaxAndNics: Amount,
   yourTotalTax: Amount,
   totalTaxFree: Amount,

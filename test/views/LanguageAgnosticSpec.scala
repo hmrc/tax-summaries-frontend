@@ -85,7 +85,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
     "show the index page in welsh language" in {
       val amount = new Amount(0.00, "GBP")
       val rate = new Rate("5")
-      val fakeViewModel = Summary(2014, "1123", amount, amount, amount, amount, amount, amount,
+      val fakeViewModel = Summary(2014, "1123", amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, rate, amount, "", "", "")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
@@ -123,7 +123,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val rate = new Rate("5")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, rate, amount, "", "Forename", "Surname")
       val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar(testUar)), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)

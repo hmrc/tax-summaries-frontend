@@ -46,6 +46,7 @@ object SummaryControllerSpec {
     year = 2014,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
+    employerNicAmount = Amount(1300, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
     yourTotalTax = Amount(1800, "GBP"),
     totalTaxFree = Amount(9440, "GBP"),

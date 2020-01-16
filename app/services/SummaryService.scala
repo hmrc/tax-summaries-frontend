@@ -50,6 +50,7 @@ trait SummaryService {
     Summary(atsData.taxYear,
       atsData.utr.getOrElse(""),
       summaryData.payload.get.getOrElse("employee_nic_amount", emptyAmount),
+      summaryData.payload.get.getOrElse("employer_nic_amount", emptyAmount),
       summaryData.payload.get.getOrElse("total_income_tax_and_nics", emptyAmount),
       summaryData.payload.get.getOrElse("your_total_tax", emptyAmount),
       summaryData.payload.get.getOrElse("personal_tax_free_amount", emptyAmount),

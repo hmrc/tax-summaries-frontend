@@ -244,6 +244,7 @@ object AtsTestData {
         Some(
           Map(
           "employee_nic_amount" -> Amount(100, "GBP"),
+            "employer_nic_amount" -> Amount(150, "GBP"),
           "total_income_tax_and_nics" -> Amount(200, "GBP"),
           "your_total_tax" -> Amount(300, "GBP"),
           "personal_tax_free_amount" -> Amount(400, "GBP"),
