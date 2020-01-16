@@ -114,6 +114,7 @@ ats.nics.tax_and_nics.lede=This shows how your tax was calculated.
 ats.nics.tax_and_nics.income_tax=Income Tax
 ats.nics.tax_and_nics_explained=National Insurance
 ats.nics.tax_and_nics.total=Income Tax and National Insurance
+ats.nics.tax_and_nics.PAYElastParagraph=In addition to this, your employers paid £{0} in National Insurance contributions.
 
 # SA variations
 ats.nics.tax_and_nics.sa.title=Your Income Tax and National Insurance contributions

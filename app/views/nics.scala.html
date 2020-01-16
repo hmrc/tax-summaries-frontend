@@ -81,7 +81,10 @@
         </tr>
       </tfoot>
     </table>
-
+    
+    @if(viewModel.isPaye){
+      <p>@Messages(("ats.nics.tax_and_nics.PAYElastParagraph"), viewModel.employeeNicAmount)</p>
+    }
 
     <div class="back">
       <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
