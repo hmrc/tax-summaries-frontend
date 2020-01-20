@@ -37,21 +37,23 @@ trait GovernmentSpendService {
     atsService.createModel(taxYear, govSpend)
 
   private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
-    val emptyAmount = Amount(0.0, "GBP")
-    val emptyUserData = UserData(Some(Map("title" -> "", "forename" -> "", "surname" ->" ")))
+    def payload(key: String): Amount =
+      atsData.income_tax.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
 
-    val taxPayerData: UserData  = atsData.taxPayerData.getOrElse(emptyUserData)
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
     GovernmentSpend(atsData.taxYear,
       atsData.utr.getOrElse(""),
       govSpendingData.govSpendAmountData.get.toList,
-      taxPayerData.taxpayer_name.get("title"),
-      taxPayerData.taxpayer_name.get("forename"),
-      taxPayerData.taxpayer_name.get("surname"),
+      taxpayerName("title"),
+      taxpayerName("forename"),
+      taxpayerName("surname"),
       govSpendingData.totalAmount,
       atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
-      atsData.income_tax.get.payload.get.getOrElse("scottish_income_tax", emptyAmount)
+      payload("scottish_income_tax")
     )
   }
 }
