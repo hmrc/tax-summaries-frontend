@@ -38,22 +38,24 @@ trait AllowanceService {
   }
 
   private[services] def allowanceDataConverter(atsData: AtsData): Allowances = {
-    val emptyAmount = Amount(0.0, "GBP")
-    val emptyUserData = UserData(Some(Map("title" -> "", "forename" -> "", "surname" ->" ")))
-    val allowanceData: DataHolder = atsData.allowance_data.get
-    val taxPayerData: UserData  = atsData.taxPayerData.getOrElse(emptyUserData)
+    def payload(key: String): Amount =
+      atsData.allowance_data.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
+
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+
 
     Allowances(
       atsData.taxYear,
-      atsData.utr.getOrElse(atsData.nino.getOrElse("")),
-      allowanceData.payload.get.getOrElse("personal_tax_free_amount", emptyAmount),
-      allowanceData.payload.get.getOrElse("marriage_allowance_transferred_amount", emptyAmount),
-      allowanceData.payload.get.getOrElse("other_allowances_amount", emptyAmount),
-      allowanceData.payload.get.getOrElse("you_pay_tax_on", emptyAmount),
-      allowanceData.payload.get.getOrElse("total_tax_free_amount", emptyAmount),
-      taxPayerData.taxpayer_name.get("title"),
-      taxPayerData.taxpayer_name.get("forename"),
-      taxPayerData.taxpayer_name.get("surname")
+      atsData.utr.getOrElse(""),
+      payload("personal_tax_free_amount"),
+      payload("marriage_allowance_transferred_amount"),
+      payload("other_allowances_amount"),
+      payload("you_pay_tax_on"),
+      payload("total_tax_free_amount"),
+      taxpayerName("title"),
+      taxpayerName("forename"),
+      taxpayerName("surname")
     )
   }
 }
