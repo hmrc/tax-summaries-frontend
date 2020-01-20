@@ -44,7 +44,6 @@ trait AllowanceService {
     def taxpayerName(key: String): String =
       atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
-
     Allowances(
       atsData.taxYear,
       atsData.utr.getOrElse(""),
