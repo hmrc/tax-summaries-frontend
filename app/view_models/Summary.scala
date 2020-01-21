@@ -34,8 +34,9 @@ case class Summary(
   cgTaxPerCurrencyUnit: Amount,
   nicsAndTaxPerCurrencyUnit: Amount,
   incomeAfterTaxAndNics: Amount,
+  nicsAndTaxRateAmount: Amount,
   totalCgTaxRate: Rate,
-  nicsAndTaxRate: Amount,
+  nicsAndTaxRate: Rate,
   title: String,
   forename: String,
   surname: String)

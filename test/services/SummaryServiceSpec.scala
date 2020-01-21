@@ -87,8 +87,9 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
         Amount(900, "GBP"),
         Amount(1000, "GBP"),
         Amount(1100, "GBP"),
-        Rate("10%"),
         Amount(20, "PERCENT"),
+        Rate("10%"),
+        Rate("20%"),
         "Mr",
         "John",
         "Smith"

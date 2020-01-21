@@ -256,12 +256,13 @@ object AtsTestData {
           "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
           "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP"),
             "income_after_tax_and_nics" -> Amount(1100, "GBP"),
-            "nics_and_tax_rate" -> Amount(20, "PERCENT")
+            "nics_and_tax_rate_amount" -> Amount(20, "PERCENT")
           )
         ),
         Some(
           Map(
-            "total_cg_tax_rate" -> Rate("10%")
+            "total_cg_tax_rate" -> Rate("10%"),
+            "nics_and_tax_rate" -> Rate("20%")
           )
         ),
         None

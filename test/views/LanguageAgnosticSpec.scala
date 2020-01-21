@@ -86,7 +86,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val amount = new Amount(0.00, "GBP")
       val rate = new Rate("5")
       val fakeViewModel = Summary(2014, "1123", amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, amount, "", "", "")
+        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
       val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
@@ -124,7 +124,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, amount, "", "Forename", "Surname")
+        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
       val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar(testUar)), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
       val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever)

@@ -64,8 +64,9 @@ trait SummaryService {
       payload("cg_tax_per_currency_unit"),
       payload("nics_and_tax_per_currency_unit"),
       payload("income_after_tax_and_nics"),
+      payload("nics_and_tax_rate_amount"),
       rates("total_cg_tax_rate"),
-      payload("nics_and_tax_rate"),
+      rates("nics_and_tax_rate"),
       taxpayerName("title"),
       taxpayerName("forename"),
       taxpayerName("surname")
