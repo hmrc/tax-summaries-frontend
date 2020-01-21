@@ -45,7 +45,7 @@
       <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
     } else {
       <h1>
-        <span class="gray heading-medium block-heading">@Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))</span>
+        <span class="gray heading-medium block-heading">@Messages("generic.taxYearPrefix") @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))</span>
         @Html(Messages("ats.nics.tax_and_nics.sa.title"))
       </h1>
       <p>@Messages("ats.nics.tax_and_nics.sa.intro1")</p>
