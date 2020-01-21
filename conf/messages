@@ -120,7 +120,7 @@ ats.nics.tax_and_nics.PAYElastParagraph=In addition to this, your employers paid
 # SA variations
 ats.nics.tax_and_nics.sa.title=Your Income Tax and National Insurance contributions
 ats.nics.tax_and_nics.sa.intro1=This is how much you pay on income above your tax-free amount.
-ats.nics.tax_and_nics.sa.intro2=Your Income Tax and National Insurance is {0}% of your total income.
+ats.nics.tax_and_nics.sa.intro2=Your Income Tax and National Insurance is {0} of your total income.
 
 # View ATS - your income before tax (IND)
 #============================================================
