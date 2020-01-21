@@ -45,18 +45,22 @@
 @includes.taxs_main(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
 
     @helpers.back_link(Messages("generic.back"))
-    <h1 id="index-page-header" class="heading-xlarge">
-        @Messages("ats.index.html.title")<br>
-        @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
-    </h1>
 
     @if(viewModel.isPaye){
+        <h1 id="index-page-header">
+            @Messages("ats.index.html.title")<br>
+            @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+        </h1>
         <p id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
         <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
         <p>@Messages("ats.index.html.tax_calc_description")</p>
         <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_spend_link")">@Messages("ats.index.html.tax_spend_link")</a></h2>
         <p>@Messages("ats.index.html.tax_spend_description")</p>
     } else {
+        <h1 id="index-page-header">
+            <span class="gray heading-medium block-heading">@Messages("generic.taxYearPrefix") @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)</span>
+            @Messages("ats.index.html.title")<br>
+        </h1>
         <p id="index-page-description">@Html(Messages("ats.sa.index.html.lede"))</p>
         <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
         <p>@Messages("ats.sa.index.html.tax_calc_description")</p>

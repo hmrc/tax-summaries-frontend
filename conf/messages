@@ -124,7 +124,7 @@ ats.nics.tax_and_nics.sa.intro2=Your Income Tax and National Insurance is {0} of
 
 # View ATS - your income before tax (IND)
 #============================================================
-ats.income_before_tax.html.title=Taxable income
+ats.income_before_tax.html.title=Your total income
 ats.income_before_tax.html.total=Total taxable income
 ats.income_before_tax.title=Taxable income
 ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
@@ -146,7 +146,7 @@ ats.income_before_tax.table.line7=Benefits from employment
 
 # View ATS - tax free amount (IND)
 #============================================================
-ats.tax_free_amount.html.title=Tax free amount
+ats.tax_free_amount.html.title=Your tax-free amount
 ats.tax_free_amount.subtitle=Your tax-free amount
 
 ats.tax_free_amount.tax_free_amount=Tax free amount
