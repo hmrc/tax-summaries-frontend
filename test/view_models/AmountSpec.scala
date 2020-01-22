@@ -97,4 +97,29 @@ class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
       testAmount.toTwoDecimalString shouldEqual "1,000.01"
     }
   }
+
+  "noLessThanZero" should {
+    "return 0 when amount is 0" in {
+      val testValue: BigDecimal = 0
+      val testCurrency: String = "GBP"
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.noLessThanZero.amount shouldEqual 0
+    }
+
+    "return 0 when amount is less than 0" in {
+      val testValue: BigDecimal = -100
+      val testCurrency: String = "GBP"
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.noLessThanZero.amount shouldEqual 0
+
+    }
+
+    "return the original amount if greater than 0" in {
+      val testValue: BigDecimal = 100
+      val testCurrency: String = "GBP"
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.noLessThanZero.amount shouldEqual 100
+
+    }
+  }
 }

@@ -194,7 +194,7 @@
       <tbody>
         <tr>
           <th scope="row">@Html(Messages("ats.total_income_tax.total_income_tax"))</th>
-          <td id="total-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTax)</td>
+          <td id="total-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTax.noLessThanZero)</td>
         </tr>
         @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
         <tr>

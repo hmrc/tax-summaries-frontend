@@ -17,6 +17,7 @@
 package views
 import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
+import org.jsoup.Jsoup
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.prop.PropertyChecks
@@ -141,6 +142,27 @@ class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants w
       val data = testTotalIncomeTax.copy(savingsTax = SavingsTax(Amount(BigDecimal(100.11), "GBP"), Amount.empty,
         Amount.empty, Amount.empty, Amount.empty, Amount.empty))
       view(data) shouldNot include("total-uk-income-tax-amount")
+    }
+
+    "show zero if total income tax is zero" in {
+      val data = testTotalIncomeTax.copy(totalIncomeTax = Amount(BigDecimal(0), "GBP"))
+      val viewData = view(data)
+      viewData should include ("total-income-tax-amount")
+      Jsoup.parse(viewData).select("#total-income-tax-amount").text() shouldBe "£0"
+    }
+
+    "show zero if total income tax is less than zero" in {
+      val data = testTotalIncomeTax.copy(totalIncomeTax = Amount(BigDecimal(-1000), "GBP"))
+      val viewData = view(data)
+      viewData should include ("total-income-tax-amount")
+      Jsoup.parse(viewData).select("#total-income-tax-amount").text() shouldBe "£0"
+    }
+
+    "show income tax value if total income tax is greater than zero" in {
+      val data = testTotalIncomeTax.copy(totalIncomeTax = Amount(BigDecimal(1000), "GBP"))
+      val viewData = view(data)
+      viewData should include ("total-income-tax-amount")
+      Jsoup.parse(viewData).select("#total-income-tax-amount").text() shouldBe "£1,000"
     }
   }
 }

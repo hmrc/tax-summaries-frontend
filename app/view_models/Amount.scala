@@ -46,6 +46,8 @@ case class Amount(amount: BigDecimal, currency: String) {
   def toHundredthsString = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 
   def unary_-(): Amount = copy(amount = -this.amount)
+
+  def noLessThanZero: Amount = copy(amount = if(this.amount > 0) this.amount else 0)
 }
 
 object Amount {
