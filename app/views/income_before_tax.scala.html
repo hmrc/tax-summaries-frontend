@@ -42,7 +42,7 @@
 
     @if(!viewModel.isPaye){
       <h1>
-        <span class="gray heading-medium block-heading">@Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)</span>
+        <span class="gray heading-medium block-heading">@Messages("generic.taxYearPrefix") @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)</span>
         @Messages("ats.sa.income_before_tax.title")
       </h1>
       <p>@Html(Messages("ats.sa.income_before_tax.intro"))</p>
