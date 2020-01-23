@@ -52,7 +52,7 @@
       <p>@Messages("ats.tax_free_amount.sa.para2")</p>
     }
 
-    @if(!viewModel.totalTaxFree.isZero && !viewModel.taxFreeAllowance.isZero){
+    @if(viewModel.totalTaxFree.isZero && !viewModel.taxFreeAllowance.isZero){
       <table id="tax-free-allowance">
           <thead>
             <tr>
@@ -83,7 +83,7 @@
           <tfoot>
             <tr>
               <th scope="row">@Html(Messages("ats.tax_free_amount.table.sa.total", viewModel.year.toString))</th>
-              @if(!viewModel.youPayTaxOn.isZero){
+              @if(viewModel.youPayTaxOn.isZero){
                 <td id="tax-free-total">@includes.currency_amount(viewModel.totalTaxFree)</td>
               } else {
                 <td id="tax-free-total">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
@@ -105,14 +105,14 @@
         <tbody>
           <tr>
             <td scope="row">@Messages("ats.tax_free_amount.table.incomeBeforeTax")</td>
-            <td id="income_before_tax_amount">@includes.currency_amount(viewModel.totalTaxFree)</td>
+            <td id="income_before_tax_amount">@includes.currency_amount(viewModel.totalIncomeBeforeTax)</td>
           </tr>
           <tr>
             <td scope="row">@Messages("ats.tax_free_amount.table.totalTaxFreeAmount")</td>
-            @if(!viewModel.youPayTaxOn.isZero){
+            @if(viewModel.youPayTaxOn.isZero){
               <td id="total_tax_free">@includes.currency_amount(viewModel.totalTaxFree)</td>
             } else {
-              <td id="total_tax_free">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
+              <td id="total_tax_free">&minus;@includes.currency_amount(viewModel.taxFreeAllowance)</td>
             }
           </tr>
         </tbody>

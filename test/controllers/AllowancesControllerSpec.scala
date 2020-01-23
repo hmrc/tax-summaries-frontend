@@ -101,7 +101,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     document.toString should include("tax-free-allowance")
     document.getElementById("user-info").text() should include("forename surname")
     document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-    document.select("h1").text shouldBe "Tax free amount 6 April 2013 to 5 April 2014"
+    document.select("h1").text shouldBe "Tax Year: 6 April 2013 to 5 April 2014 Your tax-free amount"
   }
 
   "have zero-value fields hidden in the view" in new TestController {
