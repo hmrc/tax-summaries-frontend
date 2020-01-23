@@ -53,6 +53,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     otherAllowances = Amount(300, "GBP"),
     youPayTaxOn = Amount(5000, "GBP"),
     totalTaxFree = Amount(9740, "GBP"),
+    totalIncomeBeforeTax =  Amount(9740, "GBP"),
     title = "Mr",
     forename = "forename",
     surname = "surname"
