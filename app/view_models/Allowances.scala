@@ -26,6 +26,7 @@ case class Allowances(
   otherAllowances: Amount,
   youPayTaxOn: Amount,
   totalTaxFree: Amount,
+  totalIncomeBeforeTax: Amount,
   title: String,
   forename: String,
   surname: String)
