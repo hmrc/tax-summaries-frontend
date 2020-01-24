@@ -82,7 +82,7 @@
         <tfoot>
           <tr>
             <th scope="row">@Html(Messages("ats.tax_free_amount.table.sa.total", viewModel.year.toString))</th>
-            @if(viewModel.youPayTaxOn.isZero){
+            @if(!viewModel.totalTaxFree.isZero){
               <td id="tax-free-total">@includes.currency_amount(viewModel.totalTaxFree)</td>
             } else {
               <td id="tax-free-total">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
