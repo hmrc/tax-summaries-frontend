@@ -158,7 +158,7 @@ ats.total_income_tax.scottish_income_uk_income_tax.table.total=Cyfanswm treth in
 ats.total_income_tax.savings_income_tax=Treth incwm ar gynilion
 ats.total_income_tax.savings_income_tax.table.lower=Cyfradd sylfaenol ({0} ar {1})
 ats.total_income_tax.savings_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
-ats.total_income_tax.savings_income_tax.table.additional=Cyfradd uchaf ({0} ar {1})
+ats.total_income_tax.savings_income_tax.table.additional=Cyfradd ychwanegol ({0} ar {1})
 
 # View ATS - capital gains tax (IND)
 #============================================================
