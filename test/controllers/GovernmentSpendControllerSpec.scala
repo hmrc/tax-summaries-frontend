@@ -114,7 +114,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in new TestController {
       when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
@@ -248,7 +248,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
     }

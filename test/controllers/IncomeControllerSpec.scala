@@ -88,7 +88,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in new TestController {
 
       when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
 
@@ -168,7 +168,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"

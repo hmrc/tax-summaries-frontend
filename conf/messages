@@ -33,11 +33,11 @@ site.back=Back
 breadcrumbs.yta.home=Home
 
 breadcrumbs.taxs.select_tax_year=Select the tax year
-breadcrumbs.taxs.home=Your annual tax summary
+breadcrumbs.taxs.home=Your Annual Tax Summary
 breadcrumbs.taxs.noauth=Not authorised
 breadcrumbs.taxs.no_ats=No ATS available
 breadcrumbs.taxs.no_ats_error=Technical Difficulties
-breadcrumbs.taxs.index=Your annual tax summary
+breadcrumbs.taxs.index=Your Annual Tax Summary
 breadcrumbs.taxs.nics=Your Income Tax and National Insurance
 breadcrumbs.taxs.summary=Your income and taxes
 breadcrumbs.taxs.treasury_spending=Your taxes and public spending
@@ -58,7 +58,7 @@ ats.select_tax_year.required=Select an option for the tax year
 
 # View ATS - Landing page
 #============================================================
-ats.index.html.title=Your annual tax summary
+ats.index.html.title=Your Annual Tax Summary
 ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
 ats.index.html.tax_calc_link=Your income and taxes
 ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount, and how much tax and National Insurance you have paid.
@@ -273,15 +273,15 @@ generic.error.try.later=Try again later.
 # No ATS - ats unavailable page
 #============================================================
 no.ats.html.title=No ATS
-no.ats.title=Your annual tax summary
-no.ats.line1=You had no taxable income or capital gains this year so you do not have an annual tax summary.
-no.ats.line2=If you had taxable income, your annual tax summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
+no.ats.title=Your Annual Tax Summary
+no.ats.line1=You had no taxable income or capital gains this year so you do not have an Annual Tax Summary.
+no.ats.line2=If you had taxable income, your Annual Tax Summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
 
 # Not authorised page
 #============================================================
 not.authorised.line1=You are not authorised to access Annual Tax Summaries.
-client_agent.notice.line1=The version of the annual tax summary for agents to view their client’s details is not available yet. This version will be coming soon.
-client_agent.notice.line2=The annual tax summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
+client_agent.notice.line1=The version of the Annual Tax Summary for agents to view their client’s details is not available yet. This version will be coming soon.
+client_agent.notice.line2=The Annual Tax Summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
 
 # Token error page
 #============================================================
@@ -298,7 +298,7 @@ global.page.not.found.error.title=Page not found
 global.page.not.found.error.heading=Page not found
 global.page.not.found.error.check.web.address.correct=If you typed the web address, check it is correct.
 global.page.not.found.error.check.web.address.full=If you pasted the web address, check you copied the entire address.
-global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your annual tax summary.
+global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your Annual Tax Summary.
 global.page.not.found.error.contact.link.text=contact the Self Assessment helpline
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
