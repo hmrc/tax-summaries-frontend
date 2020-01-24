@@ -32,8 +32,10 @@
             <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
         </div>
     }
-    @if(!actingAsAttorney.isDefined){
-        <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+    @if(!viewModel.isPaye) {
+        @if(!actingAsAttorney.isDefined){
+            <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+        }
     }
 
 }
@@ -45,7 +47,6 @@
 @includes.taxs_main(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
 
     @helpers.back_link(Messages("generic.back"))
-
     @if(viewModel.isPaye){
         <h1 id="index-page-header">
             @Messages("ats.index.html.title")<br>

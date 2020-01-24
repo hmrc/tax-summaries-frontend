@@ -36,8 +36,10 @@
             <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
         </div>
     }
-    @if(!actingAsAttorney.isDefined){
-        <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
+    @if(!viewModel.isPaye) {
+        @if(!actingAsAttorney.isDefined){
+            <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
+        }
     }
 
 

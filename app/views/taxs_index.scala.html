@@ -35,6 +35,7 @@
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@atsList.forename @atsList.surname</strong> <br>@Html(Messages("generic.utr")) @atsList.utr</p>
     }
+
 }
 
 @includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
