@@ -78,7 +78,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       val result =  Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.income_before_tax.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(Messages("ats.sa.income_before_tax.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in new TestController {
