@@ -47,8 +47,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the landing page" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -72,7 +72,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
@@ -95,7 +95,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
@@ -105,8 +105,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the nics page" in  {
 
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.nics(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -118,7 +118,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
@@ -143,8 +143,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the summaries page" in  {
 
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.summary(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -157,14 +157,14 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your income and taxes</strong>")
     }
 
     "show the 'exit tax summaries' link on the tax free amount page" in  {
 
-      val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, amount, "", "", "")
+      val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, amount, amount, "", "", "")
       val result = views.html.tax_free_amount(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -176,7 +176,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
@@ -202,7 +202,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
@@ -234,7 +234,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your taxes and public spending</strong>")
     }
@@ -260,8 +260,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "contain GA event attribute on the landing page" in  {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, utr, amount, amount,  amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -273,8 +273,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'back to the Portal' link containing the client's UTR" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 

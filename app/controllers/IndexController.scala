@@ -90,9 +90,9 @@ trait IndexController extends TaxsController {
     }
 
   override def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    (request.saUtr, request.nino) match {
-      case (None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + ApplicationConfig.payeTaxYear))
-      case (Some(_), _)   =>  showAvailableTaxYears(request)
+    (request.saUtr, request.agentRef, request.nino) match {
+      case (None, None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + ApplicationConfig.payeTaxYear))
+      case (_, _, _)   =>  showAvailableTaxYears(request)
     }
   }
 

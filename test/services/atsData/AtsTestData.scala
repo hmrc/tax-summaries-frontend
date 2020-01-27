@@ -36,7 +36,8 @@ object AtsTestData {
             "marriage_allowance_transferred_amount" -> Amount(200, "GBP"),
             "other_allowances_amount" -> Amount(300, "GBP"),
             "you_pay_tax_on" -> Amount(400, "GBP"),
-            "total_tax_free_amount" -> Amount(500, "GBP")
+            "total_tax_free_amount" -> Amount(500, "GBP"),
+            "total_income_before_tax" -> Amount(600, "GBP")
           )
         ),
         None,
@@ -244,6 +245,7 @@ object AtsTestData {
         Some(
           Map(
           "employee_nic_amount" -> Amount(100, "GBP"),
+            "employer_nic_amount" -> Amount(150, "GBP"),
           "total_income_tax_and_nics" -> Amount(200, "GBP"),
           "your_total_tax" -> Amount(300, "GBP"),
           "personal_tax_free_amount" -> Amount(400, "GBP"),
@@ -254,7 +256,8 @@ object AtsTestData {
           "taxable_gains" -> Amount(800, "GBP"),
           "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
           "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP"),
-            "income_after_tax_and_nics" -> Amount(1100, "GBP")
+            "income_after_tax_and_nics" -> Amount(1100, "GBP"),
+            "nics_and_tax_rate_amount" -> Amount(20, "PERCENT")
           )
         ),
         Some(

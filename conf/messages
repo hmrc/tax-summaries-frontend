@@ -15,6 +15,7 @@ generic.english=English
 generic.welsh=Cymraeg
 generic.acting_for=You are acting for
 generic.name_not_defined=Name Not Defined
+generic.taxYearPrefix=Tax Year:
 generic.tax_year_heading=6 April {0} to 5 April {1}
 generic.to_from=: {0} to {1}
 generic.sign_out=Sign out
@@ -32,11 +33,11 @@ site.back=Back
 breadcrumbs.yta.home=Home
 
 breadcrumbs.taxs.select_tax_year=Select the tax year
-breadcrumbs.taxs.home=Your annual tax summary
+breadcrumbs.taxs.home=Your Annual Tax Summary
 breadcrumbs.taxs.noauth=Not authorised
 breadcrumbs.taxs.no_ats=No ATS available
 breadcrumbs.taxs.no_ats_error=Technical Difficulties
-breadcrumbs.taxs.index=Your annual tax summary
+breadcrumbs.taxs.index=Your Annual Tax Summary
 breadcrumbs.taxs.nics=Your Income Tax and National Insurance
 breadcrumbs.taxs.summary=Your income and taxes
 breadcrumbs.taxs.treasury_spending=Your taxes and public spending
@@ -57,7 +58,7 @@ ats.select_tax_year.required=Select an option for the tax year
 
 # View ATS - Landing page
 #============================================================
-ats.index.html.title=Your annual tax summary
+ats.index.html.title=Your Annual Tax Summary
 ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
 ats.index.html.tax_calc_link=Your income and taxes
 ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount, and how much tax and National Insurance you have paid.
@@ -74,17 +75,17 @@ ats.sa.index.html.tax_spend_description=This shows a breakdown of how your taxes
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.total_income.sa.title=Total income
 ats.summary.total_income.paye.title=Taxable income
 ats.summary.total_income.link=Your taxable income
+ats.summary.nicsheading=Income Tax and National Insurance
 ats.summary.total_income.description=This is your total taxable income for the year.
 ats.summary.tax_free.title=Tax-free amount
 ats.summary.tax_free.link=Your tax-free amount
-ats.summary.tax_free.description=This is the amount you recieved without paying tax.
+ats.summary.tax_free.description=This is the amount you received without paying tax.
 
 ats.summary.tax_and_nics.title=Income Tax and National Insurance
 ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
-ats.summary.tax_and_nics.description=This is a percentage of your taxable income. For every £1 of income, you paid p in Income Tax and National Insurance contributions.
+ats.summary.tax_and_nics.description=This is {0}% of your taxable income. For every £1 of income, you paid {0}p in Income Tax and National Insurance contributions.
 ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
 ats.summary.capital_gains.title=Capital Gains Tax
 ats.summary.capital_gains.link=Your Capital Gains Tax
@@ -98,17 +99,32 @@ ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Inc
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
+# SA variations
+ats.summary.total_income.sa.intro=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
+ats.summary.total_income.sa.title=Total income
+ats.summary.total_income.sa.description=This is your total income for the year.
+ats.summary.total_income.sa.link=Your total income
+ats.summary.tax_free.sa.description=This is how much you can earn before you start paying Income Tax.
+ats.summary.tax_and_nics.sa.description=This is how much you pay on all your income above your tax-free amount.
+
+
 # View NICS page
 #=============================================================
-ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
+ats.nics.tax_and_nics.title=Income Tax and National Insurance contributions
 ats.nics.tax_and_nics.lede=This shows how your tax was calculated.
 ats.nics.tax_and_nics.income_tax=Income Tax
 ats.nics.tax_and_nics_explained=National Insurance
 ats.nics.tax_and_nics.total=Income Tax and National Insurance
+ats.nics.tax_and_nics.PAYElastParagraph=In addition to this, your employers paid £{0} in National Insurance contributions.
+
+# SA variations
+ats.nics.tax_and_nics.sa.title=Your Income Tax and National Insurance contributions
+ats.nics.tax_and_nics.sa.intro1=This is how much you pay on income above your tax-free amount.
+ats.nics.tax_and_nics.sa.intro2=Your Income Tax and National Insurance is {0} of your total income.
 
 # View ATS - your income before tax (IND)
 #============================================================
-ats.income_before_tax.html.title=Taxable income
+ats.income_before_tax.html.title=Your total income
 ats.income_before_tax.html.total=Total taxable income
 ats.income_before_tax.title=Taxable income
 ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
@@ -130,14 +146,26 @@ ats.income_before_tax.table.line7=Benefits from employment
 
 # View ATS - tax free amount (IND)
 #============================================================
-ats.tax_free_amount.html.title=Tax free amount
+ats.tax_free_amount.html.title=Your tax-free amount
 ats.tax_free_amount.subtitle=Your tax-free amount
 
 ats.tax_free_amount.tax_free_amount=Tax free amount
 ats.tax_free_amount.table.line1=Personal Allowance
 ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
 ats.tax_free_amount.table.line3=Less Marriage Allowance Transferred
-ats.tax_free_amount.table.total=Total tax-free amount
+ats.tax_free_amount.table.incomeBeforeTax=Income before tax
+
+ats.tax_free_amount.table.totalTaxFreeAmount=Less your total tax free amount
+
+ats.tax_free_amount.table.total=You pay tax on
+
+# SA variations
+ats.tax_free_amount.sa.tax_free_amount=Your tax-free amount
+ats.tax_free_amount.sa.intro=This is how much you can earn before you start paying Income Tax.
+ats.tax_free_amount.sa.para2=This includes your Personal Allowance and any other allowances, deductions and expenses.
+
+ats.tax_free_amount.table.sa.total=Total tax-free amount
+
 
 # View ATS - total income tax (IND)
 #============================================================
@@ -245,15 +273,15 @@ generic.error.try.later=Try again later.
 # No ATS - ats unavailable page
 #============================================================
 no.ats.html.title=No ATS
-no.ats.title=Your annual tax summary
-no.ats.line1=You had no taxable income or capital gains this year so you do not have an annual tax summary.
-no.ats.line2=If you had taxable income, your annual tax summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
+no.ats.title=Your Annual Tax Summary
+no.ats.line1=You had no taxable income or capital gains this year so you do not have an Annual Tax Summary.
+no.ats.line2=If you had taxable income, your Annual Tax Summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
 
 # Not authorised page
 #============================================================
 not.authorised.line1=You are not authorised to access Annual Tax Summaries.
-client_agent.notice.line1=The version of the annual tax summary for agents to view their client’s details is not available yet. This version will be coming soon.
-client_agent.notice.line2=The annual tax summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
+client_agent.notice.line1=The version of the Annual Tax Summary for agents to view their client’s details is not available yet. This version will be coming soon.
+client_agent.notice.line2=The Annual Tax Summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
 
 # Token error page
 #============================================================
@@ -270,7 +298,7 @@ global.page.not.found.error.title=Page not found
 global.page.not.found.error.heading=Page not found
 global.page.not.found.error.check.web.address.correct=If you typed the web address, check it is correct.
 global.page.not.found.error.check.web.address.full=If you pasted the web address, check you copied the entire address.
-global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your annual tax summary.
+global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your Annual Tax Summary.
 global.page.not.found.error.contact.link.text=contact the Self Assessment helpline
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 

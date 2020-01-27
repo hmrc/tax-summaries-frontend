@@ -38,22 +38,25 @@ trait IncomeService {
   }
 
   private[services] def createIncomeConverter(atsData: AtsData): IncomeBeforeTax = {
-      val incomeData: DataHolder = atsData.income_data.get
-      val taxPayerData: UserData = atsData.taxPayerData.getOrElse(UserData(Some(Map("title"-> "Mr", "forename" -> "Joe", "surname" -> "Bloggs"))))
-      val emptyAmount = Amount(0, "GBP")
+    def payload(key: String): Amount =
+      atsData.income_data.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
+
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+
       IncomeBeforeTax(atsData.taxYear,
         atsData.utr.getOrElse(""),
-        incomeData.payload.get.getOrElse("self_employment_income", emptyAmount),
-        incomeData.payload.get("income_from_employment"),
-        incomeData.payload.get("state_pension"),
-        incomeData.payload.get("other_pension_income"),
-        incomeData.payload.get.getOrElse("taxable_state_benefits", emptyAmount),
-        incomeData.payload.get("other_income"),
-        incomeData.payload.get.getOrElse("benefits_from_employment", emptyAmount),
-        incomeData.payload.get("total_income_before_tax"),
-        taxPayerData.taxpayer_name.get("title"),
-        taxPayerData.taxpayer_name.get("forename"),
-        taxPayerData.taxpayer_name.get("surname")
+        payload("self_employment_income"),
+        payload("income_from_employment"),
+        payload("state_pension"),
+        payload("other_pension_income"),
+        payload("taxable_state_benefits"),
+        payload("other_income"),
+        payload("benefits_from_employment"),
+        payload("total_income_before_tax"),
+        taxpayerName("title"),
+        taxpayerName("forename"),
+        taxpayerName("surname")
       )
     }
 }

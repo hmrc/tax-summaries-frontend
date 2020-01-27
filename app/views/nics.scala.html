@@ -30,18 +30,29 @@
       <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
     </div>
   }
-  @if(!actingAsAttorney.isDefined){
-    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+  @if(!viewModel.isPaye) {
+    @if(!actingAsAttorney.isDefined){
+      <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+    }
   }
 }
 
 @includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
-    <h1>
-        @Html(Messages("ats.nics.tax_and_nics.title"))<br>
-        @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-    </h1>
-    <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+    @if(viewModel.isPaye){
+      <h1>
+          @Html(Messages("ats.nics.tax_and_nics.title"))<br>
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+      </h1>
+      <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+    } else {
+      <h1>
+        <span class="gray heading-medium block-heading">@Messages("generic.taxYearPrefix") @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))</span>
+        @Html(Messages("ats.nics.tax_and_nics.sa.title"))
+      </h1>
+      <p>@Messages("ats.nics.tax_and_nics.sa.intro1")</p>
+      <p>@Messages("ats.nics.tax_and_nics.sa.intro2", viewModel.nicsAndTaxRate.percent)</p>
+    }
 
     <table id="total-income-tax">
       <thead>
@@ -73,6 +84,9 @@
       </tfoot>
     </table>
 
+    @if(viewModel.isPaye){
+      <p>@Messages(("ats.nics.tax_and_nics.PAYElastParagraph"), viewModel.employerNicAmount)</p>
+    }
 
     <div class="back">
       <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>

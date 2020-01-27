@@ -40,32 +40,36 @@ trait SummaryService {
 
   private[services] def summaryConverter(atsData: AtsData): Summary = {
 
-    val emptyAmount = Amount(0.0, "GBP")
-    val emptyRate = Rate("0")
-    val emptyUserData = UserData(Some(Map("title" -> "", "forename" -> "", "surname" ->" ")))
+    def payload(key: String): Amount =
+      atsData.summary_data.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
 
-    val summaryData: DataHolder = atsData.summary_data.get
-    val taxPayerData: UserData  = atsData.taxPayerData.getOrElse(emptyUserData)
-    val rates: Map[String, Rate] = summaryData.rates.getOrElse(Map())
+    def rates(key: String): Rate =
+      atsData.summary_data.flatMap(_.rates.flatMap(_.get(key))).getOrElse(Rate.empty)
+
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+
     Summary(atsData.taxYear,
       atsData.utr.getOrElse(""),
-      summaryData.payload.get.getOrElse("employee_nic_amount", emptyAmount),
-      summaryData.payload.get.getOrElse("total_income_tax_and_nics", emptyAmount),
-      summaryData.payload.get.getOrElse("your_total_tax", emptyAmount),
-      summaryData.payload.get.getOrElse("personal_tax_free_amount", emptyAmount),
-      summaryData.payload.get.getOrElse("total_tax_free_amount", emptyAmount),
-      summaryData.payload.get.getOrElse("total_income_before_tax", emptyAmount),
-      summaryData.payload.get.getOrElse("total_income_tax", emptyAmount),
-      summaryData.payload.get.getOrElse("total_cg_tax", emptyAmount),
-      summaryData.payload.get.getOrElse("taxable_gains", emptyAmount),
-      summaryData.payload.get.getOrElse("cg_tax_per_currency_unit", emptyAmount),
-      summaryData.payload.get.getOrElse("nics_and_tax_per_currency_unit", emptyAmount),
-      summaryData.payload.get.getOrElse("income_after_tax_and_nics", emptyAmount),
-      rates.getOrElse("total_cg_tax_rate", emptyRate),
-      rates.getOrElse("nics_and_tax_rate", emptyRate),
-      taxPayerData.taxpayer_name.get("title"),
-      taxPayerData.taxpayer_name.get("forename"),
-      taxPayerData.taxpayer_name.get("surname")
+      payload("employee_nic_amount"),
+      payload("employer_nic_amount"),
+      payload("total_income_tax_and_nics"),
+      payload("your_total_tax"),
+      payload("personal_tax_free_amount"),
+      payload("total_tax_free_amount"),
+      payload("total_income_before_tax"),
+      payload("total_income_tax"),
+      payload("total_cg_tax"),
+      payload("taxable_gains"),
+      payload("cg_tax_per_currency_unit"),
+      payload("nics_and_tax_per_currency_unit"),
+      payload("income_after_tax_and_nics"),
+      payload("nics_and_tax_rate_amount"),
+      rates("total_cg_tax_rate"),
+      rates("nics_and_tax_rate"),
+      taxpayerName("title"),
+      taxpayerName("forename"),
+      taxpayerName("surname")
     )
   }
 }
