@@ -5,6 +5,8 @@ import play.sbt.routes.RoutesKeys.routesGenerator
 import uk.gov.hmrc._
 import DefaultBuildSettings._
 
+This is a test
+
 val appName = "tax-summaries-frontend"
 
 lazy val plugins : Seq[Plugins] = Seq(
