@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package services.paye
 
 import java.util.Date
 
@@ -22,14 +22,15 @@ import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
+import services.{AgentToken, AuditService, AuditTypes}
+import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
 import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
-object AtsService extends AtsService {
+object PayeAtsService extends PayeAtsService {
   override val middleConnector = MiddleConnector
   override val dataCache = DataCacheConnector
   override val auditService = AuditService
@@ -37,7 +38,7 @@ object AtsService extends AtsService {
   override val accountUtils = AccountUtils
 }
 
-trait AtsService {
+trait PayeAtsService {
   def middleConnector: MiddleConnector
   def dataCache: DataCacheConnector
   def auditService: AuditService
@@ -65,6 +66,9 @@ trait AtsService {
       case Some(data) =>
         if (accountUtils.isAgent(request)) {
           fetchAgentInfo(data, taxYear)
+        }
+        else if(request.nino.isDefined ){
+             Future.successful(data)
         } else {
           getAtsAndStore(taxYear)
         }
@@ -94,12 +98,15 @@ trait AtsService {
 
   private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] = {
     val account = utils.AccountUtils.getAccount(request)
-    val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     val gotData = (account: @unchecked) match {
-      case agentUar: Uar => middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
+      case agentUar: Uar => {
+        val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
+        middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
+      }
       case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
+      case individualNino: Nino => middleConnector.connectToPayeAts(individualNino, taxYear)
     }
 
     gotData flatMap { data =>
@@ -139,6 +146,16 @@ trait AtsService {
           "taxYear" -> data.taxYear.toString,
           "time" -> new Date().toString
         ))
+      case _: Nino =>
+        val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
+        auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
+          "userId" -> request.userId,
+          "nino" -> data.nino.get,
+          "userType" -> userType,
+          "taxYear" -> data.taxYear.toString,
+          "time" -> new Date().toString
+        ))
+
     }
   }
 }

@@ -85,15 +85,16 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
     "show the index page in welsh language" in {
       val amount = new Amount(0.00, "GBP")
       val rate = new Rate("5")
-      val fakeViewModel = Summary(2014, "1123", amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, "1123", amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
       val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
-      document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn."
+      document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +
+        "a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn."
     }
 
     "show the treasury spending page in welsh language" in {
@@ -123,8 +124,8 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val rate = new Rate("5")
       val language = Lang("cy-GB")
       implicit val messages = Messages(language, messagesApi)
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
       val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar(testUar)), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
       val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever)

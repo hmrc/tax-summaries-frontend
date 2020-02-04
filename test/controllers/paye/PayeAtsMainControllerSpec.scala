@@ -28,10 +28,12 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.domain.{Nino, SaUtr}
+import services.paye.PayeSummaryService
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
+import view_models.paye.PayeSummary
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
 
 import scala.concurrent.Future
@@ -41,7 +43,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
-   val baseModel = Summary(
+   val baseModel = PayeSummary(
     year = 2014,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
@@ -68,7 +70,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   val badRequest = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET","?taxYear=20145"))
 
   trait TestController extends PayeAtsMainController {
-    override lazy val summaryService = mock[SummaryService]
+    override lazy val summaryService = mock[PayeSummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
     override val authAction: AuthAction = FakeAuthAction
@@ -110,13 +112,11 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
 
       status(result) shouldBe 200
       document.getElementById("tax-calc-link").text shouldBe "Your income and taxes"
-      document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
-      document.getElementById("index-page-header").text shouldBe "Tax Year: 6 April 2013 to 5 April 2014 Your Annual Tax Summary"
-      document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
+      document.getElementById("tax-services-link").text shouldBe "How your tax was spent"
+      document.getElementById("index-page-header").text shouldBe "Your Annual Tax Summary 6 April 2013 to 5 April 2014"
+  // PAB    document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
       document.getElementById("tax-calc-link").tagName shouldBe "a"
       document.getElementById("tax-services-link").tagName shouldBe "a"
-      document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
     }
 
     "display the right years" in new TestController {

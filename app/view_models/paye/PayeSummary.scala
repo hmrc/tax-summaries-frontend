@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package view_models
+package view_models.paye
 
 import utils.{GenericViewModel, TextGenerator}
+import view_models.{Amount, Rate}
 
-case class Summary(
+case class PayeSummary(
   year: Int,
   utr: String,
   employeeNicAmount: Amount,
+  employerNicAmount: Amount,
   totalIncomeTaxAndNics: Amount,
   yourTotalTax: Amount,
   totalTaxFree: Amount,
@@ -32,12 +34,16 @@ case class Summary(
   taxableGains: Amount,
   cgTaxPerCurrencyUnit: Amount,
   nicsAndTaxPerCurrencyUnit: Amount,
+  incomeAfterTaxAndNics: Amount,
+  nicsAndTaxRateAmount: Amount,
   totalCgTaxRate: Rate,
   nicsAndTaxRate: Rate,
   title: String,
   forename: String,
   surname: String)
     extends GenericViewModel {
+  
+  def isPaye: Boolean = true
 
   def taxYearInterval = taxYearFrom + "-" + taxYearTo.substring(2)
   def taxYearIntervalTo = taxYearFrom + " to " + taxYearTo

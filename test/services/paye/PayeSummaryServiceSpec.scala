@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package services.paye
 
 import controllers.auth.AuthenticatedRequest
 import models.AtsData
@@ -36,8 +36,10 @@ import view_models._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import view_models.paye.PayeSummary
 
-class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with MockFactory{
+
+class PayeSummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with MockFactory{
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -48,9 +50,8 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
     )
   )
 
-  class TestService extends SummaryService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
+  class TestService extends PayeSummaryService with MockitoSugar {
+    override lazy val atsService: PayeAtsService = mock[PayeAtsService]
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
     val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
@@ -71,10 +72,11 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
       val atsData = AtsTestData.summaryData
       val result = summaryConverter(atsData)
 
-      result shouldBe Summary(
+      result shouldBe PayeSummary(
         2019,
         "1111111111",
         Amount(100, "GBP"),
+        Amount(150, "GBP"),
         Amount(200, "GBP"),
         Amount(300, "GBP"),
         Amount(400, "GBP"),
@@ -85,6 +87,8 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
         Amount(800, "GBP"),
         Amount(900, "GBP"),
         Amount(1000, "GBP"),
+        Amount(1100, "GBP"),
+        Amount(20, "PERCENT"),
         Rate("10%"),
         Rate("20%"),
         "Mr",

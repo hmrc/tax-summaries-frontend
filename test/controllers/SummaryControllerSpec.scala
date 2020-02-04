@@ -46,7 +46,6 @@ object SummaryControllerSpec {
     year = 2014,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
-    employerNicAmount = Amount(1300, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
     yourTotalTax = Amount(1800, "GBP"),
     totalTaxFree = Amount(9440, "GBP"),
@@ -57,10 +56,8 @@ object SummaryControllerSpec {
     taxableGains = Amount(20000, "GBP"),
     cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
     nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
-    nicsAndTaxRateAmount = Amount(0.5678, "GBP"),
     totalCgTaxRate = Rate("12.34%"),
     nicsAndTaxRate = Rate("56.78%"),
-    incomeAfterTaxAndNics = Amount(0.5678, "GBP"),
     title = "Mr",
     forename = "forename",
     surname = "surname"

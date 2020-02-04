@@ -47,8 +47,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the landing page" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -105,8 +105,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the nics page" in  {
 
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.nics(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -143,8 +143,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'exit tax summaries' link on the summaries page" in  {
 
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.summary(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -260,8 +260,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "contain GA event attribute on the landing page" in  {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount,  amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -273,8 +273,8 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
     "show the 'back to the Portal' link containing the client's UTR" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
+        amount, amount, amount, amount, amount, rate, rate, "", "", "")
       val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 

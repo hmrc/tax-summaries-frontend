@@ -21,19 +21,20 @@ import controllers.TaxYearRequest
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
-import play.api.mvc.Result
-import services.{AuditService, SummaryService}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.GenericViewModel
-import view_models.Summary
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Result
+import services.AuditService
+import services.paye.PayeSummaryService
+import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils.GenericViewModel
+import view_models.paye.PayeSummary
 
 import scala.concurrent.Future
 
 object PayeAtsMainController extends PayeAtsMainController {
 
-  override val summaryService = SummaryService
+  override val summaryService = PayeSummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]
@@ -45,13 +46,13 @@ trait PayeAtsMainController extends TaxYearRequest {
 
   val authAction: AuthAction
 
-  def summaryService: SummaryService
+  def summaryService: PayeSummaryService
 
   def authorisedAtsMain = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = Summary
+  type ViewModel = PayeSummary
 
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
