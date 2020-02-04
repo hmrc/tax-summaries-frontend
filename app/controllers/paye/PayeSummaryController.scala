@@ -17,45 +17,47 @@
 package controllers.paye
 
 import config.AppFormPartialRetriever
+import controllers.TaxYearRequest
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Result
-import services.{AuditService, IncomeService}
+import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
-import view_models.IncomeBeforeTax
+import view_models.Summary
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-object IncomeController extends IncomeController {
-  override val incomeService = IncomeService
+object PayeSummaryController extends PayeSummaryController {
+  override val summaryService = SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]
 }
 
-trait IncomeController extends TaxYearRequest {
+trait PayeSummaryController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
   val authAction: AuthAction
 
-  def incomeService: IncomeService
+  def summaryService: SummaryService
 
-  def authorisedIncomeBeforeTax = authAction.async {
+  def authorisedSummaries = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = IncomeBeforeTax
+  type ViewModel = Summary
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModelWithTaxYear(incomeService.getIncomeData(_))
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_summary(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }
+

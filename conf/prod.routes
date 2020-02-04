@@ -1,4 +1,5 @@
 ->    /template                  template.Routes
 ->    /annual-tax-summary        app.Routes
+->    /paye/annual-tax-summary   app.paye.Routes
 ->    /                          health.Routes
 GET   /admin/metrics             @com.kenshoo.play.metrics.MetricsController.metrics
