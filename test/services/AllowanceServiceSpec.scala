@@ -79,6 +79,8 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
         Amount(200, "GBP"),
         Amount(300, "GBP"),
         Amount(400, "GBP"),
+        Amount(500, "GBP"),
+        Amount(600, "GBP"),
         "Mr",
         "John",
         "Smith"

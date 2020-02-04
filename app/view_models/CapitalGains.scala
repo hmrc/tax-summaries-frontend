@@ -47,7 +47,6 @@ case class CapitalGains(
   forename: String,
   surname: String)
     extends GenericViewModel {
-
   def taxYearFrom = (taxYear - 1).toString
   def taxYearTo = taxYear.toString
 

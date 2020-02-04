@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.paye
 
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
@@ -28,24 +28,46 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import view_models.NoATSViewModel
+import view_models.{Amount, NoATSViewModel, Rate, Summary}
 
 import scala.concurrent.Future
 
-class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
-  val baseModel = SummaryControllerSpec.baseModel
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+   val baseModel = Summary(
+    year = 2014,
+    utr = testUtr,
+    employeeNicAmount = Amount(1200, "GBP"),
+    employerNicAmount = Amount(1300, "GBP"),
+    totalIncomeTaxAndNics = Amount(1400, "GBP"),
+    yourTotalTax = Amount(1800, "GBP"),
+    totalTaxFree = Amount(9440, "GBP"),
+    totalTaxFreeAllowance = Amount(9740, "GBP"),
+    yourIncomeBeforeTax = Amount(11600, "GBP"),
+    totalIncomeTaxAmount = Amount(372, "GBP"),
+    totalCapitalGainsTax = Amount(5500, "GBP"),
+    taxableGains = Amount(20000, "GBP"),
+    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
+    nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
+    nicsAndTaxRateAmount = Amount(0.5678, "GBP"),
+    totalCgTaxRate = Rate("12.34%"),
+    nicsAndTaxRate = Rate("56.78%"),
+    incomeAfterTaxAndNics = Amount(0.5678, "GBP"),
+    title = "Mr",
+    forename = "forename",
+    surname = "surname"
+  )
+  val request = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET","?taxYear=20145"))
 
-  trait TestController extends AtsMainController {
+  trait TestController extends PayeAtsMainController {
     override lazy val summaryService = mock[SummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
@@ -77,7 +99,7 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
       val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts().url
 
     }
 

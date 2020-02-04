@@ -59,6 +59,12 @@ ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm ei
 ats.index.html.tax_spend_link=Eich trethi a gwariant cyhoeddus
 ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
 
+# SA variations
+ats.sa.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn.
+ats.sa.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich swm yn rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
+ats.sa.index.html.tax_spend_link=Eich trethi a gwariant cyhoeddus
+ats.sa.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
+
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Eich incwm a’ch trethi
@@ -86,6 +92,15 @@ ats.summary.taxable_income.your_total_tax.msg_binary=Eich {0} ac {1}.
 ats.summary.taxable_income.your_total_tax.msg_unary=Eich {0}.
 
 
+# SA variations
+ats.summary.total_income.sa.intro=Mae hwn yn dangos dadansoddiad o’ch incwm, swm yn rhydd o dreth, a threthi rydych wedi eu talu neu y byddwch yn eu talu
+ats.summary.total_income.sa.title=Cyfanswm yr incwm
+ats.summary.total_income.sa.description=Dyma gyfanswm eich incwm am y flwyddyn.
+ats.summary.total_income.sa.link=Cyfanswm eich incwm
+ats.summary.tax_free.sa.description=Dyma faint y gallwch ei ennill cyn i chi ddechrau talu Treth Incwm.
+ats.summary.tax_and_nics.sa.description=Dyma faint y talwch ar eich holl incwm uwchlaw eich swm yn rhydd o dreth.
+
+
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Treth Incwm a chyfraniadau Yswiriant Gwladol
@@ -95,11 +110,21 @@ ats.nics.tax_and_nics.income_tax=Treth Incwm
 ats.nics.tax_and_nics_explained=Yswiriant Gwladol
 ats.nics.tax_and_nics.total=Treth Incwm ac Yswiriant Gwladol
 
+# SA variations
+ats.nics.tax_and_nics.sa.title=Treth Incwm a chyfraniadau Yswiriant Gwladol
+ats.nics.tax_and_nics.sa.intro1=Dyma faint y talwch ar incwm uwchlaw eich swm yn rhydd o dreth.
+ats.nics.tax_and_nics.sa.intro2=Mae eich Treth Incwm ac Yswiriant Gwladol yn {0}% o gyfanswm eich incwm.
+
+
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Cyfanswm yr incwm
 ats.income_before_tax.title=Cyfanswm yr incwm
 ats.income_before_tax.intro=Dyma gyfanswm eich incwm am y flwyddyn.
+
+# SA variations
+ats.sa.income_before_tax.title=Cyfanswm yr incwm
+ats.sa.income_before_tax.intro=Dyma gyfanswm eich incwm am y flwyddyn.
 
 ats.income_before_tax.table_header=Ffynhonnell yr incwm
 ats.income_before_tax.table.line1=Hunangyflogaeth

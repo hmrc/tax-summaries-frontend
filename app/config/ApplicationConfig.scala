@@ -51,7 +51,15 @@ trait ApplicationConfig {
 
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
 
+
+
   def getConf(key: String) = getConfString(key, throw new Exception(s"Could not find config '$key'"))
+
+  // PAYE tax year
+  lazy val payeTaxYear =  getConf("paye-tax-year")
+
+  // SA Auth Only
+  lazy val  saAuthOnly = getConfBool("sa-auth-only", throw new Exception(s"Could not find config sa-auth-only"))
 
   // Services url config
   private val contactHost = baseUrl("contact-frontend")

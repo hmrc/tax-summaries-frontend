@@ -27,6 +27,7 @@ object AtsTestData {
     None,
     None,
     None,
+    None,
     Some(
       DataHolder(
         Some(
@@ -34,7 +35,9 @@ object AtsTestData {
             "personal_tax_free_amount" -> Amount(100, "GBP"),
             "marriage_allowance_transferred_amount" -> Amount(200, "GBP"),
             "other_allowances_amount" -> Amount(300, "GBP"),
-            "total_tax_free_amount" -> Amount(400, "GBP")
+            "you_pay_tax_on" -> Amount(400, "GBP"),
+            "total_tax_free_amount" -> Amount(500, "GBP"),
+            "total_income_before_tax" -> Amount(600, "GBP")
           )
         ),
         None,
@@ -60,6 +63,7 @@ object AtsTestData {
   val incomeData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     None,
     None,
     Some(
@@ -100,6 +104,7 @@ object AtsTestData {
   val totalIncomeTaxData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     Some(
       DataHolder(
         Some(
@@ -139,7 +144,9 @@ object AtsTestData {
             "savings_additional_rate_tax" -> Amount.gbp(3300),
             "savings_additional_income" -> Amount.gbp(3400),
             "total_income_tax" -> Amount(3500, "GBP"),
-            "scottish_income_tax" -> Amount(3600, "GBP")
+            "scottish_income_tax" -> Amount(3600, "GBP"),
+            "less_tax_adjustment_previous_year" ->  Amount(3700, "GBP"),
+            "tax_underpaid_previous_year" -> Amount(3800, "GBP")
           )
         ),
         Some(
@@ -186,6 +193,7 @@ object AtsTestData {
   val govSpendingData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     Some(
       DataHolder(
         Some(
@@ -231,11 +239,13 @@ object AtsTestData {
     2019,
     Some("1111111111"),
     None,
+    None,
     Some(
       DataHolder(
         Some(
           Map(
           "employee_nic_amount" -> Amount(100, "GBP"),
+            "employer_nic_amount" -> Amount(150, "GBP"),
           "total_income_tax_and_nics" -> Amount(200, "GBP"),
           "your_total_tax" -> Amount(300, "GBP"),
           "personal_tax_free_amount" -> Amount(400, "GBP"),
@@ -245,7 +255,9 @@ object AtsTestData {
           "total_cg_tax" -> Amount(700, "GBP"),
           "taxable_gains" -> Amount(800, "GBP"),
           "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
-          "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP")
+          "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP"),
+            "income_after_tax_and_nics" -> Amount(1100, "GBP"),
+            "nics_and_tax_rate_amount" -> Amount(20, "PERCENT")
           )
         ),
         Some(
@@ -278,6 +290,7 @@ object AtsTestData {
   val capitalGainsData = AtsData(
     2019,
     Some("1111111111"),
+    None,
     None,
     None,
     None,

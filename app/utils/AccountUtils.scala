@@ -22,17 +22,21 @@ import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Request
-import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
 
 trait AccountUtils {
-  def getAccount(request: AuthenticatedRequest[_]): TaxIdentifier = request.agentRef.getOrElse(request.saUtr.get)
+
+
+  def getAccount(request: AuthenticatedRequest[_]): TaxIdentifier = request.agentRef.getOrElse(request.saUtr.getOrElse(request.nino.get))
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
   def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
     case sa: SaUtr => sa.utr
     case ta: Uar => ta.uar
+    case nino: Nino => nino.nino
   }
   def isPortalUser(request: Request[_]): Boolean = request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)
   def isAgent(request: AuthenticatedRequest[_]): Boolean = request.agentRef.isDefined
+  def isPaye(request: AuthenticatedRequest[_]): Boolean = request.nino.isDefined
 }
 
 trait AttorneyUtils {

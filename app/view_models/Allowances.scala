@@ -24,11 +24,14 @@ case class Allowances(
   taxFreeAllowance: Amount,
   marriageAllowanceTransferred: Amount,
   otherAllowances: Amount,
+  youPayTaxOn: Amount,
   totalTaxFree: Amount,
+  totalIncomeBeforeTax: Amount,
   title: String,
   forename: String,
   surname: String)
     extends GenericViewModel {
+  def isPaye = utr.isEmpty
   def year = taxYear
   def taxYearTo = taxYear.toString
   def taxYearFrom = (taxYear - 1).toString

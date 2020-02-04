@@ -16,6 +16,7 @@
 
 package utils
 
+import uk.gov.hmrc.domain.{ Generator, SaUtrGenerator }
 import uk.gov.hmrc.domain.SaUtrGenerator
 import utils.TestConstants.testUtr
 import view_models.{Amount, CapitalGains, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
@@ -27,6 +28,7 @@ trait TestConstants {
   // We only want one test nino and utr throughout, therefore assign a value in the object declaration
   lazy val testUtr = new SaUtrGenerator().nextSaUtr.utr
   lazy val testUar = "V" + genRandNumString(4) + "H"
+  lazy val testNino = new Generator().nextNino.nino
   lazy val testInvalidUtr = genRandNumString(4)
   lazy val testKey = genRandNumString(22)
   lazy val testOid = genRandNumString(12)
@@ -68,6 +70,8 @@ trait TestConstants {
     Rate.empty,
     ScottishRates.empty,
     SavingsRates.empty,
+    Amount.empty,
+    Amount.empty,
     "Mr",
     "forename",
     "surname"

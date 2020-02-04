@@ -19,7 +19,7 @@ package services
 import controllers.auth.AuthenticatedRequest
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import utils.TestConstants._
@@ -30,13 +30,16 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
 
     val utr = testUtr
     val uar = testUar
+    val nino = testNino
     val nonMatchingUtr = testNonMatchingUtr
 
     val request = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest())
     val agentRequest = AuthenticatedRequest("userId", Some(Uar(uar)), Some(SaUtr(utr)), None, None, None, None, FakeRequest())
+    val ninoRequest =  AuthenticatedRequest("userId", None, None, Some(Nino(nino)), None, None, None, FakeRequest())
 
     val account = AccountUtils.getAccount(request)
     val agentAccount = AccountUtils.getAccount(agentRequest)
+    val ninoAccount =  AccountUtils.getAccount(ninoRequest)
 
     val agentToken = AgentToken(
       agentUar = uar,
@@ -89,6 +92,14 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
 
     "return true when the utr is Some(_) and the criteria should match" in new TestService {
       val result = checkUtr(Some(utr), None)(request)
+      result shouldBe true
+    }
+  }
+
+  "checkNino" should {
+
+    "return true when a PAYE User has a matching nino" in new TestService {
+      val result = checkNino(Some(nino))(ninoRequest)
       result shouldBe true
     }
   }

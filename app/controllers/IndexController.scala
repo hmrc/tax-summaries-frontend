@@ -16,20 +16,25 @@
 
 package controllers
 
+import java.util.Date
+
 import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
+import play.Logger
 import play.api.Play
 import play.api.mvc.Result
-import services.{AtsListService, AtsYearListService, AuditService}
+import services.{AtsListService, AtsYearListService, AuditService, AuditTypes}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
+import config.ApplicationConfig
 
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService
@@ -83,6 +88,29 @@ trait IndexController extends TaxsController {
         show(request)
       }
     }
+
+  override def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    (request.saUtr, request.agentRef, request.nino) match {
+      case (None, None, Some(_)) =>  Future(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + ApplicationConfig.payeTaxYear))
+      case (_, _, _)   =>  showAvailableTaxYears(request)
+    }
+  }
+
+  def showAvailableTaxYears(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    transformation recover {
+      case error =>
+        Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
+        error match {
+          case token_error: AgentTokenException =>
+            auditService.sendEvent(AuditTypes.Tx_FAILED, Map(
+              "userId" -> getAccountId(request), "error" -> token_error.message,
+              "time" -> new Date().toString,
+              "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")))
+            Ok(views.html.errors.token_error())
+          case _ => Ok(views.html.errors.generic_error())
+        }
+    }
+  }
 
   type ViewModel = AtsList
 

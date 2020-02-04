@@ -17,10 +17,10 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, GovernmentSpendingOutputWrapper}
+import models.{AtsData, DataHolder, GovernmentSpendingOutputWrapper, UserData}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.GovernmentSpend
+import view_models.{Amount, GovernmentSpend, Rate}
 
 import scala.concurrent.Future
 
@@ -37,17 +37,23 @@ trait GovernmentSpendService {
     atsService.createModel(taxYear, govSpend)
 
   private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
+    def payload(key: String): Amount =
+      atsData.income_tax.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
+
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
     GovernmentSpend(atsData.taxYear,
-      atsData.utr.get,
+      atsData.utr.getOrElse(""),
       govSpendingData.govSpendAmountData.get.toList,
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname"),
+      taxpayerName("title"),
+      taxpayerName("forename"),
+      taxpayerName("surname"),
       govSpendingData.totalAmount,
       atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
-      atsData.income_tax.get.payload.get("scottish_income_tax")
+      payload("scottish_income_tax")
     )
   }
 }

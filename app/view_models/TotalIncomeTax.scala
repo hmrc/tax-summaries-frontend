@@ -52,10 +52,13 @@ case class TotalIncomeTax(
   additionalRateRateRate: Rate,
   scottishRates: ScottishRates,
   savingsRates: SavingsRates,
+  lessTaxAdjustmentPreviousYear: Amount,
+  taxUnderpaidPreviousYear: Amount,
   title: String,
   forename: String,
   surname: String)
     extends GenericViewModel {
+  def isPaye = utr.isEmpty
   def taxYear = year.toString
 
   def startingRateForSavingsRate = startingRateForSavingsRateRate.percent

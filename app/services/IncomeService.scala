@@ -17,10 +17,10 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, DataHolder}
+import models.{AtsData, DataHolder, UserData}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.IncomeBeforeTax
+import view_models.{Amount, IncomeBeforeTax}
 
 import scala.concurrent.Future
 
@@ -38,21 +38,25 @@ trait IncomeService {
   }
 
   private[services] def createIncomeConverter(atsData: AtsData): IncomeBeforeTax = {
-      val incomeData: DataHolder = atsData.income_data.get
+    def payload(key: String): Amount =
+      atsData.income_data.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
+
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
       IncomeBeforeTax(atsData.taxYear,
-        atsData.utr.get,
-        incomeData.payload.get("self_employment_income"),
-        incomeData.payload.get("income_from_employment"),
-        incomeData.payload.get("state_pension"),
-        incomeData.payload.get("other_pension_income"),
-        incomeData.payload.get("taxable_state_benefits"),
-        incomeData.payload.get("other_income"),
-        incomeData.payload.get("benefits_from_employment"),
-        incomeData.payload.get("total_income_before_tax"),
-        atsData.taxPayerData.get.taxpayer_name.get("title"),
-        atsData.taxPayerData.get.taxpayer_name.get("forename"),
-        atsData.taxPayerData.get.taxpayer_name.get("surname")
+        atsData.utr.getOrElse(""),
+        payload("self_employment_income"),
+        payload("income_from_employment"),
+        payload("state_pension"),
+        payload("other_pension_income"),
+        payload("taxable_state_benefits"),
+        payload("other_income"),
+        payload("benefits_from_employment"),
+        payload("total_income_before_tax"),
+        taxpayerName("title"),
+        taxpayerName("forename"),
+        taxpayerName("surname")
       )
     }
 }

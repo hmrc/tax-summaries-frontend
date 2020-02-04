@@ -40,7 +40,7 @@ trait CapitalGainsService {
   private[services] def capitalGains(atsData: AtsData): CapitalGains = {
       val capitalGainsData: DataHolder = atsData.capital_gains_data.get
       CapitalGains(atsData.taxYear,
-        atsData.utr.get,
+        atsData.utr.getOrElse(""),
         capitalGainsData.payload.get("taxable_gains"),
         capitalGainsData.payload.get("less_tax_free_amount"),
         capitalGainsData.payload.get("pay_cg_tax_on"),
