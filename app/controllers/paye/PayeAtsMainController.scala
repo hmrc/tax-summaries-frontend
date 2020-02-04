@@ -17,66 +17,48 @@
 package controllers.paye
 
 import config.AppFormPartialRetriever
+import controllers.TaxYearRequest
 import controllers.auth.{AuthAction, AuthenticatedRequest}
-import models.{ErrorResponse, SpendData}
+import models.ErrorResponse
 import play.api.Play
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Result
-import services.{AuditService, GovernmentSpendService}
+import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
-import view_models.GovernmentSpend
+import view_models.Summary
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-object GovernmentSpendController extends GovernmentSpendController {
-  override val governmentSpendService = GovernmentSpendService
+object PayeAtsMainController extends PayeAtsMainController {
+
+  override val summaryService = SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]
 }
 
-trait GovernmentSpendController extends TaxYearRequest {
+trait PayeAtsMainController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
   val authAction: AuthAction
 
-  def governmentSpendService: GovernmentSpendService
+  def summaryService: SummaryService
 
-  def authorisedGovernmentSpendData = authAction.async {
+  def authorisedAtsMain = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = GovernmentSpend
+  type ViewModel = Summary
+
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
+    Ok(views.html.paye.paye_taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
-
-  def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
-    var percentEnviron = 0.0
-    var percentCultural = 0.0
-    var percentHousing = 0.0
-
-    govSpendList.foreach {
-      case (key, value) =>
-        if(key == "Environment") {
-          percentEnviron = value.percentage.doubleValue()
-        } else if(key == "Culture") {
-          percentCultural = value.percentage.doubleValue()
-        } else if(key == "HousingAndUtilities") {
-          percentHousing = value.percentage.doubleValue()
-        }
-
-    }
-
-    (percentEnviron, percentCultural, percentHousing)
-  }
-
 }
