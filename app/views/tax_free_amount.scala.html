@@ -30,31 +30,25 @@
       <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
     </div>
   }
-  @if(!viewModel.isPaye) {
-    @if(!actingAsAttorney.isDefined){
-      <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
-    }
+  @if(!actingAsAttorney.isDefined){
+    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }
 }
 
 @includes.taxs_main(title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     @helpers.back_link(Messages("generic.back"))
-    @if(viewModel.isPaye) {
-      <h1>
-        @Messages("ats.tax_free_amount.tax_free_amount")<br>
-        @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
-      </h1>
-    } else {
-      <h1>
-        <span class="gray heading-medium block-heading">@Messages("generic.taxYearPrefix") @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)</span>
-        @Messages("ats.tax_free_amount.sa.tax_free_amount")
-      </h1>
-      <p>@Messages("ats.tax_free_amount.sa.intro")</p>
-      <p>@Messages("ats.tax_free_amount.sa.para2")</p>
-    }
+    <h1>
+        <span class="gray heading-medium block-heading">
+            @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        </span>
+        @Html(Messages("ats.tax_free_amount.tax_free_amount"))
+    </h1>
 
-    <table id="tax-free-allowance">
+      <p class="lede">@Html(Messages("ats.tax_free_amount.lede"))</p>
+      <p>@Html(Messages("ats.tax_free_amount.description"))</p>
+
+      <table id="tax-free-allowance">
         <thead>
           <tr>
             <th scope="col">@Html(Messages("generic.description"))</th>
@@ -64,69 +58,33 @@
         <tbody>
           @if(!viewModel.taxFreeAllowance.isZero) {
           <tr>
-            <td scope="row">@Html(Messages("ats.tax_free_amount.table.line1", viewModel.year.toString))</td>
+            <td>@Html(Messages("ats.tax_free_amount.table.line1", viewModel.year.toString))</td>
             <td id="tax-free-allowance-amount">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
           </tr>
           }
           @if(!viewModel.marriageAllowanceTransferred.isZero) {
           <tr>
-            <td scope="row">@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
+            <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
             <td id="marriage_allowance_transferred_amount">@includes.currency_amount(viewModel.marriageAllowanceTransferred)</td>
           </tr>
           }
           @if(!viewModel.otherAllowances.isZero) {
           <tr>
-            <td scope="row">@Html(Messages("ats.tax_free_amount.table.line2"))</td>
+            <td>@Html(Messages("ats.tax_free_amount.table.line2"))</td>
             <td id="other-allowances">@includes.currency_amount(viewModel.otherAllowances)</td>
           </tr>
           }
         </tbody>
         <tfoot>
           <tr>
-            <th scope="row">@Html(Messages("ats.tax_free_amount.table.sa.total", viewModel.year.toString))</th>
-            @if(!viewModel.totalTaxFree.isZero){
-              <td id="tax-free-total">@includes.currency_amount(viewModel.totalTaxFree)</td>
-            } else {
-              <td id="tax-free-total">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
-            }
-          </tr>
-        </tfoot>
-      </table>
-
-
-    @if(viewModel.isPaye) {
-      <table id="income_tax_total_tax_free">
-        <thead>
-          <tr>
-            <th scope="col">@Html(Messages("generic.description"))</th>
-            <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td scope="row">@Messages("ats.tax_free_amount.table.incomeBeforeTax")</td>
-            <td id="income_before_tax_amount">@includes.currency_amount(viewModel.totalIncomeBeforeTax)</td>
-          </tr>
-          <tr>
-            <td scope="row">@Messages("ats.tax_free_amount.table.totalTaxFreeAmount")</td>
-            @if(viewModel.youPayTaxOn.isZero){
-              <td id="total_tax_free">@includes.currency_amount(viewModel.totalTaxFree)</td>
-            } else {
-              <td id="total_tax_free">&minus;@includes.currency_amount(viewModel.taxFreeAllowance)</td>
-            }
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
             <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
-            <td id="tax-free-total" class="no-bold">@includes.currency_amount(viewModel.youPayTaxOn)</td>
+            <td id="tax-free-total" class="no-bold">@includes.currency_amount(viewModel.totalTaxFree)</td>
           </tr>
         </tfoot>
       </table>
-    }
 
-    <div class="back">
-      <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.tax_free_amount.tax_free_amount")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
-    </div>
+      <div class="back">
+        <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.tax_free_amount.tax_free_amount")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
+      </div>
 
 }
