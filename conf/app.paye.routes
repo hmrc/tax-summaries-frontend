@@ -1,0 +1,13 @@
+GET     /assets/*file                                           controllers.Assets.at(path="/public", file)
+GET     /                                                       controllers.paye.PayeIndexController.authorisedIndex
+GET     /main                                                   controllers.paye.PayeAtsMainController.authorisedAtsMain
+GET     /summary                                                controllers.paye.PayeSummaryController.authorisedSummaries
+
+
+GET     /not-authorised                                         controllers.ErrorController.notAuthorised
+GET     /no-ats                                                 controllers.ErrorController.authorisedNoAts
+
+GET     /switch-to-welsh                                       controllers.TaxsLanguageController.switchLanguage(lang = "cy")
+GET     /switch-to-english                                     controllers.TaxsLanguageController.switchLanguage(lang = "en")
+
+GET     /sign-out                                              controllers.AccountController.signOut
