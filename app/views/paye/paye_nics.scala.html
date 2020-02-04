@@ -1,0 +1,73 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.auth.AuthenticatedRequest
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+
+@headerContent = {
+  @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "breadcrumbs.taxs.nics", viewModel.year)
+  @if(lang.language == "cy"){
+    <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+  } else {
+    <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+  }
+}
+
+@includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+    @helpers.back_link(Messages("generic.back"))
+    <h1>
+        @Html(Messages("ats.nics.tax_and_nics.title"))<br>
+        @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+    </h1>
+    <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+
+    <table id="total-income-tax">
+      <thead>
+        <tr>
+          <th scope="col">@Html(Messages("generic.description"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td scope="row">
+              <a href="@controllers.paye.routes.PayeTotalIncomeTaxController.authorisedTotalIncomeTax()?taxYear=@viewModel.taxYearTo"
+                 data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("ats.nics.tax_and_nics.income_tax"))">
+                  @Html(Messages("ats.nics.tax_and_nics.income_tax"))
+              </a>
+          </td>
+          <td id="total-income-tax-amt">@includes.currency_amount(viewModel.totalIncomeTaxAmount)</td>
+        </tr>
+        <tr>
+          <td scope="row">@Html(Messages("ats.nics.tax_and_nics_explained"))</td>
+          <td id="employee-nic-amount">@includes.currency_amount(viewModel.employeeNicAmount)</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">@Html(Messages("ats.nics.tax_and_nics.total"))</th>
+          <td id="total-income-tax-and-nics" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p>@Messages(("ats.nics.tax_and_nics.PAYElastParagraph"), viewModel.employerNicAmount)</p>
+
+    <div class="back">
+      <a href="@controllers.paye.routes.PayeSummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
+    </div>
+}
