@@ -51,9 +51,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     taxFreeAllowance = Amount(9440, "GBP"),
     marriageAllowanceTransferred = Amount(0, "GBP"),
     otherAllowances = Amount(300, "GBP"),
-    youPayTaxOn = Amount(5000, "GBP"),
     totalTaxFree = Amount(9740, "GBP"),
-    totalIncomeBeforeTax =  Amount(9740, "GBP"),
     title = "Mr",
     forename = "forename",
     surname = "surname"
@@ -101,7 +99,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     document.toString should include("tax-free-allowance")
     document.getElementById("user-info").text() should include("forename surname")
     document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-    document.select("h1").text shouldBe "6 April 2013 to 5 April 2014 Tax free amount"
+    document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
   }
 
   "have zero-value fields hidden in the view" in new TestController {
@@ -131,7 +129,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
     document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-    document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
+    document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
     document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
     document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"

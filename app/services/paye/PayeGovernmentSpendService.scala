@@ -14,40 +14,45 @@
  * limitations under the License.
  */
 
-package services
+package services.paye
 
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, GovernmentSpendingOutputWrapper}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.GovernmentSpend
+import view_models.paye.PayeGovernmentSpend
+import view_models.{Amount, GovernmentSpend}
 
 import scala.concurrent.Future
 
-object GovernmentSpendService extends GovernmentSpendService {
-  override val atsService = AtsService
-  override val atsYearListService = AtsYearListService
+object GovernmentSpendService extends PayeGovernmentSpendService {
+  override val atsService = PayeAtsService
 }
 
-trait GovernmentSpendService {
-  def atsService: AtsService
-  def atsYearListService: AtsYearListService
+trait PayeGovernmentSpendService {
+  def atsService: PayeAtsService
 
   def getGovernmentSpendData(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
-  private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
+  private[services] def govSpend(atsData: AtsData): PayeGovernmentSpend = {
+    def payload(key: String): Amount =
+      atsData.income_tax.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
+
+    def taxpayerName(key: String): String =
+      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
-    GovernmentSpend(atsData.taxYear,
-      atsData.utr.get,
+    PayeGovernmentSpend(atsData.taxYear,
+      atsData.utr.getOrElse(""),
       govSpendingData.govSpendAmountData.get.toList,
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname"),
+      taxpayerName("title"),
+      taxpayerName("forename"),
+      taxpayerName("surname"),
       govSpendingData.totalAmount,
       atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
-      atsData.income_tax.get.payload.get("scottish_income_tax")
+      payload("scottish_income_tax")
     )
   }
 }

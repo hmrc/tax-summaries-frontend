@@ -74,7 +74,7 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
       when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
@@ -94,7 +94,7 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("total-cg-tax-rate").text() shouldBe "12.34%"
       document.getElementById("user-info").text() should include("forename surname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text shouldBe "Capital Gains Tax 6 April 2013 to 5 April 2014"
+      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Capital Gains Tax"
     }
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in new TestController {
@@ -261,7 +261,7 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"

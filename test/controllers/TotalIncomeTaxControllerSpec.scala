@@ -79,8 +79,6 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
     additionalRateRateRate = Rate("37.5%"),
     ScottishRates.empty,
     SavingsRates.empty,
-    lessTaxAdjustmentPreviousYear = Amount(110, "GBP"),
-    taxUnderpaidPreviousYear = Amount(120, "GBP"),
     "Mr",
     "forename",
     "surname"
@@ -203,7 +201,7 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"

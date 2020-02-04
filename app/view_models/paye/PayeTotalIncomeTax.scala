@@ -14,48 +14,52 @@
  * limitations under the License.
  */
 
-package view_models
+package view_models.paye
 
 import utils.GenericViewModel
+import view_models.{Amount, Rate}
 
-case class TotalIncomeTax(
-  year: Int,
-  utr: String,
-  startingRateForSavings: Amount,
-  startingRateForSavingsAmount: Amount,
-  basicRateIncomeTax: Amount,
-  basicRateIncomeTaxAmount: Amount,
-  higherRateIncomeTax: Amount,
-  higherRateIncomeTaxAmount: Amount,
-  additionalRateIncomeTax: Amount,
-  additionalRateIncomeTaxAmount: Amount,
-  ordinaryRate: Amount,
-  ordinaryRateAmount: Amount,
-  upperRate: Amount,
-  upperRateAmount: Amount,
-  additionalRate: Amount,
-  additionalRateAmount: Amount,
-  otherAdjustmentsIncreasing: Amount,
-  marriageAllowanceReceivedAmount: Amount,
-  otherAdjustmentsReducing: Amount,
-  scottishTax: ScottishTax,
-  totalIncomeTax: Amount,
-  scottishIncomeTax: Amount,
-  savingsTax: SavingsTax,
-  incomeTaxStatus: String,
-  startingRateForSavingsRateRate: Rate,
-  basicRateIncomeTaxRateRate: Rate,
-  higherRateIncomeTaxRateRate: Rate,
-  additionalRateIncomeTaxRateRate: Rate,
-  ordinaryRateTaxRateRate: Rate,
-  upperRateRateRate: Rate,
-  additionalRateRateRate: Rate,
-  scottishRates: ScottishRates,
-  savingsRates: SavingsRates,
-  title: String,
-  forename: String,
-  surname: String)
+case class PayeTotalIncomeTax(
+                               year: Int,
+                               utr: String,
+                               startingRateForSavings: Amount,
+                               startingRateForSavingsAmount: Amount,
+                               basicRateIncomeTax: Amount,
+                               basicRateIncomeTaxAmount: Amount,
+                               higherRateIncomeTax: Amount,
+                               higherRateIncomeTaxAmount: Amount,
+                               additionalRateIncomeTax: Amount,
+                               additionalRateIncomeTaxAmount: Amount,
+                               ordinaryRate: Amount,
+                               ordinaryRateAmount: Amount,
+                               upperRate: Amount,
+                               upperRateAmount: Amount,
+                               additionalRate: Amount,
+                               additionalRateAmount: Amount,
+                               otherAdjustmentsIncreasing: Amount,
+                               marriageAllowanceReceivedAmount: Amount,
+                               otherAdjustmentsReducing: Amount,
+                               scottishTax: PayeScottishTax,
+                               totalIncomeTax: Amount,
+                               scottishIncomeTax: Amount,
+                               savingsTax: PayeSavingsTax,
+                               incomeTaxStatus: String,
+                               startingRateForSavingsRateRate: Rate,
+                               basicRateIncomeTaxRateRate: Rate,
+                               higherRateIncomeTaxRateRate: Rate,
+                               additionalRateIncomeTaxRateRate: Rate,
+                               ordinaryRateTaxRateRate: Rate,
+                               upperRateRateRate: Rate,
+                               additionalRateRateRate: Rate,
+                               scottishRates: PayeScottishRates,
+                               savingsRates: PayeSavingsRates,
+                               lessTaxAdjustmentPreviousYear: Amount,
+                               taxUnderpaidPreviousYear: Amount,
+                               title: String,
+                               forename: String,
+                               surname: String)
     extends GenericViewModel {
+  def isPaye = utr.isEmpty
   def taxYear = year.toString
 
   def startingRateForSavingsRate = startingRateForSavingsRateRate.percent
@@ -86,7 +90,7 @@ case class TotalIncomeTax(
   }
 }
 
-case class ScottishTax(
+case class PayeScottishTax(
   scottishStarterIncomeTax: Amount,
   scottishStarterIncomeTaxAmount: Amount,
   scottishBasicIncomeTax: Amount,
@@ -109,10 +113,10 @@ case class ScottishTax(
       scottishTotalTax.nonZero
 }
 
-object ScottishTax {
+object PayeScottishTax {
 
-  val empty: ScottishTax =
-    ScottishTax(
+  val empty: PayeScottishTax =
+    PayeScottishTax(
       Amount.empty,
       Amount.empty,
       Amount.empty,
@@ -127,7 +131,7 @@ object ScottishTax {
     )
 }
 
-case class SavingsTax(
+case class PayeSavingsTax(
   savingsLowerRateTax: Amount,
   savingsLowerRateTaxAmount: Amount,
   savingsHigherRateTax: Amount,
@@ -142,10 +146,10 @@ case class SavingsTax(
     savingsAdditionalRateTax.nonZero
 }
 
-object SavingsTax {
+object PayeSavingsTax {
 
-  val empty: SavingsTax =
-    SavingsTax(
+  val empty: PayeSavingsTax =
+    PayeSavingsTax(
       Amount.empty,
       Amount.empty,
       Amount.empty,
@@ -155,7 +159,7 @@ object SavingsTax {
     )
 }
 
-case class ScottishRates(
+case class PayeScottishRates(
   scottishStarterRate: Rate,
   scottishBasicRate: Rate,
   scottishIntermediateRate: Rate,
@@ -163,10 +167,10 @@ case class ScottishRates(
   scottishAdditionalRate: Rate
 )
 
-object ScottishRates {
+object PayeScottishRates {
 
-  val empty: ScottishRates =
-    ScottishRates(
+  val empty: PayeScottishRates =
+    PayeScottishRates(
       Rate.empty,
       Rate.empty,
       Rate.empty,
@@ -175,16 +179,16 @@ object ScottishRates {
     )
 }
 
-case class SavingsRates(
+case class PayeSavingsRates(
   savingsLowerRate: Rate,
   savingsHigherRate: Rate,
   savingsAdditionalRate: Rate
 )
 
-object SavingsRates {
+object PayeSavingsRates {
 
-  val empty: SavingsRates =
-    SavingsRates(
+  val empty: PayeSavingsRates =
+    PayeSavingsRates(
       Rate.empty,
       Rate.empty,
       Rate.empty

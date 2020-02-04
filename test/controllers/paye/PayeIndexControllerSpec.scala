@@ -18,7 +18,8 @@ package controllers.paye
 
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import connectors.DataCacheConnector
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.paye.{PayeAuthAction, PayeFakeAuthAction}
+import controllers.auth.AuthenticatedRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -27,7 +28,6 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-
 import utils.TestConstants._
 
 class PayeIndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with DefaultAwaitTimeout {
@@ -38,7 +38,7 @@ class PayeIndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
 
     override lazy val dataCache = mock[DataCacheConnector]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
+    override val authAction: PayeAuthAction = PayeFakeAuthAction
   }
 
   lazy val  payeTaxYear = ApplicationConfig.payeTaxYear

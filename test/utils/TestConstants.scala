@@ -70,8 +70,6 @@ trait TestConstants {
     Rate.empty,
     ScottishRates.empty,
     SavingsRates.empty,
-    Amount.empty,
-    Amount.empty,
     "Mr",
     "forename",
     "surname"

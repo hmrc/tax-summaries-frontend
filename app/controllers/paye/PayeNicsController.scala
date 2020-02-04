@@ -18,8 +18,8 @@ package controllers.paye
 
 import config.AppFormPartialRetriever
 import controllers.TaxYearRequest
+import controllers.auth.AuthenticatedRequest
 import controllers.auth.paye.PayeAuthAction
-import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
 import play.api.Play.current
@@ -33,15 +33,14 @@ import view_models.paye.PayeSummary
 
 import scala.concurrent.Future
 
-object PayeAtsMainController extends PayeAtsMainController {
-
+object PayeNicsController extends PayeNicsController {
   override val summaryService = PayeSummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeAtsMainController extends TaxYearRequest {
+trait PayeNicsController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
@@ -49,18 +48,16 @@ trait PayeAtsMainController extends TaxYearRequest {
 
   def summaryService: PayeSummaryService
 
-  def authorisedAtsMain = authAction.async {
+  def authorisedNics = authAction.async {
     request => show(request)
   }
 
   type ViewModel = PayeSummary
 
-
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
-
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_nics(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

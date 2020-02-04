@@ -18,7 +18,8 @@ package controllers.paye
 
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import connectors.DataCacheConnector
-import controllers.auth.{AuthAction, AuthenticatedRequest}
+import controllers.auth.AuthenticatedRequest
+import controllers.auth.paye.PayeAuthAction
 import play.api.Play
 import play.api.mvc.Result
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -28,7 +29,7 @@ import scala.concurrent.Future
 
 object PayeIndexController extends PayeIndexController {
   override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
+  override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
   override lazy val dataCache = DataCacheConnector
 }
 
@@ -36,7 +37,7 @@ trait PayeIndexController extends FrontendController {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
-  val authAction: AuthAction
+  val authAction: PayeAuthAction
   val dataCache: DataCacheConnector
 
   def authorisedIndex = authAction.async {

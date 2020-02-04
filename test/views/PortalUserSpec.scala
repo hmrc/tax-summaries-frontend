@@ -72,7 +72,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
@@ -95,12 +95,12 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Taxable income</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your total income</strong>")
     }
 
     "show the 'exit tax summaries' link on the nics page" in  {
@@ -118,7 +118,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
@@ -157,14 +157,14 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your income and taxes</strong>")
     }
 
     "show the 'exit tax summaries' link on the tax free amount page" in  {
 
-      val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, amount, amount, "", "", "")
+      val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, "", "", "")
       val result = views.html.tax_free_amount(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -176,7 +176,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
@@ -189,7 +189,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       val fakeViewModel = new TotalIncomeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, amount, amount, amount, ScottishTax.empty, amount, amount, SavingsTax.empty,
         "", rate, rate, rate, rate, rate, rate, rate, ScottishRates.empty, SavingsRates.empty,
-        amount, amount, "", "", "")
+        "", "", "")
 
       val result = views.html.total_income_tax(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever)
       val document = Jsoup.parse(contentAsString(result))
@@ -202,7 +202,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
@@ -234,7 +234,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your taxes and public spending</strong>")
     }

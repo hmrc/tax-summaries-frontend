@@ -18,49 +18,46 @@ package controllers.paye
 
 import config.AppFormPartialRetriever
 import controllers.TaxYearRequest
+import controllers.auth.AuthenticatedRequest
 import controllers.auth.paye.PayeAuthAction
-import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Result
-import services.AuditService
-import services.paye.PayeSummaryService
+import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
-import view_models.paye.PayeSummary
+import view_models.IncomeBeforeTax
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-object PayeAtsMainController extends PayeAtsMainController {
-
-  override val summaryService = PayeSummaryService
+object PayeIncomeController extends PayeIncomeController {
+  override val incomeService = IncomeService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeAtsMainController extends TaxYearRequest {
+trait PayeIncomeController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
   val authAction: PayeAuthAction
 
-  def summaryService: PayeSummaryService
+  def incomeService: IncomeService
 
-  def authorisedAtsMain = authAction.async {
+  def authorisedIncomeBeforeTax = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = PayeSummary
-
+  type ViewModel = IncomeBeforeTax
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
+    extractViewModelWithTaxYear(incomeService.getIncomeData(_))
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

@@ -36,10 +36,12 @@
 @includes.taxs_main(title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
     <h1>
-      @Html(Messages("ats.capital_gains_tax.subtitle"))<br>
-      @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        <span class="gray heading-medium block-heading">
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        </span>
+      @Html(Messages("ats.capital_gains_tax.subtitle"))
     </h1>
-    <p>@Html(Messages("ats.capital_gains_tax.lede"))</p>
+    <p class="lede">@Html(Messages("ats.capital_gains_tax.lede"))</p>
     @if(!viewModel.totalCapitalGainsTaxAmount.isZero) {
       <p id="total-cg-description">@Html(Messages("ats.capital_gains_tax.description",
         """<span id="total-cg-tax-rate">"""+viewModel.totalCgTaxRate.percent+"""</span>"""))</p>
@@ -54,12 +56,12 @@
       </thead>
       <tbody>
         <tr>
-          <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line1"))</td>
+          <td>@Html(Messages("ats.capital_gains_tax.table.line1"))</td>
           <td id="taxable-gains">@includes.currency_amount(viewModel.taxableGains)</td>
         </tr>
 
         <tr>
-          <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line2","""<span id="tax-period">"""+Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)+"""</span>"""))</td>
+          <td>@Html(Messages("ats.capital_gains_tax.table.line2","""<span id="tax-period">"""+Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)+"""</span>"""))</td>
           <td id="less-taxable-gains">
               <span id="gains" class="visuallyhidden">@Html(Messages("generic.minus")) @includes.currency_amount(viewModel.lessTaxFreeAmount)</span>
               <span aria-hidden="true">-@includes.currency_amount(viewModel.lessTaxFreeAmount)</span>
@@ -67,7 +69,7 @@
         </tr>
 
         <tr>
-          <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line3"))</td>
+          <td>@Html(Messages("ats.capital_gains_tax.table.line3"))</td>
           <td id="cg-pay-tax-on">@includes.currency_amount(viewModel.payCgTaxOn)</td>
         </tr>
       </tbody>
@@ -100,7 +102,7 @@
 
           @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
           <tr id="entrepreneurs-relief-rate-section">
-            <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line4",
+            <td>@Html(Messages("ats.capital_gains_tax.table.line4",
                 """<span id="entrepreneurs-relief-rate-before">"""+includes.currency_amount(viewModel.entrepreneursReliefRateBefore)+"""</span>""",
                 """<span id="entrepreneurs-relief-rate">""" + viewModel.entrepreneursReliefRate + """</span>"""))</td>
             <td id="entrepreneurs-relief-rate-amount">@includes.currency_amount(viewModel.entrepreneursReliefRateAmount)</td>
@@ -109,7 +111,7 @@
 
           @if(!viewModel.ordinaryRateBefore.isZero) {
           <tr id="ordinary-rate-section">
-            <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line5",
+            <td>@Html(Messages("ats.capital_gains_tax.table.line5",
                 """<span id="ordinary-rate-before">"""+includes.currency_amount(viewModel.ordinaryRateBefore)+"""</span>""",
                 """<span id="ordinary-rate">""" + viewModel.ordinaryRate + """</span>"""))</td>
             <td id="ordinary-rate-amount">@includes.currency_amount(viewModel.ordinaryRateAmount)</td>
@@ -118,7 +120,7 @@
 
           @if(!viewModel.upperRateBefore.isZero) {
           <tr id="upper-rate-section">
-            <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line6",
+            <td>@Html(Messages("ats.capital_gains_tax.table.line6",
                 """<span id="upper-rate-before">"""+includes.currency_amount(viewModel.upperRateBefore)+"""</span>""",
                 """<span id="upper-rate">""" + viewModel.upperRate + """</span>"""))</td>
             <td id="upper-rate-amount">@includes.currency_amount(viewModel.upperRateAmount)</td>
@@ -127,7 +129,7 @@
           
           @if(!viewModel.adjustmentsAmount.isZero) {
           <tr id="adjustments-section">
-            <td scope="row">@Html(Messages("ats.capital_gains_tax.table.line7"))</td>
+            <td>@Html(Messages("ats.capital_gains_tax.table.line7"))</td>
             <td id="adjustment-to-capital-gains-tax-amount">
               <span id="gains-tax-amount" class="visuallyhidden">@Html(Messages("generic.minus")) @includes.currency_amount(viewModel.adjustmentsAmount)</span>
               <span aria-hidden="true">-@includes.currency_amount(viewModel.adjustmentsAmount)</span>

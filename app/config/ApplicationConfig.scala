@@ -41,6 +41,7 @@ trait ApplicationConfig {
   val encryptionTokenMaxAge: Int
   val loginCallback: String
   val loginUrl: String
+  val payeLoginUrl: String
   val ytaUrl: String
   val portalUrl: String
   val authHost: String
@@ -93,6 +94,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   // External urls
   override lazy val loginCallback = getConf(s"login-callback.url")
   override lazy val loginUrl = getConf("login.url")
+  override lazy val payeLoginUrl = getConf("login.paye.url")
   override lazy val ytaUrl = getConf("yta.url")
   override lazy val portalUrl = getConf("portal.url")
   override lazy val optimizelyProjectId: String = getString("optimizely.projectId")

@@ -70,7 +70,7 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
 
       when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
 
@@ -88,9 +88,9 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
 
       status(result) shouldBe 200
       document.getElementById("tax-calc-link").text shouldBe "Your income and taxes"
-      document.getElementById("tax-services-link").text shouldBe "How your tax was spent"
-      document.getElementById("index-page-header").text shouldBe "6 April 2013 to 5 April 2014 Your Annual Tax Summary"
-  // PAB    document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
+      document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
+      document.getElementById("index-page-header").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your annual tax summary"
+      document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
       document.getElementById("tax-calc-link").tagName shouldBe "a"
       document.getElementById("tax-services-link").tagName shouldBe "a"
       document.getElementById("user-info").text should include("forename surname")

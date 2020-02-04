@@ -37,13 +37,13 @@
 
     @helpers.back_link(Messages("generic.back"))
     <h1 id="index-page-header">
-        @Messages("ats.index.html.title")<br>
-        @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+        @Messages("paye.ats.index.html.title")<br>
+        @Messages("paye.generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
     </h1>
     <p id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
     <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeSummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
     <p>@Messages("ats.index.html.tax_calc_description")</p>
-    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_spend_link")">@Messages("ats.index.html.tax_spend_link")</a></h2>
+    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("paye.ats.index.html.title"):@Messages("paye.ats.index.html.tax_spend_link")">@Messages("paye.ats.index.html.tax_spend_link")</a></h2>
     <p>@Messages("ats.index.html.tax_spend_description")</p>
 
 

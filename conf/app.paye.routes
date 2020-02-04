@@ -2,7 +2,11 @@ GET     /assets/*file                                           controllers.Asse
 GET     /                                                       controllers.paye.PayeIndexController.authorisedIndex
 GET     /main                                                   controllers.paye.PayeAtsMainController.authorisedAtsMain
 GET     /summary                                                controllers.paye.PayeSummaryController.authorisedSummaries
-
+GET     /nics                                                   controllers.paye.PayeNicsController.authorisedNics
+GET     /treasury-spending                                      controllers.paye.PayeGovernmentSpendController.authorisedGovernmentSpendData
+GET     /income-before-tax                                      controllers.paye.PayeIncomeController.authorisedIncomeBeforeTax
+GET     /tax-free-amount                                        controllers.paye.PayeAllowancesController.authorisedAllowance
+GET     /total-income-tax                                       controllers.paye.PayeTotalIncomeTaxController.authorisedTotalIncomeTax
 
 GET     /not-authorised                                         controllers.ErrorController.notAuthorised
 GET     /no-ats                                                 controllers.ErrorController.authorisedNoAts

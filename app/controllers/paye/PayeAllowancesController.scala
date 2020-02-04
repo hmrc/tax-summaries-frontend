@@ -26,41 +26,40 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Result
 import services.AuditService
-import services.paye.PayeSummaryService
+import services.paye.PayeAllowanceService
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
-import view_models.paye.PayeSummary
+import view_models.paye.PayeAllowances
 
 import scala.concurrent.Future
 
-object PayeAtsMainController extends PayeAtsMainController {
-
-  override val summaryService = PayeSummaryService
+object PayeAllowancesController extends PayeAllowancesController {
+  override val allowanceService = PayeAllowanceService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeAtsMainController extends TaxYearRequest {
+trait PayeAllowancesController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
   val authAction: PayeAuthAction
 
-  def summaryService: PayeSummaryService
+  def allowanceService: PayeAllowanceService
 
-  def authorisedAtsMain = authAction.async {
+  def authorisedAllowance = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = PayeSummary
-
+  type ViewModel = PayeAllowances
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
+    extractViewModelWithTaxYear(allowanceService.getAllowances(_))
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
+
 }

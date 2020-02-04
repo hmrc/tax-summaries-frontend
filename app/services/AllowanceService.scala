@@ -17,10 +17,10 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, DataHolder, UserData}
+import models.{AtsData, DataHolder}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.{Allowances, Amount}
+import view_models.Allowances
 
 import scala.concurrent.Future
 
@@ -38,24 +38,18 @@ trait AllowanceService {
   }
 
   private[services] def allowanceDataConverter(atsData: AtsData): Allowances = {
-    def payload(key: String): Amount =
-      atsData.allowance_data.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
-
-    def taxpayerName(key: String): String =
-      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+    val allowanceData: DataHolder = atsData.allowance_data.get
 
     Allowances(
       atsData.taxYear,
-      atsData.utr.getOrElse(""),
-      payload("personal_tax_free_amount"),
-      payload("marriage_allowance_transferred_amount"),
-      payload("other_allowances_amount"),
-      payload("you_pay_tax_on"),
-      payload("total_tax_free_amount"),
-      payload("total_income_before_tax"),
-      taxpayerName("title"),
-      taxpayerName("forename"),
-      taxpayerName("surname")
+      atsData.utr.get,
+      allowanceData.payload.get("personal_tax_free_amount"),
+      allowanceData.payload.get("marriage_allowance_transferred_amount"),
+      allowanceData.payload.get("other_allowances_amount"),
+      allowanceData.payload.get("total_tax_free_amount"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
     )
   }
 }

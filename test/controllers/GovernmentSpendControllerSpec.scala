@@ -114,7 +114,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
       when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(show(request))
       status(result) mustBe SEE_OTHER
@@ -159,9 +159,9 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.getElementById("user-info").text() should include("userForename userSurname")
       document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
-      //  PAB  document
-   //     .select("h1")
-    //    .text shouldBe "Your taxes and public spending 6 April 2013 to 5 April 2014"
+      document
+        .select("h1")
+        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 
     "have correct data for 2015" in new TestController {
@@ -248,7 +248,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
     }

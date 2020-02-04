@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package view_models
+package view_models.paye
 
+import models.SpendData
 import utils.GenericViewModel
+import view_models.Amount
 
-case class IncomeBeforeTax(
+case class PayeGovernmentSpend(
   taxYear: Int,
-  utr: String,
-  getSelfEmployTotal: Amount,
-  getIncomeFromEmployment: Amount,
-  getStatePension: Amount,
-  getOtherPensionTotal: Amount,
-  getTaxableStateBenefit: Amount,
-  getOtherIncome: Amount,
-  getBenefitsFromEmployment: Amount,
-  getIncomeBeforeTaxTotal: Amount,
-  title: String,
-  forename: String,
-  surname: String)
+  userUtr: String,
+  govSpendAmountData: List[(String, SpendData)],
+  userTitle: String,
+  userForename: String,
+  userSurname: String,
+  totalAmount: Amount,
+  incomeTaxStatus: String,
+  scottishIncomeTax: Amount)
     extends GenericViewModel {
-
-  def taxYearTo = taxYear.toString
+  def isPaye = userUtr.isEmpty
+  def taxYearInterval = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
   def taxYearFrom = (taxYear - 1).toString
+  def taxYearTo = taxYear.toString
 }

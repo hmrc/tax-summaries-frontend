@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package view_models
+package view_models.paye
 
 import utils.GenericViewModel
+import view_models.Amount
 
-case class IncomeBeforeTax(
+case class PayeAllowances(
   taxYear: Int,
   utr: String,
-  getSelfEmployTotal: Amount,
-  getIncomeFromEmployment: Amount,
-  getStatePension: Amount,
-  getOtherPensionTotal: Amount,
-  getTaxableStateBenefit: Amount,
-  getOtherIncome: Amount,
-  getBenefitsFromEmployment: Amount,
-  getIncomeBeforeTaxTotal: Amount,
+  taxFreeAllowance: Amount,
+  marriageAllowanceTransferred: Amount,
+  otherAllowances: Amount,
+  youPayTaxOn: Amount,
+  totalTaxFree: Amount,
+  totalIncomeBeforeTax: Amount,
   title: String,
   forename: String,
   surname: String)
     extends GenericViewModel {
-
+  def isPaye = utr.isEmpty
+  def year = taxYear
   def taxYearTo = taxYear.toString
   def taxYearFrom = (taxYear - 1).toString
 }

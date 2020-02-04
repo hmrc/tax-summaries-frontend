@@ -14,64 +14,34 @@
  * limitations under the License.
  */
 
-package services
+package services.paye
 
-import controllers.auth.AuthenticatedRequest
 import models.AtsData
-import org.mockito.Matchers
-import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.FakeRequest
 import services.atsData.AtsTestData
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
-import utils.TestConstants._
-import view_models._
+import view_models.paye._
+import view_models.{Amount, Rate}
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
+class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
-class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
-
-  val genericViewModel: GenericViewModel =  AtsList(
-    utr = "3000024376",
-    forename = "forename",
-    surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
-  )
-
-  class TestService extends TotalIncomeTaxService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
+  class TestService extends PayeTotalIncomeTaxService with MockitoSugar {
+    override lazy val atsService: PayeAtsService = mock[PayeAtsService]
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
   }
 
-  "TotalIncomeTaxService getIncomeData" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
-      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
-      val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
-      result mustEqual genericViewModel
-    }
-  }
-
-    "TotalIncomeTaxService.totalIncomeConverter" should {
-
-
+  "PayeTotalIncomeTaxService.totalIncomeConverter" should {
     "return complete TotalIncomeTax data when given complete AtsData" in new TestService {
       val incomeData: AtsData = AtsTestData.totalIncomeTaxData
-      val result: TotalIncomeTax = totalIncomeConverter(incomeData)
+      val result: PayeTotalIncomeTax = totalIncomeConverter(incomeData)
 
-      val scottishTax = ScottishTax(
+      val scottishTax = PayeScottishTax(
         Amount.gbp(1800),
         Amount.gbp(1900),
         Amount.gbp(2000),
@@ -85,7 +55,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Amount.gbp(2800)
       )
 
-      val savingsTax = SavingsTax(
+      val savingsTax = PayeSavingsTax(
         Amount.gbp(2900),
         Amount.gbp(3000),
         Amount.gbp(3100),
@@ -94,7 +64,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Amount.gbp(3400)
       )
 
-      val scottishRates = ScottishRates(
+      val scottishRates = PayeScottishRates(
         Rate("80%"),
         Rate("90%"),
         Rate("100%"),
@@ -102,13 +72,13 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Rate("120%")
       )
 
-      val savingsRates = SavingsRates(
+      val savingsRates = PayeSavingsRates(
         Rate("130%"),
         Rate("140%"),
         Rate("150%")
       )
-
-      result mustEqual TotalIncomeTax(
+         println(result)
+      result mustEqual PayeTotalIncomeTax(
         2019,
         "1111111111",
         Amount(100, "GBP"),
@@ -142,11 +112,12 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Rate("70%"),
         scottishRates,
         savingsRates,
+        Amount(3700, "GBP"),
+        Amount(3800, "GBP"),
         "Mr",
         "John",
         "Smith"
       )
     }
-
   }
 }

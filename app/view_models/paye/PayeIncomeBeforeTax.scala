@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package view_models
+package view_models.paye
 
 import utils.GenericViewModel
+import view_models.Amount
 
-case class IncomeBeforeTax(
+case class PayeIncomeBeforeTax(
   taxYear: Int,
   utr: String,
   getSelfEmployTotal: Amount,
@@ -33,7 +34,7 @@ case class IncomeBeforeTax(
   forename: String,
   surname: String)
     extends GenericViewModel {
-
+  def isPaye = utr.isEmpty
   def taxYearTo = taxYear.toString
   def taxYearFrom = (taxYear - 1).toString
 }

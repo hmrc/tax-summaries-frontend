@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package view_models
+package controllers.auth.paye
 
-import utils.GenericViewModel
+import controllers.auth.AuthenticatedRequest
+import play.api.mvc.{Request, Result}
+import uk.gov.hmrc.domain.SaUtr
+import utils.TestConstants._
 
-case class IncomeBeforeTax(
-  taxYear: Int,
-  utr: String,
-  getSelfEmployTotal: Amount,
-  getIncomeFromEmployment: Amount,
-  getStatePension: Amount,
-  getOtherPensionTotal: Amount,
-  getTaxableStateBenefit: Amount,
-  getOtherIncome: Amount,
-  getBenefitsFromEmployment: Amount,
-  getIncomeBeforeTaxTotal: Amount,
-  title: String,
-  forename: String,
-  surname: String)
-    extends GenericViewModel {
+import scala.concurrent.Future
 
-  def taxYearTo = taxYear.toString
-  def taxYearFrom = (taxYear - 1).toString
+object PayeFakeAuthAction extends PayeAuthAction {
+  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    block(AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, request))
+  }
 }
+
+

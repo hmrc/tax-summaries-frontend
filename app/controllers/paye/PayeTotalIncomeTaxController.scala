@@ -18,49 +18,46 @@ package controllers.paye
 
 import config.AppFormPartialRetriever
 import controllers.TaxYearRequest
+import controllers.auth.AuthenticatedRequest
 import controllers.auth.paye.PayeAuthAction
-import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Result
-import services.AuditService
-import services.paye.PayeSummaryService
+import services.{AuditService, TotalIncomeTaxService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
-import view_models.paye.PayeSummary
+import view_models.TotalIncomeTax
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-object PayeAtsMainController extends PayeAtsMainController {
-
-  override val summaryService = PayeSummaryService
+object PayeTotalIncomeTaxController extends PayeTotalIncomeTaxController {
+  override val totalIncomeTaxService = TotalIncomeTaxService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeAtsMainController extends TaxYearRequest {
+trait PayeTotalIncomeTaxController extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever
 
   val authAction: PayeAuthAction
 
-  def summaryService: PayeSummaryService
+  def totalIncomeTaxService: TotalIncomeTaxService
 
-  def authorisedAtsMain = authAction.async {
+  def authorisedTotalIncomeTax = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = PayeSummary
-
+  type ViewModel = TotalIncomeTax
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
-    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
+    extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
   }
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+  override def obtainResult(result:ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    Ok(views.html.paye.paye_total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

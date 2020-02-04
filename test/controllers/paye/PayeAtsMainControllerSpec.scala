@@ -17,7 +17,8 @@
 package controllers.paye
 
 import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.paye.{PayeAuthAction, PayeFakeAuthAction}
+import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -34,7 +35,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.paye.PayeSummary
-import view_models.{Amount, NoATSViewModel, Rate, Summary}
+import view_models.{Amount, NoATSViewModel, Rate}
 
 import scala.concurrent.Future
 
@@ -73,7 +74,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     override lazy val summaryService = mock[PayeSummaryService]
     override lazy val auditService = mock[AuditService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
+    override val authAction: PayeAuthAction = PayeFakeAuthAction
     when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
 
   }
@@ -114,7 +115,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.getElementById("tax-calc-link").text shouldBe "Your income and taxes"
       document.getElementById("tax-services-link").text shouldBe "How your tax was spent"
       document.getElementById("index-page-header").text shouldBe "Your Annual Tax Summary 6 April 2013 to 5 April 2014"
-  // PAB    document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
+      document.getElementById("index-page-description").text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
       document.getElementById("tax-calc-link").tagName shouldBe "a"
       document.getElementById("tax-services-link").tagName shouldBe "a"
     }
