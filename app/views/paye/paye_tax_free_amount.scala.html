@@ -1,0 +1,110 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.auth.AuthenticatedRequest
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@(viewModel: view_models.Allowances, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+
+@headerContent = {
+  @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.tax_free_amount.subtitle", viewModel.year)
+  @if(lang.language == "cy"){
+    <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+  } else {
+    <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+  }
+}
+
+@includes.taxs_main(title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+
+    @helpers.back_link(Messages("generic.back"))
+    <h1>
+      @Messages("ats.tax_free_amount.tax_free_amount")<br>
+      @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    </h1>
+
+    <table id="tax-free-allowance">
+      <thead>
+        <tr>
+          <th scope="col">@Html(Messages("generic.description"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(!viewModel.taxFreeAllowance.isZero) {
+        <tr>
+          <td scope="row">@Html(Messages("ats.tax_free_amount.table.line1", viewModel.year.toString))</td>
+          <td id="tax-free-allowance-amount">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
+        </tr>
+        }
+        @if(!viewModel.marriageAllowanceTransferred.isZero) {
+        <tr>
+          <td scope="row">@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
+          <td id="marriage_allowance_transferred_amount">@includes.currency_amount(viewModel.marriageAllowanceTransferred)</td>
+        </tr>
+        }
+        @if(!viewModel.otherAllowances.isZero) {
+        <tr>
+          <td scope="row">@Html(Messages("ats.tax_free_amount.table.line2"))</td>
+          <td id="other-allowances">@includes.currency_amount(viewModel.otherAllowances)</td>
+        </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">@Html(Messages("ats.tax_free_amount.table.sa.total", viewModel.year.toString))</th>
+          @if(!viewModel.totalTaxFree.isZero){
+            <td id="tax-free-total">@includes.currency_amount(viewModel.totalTaxFree)</td>
+          } else {
+            <td id="tax-free-total">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
+          }
+        </tr>
+      </tfoot>
+    </table>
+
+    <table id="income_tax_total_tax_free">
+      <thead>
+        <tr>
+          <th scope="col">@Html(Messages("generic.description"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td scope="row">@Messages("ats.tax_free_amount.table.incomeBeforeTax")</td>
+          <td id="income_before_tax_amount">@includes.currency_amount(viewModel.totalIncomeBeforeTax)</td>
+        </tr>
+        <tr>
+          <td scope="row">@Messages("ats.tax_free_amount.table.totalTaxFreeAmount")</td>
+          @if(viewModel.youPayTaxOn.isZero){
+            <td id="total_tax_free">@includes.currency_amount(viewModel.totalTaxFree)</td>
+          } else {
+            <td id="total_tax_free">&minus;@includes.currency_amount(viewModel.taxFreeAllowance)</td>
+          }
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
+          <td id="tax-free-total" class="no-bold">@includes.currency_amount(viewModel.youPayTaxOn)</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="back">
+      <a href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.tax_free_amount.tax_free_amount")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
+    </div>
+
+}
