@@ -1,0 +1,99 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.auth.AuthenticatedRequest
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+
+@headerContent = {
+    @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "ats.summary.title", viewModel.year)
+    @if(lang.language == "cy"){
+        <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+    } else {
+        <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+    }
+}
+
+@includes.taxs_main(title = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+    @helpers.back_link(Messages("generic.back"))
+
+    <h1>
+        @Messages("ats.summary.title")<br>
+        @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    </h1>
+    <h2>@Messages("ats.summary.total_income.paye.title")</h2>
+    <section id="taxable-income">
+        <p class="text">@Html(Messages("ats.summary.total_income.description"))</p>
+        <a href="@controllers.paye.routes.PayeIncomeController.authorisedIncomeBeforeTax()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.total_income.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.total_income.link"))</span><br>
+            <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.yourIncomeBeforeTax)</span>
+        </a>
+    </section>
+    <section id="tax-free-amount">
+        <h2>@Html(Messages("ats.summary.tax_free.title"))</h2>
+        <p class="text">@Html(Messages("ats.summary.tax_free.description"))</p>
+        <a href="@controllers.paye.routes.PayeAllowancesController.authorisedAllowance()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_free.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.tax_free.link"))</span><br>
+            <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.totalTaxFreeAllowance)</span>
+        </a>
+    </section>
+
+    <section id="tax-calculated-as">
+        <h2 id="tax-and-nics-title">@Messages("ats.summary.nicsheading")</h2>
+        <p class="text">@Messages("ats.summary.tax_and_nics.description", viewModel.nicsAndTaxRateAmount)</p>
+        <p class="text">@Html(Messages("ats.summary.tax_and_nics.description-2"))</p>
+        <a href="@controllers.paye.routes.PayeNicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.tax_and_nics.link"))</span><br>
+            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</span>
+        </a>
+    </section>
+
+    @if(viewModel.hasTaxableGains) {
+    <section id="capital-gains">
+        <h2>@Html(Messages("ats.summary.capital_gains.title"))</h2>
+        @if(!viewModel.totalCapitalGainsTax.isZero) {
+            <p id="total-cg-description" class="text">@Html(Messages("ats.summary.capital_gains.description"))</p>
+        }
+        <a href="@controllers.paye.routes.PayeCapitalGainsTaxController.authorisedCapitalGains()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.capital_gains.link")">
+            <span class="bold-small">@Html(Messages("ats.summary.capital_gains.link"))</span><br>
+            <span class="bold-xlarge" id="total-capital-gains-tax">@includes.currency_amount(viewModel.totalCapitalGainsTax)</span>
+        </a>
+
+    </section>
+    }
+
+    <section id="income_after_tax_and_nics">
+        <h2>@Html(Messages("ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
+        <p class="bold-xlarge">
+            <span class="visuallyhidden" id="income-after-tax-and-nics-description">
+            @if(lang.code == "cy-GB") {
+                @Html(Messages("ats.summary.taxable_income.income_after_tax_and_nics_msg")) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.incomeAfterTaxAndNics)
+            } else {
+                @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+                    (viewModel.yourTotalTaxTextKeys._2 map { key: String => Html(Messages(key)) }): _*)) @Html(Messages("generic.is")) @includes.currency_amount(viewModel.incomeAfterTaxAndNics)
+            }</span>
+            <span id="income-after-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.incomeAfterTaxAndNics)</span>
+        </p>
+    </section>
+
+
+
+
+    <div class="back">
+        <a href="@controllers.paye.routes.PayeAtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("generic.back")">@Html(Messages("generic.back"))</a>
+    </div>
+
+}
