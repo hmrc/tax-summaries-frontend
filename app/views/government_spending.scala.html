@@ -36,10 +36,8 @@
             <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
         </div>
     }
-    @if(!viewModel.isPaye) {
-        @if(!actingAsAttorney.isDefined){
-            <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
-        }
+    @if(!actingAsAttorney.isDefined){
+        <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
     }
 
 
@@ -55,8 +53,10 @@
     </div>
 
     <h1>
-        @Html(Messages("ats.treasury_spending.title"))<br>
-        @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+            <span class="gray heading-medium block-heading">
+                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+            </span>
+        @Html(Messages("ats.treasury_spending.title"))
     </h1>
             @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>

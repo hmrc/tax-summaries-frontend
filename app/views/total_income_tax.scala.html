@@ -31,10 +31,8 @@
       <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
     </div>
   }
-  @if(!viewModel.isPaye) {
-    @if(!actingAsAttorney.isDefined){
-      <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
-    }
+  @if(!actingAsAttorney.isDefined){
+    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }
 
 }
@@ -43,8 +41,10 @@
 
     @helpers.back_link(Messages("generic.back"))
     <h1>
-      @Messages("ats.total_income_tax.income_tax")<br>
-      @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear)
+        <span class="gray heading-medium block-heading">
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear))
+        </span>
+      @Html(Messages("ats.total_income_tax.income_tax"))
     </h1>
 
     @if(viewModel.showIncomeTaxTable) {
@@ -58,7 +58,7 @@
       <tbody>
         @if(!viewModel.startingRateForSavings.isZero) {
         <tr id="starting-rate-for-savings-row">
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.savings",
+          <td>@Html(Messages("ats.total_income_tax.table.savings",
               """<span id="start-rate-for-savings-before">"""+includes.currency_amount(viewModel.startingRateForSavings)+"""</span>""",
               """<span id="start-rate-for-savings-rate">"""+viewModel.startingRateForSavingsRate+"""</span>"""))</td>
           <td id="starting-rate-for-savings-amount">@includes.currency_amount(viewModel.startingRateForSavingsAmount)</td>
@@ -67,7 +67,7 @@
 
         @if(!viewModel.basicRateIncomeTax.isZero) {
         <tr id="basic-rate-income-tax-row">
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.basic",
+          <td>@Html(Messages("ats.total_income_tax.table.basic",
                 """<span id="basic-rate-income-tax-before">"""+includes.currency_amount(viewModel.basicRateIncomeTax)+"""</span>""",
                 """<span id="basic-rate-income-tax-rate">"""+viewModel.basicRateIncomeTaxRate+"""</span>"""))</td>
           <td id="basic-rate-income-tax-amount">@includes.currency_amount(viewModel.basicRateIncomeTaxAmount)</td>
@@ -77,7 +77,7 @@
         @if(!viewModel.basicRateIncomeTax.isZero) {
           @if(!viewModel.higherRateIncomeTax.isZero) {
         <tr id="higher-rate-income-tax-row">
-            <td scope="row">@Html(Messages("ats.total_income_tax.table.higher",
+            <td>@Html(Messages("ats.total_income_tax.table.higher",
                 """<span id="higher-rate-income-tax-before">"""+includes.currency_amount(viewModel.higherRateIncomeTax)+"""</span>""",
                 """<span id="higher-rate-income-tax-rate">"""+viewModel.higherRateIncomeTaxRate+"""</span>"""))</td>
           <td id="higher-rate-income-tax-amount">@includes.currency_amount(viewModel.higherRateIncomeTaxAmount)</td>
@@ -86,7 +86,7 @@
 
         @if(!viewModel.additionalRateIncomeTax.isZero) {
         <tr id="additional-rate-income-tax-row">
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.additional",
+          <td>@Html(Messages("ats.total_income_tax.table.additional",
               """<span id="additional-rate-income-tax-before">"""+includes.currency_amount(viewModel.additionalRateIncomeTax)+"""</span>""",
               """<span id="additional-rate-income-tax-rate">"""+viewModel.additionalRateIncomeTaxRate+"""</span>"""))</td>
           <td id="additional-rate-income-tax-amount">@includes.currency_amount(viewModel.additionalRateIncomeTaxAmount)</td>
@@ -114,7 +114,7 @@
       <tbody>
         @if(!viewModel.ordinaryRate.isZero) {
         <tr id="ordinary-rate-row">
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.basic",
+          <td>@Html(Messages("ats.total_income_tax.table.basic",
               """<span id="ordinary-rate-before">"""+includes.currency_amount(viewModel.ordinaryRate)+"""</span>""",
               """<span id="ordinary-rate-rate">"""+viewModel.ordinaryRateTaxRate+"""</span>"""))</td>
           <td id="ordinary-rate-amount">@includes.currency_amount(viewModel.ordinaryRateAmount)</td>
@@ -123,7 +123,7 @@
 
         @if(!viewModel.upperRate.isZero) {
         <tr id="upper-rate-row">
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.higher",
+          <td>@Html(Messages("ats.total_income_tax.table.higher",
               """<span id="upper-rate-before">"""+includes.currency_amount(viewModel.upperRate)+"""</span>""",
               """<span id="upper-rate-rate">"""+viewModel.upperRateRate+"""</span>"""))</td>
           <td id="upper-rate-amount">@includes.currency_amount(viewModel.upperRateAmount)</td>
@@ -132,7 +132,7 @@
 
         @if(!viewModel.additionalRate.isZero) {
         <tr id="additional-rate-row">
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.additional",
+          <td>@Html(Messages("ats.total_income_tax.table.additional",
               """<span id="additional-rate-before">"""+includes.currency_amount(viewModel.additionalRate)+"""</span>""",
               """<span id="additional-rate-rate">"""+viewModel.additionalRateRate+"""</span>"""))</td>
           <td id="additional-rate-amount">@includes.currency_amount(viewModel.additionalRateAmount)</td>
@@ -165,21 +165,21 @@
       <tbody>
         @if(!viewModel.otherAdjustmentsIncreasing.isZero) {
         <tr>
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
+          <td>@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
           <td id="other-adjustments-increasing-amount">@includes.currency_amount(viewModel.otherAdjustmentsIncreasing)</td>
         </tr>
         }
 
         @if(!viewModel.marriageAllowanceReceivedAmount.isZero) {
         <tr>
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
+          <td>@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
           <td id="marriage-allowance-received-amount">@includes.currency_amount(viewModel.marriageAllowanceReceivedAmount)</td>
         </tr>
         }
 
         @if(!viewModel.otherAdjustmentsReducing.isZero) {
         <tr>
-          <td scope="row">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
+          <td>@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
           <td id="other-adjustments-reducing-amount">
               <span id="reducing-amount" class="visuallyhidden">@Html(Messages("generic.minus")) @includes.currency_amount(viewModel.otherAdjustmentsReducing)</span>
               <span aria-hidden="true">-@includes.currency_amount(viewModel.otherAdjustmentsReducing)</span>
@@ -198,7 +198,7 @@
         </tr>
         @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
         <tr>
-          <td class="scottish-income-tax" scope="row">@Html(Messages("ats.total_income_tax.table.scottish_income_tax"))</td>
+          <td class="scottish-income-tax">@Html(Messages("ats.total_income_tax.table.scottish_income_tax"))</td>
           <td id="scottish-income-tax-amount" class="scottish-income-tax">@includes.currency_amount(viewModel.scottishIncomeTax)</td>
         </tr>
         }
