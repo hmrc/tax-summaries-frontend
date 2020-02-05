@@ -17,7 +17,7 @@
 package view_models.paye
 
 import utils.GenericViewModel
-import view_models.{Amount, Rate}
+import view_models._
 
 case class PayeTotalIncomeTax(
                                year: Int,
@@ -39,10 +39,10 @@ case class PayeTotalIncomeTax(
                                otherAdjustmentsIncreasing: Amount,
                                marriageAllowanceReceivedAmount: Amount,
                                otherAdjustmentsReducing: Amount,
-                               scottishTax: PayeScottishTax,
+                               scottishTax: ScottishTax,
                                totalIncomeTax: Amount,
                                scottishIncomeTax: Amount,
-                               savingsTax: PayeSavingsTax,
+                               savingsTax: SavingsTax,
                                incomeTaxStatus: String,
                                startingRateForSavingsRateRate: Rate,
                                basicRateIncomeTaxRateRate: Rate,
@@ -51,8 +51,8 @@ case class PayeTotalIncomeTax(
                                ordinaryRateTaxRateRate: Rate,
                                upperRateRateRate: Rate,
                                additionalRateRateRate: Rate,
-                               scottishRates: PayeScottishRates,
-                               savingsRates: PayeSavingsRates,
+                               scottishRates: ScottishRates,
+                               savingsRates: SavingsRates,
                                lessTaxAdjustmentPreviousYear: Amount,
                                taxUnderpaidPreviousYear: Amount,
                                title: String,
@@ -88,109 +88,4 @@ case class PayeTotalIncomeTax(
       + upperRateAmount.amount
       + additionalRateAmount.amount, savingsTax.savingsLowerRateTaxAmount.currency)
   }
-}
-
-case class PayeScottishTax(
-  scottishStarterIncomeTax: Amount,
-  scottishStarterIncomeTaxAmount: Amount,
-  scottishBasicIncomeTax: Amount,
-  scottishBasicIncomeTaxAmount: Amount,
-  scottishIntermediateIncomeTax: Amount,
-  scottishIntermediateIncomeTaxAmount: Amount,
-  scottishHigherIncomeTax: Amount,
-  scottishHigherIncomeTaxAmount: Amount,
-  scottishAdditionalIncomeTax: Amount,
-  scottishAdditionalIncomeTaxAmount: Amount,
-  scottishTotalTax: Amount
-) {
-
-  def hasTax: Boolean =
-    scottishStarterIncomeTax.nonZero ||
-      scottishBasicIncomeTax.nonZero ||
-      scottishIntermediateIncomeTax.nonZero ||
-      scottishHigherIncomeTax.nonZero ||
-      scottishAdditionalIncomeTax.nonZero ||
-      scottishTotalTax.nonZero
-}
-
-object PayeScottishTax {
-
-  val empty: PayeScottishTax =
-    PayeScottishTax(
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty
-    )
-}
-
-case class PayeSavingsTax(
-  savingsLowerRateTax: Amount,
-  savingsLowerRateTaxAmount: Amount,
-  savingsHigherRateTax: Amount,
-  savingsHigherRateTaxAmount: Amount,
-  savingsAdditionalRateTax: Amount,
-  savingsAdditionalRateTaxAmount: Amount
-) {
-
-  val hasTax: Boolean =
-    savingsLowerRateTax.nonZero ||
-    savingsHigherRateTax.nonZero ||
-    savingsAdditionalRateTax.nonZero
-}
-
-object PayeSavingsTax {
-
-  val empty: PayeSavingsTax =
-    PayeSavingsTax(
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty,
-      Amount.empty
-    )
-}
-
-case class PayeScottishRates(
-  scottishStarterRate: Rate,
-  scottishBasicRate: Rate,
-  scottishIntermediateRate: Rate,
-  scottishHigherRate: Rate,
-  scottishAdditionalRate: Rate
-)
-
-object PayeScottishRates {
-
-  val empty: PayeScottishRates =
-    PayeScottishRates(
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      Rate.empty,
-      Rate.empty
-    )
-}
-
-case class PayeSavingsRates(
-  savingsLowerRate: Rate,
-  savingsHigherRate: Rate,
-  savingsAdditionalRate: Rate
-)
-
-object PayeSavingsRates {
-
-  val empty: PayeSavingsRates =
-    PayeSavingsRates(
-      Rate.empty,
-      Rate.empty,
-      Rate.empty
-    )
 }

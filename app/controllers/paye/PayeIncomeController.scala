@@ -22,18 +22,19 @@ import controllers.auth.AuthenticatedRequest
 import controllers.auth.paye.PayeAuthAction
 import models.ErrorResponse
 import play.api.Play
-import play.api.mvc.Result
-import services.{AuditService, IncomeService}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.GenericViewModel
-import view_models.IncomeBeforeTax
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Result
+import services.AuditService
+import services.paye.PayeIncomeService
+import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils.GenericViewModel
+import view_models.paye.PayeIncomeBeforeTax
 
 import scala.concurrent.Future
 
 object PayeIncomeController extends PayeIncomeController {
-  override val incomeService = IncomeService
+  override val incomeService = PayeIncomeService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
@@ -45,19 +46,19 @@ trait PayeIncomeController extends TaxYearRequest {
 
   val authAction: PayeAuthAction
 
-  def incomeService: IncomeService
+  def incomeService: PayeIncomeService
 
   def authorisedIncomeBeforeTax = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = IncomeBeforeTax
+  type ViewModel = PayeIncomeBeforeTax
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(incomeService.getIncomeData(_))
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

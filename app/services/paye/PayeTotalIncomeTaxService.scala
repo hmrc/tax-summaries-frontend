@@ -20,7 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.{Amount, Rate}
+import view_models._
 import view_models.paye._
 
 import scala.concurrent.Future
@@ -47,7 +47,7 @@ trait PayeTotalIncomeTaxService {
     def taxpayerName(key: String): String =
       atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
-    val scottishTax = PayeScottishTax(
+    val scottishTax = ScottishTax(
       payload("scottish_starter_rate_tax"),
       payload("scottish_starter_income"),
       payload("scottish_basic_rate_tax"),
@@ -61,7 +61,7 @@ trait PayeTotalIncomeTaxService {
       payload("scottish_total_tax")
     )
 
-    val savingsTax = PayeSavingsTax(
+    val savingsTax = SavingsTax(
       payload("savings_lower_rate_tax"),
       payload("savings_lower_income"),
       payload("savings_higher_rate_tax"),
@@ -70,7 +70,7 @@ trait PayeTotalIncomeTaxService {
       payload("savings_additional_income")
     )
 
-    val scottishRates = PayeScottishRates(
+    val scottishRates = ScottishRates(
       rates("scottish_starter_rate"),
       rates("scottish_basic_rate"),
       rates("scottish_intermediate_rate"),
@@ -78,7 +78,7 @@ trait PayeTotalIncomeTaxService {
       rates("scottish_additional_rate")
     )
 
-    val savingsRates = PayeSavingsRates(
+    val savingsRates = SavingsRates(
       rates("savings_lower_rate"),
       rates("savings_higher_rate"),
       rates("savings_additional_rate")

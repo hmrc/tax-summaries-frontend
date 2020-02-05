@@ -22,18 +22,19 @@ import controllers.auth.AuthenticatedRequest
 import controllers.auth.paye.PayeAuthAction
 import models.{ErrorResponse, SpendData}
 import play.api.Play
-import play.api.mvc.Result
-import services.{AuditService, GovernmentSpendService}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.GenericViewModel
-import view_models.GovernmentSpend
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Result
+import services.AuditService
+import services.paye.PayeGovernmentSpendService
+import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils.GenericViewModel
+import view_models.paye.PayeGovernmentSpend
 
 import scala.concurrent.Future
 
 object PayeGovernmentSpendController extends PayeGovernmentSpendController {
-  override val governmentSpendService = GovernmentSpendService
+  override val governmentSpendService = PayeGovernmentSpendService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
@@ -45,13 +46,13 @@ trait PayeGovernmentSpendController extends TaxYearRequest {
 
   val authAction: PayeAuthAction
 
-  def governmentSpendService: GovernmentSpendService
+  def governmentSpendService: PayeGovernmentSpendService
 
   def authorisedGovernmentSpendData = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = GovernmentSpend
+  type ViewModel = PayeGovernmentSpend
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))

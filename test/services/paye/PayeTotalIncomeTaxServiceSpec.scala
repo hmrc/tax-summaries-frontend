@@ -25,7 +25,7 @@ import services.atsData.AtsTestData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import view_models.paye._
-import view_models.{Amount, Rate}
+import view_models._
 
 class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
@@ -41,7 +41,7 @@ class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite wi
       val incomeData: AtsData = AtsTestData.totalIncomeTaxData
       val result: PayeTotalIncomeTax = totalIncomeConverter(incomeData)
 
-      val scottishTax = PayeScottishTax(
+      val scottishTax = ScottishTax(
         Amount.gbp(1800),
         Amount.gbp(1900),
         Amount.gbp(2000),
@@ -55,7 +55,7 @@ class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite wi
         Amount.gbp(2800)
       )
 
-      val savingsTax = PayeSavingsTax(
+      val savingsTax = SavingsTax(
         Amount.gbp(2900),
         Amount.gbp(3000),
         Amount.gbp(3100),
@@ -64,7 +64,7 @@ class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite wi
         Amount.gbp(3400)
       )
 
-      val scottishRates = PayeScottishRates(
+      val scottishRates = ScottishRates(
         Rate("80%"),
         Rate("90%"),
         Rate("100%"),
@@ -72,7 +72,7 @@ class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite wi
         Rate("120%")
       )
 
-      val savingsRates = PayeSavingsRates(
+      val savingsRates = SavingsRates(
         Rate("130%"),
         Rate("140%"),
         Rate("150%")

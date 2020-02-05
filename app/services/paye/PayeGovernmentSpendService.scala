@@ -25,7 +25,7 @@ import view_models.{Amount, GovernmentSpend}
 
 import scala.concurrent.Future
 
-object GovernmentSpendService extends PayeGovernmentSpendService {
+object PayeGovernmentSpendService extends PayeGovernmentSpendService {
   override val atsService = PayeAtsService
 }
 

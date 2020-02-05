@@ -29,11 +29,13 @@ import utils.GenericViewModel
 import view_models.TotalIncomeTax
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import services.paye.PayeTotalIncomeTaxService
+import view_models.paye.PayeTotalIncomeTax
 
 import scala.concurrent.Future
 
 object PayeTotalIncomeTaxController extends PayeTotalIncomeTaxController {
-  override val totalIncomeTaxService = TotalIncomeTaxService
+  override val totalIncomeTaxService = PayeTotalIncomeTaxService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[PayeAuthAction]
@@ -45,13 +47,13 @@ trait PayeTotalIncomeTaxController extends TaxYearRequest {
 
   val authAction: PayeAuthAction
 
-  def totalIncomeTaxService: TotalIncomeTaxService
+  def totalIncomeTaxService: PayeTotalIncomeTaxService
 
   def authorisedTotalIncomeTax = authAction.async {
     request => show(request)
   }
 
-  type ViewModel = TotalIncomeTax
+  type ViewModel = PayeTotalIncomeTax
 
   override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
