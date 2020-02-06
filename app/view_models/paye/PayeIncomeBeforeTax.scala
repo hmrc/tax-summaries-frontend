@@ -34,7 +34,6 @@ case class PayeIncomeBeforeTax(
   forename: String,
   surname: String)
     extends GenericViewModel {
-  def isPaye = utr.isEmpty
   def taxYearTo = taxYear.toString
   def taxYearFrom = (taxYear - 1).toString
 }

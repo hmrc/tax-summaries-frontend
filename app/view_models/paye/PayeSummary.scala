@@ -42,9 +42,6 @@ case class PayeSummary(
   forename: String,
   surname: String)
     extends GenericViewModel {
-  
-  def isPaye: Boolean = true
-
   def taxYearInterval = taxYearFrom + "-" + taxYearTo.substring(2)
   def taxYearIntervalTo = taxYearFrom + " to " + taxYearTo
 
