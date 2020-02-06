@@ -88,10 +88,10 @@
         </tr>
         <tr>
           <td scope="row">@Messages("paye.ats.tax_free_amount.table.totalTaxFreeAmount")</td>
-          @if(viewModel.youPayTaxOn.isZero){
+          @if(!viewModel.totalTaxFree.isZero){
             <td id="total_tax_free">@includes.currency_amount(viewModel.totalTaxFree)</td>
           } else {
-            <td id="total_tax_free">&minus;@includes.currency_amount(viewModel.taxFreeAllowance)</td>
+            <td id="total_tax_free">@includes.currency_amount(viewModel.taxFreeAllowance)</td>
           }
         </tr>
       </tbody>

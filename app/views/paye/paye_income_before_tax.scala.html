@@ -71,7 +71,7 @@
           @if(!viewModel.getStatePension.isZero) {
             <td scope="row">@Html(Messages("ats.income_before_tax.table.line4"))</td>
           } else {
-            <td scope="row">@Html(Messages("ats.income_before_tax.table.line4-alternative"))</td>
+            <td scope="row">@Html(Messages("paye.ats.income_before_tax.table.line4-alternative"))</td>
           }
           <td id="other-pension-total">@includes.currency_amount(viewModel.getOtherPensionTotal)</td>
         </tr>
