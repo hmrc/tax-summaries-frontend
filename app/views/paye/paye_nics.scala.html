@@ -30,10 +30,10 @@
 @includes.taxs_main(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
     <h1>
-        @Html(Messages("ats.nics.tax_and_nics.title"))<br>
-        @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        @Html(Messages("paye.ats.nics.tax_and_nics.title"))<br>
+        @Messages("paye.generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
     </h1>
-    <p>@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+    <p>@Html(Messages("paye.ats.nics.tax_and_nics.lede"))</p>
 
     <table id="total-income-tax">
       <thead>
