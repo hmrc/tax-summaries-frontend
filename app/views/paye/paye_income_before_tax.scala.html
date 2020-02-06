@@ -32,9 +32,9 @@
     @helpers.back_link(Messages("generic.back"))
     <h1>
       @Messages("ats.income_before_tax.title")<br>
-      @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+      @Messages("paye.generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
     </h1>
-    <p>@Html(Messages("ats.income_before_tax.intro"))</p>
+    <p>@Html(Messages("paye.ats.income_before_tax.intro"))</p>
 
     <table>
       <thead>
@@ -71,7 +71,7 @@
           @if(!viewModel.getStatePension.isZero) {
             <td scope="row">@Html(Messages("ats.income_before_tax.table.line4"))</td>
           } else {
-            <td scope="row">@Html(Messages("ats.income_before_tax.table.line4-alternative"))</td>
+            <td scope="row">@Html(Messages("paye.ats.income_before_tax.table.line4-alternative"))</td>
           }
           <td id="other-pension-total">@includes.currency_amount(viewModel.getOtherPensionTotal)</td>
         </tr>

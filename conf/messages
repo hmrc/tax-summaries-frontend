@@ -104,6 +104,7 @@ ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
 paye.ats.summary.total_income.paye.title=Taxable income
 paye.ats.summary.total_income.link=Your taxable income
+paye.ats.summary.total_income.description=This is your total taxable income for the year.
 paye.ats.summary.nicsheading=Income Tax and National Insurance
 paye.ats.summary.tax_free.description=This is the amount you received without paying tax.
 paye.ats.summary.tax_and_nics.description=This is {0}% of your taxable income. For every £1 of income, you paid {0}p in Income Tax and National Insurance contributions.
