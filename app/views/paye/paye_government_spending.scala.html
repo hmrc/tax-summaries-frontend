@@ -33,7 +33,7 @@
     }
 }
 
-@includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), "", contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     @helpers.back_link(Messages("generic.back"))
 

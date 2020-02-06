@@ -50,7 +50,6 @@ class PayeTotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite
   val badRequest = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = PayeTotalIncomeTax(
     year = 2014,
-    utr = testUtr,
     startingRateForSavings = Amount(110, "GBP"),
     startingRateForSavingsAmount = Amount(140, "GBP"),
     basicRateIncomeTax = Amount(1860, "GBP"),
@@ -83,10 +82,7 @@ class PayeTotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite
     ScottishRates.empty,
     SavingsRates.empty,
     lessTaxAdjustmentPreviousYear = Amount(110, "GBP"),
-    taxUnderpaidPreviousYear = Amount(120, "GBP"),
-    "Mr",
-    "forename",
-    "surname"
+    taxUnderpaidPreviousYear = Amount(120, "GBP")
   )
 
   trait TestController extends PayeTotalIncomeTaxController {

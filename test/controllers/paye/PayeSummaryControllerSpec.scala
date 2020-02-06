@@ -47,7 +47,6 @@ object PayeSummaryControllerSpec {
 
   val baseModel = PayeSummary(
     year = 2014,
-    utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     employerNicAmount = Amount(1300, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -63,10 +62,7 @@ object PayeSummaryControllerSpec {
     nicsAndTaxRateAmount = Amount(0.5678, "GBP"),
     totalCgTaxRate = Rate("12.34%"),
     nicsAndTaxRate = Rate("56.78%"),
-    incomeAfterTaxAndNics = Amount(0.5678, "GBP"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
+    incomeAfterTaxAndNics = Amount(0.5678, "GBP")
   )
 }
 

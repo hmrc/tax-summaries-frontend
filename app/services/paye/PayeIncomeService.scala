@@ -44,7 +44,6 @@ trait PayeIncomeService {
       atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
       PayeIncomeBeforeTax(atsData.taxYear,
-        atsData.utr.getOrElse(""),
         payload("self_employment_income"),
         payload("income_from_employment"),
         payload("state_pension"),
@@ -52,10 +51,7 @@ trait PayeIncomeService {
         payload("taxable_state_benefits"),
         payload("other_income"),
         payload("benefits_from_employment"),
-        payload("total_income_before_tax"),
-        taxpayerName("title"),
-        taxpayerName("forename"),
-        taxpayerName("surname")
+        payload("total_income_before_tax")
       )
     }
 }

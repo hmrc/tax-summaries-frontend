@@ -59,7 +59,7 @@ trait PayeAllowancesController extends TaxYearRequest {
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_tax_free_amount(result, None))
   }
 
 }

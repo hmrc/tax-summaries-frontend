@@ -21,7 +21,6 @@ import view_models.{Amount, Rate}
 
 case class PayeSummary(
   year: Int,
-  utr: String,
   employeeNicAmount: Amount,
   employerNicAmount: Amount,
   totalIncomeTaxAndNics: Amount,
@@ -37,10 +36,8 @@ case class PayeSummary(
   incomeAfterTaxAndNics: Amount,
   nicsAndTaxRateAmount: Amount,
   totalCgTaxRate: Rate,
-  nicsAndTaxRate: Rate,
-  title: String,
-  forename: String,
-  surname: String)
+  nicsAndTaxRate: Rate
+)
     extends GenericViewModel {
   def taxYearInterval = taxYearFrom + "-" + taxYearTo.substring(2)
   def taxYearIntervalTo = taxYearFrom + " to " + taxYearTo

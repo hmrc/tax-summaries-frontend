@@ -58,7 +58,6 @@ class PayeNicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
     override val authAction = PayeFakeAuthAction
     val model = PayeSummary(
       year = 2014,
-      utr = testUtr,
       employeeNicAmount = Amount(1200, "GBP"),
       employerNicAmount = Amount(1300, "GBP"),
       totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -74,10 +73,7 @@ class PayeNicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       nicsAndTaxRateAmount = Amount(56.78, "PERCENT"),
       totalCgTaxRate = Rate("12.34%"),
       nicsAndTaxRate = Rate("56.78%"),
-      incomeAfterTaxAndNics = Amount(0.5678, "GBP"),
-      title = "Mr",
-      forename = "forename",
-      surname = "surname"
+      incomeAfterTaxAndNics = Amount(0.5678, "GBP")
     )
 
     when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))

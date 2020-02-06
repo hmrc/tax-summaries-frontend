@@ -86,7 +86,6 @@ trait PayeTotalIncomeTaxService {
 
     PayeTotalIncomeTax(
       atsData.taxYear,
-      atsData.utr.getOrElse(""),
       payload("starting_rate_for_savings"),
       payload("starting_rate_for_savings_amount"),
       payload("basic_rate_income_tax"),
@@ -119,10 +118,7 @@ trait PayeTotalIncomeTaxService {
       scottishRates,
       savingsRates,
       payload("less_tax_adjustment_previous_year"),
-      payload("tax_underpaid_previous_year"),
-      taxpayerName("title"),
-      taxpayerName("forename"),
-      taxpayerName("surname")
+      payload("tax_underpaid_previous_year")
     )
   }
 }

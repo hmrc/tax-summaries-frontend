@@ -21,16 +21,13 @@ import view_models.Amount
 
 case class PayeAllowances(
   taxYear: Int,
-  utr: String,
   taxFreeAllowance: Amount,
   marriageAllowanceTransferred: Amount,
   otherAllowances: Amount,
   youPayTaxOn: Amount,
   totalTaxFree: Amount,
-  totalIncomeBeforeTax: Amount,
-  title: String,
-  forename: String,
-  surname: String)
+  totalIncomeBeforeTax: Amount
+  )
     extends GenericViewModel {
   def year = taxYear
   def taxYearTo = taxYear.toString

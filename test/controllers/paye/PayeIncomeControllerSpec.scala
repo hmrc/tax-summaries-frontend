@@ -50,7 +50,6 @@ class PayeIncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
   val badRequest = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = PayeIncomeBeforeTax(
     taxYear = 2014,
-    utr = testUtr,
     getSelfEmployTotal = Amount(1100, "GBP"),
     getIncomeFromEmployment = Amount(10500, "GBP"),
     getStatePension = Amount(1000, "GBP"),
@@ -58,10 +57,7 @@ class PayeIncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     getTaxableStateBenefit = Amount(3000, "GBP"),
     getOtherIncome = Amount(1500, "GBP"),
     getBenefitsFromEmployment = Amount(20, "GBP"),
-    getIncomeBeforeTaxTotal = Amount(11600, "GBP"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
+    getIncomeBeforeTaxTotal = Amount(11600, "GBP")
   )
 
   trait TestController extends PayeIncomeController {
@@ -118,7 +114,7 @@ class PayeIncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
       document.getElementById("other-pension-total").text() shouldBe "£2,000"
       document.getElementById("taxable-state-benefits").text() shouldBe "£3,000"
       document.getElementById("other-income-amount").text() shouldBe "£1,500"
-
+      // TODO Commented out tests are waiting for view to use PAYE message keys
 //      document.toString should include("Taxable income")
 //      document.select("h1").text shouldBe "Tax Year: 6 April 2013 to 5 April 2014 Your total income"
     }

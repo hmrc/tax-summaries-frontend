@@ -80,7 +80,6 @@ class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite wi
          println(result)
       result mustEqual PayeTotalIncomeTax(
         2019,
-        "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
         Amount(300, "GBP"),
@@ -113,10 +112,7 @@ class PayeTotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite wi
         scottishRates,
         savingsRates,
         Amount(3700, "GBP"),
-        Amount(3800, "GBP"),
-        "Mr",
-        "John",
-        "Smith"
+        Amount(3800, "GBP")
       )
     }
   }

@@ -59,7 +59,6 @@ class PayeGovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuit
 
     val model = new PayeGovernmentSpend(
       taxYear = 2014,
-      userUtr = testUtr,
       govSpendAmountData = List(
         ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
         ("health", SpendData(Amount(4512.19, "GBP"), 18.87)),

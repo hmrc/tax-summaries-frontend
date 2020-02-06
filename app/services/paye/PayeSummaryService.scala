@@ -49,7 +49,6 @@ trait PayeSummaryService {
       atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
     PayeSummary(atsData.taxYear,
-      atsData.utr.getOrElse(""),
       payload("employee_nic_amount"),
       payload("employer_nic_amount"),
       payload("total_income_tax_and_nics"),
@@ -65,10 +64,7 @@ trait PayeSummaryService {
       payload("income_after_tax_and_nics"),
       payload("nics_and_tax_rate_amount"),
       rates("total_cg_tax_rate"),
-      rates("nics_and_tax_rate"),
-      taxpayerName("title"),
-      taxpayerName("forename"),
-      taxpayerName("surname")
+      rates("nics_and_tax_rate")
     )
   }
 }

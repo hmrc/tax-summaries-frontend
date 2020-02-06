@@ -28,7 +28,7 @@
   }
 }
 
-@includes.taxs_main(title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@includes.taxs_main(title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear), "", contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
 
     @helpers.back_link(Messages("generic.back"))
     <h1>

@@ -74,7 +74,6 @@ class PayeSummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Scal
 
       result shouldBe PayeSummary(
         2019,
-        "1111111111",
         Amount(100, "GBP"),
         Amount(150, "GBP"),
         Amount(200, "GBP"),
@@ -90,10 +89,7 @@ class PayeSummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Scal
         Amount(1100, "GBP"),
         Amount(20, "PERCENT"),
         Rate("10%"),
-        Rate("20%"),
-        "Mr",
-        "John",
-        "Smith"
+        Rate("20%")
       )
     }
 

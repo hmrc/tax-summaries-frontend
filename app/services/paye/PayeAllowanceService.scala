@@ -45,16 +45,12 @@ trait PayeAllowanceService {
 
     PayeAllowances(
       atsData.taxYear,
-      atsData.utr.getOrElse(""),
       payload("personal_tax_free_amount"),
       payload("marriage_allowance_transferred_amount"),
       payload("other_allowances_amount"),
       payload("you_pay_tax_on"),
       payload("total_tax_free_amount"),
-      payload("total_income_before_tax"),
-      taxpayerName("title"),
-      taxpayerName("forename"),
-      taxpayerName("surname")
+      payload("total_income_before_tax")
     )
   }
 }

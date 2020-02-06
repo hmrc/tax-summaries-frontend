@@ -22,7 +22,6 @@ import view_models.Amount
 
 case class PayeGovernmentSpend(
   taxYear: Int,
-  userUtr: String,
   govSpendAmountData: List[(String, SpendData)],
   userTitle: String,
   userForename: String,

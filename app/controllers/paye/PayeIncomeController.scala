@@ -59,6 +59,6 @@ trait PayeIncomeController extends TaxYearRequest {
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_income_before_tax(result, None))
   }
 }

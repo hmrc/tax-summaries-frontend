@@ -21,7 +21,6 @@ import view_models._
 
 case class PayeTotalIncomeTax(
                                year: Int,
-                               utr: String,
                                startingRateForSavings: Amount,
                                startingRateForSavingsAmount: Amount,
                                basicRateIncomeTax: Amount,
@@ -54,10 +53,8 @@ case class PayeTotalIncomeTax(
                                scottishRates: ScottishRates,
                                savingsRates: SavingsRates,
                                lessTaxAdjustmentPreviousYear: Amount,
-                               taxUnderpaidPreviousYear: Amount,
-                               title: String,
-                               forename: String,
-                               surname: String)
+                               taxUnderpaidPreviousYear: Amount
+                              )
     extends GenericViewModel {
   def taxYear = year.toString
 

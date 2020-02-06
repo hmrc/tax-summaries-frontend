@@ -45,7 +45,6 @@ trait PayeGovernmentSpendService {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
     PayeGovernmentSpend(atsData.taxYear,
-      atsData.utr.getOrElse(""),
       govSpendingData.govSpendAmountData.get.toList,
       taxpayerName("title"),
       taxpayerName("forename"),

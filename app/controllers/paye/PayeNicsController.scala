@@ -58,6 +58,6 @@ trait PayeNicsController extends TaxYearRequest {
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_nics(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(views.html.paye.paye_nics(result, None))
   }
 }

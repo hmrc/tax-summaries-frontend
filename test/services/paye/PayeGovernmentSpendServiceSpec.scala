@@ -48,7 +48,6 @@ class PayeGovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite w
 
       result shouldBe PayeGovernmentSpend(
        2019,
-        "1111111111",
         List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
         "Mr",
         "John",

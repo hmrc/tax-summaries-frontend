@@ -59,7 +59,7 @@ trait PayeGovernmentSpendController extends TaxYearRequest {
   }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.paye.paye_government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
+    Ok(views.html.paye.paye_government_spending(result, assignPercentage(result.govSpendAmountData), None))
   }
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {

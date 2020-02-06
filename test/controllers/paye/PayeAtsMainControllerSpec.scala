@@ -46,7 +46,6 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   val taxYear = 2014
    val baseModel = PayeSummary(
     year = 2014,
-    utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     employerNicAmount = Amount(1300, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -62,10 +61,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     nicsAndTaxRateAmount = Amount(0.5678, "GBP"),
     totalCgTaxRate = Rate("12.34%"),
     nicsAndTaxRate = Rate("56.78%"),
-    incomeAfterTaxAndNics = Amount(0.5678, "GBP"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
+    incomeAfterTaxAndNics = Amount(0.5678, "GBP")
   )
   val request = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val badRequest = AuthenticatedRequest("userId", None, None, Some(Nino(testNino)), None, None, None, FakeRequest("GET","?taxYear=20145"))

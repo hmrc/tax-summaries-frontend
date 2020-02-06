@@ -21,7 +21,6 @@ import view_models.Amount
 
 case class PayeIncomeBeforeTax(
   taxYear: Int,
-  utr: String,
   getSelfEmployTotal: Amount,
   getIncomeFromEmployment: Amount,
   getStatePension: Amount,
@@ -29,10 +28,7 @@ case class PayeIncomeBeforeTax(
   getTaxableStateBenefit: Amount,
   getOtherIncome: Amount,
   getBenefitsFromEmployment: Amount,
-  getIncomeBeforeTaxTotal: Amount,
-  title: String,
-  forename: String,
-  surname: String)
+  getIncomeBeforeTaxTotal: Amount)
     extends GenericViewModel {
   def taxYearTo = taxYear.toString
   def taxYearFrom = (taxYear - 1).toString

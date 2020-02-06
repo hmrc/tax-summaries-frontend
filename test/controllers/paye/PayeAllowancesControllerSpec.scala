@@ -51,16 +51,12 @@ class PayeAllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
 
   val baseModel = PayeAllowances(
     taxYear = 2014,
-    utr = testUtr,
     taxFreeAllowance = Amount(9440, "GBP"),
     marriageAllowanceTransferred = Amount(0, "GBP"),
     otherAllowances = Amount(300, "GBP"),
     youPayTaxOn = Amount(5000, "GBP"),
     totalTaxFree = Amount(9740, "GBP"),
-    totalIncomeBeforeTax =  Amount(9740, "GBP"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
+    totalIncomeBeforeTax =  Amount(9740, "GBP")
   )
 
   val noATSViewModel: NoATSViewModel = new NoATSViewModel()

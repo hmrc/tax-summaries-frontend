@@ -48,7 +48,6 @@ class PayeIncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Scala
       val result: PayeIncomeBeforeTax = createIncomeConverter(incomeData)
       result mustEqual PayeIncomeBeforeTax(
         2019,
-        "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
         Amount(300, "GBP"),
@@ -56,10 +55,7 @@ class PayeIncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Scala
         Amount(500, "GBP"),
         Amount(600, "GBP"),
         Amount(700, "GBP"),
-        Amount(800, "GBP"),
-        "Mr",
-        "John",
-        "Smith"
+        Amount(800, "GBP")
       )
     }
 

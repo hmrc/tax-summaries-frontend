@@ -48,16 +48,12 @@ class PayeAllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sc
 
       result shouldBe PayeAllowances(
         2019,
-        "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
         Amount(300, "GBP"),
         Amount(500, "GBP"),
         Amount(400, "GBP"),
-        Amount(600, "GBP"),
-        "Mr",
-        "John",
-        "Smith"
+        Amount(600, "GBP")
       )
     }
   }
