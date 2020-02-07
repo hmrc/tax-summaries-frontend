@@ -61,11 +61,4 @@
       <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_spend_link")">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
       <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
     </div>
-
-    @if(request.session.get("TaxYearListLength").getOrElse("0") != "1"){
-        <div class="back">
-            <a href="@controllers.routes.IndexController.authorisedIndex()" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("generic.back")">@Html(Messages("generic.back"))</a>
-        </div>
-    }
-
 }
