@@ -234,14 +234,10 @@ class PayeGovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuit
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-      // TODO This test will not pass until we use the PAYE message key in the view
- //     document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
-
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
+      document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>How your tax was spent</strong>")
     }
 
     "return zero percentage for Housing, Cultural and Environment when they are not same" in new TestController {

@@ -19,7 +19,7 @@
 @(viewModel: view_models.paye.PayeIncomeBeforeTax, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
-  @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.income_before_tax.title", viewModel.taxYear)
+  @includes.paye.paye_taxs_breadcrumb(List("paye.breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "paye.ats.income_before_tax.title", viewModel.taxYear)
   @if(lang.language == "cy"){
     <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
   } else {

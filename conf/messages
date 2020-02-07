@@ -35,12 +35,10 @@ breadcrumbs.yta.home=Home
 
 breadcrumbs.taxs.select_tax_year=Select the tax year
 breadcrumbs.taxs.home=Your annual tax summary
-paye.breadcrumbs.taxs.home=Your Annual Tax Summary
 breadcrumbs.taxs.noauth=Not authorised
 breadcrumbs.taxs.no_ats=No ATS available
 breadcrumbs.taxs.no_ats_error=Technical Difficulties
 breadcrumbs.taxs.index=Your annual tax summary
-paye.breadcrumbs.taxs.index=Your Annual Tax Summary
 breadcrumbs.taxs.nics=Your Income Tax and National Insurance
 breadcrumbs.taxs.summary=Your income and taxes
 breadcrumbs.taxs.treasury_spending=Your taxes and public spending
@@ -49,6 +47,10 @@ breadcrumbs.taxs.tax_free_amount=Tax-free amount
 breadcrumbs.taxs.total_income_tax=Income Tax
 breadcrumbs.taxs.capital_gains_tax=Capital Gains Tax
 breadcrumbs.taxs.agent_service_unavailable=Annual tax summary: 2013 to 2014
+
+paye.breadcrumbs.taxs.home=Your Annual Tax Summary
+paye.breadcrumbs.taxs.index=Your Annual Tax Summary
+paye.breadcrumbs.taxs.treasury_spending=How your tax was spent
 
 
 # View ATS - Select the tax year page

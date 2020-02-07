@@ -36,7 +36,7 @@
 @(viewModel: view_models.paye.PayeSummary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
-    @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.home", viewModel.year)
+    @includes.paye.paye_taxs_breadcrumb(List(), "paye.breadcrumbs.taxs.home", viewModel.year)
 
     @if(lang.language == "cy"){
         <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>

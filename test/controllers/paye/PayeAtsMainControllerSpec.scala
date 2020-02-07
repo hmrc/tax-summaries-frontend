@@ -139,7 +139,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2)").toString should include("Select the tax year")
+      document.select("#global-breadcrumb li:nth-child(2)").toString should include("Your Annual Tax Summary")
     }
   }
 }

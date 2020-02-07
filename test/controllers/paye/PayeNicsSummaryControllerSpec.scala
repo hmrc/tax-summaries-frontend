@@ -125,17 +125,14 @@ class PayeNicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
+      
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
-//      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
-
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
-
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
     }
   }
 }

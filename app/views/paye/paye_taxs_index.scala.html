@@ -21,7 +21,7 @@
 @(atsList: view_models.AtsList, atsYear: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, lang: Lang)
 
 @headerContent = {
-    @includes.taxs_breadcrumb(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
+    @includes.paye.paye_taxs_breadcrumb(List(), "", 0, isLandingPage=true)
     @if(lang.language == "cy"){
         <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
     } else {

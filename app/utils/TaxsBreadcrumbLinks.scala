@@ -32,3 +32,5 @@ object TaxsBreadcrumbLinks {
 
   def getLink(key: String) = links.get(key)
 }
+
+

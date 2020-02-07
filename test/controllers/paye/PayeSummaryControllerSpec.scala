@@ -152,14 +152,6 @@ class PayeSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,400"
     }
 
-    "show capital gains (and description) on the summary if capital gains is not 0" in new TestController {
-
-      val result = Future.successful(show(request))
-      status(result) shouldBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("capital-gains") should not be null
-    }
 
     "not show capital gains on the summary if capital gains is 0" in new TestController {
 
@@ -176,40 +168,7 @@ class PayeSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.toString should not include("Technical Difficulties")
       document.getElementById("capital-gains") should be(null)
     }
-
-    "show Total Capital Gains Tax value" in new TestController {
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-capital-gains-tax").text() should equal("£5,500")
-    }
-
-    "show capital gains description on the summary if total capital gains tax is not 0" in new TestController {
-
-      val result = Future.successful(show(request))
-      status(result) shouldBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
- //     document.getElementById("total-cg-description") should not be null
-    }
-
-    "hide capital gains description on the summary if total capital gains tax is  0" in new TestController {
-
-      val model4 = baseModel.copy(
-        totalCapitalGainsTax = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
-
-      val result = Future.successful(show(request))
-      status(result) shouldBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.toString should not include("Technical Difficulties")
-      document.getElementById("total-cg-description") should be (null)
-    }
-
+    
     "show zero in Total Income Tax value" in new TestController {
 
       val model5 = baseModel.copy(
@@ -233,50 +192,7 @@ class PayeSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.getElementById("tax-and-nics-title").text() should equal("Income Tax and National Insurance")
     }
 
-    "show Tax and Nics description having only (total income tax)" in new TestController {
 
-      val model6 = baseModel.copy(
-        employeeNicAmount = Amount(0, "GBP"),
-        totalCapitalGainsTax = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("tax-and-nics-title").text() should equal("Your tax was calculated as")
-    }
-
-    "show Tax and Nics description having only (capital gains)" in new TestController {
-
-      val model7 = baseModel.copy(
-        totalIncomeTaxAmount = Amount(0, "GBP"),
-        employeeNicAmount = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("tax-and-nics-title").text() should equal("Your tax was calculated as")
-    }
-
-    "show Tax and Nics description having only (employee nics)" in new TestController {
-
-      val model8 = baseModel.copy(
-        totalIncomeTaxAmount = Amount(0, "GBP"),
-        totalCapitalGainsTax = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("tax-and-nics-title").text() should equal("Your NICs were calculated as")
-    }
 
     "show Tax and Nics description having only (total income tax, employee nics)" in new TestController {
 
@@ -292,129 +208,6 @@ class PayeSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.getElementById("tax-and-nics-title").text() should equal("Income Tax and National Insurance")
     }
 
-    "show Tax and Nics description having only (capital gains, employee nics)" in new TestController {
-
-      val model10 = baseModel.copy(
-        totalIncomeTaxAmount = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model10))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("tax-and-nics-title").text() should equal("Your NICs were calculated as")
-    }
-
-    "show Your Total Tax as sum of Income Tax, capital gains and employee nics)" in new TestController {
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-amount").text() shouldBe "£1,800"
-    }
-
-    "show Your Total Tax description having (total income tax, capital gains, employee nics)" in new TestController {
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your total Income Tax, National Insurance and Capital Gains Tax.")
-    }
-
-    "show Your Total Tax description having only (total income tax)" in new TestController {
-
-      val model11 = baseModel.copy(
-        employeeNicAmount = Amount(0, "GBP"),
-        totalCapitalGainsTax = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model11))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your total Income Tax.")
-    }
-
-    "show Your Total Tax description having only (capital gains)" in new TestController {
-
-      val model12 = baseModel.copy(
-        totalIncomeTaxAmount = Amount(0, "GBP"),
-        employeeNicAmount = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model12))
-
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your Capital Gains Tax.")
-    }
-
-    "show Your Total Tax description having only (employee nics)" in new TestController {
-
-      val model13 = baseModel.copy(
-        totalIncomeTaxAmount = Amount(0, "GBP"),
-        totalCapitalGainsTax = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model13))
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your National Insurance.")
-    }
-
-    "show Your Total Tax description having only (total income tax, capital gains)" in new TestController {
-
-      val model14 = baseModel.copy(
-        employeeNicAmount = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model14))
-
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your total Income Tax and Capital Gains Tax.")
-    }
-
-    "show Your Total Tax description having only (total income tax, employee nics)" in new TestController {
-
-      val model15 = baseModel.copy(
-        totalCapitalGainsTax = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model15))
-
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your total Income Tax and National Insurance.")
-    }
-
-    "show Your Total Tax description having only (capital gains, employee nics)" in new TestController {
-
-      val model16 = baseModel.copy(
-        totalIncomeTaxAmount = Amount(0, "GBP")
-      )
-
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model16))
-
-
-      val result = Future.successful(show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-//      document.getElementById("total-tax-description").text() should equal("Your National Insurance and Capital Gains Tax.")
-    }
-
     "show 'Summary' page with a correct breadcrumb" in new TestController {
 
       val result = Future.successful(show(request))
@@ -423,13 +216,10 @@ class PayeSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
       document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-//      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
-
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your income and taxes</strong>")
+      document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your income and taxes</strong>")
     }
 
     "Redirect to 'No ATS' page" in new TestController {

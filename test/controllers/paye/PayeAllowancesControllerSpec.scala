@@ -85,14 +85,11 @@ class PayeAllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       status(result) shouldBe 200
 
       val document = Jsoup.parse(contentAsString(result))
-    // TODO These tests will not pass untill we use the PAYE message keys in the view
-//      document.getElementById("tax-free-total").text() shouldBe "£9,740"
-//      document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
-//      document.getElementById("other-allowances").text() shouldBe "£300"
-//      document.toString should include("tax-free-allowance")
-//      document.getElementById("user-info").text() should include("forename surname")
-//      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-//      document.select("h1").text shouldBe "Tax Year: 6 April 2013 to 5 April 2014 Your tax-free amount"
+      document.getElementById("tax-free-total").text() shouldBe "£9,740"
+      document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
+      document.getElementById("other-allowances").text() shouldBe "£300"
+      document.toString should include("tax-free-allowance")
+      document.select("h1").text shouldBe "Tax free amount 6 April 2013 to 5 April 2014"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
@@ -114,20 +111,16 @@ class PayeAllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
 
       val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
-      // TODO: These tests will not pass until we create PAYE specific Breadcrumbs
-//      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
-//      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
-//
-//      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-//      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
-//
-//      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-//      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
-//
-//      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
-//      document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
-//
-//      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
+      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
+
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
+
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your tax-free amount</strong>")
     }
 
     "return a successful response for a valid request" in new TestController {

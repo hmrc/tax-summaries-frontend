@@ -19,7 +19,7 @@
 @(viewModel: view_models.paye.PayeGovernmentSpend, percent: (Double, Double, Double), actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
-    @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
+    @includes.paye.paye_taxs_breadcrumb(List("paye.breadcrumbs.taxs.index"), "paye.breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
 
     <div class="hmrc-logo-print" aria-hidden="true">
         <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
