@@ -87,7 +87,6 @@ class PayeSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   }
 
   "Calling Summary" should {
-      // TODO Commented out tests will pass when PAYE messages keys are used
     "return a successful response for a valid request" in new TestController {
       val result =  Future.successful(show(request))
       status(result) shouldBe 200

@@ -114,9 +114,8 @@ class PayeIncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
       document.getElementById("other-pension-total").text() shouldBe "£2,000"
       document.getElementById("taxable-state-benefits").text() shouldBe "£3,000"
       document.getElementById("other-income-amount").text() shouldBe "£1,500"
-      // TODO Commented out tests are waiting for view to use PAYE message keys
-//      document.toString should include("Taxable income")
-//      document.select("h1").text shouldBe "Tax Year: 6 April 2013 to 5 April 2014 Your total income"
+      document.toString should include("Taxable income")
+      document.select("h1").text shouldBe "Taxable income 6 April 2013 to 5 April 2014"
     }
 
     "have zero-value fields hidden in the view" in new TestController {
@@ -152,7 +151,6 @@ class PayeIncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     }
 
     "show 'Income Before Tax' page with a correct breadcrumb" in new TestController {
-      // TODO Commented out tests are waiting for view to use PAYE message keys
       val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
