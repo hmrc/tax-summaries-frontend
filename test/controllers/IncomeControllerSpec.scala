@@ -24,7 +24,9 @@ import org.mockito.Mockito.when
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Play.current
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, IncomeService}

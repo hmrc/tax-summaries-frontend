@@ -63,56 +63,20 @@ trait PayeAtsService {
 
   def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] = {
     dataCache.fetchAndGetAtsForSession(taxYear) flatMap {
-      case Some(data) =>
-        if (accountUtils.isAgent(request)) {
-          fetchAgentInfo(data, taxYear)
-        }
-        else if(request.nino.isDefined ){
-             Future.successful(data)
-        } else {
-          getAtsAndStore(taxYear)
-        }
-      case None =>
-        if (accountUtils.isAgent(request)) {
-          dataCache.getAgentToken.flatMap {
-            token => getAtsAndStore(taxYear, token)
-          }
-        } else {
-          getAtsAndStore(taxYear)
-        }
+      case Some(data) => Future.successful(data)
+      case None => getAtsAndStore(taxYear)
+
     }
   }
-
-
-  private def fetchAgentInfo (data :AtsData, taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsData] = {
-    dataCache.getAgentToken.flatMap {
-      token =>
-        if (authUtils.checkUtr(data.utr, token)) {
-          Future.successful(data)
-        } else {
-          getAtsAndStore(taxYear, token)
-        }
-    }
-  }
-  
 
   private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] = {
-    val account = utils.AccountUtils.getAccount(request)
-
-    //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-    val gotData = (account: @unchecked) match {
-      case agentUar: Uar => {
-        val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
-        middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
-      }
-      case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
-      case individualNino: Nino => middleConnector.connectToPayeAts(individualNino, taxYear)
-    }
+    val nino :Nino = request.nino.get
+    val gotData = middleConnector.connectToPayeAts(nino, taxYear)
 
     gotData flatMap { data =>
       data.errors match {
         case None =>
-          sendAuditEvent(account, data)
+          sendAuditEvent(nino, data)
           storeAtsData(data)
         case Some(IncomingAtsError("NoAtsError")) =>
           storeAtsData(data)
@@ -128,25 +92,7 @@ trait PayeAtsService {
     }
   }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
-    (account: @unchecked) match {
-      case _: Uar =>
-        auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
-          "agentId" -> AccountUtils.getAccountId(request),
-          "clientUtr" -> data.utr.get,
-          "taxYear" -> data.taxYear.toString,
-          "time" -> new Date().toString
-        ))
-      case _: SaUtr =>
-        val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
-        auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
-          "userId" -> request.userId,
-          "userUtr" -> data.utr.get,
-          "userType" -> userType,
-          "taxYear" -> data.taxYear.toString,
-          "time" -> new Date().toString
-        ))
-      case _: Nino =>
+  private def sendAuditEvent(account: Nino, data: AtsData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
           "userId" -> request.userId,
@@ -155,7 +101,5 @@ trait PayeAtsService {
           "taxYear" -> data.taxYear.toString,
           "time" -> new Date().toString
         ))
-
-    }
   }
 }
