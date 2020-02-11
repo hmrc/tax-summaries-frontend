@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
+@*TODO Restore dependency *@
+@*import utils.PayeTaxsBreadcrumbLinks*@
+
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-@import utils.PayeTaxsBreadcrumbLinks
 @(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages)
 
 <div id="global-breadcrumb" class="header-context">
@@ -27,10 +29,10 @@
           @for(link <- links) {
               @if(link == "breadcrumbs.taxs.select_tax_year") {
                 @if(request.session.get("TaxYearListLength").getOrElse("0") != "1") {
-                    <li><a href="@PayeTaxsBreadcrumbLinks.getLink(link)" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>
+@*                    <li><a href="@PayeTaxsBreadcrumbLinks.getLink(link)" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>*@
                 }
               } else {
-                <li><a href="@PayeTaxsBreadcrumbLinks.getLink(link)?taxYear=@taxYear" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>
+@*                <li><a href="@PayeTaxsBreadcrumbLinks.getLink(link)?taxYear=@taxYear" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>*@
               }
           }
           @if(!(utils.AccountUtils.isPortalUser(request) && isLandingPage)) {

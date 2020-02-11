@@ -195,9 +195,9 @@
     </table>
 
 
-    <div class="back">
-      <a href="@controllers.paye.routes.PayeNicsController.authorisedNics()?taxYear=@viewModel.taxYear"
-         data-journey-click="link - click:@Html(Messages("ats.total_income_tax.income_tax")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a>
+    <div class="back">  <!-- TODO Restore dependency. Restore controller reference once controller code is merged into master -->
+@*      <a href="@controllers.paye.routes.PayeNicsController.authorisedNics()?taxYear=@viewModel.taxYear"*@
+@*         data-journey-click="link - click:@Html(Messages("ats.total_income_tax.income_tax")):@Html(Messages("generic.back"))">@Html(Messages("generic.back"))</a> *@
     </div>
 
 }

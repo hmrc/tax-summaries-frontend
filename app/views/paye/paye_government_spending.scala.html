@@ -107,8 +107,8 @@
                 </tfoot>
             </table>
 
-            <div class="back">
-                <a href="@controllers.paye.routes.PayeAtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.return"))">@Html(Messages("ats.treasury_spending.return"))</a>
+            <div class="back"> <!-- TODO Restore dependency. Restore dependency to controller once controller code is merged into master   -->
+@*                <a href="@controllers.paye.routes.PayeAtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.return"))">@Html(Messages("ats.treasury_spending.return"))</a>*@
             </div>
 
             <script>
