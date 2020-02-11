@@ -119,10 +119,6 @@
                 </tfoot>
             </table>
 
-            <div class="back">
-                <a href="@controllers.routes.AtsMainController.authorisedAtsMain()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.return"))">@Html(Messages("ats.treasury_spending.return"))</a>
-            </div>
-
             <script>
                 var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];
                 var chart_toggle_text_ga = ['View this information as a table', 'View this information as a chart'];

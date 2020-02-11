@@ -276,8 +276,6 @@ main, section, article, aside {
 #wrapper #content .page-header h1 {
   clear: right; }
 
-.selectYear#wrapper #content .page-header #user-info {
-  float: none;}
 .selectYear #errors h2.heading-medium.error-summary-heading {
     margin-top: 0;
 }
