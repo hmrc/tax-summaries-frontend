@@ -107,13 +107,12 @@ class PayeNicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
     }
 
     "have the right user data in the view" in new TestController {
-     // TODO commented out tests will not work until PAYE messages keys are used in view
       val result = Future.successful(show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-income-tax-amt").text() shouldBe "£372"
-//      document.getElementById("total-cg-tax-rate").text() shouldBe "56.78%"
+      document.getElementById("total-cg-tax-rate").text() shouldBe "56.78 %"
       document.getElementById("employee-nic-amount").text() shouldBe "£1,200"
       document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,400"
     }

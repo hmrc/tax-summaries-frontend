@@ -147,10 +147,9 @@ class PayeGovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuit
       document.select("#uk_contribution_to_eu_budget").text() should include("0.75%")
       
       document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
-      // TODO THis will nat pass until we use the PAYE message key in the view
-//      document
-//        .select("h1")
-//        .text shouldBe "Your taxes and public spending 6 April 2013 to 5 April 2014"
+       document
+       .select("h1")
+       .text shouldBe "How your tax was spent 6 April 2013 to 5 April 2014"
     }
 
     "have correct data for 2015" in new TestController {
@@ -189,41 +188,40 @@ class PayeGovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuit
       val result = Future.successful(show(request))
       val document = Jsoup.parse(contentAsString(result))
 
-      // TODO These fail for PAYE. have they been changed in the view?
-//      document.select("#welfare + td").text() shouldBe "£2,530.00"
-//      document.select("#welfare").text() should include("25.3%")
-//      document.select("#health + td").text() shouldBe "£1,990.00"
-//      document.select("#health").text() should include("19.9%")
-//      document.select("#pension + td").text() shouldBe "£1,280.00"
-//      document.select("#pension").text() should include("12.8%")
-//      document.select("#education + td").text() shouldBe "£1,250.00"
-//      document.select("#education").text() should include("12.5%")
-//      document.select("#defence + td").text() shouldBe "£540.00"
-//      document.select("#defence").text() should include("5.4%")
-//      document.select("#national_debt_interest + td").text() shouldBe "£500.00"
-//      document.select("#national_debt_interest").text() should include("5.0%")
-//      document.select("#public_order_and_safety + td").text() shouldBe "£440.00"
-//      document.select("#public_order_and_safety").text() should include("4.4%")
-//      document.select("#transport + td").text() shouldBe "£300.00"
-//      document.select("#transport").text() should include("3.0%")
-//      document.select("#business_and_industry + td").text() shouldBe "£270.00"
-//      document.select("#business_and_industry").text() should include("2.7%")
-//      document.select("#government_administration + td").text() shouldBe "£200.00"
-//      document.select("#government_administration").text() should include("2.0%")
-//      document.select("#Culture + td").text() shouldBe "£180.00"
-//      document.select("#Culture").text() should include("1.8%")
-//      document.select("#Environment + td").text() shouldBe "£170.00"
-//      document.select("#Environment").text() should include("1.7%")
-//      document.select("#HousingAndUtilities + td").text() shouldBe "£160.00"
-//      document.select("#HousingAndUtilities").text() should include("1.6%")
-//      document.select("#overseas_aid + td").text() shouldBe "£130.00"
-//      document.select("#overseas_aid").text() should include("1.3%")
-//      document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£600.00"
-//      document.select("#uk_contribution_to_eu_budget").text() should include("0.6%")
-//
-//      document.getElementById("user-info").text() should include("userForename userSurname")
-//      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-//      document.select("#gov-spend-total + td").text() shouldBe "£10,000.00"
+      document.select("#welfare + td").text() shouldBe "£2,530.00"
+      document.select("#welfare").text() should include("25.3%")
+      document.select("#health + td").text() shouldBe "£1,990.00"
+      document.select("#health").text() should include("19.9%")
+      document.select("#pension + td").text() shouldBe "£1,280.00"
+      document.select("#pension").text() should include("12.8%")
+      document.select("#education + td").text() shouldBe "£1,250.00"
+      document.select("#education").text() should include("12.5%")
+      document.select("#defence + td").text() shouldBe "£540.00"
+      document.select("#defence").text() should include("5.4%")
+      document.select("#national_debt_interest + td").text() shouldBe "£500.00"
+      document.select("#national_debt_interest").text() should include("5.0%")
+      document.select("#public_order_and_safety + td").text() shouldBe "£440.00"
+      document.select("#public_order_and_safety").text() should include("4.4%")
+      document.select("#transport + td").text() shouldBe "£300.00"
+      document.select("#transport").text() should include("3.0%")
+      document.select("#business_and_industry + td").text() shouldBe "£270.00"
+      document.select("#business_and_industry").text() should include("2.7%")
+      document.select("#government_administration + td").text() shouldBe "£200.00"
+      document.select("#government_administration").text() should include("2.0%")
+      document.select("#Culture + td").text() shouldBe "£180.00"
+      document.select("#Culture").text() should include("1.8%")
+      document.select("#Environment + td").text() shouldBe "£170.00"
+      document.select("#Environment").text() should include("1.7%")
+      document.select("#HousingAndUtilities + td").text() shouldBe "£160.00"
+      document.select("#HousingAndUtilities").text() should include("1.6%")
+      document.select("#overseas_aid + td").text() shouldBe "£130.00"
+      document.select("#overseas_aid").text() should include("1.3%")
+      document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£600.00"
+      document.select("#uk_contribution_to_eu_budget").text() should include("0.6%")
+
+      document.getElementById("user-info").text() should include("userForename userSurname")
+      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
+      document.select("#gov-spend-total + td").text() shouldBe "£10,000.00"
     }
 
     "show 'Government spend' page with a correct breadcrumb" in new TestController {
