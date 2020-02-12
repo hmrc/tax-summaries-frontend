@@ -112,7 +112,6 @@ class PayeNicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-income-tax-amt").text() shouldBe "£372"
-      document.getElementById("total-cg-tax-rate").text() shouldBe "56.78 %"
       document.getElementById("employee-nic-amount").text() shouldBe "£1,200"
       document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,400"
     }

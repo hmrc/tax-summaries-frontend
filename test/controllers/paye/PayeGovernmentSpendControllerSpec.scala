@@ -154,9 +154,8 @@ class PayeGovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuit
 
     "have correct data for 2015" in new TestController {
 
-      val model2 = new GovernmentSpend(
+      val model2 = new PayeGovernmentSpend(
         taxYear = 2015,
-        userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
           ("health", SpendData(Amount(1990, "GBP"), 19.9)),
@@ -218,9 +217,6 @@ class PayeGovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuit
       document.select("#overseas_aid").text() should include("1.3%")
       document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£600.00"
       document.select("#uk_contribution_to_eu_budget").text() should include("0.6%")
-
-      document.getElementById("user-info").text() should include("userForename userSurname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + td").text() shouldBe "£10,000.00"
     }
 
