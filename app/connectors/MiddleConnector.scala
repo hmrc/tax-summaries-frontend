@@ -52,8 +52,10 @@ trait MiddleConnector {
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
     http.GET[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
-  def connectToPayeAts(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
+  def connectToPayeAts(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =    {
     http.GET[AtsData](url("/taxs/" + nino.nino + "/" + taxYear + "/paye-ats-data"))
+
+  }
 
   def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
     connectToAts(requestedUTR, taxYear)
