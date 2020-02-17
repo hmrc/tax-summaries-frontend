@@ -17,10 +17,10 @@
 package connectors
 
 import config.WSHttp
-import models.{AtsData, AtsListData}
+import models.{AtsData, AtsListData, PayeAtsData}
 import play.api.Mode.Mode
 import play.api.{Configuration, Play}
-import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.play.config.ServicesConfig
 
@@ -60,4 +60,7 @@ trait MiddleConnector {
 
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
     connectToAtsList(requestedUTR)
+
+  def connectToPayeATS(nino: Nino, taxYear : Int)(implicit hc : HeaderCarrier) : Future[PayeAtsData] =
+    http.GET[PayeAtsData](url("/taxs/"+ nino + "/" + taxYear + "/paye-ats-data"))
 }
