@@ -1,5 +1,5 @@
-{"taxYear":2014,
-"nino":"$nino",
+{
+ "taxYear":2014,
   "income_tax":{
     "payload":{
       "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -69,6 +69,10 @@
   },
   "gov_spending": {
     "taxYear": 2014,
+    "totalAmount" : {
+        "amount": 4512.19,
+        "currency": "GBP"
+    },
     "govSpendAmountData": {
       "health": {
         "amount": {

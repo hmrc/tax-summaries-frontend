@@ -19,8 +19,9 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import config.WSHttp
 import connectors.MiddleConnector.baseUrl
+import javax.swing.text.AbstractDocument.Content
 import models.PayeAtsData
-import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.OK
@@ -33,7 +34,7 @@ import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper{
+class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience{
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -65,8 +66,9 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withBody(expectedResponse))
       )
 
-      val result = connectToPayeATS(testNino, currentYear).flatMap(result =>
-        result shouldBe Json.parse(expectedResponse).as[PayeAtsData])
+      val result = connectToPayeATS(testNino, currentYear).futureValue
+
+      result.json shouldBe Json.parse(expectedResponse)
     }
 
     "return BadRequest response" in new MiddleConnectorSetUp {

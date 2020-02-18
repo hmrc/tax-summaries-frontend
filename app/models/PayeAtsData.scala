@@ -16,14 +16,9 @@
 
 package models
 
-import java.text.SimpleDateFormat
-
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
 
-case class PayeAtsData(
-                        taxYear: Int,
-                        nino: String,
+case class PayeAtsData(taxYear: Int,
                         income_tax: Option[DataHolder],
                         summary_data: Option[DataHolder],
                         income_data: Option[DataHolder],
@@ -31,6 +26,6 @@ case class PayeAtsData(
                         gov_spending: Option[GovernmentSpendingOutputWrapper])
 
 object PayeAtsData {
-  implicit val formats = Json.format[PayeAtsData]
+  implicit val reads = Json.reads[PayeAtsData]
 }
 
