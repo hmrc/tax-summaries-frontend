@@ -17,29 +17,23 @@
 package controllers.paye
 
  import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import play.api.Play
-import play.api.mvc.Result
-import services.PayeAtsService
+ import play.api.Play
+ import play.api.mvc.{Action, AnyContent}
+ import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-import scala.concurrent.Future
+ import scala.concurrent.Future
 
 object PayeGovernmentSpendController extends PayeGovernmentSpendController{
 
-  override val payeAtsService = PayeAtsService
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeGovernmentSpendController {
+trait PayeGovernmentSpendController extends FrontendController {
 
-  def payeAtsService : PayeAtsService
   val payeAuthAction: PayeAuthAction
 
-
-//  def show(request: PayeAuthenticatedRequest[_]): Future[Result] = {
-//    Ok()
-//  }
-//
-//  def authorisedGovernmentSpendData = payeAuthAction.async {
-//    request => show(request)
-//  }
+  def show: Action[AnyContent] = payeAuthAction.async {
+    implicit request =>
+      Future.successful(Ok)
+  }
 }

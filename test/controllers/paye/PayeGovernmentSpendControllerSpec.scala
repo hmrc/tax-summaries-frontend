@@ -17,7 +17,7 @@
 package controllers.paye
 
 import connectors.MiddleConnector
-import controllers.auth.{AuthenticatedRequest, PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{AuthenticatedRequest, FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -29,7 +29,7 @@ import play.api.test.Helpers.contentAsJson
 import services.PayeAtsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
+import utils.{JsonUtil, TaxsController}
 import utils.TestConstants.{testNino, testUtr}
 import org.mockito.Matchers.{eq => eqTo, _}
 import play.api.mvc.Result
@@ -43,31 +43,19 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
   implicit val hc = HeaderCarrier()
   val taxYear = 2014
-  val request = FakeRequest()
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("userId", Some(testNino),FakeRequest("GET", s"?taxYear=$taxYear"))
+  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("userId", Some(testNino), FakeRequest("GET", s"?taxYear=$taxYear"))
 
   class TestController extends PayeGovernmentSpendController {
-    lazy val payeAtsService: PayeAtsService = mock[PayeAtsService]
-    override val payeAuthAction: PayeAuthAction = mock[PayeAuthAction]
+    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
   }
-
-  private def readJson(path: String) = {
-    val resource = getClass.getResourceAsStream(path)
-    Json.parse(Source.fromInputStream(resource).getLines().mkString)
-  }
-
-  val expectedResponse: JsValue = readJson("/paye_ats.json")
 
   "Government spend controller" should {
 
     "return OK response" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2018))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(Right(expectedResponse.as[PayeAtsData])))
+      val result = show(fakeAuthenticatedRequest)
 
-//      val result = show(fakeAuthenticatedRequest)
-
-//      result shouldBe 200
+      status(result) shouldBe OK
     }
 
     "return bad request and errors when receiving any errors from service" in new TestController {
