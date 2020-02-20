@@ -16,9 +16,58 @@
 
 package view_models.paye
 
+import models.PayeAtsData
 import view_models.Amount
 
 case class PayeGovernmentSpend(
   taxYear: Int,
-  totalAmount: Amount,
-  totalAmountNics: Amount)
+  orderedSpendRows: List[SpendRow],
+  totalAmount: Amount)
+
+object PayeGovernmentSpend {
+
+  val orderedSpendCategories: List[String] = List(
+    "welfare",
+    "health",
+    "pension",
+    "education",
+    "defence",
+    "national_debt_interest",
+    "transport",
+    "criminal_justice",
+    "business_and_industry",
+    "government_administration",
+    "housing_and_utilities",
+    "environment",
+    "culture",
+    "overseas_aid",
+    "uk_contribution_to_eu_budget"
+  )
+
+  def buildViewModel(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
+
+    val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
+      category => {
+        payeAtsData.gov_spending.flatMap {
+          govSpending =>
+            govSpending.govSpendAmountData.map {
+              spendDataMap => {
+                val spending = spendDataMap(category)
+                SpendRow(category, spending.percentage, spending.amount)
+              }
+            }
+        }
+      }
+    )
+
+    val totalSpendingAmount = payeAtsData.gov_spending.map {
+      spending =>
+        spending.totalAmount
+    }
+
+    PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount.getOrElse(Amount(BigDecimal(0.0), "GBP")))
+  }
+}
+
+case class SpendRow(category: String, percentage: BigDecimal, amount: Amount)
+

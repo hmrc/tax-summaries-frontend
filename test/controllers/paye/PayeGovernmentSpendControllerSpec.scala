@@ -16,28 +16,15 @@
 
 package controllers.paye
 
-import connectors.MiddleConnector
-import controllers.auth.{AuthenticatedRequest, FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.libs.json.{JsValue, Json}
-import play.api.test.Helpers.contentAsJson
-import services.PayeAtsService
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{JsonUtil, TaxsController}
-import utils.TestConstants.{testNino, testUtr}
-import org.mockito.Matchers.{eq => eqTo, _}
-import play.api.mvc.Result
-import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.{Nino, SaUtr}
-
-import scala.concurrent.Future
-import scala.io.Source
+import utils.JsonUtil
+import utils.TestConstants.testNino
 
 class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
