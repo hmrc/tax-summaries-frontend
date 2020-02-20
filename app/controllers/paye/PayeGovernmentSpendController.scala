@@ -16,7 +16,7 @@
 
 package controllers.paye
 
- import config.AppFormPartialRetriever
+ import config.{AppFormPartialRetriever, ApplicationConfig}
  import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
  import models.PayeAtsData
  import play.api.Play
@@ -34,6 +34,7 @@ object PayeGovernmentSpendController extends PayeGovernmentSpendController{
 
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
   override val payeAtsService = PayeAtsService
+  override val payeYear: Int = ApplicationConfig.payeYear
 }
 
 trait PayeGovernmentSpendController extends FrontendController {
@@ -41,21 +42,17 @@ trait PayeGovernmentSpendController extends FrontendController {
   implicit val formPartialRetriever = AppFormPartialRetriever
 
   val payeAuthAction: PayeAuthAction
-
   val payeAtsService: PayeAtsService
+  val payeYear: Int
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] =>
-      for {
-        payload <- payeAtsService.getPayeATSData(request.nino, 2019)
-      } yield {
-        payload match {
-          case Left(response: HttpResponse) => response.status match {
-            case 404 => Redirect(controllers.routes.ErrorController.authorisedNoAts())
-            case _ => BadRequest("Bad request")
 
-          }
-          case Right(successResponse: PayeAtsData) => Ok("")
+      payeAtsService.getPayeATSData(request.nino, payeYear).map {
+        case Right(successResponse: PayeAtsData) => Ok("")
+        case Left(response: HttpResponse) =>
+          response.status match {
+          case 404 => Redirect(controllers.routes.ErrorController.authorisedNoAts())
           case _ => BadRequest("Bad request")
         }
       }

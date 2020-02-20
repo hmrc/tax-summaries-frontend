@@ -46,6 +46,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
   class TestController extends PayeGovernmentSpendController {
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeAtsService = mock[PayeAtsService]
+    override val payeYear = 2019
 
     private def readJson(path: String) = {
       val resource = getClass.getResourceAsStream(path)
