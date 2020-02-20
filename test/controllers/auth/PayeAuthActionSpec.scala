@@ -48,6 +48,9 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+
+  val unauthorisedUrl = "/annual-tax-summary/not-authorised"
+
   implicit val timeout: FiniteDuration = 5 seconds
 
   class Harness(authAction: PayeAuthAction) extends Controller {
@@ -78,26 +81,14 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   }
 
   "A user with a confidence level 200 and no Nino" should {
-
-    //TODO : We need to cater for failure scenarios
-
-    "create an authenticated request" in {
-      val nino =  new Generator().nextNino.nino
-      val retrievalResult: Future[
-        Option[String] ~ Option[String]] =
-        Future.successful(
-          Some("") ~ None
-        )
-
-      when(mockAuthConnector
-        .authorise[Option[String] ~ Option[String]](any(), any())(any(), any()))
-        .thenReturn(retrievalResult)
-
+    "return 303 and be redirected to not authorised page" in {
+      when(mockAuthConnector.authorise(any(), any())(any(), any()))
+        .thenReturn(Future.failed(new InternalError))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, app.configuration)
       val controller = new Harness(authAction)
-
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get should endWith(unauthorisedUrl)
     }
   }
 

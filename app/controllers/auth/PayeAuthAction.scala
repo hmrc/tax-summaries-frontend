@@ -67,7 +67,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       )
     }
 
-    case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
+    case _ => Redirect(controllers.routes.ErrorController.notAuthorised())
   }
 }
 
