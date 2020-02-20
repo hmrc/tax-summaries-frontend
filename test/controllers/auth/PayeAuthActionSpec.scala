@@ -39,33 +39,27 @@ import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+  val unauthorisedUrl = "/annual-tax-summary/not-authorised"
 
   class BrokenAuthConnector(exception: Throwable) extends AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
       Future.failed(exception)
   }
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
-
-  val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
-
-  val unauthorisedUrl = "/annual-tax-summary/not-authorised"
-
   implicit val timeout: FiniteDuration = 5 seconds
 
   class Harness(authAction: PayeAuthAction) extends Controller {
-    def onPageLoad(): Action[AnyContent] = authAction { request => Ok(
-        s"Nino: ${request.nino.nino}") }
+    def onPageLoad(): Action[AnyContent] = authAction { request =>
+      Ok(s"Nino: ${request.nino.nino}")
+    }
   }
 
   "A user with a confidence level 200 and a Nino" should {
     "create an authenticated request" in {
-      val nino =  new Generator().nextNino.nino
-      val retrievalResult: Future[
-        Option[String] ~ Option[String]] =
-        Future.successful(
-          Some("") ~ Some(nino)
-        )
+      val nino = new Generator().nextNino.nino
+      val retrievalResult: Future[Option[String] ~ Option[String]] = Future.successful(Some("") ~ Some(nino))
 
       when(mockAuthConnector
         .authorise[Option[String] ~ Option[String]](any(), any())(any(), any()))

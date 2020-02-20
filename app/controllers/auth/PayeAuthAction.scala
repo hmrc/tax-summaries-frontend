@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
-                               configuration: Configuration)(implicit ec: ExecutionContext)
+                                   configuration: Configuration)(implicit ec: ExecutionContext)
   extends PayeAuthAction with AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
@@ -41,18 +41,17 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true))
-
       .retrieve(Retrievals.externalId and Retrievals.nino) {
-        case Some(externalId) ~ nino => {
+        case Some(externalId) ~ Some(nino) => {
           block {
             PayeAuthenticatedRequest(
               externalId,
-              Nino(nino.get),   // TODO
+              Nino(nino),
               request
             )
           }
         }
-        case _ => throw new RuntimeException("Can't find credentials for user")
+        case _ => throw new RuntimeException("Auth retrieval failed for user")
       }
   } recover {
     case _: NoActiveSession => {
@@ -61,8 +60,8 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       Redirect(
         ggSignIn,
         Map(
-          "continue"    -> Seq(callbackUrl),
-          "origin"      -> Seq(ApplicationConfig.appName)
+          "continue" -> Seq(callbackUrl),
+          "origin" -> Seq(ApplicationConfig.appName)
         )
       )
     }
