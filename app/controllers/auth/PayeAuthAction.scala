@@ -47,7 +47,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
           block {
             PayeAuthenticatedRequest(
               externalId,
-              nino.map(Nino),
+              Nino(nino.get),   // TODO
               request
             )
           }

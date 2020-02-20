@@ -20,5 +20,5 @@ import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.domain._
 
 case class PayeAuthenticatedRequest[A](userId: String,
-                                   nino: Option[Nino],
+                                   nino: Nino,
                                    request: Request[A]) extends WrappedRequest[A](request)

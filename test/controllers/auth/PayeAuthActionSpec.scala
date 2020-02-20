@@ -55,7 +55,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
 
   class Harness(authAction: PayeAuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { request => Ok(
-        s"Nino: ${request.nino.map(_.nino).getOrElse("fail").toString}") }
+        s"Nino: ${request.nino.nino}") }
   }
 
   "A user with a confidence level 200 and a Nino" should {
