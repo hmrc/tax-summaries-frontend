@@ -16,33 +16,18 @@
 
 package view_models.paye
 
+import config.PayeConfig
 import models.PayeAtsData
+import play.api.Play
 import view_models.Amount
 
-case class PayeGovernmentSpend(
-  taxYear: Int,
-  orderedSpendRows: List[SpendRow],
-  totalAmount: Amount)
+case class PayeGovernmentSpend(taxYear: Int,
+                               orderedSpendRows: List[SpendRow],
+                               totalAmount: Amount)
 
 object PayeGovernmentSpend {
 
-  val orderedSpendCategories: List[String] = List(
-    "welfare",
-    "health",
-    "pension",
-    "education",
-    "defence",
-    "national_debt_interest",
-    "transport",
-    "criminal_justice",
-    "business_and_industry",
-    "government_administration",
-    "housing_and_utilities",
-    "environment",
-    "culture",
-    "overseas_aid",
-    "uk_contribution_to_eu_budget"
-  )
+  val orderedSpendCategories: List[String] = Play.current.injector.instanceOf[PayeConfig].spendCategories
 
   def buildViewModel(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
 
