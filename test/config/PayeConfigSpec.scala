@@ -29,21 +29,21 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
       }
 
       val expected = List(
-        "welfare",
-        "health",
-        "pension",
-        "education",
-        "defence",
-        "national_debt_interest",
-        "transport",
-        "criminal_justice",
-        "business_and_industry",
-        "government_administration",
-        "housing_and_utilities",
-        "environment",
-        "culture",
-        "overseas_aid",
-        "uk_contribution_to_eu_budget"
+        "Welfare",
+        "Health",
+        "StatePensions",
+        "Education",
+        "Defence",
+        "NationalDebtInterest",
+        "Transport",
+        "PublicOrderAndSafety",
+        "BusinessAndIndustry",
+        "GovernmentAdministration",
+        "HousingAndUtilities",
+        "Environment",
+        "Culture",
+        "OverseasAid",
+        "UkContributionToEuBudget"
       )
 
       config.spendCategories shouldBe expected

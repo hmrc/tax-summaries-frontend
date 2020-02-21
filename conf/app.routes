@@ -19,3 +19,5 @@ GET     /switch-to-welsh                                       controllers.TaxsL
 GET     /switch-to-english                                     controllers.TaxsLanguageController.switchLanguage(lang = "en")
 
 GET     /sign-out                                              controllers.AccountController.signOut
+
+GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show

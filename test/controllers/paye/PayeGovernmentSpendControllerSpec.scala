@@ -17,32 +17,34 @@
 package controllers.paye
 
 import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
-import controllers.routes
 import models.PayeAtsData
-import org.mockito.Matchers.any
+import org.jsoup.Jsoup
+import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsJson, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
-import org.mockito.Matchers.{eq => eqTo, _}
 import view_models.Amount
 import view_models.paye.{PayeGovernmentSpend, SpendRow}
 
+import scala.concurrent.Future
 import scala.io.Source
 
-class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
-  val taxYear = 2019
+  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+
+  val taxYear = 2020
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest("userId", testNino, FakeRequest("GET", s"?taxYear=$taxYear"))
 
   val expectedViewModel =  PayeGovernmentSpend(2019, List(
@@ -64,6 +66,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
     , totalAmount = Amount(4512.00,"GBP"))
 
   class TestController extends PayeGovernmentSpendController {
+
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeAtsService = mock[PayeAtsService]
     override val payeYear = 2019
@@ -86,7 +89,55 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
-      contentAsString(result) shouldBe expectedViewModel.toString
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+    }
+
+    "have correct data for 2019" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+
+      val result = Future.successful(show(fakeAuthenticatedRequest))
+
+      status(result) shouldBe OK
+
+      val document = Jsoup.parse(contentAsString(result))
+      document.getElementById("welfare").text() shouldBe "Welfare (24.52%)"
+//      document.getElementById("health").text() shouldBe "Health (18.87%)"
+//      document.select("#health").text() should include("18.87%")
+//      document.select("#education + td").text() shouldBe "£3,144.43"
+//      document.select("#education").text() should include("13.15%")
+//      document.select("#pension + td").text() shouldBe "£2,898.13"
+//      document.select("#pension").text() should include("12.12%")
+//      document.select("#national_debt_interest + td").text() shouldBe "£1,673.84"
+//      document.select("#national_debt_interest").text() should include("7.0%")
+//      document.select("#defence + td").text() shouldBe "£1,269.73"
+//      document.select("#defence").text() should include("5.31%")
+//      document.select("#criminal_justice + td").text() shouldBe "£1,052.13"
+//      document.select("#criminal_justice").text() should include("4.4%")
+//      document.select("#transport + td").text() shouldBe "£705.40"
+//      document.select("#transport").text() should include("2.95%")
+//      document.select("#business_and_industry + td").text() shouldBe "£655.19"
+//      document.select("#business_and_industry").text() should include("2.74%")
+//      document.select("#government_administration + td").text() shouldBe "£490.20"
+//      document.select("#government_administration").text() should include("2.05%")
+//      document.select("#Culture + td").text() shouldBe "£404.11"
+//      document.select("#Culture").text() should include("1.69%")
+//      document.select("#Environment + td").text() shouldBe "£396.94"
+//      document.select("#Environment").text() should include("1.66%")
+//      document.select("#HousingAndUtilities + td").text() shouldBe "£392.16"
+//      document.select("#HousingAndUtilities").text() should include("1.64%")
+//      document.select("#overseas_aid + td").text() shouldBe "£274.99"
+//      document.select("#overseas_aid").text() should include("1.15%")
+//      document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£179.34"
+//      document.select("#uk_contribution_to_eu_budget").text() should include("0.75%")
+//      document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
+      document
+        .select("h1")
+        .text shouldBe "How your tax was spent 6 April 2019 to 5 April 2020"
     }
 
     "return bad request and errors when receiving any errors from service" in new TestController {
@@ -97,7 +148,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get shouldBe controllers.routes.ErrorController.authorisedNoAts().url
 
     }
   }

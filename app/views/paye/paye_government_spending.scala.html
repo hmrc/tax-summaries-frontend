@@ -1,0 +1,65 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import view_models.paye.PayeGovernmentSpend
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+
+@(viewModel:PayeGovernmentSpend)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
+
+@headerContent = {
+	<div class="hmrc-logo-print" aria-hidden="true">
+	  <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
+	  <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
+	</div>
+}
+
+@includes.taxs_main(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYear.toString, (viewModel.taxYear + 1).toString), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear full-width")) {
+
+	<div class="grid-row form-group">
+		<div class="column-two-thirds">
+			<h1 class="heading-xlarge">
+					@Html(Messages("paye.ats.treasury_spending.title"))
+			    <span class="block-heading">
+			      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYear.toString, (viewModel.taxYear + 1).toString))
+			    </span>
+				</h1>
+			
+				<p id="intro-paragraph">@Messages("paye.ats.treasury_spending.introParagraph")</p>
+			</div>
+	</div>
+
+	<dl class="form-group" id="bar-chart">
+	@for(rowModel <- viewModel.orderedSpendRows){
+  	<dt class="percentage" id="welfare">@rowModel.category (@rowModel.percentage%)</dt>
+		<dd class="value"><span class="bar-chart" aria-hidden="true" style="width: @{rowModel.percentage}%;"></span> &pound;@rowModel.amount</dd>
+	}
+  	<dt class="percentage">Total</dt>
+		<dd>&pound;@viewModel.totalAmount</dd>
+	</dl>
+
+	<div class="grid-row">
+		<div class="column-two-thirds">
+			<p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
+			<p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
+			<p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
+			<p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>
+		</div>
+	</div>
+
+}

@@ -20,16 +20,13 @@ package controllers.paye
  import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
  import models.PayeAtsData
  import play.api.Play
- import play.api.mvc.Results.Redirect
+ import play.api.Play.current
+ import play.api.i18n.Messages.Implicits._
  import play.api.mvc.{Action, AnyContent}
  import services.PayeAtsService
  import uk.gov.hmrc.http.HttpResponse
  import uk.gov.hmrc.play.frontend.controller.FrontendController
- import play.api.Play.current
- import play.api.i18n.Messages.Implicits._
  import view_models.paye.PayeGovernmentSpend
-import play.api.libs.json.{JsValue, Json}
- import scala.concurrent.Future
 
 object PayeGovernmentSpendController extends PayeGovernmentSpendController{
 
@@ -48,15 +45,16 @@ trait PayeGovernmentSpendController extends FrontendController {
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] =>
-
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
+
         case Right(successResponse: PayeAtsData) => {
-          Ok(PayeGovernmentSpend.buildViewModel(successResponse).toString)
+          Ok(views.html.paye.paye_government_spending(PayeGovernmentSpend.buildViewModel(successResponse)))
         }
         case Left(response: HttpResponse) =>
           response.status match {
           case 404 => Redirect(controllers.routes.ErrorController.authorisedNoAts())
-          case _ => BadRequest("Bad request")
+          case _ =>  BadRequest("Bad request")
+
         }
       }
   }
