@@ -27,7 +27,8 @@ package controllers.paye
  import uk.gov.hmrc.play.frontend.controller.FrontendController
  import play.api.Play.current
  import play.api.i18n.Messages.Implicits._
-
+ import view_models.paye.PayeGovernmentSpend
+import play.api.libs.json.{JsValue, Json}
  import scala.concurrent.Future
 
 object PayeGovernmentSpendController extends PayeGovernmentSpendController{
@@ -49,7 +50,9 @@ trait PayeGovernmentSpendController extends FrontendController {
     implicit request: PayeAuthenticatedRequest[_] =>
 
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
-        case Right(successResponse: PayeAtsData) => Ok("")
+        case Right(successResponse: PayeAtsData) => {
+          Ok(PayeGovernmentSpend.buildViewModel(successResponse).toString)
+        }
         case Left(response: HttpResponse) =>
           response.status match {
           case 404 => Redirect(controllers.routes.ErrorController.authorisedNoAts())

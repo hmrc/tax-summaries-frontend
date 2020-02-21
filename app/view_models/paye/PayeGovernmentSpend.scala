@@ -30,17 +30,17 @@ object PayeGovernmentSpend {
   val orderedSpendCategories: List[String] = Play.current.injector.instanceOf[PayeConfig].spendCategories
 
   def buildViewModel(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
-
     val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
       category => {
         payeAtsData.gov_spending.flatMap {
-          govSpending =>
+          govSpending => {
             govSpending.govSpendAmountData.map {
               spendDataMap => {
                 val spending = spendDataMap(category)
                 SpendRow(category, spending.percentage, spending.amount)
               }
             }
+          }
         }
       }
     )
