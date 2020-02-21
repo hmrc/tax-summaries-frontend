@@ -87,6 +87,32 @@
   width: device-width; }
 @-o-viewport {
   width: device-width; }
+.percentage,
+.value {
+  display: block;
+  margin-bottom: 20px;
+  float: left;
+  width: 66.66%; }
+
+.percentage {
+  clear: both;
+  text-align: right;
+  margin-right: 10px;
+  width: 30%; }
+
+.value {
+  position: relative;
+  top: -25px; }
+
+.bar-chart {
+  position: relative;
+  top: 14px;
+  background-color: #28a197;
+  border: 2px solid #296969;
+  display: inline-block;
+  height: 40px;
+  margin-right: 10px; }
+
 /*= Variables
 ----------------------------------------------*/
 /*= Mixins
@@ -130,7 +156,7 @@
       @media (max-width: 640px) {
         #global-breadcrumb ol li {
           font-size: 14px;
-          line-height: 1.14286; } }
+          line-height: 1.1428571429; } }
       #global-breadcrumb ol li:last-child {
         margin-right: 0;
         background-image: none; }
@@ -144,7 +170,7 @@
         @media (max-width: 640px) {
           #global-breadcrumb ol li a {
             font-size: 14px;
-            line-height: 1.14286; } }
+            line-height: 1.1428571429; } }
       #global-breadcrumb ol li strong {
         font-weight: normal; }
 
@@ -172,7 +198,7 @@
   @media (max-width: 640px) {
     .phase-tag {
       font-size: 14px;
-      line-height: 1.14286; } }
+      line-height: 1.1428571429; } }
 
 /*= Main styles
 ----------------------------------------------*/
@@ -201,7 +227,7 @@ main, section, article, aside {
     @media (max-width: 640px) {
       #wrapper #content .phase-banner p {
         font-size: 14px;
-        line-height: 1.14286; } }
+        line-height: 1.1428571429; } }
   #wrapper #content .phase-banner .phase-tag {
     display: inline-block;
     *display: inline;
@@ -226,7 +252,7 @@ main, section, article, aside {
     @media (max-width: 640px) {
       #wrapper #content .phase-banner .phase-tag {
         font-size: 14px;
-        line-height: 1.14286; } }
+        line-height: 1.1428571429; } }
   #wrapper #content .phase-banner span {
     display: inline-block;
     *display: inline;
@@ -249,10 +275,10 @@ main, section, article, aside {
 #wrapper #content .back {
   font-family: "nta", Arial, sans-serif;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   font-weight: 400;
   text-transform: none;
-  margin-bottom: 15px;}
+  margin-bottom: 15px; }
   @media (max-width: 640px) {
     #wrapper #content .back {
       font-size: 16px;
@@ -270,15 +296,16 @@ main, section, article, aside {
 #wrapper #content .page-header #english-switch, #wrapper #content .page-header #welsh-switch {
   float: right; }
 #wrapper #content .page-header #user-info {
-  text-align: right;
+  float: right;
   clear: both;
-  float: right;}
+  text-align: right; }
 #wrapper #content .page-header h1 {
   clear: right; }
 
 .selectYear #errors h2.heading-medium.error-summary-heading {
     margin-top: 0;
 }
+
 /*= Footer styles
 ----------------------------------------------*/
 #footer {
@@ -292,7 +319,7 @@ main, section, article, aside {
     @media (max-width: 640px) {
       #footer a {
         font-size: 14px;
-        line-height: 1.14286; } }
+        line-height: 1.1428571429; } }
 
 @media (min-width: 769px) {
   #footer {
@@ -302,7 +329,7 @@ main, section, article, aside {
 h1 {
   font-family: "nta", Arial, sans-serif;
   font-size: 48px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
   font-weight: 400;
   text-transform: none;
   padding-top: 10px;
@@ -321,7 +348,7 @@ h1 {
 h2, article h2 {
   font-family: "nta", Arial, sans-serif;
   font-size: 36px;
-  line-height: 1.11111;
+  line-height: 1.1111111111;
   font-weight: 400;
   text-transform: none;
   font-weight: 700;
@@ -330,7 +357,7 @@ h2, article h2 {
   @media (max-width: 640px) {
     h2, article h2 {
       font-size: 24px;
-      line-height: 1.04167; } }
+      line-height: 1.0416666667; } }
 
 h3 {
   font-family: "nta", Arial, sans-serif;
@@ -359,7 +386,7 @@ section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, 
 p {
   font-family: "nta", Arial, sans-serif;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   font-weight: 400;
   text-transform: none; }
   @media (max-width: 640px) {
@@ -386,10 +413,10 @@ article p.lede {
 .no-bold {
   font-weight: normal; }
 
-.content__body p.bold-xlarge, .bold-xlarge {
+.bold-xlarge {
   font-family: "nta", Arial, sans-serif;
   font-size: 48px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
   font-weight: 400;
   text-transform: none;
   font-weight: 700;
@@ -410,7 +437,7 @@ article p.lede {
   @media (max-width: 640px) {
     .bold-small {
       font-size: 14px;
-      line-height: 1.14286; } }
+      line-height: 1.1428571429; } }
 
 a .bold-small {
   text-decoration: underline; }
@@ -429,7 +456,7 @@ a.data-link + p {
 a.mc-toggle-link {
   font-family: "nta", Arial, sans-serif;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   font-weight: 400;
   text-transform: none; }
   @media (max-width: 640px) {
@@ -602,7 +629,7 @@ fieldset {
 article table {
   font-family: "nta", Arial, sans-serif;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   font-weight: 400;
   text-transform: none;
   width: 100%;
@@ -616,7 +643,7 @@ article table {
   article table td {
     font-family: "nta", Arial, sans-serif;
     font-size: 19px;
-    line-height: 1.31579;
+    line-height: 1.3157894737;
     font-weight: 400;
     text-transform: none; }
     @media (max-width: 640px) {
@@ -628,7 +655,7 @@ article table {
   article table tfoot th:nth-child(2) {
     font-family: "nta", Arial, sans-serif;
     font-size: 19px;
-    line-height: 1.31579;
+    line-height: 1.3157894737;
     font-weight: 400;
     text-transform: none;
     font-weight: normal; }
@@ -734,6 +761,7 @@ article table {
   font-family: "nta", Arial, sans-serif;
   font-size: 19px;
   line-height: 1.31579;
+  line-height: 1.3157894737;
   font-weight: 400;
   text-transform: none;
   border-spacing: 0 5px;
@@ -744,9 +772,7 @@ article table {
     .mc-chart {
       font-size: 16px;
       line-height: 1.25;
-      max-width: -moz-min-content;
-    }
-  }
+      max-width: -moz-min-content; } }
 
 .mc-key-cell {
   padding-right: 20px !important;
@@ -758,7 +784,7 @@ article table {
   border: 2px solid #296969 !important;
   font-weight: 700; }
   .mc-bar-cell span {
-    /*width: 150px !important; */}
+    /*width: 150px !important;*/ }
 
 .gray {
   color: #6f777b !important;
@@ -842,6 +868,13 @@ a, a:visited {color:#005ea5;}
     text-decoration: none;
 }
 
+
+/*= Year heading styles
+----------------------------------------------*/
+.heading-secondary {
+  color: #6f777b;
+  font-weight: 400;
+  display: block; }
 
 .link-back {
     display: -moz-inline-stack;

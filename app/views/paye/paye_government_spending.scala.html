@@ -23,10 +23,7 @@
 @(viewModel:PayeGovernmentSpend)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
-	<div class="hmrc-logo-print" aria-hidden="true">
-	  <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
-	  <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
-	</div>
+
 }
 
 @includes.taxs_main(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYear.toString, (viewModel.taxYear + 1).toString), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear full-width")) {
