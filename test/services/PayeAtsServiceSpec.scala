@@ -18,7 +18,7 @@ package services
 
 import connectors.MiddleConnector
 import models.PayeAtsData
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
@@ -28,26 +28,24 @@ import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFo
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
-import org.mockito.Matchers.{any, eq => eqTo}
 
-import scala.io.Source
 import scala.concurrent.Future
+import scala.io.Source
 
 class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
+  val expectedResponse: JsValue = readJson("/paye_ats.json")
+  private val currentYear = 2018
 
   private def readJson(path: String) = {
     val resource = getClass.getResourceAsStream(path)
     Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
 
-  val expectedResponse: JsValue = readJson("/paye_ats.json")
   class TestService extends PayeAtsService {
     lazy val middleConnector: MiddleConnector = mock[MiddleConnector]
   }
-
-  private val currentYear = 2018
 
   "getPayeATSData" should {
 
@@ -71,7 +69,6 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with JsonUtil with G
 
       val result = getPayeATSData(testNino, currentYear).futureValue
 
-//      result shouldBe Left(HttpResponse(500))
       result.left.get.status shouldBe 500
     }
 
@@ -94,6 +91,6 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with JsonUtil with G
 
       result.left.get.status shouldBe 404
     }
-    }
+  }
 
 }
