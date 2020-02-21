@@ -26,13 +26,12 @@ import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.libs.json.{JsResultException, JsValue, Json}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
 import utils.TestConstants.testNino
 
 import scala.concurrent.Future
 import scala.io.Source
 
-class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
   val expectedResponse: JsValue = readJson("/paye_ats.json")
