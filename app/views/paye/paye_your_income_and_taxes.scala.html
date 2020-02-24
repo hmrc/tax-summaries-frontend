@@ -74,12 +74,7 @@
 
 <section id="income_after_tax_and_nics">
     <h2>@Html(Messages("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
-    <p class="bold-xlarge">
-            <span class="visuallyhidden" id="income-after-tax-and-nics-description">
-                <h2>@Html(Messages("ats.summary.tax_and_nics.title"))</h2>
-                </span>
-        <span id="income-after-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.incomeAfterTaxNics)</span>
-    </p>
+        <span class="bold-xlarge" id="income-after-tax-amount">@includes.currency_amount(viewModel.incomeAfterTaxNics)</span>
 </section>
 
 

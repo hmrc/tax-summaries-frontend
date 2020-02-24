@@ -96,6 +96,11 @@ ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Inc
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
+paye.ats.summary.total_income.paye.title=Taxable income
+paye.ats.summary.nicsheading=Income Tax and National Insurance
+paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance
+paye.ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
+
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
