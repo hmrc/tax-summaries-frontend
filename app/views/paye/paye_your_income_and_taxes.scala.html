@@ -19,8 +19,9 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import controllers.auth.PayeAuthenticatedRequest
 
-@(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
+@(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 
@@ -40,5 +41,46 @@
 				<p id="intro-paragraph">@Messages("paye.ats.summary.lede")</p>
 			</div>
 	</div>
+
+<h1>
+    @Messages("ats.summary.title")<br>
+    @Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)
+</h1>
+<h2>@Messages("paye.ats.summary.total_income.paye.title")</h2>
+<section id="taxable-income">
+    <p class="text">@Html(Messages("paye.ats.summary.total_income.description"))</p>
+    <p class="text"> @Messages("ats.summary.total_income.link")" </p>
+    <span class="bold-small">@Html(Messages("paye.ats.summary.total_income.link"))</span><br>
+    <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.incomeBeforeTax)</span>
+    </a>
+</section>
+<section id="tax-free-amount">
+    <h2>@Html(Messages("ats.summary.tax_free.title"))</h2>
+    <p class="text">@Html(Messages("paye.ats.summary.tax_free.description"))</p>
+    <p class="text"> @Messages("ats.summary.tax_free.link")" </p>
+    <span class="bold-small">@Html(Messages("ats.summary.tax_free.link"))</span><br>
+    <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.taxFreeAmount)</span>
+    </a>
+</section>
+<section id="tax-calculated-as">
+    <h2 id="tax-and-nics-title">@Messages("paye.ats.summary.nicsheading")</h2>
+    <p class="text">@Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate)</p>
+    <p class="text">@Html(Messages("paye.ats.summary.tax_and_nics.description-2"))</p>
+    <p class="text"> @Messages("ats.summary.tax_and_nics.link")" </p>
+    <span class="bold-small">@Html(Messages("ats.summary.tax_and_nics.link"))</span><br>
+    <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTaxNics)</span>
+    </a>
+</section>
+
+<section id="income_after_tax_and_nics">
+    <h2>@Html(Messages("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
+    <p class="bold-xlarge">
+            <span class="visuallyhidden" id="income-after-tax-and-nics-description">
+                <h2>@Html(Messages("ats.summary.tax_and_nics.title"))</h2>
+                </span>
+        <span id="income-after-tax-amount" aria-hidden="true">@includes.currency_amount(viewModel.incomeAfterTaxNics)</span>
+    </p>
+</section>
+
 
 }

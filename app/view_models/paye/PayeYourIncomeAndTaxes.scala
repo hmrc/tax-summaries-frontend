@@ -28,15 +28,15 @@ case class PayeYourIncomeAndTaxes(
   totalIncomeTaxNics: Amount,
   incomeAfterTaxNics: Amount,
   averageTaxRate: Rate,
-  taxFreeAmount: Amount)
+  taxFreeAmount: Amount) extends TaxYearFormatting
 
 object PayeYourIncomeAndTaxes {
 
   def buildViewModel(payeAtsData: PayeAtsData): PayeYourIncomeAndTaxes = {
-    payeAtsData.summary_data.flatMap{
+    val model = payeAtsData.summary_data.flatMap {
       summaryData => {
 
-        val averageTaxRate: Rate = summaryData.rates.map (
+        val averageTaxRate: Rate = summaryData.rates.map(
           rates =>
             rates("nics_and_tax_rate")
         ).get
@@ -60,5 +60,8 @@ object PayeYourIncomeAndTaxes {
         )
       }
     }
-  }.getOrElse(PayeYourIncomeAndTaxes(1,false,Amount(123,""),None,Amount(123,""),Amount(123,""),Amount(123,""),Rate(""),Amount(123,"")))
+
+    println(s"==================${payeAtsData}=============================")
+    model.getOrElse(PayeYourIncomeAndTaxes(1, false, Amount(123, ""), None, Amount(123, ""), Amount(123, ""), Amount(123, ""), Rate(""), Amount(123, "")))
+  }
 }

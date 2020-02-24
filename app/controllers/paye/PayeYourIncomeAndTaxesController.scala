@@ -45,7 +45,6 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {
-
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
