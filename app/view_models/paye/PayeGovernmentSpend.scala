@@ -23,7 +23,7 @@ import view_models.Amount
 
 case class PayeGovernmentSpend(taxYear: Int,
                                orderedSpendRows: List[SpendRow],
-                               totalAmount: Amount)
+                               totalAmount: Amount) extends TaxYearFormatting
 
 object PayeGovernmentSpend {
 

@@ -72,7 +72,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+      document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", (taxYear -1).toString, taxYear.toString))
     }
 
     "have correct data for 2019" in new TestController {

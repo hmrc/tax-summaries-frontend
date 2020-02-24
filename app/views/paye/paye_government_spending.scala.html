@@ -26,14 +26,14 @@
 
 }
 
-@includes.taxs_main(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYear.toString, (viewModel.taxYear + 1).toString), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear full-width")) {
+@includes.taxs_main(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear full-width")) {
 
 	<div class="grid-row form-group">
 		<div class="column-two-thirds">
 			<h1 class="heading-xlarge">
 					@Html(Messages("paye.ats.treasury_spending.title"))
 			    <span class="block-heading">
-			      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYear.toString, (viewModel.taxYear + 1).toString))
+			      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
 			    </span>
 				</h1>
 			
