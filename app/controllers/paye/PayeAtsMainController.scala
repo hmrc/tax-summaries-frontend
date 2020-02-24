@@ -26,7 +26,6 @@ import play.api.mvc.{Action, AnyContent}
 
 object PayeAtsMainController extends PayeAtsMainController {
 
-
   override val payeYear: Int = ApplicationConfig.payeYear
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
