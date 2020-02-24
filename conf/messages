@@ -258,6 +258,31 @@ paye.ats.treasury_spending.para2=All figures are rounded to the nearest pound.
 paye.ats.treasury_spending.para3=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.para4=Spending information is published by HM Treasury.
 
+# View ATS - Summary
+#============================================================
+paye.ats.summary.html.title=Your income and taxes
+paye.ats.summary.title=Your income and taxes
+paye.ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
+paye.ats.summary.total_income.title=Total income
+paye.ats.summary.total_income.link=Your total income
+paye.ats.summary.total_income.description=This is your total income for the year.
+paye.ats.summary.tax_free.title=Tax-free amount
+paye.ats.summary.tax_free.link=Your tax-free amount
+paye.ats.summary.tax_free.description=This is how much you can earn before you start paying Income Tax.
+paye.ats.summary.tax_and_nics.title=Income Tax and National Insurance
+paye.ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
+paye.ats.summary.tax_and_nics.description=This is how much you pay on all your income above your tax-free amount.
+paye.ats.summary.capital_gains.title=Capital Gains Tax
+paye.ats.summary.capital_gains.link=Your Capital Gains Tax
+paye.ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
+paye.ats.summary.total_tax.your_total_tax=Total tax
+paye.ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
+paye.ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
+paye.ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
+paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Income Tax
+paye.ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
+paye.ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
+
 # No ATS - error page
 #============================================================
 generic.error.html.title=Sorry, there is a problem with the service
