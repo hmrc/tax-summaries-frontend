@@ -18,20 +18,21 @@ package controllers.paye
 
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
+import models.PayeAtsData
 import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
+import services.PayeAtsService
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.Amount
 import view_models.paye.PayeYourIncomeAndTaxes
-
-import scala.concurrent.Future
 
 object PayeYourIncomeAndTaxesController extends PayeYourIncomeAndTaxesController{
 
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
   override val payeYear: Int = ApplicationConfig.payeYear
+  override val payeAtsService = PayeAtsService
 }
 
 trait PayeYourIncomeAndTaxesController extends FrontendController {
@@ -40,23 +41,23 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
 
   val payeAuthAction: PayeAuthAction
   val payeYear: Int
+ val payeAtsService : PayeAtsService
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {
 
-      val blankViewModel = PayeYourIncomeAndTaxes(
-        taxYear = 2019,
-        employeeContributions = false,
-        incomeBeforeTax = Amount(200, "GBP"),
-        taxableIncome = Some(Amount(200, "GBP")),
-        totalIncomeTax = Amount(200, "GBP"),
-        totalIncomeTaxNics = Amount(200, "GBP"),
-        incomeAfterTaxNics = Amount(200, "GBP"),
-        averageTaxRate = Amount(200, "GBP"),
-        taxFreeAmount =  Amount(200, "GBP"))
+      payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
-      Future.successful(Ok(views.html.paye.paye_your_income_and_taxes(blankViewModel)))
+        case Right(successResponse: PayeAtsData) => {
+          Ok(views.html.paye.paye_your_income_and_taxes(PayeYourIncomeAndTaxes.buildViewModel(successResponse)))
+        }
+        case Left(response: HttpResponse) =>
+          response.status match {
+            case 404 => Redirect(controllers.routes.ErrorController.authorisedNoAts())
+            case _ =>  BadRequest("Bad request")
 
+          }
+      }
 
     }
 

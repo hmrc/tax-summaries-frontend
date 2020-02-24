@@ -49,6 +49,7 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
 
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeYear = taxYear
+    override val payeAtsService = mock[PayeAtsService]
 
     private def readJson(path: String) = {
       val resource = getClass.getResourceAsStream(path)
@@ -62,9 +63,16 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
 
     "return OK response" in new TestController {
 
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.title should include(Messages("paye.ats.summary.title")+ Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
     }
   }
 

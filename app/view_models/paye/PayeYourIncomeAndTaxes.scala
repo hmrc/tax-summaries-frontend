@@ -16,7 +16,8 @@
 
 package view_models.paye
 
-import view_models.Amount
+import models.PayeAtsData
+import view_models.{Amount, Rate}
 
 case class PayeYourIncomeAndTaxes(
   taxYear: Int,
@@ -26,5 +27,38 @@ case class PayeYourIncomeAndTaxes(
   totalIncomeTax: Amount,
   totalIncomeTaxNics: Amount,
   incomeAfterTaxNics: Amount,
-  averageTaxRate: Amount,
+  averageTaxRate: Rate,
   taxFreeAmount: Amount)
+
+object PayeYourIncomeAndTaxes {
+
+  def buildViewModel(payeAtsData: PayeAtsData): PayeYourIncomeAndTaxes = {
+    payeAtsData.summary_data.flatMap{
+      summaryData => {
+
+        val averageTaxRate: Rate = summaryData.rates.map (
+          rates =>
+            rates("nics_and_tax_rate")
+        ).get
+
+        summaryData.payload.map(
+          payload => {
+
+            PayeYourIncomeAndTaxes(
+              2019,
+              payload.get("employee_nic_amount").isDefined,
+              payload("total_income_before_tax"),
+              Some(payload("total_tax_free_amount")),
+              payload("total_income_tax"),
+              payload("total_income_tax_and_nics"),
+              payload("income_after_tax_and_nics"),
+              averageTaxRate,
+              payload("personal_tax_free_amount"))
+
+
+          }
+        )
+      }
+    }
+  }.getOrElse(PayeYourIncomeAndTaxes(1,false,Amount(123,""),None,Amount(123,""),Amount(123,""),Amount(123,""),Rate(""),Amount(123,"")))
+}
