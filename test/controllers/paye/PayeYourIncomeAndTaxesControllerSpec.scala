@@ -72,7 +72,7 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(Messages("paye.ats.summary.title")+ Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+      document.title should include(Messages("paye.ats.summary.title")+ Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
   }
 

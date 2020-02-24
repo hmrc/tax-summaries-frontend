@@ -97,8 +97,8 @@ ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
 paye.ats.summary.total_income.paye.title=Taxable income
-paye.ats.summary.nicsheading=Income Tax and National Insurance
-paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance
+paye.ats.summary.nicsheading=Income Tax and National Insurance contributions
+paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance contributions
 paye.ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
 
 # View NICS page
@@ -268,15 +268,15 @@ paye.ats.treasury_spending.para4=Spending information is published by HM Treasur
 paye.ats.summary.html.title=Your income and taxes
 paye.ats.summary.title=Your income and taxes
 paye.ats.summary.lede=This is for your information only. You do not need to contact us as this is not a bill or demand for payment.
-paye.ats.summary.total_income.title=Total income
-paye.ats.summary.total_income.link=Your total income
-paye.ats.summary.total_income.description=This is your total income for the year.
+paye.ats.summary.total_income.title=Taxable income
+paye.ats.summary.total_income.link=Your taxable income
+paye.ats.summary.total_income.description=This is your total taxable income for the year.
 paye.ats.summary.tax_free.title=Tax-free amount
 paye.ats.summary.tax_free.link=Your tax-free amount
-paye.ats.summary.tax_free.description=This is how much you can earn before you start paying Income Tax.
+paye.ats.summary.tax_free.description=This is the amount you received without paying tax.
 paye.ats.summary.tax_and_nics.title=Income Tax and National Insurance
-paye.ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
-paye.ats.summary.tax_and_nics.description=This is how much you pay on all your income above your tax-free amount.
+paye.ats.summary.tax_and_nics.link=Your Income Tax and National Insurance contributions
+paye.ats.summary.tax_and_nics.description=This is {0}% of your taxable income. For every £1 of income, you paid {0}p in Income Tax and National Insurance contributions.
 paye.ats.summary.capital_gains.title=Capital Gains Tax
 paye.ats.summary.capital_gains.link=Your Capital Gains Tax
 paye.ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.

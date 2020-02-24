@@ -21,14 +21,11 @@ import view_models.{Amount, Rate}
 
 case class PayeYourIncomeAndTaxes(
   taxYear: Int,
-  employeeContributions: Boolean,
   incomeBeforeTax: Amount,
-  taxableIncome: Option[Amount],
+  taxableIncome: Amount,
   totalIncomeTax: Amount,
-  totalIncomeTaxNics: Amount,
   incomeAfterTaxNics: Amount,
-  averageTaxRate: Rate,
-  taxFreeAmount: Amount) extends TaxYearFormatting
+  averageTaxRate: String) extends TaxYearFormatting
 
 object PayeYourIncomeAndTaxes {
 
@@ -43,20 +40,19 @@ object PayeYourIncomeAndTaxes {
 
         summaryData.payload.map(
           payload => {
+            val hasEmployeeContribution = payload.get("employee_nic_amount").isDefined
             PayeYourIncomeAndTaxes(
               2019,
-              payload.get("employee_nic_amount").isDefined,
               payload("total_income_before_tax"),
-              Some(payload("total_tax_free_amount")),
-              payload("total_income_tax"),
-                payload("total_income_tax_and_nics"),
+              payload.get("total_tax_free_amount").getOrElse(payload("personal_tax_free_amount")) ,
+              if(hasEmployeeContribution) payload("total_income_tax_and_nics") else payload("total_income_tax") ,
               payload("income_after_tax_and_nics"),
-              averageTaxRate,
-              payload("total_tax_free_amount"))
+              averageTaxRate.percent.replaceAll("%", ""))
           }
         )
       }
     }
-    model.getOrElse(PayeYourIncomeAndTaxes(1, false, Amount(123, ""), None, Amount(123, ""), Amount(123, ""), Amount(123, ""), Rate(""), Amount(123, "")))
+
+    model.getOrElse(PayeYourIncomeAndTaxes(1, Amount(123, ""), Amount(123, ""), Amount(123, ""), Amount(123, ""), ""))
   }
 }

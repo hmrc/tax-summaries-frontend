@@ -22,7 +22,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
-import view_models.{Amount, Rate}
+import view_models.Amount
 
 class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
@@ -32,9 +32,9 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.yourIncomeAndTaxesData
 
-      val expectedViewModel =  PayeYourIncomeAndTaxes(2019, true,
-        Amount(500, "GBP"),Some(Amount(400, "GBP")),Amount(600, "GBP"),
-        Amount(200, "GBP"),Amount(1100, "GBP"),Rate("20%"),Amount(400, "GBP"))
+      val expectedViewModel =  PayeYourIncomeAndTaxes(2019,
+        Amount(500, "GBP"),Amount(400, "GBP"),Amount(200, "GBP"),
+        Amount(1100, "GBP"),"20")
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
 
