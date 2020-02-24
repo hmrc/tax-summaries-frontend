@@ -100,41 +100,41 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       document.getElementById("Defence").text() shouldBe "Defence (5.31%)"
       document.select("#Defence + dd").text() shouldBe "£1,269"
 
-      document.getElementById("NationalDebtInterest").text() shouldBe "National Debt Interest (7.0%)"
+      document.getElementById("NationalDebtInterest").text() shouldBe "National debt interest (7.0%)"
       document.select("#NationalDebtInterest + dd").text() shouldBe "£1,673"
 
       document.getElementById("Transport").text() shouldBe "Transport (2.95%)"
       document.select("#Transport + dd").text() shouldBe "£705"
 
-      document.getElementById("PublicOrderAndSafety").text() shouldBe "Public Order and Safety (4.4%)"
+      document.getElementById("PublicOrderAndSafety").text() shouldBe "Public order and safety (4.4%)"
       document.select("#PublicOrderAndSafety + dd").text() shouldBe "£1,052"
 
-      document.getElementById("BusinessAndIndustry").text() shouldBe "Business and Industry (2.74%)"
+      document.getElementById("BusinessAndIndustry").text() shouldBe "Business and industry (2.74%)"
       document.select("#BusinessAndIndustry + dd").text() shouldBe "£655"
 
-      document.getElementById("GovernmentAdministration").text() shouldBe "Government Administration (2.05%)"
+      document.getElementById("GovernmentAdministration").text() shouldBe "Government administration (2.05%)"
       document.select("#GovernmentAdministration + dd").text() shouldBe "£490"
 
-      document.getElementById("HousingAndUtilities").text() shouldBe "Housing and Utilities, like street lighting (1.64%)"
+      document.getElementById("HousingAndUtilities").text() shouldBe "Housing and utilities, like street lighting (1.64%)"
       document.select("#HousingAndUtilities + dd").text() shouldBe "£392"
 
       document.getElementById("Environment").text() shouldBe "Environment (1.66%)"
       document.select("#Environment + dd").text() shouldBe "£396"
 
-      document.getElementById("Culture").text() shouldBe "Culture, like sports, libraries, museums (1.69%)"
+      document.getElementById("Culture").text() shouldBe "Culture, like sports, libraries and museums (1.69%)"
       document.select("#Culture + dd").text() shouldBe "£404"
 
-      document.getElementById("OverseasAid").text() shouldBe "Overseas Aid (1.15%)"
+      document.getElementById("OverseasAid").text() shouldBe "Overseas aid (1.15%)"
       document.select("#OverseasAid + dd").text() shouldBe "£274"
 
-      document.getElementById("UkContributionToEuBudget").text() shouldBe "UK Contribution to the EU Budget (0.75%)"
+      document.getElementById("UkContributionToEuBudget").text() shouldBe "UK contribution to the EU budget (0.75%)"
       document.select("#UkContributionToEuBudget + dd").text() shouldBe "£179"
 
       document.select("#TotalAmount + dd").text() shouldBe "£4,512"
 
       document
         .select("h1")
-        .text shouldBe "How your tax was spent 6 April 2019 to 5 April 2020"
+        .text shouldBe "How your tax was spent 6 April 2018 to 5 April 2019"
     }
 
     "return bad request and errors when receiving any errors from service" in new TestController {
