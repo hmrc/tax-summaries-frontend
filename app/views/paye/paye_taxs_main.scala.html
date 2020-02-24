@@ -41,7 +41,7 @@
 
 @includes.taxs_main(title = Messages("ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString), "", contentHeader = Option(headerContent)) {
 
-    <h1 id="index-page-header">
+    <h1 class="heading-xlarge" id="index-page-header">
         @Messages("paye.ats.index.html.title")<br>
         @Messages("paye.generic.tax_year_heading", taxYear.toString, (taxYear+1).toString)
     </h1>
