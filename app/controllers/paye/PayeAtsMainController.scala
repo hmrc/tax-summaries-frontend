@@ -21,9 +21,8 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.http.HttpResponse
 import play.api.mvc.Results.Ok
+import play.api.mvc.{Action, AnyContent}
 
 object PayeAtsMainController extends PayeAtsMainController {
 

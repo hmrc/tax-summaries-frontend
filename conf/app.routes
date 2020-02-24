@@ -23,3 +23,5 @@ GET     /sign-out                                              controllers.Accou
 GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
 
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
+
+GET     /paye/main                                             controllers.paye.PayeAtsMainController.show
