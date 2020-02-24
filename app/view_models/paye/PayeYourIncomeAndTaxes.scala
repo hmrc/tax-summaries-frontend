@@ -22,7 +22,7 @@ case class PayeYourIncomeAndTaxes(
   taxYear: Int,
   employeeContributions: Boolean,
   incomeBeforeTax: Amount,
-  taxableIncome: Amount,
+  taxableIncome: Option[Amount],
   totalIncomeTax: Amount,
   totalIncomeTaxNics: Amount,
   incomeAfterTaxNics: Amount,

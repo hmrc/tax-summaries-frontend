@@ -48,7 +48,7 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
         taxYear = 2019,
         employeeContributions = false,
         incomeBeforeTax = Amount(200, "GBP"),
-        taxableIncome = Amount(200, "GBP"),
+        taxableIncome = Some(Amount(200, "GBP")),
         totalIncomeTax = Amount(200, "GBP"),
         totalIncomeTaxNics = Amount(200, "GBP"),
         incomeAfterTaxNics = Amount(200, "GBP"),
