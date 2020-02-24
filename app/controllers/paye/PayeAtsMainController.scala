@@ -23,6 +23,7 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
+import view_models.paye.PayeAtsMain
 
 object PayeAtsMainController extends PayeAtsMainController {
 
@@ -40,6 +41,6 @@ trait PayeAtsMainController {
 
   def show: Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] =>
-      Ok(views.html.paye.paye_taxs_main(payeYear))
+      Ok(views.html.paye.paye_taxs_main(PayeAtsMain(payeYear)))
   }
 }

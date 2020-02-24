@@ -61,7 +61,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I1
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(Messages("ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+      document.title should include(Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
 
       document.getElementById("index-page-description").text() shouldBe(Messages("paye.ats.index.html.lede"))
 
