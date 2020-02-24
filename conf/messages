@@ -258,11 +258,11 @@ paye.ats.treasury_spending.para2=All figures are rounded to the nearest pound.
 paye.ats.treasury_spending.para3=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.para4=Spending information is published by HM Treasury.
 
-# View ATS - Summary
+# View ATS - Summary (PAYE)
 #============================================================
 paye.ats.summary.html.title=Your income and taxes
 paye.ats.summary.title=Your income and taxes
-paye.ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
+paye.ats.summary.lede=This is for your information only. You do not need to contact us as this is not a bill or demand for payment.
 paye.ats.summary.total_income.title=Total income
 paye.ats.summary.total_income.link=Your total income
 paye.ats.summary.total_income.description=This is your total income for the year.

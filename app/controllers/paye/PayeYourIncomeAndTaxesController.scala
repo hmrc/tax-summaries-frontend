@@ -16,8 +16,9 @@
 
 package controllers.paye
 
-import config.AppFormPartialRetriever
+import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
+import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
@@ -27,6 +28,11 @@ import view_models.paye.PayeYourIncomeAndTaxes
 
 import scala.concurrent.Future
 
+object PayeYourIncomeAndTaxesController extends PayeYourIncomeAndTaxesController{
+
+  override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
+  override val payeYear: Int = ApplicationConfig.payeYear
+}
 
 trait PayeYourIncomeAndTaxesController extends FrontendController {
 
