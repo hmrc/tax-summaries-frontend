@@ -32,18 +32,19 @@
 
 @import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import view_models.paye.PayeAtsMain
 
-@(taxYear : Int)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
+@(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 
 }
 
-@includes.taxs_main(title = Messages("ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString), "", contentHeader = Option(headerContent)) {
+@includes.taxs_main(title = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent)) {
 
     <h1 class="heading-xlarge" id="index-page-header">
         @Messages("paye.ats.index.html.title")<br>
-        @Messages("paye.generic.tax_year_heading", taxYear.toString, (taxYear+1).toString)
+        @Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)
     </h1>
     <p id="index-page-description">@Html(Messages("paye.ats.index.html.lede"))</p>
     <h2 class="heading-medium"><a id="tax-calc-link" href="#" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
