@@ -35,6 +35,8 @@ case class Amount(amount: BigDecimal, currency: String) {
 
   override def toString = format(0, BigDecimal.RoundingMode.DOWN)
 
+  def toHalfRoundedUpAmount = format(0, BigDecimal.RoundingMode.HALF_UP)
+
   def isZero = amount == BigDecimal(0)
 
   val nonZero: Boolean = !isZero

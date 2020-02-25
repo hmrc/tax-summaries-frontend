@@ -98,10 +98,10 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       document.select("#Education + dd").text() shouldBe "£3,144"
 
       document.getElementById("Defence").text() shouldBe "Defence (5.31%)"
-      document.select("#Defence + dd").text() shouldBe "£1,269"
+      document.select("#Defence + dd").text() shouldBe "£1,270"
 
       document.getElementById("NationalDebtInterest").text() shouldBe "National debt interest (7.0%)"
-      document.select("#NationalDebtInterest + dd").text() shouldBe "£1,673"
+      document.select("#NationalDebtInterest + dd").text() shouldBe "£1,674"
 
       document.getElementById("Transport").text() shouldBe "Transport (2.95%)"
       document.select("#Transport + dd").text() shouldBe "£705"
@@ -119,13 +119,13 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       document.select("#HousingAndUtilities + dd").text() shouldBe "£392"
 
       document.getElementById("Environment").text() shouldBe "Environment (1.66%)"
-      document.select("#Environment + dd").text() shouldBe "£396"
+      document.select("#Environment + dd").text() shouldBe "£397"
 
       document.getElementById("Culture").text() shouldBe "Culture, like sports, libraries and museums (1.69%)"
       document.select("#Culture + dd").text() shouldBe "£404"
 
       document.getElementById("OverseasAid").text() shouldBe "Overseas aid (1.15%)"
-      document.select("#OverseasAid + dd").text() shouldBe "£274"
+      document.select("#OverseasAid + dd").text() shouldBe "£275"
 
       document.getElementById("UkContributionToEuBudget").text() shouldBe "UK contribution to the EU budget (0.75%)"
       document.select("#UkContributionToEuBudget + dd").text() shouldBe "£179"

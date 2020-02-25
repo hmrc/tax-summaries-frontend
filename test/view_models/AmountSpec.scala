@@ -61,6 +61,20 @@ class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
       testAmount.toCreditString shouldEqual "1,001"
     }
 
+    "can round up if testValue is Greater than or 1000.5" in {
+      val testValue: BigDecimal = 1000.5
+      val testCurrency: String = "GBP"
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.toHalfRoundedUpAmount shouldEqual "1,001"
+    }
+
+    "can round down if testValue is less than 1000.4" in {
+      val testValue: BigDecimal = 1000.4
+      val testCurrency: String = "GBP"
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.toHalfRoundedUpAmount shouldEqual "1,000"
+    }
+
     "produce correct inverse amount" in {
       val testValue: BigDecimal = 1000.00
       val testCurrency: String = "GBP"
