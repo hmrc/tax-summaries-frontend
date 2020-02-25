@@ -16,7 +16,7 @@
 
 package utils
 
-import uk.gov.hmrc.domain.SaUtrGenerator
+import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import utils.TestConstants.testUtr
 import view_models.{Amount, CapitalGains, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
 
@@ -31,7 +31,7 @@ trait TestConstants {
   lazy val testKey = genRandNumString(22)
   lazy val testOid = genRandNumString(12)
   lazy val testNonMatchingUtr = new SaUtrGenerator().nextSaUtr.utr
-
+  lazy val testNino = new Generator().nextNino
   def genRandNumString(length: Int) = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax = TotalIncomeTax(

@@ -17,11 +17,12 @@
 package connectors
 
 import config.WSHttp
-import models.{AtsData, AtsListData}
+import models.{AtsData, AtsListData, PayeAtsData}
 import play.api.Mode.Mode
-import play.api.{Configuration, Play}
-import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.{Configuration, Logger, Play}
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -60,4 +61,7 @@ trait MiddleConnector {
 
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
     connectToAtsList(requestedUTR)
+
+  def connectToPayeATS(nino: Nino, taxYear : Int)(implicit hc : HeaderCarrier) : Future[HttpResponse] =
+    http.GET[HttpResponse](url("/taxs/"+ nino + "/" + taxYear + "/paye-ats-data"))
 }

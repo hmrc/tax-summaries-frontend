@@ -28,7 +28,8 @@ object AppDependencies {
     "org.scalatestplus.play"  %% "scalatestplus-play"           % "2.0.1",
     "org.scalamock"           %% "scalamock-scalatest-support"  % "3.6.0",
     "com.typesafe.play"       %% "play-test"                    % PlayVersion.current,
-    "org.scalacheck"          %% "scalacheck"                   % "1.14.1"
+    "org.scalacheck"          %% "scalacheck"                   % "1.14.1",
+    "com.github.tomakehurst"   % "wiremock"               % "2.26.0"
   ).map(_ % "test")
 
   val all: Seq[ModuleID] = compile ++ test
