@@ -47,6 +47,7 @@ trait ApplicationConfig {
   val sessionCacheHost: String
   val optimizelyProjectId: String
   val feedbackUrl: String
+  val payeYear: Int
 }
 
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
@@ -92,4 +93,6 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
 
   //Application name
   override lazy val appName = getString("appName")
+
+  override val payeYear: Int = getInt("paye.year")
 }
