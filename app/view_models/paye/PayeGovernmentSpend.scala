@@ -17,7 +17,7 @@
 package view_models.paye
 
 import config.PayeConfig
-import models.PayeAtsData
+import models.{PayeAtsData, SpendData}
 import play.api.Play
 import view_models.Amount
 
@@ -29,32 +29,29 @@ object PayeGovernmentSpend {
 
   val orderedSpendCategories: List[String] = Play.current.injector.instanceOf[PayeConfig].spendCategories
 
-  def buildViewModel(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
+  def apply(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
 
     val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
       category => {
-
         payeAtsData.gov_spending.flatMap {
           govSpending => {
             govSpending.govSpendAmountData.map {
               spendDataMap => {
-                val spending = spendDataMap(category)
-                SpendRow(category, spending.percentage, spending.amount)
+                val spendData = spendDataMap(category)
+                SpendRow(category, spendData)
               }
             }
           }
         }
       }
     )
-
     val totalSpendingAmount = payeAtsData.gov_spending.map {
       spending =>
         spending.totalAmount
     }
-
-    PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount.getOrElse(Amount(BigDecimal(0.0), "GBP")))
+    PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount.getOrElse(Amount.empty))
   }
 }
 
-case class SpendRow(category: String, percentage: BigDecimal, amount: Amount)
+case class SpendRow(category: String, spendData: SpendData)
 

@@ -23,7 +23,7 @@ import scala.concurrent.Future
 
 object FakePayeAuthAction extends PayeAuthAction {
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    block(PayeAuthenticatedRequest("userId", testNino, request))
+    block(PayeAuthenticatedRequest(testNino, request))
   }
 }
 

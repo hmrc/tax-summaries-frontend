@@ -48,7 +48,7 @@ trait PayeGovernmentSpendController extends FrontendController {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          Ok(views.html.paye.paye_government_spending(PayeGovernmentSpend.buildViewModel(successResponse)))
+          Ok(views.html.paye.paye_government_spending(PayeGovernmentSpend(successResponse)))
         }
         case Left(response: HttpResponse) =>
           response.status match {

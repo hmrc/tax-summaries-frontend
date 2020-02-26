@@ -21,34 +21,32 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
+import play.api.Application
 import play.api.http.Status.SEE_OTHER
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.RetrievalOps._
-
-import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.language.postfixOps
 
 class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
+
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
-  val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
-  val unauthorisedUrl = "/annual-tax-summary/not-authorised"
 
-  class BrokenAuthConnector(exception: Throwable) extends AuthConnector {
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
-      Future.failed(exception)
-  }
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder()
+      .configure(
+        "login.paye.url" -> "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary"
+      )
+      .build()
 
-  implicit val timeout: FiniteDuration = 5 seconds
+  val ggSignInUrl = fakeApplication.configuration.getString("login.paye.url").getOrElse("Config key not found")
+  val unauthorisedRoute = controllers.routes.ErrorController.notAuthorised().url
 
   class Harness(authAction: PayeAuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -59,16 +57,16 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   "A user with a confidence level 200 and a Nino" should {
     "create an authenticated request" in {
       val nino = new Generator().nextNino.nino
-      val retrievalResult: Future[Option[String] ~ Option[String]] = Future.successful(Some("") ~ Some(nino))
+      val retrievalResult: Future[Option[String]] = Future.successful(Some(nino))
 
       when(mockAuthConnector
-        .authorise[Option[String] ~ Option[String]](any(), any())(any(), any()))
+        .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
       val controller = new Harness(authAction)
 
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe OK
       contentAsString(result) should include(nino)
     }
@@ -78,23 +76,23 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new InternalError))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(unauthorisedUrl)
+      redirectLocation(result).get should endWith(unauthorisedRoute)
     }
   }
 
-  "A user with no active session" should {
+  "A user with NoActiveSession type exception" should {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
+      redirectLocation(result).get should startWith(ggSignInUrl)
     }
   }
 }

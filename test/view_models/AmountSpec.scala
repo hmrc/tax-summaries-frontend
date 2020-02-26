@@ -23,11 +23,13 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 
 class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
+
+  val testCurrency: String = "GBP"
+
   "Amount" should {
 
     "not change constructor parameter values" in {
       val testValue: BigDecimal = 1.0
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       assert(testValue equals testAmount.amount)
       assert(testCurrency equals testAmount.currency)
@@ -35,49 +37,42 @@ class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
 
     "format with two decimal places" in {
       val testValue: BigDecimal = 1000.00
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toString() shouldEqual "1,000"
     }
 
     "formats the decimal places to zero" in {
       val testValue: BigDecimal = 1000.63
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toString() shouldEqual "1,000"
     }
 
     "produces a comma for thousands" in {
       val testValue: BigDecimal = 1000.00
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toString() shouldEqual "1,000"
     }
 
     "can round up if it's a credit" in {
       val testValue: BigDecimal = 1000.01
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toCreditString shouldEqual "1,001"
     }
 
     "can round up if testValue is Greater than or 1000.5" in {
       val testValue: BigDecimal = 1000.5
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toHalfRoundedUpAmount shouldEqual "1,001"
     }
 
     "can round down if testValue is less than 1000.4" in {
       val testValue: BigDecimal = 1000.4
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toHalfRoundedUpAmount shouldEqual "1,000"
     }
 
     "produce correct inverse amount" in {
       val testValue: BigDecimal = 1000.00
-      val testCurrency: String = "GBP"
       val testAmount: Amount = -Amount(testValue, testCurrency)
       testAmount.toString() shouldEqual "-1,000"
     }
@@ -85,28 +80,25 @@ class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
     "carry out JSON transformation" in {
       val amountText = """{"amount":1.0,"currency":"GBP"}"""
       val jsonFromText = Json.parse(amountText)
-      val amountObject = Amount(1.0, "GBP")
+      val amountObject = Amount(1.0, testCurrency)
       val jsonFromObject = Json.toJson(amountObject)
       assert(jsonFromText equals jsonFromObject)
     }
 
     "have a comma and two decimal places for government spend values" in {
       val testValue: BigDecimal = 1000.01
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toTwoDecimalString shouldEqual "1,000.01"
     }
 
     "not round up government spend values" in {
       val testValue: BigDecimal = 1000.99
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toTwoDecimalString shouldEqual "1,000.99"
     }
 
     "round down government spend values after the second decimal place" in {
       val testValue: BigDecimal = 1000.018796799
-      val testCurrency: String = "GBP"
       val testAmount: Amount = new Amount(testValue, testCurrency)
       testAmount.toTwoDecimalString shouldEqual "1,000.01"
     }

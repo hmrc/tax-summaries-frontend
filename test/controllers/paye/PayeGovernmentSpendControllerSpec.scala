@@ -43,7 +43,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2019
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("userId", testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   class TestController extends PayeGovernmentSpendController {
 
@@ -63,7 +63,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
     "return OK response" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
@@ -75,71 +75,9 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", (taxYear -1).toString, taxYear.toString))
     }
 
-    "have correct data for 2019" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
-
-      val result = Future.successful(show(fakeAuthenticatedRequest))
-
-      status(result) shouldBe OK
-
-      val document = Jsoup.parse(contentAsString(result))
-      document.getElementById("Welfare").text() shouldBe "Welfare (24.52%)"
-      document.select("#Welfare + dd").text() shouldBe "£5,863"
-
-      document.getElementById("Health").text() shouldBe "Health (18.87%)"
-      document.select("#Health + dd").text() shouldBe "£4,512"
-
-      document.getElementById("StatePensions").text() shouldBe "State Pensions (12.12%)"
-      document.select("#StatePensions + dd").text() shouldBe "£2,898"
-
-      document.getElementById("Education").text() shouldBe "Education (13.15%)"
-      document.select("#Education + dd").text() shouldBe "£3,144"
-
-      document.getElementById("Defence").text() shouldBe "Defence (5.31%)"
-      document.select("#Defence + dd").text() shouldBe "£1,270"
-
-      document.getElementById("NationalDebtInterest").text() shouldBe "National debt interest (7.0%)"
-      document.select("#NationalDebtInterest + dd").text() shouldBe "£1,674"
-
-      document.getElementById("Transport").text() shouldBe "Transport (2.95%)"
-      document.select("#Transport + dd").text() shouldBe "£705"
-
-      document.getElementById("PublicOrderAndSafety").text() shouldBe "Public order and safety (4.4%)"
-      document.select("#PublicOrderAndSafety + dd").text() shouldBe "£1,052"
-
-      document.getElementById("BusinessAndIndustry").text() shouldBe "Business and industry (2.74%)"
-      document.select("#BusinessAndIndustry + dd").text() shouldBe "£655"
-
-      document.getElementById("GovernmentAdministration").text() shouldBe "Government administration (2.05%)"
-      document.select("#GovernmentAdministration + dd").text() shouldBe "£490"
-
-      document.getElementById("HousingAndUtilities").text() shouldBe "Housing and utilities, like street lighting (1.64%)"
-      document.select("#HousingAndUtilities + dd").text() shouldBe "£392"
-
-      document.getElementById("Environment").text() shouldBe "Environment (1.66%)"
-      document.select("#Environment + dd").text() shouldBe "£397"
-
-      document.getElementById("Culture").text() shouldBe "Culture, like sports, libraries and museums (1.69%)"
-      document.select("#Culture + dd").text() shouldBe "£404"
-
-      document.getElementById("OverseasAid").text() shouldBe "Overseas aid (1.15%)"
-      document.select("#OverseasAid + dd").text() shouldBe "£275"
-
-      document.getElementById("UkContributionToEuBudget").text() shouldBe "UK contribution to the EU budget (0.75%)"
-      document.select("#UkContributionToEuBudget + dd").text() shouldBe "£179"
-
-      document.select("#TotalAmount + dd").text() shouldBe "£4,512"
-
-      document
-        .select("h1")
-        .text shouldBe "How your tax was spent 6 April 2018 to 5 April 2019"
-    }
-
-    "return bad request and errors when receiving any errors from service" in new TestController {
-
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)

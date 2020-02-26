@@ -18,13 +18,11 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import controllers.auth.{AuthConnector, AuthenticatedRequest}
-import play.api.Configuration
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import play.api.{Configuration, Logger}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientEnrolments, NoActiveSession, Nino => AuthNino}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -41,11 +39,10 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true))
-      .retrieve(Retrievals.externalId and Retrievals.nino) {
-        case Some(externalId) ~ Some(nino) => {
+      .retrieve(Retrievals.nino) {
+        case Some(nino) => {
           block {
             PayeAuthenticatedRequest(
-              externalId,
               Nino(nino),
               request
             )
@@ -55,18 +52,19 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       }
   } recover {
     case _: NoActiveSession => {
-      lazy val ggSignIn = ApplicationConfig.payeLoginUrl
-      lazy val callbackUrl = ApplicationConfig.loginCallback
       Redirect(
-        ggSignIn,
+        ApplicationConfig.payeLoginUrl,
         Map(
-          "continue" -> Seq(callbackUrl),
+          "continue" -> Seq(ApplicationConfig.loginCallback),
           "origin" -> Seq(ApplicationConfig.appName)
         )
       )
     }
 
-    case _ => Redirect(controllers.routes.ErrorController.notAuthorised())
+    case e: Exception => {
+      Logger.error(s"Exception in PayeAuthAction: $e", e)
+      Redirect(controllers.routes.ErrorController.notAuthorised())
+    }
   }
 }
 
