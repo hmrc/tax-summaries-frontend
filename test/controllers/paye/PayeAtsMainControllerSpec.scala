@@ -66,6 +66,8 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I1
       document.getElementById("index-page-description").text() shouldBe(Messages("paye.ats.index.html.lede"))
 
       document.getElementById("tax-services-link").text shouldBe(Messages("paye.ats.index.html.tax_spend_link"))
+
+      document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
     }
 
   }
