@@ -25,3 +25,4 @@ GET     /paye/treasury-spending                                controllers.paye.
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 
 GET     /paye/main                                             controllers.paye.PayeAtsMainController.show
+
