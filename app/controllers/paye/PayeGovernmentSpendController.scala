@@ -52,10 +52,9 @@ trait PayeGovernmentSpendController extends FrontendController {
         }
         case Left(response: HttpResponse) =>
           response.status match {
-          case 404 => Redirect(controllers.routes.ErrorController.authorisedNoAts())
-          case _ =>  BadRequest("Bad request")
-
-        }
+          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+          case _ =>   BadRequest("Bad request")
+          }
       }
   }
 }

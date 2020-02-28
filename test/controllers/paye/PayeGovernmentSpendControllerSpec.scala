@@ -75,15 +75,15 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", (taxYear -1).toString, taxYear.toString))
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+    "return NO ATS page if NOT_FOUND response received from NPS service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
 
     }
   }

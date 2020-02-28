@@ -21,3 +21,5 @@ GET     /switch-to-english                                     controllers.TaxsL
 GET     /sign-out                                              controllers.AccountController.signOut
 
 GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
+
+GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
