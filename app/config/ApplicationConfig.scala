@@ -48,6 +48,7 @@ trait ApplicationConfig {
   val optimizelyProjectId: String
   val feedbackUrl: String
   val payeYear: Int
+  val payeLoginUrl: String
 }
 
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
@@ -90,6 +91,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val portalUrl = getConf("portal.url")
   override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
   override lazy val feedbackUrl: String = getConf("feedback.url")
+  override lazy val payeLoginUrl = getConf("login.paye.url")
 
   //Application name
   override lazy val appName = getString("appName")
