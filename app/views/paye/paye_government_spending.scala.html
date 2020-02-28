@@ -44,10 +44,10 @@
 	<dl class="form-group" id="bar-chart">
 	@for(rowModel <- viewModel.orderedSpendRows){
 		<dt class="percentage" id="@rowModel.category">@Messages("paye.ats.treasury_spending.table." + rowModel.category) (@rowModel.spendData.percentage%)</dt>
-		<dd class="value"><span class="bar-chart" aria-hidden="true" style="width: @{rowModel.spendData.percentage}%;"></span> &pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
+		<dd class="value"><span class="bar-chart" aria-hidden="true" style="width: @{rowModel.spendData.percentage}%;"></span> <strong>&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</strong></dd>
 	}
   	<dt class="percentage" id="TotalAmount">Total</dt>
-		<dd>&pound;@viewModel.totalAmount</dd>
+		<dd class="value total"><strong>&pound;@viewModel.totalAmount</strong></dd>
 	</dl>
 
 	<div class="grid-row">

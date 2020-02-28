@@ -104,6 +104,10 @@
   position: relative;
   top: -25px; }
 
+.total {
+  top: 0;
+}
+
 .bar-chart {
   position: relative;
   top: 14px;
