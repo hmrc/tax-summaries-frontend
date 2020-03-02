@@ -28,12 +28,51 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
   "PayeYourIncomeAndTaxesData" should {
 
-    "Transform PayeAtsData to view model" in {
+    "successfully Transform PayeAtsData to view model" in {
 
       val yourIncomeAndTaxesData = PayeAtsTestData.yourIncomeAndTaxesData
 
       val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(400, "GBP"),Amount(200, "GBP"),
+        Amount(1100, "GBP"),"20"))
+
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+
+      result shouldBe expectedViewModel
+    }
+
+    "throws exception if a key is not present in PayeAtsData" in {
+
+      val yourIncomeAndTaxesData = PayeAtsTestData.malformedYourIncomeAndTaxesData
+
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
+        Amount(500, "GBP"),Amount(400, "GBP"),Amount(200, "GBP"),
+        Amount(1100, "GBP"),"20"))
+
+      val result = intercept[NoSuchElementException] { PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)}
+
+      result.getMessage shouldBe "key not found: total_income_before_tax"
+    }
+
+    "return correct data for total_tax_free_amount if total_tax_free_amount is not present in PayeAtsData" in {
+
+      val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount
+
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
+        Amount(500, "GBP"),Amount(800, "GBP"),Amount(200, "GBP"),
+        Amount(1100, "GBP"),"20"))
+
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+
+      result shouldBe expectedViewModel
+    }
+
+    "return correct data for totalIncomeTax if employee_nic_amount is not present in PayeAtsData" in {
+
+      val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingEmployeeNicAmount
+
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
+        Amount(500, "GBP"),Amount(800, "GBP"),Amount(600, "GBP"),
         Amount(1100, "GBP"),"20"))
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
