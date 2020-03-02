@@ -607,7 +607,7 @@ article table {
   text-transform: none;
   width: 100%;
   margin-bottom: 15px !important;
-  margin-top: 48px;
+  margin-top: 30px;
   border-collapse: collapse; }
   @media (max-width: 640px) {
     article table {
@@ -777,8 +777,8 @@ a, a:visited {color:#005ea5;}
     border-bottom: 0 none;
 }
 
-#total-income-tax tbody th, #total-uk-income-tax tbody th, #total-capital-gains-tax tbody th {
-    border-bottom: 0 none;
+#total-income-tax tbody, #total-uk-income-tax tbody, #total-capital-gains-tax tbody {
+  border-bottom: 1px solid #bfc1c3;
 }
 
 .validation-summary {

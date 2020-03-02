@@ -326,7 +326,7 @@ article table {
 
   width: $full-width;
   margin-bottom: $gutter-half !important;
-  margin-top: 48px;
+  margin-top: 30px;
   border-collapse: collapse;
 
   td { 
@@ -365,7 +365,7 @@ article table {
       @include bold-24;
       padding-top: 70px;
       padding-bottom: $gutter-half;
-      border-bottom: 0;
+      border-bottom: 1px solid #bfc1c3;
     }
     th + td {
       padding-right: $gutter;

@@ -152,7 +152,7 @@ ats.total_income_tax.scottish_income_tax.table.basic=Basic rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.intermediate=Intermediate rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.higher=Higher rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.additional=Top rate ({0} at {1})
-ats.total_income_tax.scottish_income_tax.table.total=Total Scottish income tax
+ats.total_income_tax.scottish_income_tax.table.total=Total Scottish Income Tax
 
 ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK income tax
 
