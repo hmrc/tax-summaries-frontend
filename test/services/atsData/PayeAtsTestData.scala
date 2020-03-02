@@ -93,6 +93,51 @@ object PayeAtsTestData {
     None
   )
 
+  val malformedYourIncomeAndTaxesData = PayeAtsData(
+    2019,
+    None,
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "employee_nic_amount" -> Amount(100, "GBP"),
+            "employer_nic_amount" -> Amount(150, "GBP"),
+            "total_income_tax_and_nics" -> Amount(200, "GBP"),
+            "your_total_tax" -> Amount(300, "GBP"),
+            "personal_tax_free_amount" -> Amount(400, "GBP"),
+            "total_tax_free_amount" -> Amount(400, "GBP"),
+            "total_income_tax" -> Amount(600, "GBP"),
+            "total_cg_tax" -> Amount(700, "GBP"),
+            "taxable_gains" -> Amount(800, "GBP"),
+            "cg_tax_per_currency_unit" -> Amount(900, "GBP"),
+            "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP"),
+            "income_after_tax_and_nics" -> Amount(1100, "GBP"),
+            "nics_and_tax_rate_amount" -> Amount(20, "PERCENT")
+          )
+        ),
+        Some(
+          Map(
+            "total_cg_tax_rate" -> Rate("10%"),
+            "nics_and_tax_rate" -> Rate("20%")
+          )
+        ),
+        None
+      )
+    ),
+    None,
+    None,
+    None
+  )
+
+  val missingYourIncomeAndTaxesData = PayeAtsData(
+    2019,
+    None,
+    None,
+    None,
+    None,
+    None
+  )
+
 
   val payeGovernmentSpendViewModel =  PayeGovernmentSpend(2019, List(
     SpendRow("Welfare", SpendData(Amount(451, "GBP"),23.5)),

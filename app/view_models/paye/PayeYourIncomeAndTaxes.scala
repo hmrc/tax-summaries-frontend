@@ -29,8 +29,8 @@ case class PayeYourIncomeAndTaxes(
 
 object PayeYourIncomeAndTaxes {
 
-  def buildViewModel(payeAtsData: PayeAtsData): PayeYourIncomeAndTaxes = {
-    val model = payeAtsData.summary_data.flatMap {
+  def buildViewModel(payeAtsData: PayeAtsData): Option[PayeYourIncomeAndTaxes] = {
+    payeAtsData.summary_data.flatMap {
       summaryData => {
 
         val averageTaxRate: Rate = summaryData.rates.map(
@@ -41,6 +41,7 @@ object PayeYourIncomeAndTaxes {
         summaryData.payload.map(
           payload => {
             val hasEmployeeContribution = payload.get("employee_nic_amount").isDefined
+
             PayeYourIncomeAndTaxes(
               2019,
               payload("total_income_before_tax"),
@@ -52,7 +53,5 @@ object PayeYourIncomeAndTaxes {
         )
       }
     }
-
-    model.getOrElse(PayeYourIncomeAndTaxes(1, Amount(123, ""), Amount(123, ""), Amount(123, ""), Amount(123, ""), ""))
   }
 }

@@ -19,12 +19,12 @@ package controllers.paye
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.Play
+import play.api.{Logger, Play}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
 import services.PayeAtsService
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import view_models.paye.PayeYourIncomeAndTaxes
 
@@ -48,7 +48,10 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          Ok(views.html.paye.paye_your_income_and_taxes(PayeYourIncomeAndTaxes.buildViewModel(successResponse)))
+          PayeYourIncomeAndTaxes.buildViewModel(successResponse) match {
+            case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
+            case _ => throw new InternalServerException("Missing summary data")
+          }
         }
         case Left(response: HttpResponse) =>
           response.status match {
@@ -57,8 +60,11 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
 
           }
       }
-
+    } recover {
+      case e: Exception  => {
+        Logger.error(s"Internal server error ${e.getMessage}", e)
+        InternalServerError(e.getMessage)
+      }
     }
-
   }
 }

@@ -27,14 +27,14 @@ import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.PayeAtsService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import services.atsData.PayeAtsTestData
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
 
-import scala.concurrent.Future
 import scala.io.Source
 
 class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
@@ -56,15 +56,15 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
       Json.parse(Source.fromInputStream(resource).getLines().mkString)
     }
 
-    val expectedResponse: JsValue = readJson("/paye_ats.json")
+    val expectedSuccessResponse: JsValue = readJson("/paye_ats.json")
   }
 
-  "Government spend controller" should {
+  "Paye your income and taxes controller" should {
 
     "return OK response" in new TestController {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+        .thenReturn(Right(expectedSuccessResponse.as[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
 
@@ -74,6 +74,29 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
 
       document.title should include(Messages("paye.ats.summary.title")+ Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
-  }
 
+    "throw internal server exception when key is missing in PAYE ATS data" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+        .thenReturn(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData))
+
+      val result = show(fakeAuthenticatedRequest)
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      contentAsString(result) shouldBe "key not found: total_income_before_tax"
+    }
+
+    "throw internal server exception when summary data is missing" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+        .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
+
+      val result = show(fakeAuthenticatedRequest)
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      contentAsString(result) shouldBe "Missing summary data"
+    }
+  }
 }
