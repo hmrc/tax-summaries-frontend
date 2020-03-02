@@ -65,6 +65,12 @@ ats.index.html.tax_calc_description=This shows a breakdown of your total income,
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
 
+paye.ats.index.html.title=Your Annual Tax Summary
+paye.ats.index.html.tax_spend_link=How your tax was spent
+paye.ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
+paye.ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount and how much tax and National Insurance you have paid.
+paye.ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
+
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Your income and taxes

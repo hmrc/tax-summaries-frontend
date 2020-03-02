@@ -28,6 +28,8 @@
 
 @includes.taxs_main(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear full-width")) {
 
+@helpers.back_link(Messages("generic.back"))
+
 	<div class="grid-row form-group">
 		<div class="column-two-thirds">
 			<h1 class="heading-xlarge">
