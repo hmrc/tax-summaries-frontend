@@ -95,5 +95,11 @@ class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with Test
         .select("h1")
         .text shouldBe "How your tax was spent 6 April 2018 to 5 April 2019"
     }
+
+    "link to Scottish government spending page" in {
+      val document = Jsoup.parse(view(payeGovernmentSpendViewModel))
+
+      document.select("#scottish-spending-link a").attr("href") shouldBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+    }
   }
 }
