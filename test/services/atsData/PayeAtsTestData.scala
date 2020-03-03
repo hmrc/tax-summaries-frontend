@@ -90,8 +90,27 @@ object PayeAtsTestData {
       )
     ),
     None,
-    None,
-    None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "personal_tax_free_amount" -> Amount(9440, "GBP"),
+            "other_allowances_amount" -> Amount(300, "GBP"),
+            "total_tax_free_amount" -> Amount(9740, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        None,
+        Amount(200,"GBP"),
+        None
+      )
+    )
   )
 
   val malformedYourIncomeAndTaxesData = PayeAtsData(
@@ -126,8 +145,27 @@ object PayeAtsTestData {
       )
     ),
     None,
-    None,
-    None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "personal_tax_free_amount" -> Amount(9440, "GBP"),
+            "other_allowances_amount" -> Amount(300, "GBP"),
+            "total_tax_free_amount" -> Amount(9740, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        None,
+        Amount(200,"GBP"),
+        None
+      )
+    )
   )
 
   val missingYourIncomeAndTaxesData = PayeAtsData(
@@ -135,8 +173,27 @@ object PayeAtsTestData {
     None,
     None,
     None,
-    None,
-    None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "personal_tax_free_amount" -> Amount(9440, "GBP"),
+            "other_allowances_amount" -> Amount(300, "GBP"),
+            "total_tax_free_amount" -> Amount(9740, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        None,
+        Amount(200,"GBP"),
+        None
+      )
+    )
   )
 
   val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount = PayeAtsData(
@@ -171,8 +228,27 @@ object PayeAtsTestData {
       )
     ),
     None,
-    None,
-    None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "personal_tax_free_amount" -> Amount(9440, "GBP"),
+            "other_allowances_amount" -> Amount(300, "GBP"),
+            "total_tax_free_amount" -> Amount(9740, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        None,
+        Amount(200,"GBP"),
+        None
+      )
+    )
   )
 
   val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount = PayeAtsData(
@@ -206,8 +282,27 @@ object PayeAtsTestData {
       )
     ),
     None,
-    None,
-    None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "personal_tax_free_amount" -> Amount(9440, "GBP"),
+            "other_allowances_amount" -> Amount(300, "GBP"),
+            "total_tax_free_amount" -> Amount(9740, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        None,
+        Amount(200,"GBP"),
+        None
+      )
+    )
   )
 
   val payeYourIncomeAndTaxesViewModel = PayeYourIncomeAndTaxes(2019,Amount(1000,"GBP"),Amount(800,"GBP"),Amount(200,"GBP"),Amount(100,"GBP"),"20")

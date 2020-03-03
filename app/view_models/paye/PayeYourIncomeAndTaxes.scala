@@ -16,6 +16,7 @@
 
 package view_models.paye
 
+import config.ApplicationConfig
 import models.PayeAtsData
 import view_models.{Amount, Rate}
 
@@ -29,24 +30,28 @@ case class PayeYourIncomeAndTaxes(
 
 object PayeYourIncomeAndTaxes {
 
+  val taxYear: Int = ApplicationConfig.payeYear
+
   def buildViewModel(payeAtsData: PayeAtsData): Option[PayeYourIncomeAndTaxes] = {
+
+   val taxableIncome = payeAtsData.allowance_data.flatMap{ allowanceData =>
+      allowanceData.payload.map(payload=>
+        if (payload("total_tax_free_amount") == Amount.empty) payload("personal_tax_free_amount") else payload("total_tax_free_amount")
+      )
+    }.get
+
+    val totalIncomeTax = payeAtsData.gov_spending.map(govSpendingData => govSpendingData.totalAmount).get
+
     payeAtsData.summary_data.flatMap {
       summaryData => {
-
-        val averageTaxRate: Rate = summaryData.rates.map(
-          rates =>
-            rates("nics_and_tax_rate")
-        ).get
-
+        val averageTaxRate: Rate = summaryData.rates.map(rates => rates("nics_and_tax_rate")).get
         summaryData.payload.map(
           payload => {
-            val hasEmployeeContribution = payload.get("employee_nic_amount").isDefined
-
             PayeYourIncomeAndTaxes(
-              2019,
+              taxYear,
               payload("total_income_before_tax"),
-              payload.get("total_tax_free_amount").getOrElse(payload("personal_tax_free_amount")) ,
-              if(hasEmployeeContribution) payload("total_income_tax_and_nics") else payload("total_income_tax") ,
+              taxableIncome ,
+              totalIncomeTax,
               payload("income_after_tax_and_nics"),
               averageTaxRate.percent.replaceAll("%", ""))
           }
