@@ -154,7 +154,7 @@ ats.total_income_tax.scottish_income_tax.table.higher=Higher rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.additional=Top rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.total=Total Scottish Income Tax
 
-ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK income tax
+ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK Income Tax
 
 # View ATS - savings income tax
 #============================================================

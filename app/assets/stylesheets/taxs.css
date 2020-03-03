@@ -606,7 +606,7 @@ article table {
   font-weight: 400;
   text-transform: none;
   width: 100%;
-  margin-bottom: 15px !important;
+  margin-bottom: 50px !important;
   margin-top: 30px;
   border-collapse: collapse; }
   @media (max-width: 640px) {
@@ -747,6 +747,8 @@ article table {
       max-width: -moz-min-content;
     }
   }
+
+
 
 .mc-key-cell {
   padding-right: 20px !important;
