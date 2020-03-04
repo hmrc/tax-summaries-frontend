@@ -23,14 +23,14 @@ import view_models.{Amount, Rate}
 object PayeAtsTestData {
 
   val govSpendingData = PayeAtsData(
-    2019,
+    2018,
     None,
     None,
     None,
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2019,
+        2018,
         Some(
           Map(
             "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 1.00),
@@ -56,7 +56,7 @@ object PayeAtsTestData {
     )
   )
 
-  val payeGovernmentSpendViewModel =  PayeGovernmentSpend(2019, List(
+  val payeGovernmentSpendViewModel =  PayeGovernmentSpend(2018, List(
     SpendRow("Welfare", SpendData(Amount(451, "GBP"),23.5)),
     SpendRow("Health", SpendData(Amount(388, "GBP"),20.2)),
     SpendRow("StatePensions", SpendData(Amount(246, "GBP"),12.8)),

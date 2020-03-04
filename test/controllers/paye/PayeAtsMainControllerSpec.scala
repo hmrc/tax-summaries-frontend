@@ -42,7 +42,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I1
   implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
-  val taxYear = 2019
+  val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   class TestController extends PayeAtsMainController {
@@ -61,7 +61,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I1
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(Messages("paye.ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+      document.title should include(Messages("paye.ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
 
       document.getElementById("index-page-description").text() shouldBe(Messages("paye.ats.index.html.lede"))
 

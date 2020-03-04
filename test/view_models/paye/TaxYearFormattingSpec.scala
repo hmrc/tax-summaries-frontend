@@ -27,11 +27,11 @@ class TaxYearFormattingSpec extends UnitSpec {
   "TaxYearFormatting" should {
 
     "Calculate valid start year" in {
-      instance.taxYearStart shouldBe "2017"
+      instance.taxYearStart shouldBe "2018"
     }
 
     "Calculate valid end year" in {
-      instance.taxYearEnd shouldBe "2018"
+      instance.taxYearEnd shouldBe "2019"
     }
 
   }
