@@ -19,10 +19,10 @@ package controllers.paye
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.{Logger, Play}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
+import play.api.{Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -41,16 +41,20 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
 
   val payeAuthAction: PayeAuthAction
   val payeYear: Int
- val payeAtsService : PayeAtsService
+  val payeAtsService : PayeAtsService
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          PayeYourIncomeAndTaxes.buildViewModelEither(successResponse) match {
-            case Right(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
-            case Left(message: String) => throw new InternalServerException(message)
+          PayeYourIncomeAndTaxes.buildViewModel(successResponse) match {
+            case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
+            case _  => {
+              val exception = new InternalServerException("Missing Paye ATS data")
+              Logger.error(s"Internal server error ${exception.getMessage}", exception)
+              InternalServerError(exception.getMessage)
+            }
           }
         }
         case Left(response: HttpResponse) =>
@@ -59,11 +63,6 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
             case _ =>  BadRequest("Bad request")
 
           }
-      }
-    } recover {
-      case e: Exception  => {
-        Logger.error(s"Internal server error ${e.getMessage}", e)
-        InternalServerError(e.getMessage)
       }
     }
   }

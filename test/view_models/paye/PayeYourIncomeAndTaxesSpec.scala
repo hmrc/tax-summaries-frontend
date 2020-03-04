@@ -32,33 +32,37 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.yourIncomeAndTaxesData
 
-      val expectedViewModel =  Right(PayeYourIncomeAndTaxes(2019,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result = PayeYourIncomeAndTaxes.buildViewModelEither(yourIncomeAndTaxesData)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
 
       result shouldBe expectedViewModel
     }
 
-    "throws exception if a key is not present in PayeAtsData" in {
+    "return incomeBeforeTaxAmount as zero if total_income_before_tax key is not present in PayeAtsData" in {
 
       val yourIncomeAndTaxesData = PayeAtsTestData.malformedYourIncomeAndTaxesData
 
-     val result = PayeYourIncomeAndTaxes.buildViewModelEither(yourIncomeAndTaxesData)
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
+        Amount(0, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
+        Amount(1100, "GBP"),"20"))
 
-      result shouldBe Left("Missing total_income_before_tax in payload")
+      val result =  PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+
+      result shouldBe expectedViewModel
     }
 
     "return correct data for total_tax_free_amount if total_tax_free_amount is not present in PayeAtsData" in {
 
       val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount
 
-      val expectedViewModel =  Right(PayeYourIncomeAndTaxes(2019,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result = PayeYourIncomeAndTaxes.buildViewModelEither(yourIncomeAndTaxesData)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
 
       result shouldBe expectedViewModel
     }
@@ -67,11 +71,11 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingEmployeeNicAmount
 
-      val expectedViewModel =  Right(PayeYourIncomeAndTaxes(2019,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result = PayeYourIncomeAndTaxes.buildViewModelEither(yourIncomeAndTaxesData)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
 
       result shouldBe expectedViewModel
     }
