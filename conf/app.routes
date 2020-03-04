@@ -27,3 +27,5 @@ GET     /paye/main                                             controllers.paye.
 GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
 
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
+
+GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError

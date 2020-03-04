@@ -21,7 +21,7 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.Results.NotFound
+import play.api.mvc.Results.{NotFound, Ok}
 import play.api.mvc.{Action, AnyContent}
 
 object PayeErrorController extends PayeErrorController {
@@ -29,8 +29,14 @@ object PayeErrorController extends PayeErrorController {
 }
 
 trait PayeErrorController {
+
   implicit val formPartialRetriever = AppFormPartialRetriever
+
   val payeAuthAction: PayeAuthAction
+
+  def genericError: Action[AnyContent] = payeAuthAction {
+    implicit request: PayeAuthenticatedRequest[_] => Ok(views.html.errors.paye_generic_error())
+  }
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] => NotFound(views.html.errors.paye_no_ats_error())
