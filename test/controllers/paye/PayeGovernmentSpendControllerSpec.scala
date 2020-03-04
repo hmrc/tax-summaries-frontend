@@ -75,15 +75,28 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
     }
 
-    "return NO ATS page if NOT_FOUND response received from NPS service" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)
+      val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+    }
+
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR, responseJson = Some(Json.toJson(INTERNAL_SERVER_ERROR)))))
+
+      val result = show(fakeAuthenticatedRequest)
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+      document.title should include(Messages("generic.error.title"))
     }
   }
 
