@@ -35,15 +35,12 @@ class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with Test
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  val payeGovernmentSpendViewModel : PayeGovernmentSpend =PayeAtsTestData.payeGovernmentSpendViewModel
-
-    def view(viewModel:PayeGovernmentSpend): String =
-    views.html.paye.paye_government_spending(payeGovernmentSpendViewModel).body
-
   "view" should {
-    "have correct data for given taxYear" in {
+    "have correct data and heading for given taxYear" in {
 
-      val document = Jsoup.parse(view(payeGovernmentSpendViewModel))
+      val view = views.html.paye.paye_government_spending(PayeAtsTestData.payeGovernmentSpendViewModel).body
+      val document = Jsoup.parse(view)
+
       document.getElementById("Welfare").text() shouldBe "Welfare (23.5%)"
       document.select("#Welfare + dd").text() shouldBe "£451"
 
@@ -96,10 +93,18 @@ class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with Test
         .text shouldBe "How your tax was spent 6 April 2018 to 5 April 2019"
     }
 
-    "link to Scottish government spending page" in {
-      val document = Jsoup.parse(view(payeGovernmentSpendViewModel))
+    "link to Scottish government spending page for Scottish users" in {
+      val view = views.html.paye.paye_government_spending(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true)).body
+      val document = Jsoup.parse(view)
 
       document.select("#scottish-spending-link a").attr("href") shouldBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+    }
+
+    "not link to Scottish government spending page for non-Scottish users" in {
+      val view = views.html.paye.paye_government_spending(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = false)).body
+      val document = Jsoup.parse(view)
+
+      document.select("#scottish-spending-link") shouldBe empty
     }
   }
 }

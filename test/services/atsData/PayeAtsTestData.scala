@@ -72,5 +72,5 @@ object PayeAtsTestData {
     SpendRow("Culture", SpendData(Amount(29, "GBP"),1.5)),
     SpendRow("OverseasAid", SpendData(Amount(23, "GBP"),1.2)),
     SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"),1)))
-    , totalAmount = Amount(200,"GBP"))
+    , totalAmount = Amount(200,"GBP"), isScottish = false)
 }
