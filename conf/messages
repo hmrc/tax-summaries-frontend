@@ -265,7 +265,6 @@ paye.ats.treasury_spending.para4=Spending information is published by HM Treasur
 
 # View ATS - Summary (PAYE)
 #============================================================
-paye.ats.summary.html.title=Your income and taxes
 paye.ats.summary.title=Your income and taxes
 paye.ats.summary.lede=This is for your information only. You do not need to contact us as this is not a bill or demand for payment.
 paye.ats.summary.total_income.title=Taxable income
@@ -284,7 +283,7 @@ paye.ats.summary.total_tax.your_total_tax=Total tax
 paye.ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
 paye.ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
 paye.ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
-paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Income Tax
+paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=Total Income Tax
 paye.ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 paye.ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 

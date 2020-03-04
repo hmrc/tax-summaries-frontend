@@ -48,9 +48,9 @@ trait PayeYourIncomeAndTaxesController extends FrontendController {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          PayeYourIncomeAndTaxes.buildViewModel(successResponse) match {
-            case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
-            case _ => throw new InternalServerException("Missing summary data")
+          PayeYourIncomeAndTaxes.buildViewModelEither(successResponse) match {
+            case Right(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
+            case Left(message: String) => throw new InternalServerException(message)
           }
         }
         case Left(response: HttpResponse) =>
