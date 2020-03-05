@@ -19,15 +19,14 @@ package controllers.paye
  import config.{AppFormPartialRetriever, ApplicationConfig}
  import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
  import models.PayeAtsData
- import play.api.{Logger, Play}
  import play.api.Play.current
  import play.api.i18n.Messages.Implicits._
  import play.api.mvc.{Action, AnyContent}
+ import play.api.{Logger, Play}
  import services.PayeAtsService
  import uk.gov.hmrc.http.HttpResponse
  import uk.gov.hmrc.play.frontend.controller.FrontendController
  import view_models.paye.PayeGovernmentSpend
- import views.html.errors.paye_generic_error
 
 object PayeGovernmentSpendController extends PayeGovernmentSpendController{
 
@@ -55,8 +54,8 @@ trait PayeGovernmentSpendController extends FrontendController {
           response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
           case _ => {
-            Logger.error(s"Error received from NPS, Http status: ${ response.status},body: ${response.body}")
-            Redirect(routes.PayeErrorController.internalServerError())
+            Logger.error(s"Error received, Http status: ${response.status}")
+            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
           }
         }
       }

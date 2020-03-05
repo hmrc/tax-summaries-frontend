@@ -95,10 +95,8 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
       val result = show(fakeAuthenticatedRequest).futureValue
       val document = Jsoup.parse(contentAsString(result))
 
-      println(document)
-
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.internalServerError().url
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
     }
   }
 
