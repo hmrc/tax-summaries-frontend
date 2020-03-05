@@ -77,14 +77,13 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
     "return NO ATS page if NOT_FOUND response received from NPS service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
-
     }
   }
 
