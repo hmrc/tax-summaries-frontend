@@ -21,6 +21,7 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.Results.{NotFound, Ok}
 import play.api.mvc.{Action, AnyContent}
 
@@ -34,8 +35,9 @@ trait PayeErrorController {
 
   val payeAuthAction: PayeAuthAction
 
-  def genericError: Action[AnyContent] = payeAuthAction {
-    implicit request: PayeAuthenticatedRequest[_] => Ok(views.html.errors.paye_generic_error())
+  def internalServerError: Action[AnyContent] = payeAuthAction {
+    implicit request: PayeAuthenticatedRequest[_] =>
+      InternalServerError(views.html.errors.paye_generic_error())
   }
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction {

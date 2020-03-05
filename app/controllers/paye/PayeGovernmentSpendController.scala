@@ -54,11 +54,11 @@ trait PayeGovernmentSpendController extends FrontendController {
         case Left(response: HttpResponse) =>
           response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
-          case _ =>   {
+          case _ => {
             Logger.error(s"Error received from NPS, Http status: ${ response.status},body: ${response.body}")
-            InternalServerError(paye_generic_error())
+            Redirect(routes.PayeErrorController.internalServerError())
           }
-          }
+        }
       }
   }
 }

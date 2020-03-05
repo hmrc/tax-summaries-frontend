@@ -28,4 +28,4 @@ GET     /paye/summary                                          controllers.paye.
 
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 
-GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError
+GET		/paye/generic-error                                    controllers.paye.PayeErrorController.internalServerError

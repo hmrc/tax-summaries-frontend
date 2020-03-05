@@ -90,13 +90,15 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR, responseJson = Some(Json.toJson(INTERNAL_SERVER_ERROR)))))
+        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = show(fakeAuthenticatedRequest).futureValue
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document.title should include(Messages("generic.error.title"))
+      println(document)
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.internalServerError().url
     }
   }
 
