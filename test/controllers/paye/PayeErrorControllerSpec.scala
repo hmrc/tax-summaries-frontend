@@ -39,6 +39,6 @@ class PayeErrorControllerSpec  extends UnitSpec with GuiceOneAppPerTest with I18
     val document = Jsoup.parse(contentAsString(result))
 
     status(result) shouldBe 404
-    document.title should include(Messages("paye.ats.no_ats_title"))
+    document.title should include(Messages("paye.ats.no_ats.title"))
   }
 }
