@@ -17,7 +17,7 @@
 package view_models.paye
 
 import config.PayeConfig
-import models.{PayeAtsData, SpendData}
+import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
 import play.api.Play
 import view_models.Amount
 
@@ -34,7 +34,7 @@ object PayeGovernmentSpend {
     val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
       category => {
         payeAtsData.gov_spending.flatMap {
-          govSpending => {
+          govSpending: GovernmentSpendingOutputWrapper => {
             govSpending.govSpendAmountData.map {
               spendDataMap => {
                 val spendData = spendDataMap(category)
