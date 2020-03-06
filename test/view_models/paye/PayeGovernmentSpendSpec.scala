@@ -16,6 +16,7 @@
 
 package view_models.paye
 
+import models.DataHolder
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -28,15 +29,40 @@ class PayeGovernmentSpendSpec extends UnitSpec with MockitoSugar with JsonUtil w
 
   "PayeGovernmentSpend" should {
 
-    "Transform PayeAtsData to view model" in {
+    "Transform PayeAtsData to view model" when {
 
-      val payeGovSpendingData = PayeAtsTestData.govSpendingData
+      "Scottish income is not present" in {
+        val payeGovSpendingData = PayeAtsTestData.govSpendingData
+        val result = PayeGovernmentSpend(payeGovSpendingData)
 
-      val result = PayeGovernmentSpend(payeGovSpendingData)
+        result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel
+      }
 
-      result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+      "Scottish income is present and greater than 0" in {
+        val payeGovSpendingData = PayeAtsTestData.govSpendingData.copy(
+          income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(500.00))), None, None))
+        )
+        val result = PayeGovernmentSpend(payeGovSpendingData)
 
-      result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel
+        result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
+          isScottish = true
+        )
+      }
+
+      "Scottish income is present and equal to 0" in {
+        val payeGovSpendingData = PayeAtsTestData.govSpendingData.copy(
+          income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(0.00))), None, None))
+        )
+        val result = PayeGovernmentSpend(payeGovSpendingData)
+
+        result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
+          isScottish = false
+        )
+      }
+
     }
   }
 }
