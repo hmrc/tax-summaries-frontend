@@ -43,7 +43,6 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val document = contentAsString(result)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
-
       document shouldBe contentAsString(views.html.errors.paye_generic_error())
     }
 
@@ -53,7 +52,6 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val document = contentAsString(result)
 
       status(result) shouldBe BAD_GATEWAY
-
       document shouldBe contentAsString(views.html.errors.paye_generic_error())
     }
 
@@ -63,7 +61,6 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val document = contentAsString(result)
 
       status(result) shouldBe BAD_GATEWAY
-
       document shouldBe contentAsString(views.html.errors.paye_generic_error())
     }
 
@@ -71,9 +68,8 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val result = authorisedNoAts(fakeAuthenticatedRequest)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) shouldBe 404
+      status(result) shouldBe NOT_FOUND
       document.title should include(Messages("paye.ats.no_ats.title"))
     }
-
   }
 }

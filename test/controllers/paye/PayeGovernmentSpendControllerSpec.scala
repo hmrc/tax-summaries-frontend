@@ -34,7 +34,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
 
-import scala.concurrent.Future
 import scala.io.Source
 
 class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
