@@ -18,27 +18,58 @@ package controllers.paye
 
 import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import org.jsoup.Jsoup
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants.testNino
+import utils.TestConstants._
 
-class PayeErrorControllerSpec  extends UnitSpec with GuiceOneAppPerTest with I18nSupport {
+class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/no-ats"))
 
-  class TestController extends PayeErrorController {
+  trait TestErrorController extends PayeErrorController {
+    implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
   }
 
-  "Show NO ATS page and return NOT_FOUND" in new TestController{
-    val result = authorisedNoAts(fakeAuthenticatedRequest)
-    val document = Jsoup.parse(contentAsString(result))
+  "PayeErrorController" should {
 
-    status(result) shouldBe 404
-    document.title should include(Messages("paye.ats.no_ats.title"))
+    "Show generic_error page with status INTERNAL_SERVER_ERROR when INTERNAL_SERVER_ERROR is received" in new TestErrorController {
+
+      val result = genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
+      val document = contentAsString(result)
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+      document shouldBe contentAsString(views.html.errors.paye_generic_error())
+    }
+
+    "Show generic_error page with status BAD_GATEWAY when GATEWAY_TIMEOUT is received" in new TestErrorController {
+
+      val result = genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
+      val document = contentAsString(result)
+
+      status(result) shouldBe BAD_GATEWAY
+      document shouldBe contentAsString(views.html.errors.paye_generic_error())
+    }
+
+    "Show generic_error page with status BAD_GATEWAY when BAD_GATEWAY is received" in new TestErrorController {
+
+      val result = genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
+      val document = contentAsString(result)
+
+      status(result) shouldBe BAD_GATEWAY
+      document shouldBe contentAsString(views.html.errors.paye_generic_error())
+    }
+
+    "Show NO ATS page and return NOT_FOUND" in new TestErrorController {
+      val result = authorisedNoAts(fakeAuthenticatedRequest)
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe NOT_FOUND
+      document.title should include(Messages("paye.ats.no_ats.title"))
+    }
   }
 }

@@ -19,10 +19,10 @@ package controllers.paye
  import config.{AppFormPartialRetriever, ApplicationConfig}
  import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
  import models.PayeAtsData
- import play.api.Play
  import play.api.Play.current
  import play.api.i18n.Messages.Implicits._
  import play.api.mvc.{Action, AnyContent}
+ import play.api.{Logger, Play}
  import services.PayeAtsService
  import uk.gov.hmrc.http.HttpResponse
  import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -53,8 +53,11 @@ trait PayeGovernmentSpendController extends FrontendController {
         case Left(response: HttpResponse) =>
           response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
-          case _ =>   BadRequest("Bad request")
+          case _ => {
+            Logger.error(s"Error received, Http status: ${response.status}")
+            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
           }
+        }
       }
   }
 }

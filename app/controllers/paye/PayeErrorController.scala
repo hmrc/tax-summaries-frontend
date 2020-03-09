@@ -21,16 +21,27 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.Results.NotFound
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 object PayeErrorController extends PayeErrorController {
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeErrorController {
+trait PayeErrorController extends FrontendController{
+
   implicit val formPartialRetriever = AppFormPartialRetriever
+
   val payeAuthAction: PayeAuthAction
+
+  def genericError (status : Int): Action[AnyContent] = payeAuthAction {
+    implicit request: PayeAuthenticatedRequest[_] =>{
+      status match {
+        case INTERNAL_SERVER_ERROR => InternalServerError(views.html.errors.paye_generic_error())
+        case _ => BadGateway(views.html.errors.paye_generic_error())
+      }
+    }
+  }
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] => NotFound(views.html.errors.paye_no_ats_error())
