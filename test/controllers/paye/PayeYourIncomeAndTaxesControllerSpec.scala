@@ -105,7 +105,7 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.authorisedNoAts().url)
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in new TestController {
@@ -116,7 +116,7 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.genericError(BAD_REQUEST).url
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(BAD_REQUEST).url)
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from service" in new TestController {
@@ -127,7 +127,7 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
       val result = show(fakeAuthenticatedRequest).futureValue
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
     }
   }
 }
