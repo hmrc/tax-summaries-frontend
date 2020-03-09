@@ -158,6 +158,9 @@ ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Inc
 ats.total_income_tax.table.marriage_allowance_received=Less Your Marriage Allowance Received
 ats.total_income_tax.table.scottish_income_tax=This includes Scottish Income Tax of
 
+paye.ats.total_income_tax.title=Income Tax and National Insurance contributions
+paye.ats.total_income_tax.introParagraph=This shows how your tax was calculated.
+
 # View ATS - scottish income tax
 #============================================================
 ats.total_income_tax.scottish_income_tax=Scottish Income Tax
