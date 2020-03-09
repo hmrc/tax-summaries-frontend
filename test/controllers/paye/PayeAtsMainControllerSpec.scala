@@ -50,13 +50,6 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeYear = taxYear
     override val payeAtsService = mock[PayeAtsService]
-
-    private def readJson(path: String) = {
-      val resource = getClass.getResourceAsStream(path)
-      Json.parse(Source.fromInputStream(resource).getLines().mkString)
-    }
-
-    val expectedResponse: JsValue = readJson("/paye_ats.json")
   }
 
   "AtsMain controller" should {
@@ -65,7 +58,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+        .thenReturn(Right(mock[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
 
@@ -85,13 +78,12 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
     "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
       val result = show(fakeAuthenticatedRequest)
-      val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.authorisedNoAts().url)
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
