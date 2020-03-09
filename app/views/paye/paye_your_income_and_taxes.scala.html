@@ -65,7 +65,7 @@
     <section id="tax-calculated-as">
         <h2 id="tax-and-nics-title">@Messages("paye.ats.summary.nicsheading")</h2>
         <p>
-            <a href="#">
+            <a href="@controllers.paye.routes.PayeTotalIncomeTaxController.show">
             <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTax, true)</span><br>
             <span class="bold-small">@Html(Messages("paye.ats.summary.tax_and_nics.link"))</span><br>
             </a>
