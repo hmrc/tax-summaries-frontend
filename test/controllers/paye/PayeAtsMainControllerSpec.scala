@@ -93,8 +93,8 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
       val result = show(fakeAuthenticatedRequest)
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
     }
-
   }
 }

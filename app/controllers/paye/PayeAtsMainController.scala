@@ -54,7 +54,7 @@ trait PayeAtsMainController extends FrontendController{
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
           case _ => {
             Logger.error(s"Error received, Http status: ${response.status}")
-            InternalServerError
+            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
           }
         }
     }
