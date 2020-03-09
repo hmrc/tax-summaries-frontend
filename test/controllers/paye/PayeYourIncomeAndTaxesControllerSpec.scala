@@ -105,7 +105,7 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
     }
 
     "return BAD_REQUEST response when receiving BAD_REQUEST from service" in new TestController {
