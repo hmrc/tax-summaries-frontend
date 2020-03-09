@@ -17,13 +17,14 @@
 package view_models.paye
 
 import config.PayeConfig
-import models.{PayeAtsData, SpendData}
+import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
 import play.api.Play
 import view_models.Amount
 
 case class PayeGovernmentSpend(taxYear: Int,
                                orderedSpendRows: List[SpendRow],
-                               totalAmount: Amount) extends TaxYearFormatting
+                               totalAmount: Amount,
+                               isScottish: Boolean) extends TaxYearFormatting
 
 object PayeGovernmentSpend {
 
@@ -34,7 +35,7 @@ object PayeGovernmentSpend {
     val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
       category => {
         payeAtsData.gov_spending.flatMap {
-          govSpending => {
+          govSpending: GovernmentSpendingOutputWrapper => {
             govSpending.govSpendAmountData.map {
               spendDataMap => {
                 val spendData = spendDataMap(category)
@@ -45,11 +46,15 @@ object PayeGovernmentSpend {
         }
       }
     )
+
     val totalSpendingAmount = payeAtsData.gov_spending.map {
       spending =>
         spending.totalAmount
-    }
-    PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount.getOrElse(Amount.empty))
+    }.getOrElse(Amount.empty)
+
+    val isScottish = payeAtsData.income_tax.flatMap(incomeTax => incomeTax.payload.flatMap(_.get("scottish_total_tax"))).exists(_.nonZero)
+
+    PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount, isScottish)
   }
 }
 

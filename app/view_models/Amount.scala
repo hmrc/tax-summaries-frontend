@@ -55,4 +55,7 @@ object Amount {
 
   val empty: Amount = gbp(0)
   def gbp(value: BigDecimal): Amount = Amount(value, "GBP")
+
+  def apply(amount: Option[Amount]): Amount = amount.getOrElse(empty)
 }
+

@@ -24,39 +24,46 @@ import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
 import play.api.{Logger, Play}
 import services.PayeAtsService
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.paye.PayeAtsMain
+import view_models.paye.PayeYourIncomeAndTaxes
 
-object PayeAtsMainController extends PayeAtsMainController {
-  override val payeAtsService = PayeAtsService
-  override val payeYear: Int = ApplicationConfig.payeYear
+object PayeYourIncomeAndTaxesController extends PayeYourIncomeAndTaxesController{
+
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
+  override val payeYear: Int = ApplicationConfig.payeYear
+  override val payeAtsService = PayeAtsService
 }
 
-trait PayeAtsMainController extends FrontendController{
+trait PayeYourIncomeAndTaxesController extends FrontendController {
 
   implicit val formPartialRetriever = AppFormPartialRetriever
 
-  val payeYear: Int
-  val payeAtsService: PayeAtsService
   val payeAuthAction: PayeAuthAction
+  val payeYear: Int
+  val payeAtsService : PayeAtsService
 
-  def show: Action[AnyContent] = payeAuthAction.async  {
-    implicit request: PayeAuthenticatedRequest[_] =>
+  def show: Action[AnyContent] = payeAuthAction.async {
+    implicit request: PayeAuthenticatedRequest[_] => {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
-      case Right(_: PayeAtsData) => {
-        Ok(views.html.paye.paye_taxs_main(PayeAtsMain(payeYear)))
-      }
-      case Left(response: HttpResponse) =>
-        response.status match {
-          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
-          case _ => {
-            Logger.error(s"Error received, Http status: ${response.status}")
-            InternalServerError
+        case Right(successResponse: PayeAtsData) => {
+          PayeYourIncomeAndTaxes.buildViewModel(successResponse) match {
+            case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
+            case _  => {
+              val exception = new InternalServerException("Missing Paye ATS data")
+              Logger.error(s"Internal server error ${exception.getMessage}", exception)
+              InternalServerError(exception.getMessage)
+            }
           }
         }
+        case Left(response: HttpResponse) =>
+          response.status match {
+            case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+            case _ =>  BadRequest("Bad request")
+
+          }
+      }
     }
   }
 }
