@@ -37,7 +37,7 @@ import utils.TestConstants.testNino
 import scala.concurrent.Future
 import scala.io.Source
 
-class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I18nSupport {
+class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with I18nSupport {
 
   implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
@@ -49,11 +49,23 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I1
 
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeYear = taxYear
+    override val payeAtsService = mock[PayeAtsService]
+
+    private def readJson(path: String) = {
+      val resource = getClass.getResourceAsStream(path)
+      Json.parse(Source.fromInputStream(resource).getLines().mkString)
+    }
+
+    val expectedResponse: JsValue = readJson("/paye_ats.json")
   }
 
-  "Government spend controller" should {
+  "AtsMain controller" should {
 
     "return OK response" in new TestController {
+
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
 
@@ -68,6 +80,28 @@ class PayeAtsMainControllerSpec extends UnitSpec with GuiceOneAppPerTest with I1
       document.getElementById("tax-services-link").text shouldBe(Messages("paye.ats.index.html.tax_spend_link"))
 
       document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
+    }
+
+    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+
+      val result = show(fakeAuthenticatedRequest)
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+    }
+
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+
+      val result = show(fakeAuthenticatedRequest)
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
     }
 
   }

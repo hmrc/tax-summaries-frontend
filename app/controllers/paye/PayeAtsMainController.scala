@@ -18,29 +18,45 @@ package controllers.paye
 
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import play.api.Play
+import models.PayeAtsData
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent}
+import play.api.{Logger, Play}
+import services.PayeAtsService
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 import view_models.paye.PayeAtsMain
 
 object PayeAtsMainController extends PayeAtsMainController {
-
+  override val payeAtsService = PayeAtsService
   override val payeYear: Int = ApplicationConfig.payeYear
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
 }
 
-trait PayeAtsMainController {
+trait PayeAtsMainController extends FrontendController{
 
   implicit val formPartialRetriever = AppFormPartialRetriever
 
   val payeYear: Int
-
+  val payeAtsService: PayeAtsService
   val payeAuthAction: PayeAuthAction
 
-  def show: Action[AnyContent] = payeAuthAction {
+  def show: Action[AnyContent] = payeAuthAction.async  {
     implicit request: PayeAuthenticatedRequest[_] =>
-      Ok(views.html.paye.paye_taxs_main(PayeAtsMain(payeYear)))
+      payeAtsService.getPayeATSData(request.nino, payeYear).map {
+
+      case Right(_: PayeAtsData) => {
+        Ok(views.html.paye.paye_taxs_main(PayeAtsMain(payeYear)))
+      }
+      case Left(response: HttpResponse) =>
+        response.status match {
+          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+          case _ => {
+            Logger.error(s"Error received, Http status: ${response.status}")
+            InternalServerError
+          }
+        }
+    }
   }
 }
