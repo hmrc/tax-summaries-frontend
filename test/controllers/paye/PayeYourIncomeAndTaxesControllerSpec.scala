@@ -100,22 +100,34 @@ class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar w
     "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
       val result = show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.authorisedNoAts().url)
     }
 
-    "return BAD_REQUEST response when receiving BAD_REQUEST from service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in new TestController {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.toJson(BAD_REQUEST)))))
+        .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST)))
 
       val result = show(fakeAuthenticatedRequest)
 
-      status(result) shouldBe BAD_REQUEST
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(BAD_REQUEST).url)
+    }
+
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from service" in new TestController {
+
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+
+      val result = show(fakeAuthenticatedRequest).futureValue
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
     }
   }
 }
