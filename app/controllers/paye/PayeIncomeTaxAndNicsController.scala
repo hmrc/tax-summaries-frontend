@@ -26,16 +26,16 @@ import play.api.mvc.{Action, AnyContent}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.paye.PayeTotalIncomeTax
+import view_models.paye.{PayeIncomeTaxAndNics}
 
-object PayeTotalIncomeTaxController extends PayeTotalIncomeTaxController{
+object PayeIncomeTaxAndNicsController extends PayeIncomeTaxAndNicsController{
 
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
   override val payeAtsService = PayeAtsService
   override val payeYear: Int = ApplicationConfig.payeYear
 }
 
-trait PayeTotalIncomeTaxController extends FrontendController {
+trait PayeIncomeTaxAndNicsController extends FrontendController {
 
   implicit val formPartialRetriever = AppFormPartialRetriever
 
@@ -47,7 +47,7 @@ trait PayeTotalIncomeTaxController extends FrontendController {
     implicit request: PayeAuthenticatedRequest[_] =>
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
         case Right(successResponse: PayeAtsData) => {
-          Ok(views.html.paye.paye_total_income_tax(PayeTotalIncomeTax(payeYear)))
+          Ok(views.html.paye.paye_income_tax_and_nics(PayeIncomeTaxAndNics(successResponse)))
         }
         case Left(response: HttpResponse) =>
           response.status match {

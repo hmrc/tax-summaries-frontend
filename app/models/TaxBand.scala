@@ -18,6 +18,7 @@ package models
 
 import view_models.{Amount, Rate}
 
-case class TaxBand(incomeAmountInBand: Amount,
+case class TaxBand(label: String,
+                   incomeAmountInBand: Amount,
                    taxPaidInBand: Amount,
                    bandRate: Rate)

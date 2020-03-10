@@ -33,13 +33,13 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with MockitoSugar with JsonUtil 
       val incomeTaxData = PayeAtsTestData.totalIncomeTaxData
 
       val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(TaxBand(Amount(2000, "GBP"),
+        scottishTaxBands = List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
           Amount(380, "GBP"), Rate("19%")),
-          TaxBand(Amount(10150, "GBP"),
+          TaxBand("scottish_basic_rate", Amount(10150, "GBP"),
             Amount(2030, "GBP"), Rate("20%")),
-          TaxBand(Amount(19430, "GBP"),
+          TaxBand("scottish_intermediate_rate", Amount(19430, "GBP"),
             Amount(4080, "GBP"), Rate("21%")),
-          TaxBand(Amount(31570, "GBP"),
+          TaxBand("scottish_higher_rate", Amount(31570, "GBP"),
             Amount(12943, "GBP"), Rate("41%"))),
         totalScottishIncomeTax = Amount(19433, "GBP")
       )
@@ -81,9 +81,9 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with MockitoSugar with JsonUtil 
       )
 
       val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(TaxBand(Amount(2000, "GBP"),
+        scottishTaxBands = List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
           Amount(380, "GBP"), Rate("19%")),
-          TaxBand(Amount(10150, "GBP"),
+          TaxBand("scottish_basic_rate", Amount(10150, "GBP"),
             Amount(2030, "GBP"), Rate("20%"))),
         totalScottishIncomeTax = Amount(19433, "GBP")
       )

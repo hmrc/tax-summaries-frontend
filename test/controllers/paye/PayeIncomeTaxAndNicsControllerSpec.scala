@@ -37,7 +37,7 @@ import utils.TestConstants.testNino
 
 import scala.io.Source
 
-class PayeTotalIncomeTaxControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
+class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
@@ -45,7 +45,7 @@ class PayeTotalIncomeTaxControllerSpec  extends UnitSpec with MockitoSugar with 
   val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"))
 
-  class TestController extends PayeTotalIncomeTaxController {
+  class TestController extends PayeIncomeTaxAndNicsController {
 
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeYear = taxYear

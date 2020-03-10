@@ -15,12 +15,12 @@
  *@
 
 @import config.ApplicationConfig
-@import view_models.paye.PayeTotalIncomeTax
+@import view_models.paye.PayeIncomeTaxAndNics
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 
-@(viewModel:PayeTotalIncomeTax)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
+@(viewModel:PayeIncomeTaxAndNics)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 
@@ -42,5 +42,9 @@
 				<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
 			</div>
 	</div>
+
+    @for(row <- viewModel.scottishTaxBands) {
+        @row.toString <br>
+    }
 
 }

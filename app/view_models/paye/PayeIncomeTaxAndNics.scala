@@ -45,7 +45,7 @@ object PayeIncomeTaxAndNics {
           incomeInTaxBand <- payload.get(name + "_income_tax")
           taxPaidInBand <- payload.get(name + "_income_tax_amount")
         } yield {
-          TaxBand(incomeInTaxBand, taxPaidInBand, rate)
+          TaxBand(name, incomeInTaxBand, taxPaidInBand, rate)
         }
       }.filter(_.bandRate != Rate.empty)
     }).getOrElse(List.empty)
