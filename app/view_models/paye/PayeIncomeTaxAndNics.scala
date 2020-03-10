@@ -25,50 +25,35 @@ case class PayeIncomeTaxAndNics(taxYear: Int,
 
 object PayeIncomeTaxAndNics {
 
+  private val scottishRates = List(
+    "scottish_starter_rate",
+    "scottish_basic_rate",
+    "scottish_intermediate_rate",
+    "scottish_higher_rate"
+  )
+
   def apply(payeAtsData: PayeAtsData): PayeIncomeTaxAndNics = {
 
-    val isScottish: Boolean = payeAtsData.income_tax.flatMap(incomeTaxData => incomeTaxData.payload.flatMap(_.get("scottish_total_tax"))).exists(_.nonZero)
-
-    if(isScottish) {
-
-      val totalScottishIncomeTax = payeAtsData.income_tax.flatMap { incomeTaxData =>
-        incomeTaxData.payload.flatMap { payload =>
-          payload.get("scottish_total_tax")
+    val scottishTaxBands = (for {
+      incomeTax <- payeAtsData.income_tax
+      rates <- incomeTax.rates
+      payload <- incomeTax.payload
+    } yield {
+      scottishRates.flatMap { name =>
+        for {
+          rate <- rates.get("paye_" + name)
+          incomeInTaxBand <- payload.get(name + "_income_tax")
+          taxPaidInBand <- payload.get(name + "_income_tax_amount")
+        } yield {
+          TaxBand(incomeInTaxBand, taxPaidInBand, rate)
         }
-      }.getOrElse(Amount.empty)
+      }.filter(_.bandRate != Rate.empty)
+    }).getOrElse(List.empty)
 
-      val scottishBandRates: Map[String, Rate] = payeAtsData.income_tax.flatMap {
-        incomeTaxData =>
-          incomeTaxData.rates.map{
-            rates => {
-              Map("scottish_starter_rate" -> rates.getOrElse("paye_scottish_starter_rate", Rate.empty),
-                  "scottish_basic_rate" -> rates.getOrElse("paye_scottish_basic_rate", Rate.empty),
-                  "scottish_intermediate_rate" -> rates.getOrElse("paye_scottish_intermediate_rate", Rate.empty),
-                  "scottish_higher_rate" -> rates.getOrElse("paye_scottish_higher_rate", Rate.empty)
-              )
-            }
-          }
-      }.getOrElse(Map.empty).filter(_._2!=Rate.empty)
+    val totalScottishIncomeTax = payeAtsData.income_tax.flatMap(
+      incomeTaxData => incomeTaxData.payload.flatMap(
+        _.get("scottish_total_tax"))).getOrElse(Amount.empty)
 
-      val scottishTaxBands: List[TaxBand] = scottishBandRates.flatMap(
-        rate => {
-          payeAtsData.income_tax.flatMap {
-            incomeTaxData =>
-              incomeTaxData.payload.map(
-                payload => {
-                  val incomeInTaxBand = payload.getOrElse(rate._1 + "_income_tax", Amount.empty)
-                  val taxPaidInBand = payload.getOrElse(rate._1 + "_income_tax_amount", Amount.empty)
-                  TaxBand(incomeInTaxBand, taxPaidInBand, rate._2)
-                }
-              )
-          }
-        }
-      ).toList
-
-      PayeIncomeTaxAndNics(payeAtsData.taxYear, scottishTaxBands, totalScottishIncomeTax)
-
-    } else {
-      PayeIncomeTaxAndNics(payeAtsData.taxYear, List.empty, Amount.empty)
-    }
+    PayeIncomeTaxAndNics(payeAtsData.taxYear, scottishTaxBands, totalScottishIncomeTax)
   }
 }

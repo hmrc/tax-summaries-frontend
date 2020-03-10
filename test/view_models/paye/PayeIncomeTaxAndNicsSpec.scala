@@ -16,7 +16,7 @@
 
 package view_models.paye
 
-import models.TaxBand
+import models.{DataHolder, PayeAtsData, TaxBand}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -29,12 +29,11 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with MockitoSugar with JsonUtil 
 
   "PayeYourIncomeAndTaxesData" should {
 
-    "successfully Transform PayeAtsData to view model" in {
-
+    "transform to view model with all Scottish rates" in {
       val incomeTaxData = PayeAtsTestData.totalIncomeTaxData
 
       val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        List(TaxBand(Amount(2000, "GBP"),
+        scottishTaxBands = List(TaxBand(Amount(2000, "GBP"),
           Amount(380, "GBP"), Rate("19%")),
           TaxBand(Amount(10150, "GBP"),
             Amount(2030, "GBP"), Rate("20%")),
@@ -42,6 +41,50 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with MockitoSugar with JsonUtil 
             Amount(4080, "GBP"), Rate("21%")),
           TaxBand(Amount(31570, "GBP"),
             Amount(12943, "GBP"), Rate("41%"))),
+        totalScottishIncomeTax = Amount(19433, "GBP")
+      )
+
+      val result = PayeIncomeTaxAndNics(incomeTaxData)
+
+      result shouldBe expectedViewModel
+    }
+
+    "transform to view model with only non-zero Scottish rates" in {
+      val incomeTaxData = PayeAtsData(
+        2018,
+        Some(
+          DataHolder(
+            Some(
+              Map(
+                "scottish_starter_rate_income_tax_amount" -> Amount.gbp(380),
+                "scottish_starter_rate_income_tax" -> Amount.gbp(2000),
+                "scottish_basic_rate_income_tax_amount" -> Amount.gbp(2030),
+                "scottish_basic_rate_income_tax" -> Amount.gbp(10150),
+                "scottish_intermediate_rate_income_tax_amount" -> Amount.gbp(0),
+                "scottish_intermediate_rate_income_tax" -> Amount.gbp(0),
+                "scottish_higher_rate_income_tax_amount" -> Amount.gbp(0),
+                "scottish_higher_rate_income_tax" -> Amount.gbp(0),
+                "scottish_total_tax" -> Amount.gbp(19433)
+              )
+            ),
+            Some(
+              Map(
+                "paye_scottish_starter_rate" -> Rate("19%"),
+                "paye_scottish_basic_rate" -> Rate("20%"),
+                "paye_scottish_intermediate_rate" -> Rate("0%"),
+                "paye_scottish_higher_rate" -> Rate("0%")
+              )
+            ), None
+          )
+        ),
+        None, None, None, None
+      )
+
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
+        scottishTaxBands = List(TaxBand(Amount(2000, "GBP"),
+          Amount(380, "GBP"), Rate("19%")),
+          TaxBand(Amount(10150, "GBP"),
+            Amount(2030, "GBP"), Rate("20%"))),
         totalScottishIncomeTax = Amount(19433, "GBP")
       )
 
