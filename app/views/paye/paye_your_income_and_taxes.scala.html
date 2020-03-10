@@ -1,0 +1,83 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import view_models.paye.PayeYourIncomeAndTaxes
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import controllers.auth.PayeAuthenticatedRequest
+
+@(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever)
+
+@headerContent = {
+
+}
+
+@includes.taxs_main(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear")) {
+
+@helpers.back_link(Messages("generic.back"))
+
+	<h1 class="heading-xlarge">
+			@Html(Messages("paye.ats.summary.title"))
+	    <span class="block-heading">
+	      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
+	    </span>
+    </h1>
+
+    <p id="intro-paragraph">@Messages("paye.ats.summary.lede")</p>
+
+    <section id="taxable-income">
+        <h2>@Html(Messages("paye.ats.summary.total_income.title"))</h2>
+        <p>
+            <a href="#">
+                <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.incomeBeforeTax, true)</span><br>
+                <span class="bold-small" aria-hidden="true">@Html(Messages("paye.ats.summary.total_income.link"))</span>
+            </a>
+        </p>
+        <p>@Html(Messages("paye.ats.summary.total_income.description"))</p>
+    </section>
+
+    <section id="tax-free-amount">
+        <h2>@Html(Messages("paye.ats.summary.tax_free.title"))</h2>
+        <p>
+            <a href="#">
+            <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.taxableIncome, true)</span><br>
+            <span class="bold-small">@Html(Messages("paye.ats.summary.tax_free.link"))</span><br>
+            </a>
+        </p>
+        <p>@Html(Messages("paye.ats.summary.tax_free.description"))</p>
+    </section>
+
+    <section id="tax-calculated-as">
+        <h2 id="tax-and-nics-title">@Messages("paye.ats.summary.nicsheading")</h2>
+        <p>
+            <a href="#">
+            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTax, true)</span><br>
+            <span class="bold-small">@Html(Messages("paye.ats.summary.tax_and_nics.link"))</span><br>
+            </a>
+        </p>
+        <p>@Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate)</p>
+        <p>@Html(Messages("paye.ats.summary.tax_and_nics.description-2"))</p>
+    </section>
+
+    <section id="income_after_tax_and_nics">
+        <h2>@Html(Messages("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
+        <span class="bold-xlarge" id="income-after-tax-amount">@includes.currency_amount(viewModel.incomeAfterTaxNics, true)</span>
+    </section>
+
+
+}

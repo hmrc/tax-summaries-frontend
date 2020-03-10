@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package view_models.paye
+@import controllers.auth.PayeAuthenticatedRequest
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-import uk.gov.hmrc.play.test.UnitSpec
+@()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
-class TaxYearFormattingSpec extends UnitSpec {
+@headerContent = {
 
-  val instance = new TaxYearFormatting {
-    val taxYear = 2018
-  }
+}
 
-  "TaxYearFormatting" should {
+@includes.taxs_main(title = Messages("generic.error.title"), "", contentHeader = Option(headerContent)) {
 
-    "Calculate valid start year" in {
-      instance.taxYearStart shouldBe "2018"
-    }
-
-    "Calculate valid end year" in {
-      instance.taxYearEnd shouldBe "2019"
-    }
-
-  }
+	<h1>@Messages("generic.error.html.title")</h1>
+	<p>@Html(Messages("generic.error.try.later"))</p>
 
 }
