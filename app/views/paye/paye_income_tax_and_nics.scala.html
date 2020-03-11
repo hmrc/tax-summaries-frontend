@@ -26,25 +26,44 @@
 
 }
 
-@includes.paye.paye_taxs_main(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent), mainClasses = Some("full-width")) {
+@includes.paye.paye_taxs_main(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent)) {
 
 @helpers.back_link(Messages("generic.back"))
 
-	<div class="grid-row form-group">
-		<div class="column-two-thirds">
-			<h1 class="heading-xlarge">
-					@Html(Messages("paye.ats.total_income_tax.title"))
-			    <span class="block-heading">
-			      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
-			    </span>
-				</h1>
-			
-				<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
-			</div>
-	</div>
+	<h1 class="heading-xlarge">
+		@Html(Messages("paye.ats.total_income_tax.title"))
+    <span class="block-heading">
+      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
+    </span>
+	</h1>
 
-    @for(row <- viewModel.scottishTaxBands) {
-        @row.toString <br>
-    }
+	<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
+
+  <table class="paye-ats-data-table">
+    <thead>
+      <tr>
+        <th scope="col">@Messages("paye.ats.total_income_tax.scottish_income_tax")</th>
+        <th scope="col">@Messages("generic.amount_pounds")</th>
+      </tr>
+    </thead>
+    <tbody>
+	    @for(row <- viewModel.scottishTaxBands) {
+		    <tr>
+					<th scope="row">
+						@Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
+					</th>
+		      <td class="numeric">@includes.currency_amount(row.taxPaidInBand, true)</td>
+	      </tr>
+	    }
+    </tbody>
+    <tfoot>
+	    <tr>
+				<th scope="row">@Messages("ats.treasury_spending.total")</th>
+		    <td class="numeric">@includes.currency_amount(viewModel.totalScottishIncomeTax, true)</td>
+		  </tr>
+    </tfoot>
+  </table>
+
+
 
 }

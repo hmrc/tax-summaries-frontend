@@ -28,7 +28,9 @@ generic.hm.revenue.and.customs = HM Revenue & Customs
 generic.hm.revenue = HM Revenue
 generic.hm.and = &
 generic.hm.customs = Customs
+generic.at=at
 site.back=Back
+
 
 # View ATS - Breadcrumbs
 #============================================================
@@ -160,6 +162,11 @@ ats.total_income_tax.table.scottish_income_tax=This includes Scottish Income Tax
 
 paye.ats.total_income_tax.title=Income Tax and National Insurance contributions
 paye.ats.total_income_tax.introParagraph=This shows how your tax was calculated.
+paye.ats.total_income_tax.scottish_income_tax=Scottish Income Tax
+paye.ats.total_income_tax.scottish_starter_rate=Starter rate
+paye.ats.total_income_tax.scottish_basic_rate=Basic rate
+paye.ats.total_income_tax.scottish_intermediate_rate=Intermediate rate
+paye.ats.total_income_tax.scottish_higher_rate=Higher rate
 
 # View ATS - scottish income tax
 #============================================================
