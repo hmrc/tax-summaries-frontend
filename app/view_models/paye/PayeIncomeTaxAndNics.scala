@@ -45,7 +45,7 @@ object PayeIncomeTaxAndNics {
   private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {
     payeAtsData.income_tax.flatMap(
     incomeTaxData => incomeTaxData.payload.flatMap(
-    _.get("scottish_total_tax"))).getOrElse(Amount.empty)
+    _.get(totalTaxKey))).getOrElse(Amount.empty)
   }
 
   private def getTaxBands(payeAtsData: PayeAtsData, taxBandRates: List[String]) = {
