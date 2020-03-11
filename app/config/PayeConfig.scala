@@ -42,4 +42,10 @@ trait PayeConfig {
     val taxBands = Option(config.getStringList(s"scottishTaxBandKeys.$payeYear")).map(_.toList)
     taxBands.getOrElse(throw new RuntimeException(s"No scottish tax band keys specified for $payeYear"))
   }
+
+  lazy val ukTaxBandKeys: List[String] = {
+    val config: Config = ConfigFactory.load(configPath)
+    val taxBands = Option(config.getStringList(s"ukTaxBandKeys.$payeYear")).map(_.toList)
+    taxBands.getOrElse(throw new RuntimeException(s"No uk tax band keys specified for $payeYear"))
+  }
 }

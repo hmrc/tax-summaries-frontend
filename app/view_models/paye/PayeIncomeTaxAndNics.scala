@@ -23,34 +23,46 @@ import view_models.{Amount, Rate}
 
 case class PayeIncomeTaxAndNics(taxYear: Int,
                                 scottishTaxBands: List[TaxBand],
-                                totalScottishIncomeTax: Amount) extends TaxYearFormatting
+                                ukTaxBands: List[TaxBand],
+                                totalScottishIncomeTax: Amount,
+                                totalUKIncomeTax: Amount) extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
 
   lazy val scottishRates: List[String] = Play.current.injector.instanceOf[PayeConfig].scottishTaxBandKeys
 
+  lazy val uKRates: List[String] = Play.current.injector.instanceOf[PayeConfig].ukTaxBandKeys
+
   def apply(payeAtsData: PayeAtsData): PayeIncomeTaxAndNics = {
 
-    val scottishTaxBands = (for {
+    PayeIncomeTaxAndNics(payeAtsData.taxYear,
+      getTaxBands(payeAtsData,scottishRates),
+      getTaxBands(payeAtsData,uKRates),
+      getTotalIncomeTax(payeAtsData , "scottish_total_tax"),
+      getTotalIncomeTax(payeAtsData , "total_UK_income_tax"))
+  }
+
+  private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {
+    payeAtsData.income_tax.flatMap(
+    incomeTaxData => incomeTaxData.payload.flatMap(
+    _.get("scottish_total_tax"))).getOrElse(Amount.empty)
+  }
+
+  private def getTaxBands(payeAtsData: PayeAtsData, taxBandRates: List[String]) = {
+    (for {
       incomeTax <- payeAtsData.income_tax
       rates <- incomeTax.rates
       payload <- incomeTax.payload
     } yield {
-      scottishRates.flatMap { name =>
+      taxBandRates.flatMap { name =>
         for {
           rate <- rates.get("paye_" + name)
-          incomeInTaxBand <- payload.get(name + "_income_tax")
-          taxPaidInBand <- payload.get(name + "_income_tax_amount")
+          incomeInTaxBand <- payload.get(name)
+          taxPaidInBand <- payload.get(name + "_amount")
         } yield {
           TaxBand(name, incomeInTaxBand, taxPaidInBand, rate)
         }
       }.filter(_.bandRate != Rate.empty)
     }).getOrElse(List.empty)
-
-    val totalScottishIncomeTax = payeAtsData.income_tax.flatMap(
-      incomeTaxData => incomeTaxData.payload.flatMap(
-        _.get("scottish_total_tax"))).getOrElse(Amount.empty)
-
-    PayeIncomeTaxAndNics(payeAtsData.taxYear, scottishTaxBands, totalScottishIncomeTax)
   }
 }

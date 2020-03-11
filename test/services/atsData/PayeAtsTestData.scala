@@ -311,15 +311,25 @@ object PayeAtsTestData {
       DataHolder(
         Some(
           Map(
-            "scottish_starter_rate_income_tax_amount" -> Amount.gbp(380),
-            "scottish_starter_rate_income_tax" -> Amount.gbp(2000),
-            "scottish_basic_rate_income_tax_amount" -> Amount.gbp(2030),
-            "scottish_basic_rate_income_tax" -> Amount.gbp(10150),
-            "scottish_intermediate_rate_income_tax_amount" -> Amount.gbp(4080),
-            "scottish_intermediate_rate_income_tax" -> Amount.gbp(19430),
-            "scottish_higher_rate_income_tax_amount" -> Amount.gbp(12943),
-            "scottish_higher_rate_income_tax" -> Amount.gbp(31570),
-            "scottish_total_tax" -> Amount.gbp(19433)
+            "scottish_starter_rate_amount" -> Amount.gbp(380),
+            "scottish_starter_rate" -> Amount.gbp(2000),
+            "scottish_basic_rate_amount" -> Amount.gbp(2030),
+            "scottish_basic_rate" -> Amount.gbp(10150),
+            "scottish_intermediate_rate_amount" -> Amount.gbp(4080),
+            "scottish_intermediate_rate" -> Amount.gbp(19430),
+            "scottish_higher_rate_amount" -> Amount.gbp(12943),
+            "scottish_higher_rate" -> Amount.gbp(31570),
+            "scottish_total_tax" -> Amount.gbp(19433),
+
+            "basic_rate_income_tax_amount" -> Amount.gbp(380),
+            "basic_rate_income_tax" -> Amount.gbp(2000),
+            "higher_rate_income_tax_amount" -> Amount.gbp(2030),
+            "higher_rate_income_tax" -> Amount.gbp(10150),
+            "ordinary_rate_amount" -> Amount.gbp(4080),
+            "ordinary_rate" -> Amount.gbp(19430),
+            "upper_rate_amount" -> Amount.gbp(12943),
+            "upper_rate" -> Amount.gbp(31570),
+            "total_UK_income_tax" -> Amount.gbp(19433)
           )
         ),
         Some(
@@ -327,7 +337,12 @@ object PayeAtsTestData {
             "paye_scottish_starter_rate" -> Rate("19%"),
             "paye_scottish_basic_rate" -> Rate("20%"),
             "paye_scottish_intermediate_rate" -> Rate("21%"),
-            "paye_scottish_higher_rate" -> Rate("41%")
+            "paye_scottish_higher_rate" -> Rate("41%"),
+
+            "paye_ordinary_rate" -> Rate("19%"),
+            "paye_higher_rate_income_tax" -> Rate("20%"),
+            "paye_basic_rate_income_tax" -> Rate("21%"),
+            "paye_upper_rate" -> Rate("41%")
           )
         ), None
       )
