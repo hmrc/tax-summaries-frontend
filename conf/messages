@@ -117,6 +117,7 @@ ats.nics.tax_and_nics.total=Income Tax and National Insurance
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Your total income
+paye.ats.income_before_tax.html.title=Your income before tax
 ats.income_before_tax.title=Your total income
 ats.income_before_tax.intro=This is your total income for the year.
 
@@ -125,6 +126,7 @@ ats.income_before_tax.table.line1=Self-employment
 ats.income_before_tax.table.line2=Employment
 ats.income_before_tax.table.line3=State pension
 ats.income_before_tax.table.line4=Other pension income
+paye.ats.income_before_tax.table.line4=Personal pension income
 ats.income_before_tax.table.line5=Taxable state benefits
 ats.income_before_tax.table.line6=Other income
 ats.income_before_tax.table.line7=Benefits from employment
