@@ -19,14 +19,14 @@ package controllers.paye
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.{Logger, Play}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
+import play.api.{Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.paye.{PayeIncomeTaxAndNics}
+import view_models.paye.PayeIncomeTaxAndNics
 
 object PayeIncomeTaxAndNicsController extends PayeIncomeTaxAndNicsController{
 

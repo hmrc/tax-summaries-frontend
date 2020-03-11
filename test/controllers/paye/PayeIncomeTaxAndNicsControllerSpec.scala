@@ -59,7 +59,7 @@ class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar wit
     val expectedSuccessResponse: JsValue = readJson("/paye_ats.json")
   }
 
-  "Paye total income tax controller" should {
+  "Paye your income tax and nics controller" should {
 
     "return OK response" in new TestController {
 

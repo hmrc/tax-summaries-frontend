@@ -16,7 +16,9 @@
 
 package view_models.paye
 
+import config.PayeConfig
 import models.{PayeAtsData, TaxBand}
+import play.api.Play
 import view_models.{Amount, Rate}
 
 case class PayeIncomeTaxAndNics(taxYear: Int,
@@ -25,12 +27,7 @@ case class PayeIncomeTaxAndNics(taxYear: Int,
 
 object PayeIncomeTaxAndNics {
 
-  private val scottishRates = List(
-    "scottish_starter_rate",
-    "scottish_basic_rate",
-    "scottish_intermediate_rate",
-    "scottish_higher_rate"
-  )
+  lazy val scottishRates: List[String] = Play.current.injector.instanceOf[PayeConfig].scottishTaxBandKeys
 
   def apply(payeAtsData: PayeAtsData): PayeIncomeTaxAndNics = {
 
