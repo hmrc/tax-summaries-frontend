@@ -92,5 +92,80 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with MockitoSugar with JsonUtil 
 
       result shouldBe expectedViewModel
     }
+
+    "transform to view model with an empty tax bands list with no payments in any scottish tax bands" in {
+      val incomeTaxData = PayeAtsData(
+        2018,
+        Some(
+          DataHolder(
+            Some(
+              Map(
+                "scottish_starter_rate_income_tax_amount" -> Amount.gbp(380),
+                "scottish_starter_rate_income_tax" -> Amount.gbp(2000),
+                "scottish_basic_rate_income_tax_amount" -> Amount.gbp(2030),
+                "scottish_basic_rate_income_tax" -> Amount.gbp(10150),
+                "scottish_intermediate_rate_income_tax_amount" -> Amount.gbp(0),
+                "scottish_intermediate_rate_income_tax" -> Amount.gbp(0),
+                "scottish_higher_rate_income_tax_amount" -> Amount.gbp(0),
+                "scottish_higher_rate_income_tax" -> Amount.gbp(0),
+                "scottish_total_tax" -> Amount.gbp(19433)
+              )
+            ),
+            Some(
+              Map(
+                "paye_scottish_starter_rate" -> Rate("0%"),
+                "paye_scottish_basic_rate" -> Rate("0%"),
+                "paye_scottish_intermediate_rate" -> Rate("0%"),
+                "paye_scottish_higher_rate" -> Rate("0%")
+              )
+            ), None
+          )
+        ),
+        None, None, None, None
+      )
+
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
+        scottishTaxBands = List(),
+        totalScottishIncomeTax = Amount(19433, "GBP")
+      )
+
+      val result = PayeIncomeTaxAndNics(incomeTaxData)
+
+      result shouldBe expectedViewModel
+    }
+
+    "transform to view model with empty tax bands with no income and tax data" in {
+      val incomeTaxData = PayeAtsData(
+        2018,
+        None,
+        None, None, None, None
+      )
+
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
+        scottishTaxBands = List(),
+        totalScottishIncomeTax = Amount.empty
+      )
+
+      val result = PayeIncomeTaxAndNics(incomeTaxData)
+
+      result shouldBe expectedViewModel
+    }
+
+    "transform to view model with empty tax bands when no amounts are present" in {
+      val incomeTaxData = PayeAtsData(
+        2018,
+        Some(DataHolder(Some(Map()), Some(Map()), None)),
+        None, None, None, None
+      )
+
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
+        scottishTaxBands = List(),
+        totalScottishIncomeTax = Amount.empty
+      )
+
+      val result = PayeIncomeTaxAndNics(incomeTaxData)
+
+      result shouldBe expectedViewModel
+    }
   }
 }
