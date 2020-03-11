@@ -49,7 +49,7 @@
     </thead>
     <tbody>
 	    @for(row <- viewModel.scottishTaxBands) {
-		    <tr>
+		    <tr id="@row.label">
 					<th scope="row">
 						@Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
 					</th>
@@ -58,7 +58,7 @@
 	    }
     </tbody>
     <tfoot>
-	    <tr>
+	    <tr id="totalScottishIncomeTax">
 				<th scope="row">@Messages("ats.treasury_spending.total")</th>
 		    <td class="numeric">@includes.currency_amount(viewModel.totalScottishIncomeTax, true)</td>
 		  </tr>
