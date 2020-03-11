@@ -16,6 +16,7 @@
 
 package config
 
+import config.ApplicationConfig.getConf
 import play.api.Mode.Mode
 import play.api.{Configuration, Play}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -49,6 +50,7 @@ trait ApplicationConfig {
   val feedbackUrl: String
   val payeYear: Int
   val payeLoginUrl: String
+  val govUkServiceManual: String
 }
 
 object ApplicationConfig extends ApplicationConfig with ServicesConfig {
@@ -92,6 +94,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
   override lazy val feedbackUrl: String = getConf("feedback.url")
   override lazy val payeLoginUrl = getConf("login.paye.url")
+  override lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
   //Application name
   override lazy val appName = getString("appName")
