@@ -37,7 +37,8 @@
 		</span>
 	</h1>
 
-	<table class="paye-ats-data-table">
+	@if(viewModel.adjustmentRows.size > 1) {
+	<table class="paye-ats-data-table" id="adjustmentRows">
 		<thead>
 		<tr>
 			<th scope="col">@Messages("paye.ats.tax_free_amount.description")</th>
@@ -48,7 +49,7 @@
 		@for(row <- viewModel.adjustmentRows) {
 		<tr id="@row.label">
 			<th scope="row">
-				@Messages("paye.ats.total_income_tax." + row.label)
+				@Messages("paye.ats.tax_free_amount." + row.label)
 			</th>
 			<td class="numeric">@includes.currency_amount(row.amount, true)</td>
 		</tr>
@@ -58,6 +59,32 @@
 		<tr id="totalTaxFreeAmount">
 			<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
 			<td class="numeric">@includes.currency_amount(viewModel.totalTaxFreeAmount, true)</td>
+		</tr>
+		</tfoot>
+	</table>
+	}
+
+	<table class="paye-ats-data-table" id="summaryRows">
+		<thead>
+		<tr>
+			<th scope="col">@Messages("paye.ats.tax_free_amount.description")</th>
+			<th scope="col">@Messages("paye.ats.tax_free_amount.amount")</th>
+		</tr>
+		</thead>
+		<tbody>
+		@for(row <- viewModel.summaryRows) {
+		<tr id="@row.label">
+			<th scope="row">
+				@Messages("paye.ats.tax_free_amount." + row.label)
+			</th>
+			<td class="numeric">@includes.currency_amount(row.amount, true)</td>
+		</tr>
+		}
+		</tbody>
+		<tfoot>
+		<tr id="taxLiableAmount">
+			<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
+			<td class="numeric">@includes.currency_amount(viewModel.liableTaxAmount, true)</td>
 		</tr>
 		</tfoot>
 	</table>

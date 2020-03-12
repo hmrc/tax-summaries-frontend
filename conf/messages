@@ -333,6 +333,20 @@ paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=Tota
 paye.ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 paye.ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
+# PAYE - Tax Free Amount
+#============================================================
+paye.ats.tax_free_amount.title=Tax-free amount
+paye.ats.tax_free_amount.description=Description
+paye.ats.tax_free_amount.amount=Amount
+paye.ats.tax_free_amount.personal_tax_free_amount=Personal Allowance
+paye.ats.tax_free_amount.marriage_allowance_transferred_amount=Marriage allowance transferred
+paye.ats.tax_free_amount.other_allowances_amount=Other allowances, deductions and expenses
+paye.ats.tax_free_amount.total_tax_free_amount=Total tax-free amount
+paye.ats.tax_free_amount.income_before_tax=Income before tax
+paye.ats.tax_free_amount.tax_free_amount=Less your tax-free amount
+paye.ats.tax_free_amount.total_tax_liable=You pay tax on
+
+
 # No ATS - error page
 #============================================================
 generic.error.html.title=Sorry, there is a problem with the service
