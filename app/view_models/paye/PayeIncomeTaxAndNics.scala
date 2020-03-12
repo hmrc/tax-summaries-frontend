@@ -25,6 +25,7 @@ case class PayeIncomeTaxAndNics(taxYear: Int,
                                 scottishTaxBands: List[TaxBand],
                                 ukTaxBands: List[TaxBand],
                                 totalScottishIncomeTax: Amount,
+                                totalRestOfUKIncomeTax: Amount,
                                 totalUKIncomeTax: Amount) extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
@@ -39,7 +40,8 @@ object PayeIncomeTaxAndNics {
       getTaxBands(payeAtsData,scottishRates),
       getTaxBands(payeAtsData,uKRates),
       getTotalIncomeTax(payeAtsData , "scottish_total_tax"),
-      getTotalIncomeTax(payeAtsData , "total_UK_income_tax"))
+      getTotalIncomeTax(payeAtsData , "total_UK_income_tax"),
+      getTotalIncomeTax(payeAtsData , "total_income_tax_2"))
   }
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {

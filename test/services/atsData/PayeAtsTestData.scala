@@ -328,7 +328,8 @@ object PayeAtsTestData {
             "ordinary_rate" -> Amount.gbp(19430),
             "upper_rate_amount" -> Amount.gbp(12943),
             "upper_rate" -> Amount.gbp(31570),
-            "total_UK_income_tax" -> Amount.gbp(20224)
+            "total_UK_income_tax" -> Amount.gbp(20224),
+            "total_income_tax_2" -> Amount.gbp(19433)
           )
         ),
         Some(
@@ -387,7 +388,7 @@ object PayeAtsTestData {
         Amount(380, "GBP"), Rate("21%")),
       TaxBand("upper_rate", Amount(31570, "GBP"),
         Amount(12943, "GBP"), Rate("41%"))),
-    Amount(19433, "GBP"),  Amount(18433, "GBP")
+    Amount(19433, "GBP"),  Amount(18433, "GBP"),Amount(19433, "GBP")
   )
 }
 

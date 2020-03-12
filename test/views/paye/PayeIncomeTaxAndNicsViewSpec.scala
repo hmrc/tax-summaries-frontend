@@ -61,7 +61,7 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
 
       document.getElementById("upper_rate").text() shouldBe "Higher rate Dividend Tax (£31,570 at 41%) £12,943.00"
 
-      document.getElementById("totalUkIncomeTax").text() shouldBe "Total £18,433.00"
+      document.getElementById("totalRestOfUkIncomeTax").text() shouldBe "Total £18,433.00"
 
     }
   }
