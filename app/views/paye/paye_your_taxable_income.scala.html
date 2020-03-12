@@ -28,24 +28,21 @@
 
 }
 
-@includes.paye.paye_taxs_main(title = Messages("ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent), mainClasses = Some("selectYear full-width")) {
+@includes.paye.paye_taxs_main(title = Messages("ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent)) {
 	@helpers.back_link(Messages("generic.back"))
 
-	<div class="grid-row form-group">
-		<div class="column-two-thirds">
-			<h1 class="heading-xlarge">
-				@Html(Messages("ats.income_before_tax.title"))
-				<span class="block-heading">
-					@Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
-				</span>
-			</h1>
-		</div>
-	</div>
+	<h1 class="heading-xlarge">
+		@Html(Messages("ats.income_before_tax.title"))
+		<span class="block-heading">
+			@Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
+		</span>
+	</h1>
 
-	<p class="lede">@Html(Messages("ats.income_before_tax.intro"))                    </p>
+	<p>@Html(Messages("paye.ats.income_before_tax.intro"))</p>
 	
     @if(viewModel.incomeTaxRows.nonEmpty){
         <table class="paye-ats-data-table">
+            <caption class="visually-hidden">@Messages("paye.ats.income_before_tax.table_caption")</caption>
             <thead>
                 <tr>
                     <th scope="col">@Messages("ats.income_before_tax.table_header")</th>
@@ -62,13 +59,12 @@
                 </tr>
             }
             </tbody>
-            <tfoot>
-		<tfoot id="income-before-tax-foot">
-			<tr>
-				<th scope="row">@Html(Messages("paye.ats.income_before_tax.html.title"))</th>
-				<td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.incomeBeforeTaxTaxTotal)</td>
-			</tr>
-		</tfoot>
+            <tfoot id="income-before-tax-foot">
+                <tr>
+                    <th scope="row">@Html(Messages("paye.ats.income_before_tax.html.title"))</th>
+                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.incomeBeforeTaxTaxTotal)</td>
+                </tr>
+            </tfoot>
         </table>
     }
 }
