@@ -18,24 +18,15 @@ package controllers.paye
 
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import play.api.Play
-import play.api.mvc.{Action, AnyContent}
-import services.PayeAtsService
-import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.paye.PayeYourTaxableIncome
-import play.api.i18n.Messages.Implicits._
-
-import config.{AppFormPartialRetriever, ApplicationConfig}
-import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
 import play.api.{Logger, Play}
 import services.PayeAtsService
-import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import view_models.paye.PayeYourIncomeAndTaxes
+import view_models.paye.PayeYourTaxableIncome
 
 object PayeYourTaxableIncomeController extends PayeYourTaxableIncomeController {
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
@@ -44,6 +35,7 @@ object PayeYourTaxableIncomeController extends PayeYourTaxableIncomeController {
 }
 
 trait PayeYourTaxableIncomeController extends FrontendController {
+
   implicit val formPartialRetriever = AppFormPartialRetriever
 
   val payeAuthAction: PayeAuthAction
@@ -51,13 +43,21 @@ trait PayeYourTaxableIncomeController extends FrontendController {
   val payeAtsService : PayeAtsService
 
   def show: Action[AnyContent] = payeAuthAction.async {
-    implicit request: PayeAuthenticatedRequest[_] => {
-      payeAtsService.getPayeATSData(request.nino, payeYear).map (
-        response => {
-          val viewModel = PayeYourTaxableIncome.buildViewModel(response.right.get)
+    implicit request: PayeAuthenticatedRequest[_] =>
+      payeAtsService.getPayeATSData(request.nino, payeYear).map {
+
+        case Right(successResponse: PayeAtsData) => {
+          val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
           Ok(views.html.paye.paye_your_taxable_income(viewModel.get))
-        })
-    }
+        }
+        case Left(response: HttpResponse) => response.status match {
+          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+          case _ => {
+            Logger.error(s"Error received, Http status: ${response.status}")
+            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
+          }
+        }
+      }
   }
 }
 

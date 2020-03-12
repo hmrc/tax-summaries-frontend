@@ -28,14 +28,12 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.PayeAtsService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
-
-
 
 import scala.io.Source
 
@@ -57,23 +55,41 @@ class PayeYourTaxableIncomeControllerSpec extends UnitSpec with MockitoSugar wit
     }
 
     val expectedSuccessResponse: JsValue = readJson("/paye_ats.json")
-
   }
 
   "Paye your income and taxes controller" should {
-    " happy path" should {
-      "return OK response" in new TestController {
-        when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
-          .thenReturn(Right(expectedSuccessResponse.as[PayeAtsData]))
+    "return OK response" in new TestController {
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+        .thenReturn(Right(expectedSuccessResponse.as[PayeAtsData]))
 
-        val result = show(fakeAuthenticatedRequest)
+      val result = show(fakeAuthenticatedRequest)
 
-        status(result) shouldBe OK
-        val document = Jsoup.parse(contentAsString(result))
+      status(result) shouldBe OK
+      val document = Jsoup.parse(contentAsString(result))
 
-        document.title should include(Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
-      }
+      document.title should include(
+        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+    }
+    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+
+      val result = show(fakeAuthenticatedRequest)
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+    }
+
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier])).thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+
+      val result = show(fakeAuthenticatedRequest).futureValue
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe
+      controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
     }
   }
-
 }
