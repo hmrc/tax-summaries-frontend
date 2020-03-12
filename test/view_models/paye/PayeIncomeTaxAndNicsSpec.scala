@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.{Amount, Rate}
 
-class PayeIncomeTaxAndNicsSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
 
   "PayeYourIncomeAndTaxesData" should {
 
