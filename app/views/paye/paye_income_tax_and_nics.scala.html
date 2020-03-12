@@ -1,0 +1,71 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import view_models.paye.PayeIncomeTaxAndNics
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+
+@(viewModel:PayeIncomeTaxAndNics)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
+
+@headerContent = {
+
+}
+
+@includes.paye.paye_taxs_main(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent)) {
+
+@helpers.back_link(Messages("generic.back"))
+
+	<h1 class="heading-xlarge">
+		@Html(Messages("paye.ats.total_income_tax.title"))
+    <span class="block-heading">
+      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
+    </span>
+	</h1>
+
+	<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
+
+  @if(viewModel.scottishTaxBands.nonEmpty){
+  <table class="paye-ats-data-table">
+    <thead>
+      <tr>
+        <th scope="col">@Messages("paye.ats.total_income_tax.scottish_income_tax")</th>
+        <th scope="col">@Messages("generic.amount_pounds")</th>
+      </tr>
+    </thead>
+    <tbody>
+	    @for(row <- viewModel.scottishTaxBands) {
+		    <tr id="@row.label">
+					<th scope="row">
+						@Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
+					</th>
+		      <td class="numeric">@includes.currency_amount(row.taxPaidInBand, true)</td>
+	      </tr>
+	    }
+    </tbody>
+    <tfoot>
+	    <tr id="totalScottishIncomeTax">
+				<th scope="row">@Messages("ats.treasury_spending.total")</th>
+		    <td class="numeric">@includes.currency_amount(viewModel.totalScottishIncomeTax, true)</td>
+		  </tr>
+    </tfoot>
+  </table>
+  }
+
+
+
+}

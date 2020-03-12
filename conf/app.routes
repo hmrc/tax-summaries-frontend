@@ -26,7 +26,7 @@ GET     /paye/main                                             controllers.paye.
 
 GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
 
-GET     /paye/total-income-tax                                 controllers.paye.PayeTotalIncomeTaxController.show
+GET     /paye/income-tax-and-national-insurance                controllers.paye.PayeIncomeTaxAndNicsController.show
 
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 

@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
-package view_models.paye
+package models
 
-case class PayeTotalIncomeTax(taxYear: Int) extends TaxYearFormatting
+import view_models.{Amount, Rate}
+
+case class TaxBand(label: String,
+                   incomeAmountInBand: Amount,
+                   taxPaidInBand: Amount,
+                   bandRate: Rate)

@@ -305,6 +305,44 @@ object PayeAtsTestData {
     )
   )
 
+  val totalIncomeTaxData = PayeAtsData(
+    2018,
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "scottish_starter_rate_income_tax_amount" -> Amount.gbp(380),
+            "scottish_starter_rate_income_tax" -> Amount.gbp(2000),
+            "scottish_basic_rate_income_tax_amount" -> Amount.gbp(2030),
+            "scottish_basic_rate_income_tax" -> Amount.gbp(10150),
+            "scottish_intermediate_rate_income_tax_amount" -> Amount.gbp(4080),
+            "scottish_intermediate_rate_income_tax" -> Amount.gbp(19430),
+            "scottish_higher_rate_income_tax_amount" -> Amount.gbp(12943),
+            "scottish_higher_rate_income_tax" -> Amount.gbp(31570),
+            "scottish_total_tax" -> Amount.gbp(19433)
+          )
+        ),
+        Some(
+          Map(
+            "paye_scottish_starter_rate" -> Rate("19%"),
+            "paye_scottish_basic_rate" -> Rate("20%"),
+            "paye_scottish_intermediate_rate" -> Rate("21%"),
+            "paye_scottish_higher_rate" -> Rate("41%")
+          )
+        ), None
+      )
+    ),
+    None, None, None, None
+  )
+
+
+
+
+
+
+
+
+
   val payeYourIncomeAndTaxesViewModel = PayeYourIncomeAndTaxes(2018,Amount(1000,"GBP"),Amount(800,"GBP"),Amount(200,"GBP"),Amount(100,"GBP"),"20")
 
 
