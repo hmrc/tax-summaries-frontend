@@ -68,7 +68,7 @@ class PayeYourTaxableIncomeControllerSpec extends UnitSpec with MockitoSugar wit
       val document = Jsoup.parse(contentAsString(result))
 
       document.title should include(
-        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+        Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
     "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
