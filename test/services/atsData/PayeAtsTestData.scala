@@ -17,8 +17,7 @@
 package services.atsData
 
 import models._
-import view_models.paye.PayeYourIncomeAndTaxes
-import view_models.paye.{PayeGovernmentSpend, SpendRow}
+import view_models.paye.{PayeGovernmentSpend, PayeIncomeTaxAndNics, PayeYourIncomeAndTaxes, SpendRow}
 import view_models.{Amount, Rate}
 
 object PayeAtsTestData {
@@ -350,14 +349,6 @@ object PayeAtsTestData {
     None, None, None, None
   )
 
-
-
-
-
-
-
-
-
   val payeYourIncomeAndTaxesViewModel = PayeYourIncomeAndTaxes(2018,Amount(1000,"GBP"),Amount(800,"GBP"),Amount(200,"GBP"),Amount(100,"GBP"),"20")
 
 
@@ -378,5 +369,25 @@ object PayeAtsTestData {
     SpendRow("OverseasAid", SpendData(Amount(23, "GBP"),1.2)),
     SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"),1)))
     , totalAmount = Amount(200,"GBP"), isScottish = false)
+
+  val payeIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(2018,
+    List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
+      Amount(380, "GBP"), Rate("19%")),
+      TaxBand("scottish_basic_rate", Amount(10150, "GBP"),
+        Amount(2030, "GBP"), Rate("20%")),
+      TaxBand("scottish_intermediate_rate", Amount(19430, "GBP"),
+        Amount(4080, "GBP"), Rate("21%")),
+      TaxBand("scottish_higher_rate", Amount(31570, "GBP"),
+        Amount(12943, "GBP"), Rate("41%"))),
+    List(TaxBand("ordinary_rate", Amount(19430, "GBP"),
+      Amount(4080, "GBP"), Rate("19%")),
+      TaxBand("higher_rate_income_tax", Amount(10150, "GBP"),
+        Amount(2030, "GBP"), Rate("20%")),
+      TaxBand("basic_rate_income_tax", Amount(2000, "GBP"),
+        Amount(380, "GBP"), Rate("21%")),
+      TaxBand("upper_rate", Amount(31570, "GBP"),
+        Amount(12943, "GBP"), Rate("41%"))),
+    Amount(19433, "GBP"),  Amount(18433, "GBP")
+  )
 }
 
