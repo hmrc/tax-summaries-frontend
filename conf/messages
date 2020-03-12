@@ -135,6 +135,7 @@ ats.income_before_tax.table.line7=Benefits from employment
 paye.ats.income_before_tax.title=Your taxable income
 paye.ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
 paye.ats.income_before_tax.table_caption=Your taxable income
+paye.ats.income_before_tax.table.line6=Other income (including interest)
 
 # View ATS - tax free amount (IND)
 #============================================================

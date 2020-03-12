@@ -57,7 +57,7 @@ object PayeYourTaxableIncome {
     ("state_pension", "ats.income_before_tax.table.line3"),
     ("other_pension_income", "ats.income_before_tax.table.line4"),
     ("taxable_state_benefits", "ats.income_before_tax.table.line5"),
-    ("other_income", "ats.income_before_tax.table.line6"),
+    ("other_income", "paye.ats.income_before_tax.table.line6"),
     ("benefits_from_employment", "ats.income_before_tax.table.line7"),
     ("total_income_before_tax", "paye.ats.income_before_tax.html.title")
   )
