@@ -82,7 +82,7 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
                                           IncomeTaxRow("ats.income_before_tax.table.line3", Amount(300, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line4", Amount(400, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line5", Amount(500, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line6", Amount(600, "GBP")),
+                                          IncomeTaxRow("paye.ats.income_before_tax.table.line6", Amount(600, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line7", Amount(700, "GBP")))
         val expectedIncomeBeforeTaxTotal = Amount(800, "GBP")
 
@@ -98,7 +98,7 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
                                           IncomeTaxRow("ats.income_before_tax.table.line3", Amount(300, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line4", Amount(400, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line5", Amount(500, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line6", Amount(600, "GBP")),
+                                          IncomeTaxRow("paye.ats.income_before_tax.table.line6", Amount(600, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line7", Amount(700, "GBP")))
 
         val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionNoIncomeFromEmployment)
@@ -112,7 +112,7 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
                                           IncomeTaxRow("ats.income_before_tax.table.line2", Amount(200, "GBP")),
                                           IncomeTaxRow("paye.ats.income_before_tax.table.line4", Amount(400, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line5", Amount(500, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line6", Amount(600, "GBP")),
+                                          IncomeTaxRow("paye.ats.income_before_tax.table.line6", Amount(600, "GBP")),
                                           IncomeTaxRow("ats.income_before_tax.table.line7", Amount(700, "GBP")))
 
         val payeAtsData = incomeTaxPayeAtsData(IncomeTaxJustOtherPension)
