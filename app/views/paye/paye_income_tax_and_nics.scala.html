@@ -87,9 +87,10 @@
             <tr id="totalRestOfUkIncomeTax">
             <th scope="row">@Messages("ats.treasury_spending.total")</th>
             <td class="numeric">@includes.currency_amount(viewModel.totalRestOfUKIncomeTax, true)</td>
-        </tr>
-        </tfoot>
-    </table>
+            </tr>
+            </tfoot>
+        </table>
+    }
   } else {
     <table class="paye-ats-data-table">
         <thead>
@@ -112,9 +113,8 @@
         <tr id="totalUkIncomeTax">
                 <th scope="row">@Messages("ats.treasury_spending.total")</th>
                 <td class="numeric">@includes.currency_amount(viewModel.totalUKIncomeTax, true)</td>
-            </tr>
-            </tfoot>
-        </table>
-    }
+        </tr>
+        </tfoot>
+    </table>
   }
 }

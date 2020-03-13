@@ -320,16 +320,16 @@ object PayeAtsTestData {
             "scottish_higher_rate" -> Amount.gbp(31570),
             "scottish_total_tax" -> Amount.gbp(19433),
 
-            "basic_rate_income_tax_amount" -> Amount.gbp(380),
-            "basic_rate_income_tax" -> Amount.gbp(2000),
-            "higher_rate_income_tax_amount" -> Amount.gbp(2030),
-            "higher_rate_income_tax" -> Amount.gbp(10150),
-            "ordinary_rate_amount" -> Amount.gbp(4080),
-            "ordinary_rate" -> Amount.gbp(19430),
-            "upper_rate_amount" -> Amount.gbp(12943),
-            "upper_rate" -> Amount.gbp(31570),
+            "basic_rate_income_tax_amount" -> Amount.gbp(480),
+            "basic_rate_income_tax" -> Amount.gbp(3000),
+            "higher_rate_income_tax_amount" -> Amount.gbp(3030),
+            "higher_rate_income_tax" -> Amount.gbp(20150),
+            "ordinary_rate_amount" -> Amount.gbp(5080),
+            "ordinary_rate" -> Amount.gbp(29430),
+            "upper_rate_amount" -> Amount.gbp(22943),
+            "upper_rate" -> Amount.gbp(41570),
             "total_UK_income_tax" -> Amount.gbp(20224),
-            "total_income_tax_2" -> Amount.gbp(19433)
+            "total_income_tax_2" -> Amount.gbp(10477)
           )
         ),
         Some(
