@@ -81,7 +81,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
                 "ordinary_rate" -> Amount.gbp(2000),
                 "upper_rate_amount" -> Amount.gbp(2030),
                 "upper_rate" -> Amount.gbp(10150),
-                "total_uk_income_tax" -> Amount.gbp(20224)
+                "total_UK_income_tax" -> Amount.gbp(20224)
               )
             ),
             Some(
@@ -140,7 +140,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
                 "ordinary_rate" -> Amount.gbp(0),
                 "upper_rate_amount" -> Amount.gbp(0),
                 "upper_rate" -> Amount.gbp(0),
-                "total_uk_income_tax" -> Amount.gbp(20224)
+                "total_UK_income_tax" -> Amount.gbp(20224)
               )
             ),
             Some(
