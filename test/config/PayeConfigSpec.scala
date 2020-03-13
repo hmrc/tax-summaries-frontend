@@ -24,8 +24,8 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
   "PayeConfig" should {
     "retrieve spend categories in order for a valid year" in {
       val config = new PayeConfig {
-        override protected val configPath: String = "paye_config.conf"
-        override val payeYear: Int = 2019
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
       }
 
       val expected = List(
@@ -33,8 +33,8 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
         "Health",
         "StatePensions",
         "Education",
-        "Defence",
         "NationalDebtInterest",
+        "Defence",
         "Transport",
         "PublicOrderAndSafety",
         "BusinessAndIndustry",
@@ -51,8 +51,8 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
 
     "retrieve scottish tax band keys in order for a valid year" in {
       val config = new PayeConfig {
-        override protected val configPath: String = "paye_config.conf"
-        override val payeYear: Int = 2019
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
       }
 
       val expected = List(
@@ -65,10 +65,26 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
       config.scottishTaxBandKeys shouldBe expected
     }
 
+    "retrieve UK tax band keys in order for a valid year" in {
+      val config = new PayeConfig {
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
+      }
+
+      val expected = List(
+        "ordinary_rate",
+        "higher_rate_income_tax",
+        "basic_rate_income_tax",
+        "upper_rate"
+      )
+
+      config.ukTaxBandKeys shouldBe expected
+    }
+
     "throw an exception for an invalid year" in {
       val config = new PayeConfig {
-        override protected val configPath: String = "paye_config.conf"
-        override val payeYear: Int = 2018
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2019
       }
 
       assertThrows[RuntimeException]{config.spendCategories}

@@ -29,11 +29,11 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
 
   "PayeYourIncomeAndTaxesData" should {
 
-    "transform to view model with all Scottish rates" in {
+    "transform to view model with all tax band rates" in {
       val incomeTaxData = PayeAtsTestData.totalIncomeTaxData
 
       val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
+        List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
           Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"),
             Amount(2030, "GBP"), Rate("20%")),
@@ -41,7 +41,15 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
             Amount(4080, "GBP"), Rate("21%")),
           TaxBand("scottish_higher_rate", Amount(31570, "GBP"),
             Amount(12943, "GBP"), Rate("41%"))),
-        totalScottishIncomeTax = Amount(19433, "GBP")
+        List(TaxBand("ordinary_rate", Amount(19430, "GBP"),
+          Amount(4080, "GBP"), Rate("19%")),
+          TaxBand("higher_rate_income_tax", Amount(10150, "GBP"),
+            Amount(2030, "GBP"), Rate("20%")),
+          TaxBand("basic_rate_income_tax", Amount(2000, "GBP"),
+            Amount(380, "GBP"), Rate("21%")),
+          TaxBand("upper_rate", Amount(31570, "GBP"),
+            Amount(12943, "GBP"), Rate("41%"))),
+        Amount(19433, "GBP"),  Amount(20224, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -49,22 +57,31 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       result shouldBe expectedViewModel
     }
 
-    "transform to view model with only non-zero Scottish rates" in {
+    "transform to view model with only non-zero tax band rates" in {
       val incomeTaxData = PayeAtsData(
         2018,
         Some(
           DataHolder(
             Some(
               Map(
-                "scottish_starter_rate_income_tax_amount" -> Amount.gbp(380),
-                "scottish_starter_rate_income_tax" -> Amount.gbp(2000),
-                "scottish_basic_rate_income_tax_amount" -> Amount.gbp(2030),
-                "scottish_basic_rate_income_tax" -> Amount.gbp(10150),
-                "scottish_intermediate_rate_income_tax_amount" -> Amount.gbp(0),
-                "scottish_intermediate_rate_income_tax" -> Amount.gbp(0),
-                "scottish_higher_rate_income_tax_amount" -> Amount.gbp(0),
-                "scottish_higher_rate_income_tax" -> Amount.gbp(0),
-                "scottish_total_tax" -> Amount.gbp(19433)
+                "scottish_starter_rate_amount" -> Amount.gbp(380),
+                "scottish_starter_rate" -> Amount.gbp(2000),
+                "scottish_basic_rate_amount" -> Amount.gbp(2030),
+                "scottish_basic_rate" -> Amount.gbp(10150),
+                "scottish_intermediate_rate_amount" -> Amount.gbp(0),
+                "scottish_intermediate_rate" -> Amount.gbp(0),
+                "scottish_higher_rate_amount" -> Amount.gbp(0),
+                "scottish_higher_rate" -> Amount.gbp(0),
+                "scottish_total_tax" -> Amount.gbp(19433),
+                "basic_rate_income_tax_amount" -> Amount.gbp(380),
+                "basic_rate_income_tax" -> Amount.gbp(2000),
+                "higher_rate_income_tax_amount" -> Amount.gbp(2030),
+                "higher_rate_income_tax" -> Amount.gbp(10150),
+                "ordinary_rate_amount" -> Amount.gbp(380),
+                "ordinary_rate" -> Amount.gbp(2000),
+                "upper_rate_amount" -> Amount.gbp(2030),
+                "upper_rate" -> Amount.gbp(10150),
+                "total_UK_income_tax" -> Amount.gbp(20224)
               )
             ),
             Some(
@@ -72,7 +89,11 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
                 "paye_scottish_starter_rate" -> Rate("19%"),
                 "paye_scottish_basic_rate" -> Rate("20%"),
                 "paye_scottish_intermediate_rate" -> Rate("0%"),
-                "paye_scottish_higher_rate" -> Rate("0%")
+                "paye_scottish_higher_rate" -> Rate("0%"),
+                "paye_ordinary_rate" -> Rate("19%"),
+                "paye_higher_rate_income_tax" -> Rate("0%"),
+                "paye_basic_rate_income_tax" -> Rate("0%"),
+                "paye_upper_rate" -> Rate("41%")
               )
             ), None
           )
@@ -80,12 +101,14 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         None, None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
           Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"),
             Amount(2030, "GBP"), Rate("20%"))),
-        totalScottishIncomeTax = Amount(19433, "GBP")
+        List(TaxBand("ordinary_rate", Amount(2000, "GBP"),
+          Amount(380, "GBP"), Rate("19%")),
+          TaxBand("upper_rate", Amount(10150, "GBP"),
+            Amount(2030, "GBP"), Rate("41%"))),Amount(19433, "GBP"),Amount(20224, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -93,22 +116,31 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       result shouldBe expectedViewModel
     }
 
-    "transform to view model with an empty tax bands list with no payments in any scottish tax bands" in {
+    "transform to view model with an empty tax bands list with no payments in any tax band" in {
       val incomeTaxData = PayeAtsData(
         2018,
         Some(
           DataHolder(
             Some(
               Map(
-                "scottish_starter_rate_income_tax_amount" -> Amount.gbp(380),
-                "scottish_starter_rate_income_tax" -> Amount.gbp(2000),
-                "scottish_basic_rate_income_tax_amount" -> Amount.gbp(2030),
-                "scottish_basic_rate_income_tax" -> Amount.gbp(10150),
-                "scottish_intermediate_rate_income_tax_amount" -> Amount.gbp(0),
-                "scottish_intermediate_rate_income_tax" -> Amount.gbp(0),
-                "scottish_higher_rate_income_tax_amount" -> Amount.gbp(0),
-                "scottish_higher_rate_income_tax" -> Amount.gbp(0),
-                "scottish_total_tax" -> Amount.gbp(19433)
+                "scottish_starter_rate_amount" -> Amount.gbp(380),
+                "scottish_starter_rate" -> Amount.gbp(2000),
+                "scottish_basic_rate_amount" -> Amount.gbp(2030),
+                "scottish_basic_rate" -> Amount.gbp(10150),
+                "scottish_intermediate_rate_amount" -> Amount.gbp(0),
+                "scottish_intermediate_rate" -> Amount.gbp(0),
+                "scottish_higher_rate_amount" -> Amount.gbp(0),
+                "scottish_higher_rate" -> Amount.gbp(0),
+                "scottish_total_tax" -> Amount.gbp(19433),
+                "basic_rate_income_tax_amount" -> Amount.gbp(380),
+                "basic_rate_income_tax" -> Amount.gbp(2000),
+                "higher_rate_income_tax_amount" -> Amount.gbp(2030),
+                "higher_rate_income_tax" -> Amount.gbp(10150),
+                "ordinary_rate_amount" -> Amount.gbp(0),
+                "ordinary_rate" -> Amount.gbp(0),
+                "upper_rate_amount" -> Amount.gbp(0),
+                "upper_rate" -> Amount.gbp(0),
+                "total_UK_income_tax" -> Amount.gbp(20224)
               )
             ),
             Some(
@@ -116,7 +148,11 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
                 "paye_scottish_starter_rate" -> Rate("0%"),
                 "paye_scottish_basic_rate" -> Rate("0%"),
                 "paye_scottish_intermediate_rate" -> Rate("0%"),
-                "paye_scottish_higher_rate" -> Rate("0%")
+                "paye_scottish_higher_rate" -> Rate("0%"),
+                "paye_ordinary_rate" -> Rate("0%"),
+                "paye_higher_rate_income_tax" -> Rate("0%"),
+                "paye_basic_rate_income_tax" -> Rate("0%"),
+                "paye_upper_rate" -> Rate("0%")
               )
             ), None
           )
@@ -124,9 +160,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         None, None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(),
-        totalScottishIncomeTax = Amount(19433, "GBP")
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,List(),List(), Amount(19433, "GBP"), Amount(20224, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -141,10 +175,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         None, None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(),
-        totalScottishIncomeTax = Amount.empty
-      )
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,List(),List(),Amount.empty,Amount.empty)
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
 
@@ -158,10 +189,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         None, None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018,
-        scottishTaxBands = List(),
-        totalScottishIncomeTax = Amount.empty
-      )
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,List(),List(),Amount.empty,Amount.empty)
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
 

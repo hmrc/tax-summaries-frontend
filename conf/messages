@@ -167,6 +167,11 @@ paye.ats.total_income_tax.scottish_starter_rate=Starter rate
 paye.ats.total_income_tax.scottish_basic_rate=Basic rate
 paye.ats.total_income_tax.scottish_intermediate_rate=Intermediate rate
 paye.ats.total_income_tax.scottish_higher_rate=Higher rate
+paye.ats.total_income_tax.uk_income_tax=UK Income Tax
+paye.ats.total_income_tax.basic_rate_income_tax=Basic rate Income Tax
+paye.ats.total_income_tax.higher_rate_income_tax=Higher rate Income Tax
+paye.ats.total_income_tax.ordinary_rate=Basic rate Dividend Tax
+paye.ats.total_income_tax.upper_rate=Higher rate Dividend Tax
 
 # View ATS - scottish income tax
 #============================================================
