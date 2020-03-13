@@ -304,7 +304,7 @@ object PayeAtsTestData {
     )
   )
 
-  val totalIncomeTaxData = PayeAtsData(
+  val totalIncomeTaxAndSummaryData = PayeAtsData(
     2018,
     Some(
       DataHolder(
@@ -352,7 +352,18 @@ object PayeAtsTestData {
         ), None
       )
     ),
-    None, None, None, None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "employee_nic_amount" -> Amount.gbp(70),
+            "employer_nic_amount" -> Amount.gbp(90),
+            "total_income_tax_2_nics" -> Amount.gbp(431)
+          )
+        ),
+        None, None
+      )
+    ), None, None, None
   )
 
 
@@ -416,6 +427,8 @@ object PayeAtsTestData {
       AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
       AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
       AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
+    Amount.empty,  Amount.empty,Amount(20322, "GBP"),
+    Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
   )
 }
 

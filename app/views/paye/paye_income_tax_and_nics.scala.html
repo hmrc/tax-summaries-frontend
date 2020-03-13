@@ -118,6 +118,7 @@
     </table>
   }
 
+
     @if(viewModel.adjustments.nonEmpty){
         <table class="paye-ats-data-table" id="adjustments-table">
             <thead>
@@ -138,4 +139,30 @@
             </tbody>
         </table>
     }
+
+    <table class="paye-ats-data-table">
+        <thead>
+        <tr>
+            <th scope="col">@Messages("generic.description")</th>
+            <th scope="col">@Messages("generic.amount_pounds")</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="employeeContributions">
+            <th scope="row">
+                @Messages("paye.ats.national_insurance.title")
+            </th>
+            <td class="numeric">@includes.currency_amount(viewModel.employeeContributions, true)</td>
+        </tr>
+        <thead>
+        <tr id="totalIncomeTaxAndNic">
+            <th scope="row">
+                @Messages("paye.ats.total_income_tax_national_insurance.title")
+            </th>
+            <td class="numeric">@includes.currency_amount(viewModel.totalIncomeTax2Nics, true)</td>
+        </tr>
+        </thead>
+        </tbody>
+    </table>
+    <p id="employerContributions">@Messages("paye.ats.total_national_insurance_employer_contribution.title",viewModel.employerContributions)</p>
 }

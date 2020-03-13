@@ -178,6 +178,9 @@ paye.ats.adjustments.less_tax_adjustment_previous_year=Less tax adjustment from 
 paye.ats.adjustments.marriage_allowance_received_amount=Less Marriage allowance received
 paye.ats.adjustments.married_couples_allowance_adjustment=Less Married Couples Allowance
 paye.ats.adjustments.tax_underpaid_previous_year=Tax underpaid in a previous year
+paye.ats.national_insurance.title=National Insurance contributions
+paye.ats.total_income_tax_national_insurance.title=Total Income Tax and National Insurance contributions
+paye.ats.total_national_insurance_employer_contribution.title=In addition to this, your employers paid £{0} in National Insurance contributions
 
 # View ATS - scottish income tax
 #============================================================
