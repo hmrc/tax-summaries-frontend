@@ -29,52 +29,61 @@ case class PayeYourTaxableIncome(
 object PayeYourTaxableIncome {
   def buildViewModel(payeAtsData: PayeAtsData): Option[PayeYourTaxableIncome] = {
     val taxRows = getIncomeTaxRows(payeAtsData.income_data).filter(row => row.value.nonZero)
-    val updatedTaxRows = modifyOtherIncomeMessageKey(taxRows)
 
     Some(PayeYourTaxableIncome(
       payeAtsData.taxYear,
-      updatedTaxRows.dropRight(1),
-      updatedTaxRows.last.value
+      taxRows.dropRight(1),
+      taxRows.last.value
       ))
   }
 
-  def modifyOtherIncomeMessageKey(taxRows: List[IncomeTaxRow]): List[IncomeTaxRow] = {
-    val noStatePension = !taxRows.exists(row => row.messageKey == "ats.income_before_tax.table.line3")
-    val otherPensionIndex = taxRows.indexOf(
-        taxRows.find(_.messageKey == "ats.income_before_tax.table.line4")
-               .getOrElse(IncomeTaxRow("", Amount.empty)))
-    if(noStatePension && (otherPensionIndex >= 0))
-      taxRows
-        .updated(otherPensionIndex, taxRows(otherPensionIndex)
-        .copy(messageKey = "paye.ats.income_before_tax.table.line4"))
-    else
-      taxRows
-  }
-
-  val lookupMessageKey =  List (
-    ("self_employment_income", "ats.income_before_tax.table.line1"),
-    ("income_from_employment", "ats.income_before_tax.table.line2"),
-    ("state_pension", "ats.income_before_tax.table.line3"),
-    ("other_pension_income", "ats.income_before_tax.table.line4"),
-    ("taxable_state_benefits", "ats.income_before_tax.table.line5"),
-    ("other_income", "paye.ats.income_before_tax.table.line6"),
-    ("benefits_from_employment", "ats.income_before_tax.table.line7"),
-    ("total_income_before_tax", "paye.ats.income_before_tax.html.title")
-  )
-  
-  def createRows(data: Map[String, Amount]): List[IncomeTaxRow] = {
-    lookupMessageKey.map{ case(key, messageKey) => {
-            IncomeTaxRow(messageKey, data.getOrElse(key, Amount.empty))
-      }
-    }
-  }
-
   def getIncomeTaxRows(incomeData: Option[DataHolder]) : List[IncomeTaxRow] ={
-    incomeData match {
-      case Some(data) => createRows(data.payload.getOrElse(Map()))
-      case None => List()
-    }
+    val selfEmploymentIncome = incomeData.flatMap(_.payload).flatMap(_.get("self_employment_income")).getOrElse(Amount.empty)
+    val incomeFromEmployment = incomeData.flatMap(_.payload).flatMap(_.get("income_from_employment")).getOrElse(Amount.empty)
+    val statePension = incomeData.flatMap(_.payload).flatMap(_.get("state_pension")).getOrElse(Amount.empty)
+    val otherPensionIncome = incomeData.flatMap(_.payload).flatMap(_.get("other_pension_income")).getOrElse(Amount.empty)
+    val taxableStateBenefits = incomeData.flatMap(_.payload).flatMap(_.get("taxable_state_benefits")).getOrElse(Amount.empty)
+    val otherIncome = incomeData.flatMap(_.payload).flatMap(_.get("other_income")).getOrElse(Amount.empty)
+    val benefitsFromEmployment = incomeData.flatMap(_.payload).flatMap(_.get("benefits_from_employment")).getOrElse(Amount.empty)
+    val totalIncomeBeforeTax = incomeData.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
+
+    List(
+      IncomeTaxRow("self_employment_income", selfEmploymentIncome),
+      IncomeTaxRow("income_from_employment", incomeFromEmployment),
+      IncomeTaxRow("state_pension", statePension),
+      IncomeTaxRow(if(statePension == Amount.empty) "personal_pension_income" else "other_pension_income", otherPensionIncome),
+      IncomeTaxRow("taxable_state_benefits", taxableStateBenefits),
+      IncomeTaxRow("other_income", otherIncome),
+      IncomeTaxRow("benefits_from_employment", benefitsFromEmployment),
+      IncomeTaxRow("total_income_before_tax", totalIncomeBeforeTax)
+    )
   }
 }
 
 case class IncomeTaxRow(messageKey: String, value: Amount)
+
+
+/*
+def apply(payeAtsData: PayeAtsData): PayeTaxFreeAmount = {
+    val totalTaxFreeAmount = payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_tax_free_amount")).getOrElse(Amount.empty)
+    val liableTaxAmount = payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("liable_tax_amount")).getOrElse(Amount.empty)
+    val totalIncomeBeforeTax = payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
+    val personalTaxFreeAmount = payeAtsData.allowance_data.flatMap(_.payload).flatMap(_.get("personal_tax_free_amount")).getOrElse(Amount.empty)
+
+    val adjustmentRows = (for {
+      allowanceData <- payeAtsData.allowance_data
+      payload <- allowanceData.payload
+    } yield {
+      adjustments.map { adjustment =>
+        AmountRow(adjustment, payload.getOrElse(adjustment, Amount.empty))
+      }.filter(_.amount != Amount.empty)
+    }).getOrElse(List.empty)
+
+    val summaryRows = List(
+      AmountRow("income_before_tax", totalIncomeBeforeTax),
+      AmountRow("tax_free_amount", if (totalTaxFreeAmount == Amount.empty) personalTaxFreeAmount else totalTaxFreeAmount)
+    )
+
+    PayeTaxFreeAmount(payeAtsData.taxYear, adjustmentRows, totalTaxFreeAmount, summaryRows, liableTaxAmount)
+  }
+ */

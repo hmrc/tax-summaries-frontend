@@ -126,13 +126,24 @@ ats.income_before_tax.table.line1=Self-employment
 ats.income_before_tax.table.line2=Employment
 ats.income_before_tax.table.line3=State pension
 ats.income_before_tax.table.line4=Other pension income
-paye.ats.income_before_tax.table.line4=Personal pension income
 ats.income_before_tax.table.line5=Taxable state benefits
 ats.income_before_tax.table.line6=Other income
 ats.income_before_tax.table.line7=Benefits from employment
 
+
+paye.ats.income_before_tax.self_employment_income=Self-employment
+paye.ats.income_before_tax.income_from_employment=Employment
+paye.ats.income_before_tax.state_pension=Employment
+paye.ats.income_before_tax.other_pension_income=Other pension income
+paye.ats.income_before_tax.personal_pension_income=Personal pension income
+paye.ats.income_before_tax.taxable_state_benefits=Taxable state benefits
+paye.ats.income_before_tax.other_income=Other income
+paye.ats.income_before_tax.benefits_from_employment=Benefits from employment
+paye.ats.income_before_tax.total_income_before_tax=Your income before tax
+
+
 # View ATS - your income before tax (IND) - PAYE content
-paye.ats.income_before_tax.title=Your taxable income
+paye.ats.income_before_tax.title=Taxable income
 paye.ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
 paye.ats.income_before_tax.table_caption=Your taxable income
 paye.ats.income_before_tax.table.line6=Other income (including interest)

@@ -74,16 +74,16 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
   def incomeTaxPayeAtsData(incomeTax: Option[DataHolder]): PayeAtsData = {
       PayeAtsData(2018, None, None, incomeTax, None, None)
     }
-
+  
     "PayeYourTaxableIncome" should {
       "Transform income tax data just other pension to view model" in {
-        val expectedIncomeeTaxRows = List(IncomeTaxRow("ats.income_before_tax.table.line1", Amount(100, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line2", Amount(200, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line3", Amount(300, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line4", Amount(400, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line5", Amount(500, "GBP")),
-                                          IncomeTaxRow("paye.ats.income_before_tax.table.line6", Amount(600, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line7", Amount(700, "GBP")))
+        val expectedIncomeeTaxRows = List(IncomeTaxRow("self_employment_income", Amount(100, "GBP")),
+                                          IncomeTaxRow("income_from_employment", Amount(200, "GBP")),
+                                          IncomeTaxRow("state_pension", Amount(300, "GBP")),
+                                          IncomeTaxRow("other_pension_income", Amount(400, "GBP")),
+                                          IncomeTaxRow("taxable_state_benefits", Amount(500, "GBP")),
+                                          IncomeTaxRow("other_income", Amount(600, "GBP")),
+                                          IncomeTaxRow("benefits_from_employment", Amount(700, "GBP")))
         val expectedIncomeBeforeTaxTotal = Amount(800, "GBP")
 
         val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionAndOther)
@@ -94,12 +94,12 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
       }
 
       "Transform income tax data, No income from employment, to view model" in {
-        val expectedIncomeeTaxRows = List(IncomeTaxRow("ats.income_before_tax.table.line1", Amount(100, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line3", Amount(300, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line4", Amount(400, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line5", Amount(500, "GBP")),
-                                          IncomeTaxRow("paye.ats.income_before_tax.table.line6", Amount(600, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line7", Amount(700, "GBP")))
+        val expectedIncomeeTaxRows = List(IncomeTaxRow("self_employment_income", Amount(100, "GBP")),
+                                          IncomeTaxRow("state_pension", Amount(300, "GBP")),
+                                          IncomeTaxRow("other_pension_income", Amount(400, "GBP")),
+                                          IncomeTaxRow("taxable_state_benefits", Amount(500, "GBP")),
+                                          IncomeTaxRow("other_income", Amount(600, "GBP")),
+                                          IncomeTaxRow("benefits_from_employment", Amount(700, "GBP")))
 
         val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionNoIncomeFromEmployment)
         val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
@@ -108,12 +108,12 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
       }
 
       "Transform income tax data, state and other pension, to view model" in {
-        val expectedIncomeeTaxRows = List(IncomeTaxRow("ats.income_before_tax.table.line1", Amount(100, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line2", Amount(200, "GBP")),
-                                          IncomeTaxRow("paye.ats.income_before_tax.table.line4", Amount(400, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line5", Amount(500, "GBP")),
-                                          IncomeTaxRow("paye.ats.income_before_tax.table.line6", Amount(600, "GBP")),
-                                          IncomeTaxRow("ats.income_before_tax.table.line7", Amount(700, "GBP")))
+        val expectedIncomeeTaxRows = List(IncomeTaxRow("self_employment_income", Amount(100, "GBP")),
+                                          IncomeTaxRow("income_from_employment", Amount(200, "GBP")),
+                                          IncomeTaxRow("personal_pension_income", Amount(400, "GBP")),
+                                          IncomeTaxRow("taxable_state_benefits", Amount(500, "GBP")),
+                                          IncomeTaxRow("other_income", Amount(600, "GBP")),
+                                          IncomeTaxRow("benefits_from_employment", Amount(700, "GBP")))
 
         val payeAtsData = incomeTaxPayeAtsData(IncomeTaxJustOtherPension)
         val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)

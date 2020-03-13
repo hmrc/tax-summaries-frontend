@@ -53,7 +53,7 @@
             @for(row <- viewModel.incomeTaxRows) {
                 <tr id="@row.messageKey">
                     <th scope="row">
-                        @Messages(row.messageKey)
+                        @Messages("paye.ats.income_before_tax." + row.messageKey)
                     </th>
                     <td class="numeric">@includes.currency_amount(row.value, true)</td>
                 </tr>
@@ -61,8 +61,8 @@
             </tbody>
             <tfoot id="income-before-tax-foot">
                 <tr>
-                    <th scope="row">@Html(Messages("paye.ats.income_before_tax.html.title"))</th>
-                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.incomeBeforeTaxTaxTotal)</td>
+                    <th scope="row">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
+                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.incomeBeforeTaxTaxTotal, true)</td>
                 </tr>
             </tfoot>
         </table>
