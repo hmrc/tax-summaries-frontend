@@ -39,7 +39,7 @@ object PayeIncomeTaxAndNics {
       getTaxBands(payeAtsData,scottishRates),
       getTaxBands(payeAtsData,uKRates),
       getTotalIncomeTax(payeAtsData , "scottish_total_tax"),
-      getTotalIncomeTax(payeAtsData , "total_UK_income_tax"))
+      getTotalIncomeTax(payeAtsData , "total_uk_income_tax"))
   }
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {
