@@ -64,5 +64,22 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
       document.getElementById("totalRestOfUkIncomeTax").text() shouldBe "Total £18,433.00"
 
     }
+
+    "have correct data for UK tax payer" in {
+
+      val view = views.html.paye.paye_income_tax_and_nics(PayeAtsTestData.payeUKIncomeTaxAndNicsViewModel).body
+      val document = Jsoup.parse(view)
+
+      document.getElementById("ordinary_rate").text() shouldBe "Basic rate Dividend Tax (£19,430 at 19%) £4,080.00"
+
+      document.getElementById("higher_rate_income_tax").text() shouldBe "Higher rate Income Tax (£10,150 at 20%) £2,030.00"
+
+      document.getElementById("basic_rate_income_tax").text() shouldBe "Basic rate Income Tax (£2,000 at 21%) £380.00"
+
+      document.getElementById("upper_rate").text() shouldBe "Higher rate Dividend Tax (£31,570 at 41%) £12,943.00"
+
+      document.getElementById("totalUkIncomeTax").text() shouldBe "Total £20,322.00"
+
+    }
   }
 }
