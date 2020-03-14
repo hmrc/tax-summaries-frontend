@@ -35,6 +35,8 @@ object PayeIncomeTaxAndNics {
 
   lazy val uKRates: List[String] = Play.current.injector.instanceOf[PayeConfig].ukTaxBandKeys
 
+  lazy val adjustments: Set[String] = Play.current.injector.instanceOf[PayeConfig].adjustmentsKeys.toSet
+
   def apply(payeAtsData: PayeAtsData): PayeIncomeTaxAndNics = {
 
     PayeIncomeTaxAndNics(payeAtsData.taxYear,
@@ -76,14 +78,7 @@ object PayeIncomeTaxAndNics {
       incomeTax <- payeAtsData.income_tax
       payload <- incomeTax.payload
     } yield {
-
-      val adjustmentKeys = Set("less_tax_adjustment_previous_year",
-        "marriage_allowance_received_amount",
-        "married_couples_allowance_adjustment",
-        "tax_underpaid_previous_year"
-      )
-
-      payload.filterKeys(adjustmentKeys).map(
+      payload.filterKeys(adjustments).map(
         adjustment =>
           AdjustmentRow(adjustment._1, adjustment._2)
       ).toList.sortBy(_.label)

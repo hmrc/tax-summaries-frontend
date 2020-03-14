@@ -81,6 +81,22 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
       config.ukTaxBandKeys shouldBe expected
     }
 
+    "retrieve adjustment keys in order for a valid year" in {
+      val config = new PayeConfig {
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
+      }
+
+      val expected = List(
+        "less_tax_adjustment_previous_year",
+        "marriage_allowance_received_amount",
+        "married_couples_allowance_adjustment",
+        "tax_underpaid_previous_year"
+      )
+
+      config.adjustmentsKeys shouldBe expected
+    }
+
     "throw an exception for an invalid year" in {
       val config = new PayeConfig {
         override protected val configPath: String = "paye.conf"

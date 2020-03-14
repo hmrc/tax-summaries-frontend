@@ -355,6 +355,7 @@ object PayeAtsTestData {
     None, None, None, None
   )
 
+
   val payeYourIncomeAndTaxesViewModel = PayeYourIncomeAndTaxes(2018,Amount(1000,"GBP"),Amount(800,"GBP"),Amount(200,"GBP"),Amount(100,"GBP"),"20")
 
 

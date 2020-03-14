@@ -173,6 +173,11 @@ paye.ats.total_income_tax.basic_rate_income_tax=Basic rate Income Tax
 paye.ats.total_income_tax.higher_rate_income_tax=Higher rate Income Tax
 paye.ats.total_income_tax.ordinary_rate=Basic rate Dividend Tax
 paye.ats.total_income_tax.upper_rate=Higher rate Dividend Tax
+paye.ats.adjustments=Adjustments
+paye.ats.adjustments.less_tax_adjustment_previous_year=Less tax adjustment from a previous year
+paye.ats.adjustments.marriage_allowance_received_amount=Less Marriage allowance received
+paye.ats.adjustments.married_couples_allowance_adjustment=Less Married Couples Allowance
+paye.ats.adjustments.tax_underpaid_previous_year=Tax underpaid in a previous year
 
 # View ATS - scottish income tax
 #============================================================
