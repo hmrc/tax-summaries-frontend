@@ -409,7 +409,8 @@ object PayeAtsTestData {
     List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
       AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
       AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
-      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
+    Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(2018,
@@ -426,8 +427,7 @@ object PayeAtsTestData {
     List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
       AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
       AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
-      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
-    Amount.empty,  Amount.empty,Amount(20322, "GBP"),
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
     Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
   )
 
@@ -435,6 +435,7 @@ object PayeAtsTestData {
     List.empty,
     List.empty,
     Amount.empty,  Amount.empty,Amount.empty,
+    List.empty,
     Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
   )
 }

@@ -107,7 +107,7 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
 
       document.getElementById("totalIncomeTaxAndNic").text() shouldBe "Total Income Tax and National Insurance contributions £431.00"
 
-      document.getElementById("employerContributions").text() shouldBe "In addition to this, your employers paid £90 in National Insurance contributions."
+      document.getElementById("employerContributions").text() shouldBe "In addition to this, your employers paid £90.00 in National Insurance contributions."
 
     }
   }
