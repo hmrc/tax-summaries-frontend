@@ -88,5 +88,14 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
       document.getElementById("totalUkIncomeTax").text() shouldBe "Total £20,322.00"
 
     }
+
+    "not display adjustments table when they have no adjustments" in {
+
+      val view = views.html.paye.paye_income_tax_and_nics(PayeAtsTestData.payeUKIncomeTaxAndNicsViewModel.copy(adjustments = List.empty)).body
+      val document = Jsoup.parse(view)
+
+      document.select("#adjustments-table") shouldBe empty
+
+    }
   }
 }
