@@ -40,7 +40,7 @@
 	<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
 
   @if(viewModel.scottishTaxBands.nonEmpty){
-    <table class="paye-ats-data-table">
+    <table class="paye-ats-data-table" id="scottish-tax-bands-table">
     <thead>
       <tr>
         <th scope="col">@Messages("paye.ats.total_income_tax.scottish_income_tax")</th>
@@ -66,7 +66,7 @@
     </table>
 
     @if(viewModel.ukTaxBands.nonEmpty){
-        <table class="paye-ats-data-table">
+        <table class="paye-ats-data-table" id="rest-of-uk-tax-bands-table">
             <thead>
             <tr>
                 <th scope="col">@Messages("paye.ats.total_income_tax.uk_income_tax")</th>
@@ -92,7 +92,7 @@
         </table>
     }
   } else {
-    <table class="paye-ats-data-table">
+    <table class="paye-ats-data-table" id="uk-tax-bands-table">
         <thead>
         <tr>
             <th scope="col">@Messages("paye.ats.total_income_tax.income_tax")</th>
@@ -118,22 +118,24 @@
     </table>
   }
 
-    <table class="paye-ats-data-table">
-        <thead>
-            <tr>
-                <th scope="col">@Messages("paye.ats.adjustments")</th>
-                <th scope="col">@Messages("generic.amount_pounds")</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for(row <- viewModel.adjustments) {
-                <tr id="@row.label">
-                    <th scope="row">
-                        @Messages("paye.ats.adjustments." + row.label)
-                    </th>
-                    <td class="numeric">@includes.currency_amount(row.adjustmentAmount, true)</td>
+    @if(viewModel.adjustments.nonEmpty){
+        <table class="paye-ats-data-table" id="adjustments-table">
+            <thead>
+                <tr>
+                    <th scope="col">@Messages("paye.ats.adjustments")</th>
+                    <th scope="col">@Messages("generic.amount_pounds")</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @for(row <- viewModel.adjustments) {
+                    <tr id="@row.label">
+                        <th scope="row">
+                            @Messages("paye.ats.adjustments." + row.label)
+                        </th>
+                        <td class="numeric">@includes.currency_amount(row.adjustmentAmount, true)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
