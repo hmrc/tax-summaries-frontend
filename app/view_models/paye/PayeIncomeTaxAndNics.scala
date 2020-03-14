@@ -27,7 +27,10 @@ case class PayeIncomeTaxAndNics(taxYear: Int,
                                 totalScottishIncomeTax: Amount,
                                 totalRestOfUKIncomeTax: Amount,
                                 totalUKIncomeTax: Amount,
-                                adjustments: List[AdjustmentRow]) extends TaxYearFormatting
+                                adjustments: List[AdjustmentRow],
+                                employeeContributions: Amount,
+                                employerContributions: Amount,
+                                totalIncomeTax2Nics: Amount) extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
 
@@ -45,8 +48,10 @@ object PayeIncomeTaxAndNics {
       getTotalIncomeTax(payeAtsData , "scottish_total_tax"),
       getTotalIncomeTax(payeAtsData , "total_UK_income_tax"),
       getTotalIncomeTax(payeAtsData , "total_income_tax_2"),
-      getAdjustments(payeAtsData)
-    )
+      getAdjustments(payeAtsData),
+      getNationalInsuranceContribution(payeAtsData , "employee_nic_amount"),
+      getNationalInsuranceContribution(payeAtsData , "employer_nic_amount"),
+      getNationalInsuranceContribution(payeAtsData , "total_income_tax_2_nics"))
   }
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {
@@ -83,6 +88,12 @@ object PayeIncomeTaxAndNics {
           AdjustmentRow(adjustment._1, adjustment._2)
       ).filter(_.adjustmentAmount!=Amount.empty).sortBy(_.label)
     }).getOrElse(List.empty)
+  }
+
+  private def getNationalInsuranceContribution(payeAtsData: PayeAtsData ,nicKey : String ) : Amount = {
+    payeAtsData.summary_data.flatMap(
+      summary_data => summary_data.payload.flatMap(
+        _.get(nicKey))).getOrElse(Amount.empty)
   }
 }
 

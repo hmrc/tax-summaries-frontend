@@ -304,7 +304,7 @@ object PayeAtsTestData {
     )
   )
 
-  val totalIncomeTaxData = PayeAtsData(
+  val totalIncomeTaxAndSummaryData = PayeAtsData(
     2018,
     Some(
       DataHolder(
@@ -352,7 +352,18 @@ object PayeAtsTestData {
         ), None
       )
     ),
-    None, None, None, None
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "employee_nic_amount" -> Amount.gbp(70),
+            "employer_nic_amount" -> Amount.gbp(90),
+            "total_income_tax_2_nics" -> Amount.gbp(431)
+          )
+        ),
+        None, None
+      )
+    ), None, None, None
   )
 
 
@@ -398,7 +409,8 @@ object PayeAtsTestData {
     List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
       AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
       AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
-      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
+    Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(2018,
@@ -415,7 +427,24 @@ object PayeAtsTestData {
     List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
       AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
       AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
-      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
+    Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
+  )
+
+  val payeEmployeeContributionNicsViewModel = PayeIncomeTaxAndNics(2018,
+    List.empty,
+    List.empty,
+    Amount.empty,  Amount.empty,Amount.empty,
+    List.empty,
+    Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
+  )
+
+  val payeEmptyNicsViewModel = PayeIncomeTaxAndNics(2018,
+    List.empty,
+    List.empty,
+    Amount.empty,  Amount.empty,Amount.empty,
+    List.empty,
+    Amount.empty,  Amount.empty,Amount.empty
   )
 }
 

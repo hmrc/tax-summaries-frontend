@@ -30,7 +30,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
   "PayeYourIncomeAndTaxesData" should {
 
     "transform to view model with all tax band rates and all adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxData
+      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData
 
       val expectedViewModel =  PayeIncomeTaxAndNics(2018,
         List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
@@ -53,7 +53,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
             AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
             AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
-            AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
+            AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
+        Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -62,7 +63,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
     }
 
     "transform to view model with all tax band rates and only 2 non zero adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxData.copy(income_tax =
+      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData.copy(income_tax =
         Some(
           DataHolder(
             Some(
@@ -129,7 +130,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
             Amount(22943, "GBP"), Rate("41%"))),
         Amount(19433, "GBP"),  Amount(20224, "GBP"),Amount(10477, "GBP"),
         List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
-          AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
+          AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
+        Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -179,7 +181,18 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
             ), None
           )
         ),
-        None, None, None, None
+        Some(
+          DataHolder(
+            Some(
+              Map(
+                "employee_nic_amount" -> Amount.gbp(70),
+                "employer_nic_amount" -> Amount.gbp(90),
+                "total_income_tax_2_nics" -> Amount.gbp(431)
+              )
+            ),
+            None, None
+          )
+        ), None, None, None
       )
 
       val expectedViewModel =  PayeIncomeTaxAndNics(2018,List(TaxBand("scottish_starter_rate", Amount(2000, "GBP"),
@@ -190,7 +203,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
           Amount(480, "GBP"), Rate("19%")),
           TaxBand("upper_rate", Amount(20150, "GBP"),
             Amount(3030, "GBP"), Rate("41%"))),Amount(19433, "GBP"),Amount(20224, "GBP"),Amount(10477, "GBP"),
-        List.empty
+        List.empty,Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -240,10 +253,22 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
             ), None
           )
         ),
-        None, None, None, None
+        Some(
+          DataHolder(
+            Some(
+              Map(
+                "employee_nic_amount" -> Amount.gbp(70),
+                "employer_nic_amount" -> Amount.gbp(90),
+                "total_income_tax_2_nics" -> Amount.gbp(431)
+              )
+            ),
+            None, None
+          )
+        ), None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018, List.empty, List.empty, Amount(19433, "GBP"), Amount(20224, "GBP"),Amount(10477, "GBP"), List.empty)
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018, List.empty, List.empty, Amount(19433, "GBP"), Amount(20224, "GBP"),Amount(10477, "GBP"), List.empty,
+        Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP"))
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
 
@@ -257,7 +282,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         None, None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018,List.empty, List.empty,Amount.empty,Amount.empty,Amount.empty, List.empty)
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018,List.empty, List.empty,Amount.empty,Amount.empty,Amount.empty, List.empty,
+      Amount.empty,Amount.empty,Amount.empty)
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
 
@@ -271,7 +297,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         None, None, None, None
       )
 
-      val expectedViewModel =  PayeIncomeTaxAndNics(2018, List.empty, List.empty ,Amount.empty,Amount.empty,Amount.empty, List.empty)
+      val expectedViewModel =  PayeIncomeTaxAndNics(2018, List.empty, List.empty ,Amount.empty,Amount.empty,Amount.empty, List.empty,
+        Amount.empty,Amount.empty,Amount.empty)
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
 
