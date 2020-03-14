@@ -26,7 +26,8 @@ case class PayeIncomeTaxAndNics(taxYear: Int,
                                 ukTaxBands: List[TaxBand],
                                 totalScottishIncomeTax: Amount,
                                 totalRestOfUKIncomeTax: Amount,
-                                totalUKIncomeTax: Amount) extends TaxYearFormatting
+                                totalUKIncomeTax: Amount,
+                                adjustments: List[AdjustmentRow]) extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
 
@@ -41,7 +42,9 @@ object PayeIncomeTaxAndNics {
       getTaxBands(payeAtsData,uKRates),
       getTotalIncomeTax(payeAtsData , "scottish_total_tax"),
       getTotalIncomeTax(payeAtsData , "total_UK_income_tax"),
-      getTotalIncomeTax(payeAtsData , "total_income_tax_2"))
+      getTotalIncomeTax(payeAtsData , "total_income_tax_2"),
+      getAdjustments(payeAtsData)
+    )
   }
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {
@@ -67,4 +70,25 @@ object PayeIncomeTaxAndNics {
       }.filter(_.bandRate != Rate.empty)
     }).getOrElse(List.empty)
   }
+
+  private def getAdjustments(payeAtsData: PayeAtsData): List[AdjustmentRow] = {
+    (for {
+      incomeTax <- payeAtsData.income_tax
+      payload <- incomeTax.payload
+    } yield {
+
+      val adjustmentKeys = Set("less_tax_adjustment_previous_year",
+        "marriage_allowance_received_amount",
+        "married_couples_allowance_adjustment",
+        "tax_underpaid_previous_year"
+      )
+
+      payload.filterKeys(adjustmentKeys).map(
+        adjustment =>
+          AdjustmentRow(adjustment._1, adjustment._2)
+      ).toList.sortBy(_.label)
+    }).getOrElse(List.empty)
+  }
 }
+
+case class AdjustmentRow(label: String, adjustmentAmount: Amount)
