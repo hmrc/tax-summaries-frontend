@@ -26,13 +26,16 @@ case class PayeIncomeTaxAndNics(taxYear: Int,
                                 ukTaxBands: List[TaxBand],
                                 totalScottishIncomeTax: Amount,
                                 totalRestOfUKIncomeTax: Amount,
-                                totalUKIncomeTax: Amount) extends TaxYearFormatting
+                                totalUKIncomeTax: Amount,
+                                adjustments: List[AdjustmentRow]) extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
 
   lazy val scottishRates: List[String] = Play.current.injector.instanceOf[PayeConfig].scottishTaxBandKeys
 
   lazy val uKRates: List[String] = Play.current.injector.instanceOf[PayeConfig].ukTaxBandKeys
+
+  lazy val adjustments: Set[String] = Play.current.injector.instanceOf[PayeConfig].adjustmentsKeys.toSet
 
   def apply(payeAtsData: PayeAtsData): PayeIncomeTaxAndNics = {
 
@@ -41,7 +44,9 @@ object PayeIncomeTaxAndNics {
       getTaxBands(payeAtsData,uKRates),
       getTotalIncomeTax(payeAtsData , "scottish_total_tax"),
       getTotalIncomeTax(payeAtsData , "total_UK_income_tax"),
-      getTotalIncomeTax(payeAtsData , "total_income_tax_2"))
+      getTotalIncomeTax(payeAtsData , "total_income_tax_2"),
+      getAdjustments(payeAtsData)
+    )
   }
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData ,totalTaxKey : String ) : Amount = {
@@ -67,4 +72,18 @@ object PayeIncomeTaxAndNics {
       }.filter(_.bandRate != Rate.empty)
     }).getOrElse(List.empty)
   }
+
+  private def getAdjustments(payeAtsData: PayeAtsData): List[AdjustmentRow] = {
+    (for {
+      incomeTax <- payeAtsData.income_tax
+      payload <- incomeTax.payload
+    } yield {
+      payload.filterKeys(adjustments).toList.map(
+        adjustment =>
+          AdjustmentRow(adjustment._1, adjustment._2)
+      ).filter(_.adjustmentAmount!=Amount.empty).sortBy(_.label)
+    }).getOrElse(List.empty)
+  }
 }
+
+case class AdjustmentRow(label: String, adjustmentAmount: Amount)

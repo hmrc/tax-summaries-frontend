@@ -37,7 +37,7 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
 
   "PayeIncomeTaxAndNicsView" should {
 
-    "have correct data for scottish and rUK tax payer" in {
+    "have correct data for scottish and rUK tax payer with all adjustments" in {
 
 
       val view = views.html.paye.paye_income_tax_and_nics(PayeAtsTestData.payeIncomeTaxAndNicsViewModel).body
@@ -63,6 +63,13 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
 
       document.getElementById("totalRestOfUkIncomeTax").text() shouldBe "Total £18,433.00"
 
+      document.getElementById("less_tax_adjustment_previous_year").text() shouldBe "Less tax adjustment from a previous year £350.00"
+
+      document.getElementById("marriage_allowance_received_amount").text() shouldBe "Less Marriage allowance received £200.00"
+
+      document.getElementById("married_couples_allowance_adjustment").text() shouldBe "Less Married Couples Allowance £400.00"
+
+      document.getElementById("tax_underpaid_previous_year").text() shouldBe "Tax underpaid in a previous year £450.00"
     }
 
     "have correct data for UK tax payer" in {
@@ -79,6 +86,15 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
       document.getElementById("upper_rate").text() shouldBe "Higher rate Dividend Tax (£31,570 at 41%) £12,943.00"
 
       document.getElementById("totalUkIncomeTax").text() shouldBe "Total £20,322.00"
+
+    }
+
+    "not display adjustments table when they have no adjustments" in {
+
+      val view = views.html.paye.paye_income_tax_and_nics(PayeAtsTestData.payeUKIncomeTaxAndNicsViewModel.copy(adjustments = List.empty)).body
+      val document = Jsoup.parse(view)
+
+      document.select("#adjustments-table") shouldBe empty
 
     }
   }

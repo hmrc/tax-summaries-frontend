@@ -48,4 +48,10 @@ trait PayeConfig {
     val taxBands = Option(config.getStringList(s"ukTaxBandKeys.$payeYear")).map(_.toList)
     taxBands.getOrElse(throw new RuntimeException(s"No uk tax band keys specified for $payeYear"))
   }
+
+  lazy val adjustmentsKeys: List[String] = {
+    val config: Config = ConfigFactory.load(configPath)
+    val adjustments = Option(config.getStringList(s"adjustmentsKeys.$payeYear")).map(_.toList)
+    adjustments.getOrElse(throw new RuntimeException(s"No adjust keys specified for $payeYear"))
+  }
 }

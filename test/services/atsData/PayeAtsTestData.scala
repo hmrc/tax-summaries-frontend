@@ -17,7 +17,7 @@
 package services.atsData
 
 import models._
-import view_models.paye.{PayeGovernmentSpend, PayeIncomeTaxAndNics, PayeYourIncomeAndTaxes, SpendRow}
+import view_models.paye.{AdjustmentRow, PayeGovernmentSpend, PayeIncomeTaxAndNics, PayeYourIncomeAndTaxes, SpendRow}
 import view_models.{Amount, Rate}
 
 object PayeAtsTestData {
@@ -329,7 +329,12 @@ object PayeAtsTestData {
             "upper_rate_amount" -> Amount.gbp(22943),
             "upper_rate" -> Amount.gbp(41570),
             "total_UK_income_tax" -> Amount.gbp(20224),
-            "total_income_tax_2" -> Amount.gbp(10477)
+            "total_income_tax_2" -> Amount.gbp(10477),
+
+            "less_tax_adjustment_previous_year" -> Amount.gbp(350),
+            "marriage_allowance_received_amount" -> Amount.gbp(200),
+            "married_couples_allowance_adjustment" -> Amount.gbp(400),
+            "tax_underpaid_previous_year" -> Amount.gbp(450)
           )
         ),
         Some(
@@ -349,6 +354,7 @@ object PayeAtsTestData {
     ),
     None, None, None, None
   )
+
 
   val payeYourIncomeAndTaxesViewModel = PayeYourIncomeAndTaxes(2018,Amount(1000,"GBP"),Amount(800,"GBP"),Amount(200,"GBP"),Amount(100,"GBP"),"20")
 
@@ -388,7 +394,11 @@ object PayeAtsTestData {
         Amount(380, "GBP"), Rate("21%")),
       TaxBand("upper_rate", Amount(31570, "GBP"),
         Amount(12943, "GBP"), Rate("41%"))),
-    Amount(19433, "GBP"),  Amount(18433, "GBP"),Amount(20322, "GBP")
+    Amount(19433, "GBP"),  Amount(18433, "GBP"),Amount(20322, "GBP"),
+    List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
+      AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
+      AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(2018,
@@ -401,7 +411,11 @@ object PayeAtsTestData {
         Amount(380, "GBP"), Rate("21%")),
       TaxBand("upper_rate", Amount(31570, "GBP"),
         Amount(12943, "GBP"), Rate("41%"))),
-    Amount.empty,  Amount.empty,Amount(20322, "GBP")
+    Amount.empty,  Amount.empty,Amount(20322, "GBP"),
+    List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
+      AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
+      AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
   )
 }
 
