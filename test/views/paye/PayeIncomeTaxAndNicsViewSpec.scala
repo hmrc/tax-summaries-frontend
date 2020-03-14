@@ -97,5 +97,18 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
       document.select("#adjustments-table") shouldBe empty
 
     }
+
+    "have correct data for national insurance contributions" in {
+
+      val view = views.html.paye.paye_income_tax_and_nics(PayeAtsTestData.payeEmployeeContributionNicsViewModel).body
+      val document = Jsoup.parse(view)
+
+      document.getElementById("employeeContributions").text() shouldBe "National Insurance contributions £70.00"
+
+      document.getElementById("totalIncomeTaxAndNic").text() shouldBe "Total Income Tax and National Insurance contributions £431.00"
+
+      document.getElementById("employerContributions").text() shouldBe "In addition to this, your employers paid £90 in National Insurance contributions."
+
+    }
   }
 }
