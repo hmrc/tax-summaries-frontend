@@ -438,5 +438,12 @@ object PayeAtsTestData {
     List.empty,
     Amount(70, "GBP"),  Amount(90, "GBP"),Amount(431, "GBP")
   )
+
+  val payeEmptyNicsViewModel = PayeIncomeTaxAndNics(2018,
+    List.empty,
+    List.empty,
+    Amount.empty,  Amount.empty,Amount.empty,
+    Amount.empty,  Amount.empty,Amount.empty
+  )
 }
 
