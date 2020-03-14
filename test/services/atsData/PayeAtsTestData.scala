@@ -320,15 +320,16 @@ object PayeAtsTestData {
             "scottish_higher_rate" -> Amount.gbp(31570),
             "scottish_total_tax" -> Amount.gbp(19433),
 
-            "basic_rate_income_tax_amount" -> Amount.gbp(380),
-            "basic_rate_income_tax" -> Amount.gbp(2000),
-            "higher_rate_income_tax_amount" -> Amount.gbp(2030),
-            "higher_rate_income_tax" -> Amount.gbp(10150),
-            "ordinary_rate_amount" -> Amount.gbp(4080),
-            "ordinary_rate" -> Amount.gbp(19430),
-            "upper_rate_amount" -> Amount.gbp(12943),
-            "upper_rate" -> Amount.gbp(31570),
-            "total_UK_income_tax" -> Amount.gbp(20224)
+            "basic_rate_income_tax_amount" -> Amount.gbp(480),
+            "basic_rate_income_tax" -> Amount.gbp(3000),
+            "higher_rate_income_tax_amount" -> Amount.gbp(3030),
+            "higher_rate_income_tax" -> Amount.gbp(20150),
+            "ordinary_rate_amount" -> Amount.gbp(5080),
+            "ordinary_rate" -> Amount.gbp(29430),
+            "upper_rate_amount" -> Amount.gbp(22943),
+            "upper_rate" -> Amount.gbp(41570),
+            "total_UK_income_tax" -> Amount.gbp(20224),
+            "total_income_tax_2" -> Amount.gbp(10477)
           )
         ),
         Some(
@@ -387,7 +388,20 @@ object PayeAtsTestData {
         Amount(380, "GBP"), Rate("21%")),
       TaxBand("upper_rate", Amount(31570, "GBP"),
         Amount(12943, "GBP"), Rate("41%"))),
-    Amount(19433, "GBP"),  Amount(18433, "GBP")
+    Amount(19433, "GBP"),  Amount(18433, "GBP"),Amount(20322, "GBP")
+  )
+
+  val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(2018,
+    List.empty,
+    List(TaxBand("ordinary_rate", Amount(19430, "GBP"),
+      Amount(4080, "GBP"), Rate("19%")),
+      TaxBand("higher_rate_income_tax", Amount(10150, "GBP"),
+        Amount(2030, "GBP"), Rate("20%")),
+      TaxBand("basic_rate_income_tax", Amount(2000, "GBP"),
+        Amount(380, "GBP"), Rate("21%")),
+      TaxBand("upper_rate", Amount(31570, "GBP"),
+        Amount(12943, "GBP"), Rate("41%"))),
+    Amount.empty,  Amount.empty,Amount(20322, "GBP")
   )
 }
 

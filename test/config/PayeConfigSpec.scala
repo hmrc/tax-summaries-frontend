@@ -72,9 +72,9 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
       }
 
       val expected = List(
-        "ordinary_rate",
-        "higher_rate_income_tax",
         "basic_rate_income_tax",
+        "higher_rate_income_tax",
+        "ordinary_rate",
         "upper_rate"
       )
 
