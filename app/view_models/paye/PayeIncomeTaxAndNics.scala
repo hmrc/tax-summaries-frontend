@@ -78,10 +78,10 @@ object PayeIncomeTaxAndNics {
       incomeTax <- payeAtsData.income_tax
       payload <- incomeTax.payload
     } yield {
-      payload.filterKeys(adjustments).map(
+      payload.filterKeys(adjustments).toList.map(
         adjustment =>
           AdjustmentRow(adjustment._1, adjustment._2)
-      ).toList.sortBy(_.label)
+      ).filter(_.adjustmentAmount!=Amount.empty).sortBy(_.label)
     }).getOrElse(List.empty)
   }
 }
