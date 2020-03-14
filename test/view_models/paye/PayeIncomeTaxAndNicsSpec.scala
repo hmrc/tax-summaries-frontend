@@ -61,7 +61,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       result shouldBe expectedViewModel
     }
 
-    "transform to view model with all tax band rates and only 2 adjustments" in {
+    "transform to view model with all tax band rates and only 2 non zero adjustments" in {
       val incomeTaxData = PayeAtsTestData.totalIncomeTaxData.copy(income_tax =
         Some(
           DataHolder(
@@ -89,7 +89,9 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
                 "total_income_tax_2" -> Amount.gbp(10477),
 
                 "less_tax_adjustment_previous_year" -> Amount.gbp(350),
-                "tax_underpaid_previous_year" -> Amount.gbp(450)
+                "tax_underpaid_previous_year" -> Amount.gbp(450),
+                "married_couples_allowance_adjustment" -> Amount.empty,
+                "marriage_allowance_received_amount" -> Amount.empty
               )
             ),
             Some(
