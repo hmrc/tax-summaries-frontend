@@ -63,7 +63,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
     }
 
     "transform to view model with all tax band rates and only 2 non zero adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxData.copy(income_tax =
+      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData.copy(income_tax =
         Some(
           DataHolder(
             Some(
