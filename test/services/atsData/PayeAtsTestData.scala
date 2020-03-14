@@ -394,7 +394,11 @@ object PayeAtsTestData {
         Amount(380, "GBP"), Rate("21%")),
       TaxBand("upper_rate", Amount(31570, "GBP"),
         Amount(12943, "GBP"), Rate("41%"))),
-    Amount(19433, "GBP"),  Amount(18433, "GBP"),Amount(20322, "GBP")
+    Amount(19433, "GBP"),  Amount(18433, "GBP"),Amount(20322, "GBP"),
+    List(AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
+      AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
+      AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
+      AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)))
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(2018,
