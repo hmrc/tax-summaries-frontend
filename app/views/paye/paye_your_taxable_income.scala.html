@@ -1,0 +1,70 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import view_models.paye.PayeGovernmentSpend
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+
+@import view_models.paye.PayeYourTaxableIncome
+@(viewModel:PayeYourTaxableIncome)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
+
+
+@headerContent = {
+
+}
+
+@includes.paye.paye_taxs_main(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent)) {
+	@helpers.back_link(Messages("generic.back"))
+
+	<h1 class="heading-xlarge">
+		@Html(Messages("paye.ats.income_before_tax.title"))
+		<span class="block-heading">
+			@Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
+		</span>
+	</h1>
+
+	<p>@Html(Messages("paye.ats.income_before_tax.intro"))</p>
+	
+    @if(viewModel.incomeTaxRows.nonEmpty){
+        <table class="paye-ats-data-table">
+            <caption class="visually-hidden">@Messages("paye.ats.income_before_tax.table_caption")</caption>
+            <thead>
+                <tr>
+                    <th scope="col">@Messages("ats.income_before_tax.table_header")</th>
+                    <th scope="col">@Messages("generic.amount_pounds")</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(row <- viewModel.incomeTaxRows) {
+                <tr id="@row.messageKey">
+                    <th scope="row">
+                        @Messages("paye.ats.income_before_tax." + row.messageKey)
+                    </th>
+                    <td class="numeric">@includes.currency_amount(row.value, true)</td>
+                </tr>
+            }
+            </tbody>
+            <tfoot id="income-before-tax-foot">
+                <tr>
+                    <th scope="row">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
+                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.incomeBeforeTaxTaxTotal, true)</td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+}
