@@ -59,7 +59,7 @@ class PayeYourTaxableIncomeControllerSpec extends UnitSpec with MockitoSugar wit
 
   "Paye your income and taxes controller" should {
     "return OK response" in new TestController {
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Right(expectedSuccessResponse.as[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
@@ -75,7 +75,6 @@ class PayeYourTaxableIncomeControllerSpec extends UnitSpec with MockitoSugar wit
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)
-      val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
@@ -85,7 +84,6 @@ class PayeYourTaxableIncomeControllerSpec extends UnitSpec with MockitoSugar wit
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier])).thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
       val result = show(fakeAuthenticatedRequest).futureValue
-      val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe

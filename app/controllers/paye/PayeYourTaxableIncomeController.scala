@@ -48,7 +48,7 @@ trait PayeYourTaxableIncomeController extends FrontendController {
 
         case Right(successResponse: PayeAtsData) => {
           val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
-          Ok(views.html.paye.paye_your_taxable_income(viewModel.get))
+          Ok(views.html.paye.paye_your_taxable_income(viewModel))
         }
         case Left(response: HttpResponse) => response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())

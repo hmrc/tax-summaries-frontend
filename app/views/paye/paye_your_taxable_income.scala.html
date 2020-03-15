@@ -41,7 +41,7 @@
 	<p>@Html(Messages("paye.ats.income_before_tax.intro"))</p>
 	
     @if(viewModel.incomeTaxRows.nonEmpty){
-        <table class="paye-ats-data-table">
+        <table class="paye-ats-data-table" id="income-tax-table">
             <caption class="visually-hidden">@Messages("paye.ats.income_before_tax.table_caption")</caption>
             <thead>
                 <tr>
@@ -62,7 +62,7 @@
             <tfoot id="income-before-tax-foot">
                 <tr>
                     <th scope="row">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
-                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.incomeBeforeTaxTaxTotal, true)</td>
+                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.totalIncomeBeforeTax, true)</td>
                 </tr>
             </tfoot>
         </table>

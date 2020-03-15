@@ -62,5 +62,14 @@ class PayeYourTaxableIncomeViewSpec extends UnitSpec with OneAppPerSuite with Te
       document.getElementById("income-before-tax-foot").text() shouldBe "Your income before tax £1,000.00"
 
     }
+
+    "not render taxable income table when they have no taxable income" in {
+
+      val view = views.html.paye.paye_your_taxable_income(PayeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
+      val document = Jsoup.parse(view)
+
+      document.select("#income-tax-table") shouldBe empty
+
+    }
   }
 }

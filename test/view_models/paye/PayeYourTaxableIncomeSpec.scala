@@ -89,8 +89,8 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
         val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionAndOther)
         val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-        viewModel.get.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
-        viewModel.get.incomeBeforeTaxTaxTotal shouldBe expectedIncomeBeforeTaxTotal
+        viewModel.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
+        viewModel.totalIncomeBeforeTax shouldBe expectedIncomeBeforeTaxTotal
       }
 
       "Transform income tax data, No income from employment, to view model" in {
@@ -104,7 +104,7 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
         val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionNoIncomeFromEmployment)
         val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-        viewModel.get.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
+        viewModel.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
       }
 
       "Transform income tax data, state and other pension, to view model" in {
@@ -118,7 +118,7 @@ class PayeYourTaxableIncomeSpec extends UnitSpec with MockitoSugar with JsonUtil
         val payeAtsData = incomeTaxPayeAtsData(IncomeTaxJustOtherPension)
         val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-        viewModel.get.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
+        viewModel.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
       }
     }
 }
