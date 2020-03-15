@@ -54,7 +54,7 @@
     <section id="tax-free-amount">
         <h2>@Html(Messages("paye.ats.summary.tax_free.title"))</h2>
         <p>
-            <a href="#">
+            <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show">
             <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.taxableIncome, true)</span><br>
             <span class="bold-small">@Html(Messages("paye.ats.summary.tax_free.link"))</span><br>
             </a>
