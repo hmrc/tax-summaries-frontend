@@ -133,11 +133,11 @@ ats.income_before_tax.table.line7=Benefits from employment
 
 paye.ats.income_before_tax.self_employment_income=Self-employment
 paye.ats.income_before_tax.income_from_employment=Employment
-paye.ats.income_before_tax.state_pension=Employment
+paye.ats.income_before_tax.state_pension=State pension
 paye.ats.income_before_tax.other_pension_income=Other pension income
 paye.ats.income_before_tax.personal_pension_income=Personal pension income
 paye.ats.income_before_tax.taxable_state_benefits=Taxable state benefits
-paye.ats.income_before_tax.other_income=Other income
+paye.ats.income_before_tax.other_income=Other income (including interest)
 paye.ats.income_before_tax.benefits_from_employment=Benefits from employment
 paye.ats.income_before_tax.total_income_before_tax=Your income before tax
 
