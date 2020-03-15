@@ -38,12 +38,12 @@
 	    </span>
     </h1>
 
-    <p class="lede">@Html(Messages("ats.income_before_tax.intro")) </p>
+    <p id="intro-paragraph">@Messages("paye.ats.summary.lede")</p>
 
-        <section id="taxable-income">
+    <section id="taxable-income">
         <h2>@Html(Messages("paye.ats.summary.total_income.title"))</h2>
         <p>
-            <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show">
+            <a href="#">
                 <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.incomeBeforeTax, true)</span><br>
                 <span class="bold-small" aria-hidden="true">@Html(Messages("paye.ats.summary.total_income.link"))</span>
             </a>
