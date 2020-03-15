@@ -167,7 +167,6 @@ object PayeAtsTestData {
     )
   )
 
-
   val missingYourIncomeAndTaxesData = PayeAtsData(
     2018,
     None,
