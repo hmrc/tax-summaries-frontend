@@ -30,6 +30,8 @@ GET     /paye/income-tax-and-national-insurance                controllers.paye.
 
 GET     /paye/income-before-tax                                controllers.paye.PayeYourTaxableIncomeController.show
 
+GET     /paye/tax-free-amount                                  controllers.paye.PayeTaxFreeAmountController.show
+
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 
-GET			/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
+GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
