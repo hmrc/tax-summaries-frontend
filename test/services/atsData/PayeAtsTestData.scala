@@ -17,7 +17,7 @@
 package services.atsData
 
 import models._
-import view_models.paye.{AdjustmentRow, PayeGovernmentSpend, PayeIncomeTaxAndNics, PayeYourIncomeAndTaxes, SpendRow}
+import view_models.paye._
 import view_models.{Amount, Rate}
 
 object PayeAtsTestData {
@@ -166,6 +166,7 @@ object PayeAtsTestData {
       )
     )
   )
+
 
   val missingYourIncomeAndTaxesData = PayeAtsData(
     2018,
@@ -446,5 +447,16 @@ object PayeAtsTestData {
     List.empty,
     Amount.empty,  Amount.empty,Amount.empty
   )
+
+  val payeYourTaxableIncomeViewModel = PayeYourTaxableIncome(2018,
+    List(
+      IncomeTaxRow("self_employment_income", Amount(450, "GBP")),
+      IncomeTaxRow("income_from_employment", Amount(550, "GBP")),
+      IncomeTaxRow("state_pension", Amount(652, "GBP")),
+      IncomeTaxRow("taxable_state_benefits", Amount(751, "GBP")),
+      IncomeTaxRow("other_income", Amount(851, "GBP")),
+      IncomeTaxRow("benefits_from_employment", Amount(251, "GBP")),
+      IncomeTaxRow("total_income_before_tax", Amount(351, "GBP"))
+    ),Amount(1000, "GBP"))
 }
 
