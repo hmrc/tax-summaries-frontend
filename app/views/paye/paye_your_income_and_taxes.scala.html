@@ -27,7 +27,7 @@
 
 }
 
-@includes.taxs_main(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear")) {
+@includes.paye.paye_taxs_main(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear")) {
 
 @helpers.back_link(Messages("generic.back"))
 
