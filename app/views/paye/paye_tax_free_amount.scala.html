@@ -39,6 +39,7 @@
 
 	@if(viewModel.adjustmentRows.size > 1) {
 	<table class="paye-ats-data-table" id="adjustmentRows">
+		<caption class="visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
 		<thead>
 		<tr>
 			<th scope="col">@Messages("paye.ats.tax_free_amount.description")</th>
@@ -65,6 +66,7 @@
 	}
 
 	<table class="paye-ats-data-table" id="summaryRows">
+		<caption class="visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
 		<thead>
 		<tr>
 			<th scope="col">@Messages("paye.ats.tax_free_amount.description")</th>
