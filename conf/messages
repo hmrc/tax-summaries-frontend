@@ -308,6 +308,7 @@ paye.ats.treasury_spending.para2=All figures are rounded to the nearest pound.
 paye.ats.treasury_spending.para3=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.para4=Spending information is published by HM Treasury.
 paye.ats.treasury_spending.scottish.spending.1=Find out more about <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">your tax and public spending in Scotland</a> on the Scottish Government website.
+paye.ats.treasury_spending.total=Total
 
 # View ATS - Summary (PAYE)
 #============================================================
