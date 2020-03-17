@@ -265,7 +265,7 @@ global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriai
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
 
-# Paye ATS pages
+# Paye ATS - landing page
 #===========================================================
 paye.ats.index.html.title=Eich Crynodeb Treth Blynyddol
 paye.generic.tax_year_heading=6 Ebrill {0} hyd at 5 Ebrill {1}
@@ -275,3 +275,18 @@ paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch i
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario’ch trethi.
 paye.ats.index.html.tax_spend_link=Sut y gwariwyd eich treth
 generic.paye.ats=Crynodeb Treth Blynyddol
+
+# Paye ATS - your income and taxes page
+#===========================================================
+paye.ats.summary.title=Eich incwm a’ch trethi
+paye.ats.summary.total_income.title=Incwm trethadwy
+paye.ats.summary.total_income.link=Eich incwm trethadwy
+paye.ats.summary.total_income.description=Dyma gyfanswm eich incwm trethadwy am y flwyddyn.
+paye.ats.summary.tax_free.title=Swm rhydd o dreth
+paye.ats.summary.tax_free.link=Eich swm rhydd o dreth
+paye.ats.summary.tax_free.description=Dyma’r swm a gawsoch heb dalu treth.
+paye.ats.summary.nicsheading=Treth Incwm a chyfraniadau Yswiriant Gwladol
+paye.ats.summary.tax_and_nics.link=Eich Treth Incwm a chyfraniadau Yswiriant Gwladol
+paye.ats.summary.tax_and_nics.description=Dyma {0}% o’ch incwm trethadwy. Am bob £1 o incwm, gwnaethoch dalu {0}c o Dreth Incwm a chyfraniadau Yswiriant Gwladol.
+paye.ats.summary.tax_and_nics.description-2=Nid yw hyn yn adlewyrchu unrhyw ad-daliadau na goddefiannau treth derbyniol ac felly gall y ffigur fod yn wahanol i’r dreth sydd wedi’i chyfrifo a’i dangos yn eich dadansoddiad.
+paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Incwm ar ôl Treth a chyfraniadau Yswiriant Gwladol
