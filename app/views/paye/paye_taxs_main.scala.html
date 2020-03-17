@@ -37,11 +37,11 @@
 @(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
-@if(lang.language == "cy"){
-<a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
-} else {
-<a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
-}
+  @if(lang.language == "cy"){
+      <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+  } else {
+      <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+  }
 }
 
 @includes.paye.paye_taxs_main(title = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent)) {
