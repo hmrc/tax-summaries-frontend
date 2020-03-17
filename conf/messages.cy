@@ -306,3 +306,29 @@ paye.ats.summary.tax_and_nics.link=Eich Treth Incwm a chyfraniadau Yswiriant Gwl
 paye.ats.summary.tax_and_nics.description=Dyma {0}% o’ch incwm trethadwy. Am bob £1 o incwm, gwnaethoch dalu {0}c o Dreth Incwm a chyfraniadau Yswiriant Gwladol.
 paye.ats.summary.tax_and_nics.description-2=Nid yw hyn yn adlewyrchu unrhyw ad-daliadau na goddefiannau treth derbyniol ac felly gall y ffigur fod yn wahanol i’r dreth sydd wedi’i chyfrifo a’i dangos yn eich dadansoddiad.
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Incwm ar ôl Treth a chyfraniadau Yswiriant Gwladol
+
+# Paye ATS - government spending page
+#===========================================================
+paye.ats.treasury_spending.title=Sut y gwariwyd eich treth
+paye.ats.treasury_spending.introParagraph=Mae’r wybodaeth ar y dudalen hon yn dangos i chi sut y gwariwyd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol. Nid yw hyn yn cynnwys trethi anuniongyrchol megis TAW a thollau eraill.
+paye.ats.treasury_spending.table.Welfare=Lles
+paye.ats.treasury_spending.table.Health=Iechyd
+paye.ats.treasury_spending.table.StatePensions=Pensiynau’r Wladwriaeth
+paye.ats.treasury_spending.table.Education=Addysg
+paye.ats.treasury_spending.table.NationalDebtInterest=Llog ar y ddyled wladol
+paye.ats.treasury_spending.table.Defence=Amddiffyn
+paye.ats.treasury_spending.table.Transport=Cludiant
+paye.ats.treasury_spending.table.GovernmentAdministration=Gweinyddiaeth y Llywodraeth
+paye.ats.treasury_spending.table.Culture=Diwylliant, megis chwaraeon, llyfrgelloedd, amgueddfeydd
+paye.ats.treasury_spending.table.Environment=Yr amgylchedd
+paye.ats.treasury_spending.table.HousingAndUtilities=Tai a gwasanaethau cyhoeddus, megis goleuadau stryd
+paye.ats.treasury_spending.table.BusinessAndIndustry=Busnes a diwydiant
+paye.ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at gyllideb yr UE
+paye.ats.treasury_spending.table.OverseasAid=Cymorth tramor
+paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a diogelwch cyhoeddus
+paye.ats.treasury_spending.para2=Mae’r holl ffigurau wedi’u talgrynnu i’r bunt agosaf.
+paye.ats.treasury_spending.para1=Mae’r ffigurau hyn yn dangos sut mae’r llywodraeth wedi gwario arian ar draws y DU gyfan, gan gynnwys gwariant gan y gweinyddiaethau datganoledig.
+paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">gael am eich treth a’ch gwariant cyhoeddus yn yr Alban</a> ar wefan Llywodraeth yr Alban.
+paye.ats.treasury_spending.para3=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
+paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
+paye.ats.treasury_spending.total=Cyfanswm
