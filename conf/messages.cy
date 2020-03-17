@@ -264,3 +264,14 @@ global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydyc
 global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
+
+# Paye ATS pages
+#===========================================================
+paye.ats.index.html.title=Eich Crynodeb Treth Blynyddol
+paye.generic.tax_year_heading=6 Ebrill {0} hyd at 5 Ebrill {1}
+paye.ats.index.html.lede=Mae hwn yn dangos sut y cafodd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol eu cyfrifo, a sut mae’r llywodraeth yn gwario’ch arian.
+paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
+paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich swm rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.
+paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario’ch trethi.
+paye.ats.index.html.tax_spend_link=Sut y gwariwyd eich treth
+generic.paye.ats=Crynodeb treth blynyddol
