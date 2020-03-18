@@ -22,7 +22,6 @@
 @(title: String,
 userLoggedIn: Boolean = true,
 serviceInfoContent: Option[Html] = None,
-contentHeader: Option[Html] = None,
 showFeedbackLinkInBetaBanner: Boolean = false,
 bodyClasses: Option[String] = None,
 mainClasses: Option[String] = None,
@@ -65,10 +64,16 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     @formPartialRetriever.getPartialContent(ApplicationConfig.reportAProblemPartialUrl)
 }
 
+@contentHeader = {
+  @if(lang.language == "cy"){
+     <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+   } else {
+     <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+   }
+}
+
 @mainContentHeader = {
-    @if(contentHeader.isDefined) {
-        @uiLayouts.main_content_header(contentHeader = contentHeader.get)
-    }
+        @uiLayouts.main_content_header(contentHeader)
 }
 
 @content = {
