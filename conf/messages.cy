@@ -274,4 +274,4 @@ paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut m
 paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich swm rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario’ch trethi.
 paye.ats.index.html.tax_spend_link=Sut y gwariwyd eich treth
-generic.paye.ats=Crynodeb treth blynyddol
+generic.paye.ats=Crynodeb Treth Blynyddol
