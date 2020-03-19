@@ -75,7 +75,7 @@ class PayeTaxFreeAmountViewSpec extends UnitSpec with OneAppPerSuite with TestCo
       document.select("#other_allowances_amount") should not be empty
     }
 
-    "not display the table of adjustments when there is one row" in {
+    "display the table of adjustments without a total when there is just personal allowance" in {
       val viewModel = PayeTaxFreeAmount(
         2018,
         List(
@@ -89,7 +89,7 @@ class PayeTaxFreeAmountViewSpec extends UnitSpec with OneAppPerSuite with TestCo
       val view = views.html.paye.paye_tax_free_amount(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#adjustmentRows") shouldBe empty
+      document.select("#adjustmentRows") should not be empty
     }
 
     "not display the table of adjustments when there are no rows" in {

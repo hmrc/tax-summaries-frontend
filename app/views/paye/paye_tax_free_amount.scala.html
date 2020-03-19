@@ -33,7 +33,7 @@
 		</span>
 	</h1>
 
-	@if(viewModel.adjustmentRows.size > 1) {
+	@if(viewModel.adjustmentRows.nonEmpty) {
 	<table class="paye-ats-data-table" id="adjustmentRows">
 		<caption class="visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
 		<thead>
@@ -52,12 +52,14 @@
 		</tr>
 		}
 		</tbody>
-		<tfoot>
-		<tr id="totalTaxFreeAmount">
-			<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
-			<td class="numeric">@includes.currency_amount(viewModel.totalTaxFreeAmount, true)</td>
-		</tr>
-		</tfoot>
+		@if(viewModel.adjustmentRows.size > 1) {
+			<tfoot>
+			<tr id="totalTaxFreeAmount">
+				<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
+				<td class="numeric">@includes.currency_amount(viewModel.totalTaxFreeAmount, true)</td>
+			</tr>
+			</tfoot>
+		}
 	</table>
 	}
 
