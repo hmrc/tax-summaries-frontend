@@ -355,7 +355,7 @@ generic.error.title=Sorry, there is a problem with the service
 generic.error.try.later=Try again later.
 
 # No ATS - error page paye content
-paye.ats.no_ats.title=You had no taxable income this year – Your Annual Tax Summary – GOV.UK
+paye.ats.no_ats.title=You had no taxable income this year
 paye.ats.no_ats.heading=Your Annual Tax Summary
 paye.ats.no_ats.paragraph=You do not have an Annual Tax Summary for this year.
 
