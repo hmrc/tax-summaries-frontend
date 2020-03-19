@@ -23,11 +23,7 @@
 
 @(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever)
 
-@headerContent = {
-
-}
-
-@includes.paye.paye_taxs_main(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear")) {
+@includes.paye.paye_taxs_main(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear")) {
 
 @helpers.back_link(Messages("generic.back"))
 
@@ -38,7 +34,7 @@
 	    </span>
     </h1>
 
-    <p class="lede">@Html(Messages("ats.income_before_tax.intro")) </p>
+    <p class="lede">@Html(Messages("paye.ats.summary.lede")) </p>
 
         <section id="taxable-income">
         <h2>@Html(Messages("paye.ats.summary.total_income.title"))</h2>

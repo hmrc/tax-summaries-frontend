@@ -22,11 +22,7 @@
 
 @(viewModel:PayeIncomeTaxAndNics)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
 
-@headerContent = {
-
-}
-
-@includes.paye.paye_taxs_main(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), contentHeader = Option(headerContent)) {
+@includes.paye.paye_taxs_main(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
 @helpers.back_link(Messages("generic.back"))
 
