@@ -90,6 +90,7 @@ class PayeTaxFreeAmountViewSpec extends UnitSpec with OneAppPerSuite with TestCo
       val document = Jsoup.parse(view)
 
       document.select("#adjustmentRows") should not be empty
+      document.select("#totalTaxFreeAmount") shouldBe empty
     }
 
     "not display the table of adjustments when there are no rows" in {
