@@ -35,3 +35,5 @@ GET     /paye/tax-free-amount                                  controllers.paye.
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 
 GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
+
+GET     /paye/not-authorised                                   controllers.paye.PayeErrorController.notAuthorised

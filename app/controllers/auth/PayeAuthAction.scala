@@ -22,7 +22,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, NoActiveSession, Nino => AuthNino}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -55,17 +55,32 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
       Redirect(
         ApplicationConfig.payeLoginUrl,
         Map(
-          "continue" -> Seq(ApplicationConfig.loginCallback),
+          "continue" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
           "origin" -> Seq(ApplicationConfig.appName)
         )
       )
     }
 
+    case _: InsufficientConfidenceLevel => {
+      upliftConfidenceLevel(request)
+    }
+
     case e: Exception => {
       Logger.error(s"Exception in PayeAuthAction: $e", e)
-      Redirect(controllers.routes.ErrorController.notAuthorised())
+      Redirect(controllers.paye.routes.PayeErrorController.notAuthorised())
     }
   }
+
+  private def upliftConfidenceLevel(request: Request[_]) =
+      Redirect(
+        ApplicationConfig.identityVerificationUpliftUrl,
+        Map(
+          "origin"          -> Seq(ApplicationConfig.appName),
+          "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
+          "completionURL" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
+          "failureURL" -> Seq(controllers.paye.routes.PayeErrorController.notAuthorised().url)
+        )
+      )
 }
 
 @ImplementedBy(classOf[PayeAuthActionImpl])

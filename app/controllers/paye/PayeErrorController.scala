@@ -48,4 +48,8 @@ trait PayeErrorController extends FrontendController{
   def authorisedNoAts: Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] => NotFound(views.html.errors.paye_no_ats_error(PayeAtsMain(payeYear)))
   }
+
+  def notAuthorised: Action[AnyContent] = payeAuthAction {
+    implicit request: PayeAuthenticatedRequest[_] => Ok(views.html.errors.paye_not_authorised())
+  }
 }

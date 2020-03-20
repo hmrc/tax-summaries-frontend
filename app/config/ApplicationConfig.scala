@@ -50,6 +50,8 @@ trait ApplicationConfig {
   val feedbackUrl: String
   val payeYear: Int
   val payeLoginUrl: String
+  val payeLoginCallbackUrl: String
+  val identityVerificationUpliftUrl: String
   val govUkServiceManual: String
 }
 
@@ -62,6 +64,8 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val sessionCacheHost = baseUrl("cachable.session-cache")
   override lazy val authHost = baseUrl("auth")
   private val contactFormServiceIdentifier = "TAX-SUMMARIES"
+  lazy val identityVerificationUrl = baseUrl("identity-verification-frontend")
+  lazy val identityVerification_web_context = runModeConfiguration.getString("identity-verification.web-context").getOrElse("mdtp")
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
@@ -93,7 +97,10 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val portalUrl = getConf("portal.url")
   override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
   override lazy val feedbackUrl: String = getConf("feedback.url")
-  override lazy val payeLoginUrl = getConf("login.paye.url")
+  override lazy val payeLoginUrl = getConf("paye.login.url")
+  override lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
+  override lazy val identityVerificationUpliftUrl = s"$identityVerificationUrl/$identityVerification_web_context/uplift"
+
   override lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
   //Application name
