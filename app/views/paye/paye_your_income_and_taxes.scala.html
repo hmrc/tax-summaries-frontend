@@ -36,7 +36,7 @@
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show">
                 <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.incomeBeforeTax, true)</span><br>
-                <span class="bold-small" aria-hidden="true">@Html(Messages("paye.ats.summary.total_income.link"))</span>
+                <span class="bold-small">@Html(Messages("paye.ats.summary.total_income.link"))</span>
             </a>
         </p>
         <p>@Html(Messages("paye.ats.summary.total_income.description"))</p>
