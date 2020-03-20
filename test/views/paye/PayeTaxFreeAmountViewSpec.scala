@@ -50,7 +50,10 @@ class PayeTaxFreeAmountViewSpec extends UnitSpec with OneAppPerSuite with TestCo
 
       document
         .select("h1")
-        .text shouldBe "Tax-free amount 6 April 2018 to 5 April 2019"
+        .text shouldBe "Tax-free amount"
+      document
+        .select("h2.heading-xlarge")
+        .text shouldBe "6 April 2018 to 5 April 2019"
     }
 
     "display the table of adjustments when there is more than one row" in {
