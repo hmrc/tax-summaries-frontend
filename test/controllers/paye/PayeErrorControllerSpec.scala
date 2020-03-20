@@ -25,14 +25,17 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
+import view_models.paye.PayeAtsMain
 
 class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  val taxYear = 2018
 
   trait TestErrorController extends PayeErrorController {
     implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
+    override val payeYear = taxYear
   }
 
   "PayeErrorController" should {
@@ -66,10 +69,10 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
 
     "Show NO ATS page and return NOT_FOUND" in new TestErrorController {
       val result = authorisedNoAts(fakeAuthenticatedRequest)
-      val document = Jsoup.parse(contentAsString(result))
+      val document = contentAsString(result)
 
       status(result) shouldBe NOT_FOUND
-      document.title should include(Messages("paye.ats.no_ats.title"))
+      document shouldBe contentAsString(views.html.errors.paye_no_ats_error(PayeAtsMain(payeYear)))
     }
   }
 }
