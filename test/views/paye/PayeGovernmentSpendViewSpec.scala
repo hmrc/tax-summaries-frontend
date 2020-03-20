@@ -90,7 +90,10 @@ class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with Test
 
       document
         .select("h1")
-        .text shouldBe "How your tax was spent 6 April 2018 to 5 April 2019"
+        .text shouldBe "How your tax was spent"
+      document
+        .select("h2.heading-xlarge")
+        .text shouldBe "6 April 2018 to 5 April 2019"
     }
 
     "link to Scottish government spending page for Scottish users" in {
