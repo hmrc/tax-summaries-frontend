@@ -36,7 +36,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     val agentUar = testUar
     val clientUtr = testUtr
     val invalidUtr = testInvalidUtr
-    val timestamp = new Date().getTime()
+    val timestamp = new Date().getTime().toString
 
     val agentToken = AgentToken(
       agentUar,
@@ -49,7 +49,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     }
 
     // Common method for creating a valid encryped token
-    def encryptToken(agent: String = agentUar, client: String = clientUtr, timestamp: Long = new Date().getTime()) = {
+    def encryptToken(agent: String = agentUar, client: String = clientUtr, timestamp: String = new Date().getTime().toString) = {
       val plain = s"$agent:$client:$timestamp"
       val encrypted = crypto.encrypt(PlainText(plain)).value
       UriEncoding.encodePathSegment(encrypted, "UTF-8")
@@ -66,7 +66,8 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
 
     "throw an AgentTokenException when an expired token is passed" in new TestCrypt {
 
-      val token = encryptToken(timestamp = (new Date().getTime() - (tokenMaxAge * 1000)))
+      val pastTimestamp = (new Date().getTime() - (tokenMaxAge * 1000)).toString
+      val token = encryptToken(timestamp = pastTimestamp)
 
       val exception = intercept[AgentTokenException] {
         getAgentToken(token)
@@ -77,7 +78,8 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
 
     "throw an exception when the token date is in the future" in new TestCrypt {
 
-      val token = encryptToken(timestamp = (new Date().getTime() + (tokenMaxAge * 1000)))
+      val futureTimestamp = (new Date().getTime() + (tokenMaxAge * 1000)).toString
+      val token = encryptToken(timestamp = futureTimestamp)
 
       val exception = intercept[AgentTokenException] {
         getAgentToken(token)

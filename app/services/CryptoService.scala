@@ -64,7 +64,7 @@ trait CryptoService {
 
     val splitToken = decryptedToken.split(':')
 
-    AgentToken(agentUar = splitToken(0), clientUtr = splitToken(1), timestamp = splitToken(2).toLong)
+    AgentToken(agentUar = splitToken(0), clientUtr = splitToken(1), timestamp = splitToken(2))
   }
 
   protected def validateTimestamp(agentToken: AgentToken) = {
@@ -80,14 +80,14 @@ trait CryptoService {
     agentToken
   }
 
-  protected def getTokenValidityInterval(timeStamp: Long) = {
-    val tokenDateTime = new DateTime(timeStamp)
+  protected def getTokenValidityInterval(timeStamp: String) = {
+    val tokenDateTime = new DateTime(timeStamp.toLong)
     val tokenExpiryDateTime = tokenDateTime.plusSeconds(tokenMaxAge)
     new Interval(tokenDateTime, tokenExpiryDateTime)
   }
 }
 
-case class AgentToken(agentUar: String, clientUtr: String, timestamp: Long)
+case class AgentToken(agentUar: String, clientUtr: String, timestamp: String)
 
 object AgentToken {
   implicit val formats = Json.format[AgentToken]
