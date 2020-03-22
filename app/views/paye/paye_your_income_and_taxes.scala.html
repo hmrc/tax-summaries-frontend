@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import controllers.auth.PayeAuthenticatedRequest
+@import utils.HtmlFormatter
 
 @(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever)
 
@@ -28,7 +29,7 @@
 @helpers.back_link(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.summary.title"))</h1>
-    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))</h2>
+    <h2 class="heading-xlarge flush--top">@Html(HtmlFormatter.toHtmlNonBroken(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)))</h2>
     <p>@Html(Messages("paye.ats.summary.lede")) </p>
 
         <section id="taxable-income">

@@ -19,6 +19,7 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import utils.HtmlFormatter
 
 @(viewModel:PayeIncomeTaxAndNics)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
 
@@ -27,7 +28,7 @@
 @helpers.back_link(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.total_income_tax.title"))</h1>
-    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))</h2>
+    <h2 class="heading-xlarge flush--top">@Html(HtmlFormatter.toHtmlNonBroken(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)))</h2>
 	<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
 
   @if(viewModel.scottishTaxBands.nonEmpty){
