@@ -33,7 +33,7 @@ trait PayeConfig {
 
   lazy val spendCategories: List[String] = {
     val config: Config = ConfigFactory.load(configPath)
-    val categories = Option(config.getStringList(s"categoryOrder.$payeYear")).map(_.toList)
+    val categories = Option(config.getStringList(s"categoryOrder.${payeYear+1}")).map(_.toList)
     categories.getOrElse(throw new RuntimeException(s"No spend categories specified for $payeYear"))
   }
 
