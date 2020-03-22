@@ -22,8 +22,8 @@
 @(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @includes.paye.paye_taxs_main(title = Messages("paye.ats.no_ats.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
-    <h1 class="heading-xlarge">@Messages("paye.ats.no_ats.heading")<br>
-      @Html(HtmlFormatter.toHtmlNonBroken(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)))
-    </h1>
+    <h1 class="heading-xlarge flush--bottom">@Messages("paye.ats.no_ats.heading")</h1>
+    <h2 class="heading-xlarge flush--top">@Html(HtmlFormatter.toHtmlNonBroken(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)))</h2>
+
 	<p>@Messages("paye.ats.no_ats.paragraph")</p>
 }
