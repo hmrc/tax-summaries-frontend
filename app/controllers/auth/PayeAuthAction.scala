@@ -33,41 +33,44 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
                                    configuration: Configuration)(implicit ec: ExecutionContext)
   extends PayeAuthAction with AuthorisedFunctions {
 
+  val payeShutter: Boolean = configuration.getBoolean("shuttering.paye").getOrElse(false)
+
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    if (payeShutter) {
+      Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable()))
+    } else {
+      implicit val hc: HeaderCarrier =
+        HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-
-    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-      .retrieve(Retrievals.nino) {
-        case Some(nino) => {
-          block {
-            PayeAuthenticatedRequest(
-              Nino(nino),
-              request
-            )
+      authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
+        .retrieve(Retrievals.nino) {
+          case Some(nino) => {
+            block {
+              PayeAuthenticatedRequest(
+                Nino(nino),
+                request
+              )
+            }
           }
+          case _ => throw new RuntimeException("Auth retrieval failed for user")
+        } recover {
+        case _: NoActiveSession => {
+          Redirect(
+            ApplicationConfig.payeLoginUrl,
+            Map(
+              "continue" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
+              "origin" -> Seq(ApplicationConfig.appName)
+            )
+          )
         }
-        case _ => throw new RuntimeException("Auth retrieval failed for user")
-      }
-  } recover {
-    case _: NoActiveSession => {
-      Redirect(
-        ApplicationConfig.payeLoginUrl,
-        Map(
-          "continue" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
-          "origin" -> Seq(ApplicationConfig.appName)
-        )
-      )
-    }
 
-    case _: InsufficientConfidenceLevel => {
+        case _: InsufficientConfidenceLevel => {
       upliftConfidenceLevel(request)
-    }
-
-    case e: Exception => {
-      Logger.error(s"Exception in PayeAuthAction: $e", e)
-      Redirect(controllers.paye.routes.PayeErrorController.notAuthorised())
+    }case e: Exception => {
+          Logger.error(s"Exception in PayeAuthAction: $e", e)
+          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised())
+        }
+      }
     }
   }
 

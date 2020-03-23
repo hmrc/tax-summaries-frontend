@@ -52,4 +52,8 @@ trait PayeErrorController extends FrontendController{
   def notAuthorised: Action[AnyContent] = Action {
     implicit request: Request[_] => Ok(views.html.errors.paye_not_authorised())
   }
+
+  def serviceUnavailable: Action[AnyContent] = Action {
+    implicit request: Request[_] => Ok(views.html.errors.paye_service_unavailable())
+  }
 }

@@ -44,7 +44,8 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "paye.login.url" -> "http://localhost:9025/gg/sign-in"
+        "paye.login.url" -> "http://localhost:9025/gg/sign-in",
+        "shuttering.paye" -> "false"
       )
       .build()
 
@@ -125,6 +126,26 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       status(result) shouldBe SEE_OTHER
 
       redirectLocation(result).get should endWith(unauthorisedRoute)
+    }
+  }
+
+
+  "A user visiting the service when it is shuttered" should {
+    "be directed to the service unavailable page without calling auth" in {
+      reset(mockAuthConnector)
+      val shutteredApplication = new GuiceApplicationBuilder()
+        .configure(
+          "login.paye.url" -> "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary",
+          "shuttering.paye" -> "true"
+        )
+        .build()
+
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, shutteredApplication.configuration)
+      val controller = new Harness(authAction)
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe (controllers.paye.routes.PayeErrorController.serviceUnavailable().url)
+      verifyZeroInteractions(mockAuthConnector)
     }
   }
 }
