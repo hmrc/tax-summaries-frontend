@@ -114,4 +114,17 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       redirectLocation(result).get should startWith(identityVerificationServiceUrl)
     }
   }
+
+  "A user without credential strength strong" should {
+    "return 303 and be redirected to not authorised page" in {
+      when(mockAuthConnector.authorise(any(), any())(any(), any()))
+        .thenReturn(Future.failed(IncorrectCredentialStrength()))
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val controller = new Harness(authAction)
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) shouldBe SEE_OTHER
+
+      redirectLocation(result).get should endWith(unauthorisedRoute)
+    }
+  }
 }
