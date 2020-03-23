@@ -49,7 +49,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       .build()
 
   val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
-  val identityVerificationServiceUrl = "http://localhost:9938/mdtp/uplift"
+  val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
 
   val unauthorisedRoute = controllers.paye.routes.PayeErrorController.notAuthorised().url
 
@@ -98,8 +98,6 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
 
-      println("\n\n\n****gg sign in level test\n\n\n"+redirectLocation(result).get + "\n\n\n")
-
       redirectLocation(result).get should startWith(ggSignInUrl)
     }
   }
@@ -113,7 +111,6 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
 
-      println("\n\n\n****confidence level test\n\n\n"+redirectLocation(result).get + "\n\n\n")
       redirectLocation(result).get should startWith(identityVerificationServiceUrl)
     }
   }

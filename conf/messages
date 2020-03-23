@@ -375,6 +375,12 @@ not.authorised.line1=You are not authorised to access Annual Tax Summaries.
 client_agent.notice.line1=The version of the annual tax summary for agents to view their client’s details is not available yet. This version will be coming soon.
 client_agent.notice.line2=The annual tax summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
 
+# PAYE Not authorised page
+#============================================================
+paye.not.authorised.title=We could not confirm your identity
+paye.not.authorised.h1=We could not confirm your identity
+paye.not.authorised.line1=PLACEHOLDER -- We we're not able to confirm your identity in the IV uplift journey -- PLACEHOLDER
+
 # Token error page
 #============================================================
 token_error.html.title=Technical problem

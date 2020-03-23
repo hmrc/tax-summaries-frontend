@@ -52,6 +52,7 @@ trait ApplicationConfig {
   val payeLoginUrl: String
   val payeLoginCallbackUrl: String
   val identityVerificationUpliftUrl: String
+  val iVUpliftFailureCallback: String
   val govUkServiceManual: String
 }
 
@@ -100,6 +101,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val payeLoginUrl = getConf("paye.login.url")
   override lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
   override lazy val identityVerificationUpliftUrl = s"$identityVerificationUrl/$identityVerification_web_context/uplift"
+  override lazy val iVUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
 
   override lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 

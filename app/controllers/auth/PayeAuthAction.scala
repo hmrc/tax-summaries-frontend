@@ -78,7 +78,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
           "origin"          -> Seq(ApplicationConfig.appName),
           "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
           "completionURL" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
-          "failureURL" -> Seq(controllers.paye.routes.PayeErrorController.notAuthorised().url)
+          "failureURL" -> Seq(ApplicationConfig.iVUpliftFailureCallback)
         )
       )
 }

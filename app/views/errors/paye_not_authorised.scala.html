@@ -15,19 +15,15 @@
  *@
 
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import controllers.auth.PayeAuthenticatedRequest
 
-@()(implicit lang: Lang, request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
 
-<h1>@Html(Messages("generic.not_authorised"))</h1>
+ <h1 class="heading-xlarge">@Html(Messages("paye.not.authorised.h1"))</h1>
 }
 
-@includes.taxs_main(title = Messages("generic.not_authorised"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
-    <p class="lede">@Html(Messages("not.authorised.line1"))</p>
+@includes.taxs_main(title = Messages("paye.not.authorised.title"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
 
-    <p>@Html(Messages("client_agent.notice.line1"))</p>
-
-    <p>@Html(Messages("client_agent.notice.line2"))</p>
+    <p>@Html(Messages("paye.not.authorised.line1"))</p>
 }

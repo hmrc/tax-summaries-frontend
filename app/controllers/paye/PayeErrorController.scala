@@ -21,7 +21,7 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import view_models.paye.PayeAtsMain
 
@@ -49,7 +49,7 @@ trait PayeErrorController extends FrontendController{
     implicit request: PayeAuthenticatedRequest[_] => NotFound(views.html.errors.paye_no_ats_error(PayeAtsMain(payeYear)))
   }
 
-  def notAuthorised: Action[AnyContent] = payeAuthAction {
-    implicit request: PayeAuthenticatedRequest[_] => Ok(views.html.errors.paye_not_authorised())
+  def notAuthorised: Action[AnyContent] = Action {
+    implicit request: Request[_] => Ok(views.html.errors.paye_not_authorised())
   }
 }
