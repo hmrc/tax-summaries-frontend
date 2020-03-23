@@ -56,7 +56,7 @@
     </tbody>
     <tfoot>
         <tr id="totalScottishIncomeTax">
-                <th scope="row">@Messages("ats.treasury_spending.total")</th>
+                <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
             <td class="numeric">@includes.currency_amount(viewModel.totalScottishIncomeTax, true)</td>
           </tr>
     </tfoot>
@@ -83,7 +83,7 @@
             </tbody>
             <tfoot>
             <tr id="totalRestOfUkIncomeTax">
-            <th scope="row">@Messages("ats.treasury_spending.total")</th>
+            <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
             <td class="numeric">@includes.currency_amount(viewModel.totalRestOfUKIncomeTax, true)</td>
             </tr>
             </tfoot>
@@ -110,7 +110,7 @@
         </tbody>
         <tfoot>
         <tr id="totalUkIncomeTax">
-                <th scope="row">@Messages("ats.treasury_spending.total")</th>
+                <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
                 <td class="numeric">@includes.currency_amount(viewModel.totalUKIncomeTax, true)</td>
         </tr>
         </tfoot>
@@ -164,5 +164,8 @@
         </thead>
         </tbody>
     </table>
-    <p id="employerContributions">@Messages("paye.ats.total_national_insurance_employer_contribution.title",viewModel.employerContributions.toTwoDecimalString)</p>
+
+    @if(viewModel.employerContributions.nonZero) {
+      <p id="employerContributions">@Messages("paye.ats.total_national_insurance_employer_contribution.title",viewModel.employerContributions.toTwoDecimalString)</p>
+    }
 }

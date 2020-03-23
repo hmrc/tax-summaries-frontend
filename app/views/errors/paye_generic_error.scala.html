@@ -19,11 +19,7 @@
 
 @()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
-@headerContent = {
-
-}
-
-@includes.taxs_main(title = Messages("generic.error.title"), "", contentHeader = Option(headerContent)) {
+@includes.paye.paye_taxs_main(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
 
 	<h1>@Messages("generic.error.html.title")</h1>
 	<p>@Html(Messages("generic.error.try.later"))</p>
