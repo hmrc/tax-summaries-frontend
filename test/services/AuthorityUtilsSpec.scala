@@ -41,7 +41,7 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
     val agentToken = AgentToken(
       agentUar = uar,
       clientUtr = utr,
-      timestamp = 0
+      timestamp = "0"
     )
   }
 
@@ -122,7 +122,7 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
       override val agentToken = AgentToken(
         agentUar = nonMatchingUtr,
         clientUtr = utr,
-        timestamp = 0
+        timestamp = "0"
       )
 
       val exception = intercept[AgentTokenException] {

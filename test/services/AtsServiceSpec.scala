@@ -54,7 +54,7 @@ class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures
     val agentToken = AgentToken(
       agentUar = testUar,
       clientUtr = testUtr,
-      timestamp = 0
+      timestamp = "0"
     )
 
     implicit val hc = new HeaderCarrier
