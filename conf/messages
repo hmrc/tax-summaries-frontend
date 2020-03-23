@@ -379,7 +379,8 @@ client_agent.notice.line2=The annual tax summary will provide a breakdown of how
 #============================================================
 paye.not.authorised.title=We could not confirm your identity
 paye.not.authorised.h1=We could not confirm your identity
-paye.not.authorised.line1=PLACEHOLDER -- We we're not able to confirm your identity in the IV uplift journey -- PLACEHOLDER
+paye.not.authorised.line1=You have not given us enough information.
+paye.not.authorised.line2=For security reasons, you must wait 24 hours and then sign in to try again.
 
 # Token error page
 #============================================================
