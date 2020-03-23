@@ -30,8 +30,10 @@
 	<div class="grid-row form-group">
 		<div class="column-two-thirds">
 			<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.treasury_spending.title"))</h1>
-			<h2 class="heading-xlarge flush--top">@Html(HtmlFormatter.toHtmlNonBroken(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)))</h2>
-			
+			<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+				HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
+				HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
+
 				<p id="intro-paragraph">@Messages("paye.ats.treasury_spending.introParagraph")</p>
 			</div>
 	</div>

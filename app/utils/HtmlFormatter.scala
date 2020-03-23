@@ -19,6 +19,7 @@ package utils
 object HtmlFormatter {
 
   def toHtmlNonBroken(string: String): String = {
+
     string.replace(" ", "&nbsp;")
   }
 }
