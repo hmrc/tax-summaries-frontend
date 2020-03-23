@@ -37,3 +37,5 @@ GET     /paye/no-ats                                           controllers.paye.
 GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
 
 GET     /paye/not-authorised                                   controllers.paye.PayeErrorController.notAuthorised
+
+GET     /paye/service-unavailable                              controllers.paye.PayeErrorController.serviceUnavailable
