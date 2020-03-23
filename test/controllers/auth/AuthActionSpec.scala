@@ -29,8 +29,10 @@ import org.mockito.Matchers._
 import play.api.test.FakeRequest
 import org.scalatest.concurrent.ScalaFutures._
 import utils.RetrievalOps._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.http.Status.SEE_OTHER
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{redirectLocation, status, _}
 import uk.gov.hmrc.auth.core.retrieve.v2.TrustedHelper
 import uk.gov.hmrc.domain.SaUtrGenerator
@@ -123,6 +125,24 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
       contentAsString(result) should include(uar)
+    }
+  }
+
+  "A user visiting the service when it is shuttered" should {
+    "be directed to the service unavailable page without calling auth" in {
+      reset(mockAuthConnector)
+      val shutteredApplication = new GuiceApplicationBuilder()
+        .configure(
+          "shuttering.sa" -> "true"
+        )
+        .build()
+
+      val authAction = new AuthActionImpl(mockAuthConnector, shutteredApplication.configuration)
+      val controller = new Harness(authAction)
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.serviceUnavailable().url)
+      verifyZeroInteractions(mockAuthConnector)
     }
   }
 }

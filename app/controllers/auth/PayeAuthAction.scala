@@ -33,10 +33,10 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
                                    configuration: Configuration)(implicit ec: ExecutionContext)
   extends PayeAuthAction with AuthorisedFunctions {
 
-  val payeShutter: Boolean = configuration.getBoolean("shuttering.paye").getOrElse(false)
+  val payeShuttered: Boolean = configuration.getBoolean("shuttering.paye").getOrElse(false)
 
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    if (payeShutter) {
+    if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable()))
     } else {
       implicit val hc: HeaderCarrier =
