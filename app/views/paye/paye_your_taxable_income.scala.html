@@ -19,6 +19,7 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import utils.HtmlFormatter
 
 @import view_models.paye.PayeYourTaxableIncome
 @(viewModel:PayeYourTaxableIncome)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
@@ -26,13 +27,10 @@
 @includes.paye.paye_taxs_main(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 	@helpers.back_link(Messages("generic.back"))
 
-	<h1 class="heading-xlarge">
-		@Html(Messages("paye.ats.income_before_tax.title"))
-		<span class="block-heading">
-			@Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
-		</span>
-	</h1>
-
+	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.income_before_tax.title"))</h1>
+    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
 	<p>@Html(Messages("paye.ats.income_before_tax.intro"))</p>
 	
     @if(viewModel.incomeTaxRows.nonEmpty){

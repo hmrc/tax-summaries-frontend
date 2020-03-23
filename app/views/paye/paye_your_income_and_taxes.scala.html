@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import controllers.auth.PayeAuthenticatedRequest
+@import utils.HtmlFormatter
 
 @(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever)
 
@@ -27,21 +28,18 @@
 
 @helpers.back_link(Messages("generic.back"))
 
-	<h1 class="heading-xlarge">
-			@Html(Messages("paye.ats.summary.title"))
-	    <span class="block-heading">
-	      @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
-	    </span>
-    </h1>
-
-    <p class="lede">@Html(Messages("paye.ats.summary.lede")) </p>
+	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.summary.title"))</h1>
+    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
+    <p>@Html(Messages("paye.ats.summary.lede")) </p>
 
         <section id="taxable-income">
         <h2>@Html(Messages("paye.ats.summary.total_income.title"))</h2>
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show">
                 <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.incomeBeforeTax, true)</span><br>
-                <span class="bold-small" aria-hidden="true">@Html(Messages("paye.ats.summary.total_income.link"))</span>
+                <span class="bold-small">@Html(Messages("paye.ats.summary.total_income.link"))</span>
             </a>
         </p>
         <p>@Html(Messages("paye.ats.summary.total_income.description"))</p>

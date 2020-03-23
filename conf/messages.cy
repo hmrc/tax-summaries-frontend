@@ -13,6 +13,8 @@ generic.utr_abbrev=UTR
 generic.minus=llai
 generic.acting_for=Rydych yn gweithredu ar ran
 generic.name_not_defined=enw heb ei ddiffinio
+generic.tax.year.start=Ebrill 6
+generic.tax.year.end=Ebrill 5
 generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} i Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Allgofnodi
@@ -268,7 +270,7 @@ global.page.not.found.error.contact.link=https://www.gov.uk/government/organisat
 # Paye ATS - landing page
 #===========================================================
 paye.ats.index.html.title=Eich Crynodeb Treth Blynyddol
-paye.generic.tax_year_heading=6 Ebrill {0} hyd at 5 Ebrill {1}
+paye.generic.tax_year_heading={0} hyd at {1}
 paye.ats.index.html.lede=Mae hwn yn dangos sut y cafodd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol eu cyfrifo, a sut mae’r llywodraeth yn gwario’ch arian.
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
 paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich swm rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.

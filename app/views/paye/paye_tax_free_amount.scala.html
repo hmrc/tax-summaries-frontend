@@ -19,6 +19,7 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import utils.HtmlFormatter
 
 @(viewModel:PayeTaxFreeAmount)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever)
 
@@ -26,12 +27,10 @@
 
 @helpers.back_link(Messages("generic.back"))
 
-	<h1 class="heading-xlarge">
-		@Html(Messages("paye.ats.tax_free_amount.title"))
-		<span class="block-heading">
-		  @Html(Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd))
-		</span>
-	</h1>
+	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.tax_free_amount.title"))</h1>
+	<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+		HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
+		HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
 
 	@if(viewModel.adjustmentRows.nonEmpty) {
 	<table class="paye-ats-data-table" id="adjustmentRows">

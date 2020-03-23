@@ -33,15 +33,16 @@
 @import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import view_models.paye.PayeAtsMain
+@import utils.HtmlFormatter
 
 @(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
 
 @includes.paye.paye_taxs_main(title = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
-    <h1 class="heading-xlarge" id="index-page-header">
-        @Messages("paye.ats.index.html.title")<br>
-        @Messages("paye.generic.tax_year_heading", viewModel.taxYearStart, viewModel.taxYearEnd)
-    </h1>
+    <h1 class="heading-xlarge flush--bottom" id="index-page-header">@Messages("paye.ats.index.html.title")</h1>
+    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
     <p id="index-page-description">@Html(Messages("paye.ats.index.html.lede"))</p>
     <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeYourIncomeAndTaxesController.show()" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
     <p>@Messages("paye.ats.index.html.tax_calc_description")</p>
