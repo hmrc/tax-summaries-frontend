@@ -19,7 +19,7 @@ package controllers
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest, MinAuthAction}
 import play.api.Play
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import play.api.Play.current
@@ -46,5 +46,9 @@ trait ErrorController extends FrontendController
 
   def notAuthorised: Action[AnyContent] = minAuthAction {
     implicit request => Ok(views.html.errors.not_authorised())
+  }
+
+  def serviceUnavailable: Action[AnyContent] = Action {
+    implicit request: Request[_] => Ok(views.html.errors.service_unavailable())
   }
 }

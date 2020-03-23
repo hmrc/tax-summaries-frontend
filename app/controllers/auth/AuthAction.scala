@@ -32,83 +32,89 @@ import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(override val authConnector: AuthConnector,
-                               configuration: Configuration)(implicit ec: ExecutionContext)
-  extends AuthAction with AuthorisedFunctions {
+class AuthActionImpl @Inject()(override val authConnector: AuthConnector, configuration: Configuration)(
+  implicit ec: ExecutionContext)
+    extends AuthAction with AuthorisedFunctions {
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  val saShuttered: Boolean = configuration.getBoolean("shuttering.sa").getOrElse(false)
 
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
+    if (saShuttered) {
+      Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable()))
+    } else {
+      implicit val hc: HeaderCarrier =
+        HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
-      .retrieve(Retrievals.allEnrolments and Retrievals.externalId) {
-        case Enrolments(enrolments) ~ Some(externalId) => {
-          val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
-            enrolment.identifiers
-              .find(id => id.key == "IRAgentReference")
-              .map(key => Uar(key.value))
-          }
-          val saUtr: Option[SaUtr] = enrolments.find(_.key == "IR-SA").flatMap { enrolment =>
-            enrolment.identifiers
-              .find(id => id.key == "UTR")
-              .map(key => SaUtr(key.value))
-          }
-
-          val payeEmpRef: Option[EmpRef] = enrolments.find(_.key == "IR-PAYE")
-            .map { enrolment =>
-              val taxOfficeNumber = enrolment.identifiers.find(id => id.key == "TaxOfficeNumber").map(_.value)
-              val taxOfficeReference = enrolment.identifiers.find(id => id.key == "TaxOfficeReference").map(_.value)
-
-              (taxOfficeNumber, taxOfficeReference) match {
-                case (Some(number), Some(reference)) =>
-                  EmpRef(number, reference)
-              }
-            }
-
-          val ctUtr: Option[CtUtr] = enrolments.find(_.key == "IR-CT").flatMap { enrolment =>
-            enrolment.identifiers
-              .find(id => id.key == "UTR")
-              .map(key => CtUtr(key.value))
-          }
-
-          val vrn: Option[Vrn] = enrolments.find(vatEnrolments => vatEnrolments.key == "HMCE-VATDEC-ORG" || vatEnrolments.key == "HMCE-VATVAR-ORG")
-            .flatMap { enrolment =>
+      authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
+        .retrieve(Retrievals.allEnrolments and Retrievals.externalId) {
+          case Enrolments(enrolments) ~ Some(externalId) => {
+            val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
-                .find(id => id.key == "VATRegNo")
-                .map(key => Vrn(key.value))
+                .find(id => id.key == "IRAgentReference")
+                .map(key => Uar(key.value))
+            }
+            val saUtr: Option[SaUtr] = enrolments.find(_.key == "IR-SA").flatMap { enrolment =>
+              enrolment.identifiers
+                .find(id => id.key == "UTR")
+                .map(key => SaUtr(key.value))
             }
 
-          block {
-            AuthenticatedRequest(
-              externalId,
-              agentRef,
-              saUtr,
-              None,
-              payeEmpRef,
-              ctUtr,
-              vrn,
-              request
-            )
-          }
-        }
-        case _ => throw new RuntimeException("Can't find credentials for user")
-      }
-  } recover {
-    case _: NoActiveSession => {
-      lazy val ggSignIn = ApplicationConfig.loginUrl
-      lazy val callbackUrl = ApplicationConfig.loginCallback
-      Redirect(
-        ggSignIn,
-        Map(
-          "continue"    -> Seq(callbackUrl),
-          "origin"      -> Seq(ApplicationConfig.appName)
-        )
-      )
-    }
+            val payeEmpRef: Option[EmpRef] = enrolments
+              .find(_.key == "IR-PAYE")
+              .map { enrolment =>
+                val taxOfficeNumber = enrolment.identifiers.find(id => id.key == "TaxOfficeNumber").map(_.value)
+                val taxOfficeReference = enrolment.identifiers.find(id => id.key == "TaxOfficeReference").map(_.value)
 
-    case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
-  }
+                (taxOfficeNumber, taxOfficeReference) match {
+                  case (Some(number), Some(reference)) =>
+                    EmpRef(number, reference)
+                }
+              }
+
+            val ctUtr: Option[CtUtr] = enrolments.find(_.key == "IR-CT").flatMap { enrolment =>
+              enrolment.identifiers
+                .find(id => id.key == "UTR")
+                .map(key => CtUtr(key.value))
+            }
+
+            val vrn: Option[Vrn] = enrolments
+              .find(vatEnrolments => vatEnrolments.key == "HMCE-VATDEC-ORG" || vatEnrolments.key == "HMCE-VATVAR-ORG")
+              .flatMap { enrolment =>
+                enrolment.identifiers
+                  .find(id => id.key == "VATRegNo")
+                  .map(key => Vrn(key.value))
+              }
+
+            block {
+              AuthenticatedRequest(
+                externalId,
+                agentRef,
+                saUtr,
+                None,
+                payeEmpRef,
+                ctUtr,
+                vrn,
+                request
+              )
+            }
+          }
+          case _ => throw new RuntimeException("Can't find credentials for user")
+        }
+    } recover {
+      case _: NoActiveSession => {
+        lazy val ggSignIn = ApplicationConfig.loginUrl
+        lazy val callbackUrl = ApplicationConfig.loginCallback
+        Redirect(
+          ggSignIn,
+          Map(
+            "continue" -> Seq(callbackUrl),
+            "origin"   -> Seq(ApplicationConfig.appName)
+          )
+        )
+      }
+
+      case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
+    }
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
