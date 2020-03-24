@@ -52,7 +52,7 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
     val agentToken = AgentToken(
       agentUar = testUar,
       clientUtr = testUtr,
-      timestamp = "0"
+      timestamp = 0
     )
 
     override lazy val middleConnector: MiddleConnector = mock[MiddleConnector]
