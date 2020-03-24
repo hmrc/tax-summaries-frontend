@@ -54,7 +54,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
     val agentToken = AgentToken(
       agentUar = testUar,
       clientUtr = testUtr,
-      timestamp = "0"
+      timestamp = 0
     )
 
 
