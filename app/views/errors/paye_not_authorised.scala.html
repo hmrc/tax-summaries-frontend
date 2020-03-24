@@ -18,13 +18,9 @@
 
 @()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
-@headerContent = {
+@includes.paye.paye_taxs_main(title = Messages("paye.not.authorised.title")) {
 
- <h1 class="heading-xlarge">@Html(Messages("paye.not.authorised.h1"))</h1>
-}
-
-@includes.taxs_main(title = Messages("paye.not.authorised.title"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
-
+    <h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.not.authorised.h1"))</h1>
     <p>@Html(Messages("paye.not.authorised.line1"))</p>
     <p>@Html(Messages("paye.not.authorised.line2"))</p>
 }
