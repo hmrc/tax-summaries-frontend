@@ -377,12 +377,12 @@ client_agent.notice.line2=The annual tax summary will provide a breakdown of how
 
 # Service unavailable page
 #============================================================
-ats.service_unavailable.title=Service is unavailable
-ats.service_unavailable.heading=Sorry, the service is unavailable
+ats.service_unavailable.title=Sorry there is a problem with the service
+ats.service_unavailable.heading=Sorry there is a problem with the service
 ats.service_unavailable.paragraph=You will be able to use the service later.
 
-paye.ats.service_unavailable.title=Service is unavailable
-paye.ats.service_unavailable.heading=Sorry, the service is unavailable
+paye.ats.service_unavailable.title=Sorry there is a problem with the service
+paye.ats.service_unavailable.heading=Sorry there is a problem with the service
 paye.ats.service_unavailable.paragraph=You will be able to use the service later.
 
 # PAYE Not authorised page
