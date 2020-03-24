@@ -52,7 +52,8 @@ trait ApplicationConfig {
   val payeLoginUrl: String
   val payeLoginCallbackUrl: String
   val identityVerificationUpliftUrl: String
-  val iVUpliftFailureCallback: String
+  val identityVerificationUpliftFailureCallback: String
+  val credentialStrengthUpliftUrl: String
   val govUkServiceManual: String
 }
 
@@ -66,6 +67,7 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val authHost = baseUrl("auth")
   private val contactFormServiceIdentifier = "TAX-SUMMARIES"
   lazy val identityVerificationUrl = baseUrl("identity-verification-frontend")
+  lazy val basGatewayUrl = baseUrl("bas-gateway-frontend")
   lazy val identityVerification_web_context = runModeConfiguration.getString("identity-verification.web-context").getOrElse("mdtp")
 
   // Caching config
@@ -101,7 +103,8 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val payeLoginUrl = getConf("paye.login.url")
   override lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
   override lazy val identityVerificationUpliftUrl = s"$identityVerificationUrl/$identityVerification_web_context/uplift"
-  override lazy val iVUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
+  override lazy val identityVerificationUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
+  override lazy val credentialStrengthUpliftUrl = s"$basGatewayUrl/bas-gateway/uplift-mfa"
 
   override lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 

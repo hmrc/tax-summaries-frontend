@@ -16,7 +16,6 @@
 
 package controllers.auth.paye
 
-import config.ApplicationConfig
 import controllers.auth.{AuthConnector, PayeAuthAction, PayeAuthActionImpl}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -30,7 +29,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -50,6 +48,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
 
   val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
   val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
+  val basGatewayServiceUrl = "http://localhost:9553/uplift-mfa"
 
   val unauthorisedRoute = controllers.paye.routes.PayeErrorController.notAuthorised().url
 
@@ -116,7 +115,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   }
 
   "A user without credential strength strong" should {
-    "return 303 and be redirected to not authorised page" in {
+    "return 303 and be redirected to MFA uplift" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(IncorrectCredentialStrength()))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
@@ -124,7 +123,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
 
-      redirectLocation(result).get should endWith(unauthorisedRoute)
+      redirectLocation(result).get should startWith(basGatewayServiceUrl)
     }
   }
 }
