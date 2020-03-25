@@ -240,6 +240,13 @@ not.authorised.line1=Nid ydych wedi eich awdurdodi i gyrchu Crynodebau Treth Bly
 client_agent.notice.line1=Nid yw’r fersiwn o’r crynodeb treth blynyddol sy’n galluogi asiantau i fwrw golwg ar fanylion eu cleientiaid ar gael eto. Bydd y fersiwn hwn ar gael cyn bo hir.
 client_agent.notice.line2=Bydd y crynodeb treth blynyddol yn dangos dadansoddiad o faint o dreth ac Yswiriant Gwladol mae eich cleient wedi eu talu neu y bydd yn eu talu, a sut mae’r llywodraeth wedi gwario’r rhain, neu sut y bydd yn eu gwario.
 
+# PAYE Not authorised page
+#============================================================
+paye.not.authorised.title=Nid oeddem yn gallu cadarnhau pwy ydych
+paye.not.authorised.h1=Nid oeddem yn gallu cadarnhau pwy ydych
+paye.not.authorised.line1=Nid oes Crynodeb Treth Blynyddol gennych ar gyfer y flwyddyn hon
+paye.not.authorised.line2=Am resymau diogelwch, mae’n rhaid i chi aros 24 awr ac yna mewngofnodi i roi cynnig arall arni.
+
 # Token error page
 #============================================================
 token_error.html.title=Problem dechnegol

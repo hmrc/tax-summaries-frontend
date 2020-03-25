@@ -50,6 +50,9 @@ trait ApplicationConfig {
   val feedbackUrl: String
   val payeYear: Int
   val payeLoginUrl: String
+  val payeLoginCallbackUrl: String
+  val identityVerificationUpliftUrl: String
+  val iVUpliftFailureCallback: String
   val govUkServiceManual: String
 }
 
@@ -93,7 +96,11 @@ object ApplicationConfig extends ApplicationConfig with ServicesConfig {
   override lazy val portalUrl = getConf("portal.url")
   override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
   override lazy val feedbackUrl: String = getConf("feedback.url")
-  override lazy val payeLoginUrl = getConf("login.paye.url")
+  override lazy val payeLoginUrl = getConf("paye.login.url")
+  override lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
+  override lazy val identityVerificationUpliftUrl = getConf("paye.iv-uplift-redirect.url")
+  override lazy val iVUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
+
   override lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
   //Application name

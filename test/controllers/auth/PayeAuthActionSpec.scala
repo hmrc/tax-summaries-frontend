@@ -16,6 +16,7 @@
 
 package controllers.auth.paye
 
+import config.ApplicationConfig
 import controllers.auth.{AuthConnector, PayeAuthAction, PayeAuthActionImpl}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -29,7 +30,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.test.UnitSpec
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.postfixOps
@@ -41,12 +44,14 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "login.paye.url" -> "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary"
+        "paye.login.url" -> "http://localhost:9025/gg/sign-in"
       )
       .build()
 
-  val ggSignInUrl = fakeApplication.configuration.getString("login.paye.url").getOrElse("Config key not found")
-  val unauthorisedRoute = controllers.routes.ErrorController.notAuthorised().url
+  val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
+  val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
+
+  val unauthorisedRoute = controllers.paye.routes.PayeErrorController.notAuthorised().url
 
   class Harness(authAction: PayeAuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -92,7 +97,34 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
+
       redirectLocation(result).get should startWith(ggSignInUrl)
+    }
+  }
+
+  "A user with Insufficient confidence level type exception" should {
+    "return 303 and be redirected to Identity verification service" in {
+      when(mockAuthConnector.authorise(any(), any())(any(), any()))
+        .thenReturn(Future.failed(InsufficientConfidenceLevel()))
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val controller = new Harness(authAction)
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) shouldBe SEE_OTHER
+
+      redirectLocation(result).get should startWith(identityVerificationServiceUrl)
+    }
+  }
+
+  "A user without credential strength strong" should {
+    "return 303 and be redirected to not authorised page" in {
+      when(mockAuthConnector.authorise(any(), any())(any(), any()))
+        .thenReturn(Future.failed(IncorrectCredentialStrength()))
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val controller = new Harness(authAction)
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) shouldBe SEE_OTHER
+
+      redirectLocation(result).get should endWith(unauthorisedRoute)
     }
   }
 }
