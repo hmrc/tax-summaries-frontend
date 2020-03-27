@@ -19,6 +19,7 @@ package views.paye
 import config.AppFormPartialRetriever
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -26,9 +27,10 @@ import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
-import view_models.paye.PayeGovernmentSpend
 
-class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
+import scala.collection.JavaConversions._
+
+class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with TestConstants with ScalaFutures {
 
   implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
@@ -94,6 +96,23 @@ class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with Test
       document
         .select("h2.heading-xlarge")
         .text shouldBe "6 April 2018 to 5 April 2019"
+    }
+
+    "render data in the correct order" in {
+      val testData = PayeAtsTestData.payeGovernmentSpendViewModel
+      val view = views.html.paye.paye_government_spending(testData).body
+      val document = Jsoup.parse(view)
+
+      val categories = testData.orderedSpendRows.map{ i =>
+        messages(s"paye.ats.treasury_spending.table.${i.category}")
+      }
+
+      val categoryElements = document.getElementsByClass("percentage").eachText().toList
+
+      (categoryElements zip categories) map {
+        case (expected: String, result: String) =>
+        expected should include (result)
+      }
     }
 
     "link to Scottish government spending page for Scottish users" in {
