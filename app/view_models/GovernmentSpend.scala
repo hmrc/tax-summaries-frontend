@@ -16,12 +16,8 @@
 
 package view_models
 
-import config.PayeConfig
 import models.SpendData
-import play.api.Play
 import utils.GenericViewModel
-
-import scala.collection.mutable
 
 case class GovernmentSpend(
   taxYear: Int,
