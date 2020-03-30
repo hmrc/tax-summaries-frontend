@@ -16,7 +16,10 @@
 
 package services
 
+import java.util.Date
+
 import connectors.MiddleConnector
+import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
 import play.api.Logger
 import uk.gov.hmrc.domain.Nino
@@ -28,15 +31,20 @@ import scala.concurrent.Future
 
 object PayeAtsService extends PayeAtsService{
   override val middleConnector = MiddleConnector
+  override val auditService = AuditService
 }
 
 trait PayeAtsService {
   def middleConnector: MiddleConnector
+  def auditService: AuditService
 
-  def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier):Future[Either[HttpResponse,PayeAtsData]] = {
+  def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]):Future[Either[HttpResponse,PayeAtsData]] = {
      middleConnector.connectToPayeATS(nino,taxYear) map { response =>
        response status match {
-         case OK =>  Right(response.json.as[PayeAtsData])
+         case OK =>  {
+           sendAuditEvent(taxYear)
+           Right(response.json.as[PayeAtsData])
+         }
          case _ => Left(response)
        }
      } recover {
@@ -47,5 +55,17 @@ trait PayeAtsService {
          Left(HttpResponse(INTERNAL_SERVER_ERROR))
        }
      }
+  }
+
+  private def sendAuditEvent(taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]) = {
+    auditService.sendEvent(
+      auditType = AuditTypes.Tx_SUCCEEDED,
+      details = Map(
+        "userId" -> request.userId,
+        "userNino" -> request.nino.nino,
+        "taxYear" -> taxYear.toString,
+        "time" -> new Date().toString
+      )
+    )
   }
 }

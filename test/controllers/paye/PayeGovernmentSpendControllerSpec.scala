@@ -42,7 +42,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2018
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   class TestController extends PayeGovernmentSpendController {
 
@@ -62,7 +62,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
     "return OK response" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
@@ -76,7 +76,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)
@@ -88,7 +88,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
       val result = show(fakeAuthenticatedRequest).futureValue

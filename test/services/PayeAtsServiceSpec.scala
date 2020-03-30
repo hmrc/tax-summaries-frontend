@@ -17,13 +17,16 @@
 package services
 
 import connectors.MiddleConnector
+import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.libs.json.{JsResultException, JsValue, Json}
+import play.api.mvc.Request
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.testNino
@@ -31,9 +34,11 @@ import utils.TestConstants.testNino
 import scala.concurrent.Future
 import scala.io.Source
 
-class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class
+PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
+  implicit val request = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
   val expectedResponse: JsValue = readJson("/paye_ats.json")
   private val currentYear = 2018
 
@@ -44,6 +49,7 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
 
   class TestService extends PayeAtsService {
     lazy val middleConnector: MiddleConnector = mock[MiddleConnector]
+    lazy val auditService: AuditService = mock[AuditService]
   }
 
   "getPayeATSData" should {
@@ -58,6 +64,20 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
       val result = getPayeATSData(testNino, currentYear).futureValue
 
       result shouldBe Right(expectedResponse.as[PayeAtsData])
+    }
+
+    "produce a 'success' audit event when returning a successful response" in new TestService {
+      when(middleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(
+          HttpResponse(responseStatus = 200, responseJson = Some(expectedResponse), responseHeaders = Map.empty)))
+
+      getPayeATSData(testNino, currentYear)
+
+      verify(auditService, times(1)).sendEvent(
+        eqTo("TxSuccessful"),
+        any[Map[String, String]],
+        any[Option[String]]
+      )(any[Request[_]], any[HeaderCarrier])
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in new TestService {
