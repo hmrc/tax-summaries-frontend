@@ -100,7 +100,7 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar {
     "throw an exception for an invalid year" in {
       val config = new PayeConfig {
         override protected val configPath: String = "paye.conf"
-        override val payeYear: Int = 2019
+        override val payeYear: Int = 2020
       }
 
       assertThrows[RuntimeException]{config.spendCategories}
