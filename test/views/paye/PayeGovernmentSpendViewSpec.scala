@@ -26,7 +26,6 @@ import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
-import view_models.paye.PayeGovernmentSpend
 
 class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
 
