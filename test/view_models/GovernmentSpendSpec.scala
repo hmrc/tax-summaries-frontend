@@ -36,8 +36,21 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants {
 
     "filteredDataWithHigherTransport" must {
 
-      "sort transport above Public Order" in {
-        fakeGovernmentSpend.filteredDataWithHigherTransport.map(_._1) mustBe expectedCategoryOrder
+      "sort transport above Public Order" when {
+
+        "the tax year is 2019" in {
+          fakeGovernmentSpend.filteredDataWithHigherTransport.map(_._1) mustBe expectedCategoryOrder
+        }
+      }
+
+      "sort public order above transport" when {
+
+        "the tax year is not 2019" in {
+          val spendFor2018 = fakeGovernmentSpend.copy(taxYear = 2018)
+
+          spendFor2018.filteredDataWithHigherTransport.map(_._1) mustBe
+          spendFor2018.sortedSpendData.map(_._1)
+        }
       }
     }
 
