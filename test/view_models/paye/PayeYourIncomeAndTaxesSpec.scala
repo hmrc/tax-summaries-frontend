@@ -32,7 +32,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.yourIncomeAndTaxesData
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
@@ -45,7 +45,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.malformedYourIncomeAndTaxesData
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(0, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
@@ -58,7 +58,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
@@ -71,7 +71,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingEmployeeNicAmount
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
+      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2019,
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
