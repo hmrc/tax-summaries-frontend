@@ -79,7 +79,7 @@
 
         <a href="@controllers.routes.NicsController.authorisedNics()?taxYear=@viewModel.taxYearTo" class="data-link" data-journey-click="link - click:@Messages("ats.summary.title"):@Messages("ats.summary.tax_and_nics.link")">
             <span class="visuallyhidden">@Html(Messages("screen.reader.income_tax_and_ni")) </span>
-            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</span><br>
+            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.nonNegativeTotalIncomeTaxAndNics)</span><br>
             <span class="bold-small" aria-hidden="true">@Html(Messages("ats.summary.tax_and_nics.link"))</span>
         </a>
 

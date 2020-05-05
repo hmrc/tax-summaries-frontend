@@ -16,91 +16,191 @@
 
 package view_models
 
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.prop.PropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
+import scala.util.matching.UnanchoredRegex
 
 
-class AmountSpec extends UnitSpec with GuiceOneAppPerSuite  {
+
+class AmountSpec extends UnitSpec with PropertyChecks {
 
   val testCurrency: String = "GBP"
 
-  "Amount" should {
+  "Amount" when {
 
-    "not change constructor parameter values" in {
-      val testValue: BigDecimal = 1.0
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      assert(testValue equals testAmount.amount)
-      assert(testCurrency equals testAmount.currency)
+    "toString is called" should {
+
+      "format with two decimal places" in {
+        val testValue: BigDecimal = 1000.00
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toString() shouldEqual "1,000"
+      }
+
+      "formats the decimal places to zero" in {
+        val testValue: BigDecimal = 1000.63
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toString() shouldEqual "1,000"
+      }
+
+      "produces a comma for thousands" in {
+        val testValue: BigDecimal = 1000.00
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toString() shouldEqual "1,000"
+      }
     }
 
-    "format with two decimal places" in {
-      val testValue: BigDecimal = 1000.00
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toString() shouldEqual "1,000"
+    "parsed as JSON" should {
+      "carry out JSON transformation" in {
+        val amountText = """{"amount":1.0,"currency":"GBP"}"""
+        val jsonFromText = Json.parse(amountText)
+        val amountObject = Amount(1.0, testCurrency)
+        val jsonFromObject = Json.toJson(amountObject)
+        assert(jsonFromText equals jsonFromObject)
+      }
     }
 
-    "formats the decimal places to zero" in {
-      val testValue: BigDecimal = 1000.63
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toString() shouldEqual "1,000"
+    "toHalfRoundedUpAmount is called" should {
+      "can round up if testValue is Greater than or 1000.5" in {
+        val testValue: BigDecimal = 1000.5
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toHalfRoundedUpAmount shouldEqual "1,001"
+      }
+
+      "can round down if testValue is less than 1000.4" in {
+        val testValue: BigDecimal = 1000.4
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toHalfRoundedUpAmount shouldEqual "1,000"
+      }
     }
 
-    "produces a comma for thousands" in {
-      val testValue: BigDecimal = 1000.00
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toString() shouldEqual "1,000"
+    "isZero is called" should {
+
+      "return true" when {
+        "the amount is zero" in {
+          val amount = Amount(0, testCurrency)
+          amount.isZero shouldBe true
+        }
+      }
+
+      "return false" when {
+        "the amount is greater than zero" in {
+          forAll { bd: BigDecimal =>
+            whenever(bd > 0) {
+              val amount = Amount(bd, testCurrency)
+              amount.isZero shouldBe false
+            }
+          }
+        }
+
+        "the amount is less than zero" in {
+          forAll { bd: BigDecimal =>
+            whenever(bd < 0) {
+              val amount = Amount(bd, testCurrency)
+              amount.isZero shouldBe false
+            }
+          }
+        }
+      }
     }
 
-    "can round up if it's a credit" in {
-      val testValue: BigDecimal = 1000.01
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toCreditString shouldEqual "1,001"
+    "isZeroOrLess is called" should {
+
+      "return true" when {
+        "the amount is zero" in {
+          val amount = Amount(0, testCurrency)
+          amount.isZeroOrLess shouldBe true
+        }
+
+        "the amount is less than zero" in {
+          forAll { bd: BigDecimal =>
+            whenever(bd < 0) {
+              val amount = Amount(bd, testCurrency)
+              amount.isZeroOrLess shouldBe true
+            }
+          }
+        }
+      }
+
+      "return false" when {
+        "the amount is greater than zero" in {
+          forAll { bd: BigDecimal =>
+            whenever(bd > 0) {
+              val amount = Amount(bd, testCurrency)
+              amount.isZeroOrLess shouldBe false
+            }
+          }
+        }
+      }
     }
 
-    "can round up if testValue is Greater than or 1000.5" in {
-      val testValue: BigDecimal = 1000.5
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toHalfRoundedUpAmount shouldEqual "1,001"
+    "nonZero is called" should {
+
+      "return true" when {
+        "the amount is not zero" in {
+          forAll { bd: BigDecimal =>
+            whenever(bd != 0) {
+              val amount = Amount(bd, testCurrency)
+              amount.nonZero shouldBe true
+            }
+          }
+        }
+      }
+
+      "return false" when {
+        "the amount is zero" in {
+          val amount = Amount(0, testCurrency)
+          amount.nonZero shouldBe false
+        }
+      }
     }
 
-    "can round down if testValue is less than 1000.4" in {
-      val testValue: BigDecimal = 1000.4
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toHalfRoundedUpAmount shouldEqual "1,000"
+    "toCreditString is called" should {
+      "can round up if it's a credit" in {
+        val testValue: BigDecimal = 1000.01
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toCreditString shouldEqual "1,001"
+      }
     }
 
-    "produce correct inverse amount" in {
-      val testValue: BigDecimal = 1000.00
-      val testAmount: Amount = -Amount(testValue, testCurrency)
-      testAmount.toString() shouldEqual "-1,000"
+    "toTwoDecimalString is called" should {
+      "have a comma and two decimal places for government spend values" in {
+        val testValue: BigDecimal = 1000.01
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toTwoDecimalString shouldEqual "1,000.01"
+      }
+
+      "not round up government spend values" in {
+        val testValue: BigDecimal = 1000.99
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toTwoDecimalString shouldEqual "1,000.99"
+      }
+
+      "round down government spend values after the second decimal place" in {
+        val testValue: BigDecimal = 1000.018796799
+        val testAmount: Amount = new Amount(testValue, testCurrency)
+        testAmount.toTwoDecimalString shouldEqual "1,000.01"
+      }
     }
 
-    "carry out JSON transformation" in {
-      val amountText = """{"amount":1.0,"currency":"GBP"}"""
-      val jsonFromText = Json.parse(amountText)
-      val amountObject = Amount(1.0, testCurrency)
-      val jsonFromObject = Json.toJson(amountObject)
-      assert(jsonFromText equals jsonFromObject)
+    "toHundredthsString is called" should {
+      "give the amount as a string with the amount multiplied by 100" in {
+        val amt = Amount(BigDecimal(123.45678), testCurrency)
+        amt.toHundredthsString shouldBe "12,345.67"
+      }
     }
 
-    "have a comma and two decimal places for government spend values" in {
-      val testValue: BigDecimal = 1000.01
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toTwoDecimalString shouldEqual "1,000.01"
-    }
+    "unary '-' is called" should {
+      "turn the amount negative" in {
 
-    "not round up government spend values" in {
-      val testValue: BigDecimal = 1000.99
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toTwoDecimalString shouldEqual "1,000.99"
-    }
-
-    "round down government spend values after the second decimal place" in {
-      val testValue: BigDecimal = 1000.018796799
-      val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toTwoDecimalString shouldEqual "1,000.01"
+        forAll { bd: BigDecimal =>
+          whenever(bd > 1) {
+            val result = -Amount(bd, testCurrency)
+            result.amount shouldBe -bd
+          }
+        }
+      }
     }
   }
 }

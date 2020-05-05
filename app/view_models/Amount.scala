@@ -39,6 +39,8 @@ case class Amount(amount: BigDecimal, currency: String) {
 
   def isZero = amount == BigDecimal(0)
 
+  def isZeroOrLess = amount <= BigDecimal(0)
+
   val nonZero: Boolean = !isZero
 
   def toCreditString = format(0, BigDecimal.RoundingMode.UP)

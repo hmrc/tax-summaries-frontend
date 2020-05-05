@@ -21,4 +21,7 @@ object ViewUtils {
 
   def toCurrency(amount: Amount, twoDecimalPlaces: Boolean = false): String =
     s"&pound;${if(twoDecimalPlaces) amount.toTwoDecimalString else amount}"
+
+  def positiveOrZero(currentAmount: Amount): Amount =
+    currentAmount.copy(amount = currentAmount.amount.max(BigDecimal(0)))
 }
