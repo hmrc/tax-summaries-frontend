@@ -216,7 +216,7 @@ class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
       "Income tax is zero or less" in new TestController {
 
         forAll { bd: BigDecimal =>
-          whenever(bd < 1) {
+          whenever(bd <= 0) {
 
             val model5 = baseModel.copy(
               totalIncomeTaxAmount = Amount(bd, "GBP")
