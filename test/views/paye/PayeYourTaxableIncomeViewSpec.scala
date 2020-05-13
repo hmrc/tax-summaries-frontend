@@ -32,7 +32,7 @@ class PayeYourTaxableIncomeViewSpec extends UnitSpec with OneAppPerSuite with Te
 
   implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
-  implicit val request = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
   val payeYourTaxableIncomeViewModel : PayeYourTaxableIncome =PayeAtsTestData.payeYourTaxableIncomeViewModel

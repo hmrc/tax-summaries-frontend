@@ -61,11 +61,11 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   "A user with a confidence level 200 and a Nino" should {
     "create an authenticated request" in {
       val nino = new Generator().nextNino.nino
-      val retrievalResult: Future[Option[String] ~ Option[String]] = Future.successful(Some("1234567890") ~ Some(nino))
+      val retrievalResult: Future[Option[String]] = Future.successful(Some(nino))
 
       when(
         mockAuthConnector
-          .authorise[Option[String] ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)

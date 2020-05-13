@@ -44,11 +44,10 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-        .retrieve(Retrievals.externalId and Retrievals.nino) {
-          case Some(userId) ~ Some(nino) => {
+        .retrieve(Retrievals.nino) {
+          case Some(nino) => {
             block {
               PayeAuthenticatedRequest(
-                userId,
                 Nino(nino),
                 request
               )

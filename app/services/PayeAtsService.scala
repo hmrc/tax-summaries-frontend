@@ -16,15 +16,14 @@
 
 package services
 
-import java.util.Date
-
 import connectors.MiddleConnector
 import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
 import play.api.Logger
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,30 +40,26 @@ trait PayeAtsService {
   def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]):Future[Either[HttpResponse,PayeAtsData]] = {
      middleConnector.connectToPayeATS(nino,taxYear) map { response =>
        response status match {
-         case OK =>  {
-           sendAuditEvent(taxYear)
+         case OK =>
+           sendAuditEvent(nino, taxYear)
            Right(response.json.as[PayeAtsData])
-         }
          case _ => Left(response)
        }
      } recover {
-       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST))
-       case e: NotFoundException   => Left(HttpResponse(NOT_FOUND))
-       case e: Exception => {
+       case _: BadRequestException => Left(HttpResponse(BAD_REQUEST))
+       case _: NotFoundException   => Left(HttpResponse(NOT_FOUND))
+       case e: Exception =>
          Logger.error(s"Exception in PayeAtsService: $e", e)
          Left(HttpResponse(INTERNAL_SERVER_ERROR))
-       }
      }
   }
 
-  private def sendAuditEvent(taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]) = {
+  private def sendAuditEvent(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]): Future[AuditResult] = {
     auditService.sendEvent(
       auditType = AuditTypes.Tx_SUCCEEDED,
       details = Map(
-        "userId" -> request.userId,
-        "userNino" -> request.nino.nino,
-        "taxYear" -> taxYear.toString,
-        "time" -> new Date().toString
+        "userNino" -> nino.nino,
+        "taxYear" -> taxYear.toString
       )
     )
   }

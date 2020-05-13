@@ -41,7 +41,7 @@ class PayeYourTaxableIncomeControllerSpec extends UnitSpec with MockitoSugar wit
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2019
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/income-before-tax"))
+  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/income-before-tax"))
 
 
   class TestController extends PayeYourTaxableIncomeController {

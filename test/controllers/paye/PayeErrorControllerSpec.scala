@@ -33,7 +33,7 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
   val taxYear = 2018
 
   trait TestErrorController extends PayeErrorController {
-    implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+    implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
     override val payeYear = taxYear
   }

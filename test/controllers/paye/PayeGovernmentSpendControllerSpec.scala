@@ -42,7 +42,7 @@ class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2018
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   class TestController extends PayeGovernmentSpendController {
 

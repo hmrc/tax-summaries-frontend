@@ -38,7 +38,7 @@ class
 PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
-  implicit val request = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
+  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
   val expectedResponse: JsValue = readJson("/paye_ats.json")
   private val currentYear = 2018
 
@@ -75,7 +75,7 @@ PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest wi
 
       verify(auditService, times(1)).sendEvent(
         eqTo("TxSuccessful"),
-        any[Map[String, String]],
+        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYear.toString)),
         any[Option[String]]
       )(any[Request[_]], any[HeaderCarrier])
     }

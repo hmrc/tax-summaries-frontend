@@ -49,7 +49,7 @@ class PayeTaxFreeAmountControllerSpec
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2018
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest("1234567890", testNino, FakeRequest("GET", routes.PayeTaxFreeAmountController.show().url))
+  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", routes.PayeTaxFreeAmountController.show().url))
 
   class TestController extends PayeTaxFreeAmountController {
     override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
