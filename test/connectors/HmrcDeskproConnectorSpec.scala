@@ -44,7 +44,7 @@ class HmrcDeskproConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with Wi
   val request = AuthenticatedRequest("1", None, None, None, None, None, None, FakeRequest())
   implicit val hc = HeaderCarrier()
 
-  lazy val sut = new HmrcDeskproConnector(WSHttp, app.injector.instanceOf[Configuration], app.injector.instanceOf[Mode])
+  lazy val sut = new HmrcDeskproConnector
 
   "HmrcDeskproConnector" when {
 

@@ -17,9 +17,10 @@
 package connectors.deskpro
 
 import com.google.inject.Inject
+import config.WSHttp
 import controllers.auth.AuthenticatedRequest
 import models.{Feedback, Ticket, TicketId}
-import play.api.Configuration
+import play.api.{Configuration, Play}
 import play.api.Mode.Mode
 import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -36,7 +37,11 @@ import scala.concurrent.Future
 //  override protected def runModeConfiguration: Configuration = Play.current.configuration
 //}
 
-class HmrcDeskproConnector @Inject()(http: HttpPost, override val runModeConfiguration: Configuration, override val mode: Mode) extends ServicesConfig {
+class HmrcDeskproConnector @Inject() extends ServicesConfig {
+
+  override protected def mode: Mode = Play.current.mode
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
+  val http = WSHttp
 
   lazy val serviceUrl: String = baseUrl("hmrc-deskpro")
 
@@ -54,4 +59,6 @@ class HmrcDeskproConnector @Inject()(http: HttpPost, override val runModeConfigu
   }
 
   private def requestUrl[B, A](uri: String): String = s"$serviceUrl$uri"
+
+
 }
