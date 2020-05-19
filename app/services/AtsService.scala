@@ -30,8 +30,8 @@ import view_models.NoATSViewModel
 import scala.concurrent.Future
 
 object AtsService extends AtsService {
-  override val middleConnector = MiddleConnector
-  override val dataCache = DataCacheConnector
+  override val middleConnector = new MiddleConnector
+  override val dataCache = new DataCacheConnector
   override val auditService = AuditService
   override val authUtils = AuthorityUtils
   override val accountUtils = AccountUtils

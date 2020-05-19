@@ -29,8 +29,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object AtsListService extends AtsListService {
-  override lazy val middleConnector = MiddleConnector
-  override lazy val dataCache = DataCacheConnector
+  override lazy val middleConnector = new MiddleConnector
+  override lazy val dataCache = new DataCacheConnector
   override lazy val cryptoService = CryptoService
   override lazy val authUtils = AuthorityUtils
   override lazy val auditService: AuditService = AuditService

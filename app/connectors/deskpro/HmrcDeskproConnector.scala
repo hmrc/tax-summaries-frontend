@@ -28,15 +28,6 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
 
-//object HmrcDeskproConnector extends HmrcDeskproConnector with ServicesConfig {
-//  override lazy val serviceUrl = baseUrl("hmrc-deskpro")
-//  override val http = WSHttp
-//
-//  override protected def mode: Mode = Play.current.mode
-//
-//  override protected def runModeConfiguration: Configuration = Play.current.configuration
-//}
-
 class HmrcDeskproConnector @Inject() extends ServicesConfig {
 
   override protected def mode: Mode = Play.current.mode

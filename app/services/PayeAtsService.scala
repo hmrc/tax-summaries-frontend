@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PayeAtsService extends PayeAtsService{
-  override val middleConnector = MiddleConnector
+  override val middleConnector = new MiddleConnector
 }
 
 trait PayeAtsService {

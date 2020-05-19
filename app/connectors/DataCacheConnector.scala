@@ -16,6 +16,7 @@
 
 package connectors
 
+import com.google.inject.Inject
 import config.TAXSSessionCache
 import models.{AtsData, AtsListData}
 import services.{AgentToken, CryptoService}
@@ -26,15 +27,13 @@ import utils.Globals
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-object DataCacheConnector extends DataCacheConnector {
-  lazy val cryptoService = CryptoService
-}
+class DataCacheConnector @Inject()() {
 
-trait DataCacheConnector {
+  lazy val cryptoService = CryptoService
+
   val sourceId: String = Globals.TAXS_CACHE_KEY
   val sourceAtsListId: String = Globals.TAXS_ATS_LIST_CACHE_KEY
   val sourceAtsSelectedTaxYearId: String = Globals.TAXS_SELECTED_TAX_YEAR_CACHE_KEY
-  val cryptoService: CryptoService
 
   def fetchAndGetAtsForSession(taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[AtsData]] = {
     val atsSourceId = sourceId + taxYear

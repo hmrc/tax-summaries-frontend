@@ -18,9 +18,6 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import config.WSHttp
-import connectors.MiddleConnector.baseUrl
-import javax.swing.text.AbstractDocument.Content
-import models.PayeAtsData
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -32,9 +29,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.testNino
 import utils.{JsonUtil, WireMockHelper}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience{
+class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience with JsonUtil {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -46,15 +41,11 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
   implicit val hc = HeaderCarrier()
   private val currentYear = 2018
 
-  trait MiddleConnectorSetUp extends MiddleConnector with JsonUtil {
-
-    override def http: HttpGet = WSHttp
-    override def serviceUrl: String =  baseUrl("tax-summaries")
-  }
+  lazy val sut = new MiddleConnector
 
   "connectToPayeTaxSummary" should {
 
-    "return successful response" in new MiddleConnectorSetUp {
+    "return successful response" in {
 
       val expectedResponse: String = loadAndReplace("/paye_ats.json", Map("$nino" -> testNino.nino))
       val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
@@ -66,12 +57,12 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withBody(expectedResponse))
       )
 
-      val result = connectToPayeATS(testNino, currentYear).futureValue
+      val result = sut.connectToPayeATS(testNino, currentYear).futureValue
 
       result.json shouldBe Json.parse(expectedResponse)
     }
 
-    "return BadRequest response" in new MiddleConnectorSetUp {
+    "return BadRequest response" in {
 
       val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
@@ -82,11 +73,11 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withBody("Bad Request"))
       )
 
-      a [BadRequestException] should be thrownBy await(connectToPayeATS(testNino, currentYear))
+      a [BadRequestException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
     }
 
-    "return NotFound response" in new MiddleConnectorSetUp {
+    "return NotFound response" in {
 
       val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
@@ -96,11 +87,11 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(404)
             .withBody("Not Found"))
       )
-      a [NotFoundException] should be thrownBy await(connectToPayeATS(testNino, currentYear))
+      a [NotFoundException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
     }
 
-    "return InternalServerError response" in new MiddleConnectorSetUp {
+    "return InternalServerError response" in {
 
       val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
@@ -108,9 +99,9 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
         get(urlEqualTo(url)).willReturn(
           aResponse()
             .withStatus(500)
-            .withBody("Internal Servr Error"))
+            .withBody("Internal Server Error"))
       )
-      a [Upstream5xxResponse] should be thrownBy await(connectToPayeATS(testNino, currentYear))
+      a [Upstream5xxResponse] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
     }
   }

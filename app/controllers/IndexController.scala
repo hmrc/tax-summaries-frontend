@@ -34,7 +34,7 @@ import scala.concurrent.Future
 object IndexController extends IndexController {
   override val atsYearListService = AtsYearListService
   override val auditService = AuditService
-  override lazy val dataCache = DataCacheConnector
+  override lazy val dataCache = new DataCacheConnector
   override val atsListService = AtsListService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

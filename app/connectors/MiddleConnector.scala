@@ -16,11 +16,11 @@
 
 package connectors
 
+import com.google.inject.Inject
 import config.WSHttp
-import models.{AtsData, AtsListData, PayeAtsData}
+import models.{AtsData, AtsListData}
 import play.api.Mode.Mode
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
-import play.api.{Configuration, Logger, Play}
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -28,24 +28,16 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object MiddleConnector extends MiddleConnector with ServicesConfig {
+class MiddleConnector @Inject()() extends ServicesConfig {
 
-  override val serviceUrl = baseUrl("tax-summaries")
-  override val agentServiceUrl = baseUrl("tax-summaries-agent")
+  val http: HttpGet = WSHttp
 
-  override def http = WSHttp
+  val serviceUrl = baseUrl("tax-summaries")
+  val agentServiceUrl = baseUrl("tax-summaries-agent")
 
   override protected def mode: Mode = Play.current.mode
 
   override protected def runModeConfiguration: Configuration = Play.current.configuration
-}
-
-trait MiddleConnector {
-
-  def http: HttpGet
-
-  def serviceUrl: String
-  def agentServiceUrl: String = ""
 
   def url(path: String) = s"$serviceUrl$path"
   def agentUrl(path: String) = s"$agentServiceUrl$path"
