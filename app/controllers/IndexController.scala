@@ -22,19 +22,22 @@ import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
 import play.api.mvc.Result
-import services.{AtsListService, AtsYearListService, AuditService}
+import services.{AtsListService, AtsYearListService, AuditService, CryptoService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
 object IndexController extends IndexController {
+  val cryptoService = new CryptoService
+
   override val atsYearListService = AtsYearListService
   override val auditService = AuditService
-  override lazy val dataCache = new DataCacheConnector
+  override lazy val dataCache = new DataCacheConnector(cryptoService)
   override val atsListService = AtsListService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

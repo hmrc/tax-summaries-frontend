@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.Inject
 import config.ApplicationConfig
 import org.joda.time.{DateTime, Interval}
 import play.api.libs.json.Json
@@ -25,15 +26,10 @@ import utils.AgentTokenException
 
 import scala.util.matching.Regex
 
-object CryptoService extends CryptoService {
-  override val key = ApplicationConfig.encryptionKey
-  override val tokenMaxAge = ApplicationConfig.encryptionTokenMaxAge
-}
+class CryptoService @Inject()() {
 
-trait CryptoService {
-
-  def key: String
-  def tokenMaxAge: Int
+  def key: String = ApplicationConfig.encryptionKey
+  def tokenMaxAge: Int = ApplicationConfig.encryptionTokenMaxAge
 
   protected def aesCrypto = new AesCrypto {
     val encryptionKey = key

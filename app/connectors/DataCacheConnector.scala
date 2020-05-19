@@ -27,9 +27,7 @@ import utils.Globals
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataCacheConnector @Inject()() {
-
-  lazy val cryptoService = CryptoService
+class DataCacheConnector @Inject()(cryptoService: CryptoService) {
 
   val sourceId: String = Globals.TAXS_CACHE_KEY
   val sourceAtsListId: String = Globals.TAXS_ATS_LIST_CACHE_KEY

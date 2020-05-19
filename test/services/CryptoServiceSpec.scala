@@ -28,10 +28,13 @@ import utils.TestConstants._
 
 class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures {
 
-  class TestCrypt extends CryptoService {
+  val maxAge = 180
+
+  lazy val sut = new CryptoService {
 
     override lazy val key = testKey
-    override lazy val tokenMaxAge: Int = 180
+    override lazy val tokenMaxAge: Int = maxAge
+  }
 
     val agentUar = testUar
     val clientUtr = testUtr
@@ -45,7 +48,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     )
 
     val crypto = new AesCrypto {
-      override protected val encryptionKey: String = key
+      override protected val encryptionKey: String = testKey
     }
 
     // Common method for creating a valid encryped token
@@ -54,55 +57,54 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
       val encrypted = crypto.encrypt(PlainText(plain)).value
       UriEncoding.encodePathSegment(encrypted, "UTF-8")
     }
-  }
 
   "getAgentToken" should {
 
-    "return an AgentToken when the input is valid" in new TestCrypt {
+    "return an AgentToken when the input is valid" in {
 
-      val result = getAgentToken(encryptToken(timestamp = timestamp))
+      val result = sut.getAgentToken(encryptToken(timestamp = timestamp))
       result shouldBe agentToken
     }
 
-    "throw an AgentTokenException when an expired token is passed" in new TestCrypt {
+    "throw an AgentTokenException when an expired token is passed" in {
 
-      val token = encryptToken(timestamp = (new Date().getTime() - (tokenMaxAge * 1000)))
+      val token = encryptToken(timestamp = (new Date().getTime() - (maxAge * 1000)))
 
       val exception = intercept[AgentTokenException] {
-        getAgentToken(token)
+        sut.getAgentToken(token)
       }
 
       exception.message should include("Expired token")
     }
 
-    "throw an exception when the token date is in the future" in new TestCrypt {
+    "throw an exception when the token date is in the future" in {
 
-      val token = encryptToken(timestamp = (new Date().getTime() + (tokenMaxAge * 1000)))
+      val token = encryptToken(timestamp = (new Date().getTime() + (maxAge * 1000)))
 
       val exception = intercept[AgentTokenException] {
-        getAgentToken(token)
+        sut.getAgentToken(token)
       }
 
       exception.message should include("Expired token")
     }
 
-    "throw an AgentTokenException when the agentToken is malformed" in new TestCrypt {
+    "throw an AgentTokenException when the agentToken is malformed" in {
 
       val token = encryptToken(client = invalidUtr)
 
       val exception = intercept[AgentTokenException] {
-        getAgentToken(token)
+        sut.getAgentToken(token)
       }
 
       exception.message should include("Malformed token content")
     }
 
-    "throw an AgentTokenException when the agentToken cannot be decryped" in new TestCrypt {
+    "throw an AgentTokenException when the agentToken cannot be decryped" in {
 
       val token = "loremipsumdolorsitamet"
 
       val exception = intercept[AgentTokenException] {
-        getAgentToken(token)
+        sut.getAgentToken(token)
       }
 
       exception.message should include("Cannot decrypt token")
