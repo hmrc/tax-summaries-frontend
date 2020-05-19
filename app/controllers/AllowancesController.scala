@@ -31,7 +31,7 @@ import view_models.Allowances
 import scala.concurrent.Future
 
 object AllowancesController extends AllowancesController {
-  override val allowanceService = AllowanceService
+  override val allowanceService = new AllowanceService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]
