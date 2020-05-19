@@ -18,6 +18,7 @@ package services
 
 import java.util.Date
 
+import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
@@ -29,22 +30,13 @@ import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
-object AtsService extends AtsService {
-  val cryptoService = new CryptoService
+class AtsService @Inject()(
+                            middleConnector: MiddleConnector,
+                            dataCacheConnector: DataCacheConnector) {
 
-  override val middleConnector = new MiddleConnector
-  override val dataCache = new DataCacheConnector(cryptoService)
-  override val auditService = AuditService
-  override val authUtils = AuthorityUtils
-  override val accountUtils = AccountUtils
-}
-
-trait AtsService {
-  def middleConnector: MiddleConnector
-  def dataCache: DataCacheConnector
-  def auditService: AuditService
-  val authUtils: AuthorityUtils
-  val accountUtils: AccountUtils
+  def auditService: AuditService = AuditService
+  val authUtils: AuthorityUtils = AuthorityUtils
+  val accountUtils: AccountUtils = AccountUtils
 
   def createModel(taxYear: Int, converter: AtsData => GenericViewModel)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     getAts(taxYear) map {
@@ -63,7 +55,7 @@ trait AtsService {
   }
 
   def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] = {
-    dataCache.fetchAndGetAtsForSession(taxYear) flatMap {
+    dataCacheConnector.fetchAndGetAtsForSession(taxYear) flatMap {
       case Some(data) =>
         if (accountUtils.isAgent(request)) {
           fetchAgentInfo(data, taxYear)
@@ -72,7 +64,7 @@ trait AtsService {
         }
       case None =>
         if (accountUtils.isAgent(request)) {
-          dataCache.getAgentToken.flatMap {
+          dataCacheConnector.getAgentToken.flatMap {
             token => getAtsAndStore(taxYear, token)
           }
         } else {
@@ -83,7 +75,7 @@ trait AtsService {
 
 
   private def fetchAgentInfo (data :AtsData, taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsData] = {
-    dataCache.getAgentToken.flatMap {
+    dataCacheConnector.getAgentToken.flatMap {
       token =>
         if (authUtils.checkUtr(data.utr, token)) {
           Future.successful(data)
@@ -118,7 +110,7 @@ trait AtsService {
   }
 
   private def storeAtsData(dataWithUser: AtsData)(implicit hc: HeaderCarrier) = {
-    dataCache.storeAtsForSession(dataWithUser) map {
+    dataCacheConnector.storeAtsForSession(dataWithUser) map {
       data => data.get
     }
   }

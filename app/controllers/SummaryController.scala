@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
@@ -27,22 +28,16 @@ import utils.GenericViewModel
 import view_models.Summary
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
-object SummaryController extends SummaryController{
-  override val summaryService = new SummaryService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class SummaryController @Inject()(summaryService: SummaryService) extends TaxYearRequest {
 
-trait SummaryController extends TaxYearRequest {
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  implicit val formPartialRetriever: FormPartialRetriever
+  val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
-  val authAction: AuthAction
-
-  def summaryService: SummaryService
+  val auditService: AuditService = AuditService
 
   def authorisedSummaries = authAction.async {
     request => show(request)

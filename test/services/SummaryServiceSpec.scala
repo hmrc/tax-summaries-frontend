@@ -54,8 +54,7 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
 
-  lazy val sut = new SummaryService {
-    override lazy val atsService: AtsService = mockAtsService
+  def sut = new SummaryService(mockAtsService) {
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
   }
 

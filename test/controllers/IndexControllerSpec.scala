@@ -66,7 +66,7 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
 
     override lazy val dataCache = mock[DataCacheConnector]
     override lazy val atsYearListService = mock[AtsYearListService]
-    override lazy val auditService = mock[AuditService]
+    override val auditService = mock[AuditService]
     override lazy val atsListService = mock[AtsListService]
     implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
     override val authAction: AuthAction = FakeAuthAction

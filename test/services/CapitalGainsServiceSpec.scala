@@ -54,8 +54,7 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  val sut = new CapitalGainsService with MockitoSugar {
-    override lazy val atsService: AtsService = mockAtsService
+  val sut = new CapitalGainsService(mockAtsService) with MockitoSugar {
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
   }
 

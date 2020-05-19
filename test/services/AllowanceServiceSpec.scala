@@ -49,13 +49,13 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
 
-  val mockAtsService=mock[AtsService]
-
   implicit val hc = HeaderCarrier()
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=${sut.taxYear}"))
-  lazy val sut = new AllowanceService with MockitoSugar {
-    override lazy val atsService: AtsService = mockAtsService
+
+  val mockAtsService: AtsService = mock[AtsService]
+
+  def sut = new AllowanceService(mockAtsService) with MockitoSugar {
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     val taxYear = 2015

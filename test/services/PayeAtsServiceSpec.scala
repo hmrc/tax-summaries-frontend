@@ -44,7 +44,7 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
 
   val mockMiddleConnector = mock[MiddleConnector]
 
-  lazy val sut = new PayeAtsService(mockMiddleConnector)
+  def sut = new PayeAtsService(mockMiddleConnector)
 
   "getPayeATSData" should {
 

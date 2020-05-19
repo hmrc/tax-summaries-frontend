@@ -16,34 +16,29 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.AppFormPartialRetriever
+import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
 import play.api.mvc.Result
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import services.{AllowanceService, AuditService}
+import services.{AllowanceService, AtsService, AuditService, CryptoService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Allowances
 
 import scala.concurrent.Future
 
-object AllowancesController extends AllowancesController {
-  override val allowanceService = new AllowanceService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class AllowancesController @Inject()(allowanceService: AllowanceService) extends TaxYearRequest {
 
-trait AllowancesController extends TaxYearRequest {
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  implicit val formPartialRetriever: FormPartialRetriever
+  override val auditService: AuditService = AuditService
 
-  val authAction: AuthAction
-
-  def allowanceService: AllowanceService
+  val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
   def authorisedAllowance = authAction.async {
     request => show(request)

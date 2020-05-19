@@ -25,9 +25,8 @@ import view_models.IncomeBeforeTax
 
 import scala.concurrent.Future
 
-class IncomeService @Inject()() {
+class IncomeService @Inject()(atsService: AtsService) {
 
-  val atsService: AtsService = AtsService
   val atsYearListService: AtsYearListService = AtsYearListService
 
   def getIncomeData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {

@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
@@ -30,20 +31,13 @@ import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-object CapitalGainsTaxController extends CapitalGainsTaxController {
-  override val capitalGainsService = new CapitalGainsService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class CapitalGainsTaxController @Inject()(capitalGainsService: CapitalGainsService) extends TaxYearRequest {
 
-trait CapitalGainsTaxController extends TaxYearRequest {
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  implicit val formPartialRetriever: FormPartialRetriever
+  val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
-  val authAction: AuthAction
-
-  def capitalGainsService: CapitalGainsService
+  val auditService: AuditService = AuditService
 
   def authorisedCapitalGains = authAction.async {
     request => show(request)

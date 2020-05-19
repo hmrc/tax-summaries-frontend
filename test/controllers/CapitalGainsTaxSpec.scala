@@ -16,30 +16,27 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{when, reset}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Play.current
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
-import utils.TestConstants._
-import view_models.{Amount, CapitalGains, NoATSViewModel, Rate}
+import view_models.{Amount, NoATSViewModel}
+import play.api.http.Status.SEE_OTHER
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with TestConstants {
+class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with TestConstants with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -48,42 +45,44 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val baseModel = capitalGains
 
-  class TestController extends CapitalGainsTaxController {
+  val mockCapitalGainsService = mock[CapitalGainsService]
+  val mockAuditService = mock[AuditService]
 
-    override lazy val capitalGainsService = mock[CapitalGainsService]
-    override lazy val auditService = mock[AuditService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  def sut = new CapitalGainsTaxController(mockCapitalGainsService) {
+    override val auditService = mockAuditService
     override val authAction: AuthAction = FakeAuthAction
+  }
 
-    when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+  override def beforeEach(): Unit = {
+    when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
   }
 
   "Calling Capital Gains" should {
 
-    "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(request))
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.capital_gains_tax.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
-    "display an error page for an invalid request " in new TestController {
-      val result = Future.successful(show(badRequest))
+    "display an error page for an invalid request " in {
+      val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(show(request))
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
-    "show Your Capital Gains section with the right user data" in new TestController {
+    "show Your Capital Gains section with the right user data" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -97,9 +96,9 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Capital Gains Tax"
     }
 
-    "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in new TestController {
+    "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -107,16 +106,16 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("capital-gains-tax-section") should not be null
     }
 
-    "hide Capital Gains Tax section if total amount of capital gains to pay tax on is 0.00" in new TestController {
+    "hide Capital Gains Tax section if total amount of capital gains to pay tax on is 0.00" in {
 
       val model2 = baseModel.copy(
         payCgTaxOn = Amount(0, "GBP"),
         taxableGains = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -124,9 +123,9 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("capital-gains-tax-section") should be(null)
     }
 
-    "show Capital Gains Tax section with correct user data" in new TestController {
+    "show Capital Gains Tax section with correct user data" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -143,15 +142,15 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("upper-rate-amount").text() should equal("£3,000")
     }
 
-    "hide Entrepreneurs' Relief Rate field if the amount on the left side is 0.00" in new TestController {
+    "hide Entrepreneurs' Relief Rate field if the amount on the left side is 0.00" in {
 
       val model3 = baseModel.copy(
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -159,15 +158,15 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("entrepreneurs-relief-rate-section") should be(null)
     }
 
-    "hide Ordinary Rate field if the amount on the left side is 0.00" in new TestController {
+    "hide Ordinary Rate field if the amount on the left side is 0.00" in {
 
       val model4 = baseModel.copy(
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -175,15 +174,15 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("ordinary-rate-section") should be(null)
     }
 
-    "hide Upper Rate field if the amount on the left side is 0.00" in new TestController {
+    "hide Upper Rate field if the amount on the left side is 0.00" in {
 
       val model5 = baseModel.copy(
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -191,67 +190,67 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document.getElementById("upper-rate-section") should be(null)
     }
 
-    "show Adjustments section with correct user data" in new TestController {
+    "show Adjustments section with correct user data" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("adjustment-to-capital-gains-tax-amount").text() should equal("minus £500 -£500")
     }
 
-    "show Total Capital Gains Tax with correct user data" in new TestController {
+    "show Total Capital Gains Tax with correct user data" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-capital-gains-tax-amount").text() should equal("£5,500")
     }
 
-    "hide Adjustments section if the Adjustments amount is 0.00" in new TestController {
+    "hide Adjustments section if the Adjustments amount is 0.00" in {
 
       val model6 = baseModel.copy(
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.toString should not include("Technical Difficulties")
       document.getElementById("adjustments-section") should be(null)
     }
-    
-    "show capital gains description if total capital gains tax is not 0" in new TestController {
 
-      val result = Future.successful(show(request))
+    "show capital gains description if total capital gains tax is not 0" in {
+
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-cg-description") should not be null
       document.getElementById("total-cg-tax-rate").text() should equal("12.34%")
     }
-    
-    "hide capital gains description if total capital gains tax is 0" in new TestController {
+
+    "hide capital gains description if total capital gains tax is 0" in {
 
       val model7 = baseModel.copy(
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(capitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.toString should not include("Technical Difficulties")
       document.getElementById("total-cg-description") should be(null)
     }
 
-    "show 'Capital Gains tax' page with a correct breadcrumb" in new TestController {
+    "show 'Capital Gains tax' page with a correct breadcrumb" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")

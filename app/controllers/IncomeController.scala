@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
@@ -27,22 +28,16 @@ import utils.GenericViewModel
 import view_models.IncomeBeforeTax
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
-object IncomeController extends IncomeController {
-  override val incomeService = new IncomeService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class IncomeController @Inject()(incomeService: IncomeService) extends TaxYearRequest {
 
-trait IncomeController extends TaxYearRequest {
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  implicit val formPartialRetriever: FormPartialRetriever
+  val auditService: AuditService = AuditService
 
-  val authAction: AuthAction
-
-  def incomeService: IncomeService
+  val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
   def authorisedIncomeBeforeTax = authAction.async {
     request => show(request)

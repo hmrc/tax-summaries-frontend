@@ -3,14 +3,14 @@ GET     /assets/*file                                           controllers.Asse
 
 GET     /                                                       controllers.IndexController.authorisedIndex
 POST    /                                                       controllers.IndexController.authorisedOnSubmit
-GET     /main                                                   controllers.AtsMainController.authorisedAtsMain
-GET     /summary                                                controllers.SummaryController.authorisedSummaries
-GET     /nics                                                   controllers.NicsController.authorisedNics
-GET     /treasury-spending                                      controllers.GovernmentSpendController.authorisedGovernmentSpendData
-GET     /income-before-tax                                      controllers.IncomeController.authorisedIncomeBeforeTax
-GET     /tax-free-amount                                        controllers.AllowancesController.authorisedAllowance
-GET     /total-income-tax                                       controllers.TotalIncomeTaxController.authorisedTotalIncomeTax
-GET     /capital-gains-tax                                      controllers.CapitalGainsTaxController.authorisedCapitalGains
+GET     /main                                                   @controllers.AtsMainController.authorisedAtsMain
+GET     /summary                                                @controllers.SummaryController.authorisedSummaries
+GET     /nics                                                   @controllers.NicsController.authorisedNics
+GET     /treasury-spending                                      @controllers.GovernmentSpendController.authorisedGovernmentSpendData
+GET     /income-before-tax                                      @controllers.IncomeController.authorisedIncomeBeforeTax
+GET     /tax-free-amount                                        @controllers.AllowancesController.authorisedAllowance
+GET     /total-income-tax                                       @controllers.TotalIncomeTaxController.authorisedTotalIncomeTax
+GET     /capital-gains-tax                                      @controllers.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                         controllers.ErrorController.notAuthorised
 GET     /no-ats                                                 controllers.ErrorController.authorisedNoAts

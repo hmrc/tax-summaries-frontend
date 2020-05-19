@@ -30,7 +30,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
 
   val maxAge = 180
 
-  lazy val sut = new CryptoService {
+  def sut = new CryptoService {
 
     override lazy val key = testKey
     override lazy val tokenMaxAge: Int = maxAge

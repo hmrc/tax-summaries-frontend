@@ -37,7 +37,7 @@ import utils.TestConstants.testNino
 
 import scala.io.Source
 
-class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
+class PayeYourIncomeAndTaxesControllerSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]

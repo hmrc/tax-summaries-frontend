@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
@@ -27,22 +28,16 @@ import utils.GenericViewModel
 import view_models.GovernmentSpend
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
-object GovernmentSpendController extends GovernmentSpendController {
-  override val governmentSpendService = new GovernmentSpendService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class GovernmentSpendController @Inject()(governmentSpendService: GovernmentSpendService) extends TaxYearRequest {
 
-trait GovernmentSpendController extends TaxYearRequest {
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  implicit val formPartialRetriever: FormPartialRetriever
+  val auditService: AuditService = AuditService
 
-  val authAction: AuthAction
-
-  def governmentSpendService: GovernmentSpendService
+  val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
   def authorisedGovernmentSpendData = authAction.async {
     request => show(request)

@@ -45,7 +45,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
   implicit val hc = HeaderCarrier()
   private val currentYear = 2018
 
-  lazy val sut = new MiddleConnector
+  def sut = new MiddleConnector
 
   val utr = SaUtr(testUtr)
 

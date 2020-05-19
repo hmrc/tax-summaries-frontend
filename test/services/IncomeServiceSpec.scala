@@ -54,8 +54,7 @@ class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  lazy val sut = new IncomeService with MockitoSugar {
-    override val atsService: AtsService = mockAtsService
+  def sut = new IncomeService(mockAtsService) with MockitoSugar {
     override val atsYearListService: AtsYearListService = mock[AtsYearListService]
   }
 

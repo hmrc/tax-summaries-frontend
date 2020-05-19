@@ -51,8 +51,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
 
   val mockAtsService = mock[AtsService]
 
-  lazy val sut = new TotalIncomeTaxService with MockitoSugar {
-    override lazy val atsService: AtsService = mockAtsService
+  def sut = new TotalIncomeTaxService(mockAtsService) with MockitoSugar {
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
     implicit val hc = new HeaderCarrier
     val taxYear = 2015

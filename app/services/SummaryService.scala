@@ -25,9 +25,8 @@ import view_models.Summary
 
 import scala.concurrent.Future
 
-class SummaryService @Inject()(){
+class SummaryService @Inject()(atsService: AtsService){
 
-  def atsService: AtsService = AtsService
   def atsYearListService: AtsYearListService = AtsYearListService
 
   def getSummaryData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {

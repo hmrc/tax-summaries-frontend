@@ -16,29 +16,26 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{when, reset}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Play.current
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
 
 import scala.concurrent.Future
 
-class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -47,66 +44,69 @@ class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
   val dataPath = "/summary_json_test.json"
 
-  trait TestController extends NicsController {
+  val model = Summary(
+    year = 2014,
+    utr = testUtr,
+    employeeNicAmount = Amount(1200, "GBP"),
+    totalIncomeTaxAndNics = Amount(1400, "GBP"),
+    yourTotalTax = Amount(1800, "GBP"),
+    totalTaxFree = Amount(9440, "GBP"),
+    totalTaxFreeAllowance = Amount(9740, "GBP"),
+    yourIncomeBeforeTax = Amount(11600, "GBP"),
+    totalIncomeTaxAmount = Amount(372, "GBP"),
+    totalCapitalGainsTax = Amount(5500, "GBP"),
+    taxableGains = Amount(20000, "GBP"),
+    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
+    nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
+    totalCgTaxRate = Rate("12.34%"),
+    nicsAndTaxRate = Rate("56.78%"),
+    title = "Mr",
+    forename = "forename",
+    surname = "surname"
+  )
 
-    override lazy val auditService = mock[AuditService]
-    override lazy val summaryService = mock[SummaryService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  val mockSummaryService = mock[SummaryService]
+
+  def sut = new NicsController(mockSummaryService) {
+    override val auditService = mock[AuditService]
     override val authAction = FakeAuthAction
-    val model = Summary(
-      year = 2014,
-      utr = testUtr,
-      employeeNicAmount = Amount(1200, "GBP"),
-      totalIncomeTaxAndNics = Amount(1400, "GBP"),
-      yourTotalTax = Amount(1800, "GBP"),
-      totalTaxFree = Amount(9440, "GBP"),
-      totalTaxFreeAllowance = Amount(9740, "GBP"),
-      yourIncomeBeforeTax = Amount(11600, "GBP"),
-      totalIncomeTaxAmount = Amount(372, "GBP"),
-      totalCapitalGainsTax = Amount(5500, "GBP"),
-      taxableGains = Amount(20000, "GBP"),
-      cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
-      nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
-      totalCgTaxRate = Rate("12.34%"),
-      nicsAndTaxRate = Rate("56.78%"),
-      title = "Mr",
-      forename = "forename",
-      surname = "surname"
-    )
+  }
 
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
+  override def beforeEach(): Unit = {
+    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+    ) thenReturn Future.successful(model)
   }
 
   "Calling NICs" should {
 
-    "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(request))
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.nics.tax_and_nics.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
-    "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(badRequest))
+    "display an error page for an invalid request" in {
+      val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
 
     }
 
-    "have the right user data in the view" in new TestController {
+    "have the right user data in the view" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -118,9 +118,9 @@ class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
     }
 
-    "show 'Income Tax and NICs' page with a correct breadcrumb" in new TestController {
+    "show 'Income Tax and NICs' page with a correct breadcrumb" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
