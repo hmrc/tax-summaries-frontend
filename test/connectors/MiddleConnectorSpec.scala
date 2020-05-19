@@ -17,24 +17,28 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
-import config.WSHttp
+import models.{AtsData, AtsListData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants.testNino
+import utils.TestConstants.{testNino, testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
+
+import scala.io.Source
 
 class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience with JsonUtil {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "microservice.services.tax-summaries.port" -> server.port()
+        "microservice.services.tax-summaries.port" -> server.port(),
+        "microservice.services.tax-summaries-agent.port" -> server.port()
       )
       .build()
 
@@ -42,6 +46,18 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
   private val currentYear = 2018
 
   lazy val sut = new MiddleConnector
+
+  val utr = SaUtr(testUtr)
+
+  val uar = Uar(testUar)
+
+  val loadSAJson = loadAndParseJsonWithDummyData("/summary_json_test.json")
+  val saResponse: String = loadAndReplace("/summary_json_test.json", Map("$utr" -> utr.utr))
+  val expectedSAResponse = Json.fromJson[AtsData](loadSAJson).get
+
+  val loadAtsListData = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
+  val atsListData =  Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
+
 
   "connectToPayeTaxSummary" should {
 
@@ -103,6 +119,135 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
       )
       a [Upstream5xxResponse] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
+    }
+  }
+
+
+  "connectToAts" should {
+
+    "return successful response" in  {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(saResponse))
+      )
+
+      val result = sut.connectToAts(utr, currentYear).futureValue
+
+      result shouldBe expectedSAResponse
+    }
+
+    "return BadRequest response" in  {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(400)
+            .withBody("Bad Request"))
+      )
+      a [BadRequestException] should be thrownBy await(sut.connectToAts(utr, currentYear))
+    }
+  }
+
+  "connectToAtsOnBehalfOf" should {
+
+    "return successful response" in {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(saResponse))
+      )
+
+      val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
+
+      result shouldBe expectedSAResponse
+    }
+
+    "return BadRequest response" in {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(400)
+            .withBody("Bad Request"))
+      )
+      a [BadRequestException] should be thrownBy await(sut.connectToAtsOnBehalfOf(uar, utr, currentYear))
+    }
+  }
+
+  "connectToAtsList" should {
+
+    "return successful response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(loadAtsListData))
+      )
+
+      val result = sut.connectToAtsList(utr).futureValue
+
+      result shouldBe atsListData
+    }
+
+    "return BadRequest response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(400)
+            .withBody("Bad Request"))
+      )
+      a [BadRequestException] should be thrownBy await(sut.connectToAtsList(utr))
+    }
+  }
+
+  "connectToAtsListOnBehalfOf" should {
+
+    "return successful response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(loadAtsListData))
+      )
+
+      val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
+
+      result shouldBe atsListData
+    }
+
+    "return BadRequest response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(400)
+            .withBody("Bad Request"))
+      )
+      a [BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
     }
   }
 }
