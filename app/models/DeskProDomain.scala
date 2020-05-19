@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.deskpro.domain
+package models
 
 import controllers.auth.AuthenticatedRequest
 import play.api.libs.json.Json
