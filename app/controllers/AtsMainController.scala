@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 object AtsMainController extends AtsMainController {
 
-  override val summaryService = SummaryService
+  override val summaryService = new SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

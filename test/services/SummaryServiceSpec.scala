@@ -37,7 +37,7 @@ import view_models._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with MockFactory{
+class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -48,28 +48,31 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
     )
   )
 
-  class TestService extends SummaryService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
+  val mockAtsService = mock[AtsService]
+
+  implicit val hc = new HeaderCarrier
+  val taxYear = 2015
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
+
+  lazy val sut = new SummaryService {
+    override lazy val atsService: AtsService = mockAtsService
     override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
-    implicit val hc = new HeaderCarrier
-    val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
   }
 
   "SummaryService getSummaryData" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
-      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getSummaryData(taxYear)(hc, request), 1500 millis)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
+      when(mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(sut.getSummaryData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
-    "SummaryService summaryConverter" should {
+  "SummaryService summaryConverter" should {
 
-    "return a complete Summary when given complete AtsData" in new TestService{
+    "return a complete Summary when given complete AtsData" in {
       val atsData = AtsTestData.summaryData
-      val result = summaryConverter(atsData)
+      val result = sut.summaryConverter(atsData)
 
       result shouldBe Summary(
         2019,
@@ -92,6 +95,5 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
         "Smith"
       )
     }
-
   }
 }

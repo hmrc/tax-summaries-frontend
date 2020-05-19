@@ -30,7 +30,7 @@ import play.api.i18n.Messages.Implicits._
 import scala.concurrent.Future
 
 object NicsController extends NicsController {
-  override val summaryService = SummaryService
+  override val summaryService = new SummaryService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

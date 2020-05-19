@@ -17,6 +17,7 @@
 package controllers.paye
 
 import config.{AppFormPartialRetriever, ApplicationConfig}
+import connectors.MiddleConnector
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Play.current
@@ -31,7 +32,7 @@ import view_models.paye.PayeIncomeTaxAndNics
 object PayeIncomeTaxAndNicsController extends PayeIncomeTaxAndNicsController{
 
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
-  override val payeAtsService = PayeAtsService
+  override val payeAtsService = new PayeAtsService(new MiddleConnector)
   override val payeYear: Int = ApplicationConfig.payeYear
 }
 

@@ -30,7 +30,7 @@ import play.api.i18n.Messages.Implicits._
 import scala.concurrent.Future
 
 object GovernmentSpendController extends GovernmentSpendController {
-  override val governmentSpendService = GovernmentSpendService
+  override val governmentSpendService = new GovernmentSpendService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

@@ -30,7 +30,7 @@ import play.api.i18n.Messages.Implicits._
 import scala.concurrent.Future
 
 object IncomeController extends IncomeController {
-  override val incomeService = IncomeService
+  override val incomeService = new IncomeService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

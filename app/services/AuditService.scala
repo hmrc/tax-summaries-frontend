@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.audit.model.DataEvent
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 object AuditTypes {
   val Tx_FAILED = "TxFailed"
   val Tx_SUCCEEDED = "TxSuccessful"

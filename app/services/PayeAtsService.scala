@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.Inject
 import connectors.MiddleConnector
 import models.PayeAtsData
 import play.api.Logger
@@ -26,12 +27,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object PayeAtsService extends PayeAtsService{
-  override val middleConnector = new MiddleConnector
-}
-
-trait PayeAtsService {
-  def middleConnector: MiddleConnector
+class PayeAtsService @Inject()(middleConnector: MiddleConnector) {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier):Future[Either[HttpResponse,PayeAtsData]] = {
      middleConnector.connectToPayeATS(nino,taxYear) map { response =>

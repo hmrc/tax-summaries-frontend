@@ -31,7 +31,7 @@ import play.api.i18n.Messages.Implicits._
 import scala.concurrent.Future
 
 object CapitalGainsTaxController extends CapitalGainsTaxController {
-  override val capitalGainsService = CapitalGainsService
+  override val capitalGainsService = new CapitalGainsService
   override val auditService = AuditService
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]

@@ -42,51 +42,51 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
     Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
 
-  class TestService extends PayeAtsService {
-    lazy val middleConnector: MiddleConnector = mock[MiddleConnector]
-  }
+  val mockMiddleConnector = mock[MiddleConnector]
+
+  lazy val sut = new PayeAtsService(mockMiddleConnector)
 
   "getPayeATSData" should {
 
-    "return a successful response after transforming tax-summaries data to PAYE model" in new TestService {
+    "return a successful response after transforming tax-summaries data to PAYE model" in {
 
-      when(middleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
         .thenReturn(Future.successful(
           HttpResponse(responseStatus = 200, responseJson = Some(expectedResponse), responseHeaders = Map.empty)))
 
 
-      val result = getPayeATSData(testNino, currentYear).futureValue
+      val result = sut.getPayeATSData(testNino, currentYear).futureValue
 
       result shouldBe Right(expectedResponse.as[PayeAtsData])
     }
 
-    "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in new TestService {
+    "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
 
-      when(middleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new JsResultException(List())))
 
 
-      val result = getPayeATSData(testNino, currentYear).futureValue
+      val result = sut.getPayeATSData(testNino, currentYear).futureValue
 
       result.left.get.status shouldBe 500
     }
 
-    "return a BAD_REQUEST response after receiving BadRequestException from connector" in new TestService {
+    "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
 
-      when(middleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new BadRequestException("Bad Request")))
 
-      val result = getPayeATSData(testNino, currentYear).futureValue
+      val result = sut.getPayeATSData(testNino, currentYear).futureValue
 
       result.left.get.status shouldBe 400
     }
 
-    "return a NOT_FOUND response after receiving NotFoundException from connector" in new TestService {
+    "return a NOT_FOUND response after receiving NotFoundException from connector" in {
 
-      when(middleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new NotFoundException("Not Found")))
 
-      val result = getPayeATSData(testNino, currentYear).futureValue
+      val result = sut.getPayeATSData(testNino, currentYear).futureValue
 
       result.left.get.status shouldBe 404
     }
