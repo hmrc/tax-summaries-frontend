@@ -23,7 +23,7 @@ GET     /sign-out                                               @controllers.Acc
 
 GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
 
-GET     /paye/main                                             controllers.paye.PayeAtsMainController.show
+GET     /paye/main                                             @controllers.paye.PayeAtsMainController.show
 
 GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
 

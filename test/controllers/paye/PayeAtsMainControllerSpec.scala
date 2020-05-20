@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -33,6 +34,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
+import play.api.http.Status._
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -45,22 +47,25 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
   val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  class TestController extends PayeAtsMainController {
+  val mockPayeAtsService=mock[PayeAtsService]
+  val mockAppConfig=mock[ApplicationConfig]
+  when(mockAppConfig.payeYear).thenReturn(taxYear)
 
-    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
-    override val payeYear = taxYear
-    override val payeAtsService = mock[PayeAtsService]
+  def sut = new PayeAtsMainController(mockPayeAtsService,FakePayeAuthAction,mockAppConfig) {
+
+    override val payeYear = mockAppConfig.payeYear
+
   }
 
   "AtsMain controller" should {
 
-    "return OK response" in new TestController {
+    "return OK response" in {
 
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Right(mock[PayeAtsData]))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe 200
 
@@ -75,23 +80,23 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
       document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in  {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
+      val x=status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.authorisedNoAts().url)
     }
 
-    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)

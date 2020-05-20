@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import com.google.inject.Inject
 import config.{AppFormPartialRetriever, ApplicationConfig}
 import connectors.MiddleConnector
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
@@ -23,25 +24,20 @@ import models.PayeAtsData
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
-import play.api.{Logger, Play}
+import play.api.{Configuration, Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import view_models.paye.PayeAtsMain
 
-object PayeAtsMainController extends PayeAtsMainController {
-  override val payeAtsService = new PayeAtsService(new MiddleConnector)
-  override val payeYear: Int = ApplicationConfig.payeYear
-  override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
-}
-
-trait PayeAtsMainController extends FrontendController{
+class PayeAtsMainController @Inject()(payeAtsService: PayeAtsService,
+                                      payeAuthAction: PayeAuthAction,
+                                      applicationConfig: ApplicationConfig
+                                     ) extends FrontendController{
 
   implicit val formPartialRetriever = AppFormPartialRetriever
 
-  val payeYear: Int
-  val payeAtsService: PayeAtsService
-  val payeAuthAction: PayeAuthAction
+  val payeYear= applicationConfig.payeYear
 
   def show: Action[AnyContent] = payeAuthAction.async  {
     implicit request: PayeAuthenticatedRequest[_] =>
