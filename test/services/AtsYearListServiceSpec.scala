@@ -45,8 +45,8 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
     val json = Json.parse(source)
     Json.fromJson[AtsListData](json).get
   }
-
-  class TestService extends AtsYearListService {
+  val mockAtsListService=mock[AtsListService]
+  class TestService extends AtsYearListService(mockAtsListService) {
 
     implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
     implicit val hc = new HeaderCarrier
@@ -56,9 +56,6 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
       clientUtr = testUtr,
       timestamp = 0
     )
-
-
-    override val atsListService = mock[AtsListService]
     val atsService = mock[AtsService]
   }
 
@@ -66,7 +63,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
 
     "Return a successful future upon success" in new TestService {
 
-      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(2014))
+      when(mockAtsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(2014))
 
       val result = storeSelectedAtsTaxYear(2014)
 
@@ -77,7 +74,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
 
     "Return a failed future when None is returned from the dataCache" in new TestService {
 
-      when(atsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(mockAtsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
 
       val result = storeSelectedAtsTaxYear(2014)
 
@@ -104,7 +101,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
       )
 
       override def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
-        atsListService.createModel(atsList)
+        mockAtsListService.createModel(atsList)
       }
 
       def atsList: AtsListData => GenericViewModel =
@@ -118,7 +115,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
 
       val model: GenericViewModel = atsListModel
 
-      when(atsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(model)
+      when(mockAtsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(model)
 
       val result = getAtsListData(hc, request)
 

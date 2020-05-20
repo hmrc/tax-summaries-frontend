@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppFormPartialRetriever
-import connectors.DataCacheConnector
+import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play
@@ -34,13 +34,13 @@ import scala.concurrent.Future
 
 object IndexController extends IndexController {
   val cryptoService = new CryptoService
-
-  override val atsYearListService = new AtsYearListService
+  val middleService=new MiddleConnector
   override val auditService = new AuditService
   override lazy val dataCache = new DataCacheConnector(cryptoService)
-  override val atsListService = AtsListService
+  override val atsListService = new AtsListService(middleService,dataCache)
   override val formPartialRetriever = AppFormPartialRetriever
   override val authAction = Play.current.injector.instanceOf[AuthAction]
+  override val atsYearListService = new AtsYearListService(atsListService)
 }
 
 trait IndexController extends TaxsController {

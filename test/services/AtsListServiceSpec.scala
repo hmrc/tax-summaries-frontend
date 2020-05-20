@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import utils.TestConstants._
 
@@ -36,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import uk.gov.hmrc.http.HeaderCarrier
 
-class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
+class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -44,70 +45,82 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
     Json.fromJson[AtsListData](json).get
   }
 
-  class TestService extends AtsListService {
+  val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
+  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  val mockAuditService: AuditService = mock[AuditService]
+  val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
+  val mockAccountUtils: AccountUtils = mock[AccountUtils]
 
-    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-    implicit val hc = new HeaderCarrier
+  override def beforeEach() = {
+    reset(mockMiddleConnector)
+    reset(mockDataCacheConnector)
+    reset(mockAuditService)
+    reset(mockAuthUtils)
+    reset(mockAccountUtils)
 
-    val agentToken = AgentToken(
-      agentUar = testUar,
-      clientUtr = testUtr,
-      timestamp = 0
-    )
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2015)))
+    when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
 
-    override lazy val middleConnector: MiddleConnector = mock[MiddleConnector]
-    override lazy val dataCache: DataCacheConnector = mock[DataCacheConnector]
-    override lazy val cryptoService: CryptoService = mock[CryptoService]
-    override lazy val authUtils: AuthorityUtils = mock[AuthorityUtils]
-    override lazy val auditService: AuditService = mock[AuditService]
-    override lazy val accountUtils: AccountUtils = mock[AccountUtils]
+    when(mockDataCacheConnector.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
 
-
-    when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
-    when(dataCache.storeAtsTaxYearForSession(eqTo(2015))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2015)))
-    when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-
-    when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
-
-    when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(Some(data)))
+    when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(Some(data)))
 
     // By default we don't want to be an agent
-    when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+    when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
 
-    when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
-    when(middleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
+    when(mockMiddleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
+    when(mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
 
-    when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
+    when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
 
   }
 
+  implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  implicit val hc = new HeaderCarrier
+
+  val agentToken = AgentToken(
+    agentUar = testUar,
+    clientUtr = testUtr,
+    timestamp = 0
+  )
+
+  def sut = new AtsListService(mockMiddleConnector,mockDataCacheConnector) {
+
+    override lazy val authUtils: AuthorityUtils = mockAuthUtils
+    override lazy val auditService: AuditService = mockAuditService
+    override lazy val accountUtils: AccountUtils = mockAccountUtils
+
+  }
+
+  when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
+
   "storeSelectedTaxYear" should {
 
-    "Return a successful future upon success" in new TestService {
+    "Return a successful future upon success" in {
 
-      val result = storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2014)
 
       whenReady(result) { result =>
         result shouldBe 2014
       }
     }
 
-    "Return a failed future when None is returned from the dataCache" in new TestService {
+    "Return a failed future when None is returned from the dataCache" in {
 
-      when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
 
-      val result = storeSelectedTaxYear(2014)
-
+      val result = sut.storeSelectedTaxYear(2014)
       whenReady(result.failed) { exception =>
         exception shouldBe a [NoSuchElementException]
       }
     }
 
-    "Return a failed future when the dataCache future has failed" in new TestService {
+    "Return a failed future when the dataCache future has failed" in  {
 
-      when(dataCache.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
 
-      val result = storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
         exception shouldBe an [Exception]
@@ -117,27 +130,27 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
 
   "fetchSelectedTaxYear" should {
 
-    "Return a successful future upon success" in new TestService {
+    "Return a successful future upon success" in  {
 
-      whenReady(fetchSelectedTaxYear) { result =>
+      whenReady(sut.fetchSelectedTaxYear) { result =>
         result shouldBe 2014
       }
     }
 
-    "Return a failed future when None is returned from the dataCache" in new TestService {
+    "Return a failed future when None is returned from the dataCache" in {
 
-      when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+      when(mockDataCacheConnector.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
 
-      whenReady(fetchSelectedTaxYear.failed) { exception =>
+      whenReady(sut.fetchSelectedTaxYear.failed) { exception =>
         exception shouldBe a [NoSuchElementException]
       }
     }
 
-    "Return a failed future when the dataCache future has failed" in new TestService {
+    "Return a failed future when the dataCache future has failed" in  {
 
-      when(dataCache.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
+      when(mockDataCacheConnector.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
 
-      whenReady(fetchSelectedTaxYear.failed) { exception =>
+      whenReady(sut.fetchSelectedTaxYear.failed) { exception =>
         exception shouldBe an [Exception]
       }
     }
@@ -145,92 +158,91 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
 
   "getAtsYearList" should {
 
-    "Return a failed future when the call to the dataCache fails (fetch)" in new TestService {
+    "Return a failed future when the call to the dataCache fails (fetch)" in  {
 
-      when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
 
-      whenReady(getAtsYearList.failed) { exception =>
+      whenReady(sut.getAtsYearList.failed) { exception =>
         exception shouldBe an [Exception]
 
-        verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(middleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+        verify(mockDataCacheConnector, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockMiddleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
-   "Return a failed future when the call to the dataCache fails (store)" in new TestService {
+   "Return a failed future when the call to the dataCache fails (store)" in  {
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
+      when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
 
-      when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
-      when(dataCache.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.failed(new Exception("failed")))
-
-      whenReady(getAtsYearList.failed) { exception =>
+      whenReady(sut.getAtsYearList.failed) { exception =>
         exception shouldBe an [Exception]
 
-        verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(middleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
-    "Return a failed future when the call to the MS fails" in new TestService {
+    "Return a failed future when the call to the MS fails" in  {
 
-      when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
-      when(middleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier]))
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
+      when(mockMiddleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("failed")))
 
-      whenReady(getAtsYearList.failed) { exception =>
+      whenReady(sut.getAtsYearList.failed) { exception =>
         exception shouldBe an [Exception]
 
-        verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(middleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+        verify(mockDataCacheConnector, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
     "User" should {
 
-      "Return the ats year list data for a user from the cache" in new TestService {
+      "Return the ats year list data for a user from the cache" in  {
 
-        when(accountUtils.isAgent(request)).thenReturn(true)
+        when(mockAccountUtils.isAgent(request)).thenReturn(true)
 
-        whenReady(getAtsYearList) { result =>
+        whenReady(sut.getAtsYearList) { result =>
           result shouldBe data
         }
 
-        verify(auditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
-        verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(middleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+        verify(mockDataCacheConnector, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockMiddleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
-    "Return the ats year list data for a user from the MS" in new TestService {
+    "Return the ats year list data for a user from the MS" in {
 
-      when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
-      whenReady(getAtsYearList) { result =>
+      whenReady(sut.getAtsYearList) { result =>
         result shouldBe data
 
-        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
-        verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(middleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
     // Should this be the case? (EDGE CASE)
-    "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in new TestService {
+    "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
 
-      when(dataCache.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
-      when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
+      when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
+      when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
-      whenReady(getAtsYearList) { result =>
+      whenReady(sut.getAtsYearList) { result =>
         result shouldBe data
 
-        verify(auditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
-        verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(middleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[AnyRef]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
@@ -238,57 +250,57 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
 
       val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
-      "Return the ats year list data for a user from the cache" in new TestService {
+      "Return the ats year list data for a user from the cache" in {
 
-        when(accountUtils.isAgent(agentRequest)).thenReturn(true)
+        when(mockAccountUtils.isAgent(agentRequest)).thenReturn(true)
 
-        whenReady(getAtsYearList(hc, agentRequest)) { result =>
+        whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe data
 
-          verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(middleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+          verify(mockDataCacheConnector, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockMiddleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
 
-      "Return the ats year list data for a user from the MS" in new TestService {
+      "Return the ats year list data for a user from the MS" in {
 
-        when(dataCache.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
+        when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
-        whenReady(getAtsYearList(hc, agentRequest)) { result =>
+        whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe data
 
-          verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(middleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
 
-      "Return the ats year list data for a user when the agent token doesn't match the user" in new TestService {
+      "Return the ats year list data for a user when the agent token doesn't match the user" in  {
 
-        when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
+        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
-        whenReady(getAtsYearList(hc, agentRequest)) { result =>
+        whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe data
 
-          verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(dataCache, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(middleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
 
-      "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in new TestService {
+      "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in {
 
-        when(authUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
-        when(authUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])).thenThrow(new AgentTokenException("Token is empty"))
+        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
+        when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])).thenThrow(new AgentTokenException("Token is empty"))
 
-        whenReady(getAtsYearList.failed) { exception =>
+        whenReady(sut.getAtsYearList.failed) { exception =>
           exception shouldBe a [AgentTokenException]
           exception.getMessage shouldBe "Token is empty"
 
-          verify(dataCache, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(dataCache, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(middleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+          verify(mockDataCacheConnector, never()).storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockMiddleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
     }

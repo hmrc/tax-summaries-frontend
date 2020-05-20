@@ -18,6 +18,7 @@ package services
 
 import java.util.Date
 
+import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models.{AtsListData, IncomingAtsError}
@@ -28,23 +29,13 @@ import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object AtsListService extends AtsListService {
-  override lazy val middleConnector = new MiddleConnector
-  override lazy val cryptoService = new CryptoService
-  override lazy val dataCache = new DataCacheConnector(cryptoService)
-  override lazy val authUtils = AuthorityUtils
-  override lazy val auditService: AuditService = new AuditService
-  override lazy val accountUtils: AccountUtils = AccountUtils
-}
 
-trait AtsListService {
+class AtsListService @Inject()(middleConnector: MiddleConnector,
+                               dataCache : DataCacheConnector) {
 
-  def middleConnector: MiddleConnector
-  def auditService: AuditService
-  def dataCache: DataCacheConnector
-  def cryptoService: CryptoService
-  def authUtils: AuthorityUtils
-  def accountUtils: AccountUtils
+  def auditService: AuditService = new AuditService
+  def authUtils: AuthorityUtils = AuthorityUtils
+  def accountUtils: AccountUtils = AccountUtils
 
   def createModel(converter: (AtsListData => GenericViewModel))(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     getAtsYearList map {
