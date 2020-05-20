@@ -31,11 +31,9 @@ import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-class AtsMainController @Inject()(summaryService: SummaryService) extends TaxYearRequest {
+class AtsMainController @Inject()(summaryService: SummaryService,val auditService: AuditService) extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 

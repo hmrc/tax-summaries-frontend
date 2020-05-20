@@ -43,7 +43,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val mockAuditService = mock[AuditService]
   val mockSummaryService = mock[SummaryService]
 
-  def incomeController = new IncomeController(mockIncomeService) {
+  def incomeController = new IncomeController(mockIncomeService, mockAuditService) {
     override val auditService = mock[AuditService]
     override val authAction: AuthAction = FakeAuthAction
   }
@@ -58,7 +58,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService) {
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService) {
 
         override val auditService = mockAuditService
         override val authAction: AuthAction = FakeAuthAction
@@ -92,7 +92,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     val allowanceService = mock[AllowanceService]
 
-    def sut = new AllowancesController(allowanceService) {
+    def sut = new AllowancesController(allowanceService, mockAuditService) {
 
       override val auditService = mockAuditService
       override val authAction: AuthAction = FakeAuthAction
@@ -110,7 +110,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     val mockCapitalGainsService = mock[CapitalGainsService]
 
-    def sut = new CapitalGainsTaxController(mockCapitalGainsService) {
+    def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService) {
 
       override val auditService = mockAuditService
       override val authAction: AuthAction = FakeAuthAction
@@ -128,7 +128,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     val mockGovernmentSpendService = mock[GovernmentSpendService]
 
-    def sut = new GovernmentSpendController(mockGovernmentSpendService) {
+    def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService) {
 
       override val auditService = mockAuditService
       override val authAction: AuthAction = FakeAuthAction
@@ -144,7 +144,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
   "show no ats page for summary page" in {
 
-    def sut = new SummaryController(mockSummaryService) {
+    def sut = new SummaryController(mockSummaryService, mockAuditService) {
       override val auditService = mockAuditService
       override val authAction: AuthAction = FakeAuthAction
 
@@ -159,7 +159,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
   "show no ats page for nics summary page" in {
 
-    def sut = new NicsController(mockSummaryService) {
+    def sut = new NicsController(mockSummaryService, mockAuditService) {
       override val auditService = mockAuditService
       override val authAction: AuthAction = FakeAuthAction
 

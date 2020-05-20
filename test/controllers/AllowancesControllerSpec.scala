@@ -74,8 +74,9 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
   lazy val taxsController = mock[TaxsController]
 
   val mockAllowanceService = mock[AllowanceService]
+  val mockAuditService = mock[AuditService]
 
-  def sut = new AllowancesController(mockAllowanceService) {
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService) {
     override val auditService = mock[AuditService]
     override val authAction: AuthAction = FakeAuthAction
   }

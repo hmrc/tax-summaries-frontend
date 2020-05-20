@@ -66,8 +66,9 @@ class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   )
 
   val mockSummaryService = mock[SummaryService]
+  val mockAuditService = mock[AuditService]
 
-  def sut = new NicsController(mockSummaryService) {
+  def sut = new NicsController(mockSummaryService, mockAuditService) {
     override val auditService = mock[AuditService]
     override val authAction = FakeAuthAction
   }

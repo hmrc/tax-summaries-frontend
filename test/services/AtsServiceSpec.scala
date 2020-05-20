@@ -67,7 +67,7 @@ class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures
     timestamp = 0
   )
 
-  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector) {
+  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, mockAuditService) {
 
     override val auditService: AuditService = mockAuditService
     override val authUtils: AuthorityUtils = mockAuthUtils

@@ -47,8 +47,9 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
   val mockGovernmentSpendService = mock[GovernmentSpendService]
+  val mockAuditService = mock[AuditService]
 
-  def sut = new GovernmentSpendController(mockGovernmentSpendService) {
+  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService) {
 
     override val auditService: AuditService = mock[AuditService]
     override val authAction: AuthAction = FakeAuthAction

@@ -45,8 +45,9 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
   val mockSummaryService = mock[SummaryService]
+  val mockAuditService = mock[AuditService]
 
-  def sut = new AtsMainController(mockSummaryService) {
+  def sut = new AtsMainController(mockSummaryService, mockAuditService) {
     override val auditService = mock[AuditService]
     override val authAction: AuthAction = FakeAuthAction
   }
