@@ -32,11 +32,9 @@ import view_models.Allowances
 
 import scala.concurrent.Future
 
-class AllowancesController @Inject()(allowanceService: AllowanceService) extends TaxYearRequest {
+class AllowancesController @Inject()(allowanceService: AllowanceService, val auditService: AuditService) extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-   val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 

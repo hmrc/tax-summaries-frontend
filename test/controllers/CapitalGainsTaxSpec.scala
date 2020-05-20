@@ -48,7 +48,7 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val mockCapitalGainsService = mock[CapitalGainsService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new CapitalGainsTaxController(mockCapitalGainsService) {
+  def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService) {
     override val auditService = mockAuditService
     override val authAction: AuthAction = FakeAuthAction
   }

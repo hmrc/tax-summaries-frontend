@@ -55,8 +55,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
 
     "show ats error page for allowances" in {
       val mockAllowanceService = mock[AllowanceService]
+      val mockAuditService = mock[AuditService]
 
-      def sut = new AllowancesController(mockAllowanceService) {
+      def sut = new AllowancesController(mockAllowanceService, mockAuditService) {
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction
 
@@ -72,8 +73,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     "show ats error page for capital-gains" in {
 
       val mockCapitalGainsService = mock[CapitalGainsService]
+      val mockAuditService = mock[AuditService]
 
-      def sut = new CapitalGainsTaxController(mockCapitalGainsService) {
+      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService) {
 
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction
@@ -91,8 +93,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     "show ats error page for government-spend" in {
 
       val mockGovernmentSpendService = mock[GovernmentSpendService]
+      val mockAuditService = mock[AuditService]
 
-      def sut = new GovernmentSpendController(mockGovernmentSpendService) {
+      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService) {
 
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction
@@ -110,8 +113,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     "show ats error page for income" in {
 
       val mockIncomeService = mock[IncomeService]
+      val mockAuditService = mock[AuditService]
 
-      def sut = new IncomeController(mockIncomeService) {
+      def sut = new IncomeController(mockIncomeService, mockAuditService) {
 
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction
@@ -129,8 +133,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     "show ats error page for total-income-tax" in {
 
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
+      val mockAuditService = mock[AuditService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService) {
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService) {
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction
       }
@@ -147,8 +152,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     "show ats error page for summary page" in {
 
       val mockSummaryService = mock[SummaryService]
+      val mockAuditService = mock[AuditService]
 
-      val sut = new SummaryController(mockSummaryService) {
+      val sut = new SummaryController(mockSummaryService, mockAuditService) {
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction
       }
@@ -165,8 +171,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
     "show ats error page for nics on summary page" in {
 
       val mockSummaryService = mock[SummaryService]
+      val mockAuditService = mock[AuditService]
 
-      def sut = new NicsController(mockSummaryService) {
+      def sut = new NicsController(mockSummaryService, mockAuditService) {
 
         override val auditService = mock[AuditService]
         override val authAction: AuthAction = FakeAuthAction

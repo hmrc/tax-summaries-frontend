@@ -70,8 +70,9 @@ class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
   val baseModel = SummaryControllerSpec.baseModel
 
   val mockSummaryService = mock[SummaryService]
+  val mockAuditService = mock[AuditService]
 
-  def sut = new SummaryController(mockSummaryService) {
+  def sut = new SummaryController(mockSummaryService, mockAuditService) {
 
     override val auditService = mock[AuditService]
     override val authAction: AuthAction = FakeAuthAction

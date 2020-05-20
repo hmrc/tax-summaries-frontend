@@ -33,9 +33,8 @@ import scala.concurrent.Future
 
 class AtsService @Inject()(
                             middleConnector: MiddleConnector,
-                            dataCacheConnector: DataCacheConnector) {
-
-  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
+                            dataCacheConnector: DataCacheConnector,
+                            val auditService: AuditService) {
   val authUtils: AuthorityUtils = AuthorityUtils
   val accountUtils: AccountUtils = AccountUtils
 

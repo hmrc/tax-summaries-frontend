@@ -82,8 +82,9 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
   )
 
   val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
+  val mockAuditService = mock[AuditService]
 
-  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService) {
+  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService) {
     override val auditService: AuditService = mock[AuditService]
     override val authAction: AuthAction = FakeAuthAction
   }
