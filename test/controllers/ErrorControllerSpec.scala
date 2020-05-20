@@ -32,19 +32,17 @@ class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
-  trait TestErrorController extends ErrorController {
-    implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
-    override val minAuthAction: MinAuthAction = FakeMinAuthAction
-  }
+  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
+  def sut = new ErrorController(FakeAuthAction, FakeMinAuthAction)
 
   "ErrorController" should {
 
-    "Show No ATS page" in new TestErrorController {
+    "Show No ATS page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
-      val result = authorisedNoAts()(request)
+      val result = sut.authorisedNoAts()(request)
       val document = contentAsString(result)
 
       status(result) shouldBe 200
@@ -52,17 +50,16 @@ class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
       document shouldBe contentAsString(views.html.errors.no_ats_error())
     }
 
-    "show not authorised page" in new TestErrorController {
+    "show not authorised page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
 
-      val result = notAuthorised()(request)
+      val result = sut.notAuthorised()(request)
       val document = contentAsString(result)
 
       status(result) shouldBe 200
 
       document shouldBe contentAsString(views.html.errors.not_authorised())
     }
-
   }
 }

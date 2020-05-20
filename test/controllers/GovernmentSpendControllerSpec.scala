@@ -49,12 +49,9 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
   val mockGovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService) {
+  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
 
-    override val auditService: AuditService = mock[AuditService]
-    override val authAction: AuthAction = FakeAuthAction
-
-    val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel =  AtsList(
       utr = "3000024376",
       forename = "forename",
       surname = "surname",
@@ -62,7 +59,6 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
         TaxYearEnd(Some("2015"))
       )
     )
-  }
 
   val model = new GovernmentSpend(
     taxYear = 2014,

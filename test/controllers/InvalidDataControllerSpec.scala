@@ -57,12 +57,10 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockAllowanceService = mock[AllowanceService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new AllowancesController(mockAllowanceService, mockAuditService) {
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
+      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)
 
-        when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
-      }
+      when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
+
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -75,13 +73,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockCapitalGainsService = mock[CapitalGainsService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService) {
+      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction)
 
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
-
-        when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
-      }
+      when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -95,13 +89,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockGovernmentSpendService = mock[GovernmentSpendService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService) {
+      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
 
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
-
-        when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
-      }
+      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -115,14 +105,10 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockIncomeService = mock[IncomeService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new IncomeController(mockIncomeService, mockAuditService) {
+      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
 
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
+      when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
-        when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
-
-      }
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -135,10 +121,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService) {
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
-      }
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction)
 
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -154,10 +137,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      val sut = new SummaryController(mockSummaryService, mockAuditService) {
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
-      }
+      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction)
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -173,13 +153,9 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new NicsController(mockSummaryService, mockAuditService) {
+      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction)
 
-        override val auditService = mock[AuditService]
-        override val authAction: AuthAction = FakeAuthAction
-
-        when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
-      }
+      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))

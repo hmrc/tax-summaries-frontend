@@ -20,24 +20,23 @@ import com.google.inject.Inject
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{Action, AnyContent, Result}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.IncomeBeforeTax
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
 
-class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService) extends TaxYearRequest {
+class IncomeController @Inject()(incomeService: IncomeService,
+                                 val auditService: AuditService,
+                                 authAction: AuthAction) extends TaxYearRequest {
 
   implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
-
-  def authorisedIncomeBeforeTax = authAction.async {
+  def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async {
     request => show(request)
   }
 

@@ -36,7 +36,7 @@ import play.api.http.Status.SEE_OTHER
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with TestConstants with BeforeAndAfterEach {
+class CapitalGainsTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with TestConstants with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -48,10 +48,7 @@ class CapitalGainsTaxSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val mockCapitalGainsService = mock[CapitalGainsService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService) {
-    override val auditService = mockAuditService
-    override val authAction: AuthAction = FakeAuthAction
-  }
+  def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction)
 
   override def beforeEach(): Unit = {
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))

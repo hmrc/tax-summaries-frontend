@@ -76,10 +76,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
   val mockAllowanceService = mock[AllowanceService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new AllowancesController(mockAllowanceService, mockAuditService) {
-    override val auditService = mock[AuditService]
-    override val authAction: AuthAction = FakeAuthAction
-  }
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)
 
   override def beforeEach(): Unit = {
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())

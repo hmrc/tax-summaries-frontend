@@ -45,7 +45,9 @@ class AccountControllerTest extends UnitSpec with GuiceOneAppPerSuite with Mocki
     "clear user session after redirect" in {
 
       val result = controller.signOut(FakeRequest().withSession("test" -> "session"))
-      result.futureValue shouldBe result.futureValue.withNewSession
+      val expected = result.futureValue
+
+      expected shouldBe expected.withNewSession
     }
   }
 }

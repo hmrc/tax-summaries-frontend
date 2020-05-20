@@ -24,6 +24,7 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Matchers._
 import org.mockito.Mockito.{when, _}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -46,7 +47,7 @@ import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with I18nSupport {
+class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with I18nSupport with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -62,32 +63,36 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
     Json.fromJson[AtsListData](json).get
   }
 
-  trait TestController extends IndexController {
+  val mockDataCacheConnector = mock[DataCacheConnector]
+  val mockAtsYearListService = mock[AtsYearListService]
+  val mockAtsListService = mock[AtsListService]
 
-    override lazy val dataCache = mock[DataCacheConnector]
-    override lazy val atsYearListService = mock[AtsYearListService]
-    override val auditService = mock[AuditService]
-    override lazy val atsListService = mock[AtsListService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
+  def sut = new IndexController(
+    mockDataCacheConnector,
+    mockAtsYearListService,
+    mockAtsListService,
+    mock[AuditService],
+    FakeAuthAction
+  )
 
-    val model: GenericViewModel = AtsList(
-      utr = testUtr,
-      forename = "forename",
-      surname = "surname",
-      yearList = List(
-        TaxYearEnd(Some("2014")),
-        TaxYearEnd(Some("2015"))
-      )
+  val model: GenericViewModel = AtsList(
+    utr = testUtr,
+    forename = "forename",
+    surname = "surname",
+    yearList = List(
+      TaxYearEnd(Some("2014")),
+      TaxYearEnd(Some("2015"))
     )
+  )
 
-    when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model)
-    when(dataCache.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+  override def beforeEach(): Unit = {
+    when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model)
+    when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
   }
 
   "Calling with request param" should {
 
-    "return a 303 response when called with '?ref=PORTAL'" in new TestController {
+    "return a 303 response when called with '?ref=PORTAL'" in {
 
       val requestWithQuery = AuthenticatedRequest(
         "userId",
@@ -100,7 +105,7 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
 
-      val result = Future.successful(agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -111,7 +116,7 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
 
   "Calling with request param and trailing slash (non-AGENT)" should {
 
-    "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in new TestController {
+    "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in {
 
       val requestWithQuery = AuthenticatedRequest(
         "userId",
@@ -124,15 +129,15 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
 
-      val result = Future.successful(agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
-      verify(dataCache, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "put TAXS_USER_TYPE into session and Agent token into dataCache when called with '/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
+    "put TAXS_USER_TYPE into session and Agent token into dataCache when called with '/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg'" in {
 
       val requestWithQuery = AuthenticatedRequest(
         "userId",
@@ -145,15 +150,15 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
-      verify(dataCache, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
+    "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in {
 
       val requestWithQuery = AuthenticatedRequest(
         "userId",
@@ -166,14 +171,14 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
 
       status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe None
-      verify(dataCache, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "go straight to summary if user has only one tax year" in new TestController {
+    "go straight to summary if user has only one tax year" in {
 
       val model2: GenericViewModel = AtsList(
         utr = testUtr,
@@ -184,22 +189,20 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         )
       )
 
-      when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
-      when(atsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
+      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
 
-      val result = agentAwareShow(request)
+      val result = sut.agentAwareShow(request)
 
-      whenReady(result) { result =>
-        status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/annual-tax-summary/main?taxYear=2014")
-      }
+      status(result) shouldBe 303
+      redirectLocation(result) shouldBe Some("/annual-tax-summary/main?taxYear=2014")
     }
   }
 
   //FIXME - should throw an error, if Agent does not provide ref/id
   "Calling with request param and trailing slash (AGENT)" should {
 
-    "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in new TestController {
+    "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in {
 
       val agentRequestWithQuery = AuthenticatedRequest(
         "userId",
@@ -212,15 +215,15 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
       )
 
-      val result = Future.successful(agentAwareShow(agentRequestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
-      verify(dataCache, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "put TAXS_USER_TYPE and TAXS_AGENT_TOKEN into store when called with '/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
+    "put TAXS_USER_TYPE and TAXS_AGENT_TOKEN into store when called with '/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg'" in {
 
       val agentRequestWithQuery = AuthenticatedRequest(
         "userId",
@@ -233,15 +236,17 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(agentAwareShow(agentRequestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
-      verify(dataCache, times(1)).storeAgentToken(Matchers.eq("bxk2Z3Q84R0W2XSklMb7Kg"))(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, times(1)).storeAgentToken(Matchers.eq("bxk2Z3Q84R0W2XSklMb7Kg"))(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in new TestController {
+    "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in {
+
+      reset(mockDataCacheConnector)
 
       val agentRequestWithQuery = AuthenticatedRequest(
         "userId",
@@ -254,24 +259,24 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(agentAwareShow(agentRequestWithQuery))
+      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
 
       session(result).get("TAXS_USER_TYPE") shouldBe None
-      verify(dataCache, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Calling connector for ATS Tax Year list" should {
 
-    "return a 200 response" in new TestController {
+    "return a 200 response" in {
 
-      val result = Future.successful(agentAwareShow(request))
+      val result = Future.successful(sut.agentAwareShow(request))
       status(result) shouldBe 200
     }
 
-    "return a Tax Year list" in new TestController {
+    "return a Tax Year list" in {
 
-      val result = Future.successful(agentAwareShow(request))
+      val result = Future.successful(sut.agentAwareShow(request))
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -281,9 +286,9 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
 
   "Submitting the Index page" should {
 
-    "give a Ok status and stay on the same page if form errors and display the error" in new TestController {
+    "give a Ok status and stay on the same page if form errors and display the error" in {
 
-      when(atsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
       val atsYear = Map("atsYear" -> "")
       val form = atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(
@@ -297,16 +302,16 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
-      val result = Future.successful(onSubmit(requestWithQuery))
+      val result = Future.successful(sut.onSubmit(requestWithQuery))
       status(result) shouldBe OK
 
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(atsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(new NoATSViewModel)
+      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(new NoATSViewModel)
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
