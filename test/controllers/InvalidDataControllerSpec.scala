@@ -27,6 +27,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
@@ -40,6 +41,8 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   val taxYear = 2014
+
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
   implicit val hc = new HeaderCarrier
 
   val genericViewModel: GenericViewModel =  AtsList(

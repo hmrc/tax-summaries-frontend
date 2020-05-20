@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -24,12 +24,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.http.Status.SEE_OTHER
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, IncomeBeforeTax, NoATSViewModel}
@@ -61,6 +62,8 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
   val mockIncomeService = mock[IncomeService]
   val mockAuditService = mock[AuditService]
+
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
 

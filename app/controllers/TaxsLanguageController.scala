@@ -17,15 +17,12 @@
 package controllers
 
 import com.google.inject.Inject
-import config.AppFormPartialRetriever
 import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class TaxsLanguageController @Inject()(val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+class TaxsLanguageController @Inject()(val messagesApi: MessagesApi)(implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController with I18nSupport {
 
   def switchLanguage(lang: String): Action[AnyContent] = Action { implicit request =>
     request.headers.get(REFERER) match {

@@ -17,9 +17,11 @@
 package modules
 
 import com.google.inject.AbstractModule
+import config.AppFormPartialRetriever
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class Module extends AbstractModule {
   override def configure(): Unit = {
-    
+    bind(classOf[FormPartialRetriever]).to(classOf[AppFormPartialRetriever])
   }
 }

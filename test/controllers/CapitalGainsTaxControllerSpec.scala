@@ -19,7 +19,7 @@ package controllers
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito.{when, reset}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import view_models.{Amount, NoATSViewModel}
 import play.api.http.Status.SEE_OTHER
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
 
@@ -47,6 +48,8 @@ class CapitalGainsTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
 
   val mockCapitalGainsService = mock[CapitalGainsService]
   val mockAuditService = mock[AuditService]
+
+  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction)
 

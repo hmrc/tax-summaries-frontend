@@ -67,6 +67,8 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val mockAtsYearListService = mock[AtsYearListService]
   val mockAtsListService = mock[AtsListService]
 
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+
   def sut = new IndexController(
     mockDataCacheConnector,
     mockAtsYearListService,

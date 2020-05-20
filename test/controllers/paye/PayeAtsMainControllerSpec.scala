@@ -17,27 +17,22 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.http.Status._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
 import utils.TestConstants.testNino
-import play.api.http.Status._
-
-import scala.concurrent.Future
-import scala.io.Source
 
 class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with I18nSupport {
 
@@ -47,14 +42,15 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
   val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val mockPayeAtsService=mock[PayeAtsService]
-  val mockAppConfig=mock[ApplicationConfig]
+  val mockPayeAtsService = mock[PayeAtsService]
+  val mockAppConfig = mock[ApplicationConfig]
+
   when(mockAppConfig.payeYear).thenReturn(taxYear)
 
-  def sut = new PayeAtsMainController(mockPayeAtsService,FakePayeAuthAction,mockAppConfig) {
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
+  def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mockAppConfig) {
     override val payeYear = mockAppConfig.payeYear
-
   }
 
   "AtsMain controller" should {

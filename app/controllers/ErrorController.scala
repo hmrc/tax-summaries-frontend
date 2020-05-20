@@ -17,7 +17,6 @@
 package controllers
 
 import com.google.inject.Inject
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, MinAuthAction}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
@@ -26,22 +25,19 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.AccountUtils
 
-class ErrorController @Inject()(authAction: AuthAction,
-                                minAuthAction: MinAuthAction
-                               ) extends FrontendController
-        with AccountUtils {
+class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction)(
+  implicit val formPartialRetriever: FormPartialRetriever)
+    extends FrontendController with AccountUtils {
 
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-  def authorisedNoAts: Action[AnyContent] = authAction {
-    implicit request => Ok(views.html.errors.no_ats_error())
+  def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
+    Ok(views.html.errors.no_ats_error())
   }
 
-  def notAuthorised: Action[AnyContent] = minAuthAction {
-    implicit request => Ok(views.html.errors.not_authorised())
+  def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>
+    Ok(views.html.errors.not_authorised())
   }
 
-  def serviceUnavailable: Action[AnyContent] = Action {
-    implicit request: Request[_] => Ok(views.html.errors.service_unavailable())
+  def serviceUnavailable: Action[AnyContent] = Action { implicit request: Request[_] =>
+    Ok(views.html.errors.service_unavailable())
   }
 }

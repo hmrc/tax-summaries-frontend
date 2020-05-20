@@ -17,6 +17,7 @@
 package config
 
 import akka.actor.ActorSystem
+import com.google.inject.Inject
 import com.typesafe.config.Config
 import play.api.Mode.Mode
 import play.api.{Configuration, Play}
@@ -92,6 +93,6 @@ object TAXSSessionCache extends SessionCache with AppName {
   override protected def appNameConfiguration: Configuration = Play.current.configuration
 }
 
-object TAXSSessionCookieCrypto {
-  val crypto = new ApplicationCrypto(Play.current.configuration.underlying).SessionCookieCrypto
+class TAXSSessionCookieCrypto @Inject()() {
+  lazy val crypto = new ApplicationCrypto(Play.current.configuration.underlying).SessionCookieCrypto
 }

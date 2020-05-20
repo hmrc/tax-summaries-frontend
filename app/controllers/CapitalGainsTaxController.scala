@@ -17,7 +17,6 @@
 package controllers
 
 import com.google.inject.Inject
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
@@ -30,23 +29,22 @@ import view_models.CapitalGains
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxController @Inject()(capitalGainsService: CapitalGainsService,
-                                          val auditService: AuditService,
-                                          authAction: AuthAction) extends TaxYearRequest {
+class CapitalGainsTaxController @Inject()(
+  capitalGainsService: CapitalGainsService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-  def authorisedCapitalGains: Action[AnyContent] = authAction.async {
-    request => show(request)
+  def authorisedCapitalGains: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = CapitalGains
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(views.html.capital_gains(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
 }

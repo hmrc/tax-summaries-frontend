@@ -19,7 +19,7 @@ package controllers
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito.{when, reset}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
@@ -67,6 +68,8 @@ class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
 
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
+
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction)
 

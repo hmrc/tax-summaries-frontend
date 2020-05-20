@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -25,12 +25,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.http.Status.SEE_OTHER
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, _}
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
@@ -48,6 +49,8 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
 
   val mockGovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService = mock[AuditService]
+
+  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
 

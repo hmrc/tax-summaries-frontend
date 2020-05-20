@@ -16,7 +16,7 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, ApplicationConfig}
+import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
 import connectors.MiddleConnector
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -37,7 +37,7 @@ object PayeYourTaxableIncomeController extends PayeYourTaxableIncomeController {
 
 trait PayeYourTaxableIncomeController extends FrontendController {
 
-  implicit val formPartialRetriever = AppFormPartialRetriever
+  implicit lazy val formPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto)
 
   val payeAuthAction: PayeAuthAction
   val payeYear: Int

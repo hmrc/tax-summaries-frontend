@@ -42,7 +42,8 @@ class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   implicit val messagesEn = Messages(languageEn, messagesApi)
   implicit val messagesCy = Messages(languageCy, messagesApi)
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   "Logging in as a portal user" should {
 

@@ -16,7 +16,6 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
@@ -40,7 +39,8 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   "Logging in as a transitioned user" should {
 

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -26,9 +26,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import view_models.NoATSViewModel
 import utils.TestConstants._
+import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
@@ -42,6 +43,8 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val mockIncomeService = mock[IncomeService]
   val mockAuditService = mock[AuditService]
   val mockSummaryService = mock[SummaryService]
+
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def incomeController = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
 

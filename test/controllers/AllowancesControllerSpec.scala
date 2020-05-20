@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -76,7 +77,7 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
   val mockAllowanceService = mock[AllowanceService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)(app.injector.instanceOf[AppFormPartialRetriever])
 
   override def beforeEach(): Unit = {
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())

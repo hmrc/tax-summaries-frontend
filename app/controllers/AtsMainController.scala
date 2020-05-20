@@ -17,7 +17,6 @@
 package controllers
 
 import com.google.inject.Inject
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
@@ -30,24 +29,22 @@ import view_models.Summary
 
 import scala.concurrent.Future
 
-class AtsMainController @Inject()(summaryService: SummaryService,
-                                  val auditService: AuditService,
-                                  authAction: AuthAction
-                                 ) extends TaxYearRequest {
+class AtsMainController @Inject()(
+  summaryService: SummaryService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-  def authorisedAtsMain: Action[AnyContent] = authAction.async {
-    request => show(request)
+  def authorisedAtsMain: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = Summary
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(views.html.taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
 }

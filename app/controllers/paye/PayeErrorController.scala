@@ -16,7 +16,7 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, ApplicationConfig}
+import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play
 import play.api.Play.current
@@ -32,7 +32,7 @@ object PayeErrorController extends PayeErrorController {
 
 trait PayeErrorController extends FrontendController{
 
-  implicit val formPartialRetriever = AppFormPartialRetriever
+  implicit lazy val formPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto)
   val payeYear: Int
   val payeAuthAction: PayeAuthAction
 

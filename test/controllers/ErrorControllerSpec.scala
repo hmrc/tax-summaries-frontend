@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
 import controllers.auth._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -32,7 +31,7 @@ class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new ErrorController(FakeAuthAction, FakeMinAuthAction)
 

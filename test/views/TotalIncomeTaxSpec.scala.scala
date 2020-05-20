@@ -15,20 +15,19 @@
  */
 
 package views
-import config.AppFormPartialRetriever
+
 import controllers.auth.AuthenticatedRequest
-import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.prop.PropertyChecks
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
-import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models._
 import views.html.total_income_tax_includes.{savings_table, scottish_table}
 
 class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants with PropertyChecks {
@@ -36,7 +35,7 @@ class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants w
   implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit lazy val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def view(tax: TotalIncomeTax): String =
     views.html.total_income_tax(tax).body

@@ -20,9 +20,12 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 
 class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
+
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new TaxsLanguageController(app.injector.instanceOf[MessagesApi])
 

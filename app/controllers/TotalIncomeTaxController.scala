@@ -17,7 +17,6 @@
 package controllers
 
 import com.google.inject.Inject
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
@@ -30,23 +29,23 @@ import view_models.TotalIncomeTax
 
 import scala.concurrent.Future
 
-class TotalIncomeTaxController @Inject()(totalIncomeTaxService: TotalIncomeTaxService,
-                                         val auditService: AuditService,
-                                         authAction: AuthAction) extends TaxYearRequest {
+class TotalIncomeTaxController @Inject()(
+  totalIncomeTaxService: TotalIncomeTaxService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-  def authorisedTotalIncomeTax: Action[AnyContent] = authAction.async {
-    request => show(request)
+  def authorisedTotalIncomeTax: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = TotalIncomeTax
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
-  }
 
-  override def obtainResult(result:ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+    Ok(
+      views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
 }

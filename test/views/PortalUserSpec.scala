@@ -16,7 +16,6 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
@@ -41,7 +40,7 @@ class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerS
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages = Messages(language, messagesApi)
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   "Logging in as a portal user" should {
 

@@ -17,7 +17,6 @@
 package controllers
 
 import com.google.inject.Inject
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
 import play.api.Play.current
@@ -30,25 +29,28 @@ import view_models.GovernmentSpend
 
 import scala.concurrent.Future
 
-class GovernmentSpendController @Inject()(governmentSpendService: GovernmentSpendService,
-                                          val auditService: AuditService,
-                                          authAction: AuthAction) extends TaxYearRequest {
+class GovernmentSpendController @Inject()(
+  governmentSpendService: GovernmentSpendService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-  def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async {
-    request => show(request)
+  def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = GovernmentSpend
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
-  }
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+    Ok(
+      views.html.government_spending(
+        result,
+        assignPercentage(result.govSpendAmountData),
+        getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
     var percentEnviron = 0.0
@@ -57,11 +59,11 @@ class GovernmentSpendController @Inject()(governmentSpendService: GovernmentSpen
 
     govSpendList.foreach {
       case (key, value) =>
-        if(key == "Environment") {
+        if (key == "Environment") {
           percentEnviron = value.percentage.doubleValue()
-        } else if(key == "Culture") {
+        } else if (key == "Culture") {
           percentCultural = value.percentage.doubleValue()
-        } else if(key == "HousingAndUtilities") {
+        } else if (key == "HousingAndUtilities") {
           percentHousing = value.percentage.doubleValue()
         }
 

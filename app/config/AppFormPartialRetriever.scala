@@ -16,20 +16,15 @@
 
 package config
 
-import uk.gov.hmrc.crypto.{CompositeSymmetricCrypto, PlainText}
+import com.google.inject.Inject
+import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.CoreGet
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-object AppFormPartialRetriever extends AppFormPartialRetriever {
-  override lazy val httpGet: CoreGet = WSGet
-  override lazy val sessionCrypto: CompositeSymmetricCrypto = TAXSSessionCookieCrypto.crypto
-}
+class AppFormPartialRetriever @Inject()(val cookieCrypto: TAXSSessionCookieCrypto) extends FormPartialRetriever {
 
-trait AppFormPartialRetriever extends FormPartialRetriever {
-
-  val httpGet: CoreGet
-  val sessionCrypto: CompositeSymmetricCrypto
+  val httpGet: CoreGet = WSGet
 
   override lazy val crypto: String => String =
-    str => sessionCrypto.encrypt(PlainText(str)).value
+    str => cookieCrypto.crypto.encrypt(PlainText(str)).value
 }

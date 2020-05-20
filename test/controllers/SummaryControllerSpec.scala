@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
@@ -71,6 +72,8 @@ class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
 
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
+
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction)
 

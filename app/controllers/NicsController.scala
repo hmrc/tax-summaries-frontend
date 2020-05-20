@@ -32,9 +32,7 @@ import scala.concurrent.Future
 
 class NicsController @Inject()(summaryService: SummaryService,
                                val auditService: AuditService,
-                               authAction: AuthAction) extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+                               authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever) extends TaxYearRequest {
 
   def authorisedNics: Action[AnyContent] = authAction.async {
     request => show(request)

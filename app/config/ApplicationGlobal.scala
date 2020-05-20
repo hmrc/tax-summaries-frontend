@@ -37,7 +37,7 @@ object ApplicationGlobal extends DefaultFrontendGlobal {
   override lazy val loggingFilter: FrontendLoggingFilter = TAXSLoggingFilter
   override lazy val frontendAuditFilter: FrontendAuditFilter = TAXSAuditFilter
 
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit lazy val formPartialRetriever: FormPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto)
 
   override def onStart(app: Application) {
     super.onStart(app)
