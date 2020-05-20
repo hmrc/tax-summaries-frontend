@@ -51,12 +51,11 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
   implicit val hc = new HeaderCarrier
 
   val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  val sut = new CapitalGainsService(mockAtsService) with MockitoSugar {
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
-  }
+  val sut = new CapitalGainsService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "CapitalGainsService getCapitalGains" should {
 

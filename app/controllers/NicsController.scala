@@ -37,7 +37,7 @@ class NicsController @Inject()(summaryService: SummaryService) extends TaxYearRe
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
-  val auditService: AuditService = AuditService
+  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   def authorisedNics = authAction.async {
     request => show(request)

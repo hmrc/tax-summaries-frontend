@@ -35,7 +35,7 @@ class GovernmentSpendController @Inject()(governmentSpendService: GovernmentSpen
 
   implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
-  val auditService: AuditService = AuditService
+  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 

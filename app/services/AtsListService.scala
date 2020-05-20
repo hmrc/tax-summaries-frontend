@@ -33,7 +33,7 @@ object AtsListService extends AtsListService {
   override lazy val cryptoService = new CryptoService
   override lazy val dataCache = new DataCacheConnector(cryptoService)
   override lazy val authUtils = AuthorityUtils
-  override lazy val auditService: AuditService = AuditService
+  override lazy val auditService: AuditService = new AuditService
   override lazy val accountUtils: AccountUtils = AccountUtils
 }
 

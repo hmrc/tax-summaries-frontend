@@ -35,8 +35,8 @@ import scala.concurrent.Future
 object IndexController extends IndexController {
   val cryptoService = new CryptoService
 
-  override val atsYearListService = AtsYearListService
-  override val auditService = AuditService
+  override val atsYearListService = new AtsYearListService
+  override val auditService = new AuditService
   override lazy val dataCache = new DataCacheConnector(cryptoService)
   override val atsListService = AtsListService
   override val formPartialRetriever = AppFormPartialRetriever

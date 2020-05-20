@@ -18,6 +18,7 @@ package utils
 
 import java.util.Date
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.Logger
@@ -30,7 +31,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 import scala.concurrent.Future
 
-abstract class TaxsController extends FrontendController
+abstract class TaxsController @Inject()() extends FrontendController
           with AccountUtils
           with AttorneyUtils {
 

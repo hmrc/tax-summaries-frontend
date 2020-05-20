@@ -50,13 +50,12 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
   val taxYear = 2015
 
   val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
 
   implicit val hc = new HeaderCarrier
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
 
-  def sut = new GovernmentSpendService(mockAtsService) with MockitoSugar {
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
-  }
+  def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" should {
 

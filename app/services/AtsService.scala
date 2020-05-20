@@ -22,6 +22,7 @@ import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
+import play.api.Play
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,7 +35,7 @@ class AtsService @Inject()(
                             middleConnector: MiddleConnector,
                             dataCacheConnector: DataCacheConnector) {
 
-  def auditService: AuditService = AuditService
+  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
   val authUtils: AuthorityUtils = AuthorityUtils
   val accountUtils: AccountUtils = AccountUtils
 

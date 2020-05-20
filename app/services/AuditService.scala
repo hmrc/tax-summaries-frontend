@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.Inject
 import config.TAXSAuditConnector
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
@@ -28,9 +29,7 @@ object AuditTypes {
   val Tx_SUCCEEDED = "TxSuccessful"
 }
 
-object AuditService extends AuditService
-
-trait AuditService {
+class AuditService @Inject()() {
 
   lazy val auditConnector = TAXSAuditConnector
   val taxsAuditSource = "tax-summaries-frontend"

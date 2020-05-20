@@ -37,7 +37,7 @@ class SummaryController @Inject()(summaryService: SummaryService) extends TaxYea
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
-  val auditService: AuditService = AuditService
+  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   def authorisedSummaries = authAction.async {
     request => show(request)

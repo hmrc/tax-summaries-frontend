@@ -25,8 +25,7 @@ import view_models.GovernmentSpend
 
 import scala.concurrent.Future
 
-class GovernmentSpendService @Inject()(atsService: AtsService) {
-  def atsYearListService: AtsYearListService = AtsYearListService
+class GovernmentSpendService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
   def getGovernmentSpendData(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)

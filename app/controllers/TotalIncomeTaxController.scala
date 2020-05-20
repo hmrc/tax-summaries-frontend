@@ -37,7 +37,7 @@ class TotalIncomeTaxController @Inject()(totalIncomeTaxService: TotalIncomeTaxSe
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
-  val auditService: AuditService = AuditService
+  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   def authorisedTotalIncomeTax = authAction.async {
     request => show(request)

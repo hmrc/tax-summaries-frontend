@@ -25,9 +25,7 @@ import view_models.Allowances
 
 import scala.concurrent.Future
 
-class AllowanceService @Inject()(atsService: AtsService) {
-
-  def atsYearListService: AtsYearListService = AtsYearListService
+class AllowanceService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
   def getAllowances(taxYear: Int)(implicit request: AuthenticatedRequest[_], hc: HeaderCarrier): Future[GenericViewModel] = {
     atsService.createModel(taxYear, allowanceDataConverter)

@@ -51,12 +51,11 @@ class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
   implicit val hc = new HeaderCarrier
 
   val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  def sut = new IncomeService(mockAtsService) with MockitoSugar {
-    override val atsYearListService: AtsYearListService = mock[AtsYearListService]
-  }
+  def sut = new IncomeService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "IncomeService getIncomeData" should {
 

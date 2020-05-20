@@ -37,7 +37,7 @@ class CapitalGainsTaxController @Inject()(capitalGainsService: CapitalGainsServi
 
   val authAction: AuthAction = Play.current.injector.instanceOf[AuthAction]
 
-  val auditService: AuditService = AuditService
+  val auditService: AuditService = Play.current.injector.instanceOf[AuditService]
 
   def authorisedCapitalGains = authAction.async {
     request => show(request)
