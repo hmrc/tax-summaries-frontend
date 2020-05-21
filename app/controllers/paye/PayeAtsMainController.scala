@@ -32,11 +32,10 @@ import view_models.paye.PayeAtsMain
 
 class PayeAtsMainController @Inject()(
   payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction,
-  applicationConfig: ApplicationConfig)(implicit val formPartialRetriever: FormPartialRetriever)
+  payeAuthAction: PayeAuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
     extends FrontendController {
 
-  val payeYear = applicationConfig.payeYear
+  val payeYear = ApplicationConfig.payeYear
 
   def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, payeYear).map {

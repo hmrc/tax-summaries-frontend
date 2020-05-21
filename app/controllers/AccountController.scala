@@ -23,9 +23,7 @@ import play.api.mvc.Results._
 
 class AccountController @Inject()() {
 
-  val appConfig: ApplicationConfig = ApplicationConfig
-
   def signOut: Action[AnyContent] = Action {
-    Redirect(appConfig.feedbackUrl).withNewSession
+    Redirect(ApplicationConfig.feedbackUrl).withNewSession
   }
 }

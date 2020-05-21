@@ -16,25 +16,20 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, AppWSGet, ApplicationConfig, ApplicationGlobal, TAXSSessionCookieCrypto}
+import com.google.inject.Inject
+import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import play.api.Play
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
 
-object PayeErrorController extends PayeErrorController {
-  override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
-  override val payeYear: Int = ApplicationConfig.payeYear
-}
-
-trait PayeErrorController extends FrontendController{
-
-  implicit lazy val formPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto, new AppWSGet(ApplicationGlobal.configuration))
-  val payeYear: Int
-  val payeAuthAction: PayeAuthAction
+class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction)
+                                    (implicit val formPartialRetriever: FormPartialRetriever)
+                                     extends FrontendController{
+  val payeYear = ApplicationConfig.payeYear
 
   def genericError (status : Int): Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] =>{

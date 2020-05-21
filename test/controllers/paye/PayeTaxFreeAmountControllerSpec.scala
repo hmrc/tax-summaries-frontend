@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -30,6 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import utils.TestConstants.testNino
@@ -47,31 +49,29 @@ class PayeTaxFreeAmountControllerSpec
 
   implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-
+  val payeAtsService: PayeAtsService = mock[PayeAtsService]
   val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", routes.PayeTaxFreeAmountController.show().url))
+  implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
+  val sut = new PayeTaxFreeAmountController(payeAtsService, FakePayeAuthAction)
+  val applicationConfig =mock[ApplicationConfig]
+  when(applicationConfig.payeYear).thenReturn(taxYear)
 
-  class TestController extends PayeTaxFreeAmountController {
-    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
-    override val payeAtsService: PayeAtsService = mock[PayeAtsService]
-    override val payeYear: Int = taxYear
-
-    private def readJson(path: String) = {
-      val resource = getClass.getResourceAsStream(path)
-      Json.parse(Source.fromInputStream(resource).getLines().mkString)
-    }
-
-    val expectedResponse: JsValue = readJson("/paye_ats.json")
+  private def readJson(path: String) = {
+    val resource = getClass.getResourceAsStream(path)
+    Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
+
+  val expectedResponse: JsValue = readJson("/paye_ats.json")
 
   "Tax Free Amount controller" should {
 
-    "return OK response" in new TestController {
+    "return OK response" in {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
@@ -80,24 +80,24 @@ class PayeTaxFreeAmountControllerSpec
       document.title should include(Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
     }
 
-    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
       when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
-      val result = show(fakeAuthenticatedRequest).futureValue
+      val result = sut.show(fakeAuthenticatedRequest).futureValue
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER

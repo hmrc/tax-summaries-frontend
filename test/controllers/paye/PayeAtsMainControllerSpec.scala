@@ -38,25 +38,19 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
   implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-
   val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
-
   val mockPayeAtsService = mock[PayeAtsService]
-  val mockAppConfig = mock[ApplicationConfig]
-
-  when(mockAppConfig.payeYear).thenReturn(taxYear)
-
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  val applicationConfig =mock[ApplicationConfig]
 
-  def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mockAppConfig) {
-    override val payeYear = mockAppConfig.payeYear
-  }
+  when(applicationConfig.payeYear).thenReturn(taxYear)
+
+  def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction)
 
   "AtsMain controller" should {
 
     "return OK response" in {
-
 
       when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Right(mock[PayeAtsData]))

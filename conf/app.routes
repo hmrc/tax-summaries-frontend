@@ -21,22 +21,22 @@ GET     /switch-to-english                                      @controllers.Tax
 
 GET     /sign-out                                               @controllers.AccountController.signOut
 
-GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
+GET     /paye/treasury-spending                                @controllers.paye.PayeGovernmentSpendController.show
 
 GET     /paye/main                                             @controllers.paye.PayeAtsMainController.show
 
-GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
+GET     /paye/summary                                          @controllers.paye.PayeYourIncomeAndTaxesController.show
 
-GET     /paye/income-tax-and-national-insurance                controllers.paye.PayeIncomeTaxAndNicsController.show
+GET     /paye/income-tax-and-national-insurance                @controllers.paye.PayeIncomeTaxAndNicsController.show
 
-GET     /paye/income-before-tax                                controllers.paye.PayeYourTaxableIncomeController.show
+GET     /paye/income-before-tax                                @controllers.paye.PayeYourTaxableIncomeController.show
 
-GET     /paye/tax-free-amount                                  controllers.paye.PayeTaxFreeAmountController.show
+GET     /paye/tax-free-amount                                  @controllers.paye.PayeTaxFreeAmountController.show
 
-GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
+GET     /paye/no-ats                                           @controllers.paye.PayeErrorController.authorisedNoAts
 
-GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
+GET		/paye/generic-error                                    @controllers.paye.PayeErrorController.genericError(status : Int)
 
-GET     /paye/not-authorised                                   controllers.paye.PayeErrorController.notAuthorised
+GET     /paye/not-authorised                                   @controllers.paye.PayeErrorController.notAuthorised
 
-GET     /paye/service-unavailable                              controllers.paye.PayeErrorController.serviceUnavailable
+GET     /paye/service-unavailable                              @controllers.paye.PayeErrorController.serviceUnavailable

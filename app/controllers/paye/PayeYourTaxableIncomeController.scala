@@ -16,30 +16,27 @@
 
 package controllers.paye
 
-import config._
+import com.google.inject.Inject
+import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
 import connectors.MiddleConnector
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
 import play.api.{Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourTaxableIncome
 
-object PayeYourTaxableIncomeController extends PayeYourTaxableIncomeController {
-  override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
-  override val payeYear: Int = ApplicationConfig.payeYear
-  override val payeAtsService = new PayeAtsService(new MiddleConnector(new WSHttp(ApplicationGlobal.configuration)))
-}
 
-trait PayeYourTaxableIncomeController extends FrontendController {
+class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
+                                                payeAuthAction: PayeAuthAction)
+                                               (implicit val formPartialRetriever: FormPartialRetriever)extends FrontendController {
 
-  implicit lazy val formPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto, new AppWSGet(ApplicationGlobal.configuration))
-
-  val payeAuthAction: PayeAuthAction
-  val payeYear: Int
-  val payeAtsService : PayeAtsService
+  val payeYear: Int = ApplicationConfig.payeYear
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] =>
