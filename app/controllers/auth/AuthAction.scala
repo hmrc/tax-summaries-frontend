@@ -120,10 +120,10 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
 
-class AuthConnector extends PlayAuthConnector with ServicesConfig {
+class AuthConnector @Inject()(wsHttp: WSHttp) extends PlayAuthConnector with ServicesConfig {
   override lazy val serviceUrl: String = baseUrl("auth")
 
-  override def http: CorePost = WSHttp
+  override def http: CorePost = wsHttp
 
   override protected def mode: Mode = Play.current.mode
 

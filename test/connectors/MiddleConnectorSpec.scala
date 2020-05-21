@@ -17,6 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import config.WSHttp
 import models.{AtsData, AtsListData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -45,7 +46,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
   implicit val hc = HeaderCarrier()
   private val currentYear = 2018
 
-  def sut = new MiddleConnector
+  def sut = new MiddleConnector(app.injector.instanceOf[WSHttp])
 
   val utr = SaUtr(testUtr)
 

@@ -85,12 +85,9 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
     timestamp = 0
   )
 
-  def sut = new AtsListService(mockMiddleConnector,mockDataCacheConnector) {
-
+  def sut = new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector) {
     override lazy val authUtils: AuthorityUtils = mockAuthUtils
-    override lazy val auditService: AuditService = mockAuditService
     override lazy val accountUtils: AccountUtils = mockAccountUtils
-
   }
 
   when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))

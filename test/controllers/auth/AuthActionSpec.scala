@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import config.WSHttp
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.scalatestplus.play.OneAppPerSuite
@@ -44,7 +45,7 @@ import utils.TestConstants._
 
 class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
-  class BrokenAuthConnector(exception: Throwable) extends AuthConnector {
+  class BrokenAuthConnector (exception: Throwable) extends AuthConnector(app.injector.instanceOf[WSHttp]) {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
       Future.failed(exception)
   }

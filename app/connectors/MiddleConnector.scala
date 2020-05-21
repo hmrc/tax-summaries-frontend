@@ -28,9 +28,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MiddleConnector @Inject()() extends ServicesConfig {
-
-  val http: HttpGet = WSHttp
+class MiddleConnector @Inject()(http: WSHttp) extends ServicesConfig {
 
   val serviceUrl = baseUrl("tax-summaries")
   val agentServiceUrl = baseUrl("tax-summaries-agent")

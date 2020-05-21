@@ -18,12 +18,10 @@ package config
 
 import com.google.inject.Inject
 import uk.gov.hmrc.crypto.PlainText
-import uk.gov.hmrc.http.CoreGet
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class AppFormPartialRetriever @Inject()(val cookieCrypto: TAXSSessionCookieCrypto) extends FormPartialRetriever {
-
-  val httpGet: CoreGet = WSGet
+class AppFormPartialRetriever @Inject()(val cookieCrypto: TAXSSessionCookieCrypto, val httpGet: AppWSGet)
+    extends FormPartialRetriever {
 
   override lazy val crypto: String => String =
     str => cookieCrypto.crypto.encrypt(PlainText(str)).value

@@ -29,9 +29,8 @@ object AuditTypes {
   val Tx_SUCCEEDED = "TxSuccessful"
 }
 
-class AuditService @Inject()() {
+class AuditService @Inject()(auditConnector: TAXSAuditConnector) {
 
-  lazy val auditConnector = TAXSAuditConnector
   val taxsAuditSource = "tax-summaries-frontend"
 
   def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(implicit request: Request[_], hc: HeaderCarrier) =

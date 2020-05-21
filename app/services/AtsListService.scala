@@ -30,10 +30,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-class AtsListService @Inject()(middleConnector: MiddleConnector,
+class AtsListService @Inject()(auditService: AuditService,
+                               middleConnector: MiddleConnector,
                                dataCache : DataCacheConnector) {
 
-  def auditService: AuditService = new AuditService
   def authUtils: AuthorityUtils = AuthorityUtils
   def accountUtils: AccountUtils = AccountUtils
 

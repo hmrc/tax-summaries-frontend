@@ -16,7 +16,7 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
+import config.{AppFormPartialRetriever, AppWSGet, ApplicationConfig, ApplicationGlobal, TAXSSessionCookieCrypto, WSHttp}
 import connectors.MiddleConnector
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -33,12 +33,12 @@ object PayeYourIncomeAndTaxesController extends PayeYourIncomeAndTaxesController
 
   override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
   override val payeYear: Int = ApplicationConfig.payeYear
-  override val payeAtsService = new PayeAtsService(new MiddleConnector)
+  override val payeAtsService = new PayeAtsService(new MiddleConnector(new WSHttp(ApplicationGlobal.configuration)))
 }
 
 trait PayeYourIncomeAndTaxesController extends FrontendController {
 
-  implicit lazy val formPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto)
+  implicit lazy val formPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto, new AppWSGet(ApplicationGlobal.configuration))
 
   val payeAuthAction: PayeAuthAction
   val payeYear: Int
