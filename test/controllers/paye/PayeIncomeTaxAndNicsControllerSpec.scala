@@ -46,9 +46,6 @@ class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar wit
   val payeAtsService = mock[PayeAtsService]
   val taxYear = 2018
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"))
-  val applicationConfig =mock[ApplicationConfig]
-  when(applicationConfig.payeYear).thenReturn(taxYear)
-
 
   private def readJson(path: String) = {
     val resource = getClass.getResourceAsStream(path)

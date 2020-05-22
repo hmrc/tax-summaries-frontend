@@ -42,9 +42,6 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   val mockPayeAtsService = mock[PayeAtsService]
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  val applicationConfig =mock[ApplicationConfig]
-
-  when(applicationConfig.payeYear).thenReturn(taxYear)
 
   def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction)
 
