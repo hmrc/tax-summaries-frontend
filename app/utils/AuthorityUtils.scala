@@ -17,7 +17,7 @@
 package utils
 
 import controllers.auth.AuthenticatedRequest
-import services.AgentToken
+import models.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
 object AuthorityUtils extends AuthorityUtils

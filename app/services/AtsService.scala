@@ -22,11 +22,10 @@ import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
-import play.api.Play
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
+import utils._
 import view_models.NoATSViewModel
 
 import scala.concurrent.Future

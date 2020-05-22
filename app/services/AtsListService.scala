@@ -21,10 +21,10 @@ import java.util.Date
 import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AtsListData, IncomingAtsError}
+import models.{AgentToken, AtsListData, IncomingAtsError}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
+import utils.{AccountUtils, AtsError, AuditTypes, AuthorityUtils, GenericViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -57,15 +57,12 @@ class AtsListService @Inject()(auditService: AuditService,
       data <- dataCache.fetchAndGetAtsListForSession
     } yield {
       data match {
-        case Some(data) => {
-          accountUtils.isAgent(request) match {
-            case true =>
-              fetchAgentInfo(data)
-            case false =>
-              getAtsListAndStore()
-
+        case Some(data) =>
+          if (accountUtils.isAgent(request)) {
+            fetchAgentInfo(data)
+          } else {
+            getAtsListAndStore()
           }
-        }
         case _ =>
           if (accountUtils.isAgent(request)) {
             dataCache.getAgentToken.flatMap {
@@ -80,7 +77,7 @@ class AtsListService @Inject()(auditService: AuditService,
   } flatMap { identity }
 
 
-  private def fetchAgentInfo (data :AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsListData] = {
+  private def fetchAgentInfo (data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsListData] = {
     for {
       token <- dataCache.getAgentToken
     } yield {
@@ -92,7 +89,7 @@ class AtsListService @Inject()(auditService: AuditService,
     }
   } flatMap (identity)
 
-  private def getAtsListAndStore(agentToken: Option[AgentToken]=None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
     val account = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 

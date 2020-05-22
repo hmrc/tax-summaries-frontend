@@ -17,7 +17,7 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.AtsListData
+import models.{AgentToken, AtsListData}
 import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._

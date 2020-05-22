@@ -18,8 +18,8 @@ package services
 
 import com.google.inject.Inject
 import config.ApplicationConfig
+import models.AgentToken
 import org.joda.time.{DateTime, Interval}
-import play.api.libs.json.Json
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
 import utils.AgentTokenException
@@ -81,10 +81,4 @@ class CryptoService @Inject()() {
     val tokenExpiryDateTime = tokenDateTime.plusSeconds(tokenMaxAge)
     new Interval(tokenDateTime, tokenExpiryDateTime)
   }
-}
-
-case class AgentToken(agentUar: String, clientUtr: String, timestamp: Long)
-
-object AgentToken {
-  implicit val formats = Json.format[AgentToken]
 }

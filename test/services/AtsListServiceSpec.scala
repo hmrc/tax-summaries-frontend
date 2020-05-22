@@ -18,7 +18,7 @@ package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.AtsListData
+import models.{AgentToken, AtsListData}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json

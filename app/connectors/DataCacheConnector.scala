@@ -18,8 +18,8 @@ package connectors
 
 import com.google.inject.Inject
 import config.TAXSSessionCache
-import models.{AtsData, AtsListData}
-import services.{AgentToken, CryptoService}
+import models.{AgentToken, AtsData, AtsListData}
+import services.CryptoService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Globals

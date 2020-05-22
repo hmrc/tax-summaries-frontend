@@ -18,6 +18,7 @@ package services
 
 import java.util.Date
 
+import models.AgentToken
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.utils.UriEncoding
