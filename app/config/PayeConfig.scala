@@ -16,20 +16,13 @@
 
 package config
 
-import com.google.inject.ImplementedBy
+import com.google.inject.Inject
 import com.typesafe.config.{Config, ConfigFactory}
-
 import scala.collection.JavaConversions._
 
-class PayeConfigImpl extends PayeConfig {
-  override val payeYear: Int = ApplicationConfig.payeYear
-  override protected val configPath = "paye.conf"
-}
-
-@ImplementedBy(classOf[PayeConfigImpl])
-trait PayeConfig {
-  val payeYear: Int
-  protected val configPath: String
+class PayeConfig @Inject()() {
+  val payeYear: Int = ApplicationConfig.payeYear
+  protected val configPath = "paye.conf"
 
   lazy val spendCategories: List[String] = {
     val config: Config = ConfigFactory.load(configPath)
