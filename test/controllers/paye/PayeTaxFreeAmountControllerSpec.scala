@@ -54,8 +54,6 @@ class PayeTaxFreeAmountControllerSpec
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", routes.PayeTaxFreeAmountController.show().url))
   implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
   val sut = new PayeTaxFreeAmountController(payeAtsService, FakePayeAuthAction)
-  val applicationConfig =mock[ApplicationConfig]
-  when(applicationConfig.payeYear).thenReturn(taxYear)
 
   private def readJson(path: String) = {
     val resource = getClass.getResourceAsStream(path)

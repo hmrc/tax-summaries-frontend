@@ -33,10 +33,8 @@ class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val taxYear = 2018
-  val applicationConfig =mock[ApplicationConfig]
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
   implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
-  when(applicationConfig.payeYear).thenReturn(taxYear)
 
   def sut = new PayeErrorController(FakePayeAuthAction)
 
