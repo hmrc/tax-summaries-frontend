@@ -132,13 +132,10 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   "A user visiting the service when it is shuttered" should {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
-      val shutteredApplication = new GuiceApplicationBuilder()
-        .configure(
-          "shuttering.sa" -> "true"
-        )
-        .build()
 
-      val authAction = new AuthActionImpl(mockAuthConnector, shutteredApplication.configuration)
+      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration){
+        override val saShuttered: Boolean = true
+      }
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER

@@ -34,7 +34,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{GenericViewModel, TaxsController}
+import utils.GenericViewModel
 import view_models._
 
 import scala.concurrent.Future

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package controllers
 
 import java.util.Date
 
@@ -28,6 +28,7 @@ import play.api.mvc.{AnyContent, Request, Result}
 import services._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils._
 
 import scala.concurrent.Future
 
