@@ -16,8 +16,8 @@
 
 package controllers.auth.paye
 
-import config.ApplicationConfig
 import controllers.auth.{AuthConnector, PayeAuthAction, PayeAuthActionImpl}
+import controllers.paye.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -30,7 +30,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,7 +51,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
   val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
 
-  val unauthorisedRoute = controllers.paye.routes.PayeErrorController.notAuthorised().url
+  val unauthorisedRoute = routes.PayeErrorController.notAuthorised().url
 
   class Harness(authAction: PayeAuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -144,7 +143,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe (controllers.paye.routes.PayeErrorController.serviceUnavailable().url)
+      redirectLocation(result).get shouldBe routes.PayeErrorController.serviceUnavailable().url
       verifyZeroInteractions(mockAuthConnector)
     }
   }

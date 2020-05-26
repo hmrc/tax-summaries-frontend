@@ -28,7 +28,7 @@ import utils.TestConstants
 
 class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   implicit lazy val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]

@@ -39,7 +39,7 @@ class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messagesEn = Messages(languageEn, messagesApi)
   implicit val messagesCy = Messages(languageCy, messagesApi)
 

@@ -272,11 +272,15 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
 
       val result = sut.assignPercentage(govSpendAmountData)
 
-      result shouldBe(1.7, 1.8, 1.6)
+      result._1 shouldBe 1.7
+      result._2 shouldBe 1.8
+      result._3 shouldBe 1.6
 
     }
 
     "return equal percentage for Housing, Cultural and Environment when they are same" in {
+
+      val expected = 1.8
 
       val govSpendAmountData = List(
         ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
@@ -289,16 +293,18 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
         ("transport", SpendData(Amount(300, "GBP"), 3.0)),
         ("business_and_industry", SpendData(Amount(270, "GBP"), 2.7)),
         ("government_administration", SpendData(Amount(200, "GBP"), 2.0)),
-        ("Culture", SpendData(Amount(180, "GBP"), 1.8)),
-        ("Environment", SpendData(Amount(180, "GBP"), 1.8)),
-        ("HousingAndUtilities", SpendData(Amount(180, "GBP"), 1.8)),
+        ("Culture", SpendData(Amount(180, "GBP"), expected)),
+        ("Environment", SpendData(Amount(180, "GBP"), expected)),
+        ("HousingAndUtilities", SpendData(Amount(180, "GBP"), expected)),
         ("overseas_aid", SpendData(Amount(130, "GBP"), 1.3)),
         ("uk_contribution_to_eu_budget", SpendData(Amount(600, "GBP"), 0.6))
       )
 
       val result = sut.assignPercentage(govSpendAmountData)
 
-      result shouldBe(1.8, 1.8, 1.8)
+      result._1 shouldBe expected
+      result._2 shouldBe expected
+      result._3 shouldBe expected
 
     }
 

@@ -32,7 +32,7 @@ import views.html.total_income_tax_includes.{savings_table, scottish_table}
 
 class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants with PropertyChecks {
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   implicit lazy val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]

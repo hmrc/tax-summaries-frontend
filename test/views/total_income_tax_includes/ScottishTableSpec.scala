@@ -30,7 +30,7 @@ import com.softwaremill.quicklens._
 
 class ScottishTableSpec extends UnitSpec with OneAppPerSuite with TestConstants with PropertyChecks {
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
 
   val scottishTaxData = ScottishTax.empty

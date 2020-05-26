@@ -16,9 +16,8 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
 import connectors.DataCacheConnector
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.AtsListData
 import org.jsoup.Jsoup
 import org.mockito.Matchers

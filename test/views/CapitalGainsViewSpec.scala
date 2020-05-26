@@ -28,7 +28,7 @@ import view_models.{Amount, CapitalGains}
 
 class CapitalGainsViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]

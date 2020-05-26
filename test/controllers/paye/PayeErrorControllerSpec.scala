@@ -16,25 +16,19 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
-import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import controllers.auth.FakePayeAuthAction
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants._
 import view_models.paye.PayeAtsMain
 
-class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with GuiceOneAppPerSuite with I18nSupport {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-  val taxYear = 2018
+
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   def sut = new PayeErrorController(FakePayeAuthAction)
 

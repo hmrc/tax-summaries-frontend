@@ -99,8 +99,6 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     "have the right user data in the view" in {
 
-      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
-
       val result = Future.successful(sut.show(request))
 
       status(result) shouldBe 200

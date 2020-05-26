@@ -31,10 +31,9 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourTaxableIncome
 
-
 class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
                                                 payeAuthAction: PayeAuthAction)
-                                               (implicit val formPartialRetriever: FormPartialRetriever)extends FrontendController {
+                                               (implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController {
 
   val payeYear: Int = ApplicationConfig.payeYear
 

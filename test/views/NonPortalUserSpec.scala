@@ -32,7 +32,7 @@ import view_models._
 
 class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
-  val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   val language = Lang("en")
   val messages: Messages = Messages(language, messagesApi)
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
