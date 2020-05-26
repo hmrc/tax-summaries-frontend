@@ -16,20 +16,14 @@
 
 package models
 
-import play.api.libs.json.Json
+import java.text.SimpleDateFormat
 
-case class AtsData(
-  taxYear: Int,
-  utr: Option[String],
-  income_tax: Option[DataHolder],
-  summary_data: Option[DataHolder],
-  income_data: Option[DataHolder],
-  allowance_data: Option[DataHolder],
-  capital_gains_data: Option[DataHolder],
-  gov_spending: Option[GovernmentSpendingOutputWrapper],
-  taxPayerData: Option[UserData],
-  errors: Option[IncomingAtsError])
+import org.joda.time.LocalDate
 
-object AtsData {
-  implicit val formats = Json.format[AtsData]
+case class TupleDate(day: String, month: String, year: String) {
+  lazy val localDate = new LocalDate(year.toInt, month.toInt, day.toInt)
+
+  lazy val date = localDate.toDate
+
+  def toString(format: String) = new SimpleDateFormat(format).format(date)
 }
