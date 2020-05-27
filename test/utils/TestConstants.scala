@@ -16,9 +16,10 @@
 
 package utils
 
+import models.SpendData
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import utils.TestConstants.testUtr
-import view_models.{Amount, CapitalGains, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models.{Amount, CapitalGains, GovernmentSpend, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
 
 import scala.util.Random
 
@@ -102,6 +103,46 @@ trait TestConstants {
     forename = "forename",
     surname = "surname"
   )
+
+  val govSpendTotalTuple: (String, SpendData) = ("GovSpendTotal", SpendData(Amount(2898.13, "GBP"), 100.0))
+
+  val fakeTaxYear = 2019
+
+  val fakeGovernmentSpend: GovernmentSpend =
+    GovernmentSpend(
+      fakeTaxYear,
+      testUtr,
+      List(
+        ("Welfare", SpendData(Amount(2898.13, "GBP"), 23.5)),
+        ("Health", SpendData(Amount(2898.13, "GBP"), 20.2)),
+        ("StatePensions", SpendData(Amount(2898.13, "GBP"), 11.8)),
+        ("Education", SpendData(Amount(2898.13, "GBP"), 12.8)),
+        ("Defence", SpendData(Amount(2898.13, "GBP"), 5.3)),
+        ("NationalDebtInterest", SpendData(Amount(2898.13, "GBP"), 5.1)),
+        ("PublicOrderAndSafety", SpendData(Amount(2898.13, "GBP"), 4.3)),
+        ("Transport", SpendData(Amount(2898.13, "GBP"), 4.3)),
+        ("BusinessAndIndustry", SpendData(Amount(2898.13, "GBP"), 3.6)),
+        ("GovernmentAdministration", SpendData(Amount(2898.13, "GBP"), 2.1)),
+        ("HousingAndUtilities", SpendData(Amount(2898.13, "GBP"), 1.6)),
+        ("Environment", SpendData(Amount(2898.13, "GBP"), 1.5)),
+        ("Culture", SpendData(Amount(2898.13, "GBP"), 1.5)),
+        ("OverseasAid", SpendData(Amount(2898.13, "GBP"), 1.2)),
+        ("UkContributionToEuBudget", SpendData(Amount(2898.13, "GBP"), 1)),
+        govSpendTotalTuple
+      ),
+      "Mr",
+      "John",
+      "Doe",
+      Amount(23912.00, "GBP"),
+      "0002",
+      Amount(2000.00, "GBP")
+    )
+
+  val expectedPercentageOrder: List[BigDecimal] =
+    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.1, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
+
+  val expectedCategoryOrder: List[String] =
+    List("Welfare", "Health", "Education", "StatePensions", "Defence", "NationalDebtInterest", "Transport", "PublicOrderAndSafety", "BusinessAndIndustry", "GovernmentAdministration", "HousingAndUtilities", "Environment", "Culture", "OverseasAid", "UkContributionToEuBudget")
 }
 
 object TestConstants extends TestConstants
