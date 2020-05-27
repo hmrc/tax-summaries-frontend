@@ -17,17 +17,19 @@
 package services
 
 import connectors.MiddleConnector
+import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.libs.json.{JsResultException, JsValue, Json}
+import play.api.mvc.Request
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.testNino
-
 import scala.concurrent.Future
 import scala.io.Source
 
@@ -43,8 +45,10 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
   }
 
   val mockMiddleConnector = mock[MiddleConnector]
+  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
+  lazy val auditService: AuditService = mock[AuditService]
 
-  def sut = new PayeAtsService(mockMiddleConnector)
+  def sut = new PayeAtsService(mockMiddleConnector,auditService)
 
   "getPayeATSData" should {
 
@@ -89,6 +93,20 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
       val result = sut.getPayeATSData(testNino, currentYear).futureValue
 
       result.left.get.status shouldBe 404
+    }
+
+    "produce a 'success' audit event when returning a successful response" in {
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(
+          HttpResponse(responseStatus = 200, responseJson = Some(expectedResponse), responseHeaders = Map.empty)))
+
+      sut.getPayeATSData(testNino, currentYear)
+
+      verify(auditService, times(1)).sendEvent(
+        eqTo("TxSuccessful"),
+        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYear.toString)),
+        any[Option[String]]
+      )(any[Request[_]], any[HeaderCarrier])
     }
   }
 

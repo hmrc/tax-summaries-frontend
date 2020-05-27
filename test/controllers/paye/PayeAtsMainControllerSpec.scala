@@ -16,7 +16,7 @@
 
 package controllers.paye
 
-import controllers.auth.FakePayeAuthAction
+import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -43,7 +43,8 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with GuiceOneA
 
     "return OK response" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(mock[PayeAtsData]))
 
       val result = sut.show(fakeAuthenticatedRequest)
@@ -63,7 +64,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with GuiceOneA
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in  {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
       val result = sut.show(fakeAuthenticatedRequest)
@@ -74,7 +75,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with GuiceOneA
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
       val result = sut.show(fakeAuthenticatedRequest)
