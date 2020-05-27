@@ -68,11 +68,8 @@ class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures
   )
 
   def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, mockAuditService) {
-
-    override val auditService: AuditService = mockAuditService
     override val authUtils: AuthorityUtils = mockAuthUtils
     override val accountUtils: AccountUtils = mockAccountUtils
-
   }
 
   "AtsService checkUtrAgainstCache" should {

@@ -16,6 +16,7 @@
 
 package view_models
 
+import utils.ViewUtils.positiveOrZero
 import utils.{GenericViewModel, TextGenerator}
 
 case class Summary(
@@ -39,12 +40,18 @@ case class Summary(
   surname: String)
     extends GenericViewModel {
 
-  def taxYearInterval = taxYearFrom + "-" + taxYearTo.substring(2)
-  def taxYearIntervalTo = taxYearFrom + " to " + taxYearTo
+  def taxYearInterval: String = taxYearFrom + "-" + taxYearTo.substring(2)
+  def taxYearIntervalTo: String = taxYearFrom + " to " + taxYearTo
 
-  def hasTotalIncomeTaxAmount = !totalIncomeTaxAmount.isZero
-  def hasTotalCapitalGains = !totalCapitalGainsTax.isZero
-  def hasEmployeeNicAmount = !employeeNicAmount.isZero
+  def hasTotalIncomeTaxAmount: Boolean = !totalIncomeTaxAmount.isZeroOrLess
+  def hasTotalCapitalGains: Boolean = !totalCapitalGainsTax.isZero
+  def hasEmployeeNicAmount: Boolean = !employeeNicAmount.isZero
+
+  def nonNegativeTotalIncomeTaxAndNics: Amount = {
+    val nonNegativeIT = positiveOrZero(totalIncomeTaxAmount)
+    val total = nonNegativeIT.amount + employeeNicAmount.amount
+    Amount(total, totalIncomeTaxAndNics.currency)
+  }
 
   def yourTotalTaxTextKey =
     if (hasTotalIncomeTaxAmount && hasEmployeeNicAmount) {

@@ -90,8 +90,6 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
     override lazy val accountUtils: AccountUtils = mockAccountUtils
   }
 
-  when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(2014)))
-
   "storeSelectedTaxYear" should {
 
     "Return a successful future upon success" in {

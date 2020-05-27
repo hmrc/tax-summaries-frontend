@@ -19,7 +19,7 @@ package controllers
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
@@ -114,7 +114,7 @@ class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       document.getElementById("total-income-tax-amt").text() shouldBe "£372"
       document.getElementById("total-cg-tax-rate").text() shouldBe "56.78%"
       document.getElementById("employee-nic-amount").text() shouldBe "£1,200"
-      document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,400"
+      document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,572"
       document.getElementById("user-info").text should include("forename surname")
       document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
     }

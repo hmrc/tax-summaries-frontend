@@ -23,6 +23,7 @@ import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
+import org.scalatest.prop.PropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -61,7 +62,7 @@ object SummaryControllerSpec {
   )
 }
 
-class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
+class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach with PropertyChecks {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -146,7 +147,7 @@ class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,400"
+      document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,572"
     }
 
     "show capital gains (and description) on the summary if capital gains is not 0" in {
@@ -207,19 +208,27 @@ class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
       document.getElementById("total-cg-description") should be (null)
     }
 
-    "show zero in Total Income Tax value" in {
+    "show only NICs in Total Income Tax value" when {
 
-      val model5 = baseModel.copy(
-        totalIncomeTaxAndNics = Amount(0, "GBP")
-      )
+      "Income tax is zero or less" in {
 
-      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
+        forAll { bd: BigDecimal =>
+          whenever(bd <= 0) {
 
-      val result = Future.successful(sut.show(request))
-      status(result) shouldBe 200
-      val document = Jsoup.parse(contentAsString(result))
+            val model5 = baseModel.copy(
+              totalIncomeTaxAmount = Amount(bd, "GBP")
+            )
 
-      document.getElementById("total-income-tax-and-nics").text() should equal("£0")
+            when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
+
+            val result = Future.successful(sut.show(request))
+            status(result) shouldBe 200
+            val document = Jsoup.parse(contentAsString(result))
+
+            document.getElementById("total-income-tax-and-nics").text() should equal("£1,200")
+          }
+        }
+      }
     }
 
     "show Tax and Nics description having (income tax and employee nics)" in {
