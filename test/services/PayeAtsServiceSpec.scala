@@ -20,7 +20,9 @@ import connectors.MiddleConnector
 import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -30,10 +32,11 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.testNino
+
 import scala.concurrent.Future
 import scala.io.Source
 
-class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience with BeforeAndAfterEach {
 
   implicit val hc = HeaderCarrier()
   val expectedResponse: JsValue = readJson("/paye_ats.json")
@@ -46,9 +49,13 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
 
   val mockMiddleConnector = mock[MiddleConnector]
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
-  lazy val auditService: AuditService = mock[AuditService]
+  lazy val mockAuditService: AuditService = mock[AuditService]
 
-  def sut = new PayeAtsService(mockMiddleConnector,auditService)
+  def sut = new PayeAtsService(mockMiddleConnector,mockAuditService)
+
+  override protected def afterEach(): Unit = {
+    Mockito.reset(mockAuditService)
+  }
 
   "getPayeATSData" should {
 
@@ -102,7 +109,7 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
 
       sut.getPayeATSData(testNino, currentYear)
 
-      verify(auditService, times(1)).sendEvent(
+      verify(mockAuditService, times(1)).sendEvent(
         eqTo("TxSuccessful"),
         eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYear.toString)),
         any[Option[String]]
