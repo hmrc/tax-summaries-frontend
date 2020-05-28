@@ -15,13 +15,13 @@
  */
 
 package utils
-import view_models.Amount
 
-object ViewUtils {
+trait BigDecimalUtils {
 
-  def toCurrency(amount: Amount, twoDecimalPlaces: Boolean = false): String =
-    s"&pound;${if(twoDecimalPlaces) amount.toTwoDecimalString else amount}"
+  implicit class Ops(bd: BigDecimal) {
 
-  def positiveOrZero(currentAmount: Amount): Amount =
-    currentAmount.copy(amount = currentAmount.amount.max(BigDecimal(0)))
+    def === (that: BigDecimal): Boolean = (bd - that).abs <= 1.0e-8 * bd.abs
+
+    def !== (that: BigDecimal): Boolean = !(bd === that)
+  }
 }
