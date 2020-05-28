@@ -16,7 +16,6 @@
 
 package controllers.auth.paye
 
-import config.ApplicationConfig
 import controllers.auth.{AuthConnector, PayeAuthAction, PayeAuthActionImpl}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -29,9 +28,10 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.RetrievalOps._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,19 +40,17 @@ import scala.language.postfixOps
 class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
+  val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
+  val unauthorisedRoute = controllers.paye.routes.PayeErrorController.notAuthorised().url
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "paye.login.url" -> "http://localhost:9025/gg/sign-in",
+        "paye.login.url"  -> "http://localhost:9025/gg/sign-in",
         "shuttering.paye" -> "false"
       )
       .build()
-
-  val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
-  val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
-
-  val unauthorisedRoute = controllers.paye.routes.PayeErrorController.notAuthorised().url
 
   class Harness(authAction: PayeAuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -65,8 +63,9 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Option[String]] = Future.successful(Some(nino))
 
-      when(mockAuthConnector
-        .authorise[Option[String]](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
@@ -129,13 +128,12 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     }
   }
 
-
   "A user visiting the service when it is shuttered" should {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
       val shutteredApplication = new GuiceApplicationBuilder()
         .configure(
-          "login.paye.url" -> "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary",
+          "login.paye.url"  -> "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/paye/annual-tax-summary",
           "shuttering.paye" -> "true"
         )
         .build()

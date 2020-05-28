@@ -63,7 +63,7 @@ class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar wit
 
     "return OK response" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2018))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2018))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedSuccessResponse.as[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
@@ -77,7 +77,7 @@ class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar wit
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = show(fakeAuthenticatedRequest)
@@ -88,7 +88,7 @@ class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar wit
 
     "redirect user to generic error page when receiving INTERNAL_SERVER_ERROR from service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR, responseJson = Some(Json.toJson(INTERNAL_SERVER_ERROR)))))
 
       val result = show(fakeAuthenticatedRequest)
@@ -99,7 +99,7 @@ class PayeIncomeTaxAndNicsControllerSpec  extends UnitSpec with MockitoSugar wit
 
     "redirect user to generic error page when receiving BAD_REQUEST from service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.toJson(BAD_REQUEST)))))
 
       val result = show(fakeAuthenticatedRequest)

@@ -57,7 +57,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
     "return OK response" in new TestController {
 
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(mock[PayeAtsData]))
 
       val result = show(fakeAuthenticatedRequest)
@@ -77,7 +77,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
       val result = show(fakeAuthenticatedRequest)
@@ -88,7 +88,7 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
       val result = show(fakeAuthenticatedRequest)
