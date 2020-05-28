@@ -16,6 +16,8 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import utils.ViewUtils
+@import utils.ViewUtils.positiveOrZero
 @(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
 
 @headerContent = {
@@ -62,7 +64,7 @@
                   @Html(Messages("ats.nics.tax_and_nics.income_tax"))
               </a>
           </td>
-          <td id="total-income-tax-amt">@includes.currency_amount(viewModel.totalIncomeTaxAmount)</td>
+          <td id="total-income-tax-amt">@includes.currency_amount(positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
         </tr>
         <tr>
           <td>@Html(Messages("ats.nics.tax_and_nics_explained"))</td>
@@ -72,7 +74,7 @@
       <tfoot>
         <tr>
           <th scope="row">@Html(Messages("ats.nics.tax_and_nics.total"))</th>
-          <td id="total-income-tax-and-nics" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</td>
+          <td id="total-income-tax-and-nics" class="no-bold">@includes.currency_amount(viewModel.nonNegativeTotalIncomeTaxAndNics)</td>
         </tr>
       </tfoot>
     </table>
