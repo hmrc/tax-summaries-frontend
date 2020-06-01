@@ -48,19 +48,20 @@ class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     )
   )
 
-  class TestService extends IncomeService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
-    implicit val hc = new HeaderCarrier
-    val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  }
+  implicit val hc = new HeaderCarrier
+
+  val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
+  val taxYear = 2015
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+
+  def sut = new IncomeService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "IncomeService getIncomeData" should {
 
-    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService {
-      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
+    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
+      when(mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
 
@@ -68,10 +69,10 @@ class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
 
   "IncomeService.createIncomeConverter" should {
 
-    "return complete IncomeBeforeTaxData when given complete AtsData" in new TestService {
+    "return complete IncomeBeforeTaxData when given complete AtsData" in {
 
       val incomeData: AtsData = AtsTestData.incomeData
-      val result: IncomeBeforeTax = createIncomeConverter(incomeData)
+      val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
         2019,
         "1111111111",

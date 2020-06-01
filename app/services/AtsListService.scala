@@ -18,33 +18,24 @@ package services
 
 import java.util.Date
 
+import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AtsListData, IncomingAtsError}
+import models.{AgentToken, AtsListData, IncomingAtsError}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AccountUtils, AtsError, AuthorityUtils, GenericViewModel}
+import utils.{AccountUtils, AtsError, AuditTypes, AuthorityUtils, GenericViewModel}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object AtsListService extends AtsListService {
-  override lazy val middleConnector = MiddleConnector
-  override lazy val dataCache = DataCacheConnector
-  override lazy val cryptoService = CryptoService
-  override lazy val authUtils = AuthorityUtils
-  override lazy val auditService: AuditService = AuditService
-  override lazy val accountUtils: AccountUtils = AccountUtils
-}
 
-trait AtsListService {
+class AtsListService @Inject()(auditService: AuditService,
+                               middleConnector: MiddleConnector,
+                               dataCache : DataCacheConnector) {
 
-  def middleConnector: MiddleConnector
-  def auditService: AuditService
-  def dataCache: DataCacheConnector
-  def cryptoService: CryptoService
-  def authUtils: AuthorityUtils
-  def accountUtils: AccountUtils
+  def authUtils: AuthorityUtils = AuthorityUtils
+  def accountUtils: AccountUtils = AccountUtils
 
   def createModel(converter: (AtsListData => GenericViewModel))(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     getAtsYearList map {
@@ -66,15 +57,12 @@ trait AtsListService {
       data <- dataCache.fetchAndGetAtsListForSession
     } yield {
       data match {
-        case Some(data) => {
-          accountUtils.isAgent(request) match {
-            case true =>
-              fetchAgentInfo(data)
-            case false =>
-              getAtsListAndStore()
-
+        case Some(data) =>
+          if (accountUtils.isAgent(request)) {
+            fetchAgentInfo(data)
+          } else {
+            getAtsListAndStore()
           }
-        }
         case _ =>
           if (accountUtils.isAgent(request)) {
             dataCache.getAgentToken.flatMap {
@@ -89,7 +77,7 @@ trait AtsListService {
   } flatMap { identity }
 
 
-  private def fetchAgentInfo (data :AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsListData] = {
+  private def fetchAgentInfo (data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsListData] = {
     for {
       token <- dataCache.getAgentToken
     } yield {
@@ -101,7 +89,7 @@ trait AtsListService {
     }
   } flatMap (identity)
 
-  private def getAtsListAndStore(agentToken: Option[AgentToken]=None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
     val account = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 

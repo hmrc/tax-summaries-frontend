@@ -16,7 +16,6 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
@@ -33,14 +32,15 @@ import view_models._
 
 class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
-  val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   val language = Lang("en")
   val messages: Messages = Messages(language, messagesApi)
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   "Logging in as a transitioned user" should {
 

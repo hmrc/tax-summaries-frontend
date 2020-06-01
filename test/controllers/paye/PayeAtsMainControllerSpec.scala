@@ -21,46 +21,33 @@ import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.http.Status._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
-import services.PayeAtsService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testNino
 
-import scala.concurrent.Future
-import scala.io.Source
+class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with GuiceOneAppPerTest with I18nSupport {
 
-class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with I18nSupport {
-
-  implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
-  val taxYear = 2018
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  class TestController extends PayeAtsMainController {
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
-    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
-    override val payeYear = taxYear
-    override val payeAtsService = mock[PayeAtsService]
-  }
+  def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction)
 
   "AtsMain controller" should {
 
-    "return OK response" in new TestController {
+    "return OK response" in {
 
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(mock[PayeAtsData]))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe 200
 
@@ -75,26 +62,26 @@ class PayeAtsMainControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
       document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in  {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.authorisedNoAts().url)
+      redirectLocation(result) shouldBe Some(routes.PayeErrorController.authorisedNoAts().url)
     }
 
-    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
+      redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
     }
   }
 }

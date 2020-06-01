@@ -16,24 +16,20 @@
 
 package services
 
+import com.google.inject.Inject
 import config.ApplicationConfig
+import models.AgentToken
 import org.joda.time.{DateTime, Interval}
-import play.api.libs.json.Json
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
 import utils.AgentTokenException
 
 import scala.util.matching.Regex
 
-object CryptoService extends CryptoService {
-  override val key = ApplicationConfig.encryptionKey
-  override val tokenMaxAge = ApplicationConfig.encryptionTokenMaxAge
-}
+class CryptoService @Inject()() {
 
-trait CryptoService {
-
-  def key: String
-  def tokenMaxAge: Int
+  def key: String = ApplicationConfig.encryptionKey
+  def tokenMaxAge: Int = ApplicationConfig.encryptionTokenMaxAge
 
   protected def aesCrypto = new AesCrypto {
     val encryptionKey = key
@@ -85,10 +81,4 @@ trait CryptoService {
     val tokenExpiryDateTime = tokenDateTime.plusSeconds(tokenMaxAge)
     new Interval(tokenDateTime, tokenExpiryDateTime)
   }
-}
-
-case class AgentToken(agentUar: String, clientUtr: String, timestamp: Long)
-
-object AgentToken {
-  implicit val formats = Json.format[AgentToken]
 }

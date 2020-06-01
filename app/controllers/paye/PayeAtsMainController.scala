@@ -16,35 +16,29 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, ApplicationConfig}
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
+import play.api.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
-import play.api.{Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
 
-object PayeAtsMainController extends PayeAtsMainController {
-  override val payeAtsService = PayeAtsService
-  override val payeYear: Int = ApplicationConfig.payeYear
-  override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
-}
+class PayeAtsMainController @Inject()(
+  payeAtsService: PayeAtsService,
+  payeAuthAction: PayeAuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends FrontendController {
 
-trait PayeAtsMainController extends FrontendController{
+  val payeYear = ApplicationConfig.payeYear
 
-  implicit val formPartialRetriever = AppFormPartialRetriever
-
-  val payeYear: Int
-  val payeAtsService: PayeAtsService
-  val payeAuthAction: PayeAuthAction
-
-  def show: Action[AnyContent] = payeAuthAction.async  {
-    implicit request: PayeAuthenticatedRequest[_] =>
-      payeAtsService.getPayeATSData(request.nino, payeYear).map {
+  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
+    payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
       case Right(_: PayeAtsData) => {
         Ok(views.html.paye.paye_taxs_main(PayeAtsMain(payeYear)))

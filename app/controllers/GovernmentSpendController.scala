@@ -16,47 +16,41 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
-import play.api.Play
-import play.api.mvc.Result
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{Action, AnyContent, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.GovernmentSpend
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
-object GovernmentSpendController extends GovernmentSpendController {
-  override val governmentSpendService = GovernmentSpendService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class GovernmentSpendController @Inject()(
+  governmentSpendService: GovernmentSpendService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-trait GovernmentSpendController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def governmentSpendService: GovernmentSpendService
-
-  def authorisedGovernmentSpendData = authAction.async {
-    request => show(request)
+  def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = GovernmentSpend
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.government_spending(result, assignPercentage(result.govSpendAmountData), getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
-  }
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+    Ok(
+      views.html.government_spending(
+        result,
+        assignPercentage(result.govSpendAmountData),
+        getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
     var percentEnviron = 0.0
@@ -65,11 +59,11 @@ trait GovernmentSpendController extends TaxYearRequest {
 
     govSpendList.foreach {
       case (key, value) =>
-        if(key == "Environment") {
+        if (key == "Environment") {
           percentEnviron = value.percentage.doubleValue()
-        } else if(key == "Culture") {
+        } else if (key == "Culture") {
           percentCultural = value.percentage.doubleValue()
-        } else if(key == "HousingAndUtilities") {
+        } else if (key == "HousingAndUtilities") {
           percentHousing = value.percentage.doubleValue()
         }
 

@@ -16,118 +16,102 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
+import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
-import services.PayeAtsService
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testNino
 
-import scala.io.Source
+class PayeYourIncomeAndTaxesControllerSpec  extends PayeControllerSpecHelpers with GuiceOneAppPerSuite with I18nSupport {
 
-class PayeYourIncomeAndTaxesControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
-
-  implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
-  val taxYear = 2019
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  class TestController extends PayeYourIncomeAndTaxesController {
+  implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
 
-    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
-    override val payeYear = taxYear
-    override val payeAtsService = mock[PayeAtsService]
+  val sut = new PayeYourIncomeAndTaxesController(mockPayeAtsService, FakePayeAuthAction)
 
-    private def readJson(path: String) = {
-      val resource = getClass.getResourceAsStream(path)
-      Json.parse(Source.fromInputStream(resource).getLines().mkString)
-    }
+  "Government spend controller" should {
 
-    val expectedSuccessResponse: JsValue = readJson("/paye_ats.json")
-  }
+    "return OK response" in {
 
-  "Paye your income and taxes controller" should {
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-    "return OK response" in new TestController {
-
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(expectedSuccessResponse.as[PayeAtsData]))
-
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(Messages("paye.ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+      document.title should include(Messages("paye.ats.summary.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
     }
 
-    "return 200 when total_income_before_tax key is missing in PAYE ATS data" in new TestController {
+    "return 200 when total_income_before_tax key is missing in PAYE ATS data" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
     }
 
-    "throw internal server exception when summary data is missing" in new TestController {
+    "throw internal server exception when summary data is missing" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(2018))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
 
       contentAsString(result) shouldBe "Missing Paye ATS data"
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
+      val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.authorisedNoAts().url)
+      redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
     }
 
-    "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST)))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(BAD_REQUEST).url)
+      redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(BAD_REQUEST).url)
     }
 
-    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
-      val result = show(fakeAuthenticatedRequest).futureValue
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
+      redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
     }
   }
+
 }

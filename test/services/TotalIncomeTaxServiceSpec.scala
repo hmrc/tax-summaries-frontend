@@ -47,19 +47,22 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
     )
   )
 
-  class TestService extends TotalIncomeTaxService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
+  implicit val hc = HeaderCarrier()
+
+  val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
+
+  def sut = new TotalIncomeTaxService(mockAtsService, mockAtsYearListService) with MockitoSugar {
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
   }
 
   "TotalIncomeTaxService getIncomeData" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
-      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
+      when(mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
       lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
-      val result = Await.result(getIncomeData(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
@@ -67,9 +70,9 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
     "TotalIncomeTaxService.totalIncomeConverter" should {
 
 
-    "return complete TotalIncomeTax data when given complete AtsData" in new TestService {
+    "return complete TotalIncomeTax data when given complete AtsData" in {
       val incomeData: AtsData = AtsTestData.totalIncomeTaxData
-      val result: TotalIncomeTax = totalIncomeConverter(incomeData)
+      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
       val scottishTax = ScottishTax(
         Amount.gbp(1800),

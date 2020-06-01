@@ -16,8 +16,10 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, ApplicationConfig}
+import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
+import connectors.MiddleConnector
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
+import javax.inject.Inject
 import models.PayeAtsData
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
@@ -26,23 +28,15 @@ import play.api.{Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourIncomeAndTaxes
 
-object PayeYourIncomeAndTaxesController extends PayeYourIncomeAndTaxesController{
 
-  override val payeAuthAction = Play.current.injector.instanceOf[PayeAuthAction]
-  override val payeYear: Int = ApplicationConfig.payeYear
-  override val payeAtsService = PayeAtsService
-}
 
-trait PayeYourIncomeAndTaxesController extends FrontendController {
-
-  implicit val formPartialRetriever = AppFormPartialRetriever
-
-  val payeAuthAction: PayeAuthAction
-  val payeYear: Int
-  val payeAtsService : PayeAtsService
-
+class PayeYourIncomeAndTaxesController @Inject()(payeAtsService: PayeAtsService,
+                                                 payeAuthAction: PayeAuthAction)
+                                                (implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController {
+  val payeYear = ApplicationConfig.payeYear
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {

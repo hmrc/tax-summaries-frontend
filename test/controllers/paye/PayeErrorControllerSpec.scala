@@ -16,63 +16,57 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
-import org.jsoup.Jsoup
-import org.scalatest.mockito.MockitoSugar
+import controllers.auth.FakePayeAuthAction
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.test.FakeRequest
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants._
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
 
-class PayeErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with GuiceOneAppPerSuite with I18nSupport {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-  val taxYear = 2018
 
-  trait TestErrorController extends PayeErrorController {
-    implicit val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
-    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
-    override val payeYear = taxYear
-  }
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+
+  def sut = new PayeErrorController(FakePayeAuthAction)
 
   "PayeErrorController" should {
 
-    "Show generic_error page with status INTERNAL_SERVER_ERROR when INTERNAL_SERVER_ERROR is received" in new TestErrorController {
+    "Show generic_error page with status INTERNAL_SERVER_ERROR when INTERNAL_SERVER_ERROR is received" in {
 
-      val result = genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
+      val result = sut.genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
       val document = contentAsString(result)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
       document shouldBe contentAsString(views.html.errors.paye_generic_error())
     }
 
-    "Show generic_error page with status BAD_GATEWAY when GATEWAY_TIMEOUT is received" in new TestErrorController {
+    "Show generic_error page with status BAD_GATEWAY when GATEWAY_TIMEOUT is received" in {
 
-      val result = genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
+      val result = sut.genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
       val document = contentAsString(result)
 
       status(result) shouldBe BAD_GATEWAY
       document shouldBe contentAsString(views.html.errors.paye_generic_error())
     }
 
-    "Show generic_error page with status BAD_GATEWAY when BAD_GATEWAY is received" in new TestErrorController {
+    "Show generic_error page with status BAD_GATEWAY when BAD_GATEWAY is received" in {
 
-      val result = genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
+      val result = sut.genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
       val document = contentAsString(result)
 
       status(result) shouldBe BAD_GATEWAY
       document shouldBe contentAsString(views.html.errors.paye_generic_error())
     }
 
-    "Show NO ATS page and return NOT_FOUND" in new TestErrorController {
-      val result = authorisedNoAts(fakeAuthenticatedRequest)
+    "Show NO ATS page and return NOT_FOUND" in {
+      val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
       val document = contentAsString(result)
 
       status(result) shouldBe NOT_FOUND
-      document shouldBe contentAsString(views.html.errors.paye_no_ats_error(PayeAtsMain(payeYear)))
+      document shouldBe contentAsString(views.html.errors.paye_no_ats_error(PayeAtsMain(taxYear)))
     }
   }
 }

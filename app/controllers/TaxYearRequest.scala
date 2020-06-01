@@ -19,7 +19,7 @@ package controllers
 import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 import play.api.mvc.Result
-import utils.{GenericViewModel, TaxYearUtil, TaxsController}
+import utils.{GenericViewModel, TaxYearUtil}
 import view_models.NoATSViewModel
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._

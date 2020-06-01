@@ -16,7 +16,6 @@
 
 package views.paye
 
-import config.AppFormPartialRetriever
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatestplus.play.OneAppPerSuite
@@ -29,10 +28,10 @@ import utils.TestConstants
 
 class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit lazy val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   "view" should {
     "have correct data and heading for given taxYear" in {

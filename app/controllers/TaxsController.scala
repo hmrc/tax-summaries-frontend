@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package utils
+package controllers
 
 import java.util.Date
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.Logger
@@ -27,10 +28,11 @@ import play.api.mvc.{AnyContent, Request, Result}
 import services._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import utils._
 
 import scala.concurrent.Future
 
-abstract class TaxsController extends FrontendController
+abstract class TaxsController @Inject()() extends FrontendController
           with AccountUtils
           with AttorneyUtils {
 

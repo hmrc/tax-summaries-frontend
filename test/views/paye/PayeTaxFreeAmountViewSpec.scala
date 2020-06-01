@@ -16,7 +16,6 @@
 
 package views.paye
 
-import config.AppFormPartialRetriever
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatestplus.play.OneAppPerSuite
@@ -30,10 +29,10 @@ import view_models.paye.{AmountRow, PayeTaxFreeAmount}
 
 class PayeTaxFreeAmountViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount"))
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
   "PayeTaxFreeAmountView" should {
     "display correct heading for given taxYear" in {

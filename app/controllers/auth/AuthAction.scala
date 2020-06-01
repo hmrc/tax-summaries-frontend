@@ -36,7 +36,7 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
   implicit ec: ExecutionContext)
     extends AuthAction with AuthorisedFunctions {
 
-  val saShuttered: Boolean = configuration.getBoolean("shuttering.sa").getOrElse(false)
+  val saShuttered: Boolean = ApplicationConfig.saShuttered
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     if (saShuttered) {
@@ -120,10 +120,10 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
 
-class AuthConnector extends PlayAuthConnector with ServicesConfig {
+class AuthConnector @Inject()(wsHttp: WSHttp) extends PlayAuthConnector with ServicesConfig {
   override lazy val serviceUrl: String = baseUrl("auth")
 
-  override def http: CorePost = WSHttp
+  override def http: CorePost = wsHttp
 
   override protected def mode: Mode = Play.current.mode
 

@@ -16,86 +16,63 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
+import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
-import services.PayeAtsService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testNino
 
-import scala.io.Source
+class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers with GuiceOneAppPerSuite with I18nSupport {
 
-class PayeGovernmentSpendControllerSpec  extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with I18nSupport with IntegrationPatience {
-
-  implicit val hc = HeaderCarrier()
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
-  val taxYear = 2018
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
 
-  class TestController extends PayeGovernmentSpendController {
+  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-    override val payeAuthAction: PayeAuthAction = FakePayeAuthAction
-    override val payeAtsService = mock[PayeAtsService]
-    override val payeYear = taxYear
-
-    private def readJson(path: String) = {
-      val resource = getClass.getResourceAsStream(path)
-      Json.parse(Source.fromInputStream(resource).getLines().mkString)
-    }
-
-    val expectedResponse: JsValue = readJson("/paye_ats.json")
-  }
+  val sut = new PayeGovernmentSpendController(mockPayeAtsService, FakePayeAuthAction)
 
   "Government spend controller" should {
 
-    "return OK response" in new TestController {
+    "return OK response" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-      val result = show(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.title should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+      contentAsString(result) should include(Messages("paye.ats.treasury_spending.title")+ Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in new TestController {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
-      val result = show(fakeAuthenticatedRequest)
-      val document = Jsoup.parse(contentAsString(result))
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+      redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
     }
 
-    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new TestController {
+    "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
-      when(payeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
-      val result = show(fakeAuthenticatedRequest).futureValue
-      val document = Jsoup.parse(contentAsString(result))
+      val result = sut.show(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
+      redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
     }
   }
 

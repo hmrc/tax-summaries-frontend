@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.Inject
-import uk.gov.hmrc.crypto.PlainText
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import play.api.libs.json.Json
 
-class AppFormPartialRetriever @Inject()(val cookieCrypto: TAXSSessionCookieCrypto, val httpGet: AppWSGet)
-    extends FormPartialRetriever {
+case class AgentToken(agentUar: String, clientUtr: String, timestamp: Long)
 
-  override lazy val crypto: String => String =
-    str => cookieCrypto.crypto.encrypt(PlainText(str)).value
+object AgentToken {
+  implicit val formats = Json.format[AgentToken]
 }

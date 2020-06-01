@@ -16,22 +16,21 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
-import utils.{AttorneyUtils, AuthorityUtils}
 import models.SpendData
 import org.jsoup.Jsoup
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.test.Helpers._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.AttorneyUtils
+import utils.TestConstants._
 import view_models.AtsForms._
 import view_models._
-import utils.TestConstants._
 
 class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
 
@@ -40,7 +39,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
   val utr = testUtr
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
 
   "Logging in with English language settings" should {

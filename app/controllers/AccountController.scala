@@ -16,19 +16,14 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.ApplicationConfig
 import play.api.mvc.{Action, AnyContent}
 import play.api.mvc.Results._
 
-object AccountController extends AccountController {
-  override val appConfig: ApplicationConfig = ApplicationConfig
-}
-
-trait AccountController {
-
-  val appConfig: ApplicationConfig
+class AccountController @Inject()() {
 
   def signOut: Action[AnyContent] = Action {
-    Redirect(appConfig.feedbackUrl).withNewSession
+    Redirect(ApplicationConfig.feedbackUrl).withNewSession
   }
 }

@@ -16,17 +16,15 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Play.current
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
@@ -34,11 +32,11 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import view_models.{Amount, NoATSViewModel, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models._
 
 import scala.concurrent.Future
 
-class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -84,42 +82,44 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
     "surname"
   )
 
-  trait TestController extends TotalIncomeTaxController {
+  val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
+  val mockAuditService = mock[AuditService]
 
-    override lazy val totalIncomeTaxService = mock[TotalIncomeTaxService]
-    override lazy val auditService: AuditService = mock[AuditService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
-    when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction)
+
+  override def beforeEach(): Unit = {
+    when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+    ) thenReturn Future.successful(baseModel)
   }
 
   "Calling Total Income Tax" should {
 
-    "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(request))
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.total_income_tax.income_tax")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
-    "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(badRequest))
+    "display an error page for an invalid request" in {
+      val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(show(request))
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
-    "have the right user data in the view" in new TestController {
+    "have the right user data in the view" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -148,17 +148,17 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
-    "hide rows if there is a zero value in the left cell amount field of the view" in new TestController {
+    "hide rows if there is a zero value in the left cell amount field of the view" in {
 
       val model2 = baseModel.copy(
         startingRateForSavings = Amount(0, "GBP"),
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model2))
 
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -169,16 +169,16 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.toString should not include "additional-rate-income-tax-row"
     }
 
-    "hide Higher and Additional Rate fields if the amounts are 0.00" in new TestController {
+    "hide Higher and Additional Rate fields if the amounts are 0.00" in {
 
       val model3 = baseModel.copy(
         higherRateIncomeTax = Amount(0, "GBP"),
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model3))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -188,9 +188,9 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.toString should not include "additional-rate-income-tax-row"
     }
 
-    "show 'Total Income Tax page with a correct breadcrumb" in new TestController {
+    "show 'Total Income Tax page with a correct breadcrumb" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
 
       val document = Jsoup.parse(contentAsString(result))
 
@@ -214,9 +214,9 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
   }
 
   "Dividends section" should {
-    "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in new TestController {
+    "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -234,7 +234,7 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.getElementById("additional-rate-rate").text() should equal("37.5%")
     }
 
-    "hide Dividends section if the amount before in each row is 0.00" in new TestController {
+    "hide Dividends section if the amount before in each row is 0.00" in {
 
       val model4 = baseModel.copy(
         ordinaryRate = Amount(0, "GBP"),
@@ -242,9 +242,9 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
         additionalRate = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model4))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -255,16 +255,16 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.toString should not include "additional-rate-row"
     }
 
-    "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in new TestController {
+    "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in {
 
       val model5 = baseModel.copy(
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model5))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -279,9 +279,9 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
 
   "Adjustments section" should {
 
-    "have the right user data for adjustments increasing and reducing income tax" in new TestController {
+    "have the right user data for adjustments increasing and reducing income tax" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -289,15 +289,15 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.getElementById("other-adjustments-reducing-amount").text() should equal("minus £20 -£20")
     }
 
-    "hide other adjustments increasing your tax section if the amount is 0.00" in new TestController {
+    "hide other adjustments increasing your tax section if the amount is 0.00" in {
 
       val model6 = baseModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model6))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -306,15 +306,15 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
 
     }
 
-    "hide other adjustments reducing your tax section if the amount is 0.00" in new TestController {
+    "hide other adjustments reducing your tax section if the amount is 0.00" in {
 
       val model7 = baseModel.copy(
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model7))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -322,16 +322,16 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
       document.toString should not include "other-adjustments-reducing-amount"
     }
 
-    "hide Adjustments section if all the amounts in this section are 0.00" in new TestController {
+    "hide Adjustments section if all the amounts in this section are 0.00" in {
 
       val model8 = baseModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP"),
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model8))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -342,16 +342,16 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
 
   "Total Income Tax" should {
 
-    "show zero value" in new TestController {
+    "show zero value" in {
 
       val model9 = baseModel.copy(
         marriageAllowanceReceivedAmount = Amount(0, "GBP"),
         totalIncomeTax = Amount(0, "GBP")
       )
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model9))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-income-tax-amount").text() should equal("£0")

@@ -21,6 +21,7 @@ import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -31,15 +32,14 @@ import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{GenericViewModel, TaxsController}
+import utils.GenericViewModel
 import view_models._
 
 import scala.concurrent.Future
 
-class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -66,97 +66,100 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
     )
   )
 
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20155"))
+  implicit val hc = new HeaderCarrier
+
   val noATSViewModel: NoATSViewModel = new NoATSViewModel()
 
   lazy val taxsController = mock[TaxsController]
 
-  trait TestController extends AllowancesController {
-    override lazy val allowanceService = mock[AllowanceService]
-    override lazy val auditService = mock[AuditService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
-    val model = baseModel
-    val taxYear = 2014
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-    val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20155"))
-    implicit val hc = new HeaderCarrier
-    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
+  val mockAllowanceService = mock[AllowanceService]
+  val mockAuditService = mock[AuditService]
+
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)(app.injector.instanceOf[AppFormPartialRetriever])
+
+  override def beforeEach(): Unit = {
+    when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())
+    ) thenReturn Future.successful(baseModel)
   }
 
-"Calling allowances" should {
+  "Calling allowances" should {
 
-  "have the right user data in the view when a valid request is sent" in new TestController {
+    "have the right user data in the view when a valid request is sent" in {
 
-    val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
 
-    status(result) shouldBe 200
+      status(result) shouldBe 200
 
-    val document = Jsoup.parse(contentAsString(result))
+      val document = Jsoup.parse(contentAsString(result))
 
-    document.getElementById("tax-free-total").text() shouldBe "£9,740"
-    document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
-    document.getElementById("other-allowances").text() shouldBe "£300"
-    document.toString should include("tax-free-allowance")
-    document.getElementById("user-info").text() should include("forename surname")
-    document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-    document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
-  }
+      document.getElementById("tax-free-total").text() shouldBe "£9,740"
+      document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
+      document.getElementById("other-allowances").text() shouldBe "£300"
+      document.toString should include("tax-free-allowance")
+      document.getElementById("user-info").text() should include("forename surname")
+      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
+      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+    }
 
-  "have zero-value fields hidden in the view" in new TestController {
+    "have zero-value fields hidden in the view" in {
 
-    override val model = baseModel.copy(
-      taxFreeAllowance = Amount(0, "GBP"),
-      otherAllowances = Amount(0, "GBP")
-    )
+      val model = baseModel.copy(
+        taxFreeAllowance = Amount(0, "GBP"),
+        otherAllowances = Amount(0, "GBP")
+      )
 
-    val result:Future[Result] = Future.successful(show(request))
-    status(result) shouldBe 200
-    val document = Jsoup.parse(contentAsString(result))
+      when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(model))
 
-    document.toString should not include "tax-free-allowance-amount"
-    document.toString should not include "other-allowances"
-  }
+      val result:Future[Result] = Future.successful(sut.show(request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
 
-  "show 'Allowances' page with a correct breadcrumb" in new TestController {
+      document.toString should not include "tax-free-allowance-amount"
+      document.toString should not include "other-allowances"
+    }
 
-    val result = Future.successful(show(request))
-    val document = Jsoup.parse(contentAsString(result))
+    "show 'Allowances' page with a correct breadcrumb" in {
 
-    document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
-    document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
+      val result = Future.successful(sut.show(request))
+      val document = Jsoup.parse(contentAsString(result))
 
-    document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-    document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
+      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
+      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
 
-    document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
-    document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-    document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
-    document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-    document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
-  }
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-  "return a successful response for a valid request" in new TestController {
-    val result =  Future.successful(show(request))
-    status(result) shouldBe 200
-    val document = Jsoup.parse(contentAsString(result))
-    document.title should include(Messages("ats.tax_free_amount.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
-  }
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your tax-free amount</strong>")
+    }
 
-  "display an error page for an invalid request" in new TestController {
-    val result = Future.successful(show(badRequest))
-    status(result) shouldBe 400
-    val document = Jsoup.parse(contentAsString(result))
-    document.title should include(Messages("generic.error.html.title"))
-  }
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
+      status(result) shouldBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("ats.tax_free_amount.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+    }
 
-  "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(new NoATSViewModel))
-    val result = Future.successful(show(request))
-    status(result) mustBe SEE_OTHER
-    redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
-  }
+    "display an error page for an invalid request" in {
+      val result = Future.successful(sut.show(badRequest))
+      status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("generic.error.html.title"))
+    }
+
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+      when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(sut.show(request))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+    }
 
   }
 }

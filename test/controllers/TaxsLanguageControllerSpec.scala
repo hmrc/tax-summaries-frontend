@@ -17,19 +17,23 @@
 package controllers
 
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Helpers._
+import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
+class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
 
-class LanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+
+  def sut = new TaxsLanguageController(app.injector.instanceOf[MessagesApi])
 
   "switchLanguage" should {
 
     "switch the language to english and redirect to the home page" in {
 
-      val result = TaxsLanguageController.switchLanguage("en")(FakeRequest())
+      val result = sut.switchLanguage("en")(FakeRequest())
 
       status(result) shouldBe 303
       header("Set-Cookie", result) shouldBe Some("PLAY_LANG=en; Path=/")
@@ -38,7 +42,7 @@ class LanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
 
     "switch the language to welsh and redirect to the home page" in {
 
-      val result = TaxsLanguageController.switchLanguage("cy")(FakeRequest())
+      val result = sut.switchLanguage("cy")(FakeRequest())
 
       status(result) shouldBe 303
       header("Set-Cookie", result) shouldBe Some("PLAY_LANG=cy; Path=/")
@@ -48,7 +52,7 @@ class LanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
     "switch the language to welsh and redirect to the referring page" in {
 
       val request = FakeRequest().withHeaders(REFERER -> "foo")
-      val result = TaxsLanguageController.switchLanguage("cy")(request)
+      val result = sut.switchLanguage("cy")(request)
 
       status(result) shouldBe 303
       header("Set-Cookie", result) shouldBe Some("PLAY_LANG=cy; Path=/")

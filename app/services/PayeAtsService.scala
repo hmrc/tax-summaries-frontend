@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.Inject
 import connectors.MiddleConnector
 import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
@@ -24,18 +25,12 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import utils.AuditTypes
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object PayeAtsService extends PayeAtsService{
-  override val middleConnector = MiddleConnector
-  override val auditService = AuditService
-}
-
-trait PayeAtsService {
-  def middleConnector: MiddleConnector
-  def auditService: AuditService
+class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService : AuditService) {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]):Future[Either[HttpResponse,PayeAtsData]] = {
      middleConnector.connectToPayeATS(nino,taxYear) map { response =>

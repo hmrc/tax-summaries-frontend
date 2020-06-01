@@ -16,45 +16,36 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{Action, AnyContent, Result}
 import services.{AuditService, TotalIncomeTaxService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.TotalIncomeTax
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
-object TotalIncomeTaxController extends TotalIncomeTaxController {
-  override val totalIncomeTaxService = TotalIncomeTaxService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class TotalIncomeTaxController @Inject()(
+  totalIncomeTaxService: TotalIncomeTaxService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-trait TotalIncomeTaxController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def totalIncomeTaxService: TotalIncomeTaxService
-
-  def authorisedTotalIncomeTax = authAction.async {
-    request => show(request)
+  def authorisedTotalIncomeTax: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = TotalIncomeTax
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
-  }
 
-  override def obtainResult(result:ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+    Ok(
+      views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
 }

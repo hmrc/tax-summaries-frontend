@@ -16,35 +16,25 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.AppFormPartialRetriever
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{Action, AnyContent, Result}
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Summary
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+
 import scala.concurrent.Future
 
-object NicsController extends NicsController {
-  override val summaryService = SummaryService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class NicsController @Inject()(summaryService: SummaryService,
+                               val auditService: AuditService,
+                               authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever) extends TaxYearRequest {
 
-trait NicsController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def summaryService: SummaryService
-
-  def authorisedNics = authAction.async {
+  def authorisedNics: Action[AnyContent] = authAction.async {
     request => show(request)
   }
 

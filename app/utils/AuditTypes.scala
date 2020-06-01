@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package utils
 
-import com.google.inject.{Inject, Singleton}
-import play.api.http.HttpErrorHandler
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-
-@Singleton
-class AssetsController @Inject()(errorHandler: HttpErrorHandler) extends AssetsBuilder(errorHandler)
+object AuditTypes {
+  val Tx_FAILED = "TxFailed"
+  val Tx_SUCCEEDED = "TxSuccessful"
+}

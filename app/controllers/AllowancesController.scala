@@ -16,13 +16,12 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Result
 import services.{AllowanceService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
@@ -30,33 +29,23 @@ import view_models.Allowances
 
 import scala.concurrent.Future
 
-object AllowancesController extends AllowancesController {
-  override val allowanceService = AllowanceService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class AllowancesController @Inject()(
+  allowanceService: AllowanceService,
+  val auditService: AuditService,
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+    extends TaxYearRequest {
 
-trait AllowancesController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def allowanceService: AllowanceService
-
-  def authorisedAllowance = authAction.async {
-    request => show(request)
+  def authorisedAllowance = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = Allowances
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
-  }
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
 
 }

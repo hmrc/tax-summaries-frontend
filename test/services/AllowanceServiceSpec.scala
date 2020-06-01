@@ -49,28 +49,33 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
 
-  class TestService extends AllowanceService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
+  implicit val hc = HeaderCarrier()
+
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=${sut.taxYear}"))
+
+  val mockAtsService: AtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
+
+  def sut = new AllowanceService(mockAtsService, mockAtsYearListService) with MockitoSugar {
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
+
   }
 
   "AllowanceService.getAllowances" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
-      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getAllowances(taxYear)(request, hc), 1500 millis)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
+      when(mockAtsService.createModel(Matchers.eq(sut.taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
   "AllowanceService.allowanceDataConverter" should {
-    "return a complete AllowancesData when given complete AtsData" in new TestService {
+    "return a complete AllowancesData when given complete AtsData" in  {
 
       val atsData = AtsTestData.atsAllowancesData
-      val result = allowanceDataConverter(atsData)
+      val result = sut.allowanceDataConverter(atsData)
 
       result shouldBe Allowances(
         2019,

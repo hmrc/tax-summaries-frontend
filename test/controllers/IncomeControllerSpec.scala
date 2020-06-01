@@ -16,17 +16,16 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Play.current
+import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, IncomeService}
@@ -38,7 +37,7 @@ import view_models.{Amount, IncomeBeforeTax, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -61,47 +60,46 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
     surname = "surname"
   )
 
-  trait TestController extends IncomeController {
+  val mockIncomeService = mock[IncomeService]
+  val mockAuditService = mock[AuditService]
 
-    override lazy val incomeService: IncomeService = mock[IncomeService]
-    override lazy val auditService: AuditService = mock[AuditService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
+  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
-    when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+  def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
 
+  override def beforeEach(): Unit = {
+    when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
   }
 
   "Calling incomes" should {
 
-    "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(request))
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.income_before_tax.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
-    "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(badRequest))
+    "display an error page for an invalid request" in {
+      val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
-
     }
 
-    "have the right user data in the view" in new TestController {
+    "have the right user data in the view" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
 
       status(result) shouldBe 200
 
@@ -122,7 +120,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
     }
 
-    "have zero-value fields hidden in the view" in new TestController {
+    "have zero-value fields hidden in the view" in {
 
       val model = baseModel.copy(
         getSelfEmployTotal = Amount(0, "GBP"),
@@ -135,10 +133,10 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(incomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(model)
+      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(model)
 
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
 
       status(result) shouldBe 200
 
@@ -156,9 +154,9 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
       document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
     }
 
-    "show 'Income Before Tax' page with a correct breadcrumb" in new TestController {
+    "show 'Income Before Tax' page with a correct breadcrumb" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")

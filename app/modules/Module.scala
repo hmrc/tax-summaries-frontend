@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package modules
 
-import com.google.inject.Inject
-import uk.gov.hmrc.crypto.PlainText
+import com.google.inject.AbstractModule
+import config.AppFormPartialRetriever
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class AppFormPartialRetriever @Inject()(val cookieCrypto: TAXSSessionCookieCrypto, val httpGet: AppWSGet)
-    extends FormPartialRetriever {
-
-  override lazy val crypto: String => String =
-    str => cookieCrypto.crypto.encrypt(PlainText(str)).value
+class Module extends AbstractModule {
+  override def configure(): Unit = {
+    bind(classOf[FormPartialRetriever]).to(classOf[AppFormPartialRetriever])
+  }
 }

@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package view_models
+package models
 
-import utils.GenericViewModel
+import java.text.SimpleDateFormat
 
-case class TaxpayerName(title: String, forename: String, surname: String) extends GenericViewModel
+import org.joda.time.LocalDate
+
+case class TupleDate(day: String, month: String, year: String) {
+  lazy val localDate = new LocalDate(year.toInt, month.toInt, day.toInt)
+
+  lazy val date = localDate.toDate
+
+  def toString(format: String) = new SimpleDateFormat(format).format(date)
+}

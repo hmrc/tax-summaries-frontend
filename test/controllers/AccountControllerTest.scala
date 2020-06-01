@@ -27,12 +27,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class AccountControllerTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
 
-  val feedbackUrl = "/test-feedback-url"
-  val controller: AccountController = new AccountController {
-    override val appConfig: ApplicationConfig = mock[ApplicationConfig]
-
-    when(appConfig.feedbackUrl).thenReturn(feedbackUrl)
-  }
+  val feedbackUrl = "http://localhost:9514/feedback/ATS/personal"
+  val controller: AccountController = new AccountController
 
   "signOut" should {
 
@@ -45,7 +41,9 @@ class AccountControllerTest extends UnitSpec with GuiceOneAppPerSuite with Mocki
     "clear user session after redirect" in {
 
       val result = controller.signOut(FakeRequest().withSession("test" -> "session"))
-      result.futureValue shouldBe result.futureValue.withNewSession
+      val expected = result.futureValue
+
+      expected shouldBe expected.withNewSession
     }
   }
 }

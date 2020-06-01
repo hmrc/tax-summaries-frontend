@@ -47,29 +47,30 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
     )
   )
 
-  class TestService extends GovernmentSpendService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
-    implicit val hc = new HeaderCarrier
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
-    val taxYear = 2015
-  }
+  val taxYear = 2015
+
+  val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
+
+  implicit val hc = new HeaderCarrier
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
+
+  def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" should {
 
-    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in new TestService{
-      when(atsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
+    "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
+      when(mockAtsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
-
   }
 
   "GovernmentSpendService govSpend" should {
 
-    "return a complete GovernmentSpend when given complete AtsData" in new TestService{
+    "return a complete GovernmentSpend when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
-      val result = govSpend(atsData)
+      val result = sut.govSpend(atsData)
 
       result shouldBe GovernmentSpend(
        2019,
@@ -83,6 +84,5 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
         Amount(500,"GBP")
       )
     }
-
   }
 }
