@@ -16,6 +16,7 @@
 
 package views
 
+import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
@@ -41,6 +42,7 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
   val rate = new Rate("5")
 
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "Logging in as a transitioned user" should {
 
@@ -77,7 +79,7 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         scottishIncomeTax
       )
       val result = views.html
-        .government_spending(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever)
+        .government_spending(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -108,7 +110,7 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         "",
         "",
         "")
-      val result = views.html.taxs_main(fakeViewModel)(request, messages, language, formPartialRetriever)
+      val result = views.html.taxs_main(fakeViewModel)(request, messages, language, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include(

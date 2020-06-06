@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -64,6 +65,7 @@ class IncomeControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val mockAuditService = mock[AuditService]
 
   implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
 

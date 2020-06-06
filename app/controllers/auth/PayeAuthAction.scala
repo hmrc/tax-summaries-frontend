@@ -31,10 +31,10 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
-                                   configuration: Configuration)(implicit ec: ExecutionContext)
+                                   configuration: Configuration)(implicit ec: ExecutionContext,implicit val appConfig: ApplicationConfig)
   extends PayeAuthAction with AuthorisedFunctions {
 
-  val payeShuttered: Boolean = ApplicationConfig.payeShuttered
+  val payeShuttered: Boolean = appConfig.payeShuttered
 
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     if (payeShuttered) {
@@ -57,10 +57,10 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
         } recover {
         case _: NoActiveSession => {
           Redirect(
-            ApplicationConfig.payeLoginUrl,
+            appConfig.payeLoginUrl,
             Map(
-              "continue" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
-              "origin" -> Seq(ApplicationConfig.appName)
+              "continue" -> Seq(appConfig.payeLoginCallbackUrl),
+              "origin" -> Seq(appConfig.appName)
             )
           )
         }
@@ -77,12 +77,12 @@ class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
 
   private def upliftConfidenceLevel(request: Request[_]) =
       Redirect(
-        ApplicationConfig.identityVerificationUpliftUrl,
+        appConfig.identityVerificationUpliftUrl,
         Map(
-          "origin"          -> Seq(ApplicationConfig.appName),
+          "origin"          -> Seq(appConfig.appName),
           "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-          "completionURL" -> Seq(ApplicationConfig.payeLoginCallbackUrl),
-          "failureURL" -> Seq(ApplicationConfig.iVUpliftFailureCallback)
+          "completionURL" -> Seq(appConfig.payeLoginCallbackUrl),
+          "failureURL" -> Seq(appConfig.iVUpliftFailureCallback)
         )
       )
 }

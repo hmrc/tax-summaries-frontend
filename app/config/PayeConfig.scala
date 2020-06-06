@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import com.typesafe.config.{Config, ConfigFactory}
 import scala.collection.JavaConversions._
 
-class PayeConfig @Inject()() {
-  val payeYear: Int = ApplicationConfig.payeYear
+class PayeConfig @Inject()()(implicit val appConfig: ApplicationConfig) {
+  val payeYear: Int = appConfig.payeYear
   protected val configPath = "paye.conf"
 
   lazy val spendCategories: List[String] = {

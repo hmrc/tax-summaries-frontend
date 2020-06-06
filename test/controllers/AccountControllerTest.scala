@@ -27,6 +27,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class AccountControllerTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
 
+  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
+
   val feedbackUrl = "http://localhost:9514/feedback/ATS/personal"
   val controller: AccountController = new AccountController
 

@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
@@ -45,6 +46,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val mockSummaryService = mock[SummaryService]
 
   implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def incomeController = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
 

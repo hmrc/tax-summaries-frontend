@@ -16,6 +16,7 @@
 
 package controllers.auth.paye
 
+import config.ApplicationConfig
 import controllers.auth.{AuthConnector, PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
 import org.mockito.Matchers._
@@ -39,6 +40,7 @@ import scala.language.postfixOps
 class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()

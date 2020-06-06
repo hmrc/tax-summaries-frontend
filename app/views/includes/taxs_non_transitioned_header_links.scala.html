@@ -16,6 +16,6 @@
 
 @import config.ApplicationConfig
 
-@(utr: String)(implicit lang: Lang, request: Request[_], messages: Messages)
+@(utr: String)(implicit lang: Lang, request: Request[_], messages: Messages, appConfig: ApplicationConfig)
 
-<li><a href="@(ApplicationConfig.portalUrl + utr)">@Messages("generic.exit_tax_summaries")</a></li>
+<li><a href="@(appConfig.portalUrl + utr)">@Messages("generic.exit_tax_summaries")</a></li>

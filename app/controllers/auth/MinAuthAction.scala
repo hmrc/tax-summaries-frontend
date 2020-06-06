@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
-                                  configuration: Configuration)(implicit ec: ExecutionContext)
+                                  configuration: Configuration)(implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)
   extends MinAuthAction with AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
@@ -45,13 +45,13 @@ class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
     }
   } recover {
     case _: NoActiveSession => {
-      lazy val ggSignIn = ApplicationConfig.loginUrl
-      lazy val callbackUrl = ApplicationConfig.loginCallback
+      lazy val ggSignIn = appConfig.loginUrl
+      lazy val callbackUrl = appConfig.loginCallback
       Redirect(
         ggSignIn,
         Map(
           "continue" -> Seq(callbackUrl),
-          "origin" -> Seq(ApplicationConfig.appName)
+          "origin" -> Seq(appConfig.appName)
         )
       )
     }

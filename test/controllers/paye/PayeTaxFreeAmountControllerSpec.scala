@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -39,6 +40,7 @@ class PayeTaxFreeAmountControllerSpec
   val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show().url)
 
   implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
   val sut = new PayeTaxFreeAmountController(mockPayeAtsService, FakePayeAuthAction)
 
   "Tax Free Amount controller" should {

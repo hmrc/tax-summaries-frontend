@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -37,6 +38,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
 
   implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
   val sut = new PayeIncomeTaxAndNicsController(mockPayeAtsService, FakePayeAuthAction)
 
   "Paye your income tax and nics controller" should {

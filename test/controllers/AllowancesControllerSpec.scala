@@ -16,8 +16,8 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import config.ApplicationConfig
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -32,9 +32,10 @@ import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants._
 import utils.GenericViewModel
+import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
@@ -76,8 +77,9 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
 
   val mockAllowanceService = mock[AllowanceService]
   val mockAuditService = mock[AuditService]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)(app.injector.instanceOf[AppFormPartialRetriever])
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)(app.injector.instanceOf[FormPartialRetriever], appConfig)
 
   override def beforeEach(): Unit = {
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())

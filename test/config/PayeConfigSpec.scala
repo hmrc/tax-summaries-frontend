@@ -17,9 +17,11 @@
 package config
 
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.play.test.UnitSpec
 
-class PayeConfigSpec extends UnitSpec with MockitoSugar {
+class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
+  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
 
   "PayeConfig" should {
     "retrieve spend categories in order for a valid year" in {

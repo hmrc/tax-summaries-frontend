@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -39,6 +40,7 @@ import scala.concurrent.Future
 class NicsSummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   val taxYear = 2014
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))

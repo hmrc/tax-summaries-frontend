@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
 @helpers.back_link(Messages("generic.back"))

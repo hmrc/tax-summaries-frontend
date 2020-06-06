@@ -18,6 +18,7 @@ package services
 
 import java.util.Date
 
+import config.ApplicationConfig
 import models.AgentToken
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -30,6 +31,7 @@ import utils.TestConstants._
 class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures {
 
   val maxAge = 180
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new CryptoService {
 

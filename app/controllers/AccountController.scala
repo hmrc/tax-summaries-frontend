@@ -21,9 +21,9 @@ import config.ApplicationConfig
 import play.api.mvc.{Action, AnyContent}
 import play.api.mvc.Results._
 
-class AccountController @Inject()() {
+class AccountController @Inject()()(implicit val appConfig: ApplicationConfig) {
 
   def signOut: Action[AnyContent] = Action {
-    Redirect(ApplicationConfig.feedbackUrl).withNewSession
+    Redirect(appConfig.feedbackUrl).withNewSession
   }
 }

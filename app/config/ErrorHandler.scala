@@ -17,35 +17,30 @@
 package config
 
 
-import play.api.Play.current
-import play.api.i18n.Lang
-import play.api.i18n.Messages.Implicits._
+import akka.stream.Materializer
+import com.google.inject.Inject
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.Request
-import play.api.{Application, Configuration, Play}
+import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
-import uk.gov.hmrc.play.frontend.filters.{FrontendAuditFilter, FrontendLoggingFilter}
+import uk.gov.hmrc.play.bootstrap.filters.frontend.FrontendAuditFilter
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-object ApplicationGlobal extends DefaultFrontendGlobal {
+
+class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration, val environment: Environment, implicit val appConfig: ApplicationConfig)
+                            (implicit val mat: Materializer,
+                             implicit val formPartialRetriever: FormPartialRetriever) extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =
     Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
 
   lazy val controllerConfig = new TAXSControllerConfig(configuration)
 
-  override lazy val auditConnector: AuditConnector = new TAXSAuditConnector(configuration)
-  override lazy val loggingFilter: FrontendLoggingFilter = new TAXSLoggingFilter(controllerConfig)
-  override lazy val frontendAuditFilter: FrontendAuditFilter = new TAXSAuditFilter(auditConnector, configuration, controllerConfig)
+   lazy val auditConnector: AuditConnector = new TAXSAuditConnector(environment,configuration)
 
-  implicit lazy val formPartialRetriever: FormPartialRetriever = new AppFormPartialRetriever(new TAXSSessionCookieCrypto, new AppWSGet(configuration))
-
-  override def onStart(app: Application) {
-    super.onStart(app)
-    new ApplicationCrypto(Play.current.configuration.underlying).verifyConfiguration()
-  }
+  lazy val frontendAuditFilter: FrontendAuditFilter = new TAXSAuditFilter(auditConnector, configuration, controllerConfig, mat)
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
     implicit request: Request[_]): Html =
@@ -56,6 +51,6 @@ object ApplicationGlobal extends DefaultFrontendGlobal {
     views.html.errors.page_not_found_template()
   }
 
-  override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
+   def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
     app.configuration.getConfig(s"microservice.metrics")
 }

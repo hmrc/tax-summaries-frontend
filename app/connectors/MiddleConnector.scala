@@ -17,25 +17,19 @@
 package connectors
 
 import com.google.inject.Inject
-import config.WSHttp
+import config.ApplicationConfig
 import models.{AtsData, AtsListData}
-import play.api.Mode.Mode
-import play.api.{Configuration, Play}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MiddleConnector @Inject()(http: WSHttp) extends ServicesConfig {
+class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: ApplicationConfig) {
 
-  val serviceUrl = baseUrl("tax-summaries")
-  val agentServiceUrl = baseUrl("tax-summaries-agent")
-
-  override protected def mode: Mode = Play.current.mode
-
-  override protected def runModeConfiguration: Configuration = Play.current.configuration
+  val serviceUrl = appConfig.serviceUrl
+  val agentServiceUrl = appConfig.agentServiceUrl
 
   def url(path: String) = s"$serviceUrl$path"
   def agentUrl(path: String) = s"$agentServiceUrl$path"

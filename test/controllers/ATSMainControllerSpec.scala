@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -49,6 +50,7 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
   val mockAuditService = mock[AuditService]
 
   implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new AtsMainController(mockSummaryService, mockAuditService, FakeAuthAction)
 

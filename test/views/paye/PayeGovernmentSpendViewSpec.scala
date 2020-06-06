@@ -16,6 +16,7 @@
 
 package views.paye
 
+import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatestplus.play.OneAppPerSuite
@@ -32,6 +33,7 @@ class PayeGovernmentSpendViewSpec extends UnitSpec with OneAppPerSuite with Test
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   implicit lazy val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "view" should {
     "have correct data and heading for given taxYear" in {

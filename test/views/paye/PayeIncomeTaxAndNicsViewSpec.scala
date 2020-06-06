@@ -16,6 +16,7 @@
 
 package views.paye
 
+import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatestplus.play.OneAppPerSuite
@@ -32,7 +33,7 @@ class PayeIncomeTaxAndNicsViewSpec extends UnitSpec with OneAppPerSuite with Tes
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"))
   implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "PayeIncomeTaxAndNicsView" should {
 

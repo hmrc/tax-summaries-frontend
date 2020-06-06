@@ -17,6 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
@@ -32,7 +33,7 @@ import scala.concurrent.Future
 class AllowancesController @Inject()(
   allowanceService: AllowanceService,
   val auditService: AuditService,
-  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
     extends TaxYearRequest {
 
   def authorisedAllowance = authAction.async { request =>

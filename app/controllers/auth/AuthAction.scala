@@ -17,26 +17,28 @@
 package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
-import config.{ApplicationConfig, WSHttp}
+import config.ApplicationConfig
 import play.api.Mode.Mode
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Play}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, Enrolment, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, NoActiveSession, PlayAuthConnector}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain.{CtUtr, EmpRef, SaUtr, Uar, Vrn}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.domain._
 import uk.gov.hmrc.http.{CorePost, HeaderCarrier}
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject()(override val authConnector: AuthConnector, configuration: Configuration)(
-  implicit ec: ExecutionContext)
+  implicit ec: ExecutionContext,
+  implicit val appConfig: ApplicationConfig)
     extends AuthAction with AuthorisedFunctions {
 
-  val saShuttered: Boolean = ApplicationConfig.saShuttered
+  val saShuttered: Boolean = appConfig.saShuttered
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     if (saShuttered) {
@@ -102,13 +104,13 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
         }
     } recover {
       case _: NoActiveSession => {
-        lazy val ggSignIn = ApplicationConfig.loginUrl
-        lazy val callbackUrl = ApplicationConfig.loginCallback
+        lazy val ggSignIn = appConfig.loginUrl
+        lazy val callbackUrl = appConfig.loginCallback
         Redirect(
           ggSignIn,
           Map(
             "continue" -> Seq(callbackUrl),
-            "origin"   -> Seq(ApplicationConfig.appName)
+            "origin"   -> Seq(appConfig.appName)
           )
         )
       }
@@ -120,10 +122,10 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
 
-class AuthConnector @Inject()(wsHttp: WSHttp) extends PlayAuthConnector with ServicesConfig {
+class AuthConnector @Inject()(httpClient : HttpClient) extends PlayAuthConnector with ServicesConfig {
   override lazy val serviceUrl: String = baseUrl("auth")
 
-  override def http: CorePost = wsHttp
+  override def http: CorePost = httpClient
 
   override protected def mode: Mode = Play.current.mode
 
