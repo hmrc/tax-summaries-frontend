@@ -25,10 +25,11 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
+class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                                   configuration: Configuration)(implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)
   extends MinAuthAction with AuthorisedFunctions {
 

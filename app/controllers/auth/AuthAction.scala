@@ -18,22 +18,19 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import play.api.Mode.Mode
+import play.api.Configuration
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import play.api.{Configuration, Play}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain._
-import uk.gov.hmrc.http.{CorePost, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
-
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(override val authConnector: AuthConnector, configuration: Configuration)(
+class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, configuration: Configuration)(
   implicit ec: ExecutionContext,
   implicit val appConfig: ApplicationConfig)
     extends AuthAction with AuthorisedFunctions {
@@ -121,13 +118,3 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
-
-class AuthConnector @Inject()(httpClient : HttpClient) extends PlayAuthConnector with ServicesConfig {
-  override lazy val serviceUrl: String = baseUrl("auth")
-
-  override def http: CorePost = httpClient
-
-  override protected def mode: Mode = Play.current.mode
-
-  override protected def runModeConfiguration: Configuration = Play.current.configuration
-}

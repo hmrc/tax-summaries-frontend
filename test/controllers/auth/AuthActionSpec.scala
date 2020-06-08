@@ -25,29 +25,21 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.SaUtrGenerator
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.RetrievalOps._
 import utils.TestConstants._
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
-  class BrokenAuthConnector (exception: Throwable) extends AuthConnector(app.injector.instanceOf[HttpClient]) {
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
-      Future.failed(exception)
-  }
-
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   class Harness(authAction: AuthAction) extends Controller {

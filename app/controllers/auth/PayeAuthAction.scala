@@ -27,10 +27,11 @@ import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialSt
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeAuthActionImpl @Inject()(override val authConnector: AuthConnector,
+class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                                    configuration: Configuration)(implicit ec: ExecutionContext,implicit val appConfig: ApplicationConfig)
   extends PayeAuthAction with AuthorisedFunctions {
 

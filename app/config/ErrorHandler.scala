@@ -16,28 +16,23 @@
 
 package config
 
-
-import akka.stream.Materializer
 import com.google.inject.Inject
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.Request
 import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration, val environment: Environment, implicit val appConfig: ApplicationConfig)
-                            (implicit val mat: Materializer,
-                             implicit val formPartialRetriever: FormPartialRetriever) extends FrontendErrorHandler {
+class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration, val environment: Environment)
+                            (implicit val formPartialRetriever: FormPartialRetriever,
+                             implicit val appConfig: ApplicationConfig) extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =
     Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
 
   lazy val controllerConfig = new TAXSControllerConfig(configuration)
-
-   lazy val auditConnector: AuditConnector = new TAXSAuditConnector(environment,configuration)
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
     implicit request: Request[_]): Html =
