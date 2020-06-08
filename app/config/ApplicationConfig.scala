@@ -17,16 +17,16 @@
 package config
 
 import com.google.inject.Inject
+import javax.inject.Singleton
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment, Play}
 import uk.gov.hmrc.play.config.ServicesConfig
 
+@Singleton
 class ApplicationConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
 
 
   protected def mode: Mode = environment.mode
-
-//  protected def runModeConfiguration: Configuration = Play.current.configuration
 
   def getConf(key: String) = getConfString(key, throw new Exception(s"Could not find config '$key'"))
 

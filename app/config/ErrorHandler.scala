@@ -24,7 +24,6 @@ import play.api.mvc.Request
 import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.filters.frontend.FrontendAuditFilter
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
@@ -39,8 +38,6 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Co
   lazy val controllerConfig = new TAXSControllerConfig(configuration)
 
    lazy val auditConnector: AuditConnector = new TAXSAuditConnector(environment,configuration)
-
-  lazy val frontendAuditFilter: FrontendAuditFilter = new TAXSAuditFilter(auditConnector, configuration, controllerConfig, mat)
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
     implicit request: Request[_]): Html =

@@ -49,7 +49,8 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
 
   val mockMiddleConnector = mock[MiddleConnector]
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
-  lazy val mockAuditService: AuditService = mock[AuditService]
+  //ToDo need to find what is causing intermittent failure for this unit test
+  val mockAuditService: AuditService = mock[AuditService]
 
   def sut = new PayeAtsService(mockMiddleConnector,mockAuditService)
 
