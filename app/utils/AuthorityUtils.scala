@@ -16,13 +16,12 @@
 
 package utils
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
-object AuthorityUtils extends AuthorityUtils
-
-trait AuthorityUtils {
+class AuthorityUtils @Inject()() {
 
   def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
     (AccountUtils.getAccount(request), agentToken) match {

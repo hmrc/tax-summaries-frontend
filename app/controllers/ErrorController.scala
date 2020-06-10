@@ -24,11 +24,10 @@ import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.AccountUtils
 
 class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction)(
   implicit val formPartialRetriever: FormPartialRetriever,implicit val appConfig: ApplicationConfig)
-    extends FrontendController with AccountUtils {
+    extends FrontendController {
 
   def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
     Ok(views.html.errors.no_ats_error())

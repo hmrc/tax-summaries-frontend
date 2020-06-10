@@ -85,8 +85,7 @@ class AtsListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
     timestamp = 0
   )
 
-  def sut = new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector) {
-    override lazy val authUtils: AuthorityUtils = mockAuthUtils
+  def sut = new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils) {
     override lazy val accountUtils: AccountUtils = mockAccountUtils
   }
 

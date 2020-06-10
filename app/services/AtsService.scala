@@ -33,8 +33,8 @@ import scala.concurrent.Future
 class AtsService @Inject()(
                             middleConnector: MiddleConnector,
                             dataCacheConnector: DataCacheConnector,
-                            val auditService: AuditService) {
-  val authUtils: AuthorityUtils = AuthorityUtils
+                            val auditService: AuditService,
+                            val authUtils: AuthorityUtils) {
   val accountUtils: AccountUtils = AccountUtils
 
   def createModel(taxYear: Int, converter: AtsData => GenericViewModel)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {

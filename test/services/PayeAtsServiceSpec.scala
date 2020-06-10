@@ -36,7 +36,7 @@ import utils.TestConstants.testNino
 import scala.concurrent.Future
 import scala.io.Source
 
-class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience with BeforeAndAfterEach {
+class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   implicit val hc = HeaderCarrier()
   val expectedResponse: JsValue = readJson("/paye_ats.json")
