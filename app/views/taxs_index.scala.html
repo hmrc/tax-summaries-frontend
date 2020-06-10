@@ -40,7 +40,7 @@
 @includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
     @helpers.errorSummaryTemplate(atsYear)
-    <h1 role="heading">@Html(Messages("ats.select_tax_year.title"))</h1>
+    <h1>@Html(Messages("ats.select_tax_year.title"))</h1>
 
     @form(action = controllers.routes.IndexController.authorisedOnSubmit){
         <div class="form-group">
