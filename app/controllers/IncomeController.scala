@@ -17,6 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
@@ -30,7 +31,7 @@ import view_models.IncomeBeforeTax
 import scala.concurrent.Future
 
 class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction)(
-  implicit val formPartialRetriever: FormPartialRetriever)
+  implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
     extends TaxYearRequest {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>

@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.SpendData
 import org.jsoup.Jsoup
@@ -51,6 +52,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
   val mockAuditService = mock[AuditService]
 
   implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
 

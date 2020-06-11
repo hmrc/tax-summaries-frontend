@@ -18,6 +18,8 @@ package view_models.paye
 
 import config.ApplicationConfig
 import models.PayeAtsData
+import play.api.{Configuration, Environment, Play}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.{Amount, Rate}
 
 case class PayeYourIncomeAndTaxes(
@@ -30,9 +32,7 @@ case class PayeYourIncomeAndTaxes(
 
 object PayeYourIncomeAndTaxes {
 
-  val taxYear: Int = ApplicationConfig.payeYear
-
-  def buildViewModel(payeAtsData: PayeAtsData): Option[PayeYourIncomeAndTaxes] = {
+  def buildViewModel(payeAtsData: PayeAtsData , taxYear : Int): Option[PayeYourIncomeAndTaxes] = {
 
     val taxableIncome = payeAtsData.allowance_data.flatMap { allowanceData =>
       allowanceData.payload.flatMap { payload => {

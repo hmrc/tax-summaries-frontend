@@ -16,6 +16,7 @@
 
 package views
 
+import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -36,6 +37,7 @@ class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants w
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   implicit lazy val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def view(tax: TotalIncomeTax): String =
     views.html.total_income_tax(tax).body

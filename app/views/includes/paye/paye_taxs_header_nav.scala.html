@@ -18,7 +18,7 @@
 
 @(navTitle: String,
   navTitleLink: Option[play.api.mvc.Call] = None,
-  showBetaLink: Boolean = false)(implicit lang: Lang, request: Request[_], messages: Messages)
+  showBetaLink: Boolean = false)(implicit lang: Lang, request: Request[_], messages: Messages, appConfig: ApplicationConfig)
 
 <div class="header-proposition">
     <div class="content">
@@ -26,7 +26,7 @@
             <span class="header__menu__proposition-name">@navTitle</span>
 
             @if(showBetaLink) {
-            <a href="@(ApplicationConfig.govUkServiceManual)" class="phase-tag beta">@Messages("generic.beta")</a>
+            <a href="@(appConfig.govUkServiceManual)" class="phase-tag beta">@Messages("generic.beta")</a>
             }
 
             <ul id="proposition-links" class="header__menu__proposition-links">

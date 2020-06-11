@@ -17,7 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
-import config.WSHttp
+import config.ApplicationConfig
 import models.{AtsData, AtsListData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -27,6 +27,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.{testNino, testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
@@ -44,9 +45,10 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
       .build()
 
   implicit val hc = HeaderCarrier()
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
   private val currentYear = 2018
 
-  def sut = new MiddleConnector(app.injector.instanceOf[WSHttp])
+  def sut = new MiddleConnector(app.injector.instanceOf[HttpClient])
 
   val utr = SaUtr(testUtr)
 

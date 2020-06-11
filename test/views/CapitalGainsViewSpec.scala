@@ -16,6 +16,7 @@
 
 package views
 
+import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
@@ -32,6 +33,7 @@ class CapitalGainsViewSpec extends UnitSpec with OneAppPerSuite with TestConstan
   implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def view(cg: CapitalGains): String =
     views.html.capital_gains(cg).body

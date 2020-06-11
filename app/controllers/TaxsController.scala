@@ -19,6 +19,7 @@ package controllers
 import java.util.Date
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.Logger
@@ -26,7 +27,7 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, Request, Result}
 import services._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 
@@ -37,6 +38,7 @@ abstract class TaxsController @Inject()() extends FrontendController
           with AttorneyUtils {
 
   implicit val formPartialRetriever: FormPartialRetriever
+  implicit val appConfig: ApplicationConfig
 
   def auditService: AuditService
 

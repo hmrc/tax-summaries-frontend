@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -37,6 +38,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers with
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
 
   val sut = new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction)
 

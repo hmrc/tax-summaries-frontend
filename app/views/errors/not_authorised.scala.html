@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import controllers.auth.AuthenticatedRequest
 
-@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
 @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.noauth", 0)

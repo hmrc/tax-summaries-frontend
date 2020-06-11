@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-@()(implicit request: Request[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever)
+@()(implicit request: Request[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @includes.paye.paye_taxs_main(title = Messages("paye.ats.service_unavailable.title")) {
 <h1 class="heading-xlarge">@Messages("paye.ats.service_unavailable.heading")</h1>

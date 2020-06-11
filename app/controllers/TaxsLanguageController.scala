@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class TaxsLanguageController @Inject()(val messagesApi: MessagesApi)(implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController with I18nSupport {

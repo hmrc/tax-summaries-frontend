@@ -16,18 +16,17 @@
 
 package controllers.paye
 
-import config.{AppFormPartialRetriever, ApplicationConfig, TAXSSessionCookieCrypto}
-import connectors.MiddleConnector
+import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import javax.inject.Inject
 import models.PayeAtsData
+import play.api.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
-import play.api.{Logger, Play}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourIncomeAndTaxes
 
@@ -35,14 +34,15 @@ import view_models.paye.PayeYourIncomeAndTaxes
 
 class PayeYourIncomeAndTaxesController @Inject()(payeAtsService: PayeAtsService,
                                                  payeAuthAction: PayeAuthAction)
-                                                (implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController {
-  val payeYear = ApplicationConfig.payeYear
+                                                (implicit val formPartialRetriever: FormPartialRetriever,
+                                                 implicit val appConfig: ApplicationConfig) extends FrontendController {
+  val payeYear = appConfig.payeYear
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          PayeYourIncomeAndTaxes.buildViewModel(successResponse) match {
+          PayeYourIncomeAndTaxes.buildViewModel(successResponse, payeYear) match {
             case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
             case _  => {
               val exception = new InternalServerException("Missing Paye ATS data")

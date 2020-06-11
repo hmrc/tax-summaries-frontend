@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.AtsListData
@@ -67,6 +68,7 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val mockAtsListService = mock[AtsListService]
 
   implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new IndexController(
     mockDataCacheConnector,

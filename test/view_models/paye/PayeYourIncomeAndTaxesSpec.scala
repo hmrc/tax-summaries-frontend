@@ -26,6 +26,8 @@ import view_models.Amount
 
 class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
 
+  val taxYear : Int = 2018
+
   "PayeYourIncomeAndTaxesData" should {
 
     "successfully Transform PayeAtsData to view model" in {
@@ -36,7 +38,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
       result shouldBe expectedViewModel
     }
@@ -49,7 +51,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
         Amount(0, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result =  PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+      val result =  PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
       result shouldBe expectedViewModel
     }
@@ -62,7 +64,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
       result shouldBe expectedViewModel
     }
@@ -75,7 +77,7 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
         Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
         Amount(1100, "GBP"),"20"))
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
       result shouldBe expectedViewModel
     }

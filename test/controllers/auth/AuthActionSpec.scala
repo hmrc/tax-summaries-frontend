@@ -16,41 +16,31 @@
 
 package controllers.auth
 
-import config.WSHttp
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.mvc.{Action, AnyContent, Controller}
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments, InsufficientConfidenceLevel, InsufficientEnrolments, SessionRecordNotFound}
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, LoginTimes, Retrieval, ~}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import config.ApplicationConfig
 import org.mockito.Matchers._
-import play.api.test.FakeRequest
-import org.scalatest.concurrent.ScalaFutures._
-import utils.RetrievalOps._
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers.{redirectLocation, status, _}
-import uk.gov.hmrc.auth.core.retrieve.v2.TrustedHelper
+import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, _}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.SaUtrGenerator
-
-import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.RetrievalOps._
+import utils.TestConstants._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import utils.TestConstants._
 
 class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
-  class BrokenAuthConnector (exception: Throwable) extends AuthConnector(app.injector.instanceOf[WSHttp]) {
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
-      Future.failed(exception)
-  }
-
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   class Harness(authAction: AuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { request => Ok(s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail").toString}," +

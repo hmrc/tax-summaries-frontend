@@ -17,6 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
@@ -36,7 +37,7 @@ class IndexController @Inject()(
   atsYearListService: AtsYearListService,
   atsListService: AtsListService,
   val auditService: AuditService,
-  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever)
+  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
     extends TaxsController {
 
   def authorisedIndex: Action[AnyContent] = authAction.async { request =>

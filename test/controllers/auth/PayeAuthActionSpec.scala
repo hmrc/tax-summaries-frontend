@@ -16,7 +16,8 @@
 
 package controllers.auth.paye
 
-import controllers.auth.{AuthConnector, PayeAuthAction, PayeAuthActionImpl}
+import config.ApplicationConfig
+import controllers.auth.{PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -30,15 +31,16 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.postfixOps
 
 class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()

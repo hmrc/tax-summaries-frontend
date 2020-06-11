@@ -27,7 +27,7 @@ bodyClasses: Option[String] = None,
 mainClasses: Option[String] = None,
 mainDataAttributes: Option[Html] = None,
 includeGridWrapper: Boolean = false,
-gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @fullTitle = {@title - @Messages("generic.paye.ats.browser.title")}
 
@@ -47,7 +47,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }
 
 @headScript = {
-    <script src="https://cdn.optimizely.com/js/@{ApplicationConfig.optimizelyProjectId}.js"></script>
+    <script src="https://cdn.optimizely.com/js/@{appConfig.optimizelyProjectId}.js"></script>
 }
 
 @head = {
@@ -61,7 +61,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 @afterHeader = {}
 
 @getHelpForm = {
-    @formPartialRetriever.getPartialContent(ApplicationConfig.reportAProblemPartialUrl)
+    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
 }
 
 @contentHeader = {
@@ -93,9 +93,9 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 @bodyEnd = {
     @uiLayouts.footer(
-        analyticsToken = ApplicationConfig.analyticsToken,
-        analyticsHost = ApplicationConfig.analyticsHost,
-        ssoUrl = ApplicationConfig.ssoUrl,
+        analyticsToken = appConfig.analyticsToken,
+        analyticsHost = appConfig.analyticsHost,
+        ssoUrl = appConfig.ssoUrl,
         scriptElem = Option(scriptElement),
         gaCalls = gaCalls
     )
@@ -104,8 +104,8 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 @betaBanner = {
     @uiLayouts.betaBanner(
         userLoggedIn,
-        ApplicationConfig.betaFeedbackUrl,
-        ApplicationConfig.betaFeedbackUnauthenticatedUrl,
+appConfig.betaFeedbackUrl,
+appConfig.betaFeedbackUnauthenticatedUrl,
         showFeedbackLinkInBetaBanner
     )
 }

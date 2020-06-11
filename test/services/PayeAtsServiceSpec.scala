@@ -36,7 +36,7 @@ import utils.TestConstants.testNino
 import scala.concurrent.Future
 import scala.io.Source
 
-class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience with BeforeAndAfterEach {
+class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   implicit val hc = HeaderCarrier()
   val expectedResponse: JsValue = readJson("/paye_ats.json")
@@ -49,7 +49,7 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerT
 
   val mockMiddleConnector = mock[MiddleConnector]
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
-  lazy val mockAuditService: AuditService = mock[AuditService]
+  val mockAuditService: AuditService = mock[AuditService]
 
   def sut = new PayeAtsService(mockMiddleConnector,mockAuditService)
 

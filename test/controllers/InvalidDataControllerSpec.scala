@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -43,6 +44,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
   val taxYear = 2014
 
   implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val hc = new HeaderCarrier
 
   val genericViewModel: GenericViewModel =  AtsList(

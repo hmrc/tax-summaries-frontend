@@ -14,11 +14,12 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import play.api.i18n.Messages.Implicits._
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 
-@()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @anchor(text: String, url: String) = {<a href="@url" target="_blank">@text</a>}
 

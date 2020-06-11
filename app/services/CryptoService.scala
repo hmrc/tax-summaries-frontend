@@ -26,10 +26,10 @@ import utils.AgentTokenException
 
 import scala.util.matching.Regex
 
-class CryptoService @Inject()() {
+class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
 
-  def key: String = ApplicationConfig.encryptionKey
-  def tokenMaxAge: Int = ApplicationConfig.encryptionTokenMaxAge
+  def key: String = appConfig.encryptionKey
+  def tokenMaxAge: Int = appConfig.encryptionTokenMaxAge
 
   protected def aesCrypto = new AesCrypto {
     val encryptionKey = key

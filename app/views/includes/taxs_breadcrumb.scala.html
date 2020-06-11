@@ -17,12 +17,12 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import utils.TaxsBreadcrumbLinks
-@(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages)
+@(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, appConfig: ApplicationConfig)
 
 <div id="global-breadcrumb" class="header-context">
       <ol class="group">
           @if(!utils.AccountUtils.isPortalUser(request)) {
-          <li><a href="@ApplicationConfig.ytaUrl" data-journey-click="link - click:breadcrumb:@Messages("breadcrumbs.yta.home")">@Html(Messages("breadcrumbs.yta.home"))</a></li>
+          <li><a href="@appConfig.ytaUrl" data-journey-click="link - click:breadcrumb:@Messages("breadcrumbs.yta.home")">@Html(Messages("breadcrumbs.yta.home"))</a></li>
           }
           @for(link <- links) {
               @if(link == "breadcrumbs.taxs.select_tax_year") {

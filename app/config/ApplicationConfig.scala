@@ -16,20 +16,24 @@
 
 package config
 
+import com.google.inject.Inject
+import javax.inject.Singleton
 import play.api.Mode.Mode
-import play.api.{Configuration, Play}
+import play.api.{Configuration, Environment, Play}
 import uk.gov.hmrc.play.config.ServicesConfig
 
-object ApplicationConfig extends ServicesConfig {
+@Singleton
+class ApplicationConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
 
 
-  protected def mode: Mode = Play.current.mode
-
-  protected def runModeConfiguration: Configuration = Play.current.configuration
+  protected def mode: Mode = environment.mode
 
   def getConf(key: String) = getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   // Services url config
+  val serviceUrl = baseUrl("tax-summaries")
+  val agentServiceUrl = baseUrl("tax-summaries-agent")
+
   private val contactHost = baseUrl("contact-frontend")
   lazy val sessionCacheHost = baseUrl("cachable.session-cache")
   lazy val authHost = baseUrl("auth")

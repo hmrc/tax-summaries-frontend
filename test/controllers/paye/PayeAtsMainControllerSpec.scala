@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -36,6 +37,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with GuiceOneA
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
+  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
 
   def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction)
 
