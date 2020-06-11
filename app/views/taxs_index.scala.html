@@ -49,10 +49,8 @@
                     atsYear("year"),
                     atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
                     fieldSetAttributes = Some("id=year_field"),
-                    legendId = Some("year_field-legend"),
                     legendClass = Some("visuallyhidden"),
-                    legend = Some(Messages("ats.select_tax_year.title")),
-                    ariaDescribedBy = Some("year_field-legend")
+                    legend = Some(Messages("ats.select_tax_year.title"))
                 )
             )
         </div>

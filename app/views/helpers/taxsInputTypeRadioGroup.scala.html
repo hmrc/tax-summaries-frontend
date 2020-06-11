@@ -71,7 +71,7 @@
 @legend = {
     @params.legend match {
         case Some(legend) => {
-            <legend @legendId @legendClass @legendAttributes>@legend</legend>
+            <legend @legendClass @legendAttributes>@legend</legend>
         }
         case _ => {}
     }
@@ -129,19 +129,6 @@
                             <input type="radio"
                                    id="@inputId"
                                    data-journey-click="radio - select:@Messages("ats.select_tax_year.title"):@value"
-                                   @if(params.ariaDescribedBy){
-                                        @if(params.ariaDescribedByForYesOptionOnly && (value == "Yes")) {
-                                            aria-describedby="@{params.ariaDescribedBy}"
-                                        } else {
-                                            @if(!params.ariaDescribedByForYesOptionOnly) {
-                                                aria-describedby="@{params.ariaDescribedBy}"
-                                            } else {
-                                                aria-describedby="@{inputTypeId}"
-                                            }
-                                        }
-                                   } else {
-                                        aria-describedby="@{inputTypeId}"
-                                   }
                                    name="@params.field.name"
                                    value="@value" @inputClass @dataAttributes @params.field.value.filter(_ == value).map { _ => checked="checked"}>
 
