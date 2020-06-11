@@ -118,7 +118,7 @@
     }
 }
 
-<fieldset @fieldSetClass @fieldSetAttributes @if(fieldErrors.nonEmpty) {aria-labelledby="@params.field.name-error-0"}>
+<fieldset @fieldSetClass @fieldSetAttributes @if(fieldErrors.nonEmpty) {aria-describedby="@params.field.name-error-0"}>
         @legend
         @formHint
         @commonHelper(params.field, fieldErrors)
