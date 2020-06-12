@@ -152,15 +152,15 @@
             </th>
             <td class="numeric">@includes.currency_amount(viewModel.employeeContributions, true)</td>
         </tr>
-        <thead>
+        </tbody>
+        <tfoot>
         <tr id="totalIncomeTaxAndNic">
             <th scope="row">
                 @Messages("paye.ats.total_income_tax_national_insurance.title")
             </th>
             <td class="numeric">@includes.currency_amount(viewModel.totalIncomeTax2Nics, true)</td>
         </tr>
-        </thead>
-        </tbody>
+        </tfoot>
     </table>
 
     @if(viewModel.employerContributions.nonZero) {
