@@ -18,37 +18,38 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
+import play.api.Environment
 import play.api.Mode.Mode
-import play.api.{Configuration, Environment, Play}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 
 @Singleton
-class ApplicationConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+class ApplicationConfig @Inject()(environment: Environment, config: ServicesConfig, runMode: RunMode) {
 
 
   protected def mode: Mode = environment.mode
 
-  def getConf(key: String) = getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  def getConf(key: String) = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   // Services url config
-  val serviceUrl = baseUrl("tax-summaries")
-  val agentServiceUrl = baseUrl("tax-summaries-agent")
+  val serviceUrl = config.baseUrl("tax-summaries")
+  val agentServiceUrl = config.baseUrl("tax-summaries-agent")
 
-  private val contactHost = baseUrl("contact-frontend")
-  lazy val sessionCacheHost = baseUrl("cachable.session-cache")
-  lazy val authHost = baseUrl("auth")
+  private val contactHost = config.baseUrl("contact-frontend")
+  lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
+  lazy val authHost = config.baseUrl("auth")
   private val contactFormServiceIdentifier = "TAX-SUMMARIES"
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   // Beta feedback config
-  lazy val betaFeedbackUrl = (if (env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
-  lazy val betaFeedbackUnauthenticatedUrl = (if (env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
+  //TODO fix this by placing on env config
+  lazy val betaFeedbackUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
+  lazy val betaFeedbackUnauthenticatedUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
 
   // Analytics config
-  lazy val analyticsToken: Option[String] = Some(getString(s"google-analytics.token"))
-  lazy val analyticsHost: String = getString(s"google-analytics.host")
+  lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))
+  lazy val analyticsHost: String = config.getString(s"google-analytics.host")
   lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
 
   lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
@@ -57,8 +58,8 @@ class ApplicationConfig @Inject()(val runModeConfiguration: Configuration, envir
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
   // Encryption config
-  lazy val encryptionKey = runModeConfiguration.getString("portal.clientagent.encryption.key").getOrElse("1111111111111111111111")
-  lazy val encryptionTokenMaxAge = getConfInt("encryption.tokenMaxAge", 0)
+  lazy val encryptionKey = config.getConfString("portal.clientagent.encryption.key", "1111111111111111111111")
+  lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
   lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
 
@@ -67,7 +68,7 @@ class ApplicationConfig @Inject()(val runModeConfiguration: Configuration, envir
   lazy val loginUrl = getConf("login.url")
   lazy val ytaUrl = getConf("yta.url")
   lazy val portalUrl = getConf("portal.url")
-  lazy val optimizelyProjectId: String = getString("optimizely.projectId")
+  lazy val optimizelyProjectId: String = config.getString("optimizely.projectId")
   lazy val feedbackUrl: String = getConf("feedback.url")
   lazy val payeLoginUrl = getConf("paye.login.url")
   lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
@@ -77,11 +78,11 @@ class ApplicationConfig @Inject()(val runModeConfiguration: Configuration, envir
   lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
   //Application name
-  lazy val appName = getString("appName")
+  lazy val appName = config.getString("appName")
 
-  val payeYear: Int = getInt("paye.year")
+  val payeYear: Int = config.getInt("paye.year")
 
-  val saShuttered: Boolean = getBoolean("shuttering.sa")
+  val saShuttered: Boolean = config.getBoolean("shuttering.sa")
 
-  val payeShuttered: Boolean = getBoolean("shuttering.paye")
+  val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
 }

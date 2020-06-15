@@ -17,14 +17,14 @@
 package services
 
 import com.google.inject.Inject
-import config.TAXSAuditConnector
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AuditService @Inject()(auditConnector: TAXSAuditConnector) {
+class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   val taxsAuditSource = "tax-summaries-frontend"
 

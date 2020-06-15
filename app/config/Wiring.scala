@@ -17,29 +17,13 @@
 package config
 
 import com.google.inject.Inject
-import com.typesafe.config.Config
-import play.api.{Configuration, Environment}
+import com.google.inject.name.Named
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.config.LoadAuditingConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.{AppName, ControllerConfig}
 
-class TAXSControllerConfig @Inject()(configuration: Configuration) extends ControllerConfig {
-  lazy val controllerConfigs: Config = configuration.underlying.getConfig("controllers")
-}
-
-class TAXSAuditConnector @Inject()(environment: Environment, configuration: Configuration) extends AuditConnector with AppName {
-  override lazy val auditingConfig: AuditingConfig = LoadAuditingConfig(configuration , environment.mode, "microservice.services.auditing")
-
-  override protected def appNameConfiguration: Configuration = configuration
-}
-
-class TAXSSessionCache @Inject()(override val appNameConfiguration: Configuration, val http: HttpClient)
-                                (implicit val appConfig: ApplicationConfig)extends SessionCache with AppName {
+class TAXSSessionCache @Inject()(val http: HttpClient, @Named("appName") appName: String)
+                                (implicit val appConfig: ApplicationConfig) extends SessionCache {
   override lazy val defaultSource: String = appName
   override lazy val baseUri: String = appConfig.sessionCacheHost
   override lazy val domain: String = appConfig.sessionCacheDomain
 }
-
