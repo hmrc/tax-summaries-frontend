@@ -23,7 +23,7 @@ import models.PayeAtsData
 import play.api.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -32,9 +32,10 @@ import view_models.paye.PayeAtsMain
 
 class PayeAtsMainController @Inject()(
   payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction)(implicit val formPartialRetriever: FormPartialRetriever,
+  payeAuthAction: PayeAuthAction,
+  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever,
                                   implicit val appConfig: ApplicationConfig)
-    extends FrontendController {
+    extends FrontendController(mcc) {
 
   val payeYear = appConfig.payeYear
 

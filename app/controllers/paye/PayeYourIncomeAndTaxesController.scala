@@ -23,7 +23,7 @@ import models.PayeAtsData
 import play.api.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -33,9 +33,10 @@ import view_models.paye.PayeYourIncomeAndTaxes
 
 
 class PayeYourIncomeAndTaxesController @Inject()(payeAtsService: PayeAtsService,
-                                                 payeAuthAction: PayeAuthAction)
+                                                 payeAuthAction: PayeAuthAction,
+                                                 mcc : MessagesControllerComponents)
                                                 (implicit val formPartialRetriever: FormPartialRetriever,
-                                                 implicit val appConfig: ApplicationConfig) extends FrontendController {
+                                                 implicit val appConfig: ApplicationConfig) extends FrontendController(mcc) {
   val payeYear = appConfig.payeYear
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {

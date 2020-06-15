@@ -21,14 +21,14 @@ import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
 
-class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction)
+class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,mcc : MessagesControllerComponents)
                                     (implicit val formPartialRetriever: FormPartialRetriever,implicit val appConfig: ApplicationConfig)
-                                     extends FrontendController{
+                                     extends FrontendController(mcc) {
   val payeYear = appConfig.payeYear
 
   def genericError (status : Int): Action[AnyContent] = payeAuthAction {

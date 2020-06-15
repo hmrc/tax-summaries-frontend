@@ -17,7 +17,7 @@
 package controllers.auth.paye
 
 import config.ApplicationConfig
-import controllers.auth.{PayeAuthAction, PayeAuthActionImpl}
+import controllers.auth.PayeAuthAction
 import controllers.paye.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -26,21 +26,22 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.Application
 import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, Controller, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  val mockMessagesControllerComponents = mock[MessagesControllerComponents]
+  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -70,7 +71,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
         .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val authAction = new PayeAuthAction(mockAuthConnector, fakeApplication.configuration,mockMessagesControllerComponents)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -83,7 +84,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new InternalError))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val authAction = new PayeAuthAction(mockAuthConnector, fakeApplication.configuration,mockMessagesControllerComponents)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -95,7 +96,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val authAction = new PayeAuthAction(mockAuthConnector, fakeApplication.configuration,mockMessagesControllerComponents)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -108,7 +109,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to Identity verification service" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientConfidenceLevel()))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val authAction = new PayeAuthAction(mockAuthConnector, fakeApplication.configuration,mockMessagesControllerComponents)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -121,7 +122,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(IncorrectCredentialStrength()))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration)
+      val authAction = new PayeAuthAction(mockAuthConnector, fakeApplication.configuration,mockMessagesControllerComponents)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -135,7 +136,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, app.configuration){
+      val authAction = new PayeAuthAction(mockAuthConnector, app.configuration,mockMessagesControllerComponents){
         override val payeShuttered: Boolean = true
       }
       val controller = new Harness(authAction)

@@ -25,7 +25,7 @@ import models.ErrorResponse
 import play.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -33,7 +33,7 @@ import utils._
 
 import scala.concurrent.Future
 
-abstract class TaxsController @Inject()() extends FrontendController
+abstract class TaxsController @Inject()(mcc : MessagesControllerComponents) extends FrontendController(mcc)
           with AccountUtils
           with AttorneyUtils {
 

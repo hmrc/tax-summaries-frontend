@@ -16,22 +16,25 @@
 
 package controllers.auth
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.Inject
 import config.ApplicationConfig
 import play.api.Configuration
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import play.api.mvc._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
-                                  configuration: Configuration)(implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)
-  extends MinAuthAction with AuthorisedFunctions {
+class MinAuthAction @Inject()(override val authConnector: DefaultAuthConnector,
+                              configuration: Configuration,
+                              cc : MessagesControllerComponents)(implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)
+  extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
+
+  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+  override protected val executionContext: ExecutionContext = cc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
 
@@ -60,6 +63,3 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
     case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
 }
-
-@ImplementedBy(classOf[MinAuthActionImpl])
-trait MinAuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]

@@ -16,24 +16,26 @@
 
 package controllers.auth
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.Inject
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
-                                   configuration: Configuration)(implicit ec: ExecutionContext,implicit val appConfig: ApplicationConfig)
-  extends PayeAuthAction with AuthorisedFunctions {
+class PayeAuthAction @Inject()(override val authConnector: DefaultAuthConnector,
+                                   configuration: Configuration,
+                                   cc : MessagesControllerComponents)(implicit ec: ExecutionContext,implicit val appConfig: ApplicationConfig)
+  extends ActionBuilder[PayeAuthenticatedRequest, AnyContent] with ActionFunction[Request, PayeAuthenticatedRequest] with AuthorisedFunctions {
+
+  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+  override protected val executionContext: ExecutionContext = cc.executionContext
 
   val payeShuttered: Boolean = appConfig.payeShuttered
 
@@ -87,8 +89,5 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
         )
       )
 }
-
-@ImplementedBy(classOf[PayeAuthActionImpl])
-trait PayeAuthAction extends ActionBuilder[PayeAuthenticatedRequest] with ActionFunction[Request, PayeAuthenticatedRequest]
 
 

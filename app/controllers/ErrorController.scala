@@ -19,15 +19,13 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, MinAuthAction}
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction)(
+class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction, mcc : MessagesControllerComponents)(
   implicit val formPartialRetriever: FormPartialRetriever,implicit val appConfig: ApplicationConfig)
-    extends FrontendController {
+    extends FrontendController(mcc) {
 
   def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
     Ok(views.html.errors.no_ats_error())
