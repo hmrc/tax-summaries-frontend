@@ -23,7 +23,7 @@ import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
@@ -37,8 +37,9 @@ class IndexController @Inject()(
   atsYearListService: AtsYearListService,
   atsListService: AtsListService,
   val auditService: AuditService,
-  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
-    extends TaxsController {
+  authAction: AuthAction,
+  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
+    extends TaxsController(mcc) {
 
   def authorisedIndex: Action[AnyContent] = authAction.async { request =>
     agentAwareShow(request)

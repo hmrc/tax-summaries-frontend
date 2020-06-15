@@ -22,7 +22,7 @@ import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
@@ -33,8 +33,9 @@ import scala.concurrent.Future
 class GovernmentSpendController @Inject()(
   governmentSpendService: GovernmentSpendService,
   val auditService: AuditService,
-  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
-    extends TaxYearRequest {
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
+    extends TaxYearRequest(mcc) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
     show(request)

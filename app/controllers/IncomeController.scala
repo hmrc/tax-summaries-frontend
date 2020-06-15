@@ -22,7 +22,7 @@ import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
@@ -30,9 +30,10 @@ import view_models.IncomeBeforeTax
 
 import scala.concurrent.Future
 
-class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction)(
+class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction,
+                                 mcc : MessagesControllerComponents)(
   implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
-    extends TaxYearRequest {
+    extends TaxYearRequest(mcc) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
     show(request)

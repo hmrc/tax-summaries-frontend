@@ -23,8 +23,6 @@ import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.Logger
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController

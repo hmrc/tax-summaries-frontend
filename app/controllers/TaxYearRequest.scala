@@ -16,16 +16,15 @@
 
 package controllers
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
-import play.api.mvc.Result
+import play.api.mvc.{MessagesControllerComponents, Result}
 import utils.{GenericViewModel, TaxYearUtil}
 import view_models.NoATSViewModel
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import scala.concurrent.Future
 
-trait TaxYearRequest extends TaxsController {
+abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents) extends TaxsController(mcc) {
 
   def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(implicit request: AuthenticatedRequest[_]):
     Future[Either[ErrorResponse, GenericViewModel]] = {

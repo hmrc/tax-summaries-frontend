@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
+//TODO check the config being passed in
 class MinAuthAction @Inject()(override val authConnector: DefaultAuthConnector,
                               configuration: Configuration,
                               cc : MessagesControllerComponents)(implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)

@@ -31,7 +31,7 @@ import view_models.paye.PayeTaxFreeAmount
 class PayeTaxFreeAmountController @Inject()(payeAtsService: PayeAtsService,
                                             payeAuthAction: PayeAuthAction,
                                             mcc : MessagesControllerComponents)
-                                           (implicit val formPartialRetriever: FormPartialRetriever,implicit val appConfig: ApplicationConfig)
+                                           (implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
                                             extends FrontendController(mcc) {
   val payeYear = appConfig.payeYear
 
