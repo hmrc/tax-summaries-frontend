@@ -20,20 +20,18 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.IncomeBeforeTax
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction,
-                                 mcc : MessagesControllerComponents)(
-  implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
-    extends TaxYearRequest(mcc) {
+                                 mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -45,8 +43,10 @@ class IncomeController @Inject()(incomeService: IncomeService, val auditService:
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(incomeService.getIncomeData(_))
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang : Lang = request.lang
     Ok(
       views.html
         .income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+  }
 }

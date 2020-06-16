@@ -17,14 +17,19 @@
 package controllers
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
+import play.api.i18n.Lang
 import play.api.mvc.{MessagesControllerComponents, Result}
+import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.{GenericViewModel, TaxYearUtil}
 import view_models.NoATSViewModel
-import scala.concurrent.Future
 
-abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents) extends TaxsController(mcc) {
+import scala.concurrent.{ExecutionContext, Future}
+
+abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,ec: ExecutionContext)
+  extends TaxsController(mcc)(formPartialRetriever, appConfig, ec) {
 
   def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(implicit request: AuthenticatedRequest[_]):
     Future[Either[ErrorResponse, GenericViewModel]] = {
@@ -35,6 +40,7 @@ abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents) exten
   }
 
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    implicit val lang : Lang = request.lang
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
       case Right(result: ViewModel) => obtainResult(result)

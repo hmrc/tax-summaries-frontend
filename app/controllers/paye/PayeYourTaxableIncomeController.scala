@@ -21,25 +21,28 @@ import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logger
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourTaxableIncome
+import scala.concurrent.ExecutionContext
 
 class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
                                                 payeAuthAction: PayeAuthAction,
                                                 mcc : MessagesControllerComponents)
-                                               (implicit val formPartialRetriever: FormPartialRetriever,
-                                                implicit val appConfig: ApplicationConfig) extends FrontendController(mcc) {
+                                               (implicit formPartialRetriever: FormPartialRetriever,
+                                                appConfig: ApplicationConfig,
+                                                ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport{
 
   val payeYear: Int = appConfig.payeYear
 
   def show: Action[AnyContent] = payeAuthAction.async {
-    implicit request: PayeAuthenticatedRequest[_] =>
+    implicit request: PayeAuthenticatedRequest[_] => {
+      implicit  val lang : Lang =request.lang
+
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
@@ -54,6 +57,7 @@ class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
           }
         }
       }
+    }
   }
 }
 

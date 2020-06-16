@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(field: Field, fieldErrors: Seq[_root_.utils.validation.FieldError])(implicit lang: Lang, message: Messages)
+@(field: Field, fieldErrors: Seq[_root_.utils.validation.FieldError])(implicit lang: Lang, message: MessagesApi)
 @import _root_.utils.validation.ErrorMessageLookup._
 @fieldErrors.zipWithIndex.map { case (fieldError, index) =>
     <span class="error-notification"

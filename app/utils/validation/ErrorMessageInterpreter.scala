@@ -166,7 +166,7 @@ object ErrorMessageInterpreter extends ErrorMessageInterpreter {
       case _                          => ""
     }
 
-  def getSummaryErrors(form: Form[_])(implicit messages: Messages): Seq[SummaryError] =
+  def getSummaryErrors(form: Form[_])(implicit messages: MessagesApi): Seq[SummaryError] =
     form.errors.map { error =>
       val anchor = error.args.nonEmpty match {
         case true => {

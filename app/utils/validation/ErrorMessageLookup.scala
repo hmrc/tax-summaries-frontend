@@ -16,7 +16,7 @@
 
 package utils.validation
 
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 
 /**
   * This API is designed to look up messages from conf/messages using an instance of the MessageLookup returned by the
@@ -27,16 +27,16 @@ import play.api.i18n.Messages
   * This API currently does not support different locales
   */
 trait ErrorMessageLookup {
-  def messageLookup(lookup: MessageLookup)(implicit messages: Messages): String
+  def messageLookup(lookup: MessageLookup)(implicit messages: MessagesApi): String
 }
 
 object ErrorMessageLookup extends ErrorMessageLookup {
 
-  @inline def messageLookup(lookup: MessageLookup)(implicit messages: Messages): String =
+  @inline def messageLookup(lookup: MessageLookup)(implicit messages: MessagesApi): String =
     messageLookup(lookup.msgKey, lookup.msgArgs)
 
-  private def messageLookup(key: String, params: MessageArguments)(implicit messages: Messages): String =
-    Messages(
+  private def messageLookup(key: String, params: MessageArguments)(implicit messages: MessagesApi): String =
+    messages(
       key,
       MessageArguments({
         for (param <- params.args) yield {

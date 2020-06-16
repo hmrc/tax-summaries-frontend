@@ -20,21 +20,20 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Summary
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class NicsController @Inject()(summaryService: SummaryService,
                                val auditService: AuditService,
                                authAction: AuthAction,
-                               mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever,
-                                                       implicit val appConfig: ApplicationConfig) extends TaxYearRequest(mcc) {
+                               mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedNics: Action[AnyContent] = authAction.async {
     request => show(request)
@@ -46,6 +45,7 @@ class NicsController @Inject()(summaryService: SummaryService,
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit  val lang : Lang =request.lang
     Ok(views.html.nics(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

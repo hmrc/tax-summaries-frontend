@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(form: Form[_], summaryErrorIdOrder : Seq[String] = Seq())(implicit messages: Messages)
+@(form: Form[_], summaryErrorIdOrder : Seq[String] = Seq())(implicit messages: MessagesApi)
 @import utils.validation.ErrorMessageInterpreter._
 @import utils.validation.ErrorMessageLookup._
 

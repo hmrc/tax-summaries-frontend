@@ -20,20 +20,21 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
+import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.CapitalGains
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CapitalGainsTaxController @Inject()(
   capitalGainsService: CapitalGainsService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
-    extends TaxYearRequest(mcc) {
+  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedCapitalGains: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -45,6 +46,8 @@ class CapitalGainsTaxController @Inject()(
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang : Lang = request.lang
     Ok(views.html.capital_gains(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+  }
 }

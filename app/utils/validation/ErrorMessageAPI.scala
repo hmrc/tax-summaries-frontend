@@ -154,7 +154,7 @@ case class TargetFieldIds(anchor: String, otherIds: String*)
   * All types inheriting this trait must contain a message key.
   */
 trait MessageLookup extends MessageConfig[String] with I18nSupport {
-  override def toString: String = ErrorMessageLookup.messageLookup(this)(implicitly)
+  override def toString: String = ErrorMessageLookup.messageLookup(this)(messagesApi)
 }
 
 /**
@@ -188,11 +188,11 @@ case class EmbeddedMessage @Inject()(
     extends MessageLookup
 
 object EmbeddedMessage {
-  def apply(msgKey: String, msgArgs: MessageArguments)(implicit messages: Messages) =
-    new EmbeddedMessage(msgKey, msgArgs, messages.messages)
+  def apply(msgKey: String, msgArgs: MessageArguments)(implicit messages: MessagesApi) =
+    new EmbeddedMessage(msgKey, msgArgs, messages)
 
-  def apply(msgKey: String)(implicit messages: Messages) =
-    new EmbeddedMessage(msgKey = msgKey, messagesApi = messages.messages)
+  def apply(msgKey: String)(implicit messages: MessagesApi) =
+    new EmbeddedMessage(msgKey = msgKey, messagesApi = messages)
 }
 
 /**
@@ -233,22 +233,22 @@ case class SummaryError @Inject()(
 }
 
 object SummaryError {
-  def apply(msgKey: String, anchor: String)(implicit messages: Messages): SummaryError =
-    new SummaryError(msgKey, anchor)(messages.messages)
+  def apply(msgKey: String, anchor: String)(implicit messages: MessagesApi): SummaryError =
+    new SummaryError(msgKey, anchor)(messages)
 
-  def apply(msgKey: String, msgArgs: MessageArguments, anchor: String)(implicit messages: Messages): SummaryError =
-    new SummaryError(msgKey, msgArgs, anchor, messages.messages)
+  def apply(msgKey: String, msgArgs: MessageArguments, anchor: String)(implicit messages: MessagesApi): SummaryError =
+    new SummaryError(msgKey, msgArgs, anchor, messages)
 
-  def apply(fieldError: FieldError, anchor: String)(implicit messages: Messages): SummaryError =
-    new SummaryError(ErrorMessageInterpreter.defaultSummaryId(fieldError.msgKey), anchor)(messages.messages)
+  def apply(fieldError: FieldError, anchor: String)(implicit messages: MessagesApi): SummaryError =
+    new SummaryError(ErrorMessageInterpreter.defaultSummaryId(fieldError.msgKey), anchor)(messages)
 
   def apply(fieldError: FieldError, summaryArgs: MessageArguments, anchor: String)(
-    implicit messages: Messages): SummaryError =
+    implicit messages: MessagesApi): SummaryError =
     new SummaryError(
       ErrorMessageInterpreter.defaultSummaryId(fieldError.msgKey),
       summaryArgs,
       anchor,
-      messages.messages)
+      messages)
 }
 
 /**
@@ -283,11 +283,11 @@ case class FieldError @Inject()(
 }
 
 object FieldError {
-  def apply(msgKey: String)(implicit messages: Messages) =
-    new FieldError(msgKey = msgKey, messagesApi = messages.messages)
+  def apply(msgKey: String)(implicit messages: MessagesApi) =
+    new FieldError(msgKey = msgKey, messagesApi = messages)
 
-  def apply(msgKey: String, msgArgs: MessageArguments)(implicit messages: Messages) =
-    new FieldError(msgKey, msgArgs, messages.messages)
+  def apply(msgKey: String, msgArgs: MessageArguments)(implicit messages: MessagesApi) =
+    new FieldError(msgKey, msgArgs, messages)
 }
 
 // These constaints are used by the factory and extractor to construct and extract the error messages from their configs.
