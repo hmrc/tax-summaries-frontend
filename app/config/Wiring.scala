@@ -18,7 +18,12 @@ package config
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.audit.http.config.AuditingConfig
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 class TAXSSessionCache @Inject()(val http: HttpClient, @Named("appName") appName: String)
@@ -27,3 +32,8 @@ class TAXSSessionCache @Inject()(val http: HttpClient, @Named("appName") appName
   override lazy val baseUri: String = appConfig.sessionCacheHost
   override lazy val domain: String = appConfig.sessionCacheDomain
 }
+
+//class TAXSAuditConnector @Inject()(environment: Environment, configuration: Configuration, runMode: RunMode) extends AuditConnector {
+//  override lazy val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration , runMode, "microservice.services.auditing").get
+//
+//}

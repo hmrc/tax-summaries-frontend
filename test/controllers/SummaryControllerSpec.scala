@@ -63,9 +63,8 @@ object SummaryControllerSpec {
   )
 }
 
-class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach with PropertyChecks {
+class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with PropertyChecks {
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
@@ -75,10 +74,8 @@ class SummaryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction)
+  def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
   override def beforeEach(): Unit = {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))

@@ -25,7 +25,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi, MessagesProvider}
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
@@ -35,7 +36,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.NoATSViewModel
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
 
@@ -48,11 +49,14 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
 
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
+  val mockMessagesControllerComponents = mock[MessagesControllerComponents]
 
   implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+  implicit lazy val msgProvider = app.injector.instanceOf[MessagesProvider]
 
-  def sut = new AtsMainController(mockSummaryService, mockAuditService, FakeAuthAction)
+  def sut = new AtsMainController(mockSummaryService, mockAuditService, FakeAuthAction,mockMessagesControllerComponents)
 
   override def beforeEach(): Unit = {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))

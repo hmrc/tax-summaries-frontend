@@ -40,9 +40,8 @@ import view_models._
 
 import scala.concurrent.Future
 
-class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
+class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
 
@@ -77,9 +76,8 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
 
   val mockAllowanceService = mock[AllowanceService]
   val mockAuditService = mock[AuditService]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)(app.injector.instanceOf[FormPartialRetriever], appConfig)
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc)
 
   override def beforeEach(): Unit = {
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())

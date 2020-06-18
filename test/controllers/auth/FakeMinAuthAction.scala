@@ -16,11 +16,12 @@
 
 package controllers.auth
 
+import com.google.inject.Inject
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeMinAuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest] {
+class FakeMinAuthAction @Inject()() extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest] {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext

@@ -23,11 +23,10 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 
-class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
+class TaxsLanguageControllerSpec extends ControllerBaseSpec {
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
-  def sut = new TaxsLanguageController(app.injector.instanceOf[MessagesApi])
+  def sut = new TaxsLanguageController(mcc)
 
   "switchLanguage" should {
 

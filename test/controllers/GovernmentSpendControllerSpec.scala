@@ -40,7 +40,7 @@ import view_models._
 
 import scala.concurrent.Future
 
-class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
+class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
@@ -51,10 +51,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
   val mockGovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService = mock[AuditService]
 
-  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
-  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
+  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
 
   val genericViewModel: GenericViewModel =  AtsList(
       utr = "3000024376",

@@ -27,13 +27,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import view_models.{Amount, CapitalGains}
 
-class CapitalGainsViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
+class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
-  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def view(cg: CapitalGains): String =
     views.html.capital_gains(cg).body

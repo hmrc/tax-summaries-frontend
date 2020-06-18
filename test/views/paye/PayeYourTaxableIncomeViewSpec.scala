@@ -16,25 +16,17 @@
 
 package views.paye
 
-import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import view_models.paye.PayeYourTaxableIncome
+import views.ViewSpecBase
 
-class PayeYourTaxableIncomeViewSpec extends UnitSpec with OneAppPerSuite with TestConstants {
+class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
-  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages: Messages = Messages(Lang("en"), messagesApi)
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
-  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   val payeYourTaxableIncomeViewModel : PayeYourTaxableIncome =PayeAtsTestData.payeYourTaxableIncomeViewModel
 

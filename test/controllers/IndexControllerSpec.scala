@@ -47,9 +47,7 @@ import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with I18nSupport with BeforeAndAfterEach {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   val taxYear = 2015
@@ -67,15 +65,13 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val mockAtsYearListService = mock[AtsYearListService]
   val mockAtsListService = mock[AtsListService]
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
   def sut = new IndexController(
     mockDataCacheConnector,
     mockAtsYearListService,
     mockAtsListService,
     mock[AuditService],
-    FakeAuthAction
+    FakeAuthAction,
+    mcc
   )
 
   val model: GenericViewModel = AtsList(

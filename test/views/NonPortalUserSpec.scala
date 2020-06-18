@@ -16,33 +16,24 @@
 
 package views
 
-import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.Lang
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
 
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   val language = Lang("en")
-  val messages: Messages = Messages(language, messagesApi)
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
-
-  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "Logging in as a transitioned user" should {
 

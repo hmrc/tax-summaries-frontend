@@ -20,7 +20,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.prop.PropertyChecks
 import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import utils.ViewUtils.toCurrency
@@ -29,7 +29,7 @@ import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, Scott
 class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants with PropertyChecks {
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages: Messages = Messages(Lang("en"), messagesApi)
+  implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
 
   val savingsTaxData = SavingsTax.empty
   val savingsRateData = SavingsRates.empty

@@ -16,32 +16,25 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
+import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testNino
 
-class PayeYourIncomeAndTaxesControllerSpec  extends PayeControllerSpecHelpers with GuiceOneAppPerSuite with I18nSupport {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class PayeYourIncomeAndTaxesControllerSpec  extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
-
-  val sut = new PayeYourIncomeAndTaxesController(mockPayeAtsService, FakePayeAuthAction)
+  val sut = new PayeYourIncomeAndTaxesController(mockPayeAtsService, FakePayeAuthAction, mcc)
 
   "Government spend controller" should {
 

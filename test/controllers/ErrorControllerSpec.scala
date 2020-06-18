@@ -28,14 +28,9 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
-class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class ErrorControllerSpec extends ControllerBaseSpec {
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-
-  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
-  def sut = new ErrorController(FakeAuthAction, FakeMinAuthAction)
+  def sut = new ErrorController(FakeAuthAction, FakeMinAuthAction, mcc)
 
   "ErrorController" should {
 
