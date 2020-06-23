@@ -27,8 +27,6 @@ import view_models.paye.PayeAtsMain
 class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting{
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
-  implicit lazy val messageApi = inject[MessagesApi]
-  implicit  val lang : Lang =fakeAuthenticatedRequest.lang
 
   def sut = new PayeErrorController(FakePayeAuthAction, mcc)
 

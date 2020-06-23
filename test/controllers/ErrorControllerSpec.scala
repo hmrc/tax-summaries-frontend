@@ -33,7 +33,7 @@ class ErrorControllerSpec extends ControllerBaseSpec {
     "Show No ATS page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-      implicit val lang : Lang = request.lang
+      //implicit val lang : Lang = request.lang
       val result = sut.authorisedNoAts()(request)
       val document = contentAsString(result)
 
@@ -45,7 +45,7 @@ class ErrorControllerSpec extends ControllerBaseSpec {
     "show not authorised page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
-      implicit val lang : Lang = request.lang
+      //implicit val lang : Lang = request.lang
       val result = sut.notAuthorised()(request)
       val document = contentAsString(result)
 

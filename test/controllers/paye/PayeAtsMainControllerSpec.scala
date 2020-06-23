@@ -31,10 +31,7 @@ import utils.TestConstants.testNino
 
 class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
-
 
   def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mcc)
 
