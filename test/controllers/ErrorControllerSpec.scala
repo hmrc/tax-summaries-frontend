@@ -16,28 +16,24 @@
 
 package controllers
 
-import config.ApplicationConfig
 import controllers.auth._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
 class ErrorControllerSpec extends ControllerBaseSpec {
 
-  def sut = new ErrorController(FakeAuthAction, FakeMinAuthAction, mcc)
+  def sut = new ErrorController(FakeAuthAction , FakeMinAuthAction , mcc)
+  implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" should {
 
     "Show No ATS page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-
+      implicit val lang : Lang = request.lang
       val result = sut.authorisedNoAts()(request)
       val document = contentAsString(result)
 
@@ -49,7 +45,7 @@ class ErrorControllerSpec extends ControllerBaseSpec {
     "show not authorised page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
-
+      implicit val lang : Lang = request.lang
       val result = sut.notAuthorised()(request)
       val document = contentAsString(result)
 

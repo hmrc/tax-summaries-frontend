@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup

@@ -16,15 +16,16 @@
 
 package controllers.auth
 
-import com.google.inject.Inject
-import play.api.mvc._
-
+import play.api.mvc.{AnyContent, Request, _}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeMinAuthAction @Inject()() extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest] {
+object FakeMinAuthAction extends MinAuthAction{
 
-  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
-  override protected val executionContext: ExecutionContext = cc.executionContext
+  val stubmcc = Stubs.stubMessagesControllerComponents()
+
+  override val parser: BodyParser[AnyContent] = stubmcc.parsers.anyContent
+  override protected val executionContext: ExecutionContext = stubmcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     block(AuthenticatedRequest("userId", None, None, None, None, None, None, request))

@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import com.google.inject.Inject
 import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -30,7 +31,7 @@ import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 
-class PayeYourIncomeAndTaxesControllerSpec  extends PayeControllerSpecHelpers with ControllerBaseSpec {
+class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 

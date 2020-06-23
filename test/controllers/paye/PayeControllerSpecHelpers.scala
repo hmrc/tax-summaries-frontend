@@ -28,13 +28,11 @@ import utils.TestConstants.testNino
 
 import scala.io.Source
 
-trait PayeControllerSpecHelpers extends UnitSpec with MockitoSugar {
+trait PayeControllerSpecHelpers {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val taxYear: Int = 2018
-
-  val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
 
   val expectedResponse: JsValue = readJson("/paye_ats.json")
 

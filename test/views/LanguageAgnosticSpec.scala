@@ -30,7 +30,7 @@ import utils.TestConstants._
 import view_models.AtsForms._
 import view_models._
 
-class LanguageAgnosticSpec extends ViewSpecBase with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
+class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with MockitoSugar  {
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val language = Lang("en")

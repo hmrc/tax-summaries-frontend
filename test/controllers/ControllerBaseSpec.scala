@@ -20,18 +20,21 @@ import config.ApplicationConfig
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{I18nSupport, MessagesApi, MessagesProvider}
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Injecting
+import services.PayeAtsService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+
 import scala.concurrent.ExecutionContext
 
-trait ControllerBaseSpec extends GuiceOneAppPerSuite with UnitSpec with MockitoSugar with  I18nSupport with Injecting {
+trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with MockitoSugar with  I18nSupport with Injecting {
 
-  override def messagesApi: MessagesApi = inject[MessagesApi]
+  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit lazy val ec = inject[ExecutionContext]
   implicit lazy val msgProvider = inject[MessagesProvider]
-  val mcc = mock[MessagesControllerComponents]
+  val mcc = Stubs.stubMessagesControllerComponents()
+  val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
 }

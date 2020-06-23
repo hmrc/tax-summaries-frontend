@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}

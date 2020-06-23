@@ -16,19 +16,15 @@
 
 package controllers
 
-import config.ApplicationConfig
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import com.google.inject.Inject
+import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.NoATSViewModel
 

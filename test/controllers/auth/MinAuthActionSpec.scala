@@ -23,7 +23,7 @@ import org.scalatest.concurrent.ScalaFutures._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{Action, AnyContent, Controller, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
@@ -36,11 +36,10 @@ import scala.language.postfixOps
 
 class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
-   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  val mockMessagesControllerComponents = mock[MessagesControllerComponents]
 
-  class Harness(minAuthAction: MinAuthAction) extends Controller {
+  class Harness(minAuthAction: MinAuthActionImpl) extends Controller {
     def onPageLoad(): Action[AnyContent] = minAuthAction { request => Ok }
   }
 
@@ -51,7 +50,7 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val minAuthAction = new MinAuthAction(mockAuthConnector, app.configuration,mockMessagesControllerComponents)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration, FakeMinAuthAction.stubmcc)
       val controller = new Harness(minAuthAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
@@ -63,7 +62,7 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "be redirected to the Sorry there is a problem page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-      val minAuthAction = new MinAuthAction(mockAuthConnector, app.configuration,mockMessagesControllerComponents)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration, FakeMinAuthAction.stubmcc)
       val controller = new Harness(minAuthAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -75,14 +74,14 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
   "A user with a confidence level 50" should {
     "create a minimum authenticated request" in {
-        val retrievalResult: Future[Option[String]] =
+      val retrievalResult: Future[Option[String]] =
         Future.successful(Some(""))
 
       when(mockAuthConnector
         .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val minAuthAction = new MinAuthAction(mockAuthConnector, app.configuration,mockMessagesControllerComponents)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration, FakeMinAuthAction.stubmcc)
       val controller = new Harness(minAuthAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))

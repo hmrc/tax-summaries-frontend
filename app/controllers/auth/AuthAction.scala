@@ -16,7 +16,7 @@
 
 package controllers.auth
 
-import com.google.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import play.api.Configuration
 import play.api.mvc.Results.Redirect
@@ -32,9 +32,9 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
 //TODO look at the amount of config being passed
-class AuthAction @Inject()(override val authConnector: DefaultAuthConnector, configuration: Configuration, cc : MessagesControllerComponents)(
+class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, configuration: Configuration, cc : MessagesControllerComponents)(
   implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)
-    extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
+    extends AuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -119,3 +119,6 @@ class AuthAction @Inject()(override val authConnector: DefaultAuthConnector, con
       case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
     }
 }
+
+@ImplementedBy(classOf[AuthActionImpl])
+trait AuthAction extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]

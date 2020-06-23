@@ -30,9 +30,13 @@ object AppDependencies {
     "org.scalamock"           %% "scalamock-scalatest-support"  % "3.6.0",
     "com.typesafe.play"       %% "play-test"                    % PlayVersion.current,
     "org.scalacheck"          %% "scalacheck"                   % "1.14.3",
-    "com.github.tomakehurst"   % "wiremock-jre8"               % "2.26.1"
+    "com.github.tomakehurst"   % "wiremock-jre8"                % "2.26.1"
   ).map(_ % "test")
 
-  val all: Seq[ModuleID] = compile ++ test
+  val bootstrapTest = Seq(
+    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.8.0" % Test classifier "tests"
+  )
+
+  val all: Seq[ModuleID] = compile ++ test ++ bootstrapTest
 
 }

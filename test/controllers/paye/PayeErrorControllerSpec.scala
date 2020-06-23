@@ -16,14 +16,19 @@
 
 package controllers.paye
 
+import com.google.inject.Inject
 import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.test.Helpers._
+import play.api.test.Injecting
 import view_models.paye.PayeAtsMain
 
-class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting{
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit lazy val messageApi = inject[MessagesApi]
+  implicit  val lang : Lang =fakeAuthenticatedRequest.lang
 
   def sut = new PayeErrorController(FakePayeAuthAction, mcc)
 

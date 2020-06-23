@@ -28,7 +28,7 @@ import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models._
 
-class PortalUserSpec extends ViewSpecBase with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
+class PortalUserSpec extends ViewSpecBase with HtmlUnitFactory with MockitoSugar  {
 
   val utr = testUtr
   lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))

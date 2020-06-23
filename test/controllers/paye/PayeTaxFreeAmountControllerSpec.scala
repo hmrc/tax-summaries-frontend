@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import com.google.inject.Inject
 import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -28,8 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 
-class PayeTaxFreeAmountControllerSpec
-  extends PayeControllerSpecHelpers with ControllerBaseSpec {
+class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show().url)
 

@@ -54,7 +54,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration, FakeAuthAction.stubmcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
@@ -66,7 +66,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration, FakeAuthAction.stubmcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -80,14 +80,14 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val retrievalResult: Future[
         Enrolments ~ Option[String]] =
         Future.successful(
-           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("")
-          )
+          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("")
+        )
 
       when(mockAuthConnector
         .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration, FakeAuthAction.stubmcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -104,13 +104,13 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
             Some("")
-          )
+        )
 
       when(mockAuthConnector
         .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration)
+      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration, FakeAuthAction.stubmcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -123,7 +123,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration){
+      val authAction = new AuthActionImpl(mockAuthConnector, app.configuration, FakeAuthAction.stubmcc){
         override val saShuttered: Boolean = true
       }
       val controller = new Harness(authAction)
