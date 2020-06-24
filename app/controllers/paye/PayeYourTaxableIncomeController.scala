@@ -41,7 +41,7 @@ class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
 
   def show: Action[AnyContent] = payeAuthAction.async {
     implicit request: PayeAuthenticatedRequest[_] => {
-      implicit  val lang : Lang =request.lang
+      implicit  val lang : Lang = request.lang
 
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 

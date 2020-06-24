@@ -50,7 +50,7 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration, FakeMinAuthAction.stubmcc)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.stubmcc)
       val controller = new Harness(minAuthAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
@@ -62,7 +62,7 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "be redirected to the Sorry there is a problem page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration, FakeMinAuthAction.stubmcc)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.stubmcc)
       val controller = new Harness(minAuthAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -81,7 +81,7 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
         .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, app.configuration, FakeMinAuthAction.stubmcc)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.stubmcc)
       val controller = new Harness(minAuthAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))

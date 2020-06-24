@@ -47,7 +47,7 @@ class SummaryController @Inject()(
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit  val lang : Lang =request.lang
+    implicit  val lang : Lang = request.lang
     Ok(views.html.summary(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

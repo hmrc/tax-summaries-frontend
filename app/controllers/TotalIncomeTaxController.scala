@@ -47,7 +47,7 @@ class TotalIncomeTaxController @Inject()(
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit  val lang : Lang =request.lang
+    implicit  val lang : Lang = request.lang
     Ok(
       views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }

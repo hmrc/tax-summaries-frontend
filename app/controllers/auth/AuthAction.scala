@@ -18,7 +18,6 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import play.api.Configuration
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -28,12 +27,10 @@ import uk.gov.hmrc.domain._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-
 import scala.concurrent.{ExecutionContext, Future}
 
-//TODO look at the amount of config being passed
-class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, configuration: Configuration, cc : MessagesControllerComponents)(
-  implicit ec: ExecutionContext, implicit val appConfig: ApplicationConfig)
+class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc : MessagesControllerComponents)(
+  implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends AuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser

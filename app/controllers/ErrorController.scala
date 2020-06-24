@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
 class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction, mcc : MessagesControllerComponents)(
-  implicit val formPartialRetriever: FormPartialRetriever,implicit val appConfig: ApplicationConfig)
+  implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
     extends FrontendController(mcc) with I18nSupport {
 
   def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>

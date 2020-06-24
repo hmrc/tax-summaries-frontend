@@ -32,7 +32,7 @@ class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,mcc : Messag
 
   def genericError (status : Int): Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] =>{
-      implicit  val lang : Lang =request.lang
+      implicit  val lang : Lang = request.lang
       status match {
         case INTERNAL_SERVER_ERROR => InternalServerError(views.html.errors.paye_generic_error())
         case _ => BadGateway(views.html.errors.paye_generic_error())
@@ -42,21 +42,21 @@ class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,mcc : Messag
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] => {
-      implicit  val lang : Lang =request.lang
+      implicit  val lang : Lang = request.lang
       NotFound(views.html.errors.paye_no_ats_error(PayeAtsMain(payeYear)))
     }
   }
 
   def notAuthorised: Action[AnyContent] = Action {
     implicit request: Request[_] => {
-      implicit  val lang : Lang =request.lang
+      implicit  val lang : Lang = request.lang
       Ok(views.html.errors.paye_not_authorised())
     }
   }
 
   def serviceUnavailable: Action[AnyContent] = Action {
     implicit request: Request[_] => {
-      implicit  val lang : Lang =request.lang
+      implicit  val lang : Lang = request.lang
       Ok(views.html.errors.paye_service_unavailable())
     }
   }

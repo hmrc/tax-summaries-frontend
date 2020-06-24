@@ -33,7 +33,6 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.postfixOps
@@ -71,7 +70,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
         .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration, FakePayeAuthAction.stubmcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.stubmcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -84,7 +83,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new InternalError))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration, FakePayeAuthAction.stubmcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.stubmcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -96,7 +95,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration, FakePayeAuthAction.stubmcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.stubmcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -109,7 +108,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to Identity verification service" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientConfidenceLevel()))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration, FakePayeAuthAction.stubmcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.stubmcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -122,7 +121,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(IncorrectCredentialStrength()))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, fakeApplication.configuration, FakePayeAuthAction.stubmcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.stubmcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
@@ -136,7 +135,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, app.configuration, FakePayeAuthAction.stubmcc){
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.stubmcc){
         override val payeShuttered: Boolean = true
       }
       val controller = new Harness(authAction)

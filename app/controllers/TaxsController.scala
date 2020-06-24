@@ -49,7 +49,7 @@ abstract class TaxsController @Inject()(mcc : MessagesControllerComponents)
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result]
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    implicit val lang : Lang =request.lang
+    implicit val lang : Lang = request.lang
     transformation recover {
       case error =>
         Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
