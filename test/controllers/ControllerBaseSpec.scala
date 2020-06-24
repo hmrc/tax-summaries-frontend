@@ -19,23 +19,39 @@ package controllers
 import config.ApplicationConfig
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n._
-import play.api.test.Injecting
+import play.api.i18n
+import play.api.i18n.{MessagesApi, MessagesImpl, _}
+import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
+import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
+import play.api.test.{FakeRequest, Injecting}
 import services.PayeAtsService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-
 import scala.concurrent.ExecutionContext
 
 trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with MockitoSugar with Injecting {
 
-  val mcc = Stubs.stubMessagesControllerComponents()
+  private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
+  private val cc: ControllerComponents = stubControllerComponents()
+  val fakeRequest = FakeRequest()
+
+  val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
+    messagesActionBuilder,
+    DefaultActionBuilder(stubBodyParser[AnyContent]()),
+    cc.parsers,
+    fakeApplication.injector.instanceOf[MessagesApi],
+    cc.langs,
+    cc.fileMimeTypes,
+    ExecutionContext.global
+  )
+
+  implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
+
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit val ec: ExecutionContext = mcc.executionContext
-  //implicit val lang: Lang = mcc.langs.availables.head
   implicit val lang: Lang = Lang(java.util.Locale.getDefault)
-  implicit val messagesProvider: MessagesProvider = MessagesImpl(lang, mcc.messagesApi)
+//  implicit val messagesProvider: MessagesProvider = MessagesImpl(lang, mcc.messagesApi)
+
 }

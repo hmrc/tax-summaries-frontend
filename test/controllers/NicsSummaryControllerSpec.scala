@@ -16,7 +16,6 @@
 
 package controllers
 
-import com.google.inject.Inject
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers

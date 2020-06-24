@@ -17,18 +17,17 @@
 package controllers
 
 import com.google.inject.Inject
-import play.api.i18n.Lang
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{Lang, _}
+import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class TaxsLanguageController @Inject()(mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController(mcc) {
+class TaxsLanguageController @Inject()(mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController(mcc) with I18nSupport {
 
-  def switchLanguage(lang: String): Action[AnyContent] = Action { implicit request =>
+  def switchLanguage(lang: String) = Action { implicit request =>
     request.headers.get(REFERER) match {
-        //TODO look for the logic to swtich the language
-      case Some(referrer) => Redirect(referrer)
-      case _              => Redirect(routes.IndexController.authorisedIndex())
+      case Some(referrer) => Redirect(referrer).withLang(Lang(lang))
+      case _              => Redirect(routes.IndexController.authorisedIndex()).withLang(Lang(lang))
     }
   }
 }

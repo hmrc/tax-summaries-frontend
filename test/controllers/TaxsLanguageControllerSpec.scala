@@ -35,7 +35,7 @@ class TaxsLanguageControllerSpec extends ControllerBaseSpec {
       val result = sut.switchLanguage("en")(FakeRequest())
 
       status(result) shouldBe 303
-      header("Set-Cookie", result) shouldBe Some("PLAY_LANG=en; Path=/")
+      cookies(result).get("PLAY_LANG").get.value shouldBe "en"
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
     }
 
@@ -44,7 +44,7 @@ class TaxsLanguageControllerSpec extends ControllerBaseSpec {
       val result = sut.switchLanguage("cy")(FakeRequest())
 
       status(result) shouldBe 303
-      header("Set-Cookie", result) shouldBe Some("PLAY_LANG=cy; Path=/")
+      cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
     }
 
@@ -54,7 +54,7 @@ class TaxsLanguageControllerSpec extends ControllerBaseSpec {
       val result = sut.switchLanguage("cy")(request)
 
       status(result) shouldBe 303
-      header("Set-Cookie", result) shouldBe Some("PLAY_LANG=cy; Path=/")
+      cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
       redirectLocation(result) shouldBe Some("foo")
     }
   }

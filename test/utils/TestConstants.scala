@@ -19,7 +19,7 @@ package utils
 import models.SpendData
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import utils.TestConstants.testUtr
-import view_models.{Amount, CapitalGains, GovernmentSpend, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models._
 
 import scala.util.Random
 
