@@ -33,7 +33,6 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with Mockito
 
   private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc: ControllerComponents = stubControllerComponents()
-  val fakeRequest = FakeRequest()
 
   val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
     messagesActionBuilder,
@@ -45,13 +44,12 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with Mockito
     ExecutionContext.global
   )
 
+  implicit lazy val lang: Lang = Lang(java.util.Locale.getDefault)
   implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit val ec: ExecutionContext = mcc.executionContext
-  implicit val lang: Lang = Lang(java.util.Locale.getDefault)
-//  implicit val messagesProvider: MessagesProvider = MessagesImpl(lang, mcc.messagesApi)
 
 }

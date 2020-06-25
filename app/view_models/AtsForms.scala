@@ -24,7 +24,6 @@ object AtsForms {
 
   val yearChoice = "year"
 
-  //TODO look at the error handling logic to show error messsage
   val atsYearFormMapping: Form[TaxYearEnd] = Form(
     mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", {_.isDefined}))(TaxYearEnd.apply)(TaxYearEnd.unapply)
   )

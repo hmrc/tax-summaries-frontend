@@ -42,7 +42,7 @@
 
 @includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
-@errors.form_error_notification(atsYearForm, formErrorMessage = "test message")
+    @helpers.errorSummaryTemplate(atsYearForm)
 
     <h1>@Html(Messages("ats.select_tax_year.title"))</h1>
 

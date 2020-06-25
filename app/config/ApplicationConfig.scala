@@ -46,7 +46,6 @@ class ApplicationConfig @Inject()(environment: Environment, config: ServicesConf
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   // Beta feedback config
-  //TODO fix this by placing on env config
   lazy val betaFeedbackUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
   lazy val betaFeedbackUnauthenticatedUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
 
