@@ -29,7 +29,6 @@ import services.{AuditService, SummaryService}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
-
 import scala.concurrent.Future
 
 class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

@@ -16,8 +16,7 @@
 
 package controllers
 
-import com.google.inject.Inject
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -27,7 +26,6 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.NoATSViewModel
-
 import scala.concurrent.Future
 
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {

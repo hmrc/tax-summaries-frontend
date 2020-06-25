@@ -16,10 +16,8 @@
 
 package controllers.paye
 
-import com.google.inject.Inject
 import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
-import play.api.i18n.{Lang, MessagesApi}
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import view_models.paye.PayeAtsMain

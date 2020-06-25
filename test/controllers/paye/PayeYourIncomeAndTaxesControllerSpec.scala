@@ -16,7 +16,6 @@
 
 package controllers.paye
 
-import com.google.inject.Inject
 import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -24,7 +23,7 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.atsData.PayeAtsTestData

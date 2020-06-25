@@ -16,7 +16,6 @@
 
 package controllers
 
-import com.google.inject.Inject
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -31,7 +30,6 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
-
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 

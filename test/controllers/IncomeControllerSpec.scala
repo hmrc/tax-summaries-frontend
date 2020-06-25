@@ -16,7 +16,6 @@
 
 package controllers
 
-import com.google.inject.Inject
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -31,7 +30,6 @@ import services.{AuditService, IncomeService}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{Amount, IncomeBeforeTax, NoATSViewModel}
-
 import scala.concurrent.Future
 
 class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

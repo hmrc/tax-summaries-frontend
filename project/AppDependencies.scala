@@ -33,10 +33,5 @@ object AppDependencies {
     "com.github.tomakehurst"   % "wiremock-jre8"                % "2.26.1"
   ).map(_ % "test")
 
-  val bootstrapTest = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.8.0" % Test classifier "tests"
-  )
-
-  val all: Seq[ModuleID] = compile ++ test ++ bootstrapTest
-
+  val all: Seq[ModuleID] = compile ++ test
 }

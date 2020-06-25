@@ -29,7 +29,6 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.NoATSViewModel
-
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

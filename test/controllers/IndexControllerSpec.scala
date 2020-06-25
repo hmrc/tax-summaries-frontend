@@ -16,8 +16,6 @@
 
 package controllers
 
-import com.google.inject.Inject
-import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.AtsListData
@@ -28,23 +26,17 @@ import org.mockito.Mockito.{when, _}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 

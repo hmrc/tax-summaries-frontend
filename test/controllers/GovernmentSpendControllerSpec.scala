@@ -16,8 +16,6 @@
 
 package controllers
 
-import com.google.inject.Inject
-import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.SpendData
 import org.jsoup.Jsoup
@@ -25,20 +23,15 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, _}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models._
-
 import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

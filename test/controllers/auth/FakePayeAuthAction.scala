@@ -16,16 +16,15 @@
 
 package controllers.auth
 
+import controllers.ControllerBaseSpec
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs
 import utils.TestConstants._
+
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakePayeAuthAction extends PayeAuthAction {
-  val stubmcc = Stubs.stubMessagesControllerComponents()
-
-  override val parser: BodyParser[AnyContent] = stubmcc.parsers.anyContent
-  override protected val executionContext: ExecutionContext = stubmcc.executionContext
+object FakePayeAuthAction extends PayeAuthAction with ControllerBaseSpec{
+  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+  override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     block(PayeAuthenticatedRequest(testNino, request))

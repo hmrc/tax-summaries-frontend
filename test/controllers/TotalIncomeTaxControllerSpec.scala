@@ -16,21 +16,19 @@
 
 package controllers
 
-import com.google.inject.Inject
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models._
-
 import scala.concurrent.Future
 
 class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

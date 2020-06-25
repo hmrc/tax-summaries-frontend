@@ -16,7 +16,6 @@
 
 package controllers.paye
 
-import com.google.inject.Inject
 import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData

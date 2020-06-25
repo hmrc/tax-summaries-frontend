@@ -16,20 +16,16 @@
 
 package controllers.auth
 
+import controllers.ControllerBaseSpec
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.bootstrap.tools.Stubs
 import utils.TestConstants._
-
 import scala.concurrent.{ExecutionContext, Future}
 
+object FakeAuthAction extends AuthAction with ControllerBaseSpec {
 
-object FakeAuthAction extends AuthAction {
-
-  val stubmcc = Stubs.stubMessagesControllerComponents()
-
-  override val parser: BodyParser[AnyContent] = stubmcc.parsers.anyContent
-  override protected val executionContext: ExecutionContext = stubmcc.executionContext
+  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+  override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     block(AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, request))
