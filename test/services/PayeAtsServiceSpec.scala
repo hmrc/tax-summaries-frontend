@@ -107,7 +107,7 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures wi
         .thenReturn(Future.successful(
           HttpResponse(responseStatus = 200, responseJson = Some(expectedResponse), responseHeaders = Map.empty)))
 
-      sut.getPayeATSData(testNino, currentYear)
+      sut.getPayeATSData(testNino, currentYear).futureValue
 
       verify(mockAuditService, times(1)).sendEvent(
         eqTo("TxSuccessful"),
