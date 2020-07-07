@@ -48,7 +48,7 @@
     </h1>
   <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
     <p>@Html(Messages("ats.nics.tax_and_nics.description",
-      "<span id=\"total-cg-tax-rate\">"+viewModel.nicsAndTaxRate.percent+"</span>"))</p>
+      "<span id=\"total-cg-tax-rate\">"+positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>"))</p>
 
     <table id="total-income-tax">
       <thead>
