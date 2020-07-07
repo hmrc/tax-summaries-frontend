@@ -64,7 +64,7 @@ class ViewUtilsSpec extends UnitSpec with PropertyChecks {
     }
 
     "return an amount object with zero as the amount if the given amount is negative" in {
-      forAll { dec: Double =>
+      forAll { dec: BigDecimal =>
         whenever(dec < 0) {
           val amount = createAmount(dec)
           ViewUtils.positiveOrZero(amount) shouldBe zeroAmount
