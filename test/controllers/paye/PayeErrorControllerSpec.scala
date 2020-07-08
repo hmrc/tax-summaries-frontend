@@ -16,23 +16,17 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
+import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import play.api.test.Injecting
 import view_models.paye.PayeAtsMain
 
-class PayeErrorControllerSpec extends PayeControllerSpecHelpers with GuiceOneAppPerSuite with I18nSupport {
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting{
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-
-  implicit lazy val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  def sut = new PayeErrorController(FakePayeAuthAction)
+  def sut = new PayeErrorController(FakePayeAuthAction, mcc)
 
   "PayeErrorController" should {
 

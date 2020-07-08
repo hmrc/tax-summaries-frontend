@@ -20,21 +20,21 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n.Lang
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.GovernmentSpend
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class GovernmentSpendController @Inject()(
   governmentSpendService: GovernmentSpendService,
   val auditService: AuditService,
-  authAction: AuthAction)(implicit val formPartialRetriever: FormPartialRetriever, implicit val appConfig: ApplicationConfig)
-    extends TaxYearRequest {
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -46,12 +46,14 @@ class GovernmentSpendController @Inject()(
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang : Lang = request.lang
     Ok(
       views.html.government_spending(
         result,
         assignPercentage(result.govSpendAmountData),
         getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
+  }
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
     var percentEnviron = 0.0

@@ -16,33 +16,25 @@
 
 package views
 
-import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.Lang
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class PortalUserSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
+class PortalUserSpec extends ViewSpecBase with HtmlUnitFactory with MockitoSugar  {
 
   val utr = testUtr
   lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val language = Lang("en")
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
-
-  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages = Messages(language, messagesApi)
-  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "Logging in as a portal user" should {
 

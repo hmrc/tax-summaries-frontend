@@ -16,32 +16,23 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
+import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testNino
 
-class PayeTaxFreeAmountControllerSpec
-  extends PayeControllerSpecHelpers
-    with GuiceOneAppPerTest
-    with I18nSupport {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show().url)
 
-  implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
-  val sut = new PayeTaxFreeAmountController(mockPayeAtsService, FakePayeAuthAction)
+  val sut = new PayeTaxFreeAmountController(mockPayeAtsService, FakePayeAuthAction, mcc)
 
   "Tax Free Amount controller" should {
 

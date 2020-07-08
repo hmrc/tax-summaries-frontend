@@ -16,33 +16,26 @@
 
 package controllers
 
-import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models._
-
 import scala.concurrent.Future
 
-class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
+class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
 
   val taxYear = 2014
 
@@ -77,9 +70,8 @@ class AllowancesControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mo
 
   val mockAllowanceService = mock[AllowanceService]
   val mockAuditService = mock[AuditService]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)(app.injector.instanceOf[FormPartialRetriever], appConfig)
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc)
 
   override def beforeEach(): Unit = {
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())

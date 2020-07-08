@@ -16,30 +16,23 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
+import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.Status._
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testNino
 
-class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with GuiceOneAppPerTest with I18nSupport {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
-
-  implicit lazy val formPartialRetriever = fakeApplication.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
-  val sut = new PayeIncomeTaxAndNicsController(mockPayeAtsService, FakePayeAuthAction)
+  val sut = new PayeIncomeTaxAndNicsController(mockPayeAtsService, FakePayeAuthAction, mcc)
 
   "Paye your income tax and nics controller" should {
 

@@ -19,7 +19,9 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.helpers._
-@(atsList: view_models.AtsList, atsYear: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, lang: Lang, appConfig: ApplicationConfig)
+@import view_models.AtsForms
+
+@(atsList: view_models.AtsList, atsYearForm: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, lang: Lang, appConfig: ApplicationConfig)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
@@ -40,20 +42,21 @@
 
 @includes.taxs_main(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
     @helpers.back_link(Messages("generic.back"))
-    @helpers.errorSummaryTemplate(atsYear)
+    @helpers.errorSummaryTemplate(atsYearForm)
+
     <h1>@Html(Messages("ats.select_tax_year.title"))</h1>
 
     @form(action = controllers.routes.IndexController.authorisedOnSubmit){
         <div class="form-group">
-            @helpers.taxsInputTypeRadioGroup(
-                InputTypeRadioGroupParams(
-                    atsYear("year"),
-                    atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
-                    fieldSetAttributes = Some("id=year_field"),
-                    legendClass = Some("visuallyhidden"),
-                    legend = Some(Messages("ats.select_tax_year.title"))
-                )
+
+            @helpers.inputRadioGroup(
+            atsYearForm(AtsForms.yearChoice),
+            atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
+            '_fieldSetAttributes -> "id=year_field",
+            '_legendClass -> "visuallyhidden",
+            '_legend -> Messages("ats.select_tax_year.title")
             )
+
         </div>
         <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
     }

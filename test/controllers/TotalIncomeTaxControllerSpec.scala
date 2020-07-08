@@ -16,30 +16,22 @@
 
 package controllers
 
-import config.ApplicationConfig
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
-
 import scala.concurrent.Future
 
-class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport with BeforeAndAfterEach {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2014
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
@@ -86,10 +78,7 @@ class TotalIncomeTaxControllerSpec extends UnitSpec with GuiceOneAppPerSuite wit
   val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
   val mockAuditService = mock[AuditService]
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
-  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction)
+  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
 
   override def beforeEach(): Unit = {
     when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))

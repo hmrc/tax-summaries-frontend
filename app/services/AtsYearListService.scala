@@ -22,12 +22,10 @@ import models.AtsListData
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
-
 import scala.concurrent.Future
 
 
 class AtsYearListService @Inject()(atsListService: AtsListService) {
-
 
   def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     atsListService.createModel(atsListDataConverter)
@@ -36,7 +34,6 @@ class AtsYearListService @Inject()(atsListService: AtsListService) {
   def storeSelectedAtsTaxYear(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Int] = {
     atsListService.storeSelectedTaxYear(taxYear)
   }
-
 
   private[services] def atsListDataConverter(atsListData: AtsListData): AtsList = {
       AtsList(

@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.AtsListData
@@ -27,29 +26,21 @@ import org.mockito.Mockito.{when, _}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with I18nSupport with BeforeAndAfterEach {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   val taxYear = 2015
@@ -67,15 +58,13 @@ class IndexControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
   val mockAtsYearListService = mock[AtsYearListService]
   val mockAtsListService = mock[AtsListService]
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
   def sut = new IndexController(
     mockDataCacheConnector,
     mockAtsYearListService,
     mockAtsListService,
     mock[AuditService],
-    FakeAuthAction
+    FakeAuthAction,
+    mcc
   )
 
   val model: GenericViewModel = AtsList(

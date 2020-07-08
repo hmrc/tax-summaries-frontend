@@ -18,20 +18,13 @@ package view_models
 
 import play.api.data.Form
 import play.api.data.Forms._
-import utils.TAXSEnums.YearEnum
-import utils.validation.ConstraintUtil.CompulsoryEnumMappingParameter
-import utils.validation.ErrorMessagesUtilAPI._
-import utils.validation.MappingUtilAPI._
+
 
 object AtsForms {
 
-  private val year_compulsory = {
-    val question = CompulsoryEnumMappingParameter(
-      simpleFieldIsEmptyConstraintParameter("year", "ats.select_tax_year.required"),
-      YearEnum
-    )
-    compulsoryEnum(question)
-  }
+  val yearChoice = "year"
 
-  val atsYearFormMapping = Form(mapping("year" -> year_compulsory)(TaxYearEnd.apply)(TaxYearEnd.unapply))
+  val atsYearFormMapping: Form[TaxYearEnd] = Form(
+    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", {_.isDefined}))(TaxYearEnd.apply)(TaxYearEnd.unapply)
+  )
 }

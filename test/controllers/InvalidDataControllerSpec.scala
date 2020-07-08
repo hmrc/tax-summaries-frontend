@@ -16,35 +16,27 @@
 
 package controllers
 
-import config.ApplicationConfig
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.{AtsList, TaxYearEnd}
-
 import scala.concurrent.Future
 
-class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class InvalidDataControllerSpec extends ControllerBaseSpec {
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   val taxYear = 2014
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val hc = new HeaderCarrier
 
   val genericViewModel: GenericViewModel =  AtsList(
@@ -62,7 +54,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockAllowanceService = mock[AllowanceService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction)
+      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
 
@@ -78,7 +70,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockCapitalGainsService = mock[CapitalGainsService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction)
+      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -94,7 +86,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockGovernmentSpendService = mock[GovernmentSpendService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
+      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -110,7 +102,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockIncomeService = mock[IncomeService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
+      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -126,7 +118,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction)
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -142,7 +134,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction)
+      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -158,7 +150,7 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction)
+      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 

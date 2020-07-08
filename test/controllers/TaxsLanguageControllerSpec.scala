@@ -16,18 +16,13 @@
 
 package controllers
 
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 
-class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
+class TaxsLanguageControllerSpec extends ControllerBaseSpec {
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
 
-  def sut = new TaxsLanguageController(app.injector.instanceOf[MessagesApi])
+  def sut = new TaxsLanguageController(mcc)
 
   "switchLanguage" should {
 
@@ -36,7 +31,7 @@ class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
       val result = sut.switchLanguage("en")(FakeRequest())
 
       status(result) shouldBe 303
-      header("Set-Cookie", result) shouldBe Some("PLAY_LANG=en; Path=/")
+      cookies(result).get("PLAY_LANG").get.value shouldBe "en"
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
     }
 
@@ -45,7 +40,7 @@ class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
       val result = sut.switchLanguage("cy")(FakeRequest())
 
       status(result) shouldBe 303
-      header("Set-Cookie", result) shouldBe Some("PLAY_LANG=cy; Path=/")
+      cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
     }
 
@@ -55,7 +50,7 @@ class TaxsLanguageControllerSpec extends UnitSpec with GuiceOneAppPerSuite {
       val result = sut.switchLanguage("cy")(request)
 
       status(result) shouldBe 303
-      header("Set-Cookie", result) shouldBe Some("PLAY_LANG=cy; Path=/")
+      cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
       redirectLocation(result) shouldBe Some("foo")
     }
   }

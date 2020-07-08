@@ -16,25 +16,19 @@
 
 package controllers
 
-import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.NoATSViewModel
-
 import scala.concurrent.Future
 
-class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2015
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
@@ -45,10 +39,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val mockAuditService = mock[AuditService]
   val mockSummaryService = mock[SummaryService]
 
-  implicit val formPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
-  def incomeController = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction)
+  def incomeController = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc)
 
   override def beforeEach() = {
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
@@ -60,7 +51,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction)
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(sut.show(request))
@@ -90,7 +81,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     val allowanceService = mock[AllowanceService]
 
-    def sut = new AllowancesController(allowanceService, mockAuditService, FakeAuthAction)
+    def sut = new AllowancesController(allowanceService, mockAuditService, FakeAuthAction, mcc)
 
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any())).thenReturn(Future.successful(model))
 
@@ -104,7 +95,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     val mockCapitalGainsService = mock[CapitalGainsService]
 
-    def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction)
+    def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc)
 
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
@@ -118,7 +109,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     val mockGovernmentSpendService = mock[GovernmentSpendService]
 
-    def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction)
+    def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
 
     when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
@@ -130,7 +121,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
   "show no ats page for summary page" in {
 
-    def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction)
+    def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
@@ -142,7 +133,7 @@ class ZeroTaxLiabilitySpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
   "show no ats page for nics summary page" in {
 
-    def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction)
+    def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 

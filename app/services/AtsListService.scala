@@ -24,11 +24,9 @@ import controllers.auth.AuthenticatedRequest
 import models.{AgentToken, AtsListData, IncomingAtsError}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AccountUtils, AtsError, AuditTypes, AuthorityUtils, GenericViewModel}
-
+import utils._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
 
 class AtsListService @Inject()(auditService: AuditService,
                                middleConnector: MiddleConnector,

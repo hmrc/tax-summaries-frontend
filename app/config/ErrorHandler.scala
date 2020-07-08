@@ -32,11 +32,11 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Co
   private def lang(implicit request: Request[_]): Lang =
     Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
 
-  lazy val controllerConfig = new TAXSControllerConfig(configuration)
-
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
-    implicit request: Request[_]): Html =
+    implicit request: Request[_]): Html = {
+    implicit val _: Lang = lang
     views.html.errors.error_template(pageTitle, heading, message)
+  }
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
     implicit val _: Lang = lang

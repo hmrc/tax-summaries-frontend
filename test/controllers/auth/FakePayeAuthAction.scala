@@ -16,12 +16,16 @@
 
 package controllers.auth
 
-import play.api.mvc.{Request, Result}
+import controllers.ControllerBaseSpec
+import play.api.mvc._
 import utils.TestConstants._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-object FakePayeAuthAction extends PayeAuthAction {
+object FakePayeAuthAction extends PayeAuthAction with ControllerBaseSpec{
+  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+  override protected val executionContext: ExecutionContext = mcc.executionContext
+
   override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     block(PayeAuthenticatedRequest(testNino, request))
   }

@@ -27,7 +27,6 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils._
 import view_models.NoATSViewModel
-
 import scala.concurrent.Future
 
 class AtsService @Inject()(

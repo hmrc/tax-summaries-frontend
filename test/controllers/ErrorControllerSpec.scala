@@ -16,33 +16,23 @@
 
 package controllers
 
-import config.ApplicationConfig
 import controllers.auth._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
-class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
+class ErrorControllerSpec extends ControllerBaseSpec {
 
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-
-  implicit val formPartialRetriever: FormPartialRetriever = app.injector.instanceOf[FormPartialRetriever]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-
-  def sut = new ErrorController(FakeAuthAction, FakeMinAuthAction)
+  def sut = new ErrorController(FakeAuthAction , FakeMinAuthAction , mcc)
+  implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" should {
 
     "Show No ATS page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-
       val result = sut.authorisedNoAts()(request)
       val document = contentAsString(result)
 
@@ -54,7 +44,6 @@ class ErrorControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
     "show not authorised page" in {
 
       implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
-
       val result = sut.notAuthorised()(request)
       val document = contentAsString(result)
 

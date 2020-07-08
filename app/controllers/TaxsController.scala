@@ -23,22 +23,20 @@ import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.Logger
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.i18n.{I18nSupport, Lang}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-abstract class TaxsController @Inject()() extends FrontendController
-          with AccountUtils
-          with AttorneyUtils {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-  implicit val appConfig: ApplicationConfig
+abstract class TaxsController @Inject()(mcc : MessagesControllerComponents)
+                                       (implicit ormPartialRetriever: FormPartialRetriever,
+                                        appConfig: ApplicationConfig,ec: ExecutionContext)
+                                        extends FrontendController(mcc) with AccountUtils
+          with AttorneyUtils with I18nSupport{
 
   def auditService: AuditService
 
@@ -51,6 +49,7 @@ abstract class TaxsController @Inject()() extends FrontendController
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result]
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    implicit val lang : Lang = request.lang
     transformation recover {
       case error =>
         Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
