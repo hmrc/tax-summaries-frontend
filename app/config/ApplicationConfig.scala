@@ -60,7 +60,7 @@ class ApplicationConfig @Inject()(environment: Environment, config: ServicesConf
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
   // Encryption config
-  lazy val encryptionKey = config.getConfString("portal.clientagent.encryption.key", "1111111111111111111111")
+  lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
   lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
