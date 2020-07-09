@@ -15,7 +15,8 @@
  */
 
 package utils
-import view_models.Amount
+
+import view_models.{Amount, Rate}
 
 object ViewUtils {
 
@@ -24,4 +25,11 @@ object ViewUtils {
 
   def positiveOrZero(currentAmount: Amount): Amount =
     currentAmount.copy(amount = currentAmount.amount.max(BigDecimal(0)))
+
+  def positiveOrZero(currentRate: Rate):Rate={
+    if (currentRate.percent.head==('-'))
+      Rate.empty
+    else
+      currentRate
+  }
 }

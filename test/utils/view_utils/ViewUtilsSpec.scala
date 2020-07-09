@@ -19,11 +19,12 @@ package utils.view_utils
 import org.scalatest.prop.PropertyChecks
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.ViewUtils
-import view_models.Amount
+import view_models.{Amount, Rate}
 
 class ViewUtilsSpec extends UnitSpec with PropertyChecks {
 
   val zeroAmount = createAmount(0)
+  val zeroRate=Rate("0%")
 
   def createAmount(bd: BigDecimal) = Amount(bd, "gbp")
 
@@ -70,5 +71,29 @@ class ViewUtilsSpec extends UnitSpec with PropertyChecks {
         }
       }
     }
+
+    "return the given rate if the percentage is positive" in {
+      forAll{ dec: Double=>
+        whenever(dec>0){
+          val percentage=dec.toString+'%'
+          val positiveRate=Rate(percentage)
+          ViewUtils.positiveOrZero(positiveRate) shouldBe positiveRate
+        }
+      }
+    }
+
+    "return the zero rate if the percentage is zero" in {
+      ViewUtils.positiveOrZero(zeroRate) shouldBe Rate.empty
+    }
+
+    "return the zero rate if the percentage is negative" in{
+      forAll{dec:Double=>
+        whenever(dec<0) {
+          val percentage = dec.toString + '%'
+          val negativeRate = Rate(percentage)
+          ViewUtils.positiveOrZero(negativeRate) shouldBe Rate.empty
+        }
+        }
+      }
   }
 }
