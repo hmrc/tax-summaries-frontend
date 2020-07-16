@@ -50,12 +50,11 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }
 
 @scriptElement = {
-    <script type='text/javascript' src='@controllers.routes.Assets.at("javascripts/taxs.js")'></script>
-    <script type='text/javascript' src='@controllers.routes.Assets.at("javascripts/magna-charta.js")'></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery.min.js")'></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-ui.min.js")'></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/details.polyfill.js")'></script>
-}
+  <script type='text/javascript' src='@controllers.routes.Assets.at("javascripts/taxs.js")'></script>
+  <script type='text/javascript' src='@controllers.routes.Assets.at("javascripts/magna-charta.js")'></script>
+  <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery.min.js")'></script>
+  <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-ui.min.js")'></script>
+  <script type="text/javascript" src='@routes.Assets.at("javascripts/details.polyfill.js")'></script>
 
 @headScript = {
     <script src="https://cdn.optimizely.com/js/@{ApplicationConfig.optimizelyProjectId}.js"></script>

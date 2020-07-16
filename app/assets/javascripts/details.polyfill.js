@@ -133,6 +133,9 @@
 
       // Set tabIndex so the summary is keyboard accessible for non-native elements
       // http://www.saliences.com/browserBugs/tabIndex.html
+      console.log('native-details', NATIVE_DETAILS);
+      console.log('details', details);
+
       if (!NATIVE_DETAILS) {
         details.__summary.tabIndex = 0
       }
