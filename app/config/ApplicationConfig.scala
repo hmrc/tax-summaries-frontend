@@ -53,7 +53,7 @@ class ApplicationConfig @Inject()(environment: Environment, config: ServicesConf
   lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))
   lazy val analyticsHost: String = config.getString(s"google-analytics.host")
   lazy val googleTagManagerId = config.getString(s"google-tag-manager.id")
-  lazy val isGtmEnabled = config.getString(s"google-tag-manager.enabled")
+  lazy val isGtmEnabled = config.getBoolean(s"google-tag-manager.enabled")
 
   lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
 

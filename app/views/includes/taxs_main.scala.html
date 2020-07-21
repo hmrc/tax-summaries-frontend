@@ -73,7 +73,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 @afterHeader = {
     <!-- Google Tag Manager -->
-        @if(appConfig.isGtmEnabled == "true") {
+        @if(appConfig.isGtmEnabled == true) {
             @google_tag_manager(appConfig.googleTagManagerId)
         }
     <!-- End Google Tag Manager -->
