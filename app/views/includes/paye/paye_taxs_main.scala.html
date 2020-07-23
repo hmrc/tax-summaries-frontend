@@ -59,7 +59,14 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     @includes.paye.paye_taxs_header_nav(Messages("generic.paye.ats"), showBetaLink = false)
 }
 
-@afterHeader = {}
+
+@afterHeader = {
+    <!-- Google Tag Manager -->
+    @if(appConfig.isGtmEnabled == true) {
+        @includes.google_tag_manager(appConfig.googleTagManagerId)
+    }
+    <!-- End Google Tag Manager -->
+}
 
 @getHelpForm = {
     @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
