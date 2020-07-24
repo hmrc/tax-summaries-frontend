@@ -18,19 +18,21 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import play.api.Configuration
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import play.api.mvc._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
-class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
-                                  configuration: Configuration)(implicit ec: ExecutionContext)
+class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
+                              cc : MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
   extends MinAuthAction with AuthorisedFunctions {
+
+  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+  override protected val executionContext: ExecutionContext = cc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
 
@@ -45,13 +47,13 @@ class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
     }
   } recover {
     case _: NoActiveSession => {
-      lazy val ggSignIn = ApplicationConfig.loginUrl
-      lazy val callbackUrl = ApplicationConfig.loginCallback
+      lazy val ggSignIn = appConfig.loginUrl
+      lazy val callbackUrl = appConfig.loginCallback
       Redirect(
         ggSignIn,
         Map(
           "continue" -> Seq(callbackUrl),
-          "origin" -> Seq(ApplicationConfig.appName)
+          "origin" -> Seq(appConfig.appName)
         )
       )
     }
@@ -61,4 +63,4 @@ class MinAuthActionImpl @Inject()(override val authConnector: AuthConnector,
 }
 
 @ImplementedBy(classOf[MinAuthActionImpl])
-trait MinAuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
+trait MinAuthAction extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]

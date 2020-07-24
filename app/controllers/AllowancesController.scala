@@ -16,46 +16,38 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.{I18nSupport, Lang, Messages}
+import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{AllowanceService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Allowances
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-object AllowancesController extends AllowancesController {
-  override val allowanceService = AllowanceService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class AllowancesController @Inject()(
+  allowanceService: AllowanceService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
-trait AllowancesController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def allowanceService: AllowanceService
-
-  def authorisedAllowance = authAction.async {
-    request => show(request)
+  def authorisedAllowance = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = Allowances
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
-  }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang : Lang = request.lang
     Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 

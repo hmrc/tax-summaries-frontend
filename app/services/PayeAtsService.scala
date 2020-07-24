@@ -16,36 +16,46 @@
 
 package services
 
+import com.google.inject.Inject
 import connectors.MiddleConnector
+import controllers.auth.PayeAuthenticatedRequest
 import models.PayeAtsData
 import play.api.Logger
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import utils.AuditTypes
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object PayeAtsService extends PayeAtsService{
-  override val middleConnector = MiddleConnector
-}
+class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService : AuditService) {
 
-trait PayeAtsService {
-  def middleConnector: MiddleConnector
-
-  def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier):Future[Either[HttpResponse,PayeAtsData]] = {
+  def getPayeATSData(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]):Future[Either[HttpResponse,PayeAtsData]] = {
      middleConnector.connectToPayeATS(nino,taxYear) map { response =>
        response status match {
-         case OK =>  Right(response.json.as[PayeAtsData])
+         case OK =>
+           sendAuditEvent(nino, taxYear)
+           Right(response.json.as[PayeAtsData])
          case _ => Left(response)
        }
      } recover {
-       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST))
-       case e: NotFoundException   => Left(HttpResponse(NOT_FOUND))
-       case e: Exception => {
+       case _: BadRequestException => Left(HttpResponse(BAD_REQUEST))
+       case _: NotFoundException   => Left(HttpResponse(NOT_FOUND))
+       case e: Exception =>
          Logger.error(s"Exception in PayeAtsService: $e", e)
          Left(HttpResponse(INTERNAL_SERVER_ERROR))
-       }
      }
+  }
+
+  private def sendAuditEvent(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, request: PayeAuthenticatedRequest[_]): Future[AuditResult] = {
+    auditService.sendEvent(
+      auditType = AuditTypes.Tx_SUCCEEDED,
+      details = Map(
+        "userNino" -> nino.nino,
+        "taxYear" -> taxYear.toString
+      )
+    )
   }
 }

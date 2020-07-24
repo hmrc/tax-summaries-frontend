@@ -16,8 +16,10 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-
-@(viewModel: view_models.TotalIncomeTax, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@import config.ApplicationConfig
+@import utils.ViewUtils
+@import utils.ViewUtils.positiveOrZero
+@(viewModel: view_models.TotalIncomeTax, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
   @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary", "breadcrumbs.taxs.nics"), "ats.total_income_tax.income_tax", viewModel.year)
@@ -194,7 +196,7 @@
       <tbody>
         <tr>
           <th scope="row">@Html(Messages("ats.total_income_tax.total_income_tax"))</th>
-          <td id="total-income-tax-amount" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTax)</td>
+          <td id="total-income-tax-amount" class="no-bold">@includes.currency_amount(positiveOrZero(viewModel.totalIncomeTax))</td>
         </tr>
         @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
         <tr>

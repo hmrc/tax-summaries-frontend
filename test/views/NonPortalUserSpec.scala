@@ -16,31 +16,24 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.Lang
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models._
 
-class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
 
-  val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
   val language = Lang("en")
-  val messages: Messages = Messages(language, messagesApi)
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
 
   "Logging in as a transitioned user" should {
 
@@ -77,7 +70,7 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         scottishIncomeTax
       )
       val result = views.html
-        .government_spending(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever)
+        .government_spending(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -108,7 +101,7 @@ class NonPortalUserSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         "",
         "",
         "")
-      val result = views.html.taxs_main(fakeViewModel)(request, messages, language, formPartialRetriever)
+      val result = views.html.taxs_main(fakeViewModel)(request, messages, language, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include(

@@ -16,32 +16,27 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
-import view_models.{AtsList, TaxYearEnd}
 import utils.TestConstants._
-
+import view_models.{AtsList, TaxYearEnd}
 import scala.concurrent.Future
 
-class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class InvalidDataControllerSpec extends ControllerBaseSpec {
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   val taxYear = 2014
+
   implicit val hc = new HeaderCarrier
 
   val genericViewModel: GenericViewModel =  AtsList(
@@ -55,112 +50,111 @@ class InvalidDataControllerSpec extends UnitSpec with GuiceOneAppPerSuite with M
 
   "Calling a service with a JSON containing errors" should {
 
-    "show ats error page for allowances" in new AllowancesController {
+    "show ats error page for allowances" in {
+      val mockAllowanceService = mock[AllowanceService]
+      val mockAuditService = mock[AuditService]
 
-      override lazy val allowanceService = mock[AllowanceService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc)
 
-      when(allowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
+      when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
 
-      val result = show(request)
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.toString should include("Sorry, there is a problem with the service")
     }
 
-    "show ats error page for capital-gains" in new CapitalGainsTaxController {
+    "show ats error page for capital-gains" in {
 
-      override lazy val capitalGainsService = mock[CapitalGainsService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      val mockCapitalGainsService = mock[CapitalGainsService]
+      val mockAuditService = mock[AuditService]
 
-      when(capitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc)
 
-      val result = show(request)
+      when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.toString should include("Sorry, there is a problem with the service")
     }
 
-    "show ats error page for government-spend" in new GovernmentSpendController {
+    "show ats error page for government-spend" in {
 
-      override lazy val governmentSpendService = mock[GovernmentSpendService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      val mockGovernmentSpendService = mock[GovernmentSpendService]
+      val mockAuditService = mock[AuditService]
 
-      when(governmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
 
-      val result = show(request)
+      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.toString should include("Sorry, there is a problem with the service")
     }
 
-    "show ats error page for income" in new IncomeController {
+    "show ats error page for income" in {
 
-      override lazy val incomeService = mock[IncomeService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      val mockIncomeService = mock[IncomeService]
+      val mockAuditService = mock[AuditService]
 
-      when(incomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc)
 
-      val result = show(request)
+      when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.toString should include("Sorry, there is a problem with the service")
     }
 
-    "show ats error page for total-income-tax" in new TotalIncomeTaxController {
+    "show ats error page for total-income-tax" in {
 
-      override lazy val totalIncomeTaxService = mock[TotalIncomeTaxService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
+      val mockAuditService = mock[AuditService]
 
-      when(totalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
 
-      val result = show(request)
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.toString should include("Sorry, there is a problem with the service")
     }
 
-    "show ats error page for summary page" in new SummaryController {
+    "show ats error page for summary page" in {
 
-      override lazy val summaryService = mock[SummaryService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      val mockSummaryService = mock[SummaryService]
+      val mockAuditService = mock[AuditService]
 
-      when(summaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
-      val result = show(request)
+      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.toString should include("Sorry, there is a problem with the service")
     }
 
-    "show ats error page for nics on summary page" in new NicsController {
+    "show ats error page for nics on summary page" in {
 
-      override lazy val summaryService = mock[SummaryService]
-      override lazy val auditService = mock[AuditService]
-      implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-      override val authAction: AuthAction = FakeAuthAction
+      val mockSummaryService = mock[SummaryService]
+      val mockAuditService = mock[AuditService]
 
-      when(summaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
 
-      val result = show(request)
+      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200

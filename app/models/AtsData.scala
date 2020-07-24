@@ -16,9 +16,6 @@
 
 package models
 
-import java.text.SimpleDateFormat
-
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
 
 case class AtsData(
@@ -35,12 +32,4 @@ case class AtsData(
 
 object AtsData {
   implicit val formats = Json.format[AtsData]
-}
-
-case class TupleDate(day: String, month: String, year: String) {
-  lazy val localDate = new LocalDate(year.toInt, month.toInt, day.toInt)
-
-  lazy val date = localDate.toDate
-
-  def toString(format: String) = new SimpleDateFormat(format).format(date)
 }

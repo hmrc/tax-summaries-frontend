@@ -18,6 +18,7 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import play.twirl.api.HtmlFormat
 
 @(title: String,
 utr: String,
@@ -34,7 +35,7 @@ mainDataAttributes: Option[Html] = None,
 articleClasses: Option[String] = None,
 includeGridWrapper: Boolean = false,
 actingAttorney: Option[ActingAsAttorneyFor] = None,
-gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @sidebarLinks = {@HtmlFormat.empty}
 
@@ -55,9 +56,10 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
   <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery.min.js")'></script>
   <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-ui.min.js")'></script>
   <script type="text/javascript" src='@routes.Assets.at("javascripts/details.polyfill.js")'></script>
+}
 
 @headScript = {
-    <script src="https://cdn.optimizely.com/js/@{ApplicationConfig.optimizelyProjectId}.js"></script>
+    <script src="https://cdn.optimizely.com/js/@{appConfig.optimizelyProjectId}.js"></script>
 }
 
 @head = {
@@ -71,7 +73,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 @afterHeader = {}
 
 @getHelpForm = {
-    @formPartialRetriever.getPartialContent(ApplicationConfig.reportAProblemPartialUrl)
+    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
 }
 
 @mainContentHeader = {
@@ -97,9 +99,9 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 @bodyEnd = {
     @uiLayouts.footer(
-        analyticsToken = ApplicationConfig.analyticsToken,
-        analyticsHost = ApplicationConfig.analyticsHost,
-        ssoUrl = ApplicationConfig.ssoUrl,
+        analyticsToken = appConfig.analyticsToken,
+        analyticsHost = appConfig.analyticsHost,
+        ssoUrl = appConfig.ssoUrl,
         scriptElem = Option(scriptElement),
         gaCalls = gaCalls
     )
@@ -108,8 +110,8 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 @betaBanner = {
     @uiLayouts.betaBanner(
         userLoggedIn,
-        ApplicationConfig.betaFeedbackUrl,
-        ApplicationConfig.betaFeedbackUnauthenticatedUrl,
+appConfig.betaFeedbackUrl,
+appConfig.betaFeedbackUnauthenticatedUrl,
         showFeedbackLinkInBetaBanner
     )
 }

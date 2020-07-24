@@ -16,22 +16,16 @@
 
 package views.total_income_tax_includes
 
-import org.scalacheck.{Arbitrary, Gen}
+import com.softwaremill.quicklens._
+import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 import org.scalatest.prop.PropertyChecks
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import utils.ViewUtils._
 import view_models.{Amount, Rate, ScottishRates, ScottishTax}
+import views.ViewSpecBase
 
-import com.softwaremill.quicklens._
-
-class ScottishTableSpec extends UnitSpec with OneAppPerSuite with TestConstants with PropertyChecks {
-
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-  implicit val messages: Messages = Messages(Lang("en"), messagesApi)
+class ScottishTableSpec extends ViewSpecBase with TestConstants with PropertyChecks {
 
   val scottishTaxData = ScottishTax.empty
   val scottishRateData = ScottishRates.empty

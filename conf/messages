@@ -2,6 +2,8 @@
 #============================================================
 generic.ats=Annual tax summary
 generic.ats.browser.title=Annual tax summary - GOV.UK
+generic.paye.ats=Annual Tax Summary
+generic.paye.ats.browser.title=Annual Tax Summary - GOV.UK
 generic.description=Description
 generic.amount_pounds=Amount
 generic.back=Back
@@ -15,7 +17,10 @@ generic.english=English
 generic.welsh=Cymraeg
 generic.acting_for=You are acting for
 generic.name_not_defined=Name Not Defined
+generic.tax.year.start=6 April
+generic.tax.year.end=5 April
 generic.tax_year_heading=Tax year: April 6 {0} to April 5 {1}
+paye.generic.tax_year_heading={0} to {1}
 generic.to_from=: {0} to {1}
 generic.sign_out=Sign out
 generic.errors_heading=There is a problem with the form
@@ -25,7 +30,9 @@ generic.hm.revenue.and.customs = HM Revenue & Customs
 generic.hm.revenue = HM Revenue
 generic.hm.and = &
 generic.hm.customs = Customs
+generic.at=at
 site.back=Back
+
 
 # View ATS - Breadcrumbs
 #============================================================
@@ -64,6 +71,12 @@ ats.index.html.tax_calc_description=This shows a breakdown of your total income,
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
 
+paye.ats.index.html.title=Your Annual Tax Summary
+paye.ats.index.html.tax_spend_link=How your tax was spent
+paye.ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
+paye.ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount and how much tax and National Insurance you have paid.
+paye.ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
+
 # View ATS - Summary
 #============================================================
 ats.summary.html.title=Your income and taxes
@@ -89,6 +102,11 @@ ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Inc
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
+paye.ats.summary.total_income.paye.title=Taxable income
+paye.ats.summary.nicsheading=Income Tax and National Insurance contributions
+paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance contributions
+paye.ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
+
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
@@ -101,6 +119,7 @@ ats.nics.tax_and_nics.total=Income Tax and National Insurance
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Your total income
+paye.ats.income_before_tax.html.title=Your income before tax
 ats.income_before_tax.title=Your total income
 ats.income_before_tax.intro=This is your total income for the year.
 
@@ -112,6 +131,24 @@ ats.income_before_tax.table.line4=Other pension income
 ats.income_before_tax.table.line5=Taxable state benefits
 ats.income_before_tax.table.line6=Other income
 ats.income_before_tax.table.line7=Benefits from employment
+
+
+paye.ats.income_before_tax.self_employment_income=Self-employment
+paye.ats.income_before_tax.income_from_employment=Employment
+paye.ats.income_before_tax.state_pension=State pension
+paye.ats.income_before_tax.other_pension_income=Other pension income
+paye.ats.income_before_tax.personal_pension_income=Personal pension income
+paye.ats.income_before_tax.taxable_state_benefits=Taxable state benefits
+paye.ats.income_before_tax.other_income=Other income (including interest)
+paye.ats.income_before_tax.benefits_from_employment=Benefits from employment
+paye.ats.income_before_tax.total_income_before_tax=Your income before tax
+
+
+# View ATS - your income before tax (IND) - PAYE content
+paye.ats.income_before_tax.title=Taxable income
+paye.ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
+paye.ats.income_before_tax.table_caption=Your taxable income
+paye.ats.income_before_tax.table.line6=Other income (including interest)
 
 # View ATS - tax free amount (IND)
 #============================================================
@@ -143,6 +180,28 @@ ats.total_income_tax.table.other.increasing=Other adjustments that increase your
 ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Income Tax
 ats.total_income_tax.table.marriage_allowance_received=Less Your Marriage Allowance Received
 ats.total_income_tax.table.scottish_income_tax=This includes Scottish Income Tax of
+
+paye.ats.total_income_tax.title=Income Tax and National Insurance contributions
+paye.ats.total_income_tax.introParagraph=This shows how your tax was calculated.
+paye.ats.total_income_tax.scottish_income_tax=Scottish Income Tax
+paye.ats.total_income_tax.scottish_starter_rate=Starter rate
+paye.ats.total_income_tax.scottish_basic_rate=Basic rate
+paye.ats.total_income_tax.scottish_intermediate_rate=Intermediate rate
+paye.ats.total_income_tax.scottish_higher_rate=Higher rate
+paye.ats.total_income_tax.uk_income_tax=UK Income Tax
+paye.ats.total_income_tax.income_tax=Income Tax
+paye.ats.total_income_tax.basic_rate_income_tax=Basic rate Income Tax
+paye.ats.total_income_tax.higher_rate_income_tax=Higher rate Income Tax
+paye.ats.total_income_tax.ordinary_rate=Basic rate Dividend Tax
+paye.ats.total_income_tax.upper_rate=Higher rate Dividend Tax
+paye.ats.adjustments=Adjustments
+paye.ats.adjustments.less_tax_adjustment_previous_year=Less tax adjustment from a previous year
+paye.ats.adjustments.marriage_allowance_received_amount=Less Marriage allowance received
+paye.ats.adjustments.married_couples_allowance_adjustment=Less Married Couples Allowance
+paye.ats.adjustments.tax_underpaid_previous_year=Tax underpaid in a previous year
+paye.ats.national_insurance.title=National Insurance contributions
+paye.ats.total_income_tax_national_insurance.title=Total Income Tax and National Insurance contributions
+paye.ats.total_national_insurance_employer_contribution.title=In addition to this, your employers paid £{0} in National Insurance contributions.
 
 # View ATS - scottish income tax
 #============================================================
@@ -221,12 +280,86 @@ ats.treasury_spending.chart.link=View this information as a chart
 ats.treasury_spending.print.click = print - click
 ats.treasury_spending.print.this.page = Print this page
 
+paye.ats.treasury_spending.table.Welfare=Welfare
+paye.ats.treasury_spending.table.Health=Health
+paye.ats.treasury_spending.table.StatePensions=State Pensions
+paye.ats.treasury_spending.table.Education=Education
+paye.ats.treasury_spending.table.NationalDebtInterest=National debt interest
+paye.ats.treasury_spending.table.Defence=Defence
+paye.ats.treasury_spending.table.CriminalJustice=Criminal Justice
+paye.ats.treasury_spending.table.Transport=Transport
+paye.ats.treasury_spending.table.GovernmentAdministration=Government administration
+paye.ats.treasury_spending.table.Culture=Culture, like sports, libraries and museums
+paye.ats.treasury_spending.table.Environment=Environment
+paye.ats.treasury_spending.table.HousingAndUtilities=Housing and utilities, like street lighting
+paye.ats.treasury_spending.table.BusinessAndIndustry=Business and industry
+paye.ats.treasury_spending.table.UkContributionToEuBudget=UK contribution to the EU budget
+paye.ats.treasury_spending.table.OverseasAid=Overseas aid
+paye.ats.treasury_spending.table.PublicOrderAndSafety=Public order and safety
+paye.ats.treasury_spending.table.link=View this information as a table
+paye.ats.treasury_spending.chart.link=View this information as a chart
+paye.ats.treasury_spending.print.click = print - click
+paye.ats.treasury_spending.print.this.page = Print this page
+
+
+# View ATS - treasury spending (IND) - PAYE content
+paye.ats.treasury_spending.title=How your tax was spent
+paye.ats.treasury_spending.introParagraph=The information on this page gives an illustration of how your Income Tax and National Insurance contributions were spent. This does not include indirect taxes such as VAT and other duties.
+paye.ats.treasury_spending.para1=These figures show how government spent money across the whole of the UK, including spending by the devolved administrations.
+paye.ats.treasury_spending.para2=All figures are rounded to the nearest pound.
+paye.ats.treasury_spending.para3=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
+paye.ats.treasury_spending.para4=Spending information is published by HM Treasury.
+paye.ats.treasury_spending.scottish.spending.1=Find out more about <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">your tax and public spending in Scotland</a> on the Scottish Government website.
+paye.ats.treasury_spending.total=Total
+
+# View ATS - Summary (PAYE)
+#============================================================
+paye.ats.summary.title=Your income and taxes
+paye.ats.summary.lede=This is for your information only. You do not need to contact us as this is not a bill or demand for payment.
+paye.ats.summary.total_income.title=Taxable income
+paye.ats.summary.total_income.link=Your taxable income
+paye.ats.summary.total_income.description=This is your total taxable income for the year.
+paye.ats.summary.tax_free.title=Tax-free amount
+paye.ats.summary.tax_free.link=Your tax-free amount
+paye.ats.summary.tax_free.description=This is the amount you received without paying tax.
+paye.ats.summary.tax_and_nics.title=Income Tax and National Insurance
+paye.ats.summary.tax_and_nics.link=Your Income Tax and National Insurance contributions
+paye.ats.summary.tax_and_nics.description=This is {0}% of your taxable income. For every £1 of income, you paid {0}p in Income Tax and National Insurance contributions.
+paye.ats.summary.capital_gains.title=Capital Gains Tax
+paye.ats.summary.capital_gains.link=Your Capital Gains Tax
+paye.ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
+paye.ats.summary.total_tax.your_total_tax=Total tax
+paye.ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
+paye.ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
+paye.ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
+paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=Total Income Tax
+paye.ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
+paye.ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
+
+# PAYE - Tax Free Amount
+#============================================================
+paye.ats.tax_free_amount.title=Tax-free amount
+paye.ats.tax_free_amount.description=Description
+paye.ats.tax_free_amount.amount=Amount
+paye.ats.tax_free_amount.personal_tax_free_amount=Personal Allowance
+paye.ats.tax_free_amount.marriage_allowance_transferred_amount=Marriage allowance transferred
+paye.ats.tax_free_amount.other_allowances_amount=Other allowances, deductions and expenses
+paye.ats.tax_free_amount.total_tax_free_amount=Total tax-free amount
+paye.ats.tax_free_amount.income_before_tax=Income before tax
+paye.ats.tax_free_amount.tax_free_amount=Less your tax-free amount
+paye.ats.tax_free_amount.total_tax_liable=You pay tax on
+
 
 # No ATS - error page
 #============================================================
 generic.error.html.title=Sorry, there is a problem with the service
 generic.error.title=Sorry, there is a problem with the service
 generic.error.try.later=Try again later.
+
+# No ATS - error page paye content
+paye.ats.no_ats.title=You had no taxable income this year
+paye.ats.no_ats.heading=Your Annual Tax Summary
+paye.ats.no_ats.paragraph=You do not have an Annual Tax Summary for this year.
 
 
 # No ATS - ats unavailable page
@@ -241,6 +374,23 @@ no.ats.line2=If you had taxable income, your annual tax summary would show how y
 not.authorised.line1=You are not authorised to access Annual Tax Summaries.
 client_agent.notice.line1=The version of the annual tax summary for agents to view their client’s details is not available yet. This version will be coming soon.
 client_agent.notice.line2=The annual tax summary will provide a breakdown of how much tax and National Insurance your client has paid or will pay, and how these have been or will be spent by government.
+
+# Service unavailable page
+#============================================================
+ats.service_unavailable.title=Sorry there is a problem with the service
+ats.service_unavailable.heading=Sorry there is a problem with the service
+ats.service_unavailable.paragraph=You will be able to use the service later.
+
+paye.ats.service_unavailable.title=Sorry there is a problem with the service
+paye.ats.service_unavailable.heading=Sorry there is a problem with the service
+paye.ats.service_unavailable.paragraph=You will be able to use the service later.
+
+# PAYE Not authorised page
+#============================================================
+paye.not.authorised.title=We could not confirm your identity
+paye.not.authorised.h1=We could not confirm your identity
+paye.not.authorised.line1=You have not given us enough information.
+paye.not.authorised.line2=For security reasons, you must wait 24 hours and then sign in to try again.
 
 # Token error page
 #============================================================

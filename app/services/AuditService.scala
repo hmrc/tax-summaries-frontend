@@ -16,24 +16,15 @@
 
 package services
 
-import config.TAXSAuditConnector
+import com.google.inject.Inject
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.play.audit.model.DataEvent
-
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import scala.concurrent.ExecutionContext.Implicits.global
 
+class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
-object AuditTypes {
-  val Tx_FAILED = "TxFailed"
-  val Tx_SUCCEEDED = "TxSuccessful"
-}
-
-object AuditService extends AuditService
-
-trait AuditService {
-
-  lazy val auditConnector = TAXSAuditConnector
   val taxsAuditSource = "tax-summaries-frontend"
 
   def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(implicit request: Request[_], hc: HeaderCarrier) =

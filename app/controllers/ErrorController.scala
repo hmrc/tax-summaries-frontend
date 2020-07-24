@@ -16,35 +16,30 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, MinAuthAction}
-import play.api.Play
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import com.google.inject.Inject
+import config.ApplicationConfig
+import controllers.auth.{AuthAction, MinAuthAction}
+import play.api.i18n.{I18nSupport, Lang}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import utils.AccountUtils
 
-object ErrorController extends ErrorController {
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-  override val minAuthAction = Play.current.injector.instanceOf[MinAuthAction]
-}
+class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction, mcc : MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+    extends FrontendController(mcc) with I18nSupport {
 
-trait ErrorController extends FrontendController
-        with AccountUtils {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-  val minAuthAction: MinAuthAction
-
-  def authorisedNoAts: Action[AnyContent] = authAction {
-    implicit request => Ok(views.html.errors.no_ats_error())
+  def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
+    implicit val lang : Lang = request.lang
+    Ok(views.html.errors.no_ats_error())
   }
 
-  def notAuthorised: Action[AnyContent] = minAuthAction {
-    implicit request => Ok(views.html.errors.not_authorised())
+  def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>
+    implicit val lang : Lang = request.lang
+    Ok(views.html.errors.not_authorised())
+  }
+
+  def serviceUnavailable: Action[AnyContent] = Action { implicit request: Request[_] =>
+    implicit val lang : Lang = request.lang
+    Ok(views.html.errors.service_unavailable())
   }
 }

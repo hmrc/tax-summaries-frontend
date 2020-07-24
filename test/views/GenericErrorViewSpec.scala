@@ -16,21 +16,17 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.{Amount, Rate}
 
-class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar  {
+class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
 
   lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")
@@ -39,16 +35,14 @@ class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
 
-  implicit val messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
-  implicit val messagesEn = Messages(languageEn, messagesApi)
-  implicit val messagesCy = Messages(languageCy, messagesApi)
-  implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
+  implicit val messagesEn = MessagesImpl(languageEn, messagesApi)
+  implicit val messagesCy = MessagesImpl(languageCy, messagesApi)
 
   "Logging in as a portal user" should {
 
     "show the correct contents of the generic error page in English" in  {
 
-      val resultEn = views.html.errors.generic_error()(languageEn, requestWithSession, messagesEn, formPartialRetriever)
+      val resultEn = views.html.errors.generic_error()(languageEn, requestWithSession, messagesEn, formPartialRetriever, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include("Sorry, there is a problem with the service")
       documentEn.toString should include("Try again later.")
@@ -56,7 +50,7 @@ class GenericErrorViewSpec extends UnitSpec with GuiceOneAppPerSuite with Mockit
 
     "show the correct contents of the generic error page in Welsh" in  {
 
-      val resultCy = views.html.errors.generic_error()(languageCy, requestWithSession, messagesCy, formPartialRetriever)
+      val resultCy = views.html.errors.generic_error()(languageCy, requestWithSession, messagesCy, formPartialRetriever, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
       documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")

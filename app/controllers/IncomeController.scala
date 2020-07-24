@@ -16,45 +16,37 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.i18n.Lang
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.IncomeBeforeTax
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import scala.concurrent.Future
 
-object IncomeController extends IncomeController {
-  override val incomeService = IncomeService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+import scala.concurrent.{ExecutionContext, Future}
 
-trait IncomeController extends TaxYearRequest {
+class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction,
+                                 mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def incomeService: IncomeService
-
-  def authorisedIncomeBeforeTax = authAction.async {
-    request => show(request)
+  def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = IncomeBeforeTax
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(incomeService.getIncomeData(_))
-  }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    Ok(views.html.income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    implicit val lang : Lang = request.lang
+    Ok(
+      views.html
+        .income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

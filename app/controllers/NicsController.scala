@@ -16,35 +16,26 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.i18n.Lang
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Summary
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import scala.concurrent.Future
 
-object NicsController extends NicsController {
-  override val summaryService = SummaryService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+import scala.concurrent.{ExecutionContext, Future}
 
-trait NicsController extends TaxYearRequest {
+class NicsController @Inject()(summaryService: SummaryService,
+                               val auditService: AuditService,
+                               authAction: AuthAction,
+                               mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def summaryService: SummaryService
-
-  def authorisedNics = authAction.async {
+  def authorisedNics: Action[AnyContent] = authAction.async {
     request => show(request)
   }
 
@@ -54,6 +45,7 @@ trait NicsController extends TaxYearRequest {
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
   }
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit  val lang : Lang = request.lang
     Ok(views.html.nics(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

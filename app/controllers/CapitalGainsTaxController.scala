@@ -16,46 +16,38 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.i18n.Lang
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.CapitalGains
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-object CapitalGainsTaxController extends CapitalGainsTaxController {
-  override val capitalGainsService = CapitalGainsService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
+class CapitalGainsTaxController @Inject()(
+  capitalGainsService: CapitalGainsService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
-trait CapitalGainsTaxController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def capitalGainsService: CapitalGainsService
-
-  def authorisedCapitalGains = authAction.async {
-    request => show(request)
+  def authorisedCapitalGains: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = CapitalGains
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
-  }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang : Lang = request.lang
     Ok(views.html.capital_gains(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

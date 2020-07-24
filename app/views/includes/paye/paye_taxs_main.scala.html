@@ -1,0 +1,124 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import play.twirl.api.HtmlFormat
+
+@(title: String,
+userLoggedIn: Boolean = true,
+serviceInfoContent: Option[Html] = None,
+showFeedbackLinkInBetaBanner: Boolean = false,
+bodyClasses: Option[String] = None,
+mainClasses: Option[String] = None,
+mainDataAttributes: Option[Html] = None,
+includeGridWrapper: Boolean = false,
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+
+@fullTitle = {@title - @Messages("generic.paye.ats.browser.title")}
+
+@linkElement = {
+    <!--[if gt IE 8]><!--><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs.css")' /><!--<![endif]-->
+    <!--[if IE 6]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie6.css")' /><![endif]-->
+    <!--[if IE 7]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie7.css")' /><![endif]-->
+    <!--[if IE 8]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie8.css")' /><![endif]-->
+    <link rel='stylesheet' media='print' href='@controllers.routes.Assets.at("stylesheets/taxs-print.css")' />
+}
+
+@scriptElement = {
+    <script src='@controllers.routes.Assets.at("javascripts/taxs.js")'></script>
+    <script src='@routes.Assets.at("javascripts/jquery.min.js")'></script>
+    <script src='@routes.Assets.at("javascripts/jquery-ui.min.js")'></script>
+    <script src='@routes.Assets.at("javascripts/details.polyfill.js")'></script>
+}
+
+@headScript = {
+    <script src="https://cdn.optimizely.com/js/@{appConfig.optimizelyProjectId}.js"></script>
+}
+
+@head = {
+    @uiLayouts.head(Option(linkElement), Some(headScript))
+}
+
+@insideHeader = {
+    @includes.paye.paye_taxs_header_nav(Messages("generic.paye.ats"), showBetaLink = false)
+}
+
+@afterHeader = {}
+
+@getHelpForm = {
+    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
+}
+
+@contentHeader = {
+  @if(lang.language == "cy"){
+     <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+   } else {
+     <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+   }
+}
+
+@mainContentHeader = {
+        @uiLayouts.main_content_header(contentHeader)
+}
+
+@content = {
+    @uiLayouts.main_content(
+        article = uiLayouts.article(mainContent),
+        mainClass = mainClasses,
+        mainDataAttributes = mainDataAttributes,
+        mainContentHeader = mainContentHeader,
+        serviceInfo = serviceInfo,
+        getHelpForm = getHelpForm,
+        sidebar = HtmlFormat.empty
+    )
+}
+
+
+@footerTop = {}
+
+@bodyEnd = {
+    @uiLayouts.footer(
+        analyticsToken = appConfig.analyticsToken,
+        analyticsHost = appConfig.analyticsHost,
+        ssoUrl = appConfig.ssoUrl,
+        scriptElem = Option(scriptElement),
+        gaCalls = gaCalls
+    )
+}
+
+@betaBanner = {
+    @uiLayouts.betaBanner(
+        userLoggedIn,
+appConfig.betaFeedbackUrl,
+appConfig.betaFeedbackUnauthenticatedUrl,
+        showFeedbackLinkInBetaBanner
+    )
+}
+
+@serviceInfo = {
+    @uiLayouts.serviceInfo(
+        betaBanner = HtmlFormat.empty,
+        includeGridWrapper,
+        serviceInfoContent,
+        setLang = messages.lang.code
+    )
+}
+
+@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+

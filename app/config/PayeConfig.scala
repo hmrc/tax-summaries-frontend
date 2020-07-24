@@ -16,24 +16,36 @@
 
 package config
 
-import com.google.inject.ImplementedBy
+import com.google.inject.Inject
 import com.typesafe.config.{Config, ConfigFactory}
-
 import scala.collection.JavaConversions._
 
-class PayeConfigImpl extends PayeConfig {
-  override val payeYear: Int = ApplicationConfig.payeYear
-  override protected val configPath = "paye.conf"
-}
-
-@ImplementedBy(classOf[PayeConfigImpl])
-trait PayeConfig {
-  val payeYear: Int
-  protected val configPath: String
+class PayeConfig @Inject()()(implicit val appConfig: ApplicationConfig) {
+  val payeYear: Int = appConfig.payeYear
+  protected val configPath = "paye.conf"
 
   lazy val spendCategories: List[String] = {
     val config: Config = ConfigFactory.load(configPath)
-    val categories = Option(config.getStringList(s"categoryOrder.$payeYear")).map(_.toList)
+    val correctYearForGovSpendCategories = payeYear+1
+    val categories = Option(config.getStringList(s"categoryOrder.$correctYearForGovSpendCategories")).map(_.toList)
     categories.getOrElse(throw new RuntimeException(s"No spend categories specified for $payeYear"))
+  }
+
+  lazy val scottishTaxBandKeys: List[String] = {
+    val config: Config = ConfigFactory.load(configPath)
+    val taxBands = Option(config.getStringList(s"scottishTaxBandKeys.$payeYear")).map(_.toList)
+    taxBands.getOrElse(throw new RuntimeException(s"No scottish tax band keys specified for $payeYear"))
+  }
+
+  lazy val ukTaxBandKeys: List[String] = {
+    val config: Config = ConfigFactory.load(configPath)
+    val taxBands = Option(config.getStringList(s"ukTaxBandKeys.$payeYear")).map(_.toList)
+    taxBands.getOrElse(throw new RuntimeException(s"No uk tax band keys specified for $payeYear"))
+  }
+
+  lazy val adjustmentsKeys: List[String] = {
+    val config: Config = ConfigFactory.load(configPath)
+    val adjustments = Option(config.getStringList(s"adjustmentsKeys.$payeYear")).map(_.toList)
+    adjustments.getOrElse(throw new RuntimeException(s"No adjust keys specified for $payeYear"))
   }
 }

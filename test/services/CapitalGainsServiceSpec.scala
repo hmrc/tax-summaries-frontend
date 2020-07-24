@@ -48,28 +48,29 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
     )
   )
 
-  class TestService extends CapitalGainsService with MockitoSugar {
-    override lazy val atsService: AtsService = mock[AtsService]
-    override lazy val atsYearListService: AtsYearListService = mock[AtsYearListService]
-    implicit val hc = new HeaderCarrier
-    val taxYear = 2015
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  }
+  implicit val hc = new HeaderCarrier
+
+  val mockAtsService = mock[AtsService]
+  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
+  val taxYear = 2015
+  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+
+  val sut = new CapitalGainsService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "CapitalGainsService getCapitalGains" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in new TestService {
-      when(atsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      val result = Await.result(getCapitalGains(taxYear)(hc, request), 1500 millis)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in{
+      when(mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      val result = Await.result(sut.getCapitalGains(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
   "CapitalGainsService capitalGains" should {
 
-    "return a complete CapitalGains when given complete AtsData" in new TestService {
+    "return a complete CapitalGains when given complete AtsData" in {
       val atsData = AtsTestData.capitalGainsData
-      val result = capitalGains(atsData)
+      val result = sut.capitalGains(atsData)
 
       result shouldBe CapitalGains(
         2019,

@@ -16,48 +16,36 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Play.current
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.i18n.Messages.Implicits._
+import play.api.http.Status.SEE_OTHER
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, _}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models._
-
 import scala.concurrent.Future
 
-
-class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2014
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
-  trait TestController extends GovernmentSpendController {
+  val mockGovernmentSpendService = mock[GovernmentSpendService]
+  val mockAuditService = mock[AuditService]
 
-    override lazy val governmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
-    override lazy val auditService: AuditService = mock[AuditService]
-    lazy val atsService: AtsService = mock[AtsService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
+  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
 
-    val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel =  AtsList(
       utr = "3000024376",
       forename = "forename",
       surname = "surname",
@@ -66,64 +54,64 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       )
     )
 
-    val model = new GovernmentSpend(
-      taxYear = 2014,
-      userUtr = testUtr,
-      govSpendAmountData = List(
-        ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
-        ("health", SpendData(Amount(4512.19, "GBP"), 18.87)),
-        ("education", SpendData(Amount(3144.43, "GBP"), 13.15)),
-        ("pension", SpendData(Amount(2898.13, "GBP"), 12.12)),
-        ("national_debt_interest", SpendData(Amount(1673.84, "GBP"), 7.00)),
-        ("defence", SpendData(Amount(1269.73, "GBP"), 5.31)),
-        ("criminal_justice", SpendData(Amount(1052.13, "GBP"), 4.40)),
-        ("transport", SpendData(Amount(705.4, "GBP"), 2.95)),
-        ("business_and_industry", SpendData(Amount(655.19, "GBP"), 2.74)),
-        ("government_administration", SpendData(Amount(490.2, "GBP"), 2.05)),
-        ("Culture", SpendData(Amount(404.11, "GBP"), 1.69)),
-        ("HousingAndUtilities", SpendData(Amount(392.16, "GBP"), 1.64)),
-        ("Environment", SpendData(Amount(396.94, "GBP"), 1.66)),
-        ("overseas_aid", SpendData(Amount(274.99, "GBP"), 1.15)),
-        ("uk_contribution_to_eu_budget", SpendData(Amount(179.34, "GBP"), 0.75))
-      ),
-      userTitle = "Mr",
-      userForename = "userForename",
-      userSurname = "userSurname",
-      totalAmount = new Amount(23912.00, "GBP"),
-      incomeTaxStatus = "0002",
-      scottishIncomeTax = new Amount(2000.00, "GBP")
-    )
+  val model = new GovernmentSpend(
+    taxYear = 2014,
+    userUtr = testUtr,
+    govSpendAmountData = List(
+      ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
+      ("health", SpendData(Amount(4512.19, "GBP"), 18.87)),
+      ("education", SpendData(Amount(3144.43, "GBP"), 13.15)),
+      ("pension", SpendData(Amount(2898.13, "GBP"), 12.12)),
+      ("national_debt_interest", SpendData(Amount(1673.84, "GBP"), 7.00)),
+      ("defence", SpendData(Amount(1269.73, "GBP"), 5.31)),
+      ("criminal_justice", SpendData(Amount(1052.13, "GBP"), 4.40)),
+      ("transport", SpendData(Amount(705.4, "GBP"), 2.95)),
+      ("business_and_industry", SpendData(Amount(655.19, "GBP"), 2.74)),
+      ("government_administration", SpendData(Amount(490.2, "GBP"), 2.05)),
+      ("Culture", SpendData(Amount(404.11, "GBP"), 1.69)),
+      ("HousingAndUtilities", SpendData(Amount(392.16, "GBP"), 1.64)),
+      ("Environment", SpendData(Amount(396.94, "GBP"), 1.66)),
+      ("overseas_aid", SpendData(Amount(274.99, "GBP"), 1.15)),
+      ("uk_contribution_to_eu_budget", SpendData(Amount(179.34, "GBP"), 0.75))
+    ),
+    userTitle = "Mr",
+    userForename = "userForename",
+    userSurname = "userSurname",
+    totalAmount = new Amount(23912.00, "GBP"),
+    incomeTaxStatus = "0002",
+    scottishIncomeTax = new Amount(2000.00, "GBP")
+  )
 
-    when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model))
-
+  override def beforeEach() = {
+    when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
   }
-
+  
   "Calling government spend" should {
 
-    "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(request))
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.treasury_spending.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
    }
 
-    "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(badRequest))
+    "display an error page for an invalid request" in {
+      val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
-      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(show(request))
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
-    "have correct data for 2014" in new TestController {
+    "have correct data for 2014" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
       document.select("#welfare + td").text() shouldBe "£5,863.22"
       document.select("#welfare").text() should include("24.52%")
@@ -164,7 +152,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
         .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 
-    "have correct data for 2015" in new TestController {
+    "have correct data for 2015" in {
 
         val model2 = new GovernmentSpend(
         taxYear = 2015,
@@ -194,10 +182,10 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
         scottishIncomeTax = new Amount(2000.00, "GBP")
       )
 
-      when(governmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
 
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#welfare + td").text() shouldBe "£2,530.00"
@@ -236,9 +224,9 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.select("#gov-spend-total + td").text() shouldBe "£10,000.00"
     }
 
-    "show 'Government spend' page with a correct breadcrumb" in new TestController {
+    "show 'Government spend' page with a correct breadcrumb" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
@@ -253,7 +241,7 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
       document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
     }
 
-    "return zero percentage for Housing, Cultural and Environment when they are not same" in new TestController {
+    "return zero percentage for Housing, Cultural and Environment when they are not same" in {
 
       val govSpendAmountData = List(
         ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
@@ -273,13 +261,17 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
         ("uk_contribution_to_eu_budget", SpendData(Amount(600, "GBP"), 0.6))
       )
 
-      val result = assignPercentage(govSpendAmountData)
+      val result = sut.assignPercentage(govSpendAmountData)
 
-      result shouldBe(1.7, 1.8, 1.6)
+      result._1 shouldBe 1.7
+      result._2 shouldBe 1.8
+      result._3 shouldBe 1.6
 
     }
 
-    "return equal percentage for Housing, Cultural and Environment when they are same" in new TestController {
+    "return equal percentage for Housing, Cultural and Environment when they are same" in {
+
+      val expected = 1.8
 
       val govSpendAmountData = List(
         ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
@@ -292,16 +284,18 @@ class GovernmentSpendControllerSpec extends UnitSpec with GuiceOneAppPerSuite wi
         ("transport", SpendData(Amount(300, "GBP"), 3.0)),
         ("business_and_industry", SpendData(Amount(270, "GBP"), 2.7)),
         ("government_administration", SpendData(Amount(200, "GBP"), 2.0)),
-        ("Culture", SpendData(Amount(180, "GBP"), 1.8)),
-        ("Environment", SpendData(Amount(180, "GBP"), 1.8)),
-        ("HousingAndUtilities", SpendData(Amount(180, "GBP"), 1.8)),
+        ("Culture", SpendData(Amount(180, "GBP"), expected)),
+        ("Environment", SpendData(Amount(180, "GBP"), expected)),
+        ("HousingAndUtilities", SpendData(Amount(180, "GBP"), expected)),
         ("overseas_aid", SpendData(Amount(130, "GBP"), 1.3)),
         ("uk_contribution_to_eu_budget", SpendData(Amount(600, "GBP"), 0.6))
       )
 
-      val result = assignPercentage(govSpendAmountData)
+      val result = sut.assignPercentage(govSpendAmountData)
 
-      result shouldBe(1.8, 1.8, 1.8)
+      result._1 shouldBe expected
+      result._2 shouldBe expected
+      result._3 shouldBe expected
 
     }
 

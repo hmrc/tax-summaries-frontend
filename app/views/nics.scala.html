@@ -14,9 +14,12 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@import utils.ViewUtils
+@import utils.ViewUtils.positiveOrZero
+@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
   @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "breadcrumbs.taxs.nics", viewModel.year)
@@ -45,7 +48,7 @@
     </h1>
   <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
     <p>@Html(Messages("ats.nics.tax_and_nics.description",
-      "<span id=\"total-cg-tax-rate\">"+viewModel.nicsAndTaxRate.percent+"</span>"))</p>
+      "<span id=\"total-cg-tax-rate\">"+positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>"))</p>
 
     <table id="total-income-tax">
       <thead>
@@ -62,7 +65,7 @@
                   @Html(Messages("ats.nics.tax_and_nics.income_tax"))
               </a>
           </td>
-          <td id="total-income-tax-amt">@includes.currency_amount(viewModel.totalIncomeTaxAmount)</td>
+          <td id="total-income-tax-amt">@includes.currency_amount(positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
         </tr>
         <tr>
           <td>@Html(Messages("ats.nics.tax_and_nics_explained"))</td>
@@ -72,7 +75,7 @@
       <tfoot>
         <tr>
           <th scope="row">@Html(Messages("ats.nics.tax_and_nics.total"))</th>
-          <td id="total-income-tax-and-nics" class="no-bold">@includes.currency_amount(viewModel.totalIncomeTaxAndNics)</td>
+          <td id="total-income-tax-and-nics" class="no-bold">@includes.currency_amount(viewModel.nonNegativeTotalIncomeTaxAndNics)</td>
         </tr>
       </tfoot>
     </table>

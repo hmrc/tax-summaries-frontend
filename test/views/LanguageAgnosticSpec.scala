@@ -16,38 +16,30 @@
 
 package views
 
-import config.AppFormPartialRetriever
 import controllers.auth.AuthenticatedRequest
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
-import utils.{AttorneyUtils, AuthorityUtils}
 import models.SpendData
 import org.jsoup.Jsoup
-import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.test.Helpers._
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.{HtmlUnitFactory, OneBrowserPerSuite, OneServerPerSuite}
+import play.api.i18n.{Lang, Messages, MessagesImpl}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.AttorneyUtils
+import utils.TestConstants._
 import view_models.AtsForms._
 import view_models._
-import utils.TestConstants._
 
-class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrowserPerSuite with HtmlUnitFactory with MockitoSugar  {
+class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with MockitoSugar  {
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val language = Lang("en")
   val utr = testUtr
 
-  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-
-
   "Logging in with English language settings" should {
     "show the correct contents of the generic error page in English" in  {
       val language = Lang("en")
-      implicit val messages = Messages(language, messagesApi)
-      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever)
+      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
@@ -56,8 +48,7 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
   "Logging in with invalid language settings" should {
     "show the correct contents of the generic error page in English" in  {
       val language = Lang("xy")
-      implicit val messages = Messages(language, messagesApi)
-      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever)
+      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
@@ -65,9 +56,9 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
 
   "Logging in with Welsh language settings" should {
     "show the correct contents of the generic error page in Welsh" in {
+      implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
       val language = Lang("cy")
-      implicit val messages = Messages(language, messagesApi)
-      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever)
+      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
     }
@@ -75,9 +66,8 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
 
     "show the English language switch" in {
       val language = Lang("cy-GB")
-      implicit val messages = Messages(language, messagesApi)
       val atsList = AtsList("", "", "", List(TaxYearEnd(Some("2014")), TaxYearEnd(Some("2015"))))
-      val result = views.html.taxs_index(atsList, atsYearFormMapping)(request, messages, formPartialRetriever, language)
+      val result = views.html.taxs_index(atsList, atsYearFormMapping)(request, messages, formPartialRetriever, language,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("english-switch").text should include("English")
     }
@@ -87,10 +77,10 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val rate = new Rate("5")
       val fakeViewModel = Summary(2014, "1123", amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
       val language = Lang("cy-GB")
-      implicit val messages = Messages(language, messagesApi)
       val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
-      val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever)
+      val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
       document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +
@@ -102,15 +92,15 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
       val totalAmount = new Amount(0.00, "GBP")
       val scottishIncomeTax = new Amount(0.00, "GBP")
       val spendData = new SpendData(amount, 20)
+      implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
       val language = Lang("cy-GB")
-      implicit val messages = Messages(language, messagesApi)
       val fakeViewModel = GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
         ("education", spendData), ("pension", spendData), ("national_debt_interest", spendData), ("defence", spendData),
         ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request, messages, formPartialRetriever)
+      val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#content h1").text should include("Eich trethi a gwariant cyhoeddus")
       document
@@ -122,13 +112,13 @@ class LanguageAgnosticSpec extends UnitSpec with OneServerPerSuite with OneBrows
     "show the summary page in welsh language" in  {
       val amount = new Amount(0.00, "GBP")
       val rate = new Rate("5")
+      implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
       val language = Lang("cy-GB")
-      implicit val messages = Messages(language, messagesApi)
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
       val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar(testUar)), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
-      val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever)
+      val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("h1").text should include("Eich incwm a’ch trethi")
       document.select(".link-back").text shouldBe "Yn ôl"

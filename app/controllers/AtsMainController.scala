@@ -16,48 +16,39 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.Play
-import play.api.mvc.Result
+import play.api.i18n.Lang
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Summary
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-object AtsMainController extends AtsMainController {
+class AtsMainController @Inject()(
+  summaryService: SummaryService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
+                                      ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
-  override val summaryService = SummaryService
-  override val auditService = AuditService
-  override val formPartialRetriever = AppFormPartialRetriever
-  override val authAction = Play.current.injector.instanceOf[AuthAction]
-}
-
-trait AtsMainController extends TaxYearRequest {
-
-  implicit val formPartialRetriever: FormPartialRetriever
-
-  val authAction: AuthAction
-
-  def summaryService: SummaryService
-
-  def authorisedAtsMain = authAction.async {
-    request => show(request)
+  def authorisedAtsMain: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = Summary
 
-
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang : Lang = request.lang
     Ok(views.html.taxs_main(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

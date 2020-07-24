@@ -1,5 +1,5 @@
 {
- "taxYear":2014,
+ "taxYear":2018,
   "income_tax":{
     "payload":{
       "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -40,6 +40,7 @@
           "total_cg_tax":{"amount":5500.00,"currency":"GBP"},
           "taxable_gains":{"amount":20000.00,"currency":"GBP"},
           "cg_tax_per_currency_unit":{"amount":0.1234, "currency":"GBP"},
+          "income_after_tax_and_nics":{"amount":0.1234, "currency":"GBP"},
           "nics_and_tax_per_currency_unit":{"amount":0.5678, "currency":"GBP"}
         },
       "rates":{
@@ -74,105 +75,105 @@
         "currency": "GBP"
     },
     "govSpendAmountData": {
-      "health": {
+      "Health": {
         "amount": {
           "amount": 4512.19,
           "currency": "GBP"
         },
         "percentage": 18.87
       },
-      "pension": {
+      "StatePensions": {
         "amount": {
           "amount": 2898.13,
           "currency": "GBP"
         },
         "percentage": 12.12
       },
-      "housing_and_utilities": {
+      "HousingAndUtilities": {
         "amount": {
           "amount": 392.16,
           "currency": "GBP"
         },
         "percentage": 1.64
       },
-      "criminal_justice": {
+      "PublicOrderAndSafety": {
         "amount": {
           "amount": 1052.13,
           "currency": "GBP"
         },
-        "percentage": 4.40
+        "percentage": 4.4
       },
-      "culture": {
+      "Culture": {
         "amount": {
           "amount": 404.11,
           "currency": "GBP"
         },
         "percentage": 1.69
       },
-      "uk_contribution_to_eu_budget": {
+      "UkContributionToEuBudget": {
         "amount": {
           "amount": 179.34,
           "currency": "GBP"
         },
         "percentage": 0.75
       },
-      "national_debt_interest": {
+      "NationalDebtInterest": {
         "amount": {
           "amount": 1673.84,
           "currency": "GBP"
         },
-        "percentage": 7.00
+        "percentage": 7.0
       },
-      "government_administration": {
+      "GovernmentAdministration": {
         "amount": {
           "amount": 490.2,
           "currency": "GBP"
         },
         "percentage": 2.05
       },
-      "transport": {
+      "Transport": {
         "amount": {
           "amount": 705.4,
           "currency": "GBP"
         },
         "percentage": 2.95
       },
-      "education": {
+      "Education": {
         "amount": {
           "amount": 3144.43,
           "currency": "GBP"
         },
         "percentage": 13.15
       },
-      "environment": {
+      "Environment": {
         "amount": {
           "amount": 396.94,
           "currency": "GBP"
         },
         "percentage": 1.66
       },
-      "defence": {
+      "Defence": {
         "amount": {
           "amount": 1269.73,
           "currency": "GBP"
         },
         "percentage": 5.31
       },
-      "overseas_aid": {
+      "OverseasAid": {
         "amount": {
           "amount": 274.99,
           "currency": "GBP"
         },
         "percentage": 1.15
       },
-      "business_and_industry": {
+      "BusinessAndIndustry": {
         "amount": {
           "amount": 655.19,
           "currency": "GBP"
         },
         "percentage": 2.74
       },
-      "welfare": {
+      "Welfare": {
         "amount": {
           "amount": 5863.22,
           "currency": "GBP"

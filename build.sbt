@@ -1,9 +1,7 @@
-import play.routes.compiler.StaticRoutesGenerator
 import sbt._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import play.sbt.routes.RoutesKeys.routesGenerator
+import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc._
-import DefaultBuildSettings._
+import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 val appName = "tax-summaries-frontend"
 
@@ -32,6 +30,7 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort := 9217,
     scoverageSettings,
     scalaSettings,
+    scalaVersion := "2.11.12",
     publishingSettings,
     defaultSettings(),
     majorVersion := 1,
@@ -39,6 +38,5 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true,
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    routesGenerator := StaticRoutesGenerator,
     resolvers ++= Seq(Resolver.bintrayRepo("hmrc", "releases"),Resolver.jcenterRepo)
   )

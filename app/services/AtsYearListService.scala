@@ -16,21 +16,16 @@
 
 package services
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.AtsListData
-import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
-
 import scala.concurrent.Future
 
-object AtsYearListService extends AtsYearListService {
-  override val atsListService = AtsListService
-}
 
-trait AtsYearListService {
-  def atsListService: AtsListService
+class AtsYearListService @Inject()(atsListService: AtsListService) {
 
   def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
     atsListService.createModel(atsListDataConverter)
@@ -39,7 +34,6 @@ trait AtsYearListService {
   def storeSelectedAtsTaxYear(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Int] = {
     atsListService.storeSelectedTaxYear(taxYear)
   }
-
 
   private[services] def atsListDataConverter(atsListData: AtsListData): AtsList = {
       AtsList(

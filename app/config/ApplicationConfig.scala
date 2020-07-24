@@ -16,83 +16,75 @@
 
 package config
 
+import com.google.inject.Inject
+import javax.inject.Singleton
+import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
-import play.api.{Configuration, Play}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.audit.http.config.AuditingConfig
+import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
 
-trait ApplicationConfig {
+@Singleton
+class ApplicationConfig @Inject()(environment: Environment, config: ServicesConfig, runMode: RunMode, configuration: Configuration) {
 
-  protected def mode: Mode = Play.current.mode
 
-  protected def runModeConfiguration: Configuration = Play.current.configuration
+  protected def mode: Mode = environment.mode
 
-  val appName: String
-  val assetsPrefix: String
-  val betaFeedbackUrl: String
-  val betaFeedbackUnauthenticatedUrl: String
-  val analyticsToken: Option[String]
-  val analyticsHost: String
-  val reportAProblemUrl: String
-  val reportAProblemPartialUrl: String
-  val externalReportProblemUrl: String
-  val reportAProblemNonJSUrl: String
-  val ssoUrl: Option[String]
-  val encryptionKey: String
-  val encryptionTokenMaxAge: Int
-  val loginCallback: String
-  val loginUrl: String
-  val ytaUrl: String
-  val portalUrl: String
-  val authHost: String
-  val sessionCacheHost: String
-  val optimizelyProjectId: String
-  val feedbackUrl: String
-  val payeYear: Int
-}
+  def getConf(key: String) = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
-object ApplicationConfig extends ApplicationConfig with ServicesConfig {
-
-  def getConf(key: String) = getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, runMode, appName).get()
 
   // Services url config
-  private val contactHost = baseUrl("contact-frontend")
-  override lazy val sessionCacheHost = baseUrl("cachable.session-cache")
-  override lazy val authHost = baseUrl("auth")
+  val serviceUrl = config.baseUrl("tax-summaries")
+  val agentServiceUrl = config.baseUrl("tax-summaries-agent")
+
+  private val contactHost = config.baseUrl("contact-frontend")
+  lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
+  lazy val authHost = config.baseUrl("auth")
   private val contactFormServiceIdentifier = "TAX-SUMMARIES"
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   // Beta feedback config
-  override lazy val betaFeedbackUrl = (if (env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
-  override lazy val betaFeedbackUnauthenticatedUrl = (if (env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
+  lazy val betaFeedbackUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
+  lazy val betaFeedbackUnauthenticatedUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
 
   // Analytics config
-  override lazy val analyticsToken: Option[String] = Some(getString(s"google-analytics.token"))
-  override lazy val analyticsHost: String = getString(s"google-analytics.host")
-  override lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
+  lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))
+  lazy val analyticsHost: String = config.getString(s"google-analytics.host")
+  lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
 
-  override lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
-  override lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
-  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
+  lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
+  lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
+  lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
   // Encryption config
-  override lazy val encryptionKey = runModeConfiguration.getString("portal.clientagent.encryption.key").getOrElse("1111111111111111111111")
-  override lazy val encryptionTokenMaxAge = getConfInt("encryption.tokenMaxAge", 0)
+  lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
+  lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
-  override lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
+  lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
 
   // External urls
-  override lazy val loginCallback = getConf(s"login-callback.url")
-  override lazy val loginUrl = getConf("login.url")
-  override lazy val ytaUrl = getConf("yta.url")
-  override lazy val portalUrl = getConf("portal.url")
-  override lazy val optimizelyProjectId: String = getString("optimizely.projectId")
-  override lazy val feedbackUrl: String = getConf("feedback.url")
+  lazy val loginCallback = getConf(s"login-callback.url")
+  lazy val loginUrl = getConf("login.url")
+  lazy val ytaUrl = getConf("yta.url")
+  lazy val portalUrl = getConf("portal.url")
+  lazy val optimizelyProjectId: String = config.getString("optimizely.projectId")
+  lazy val feedbackUrl: String = getConf("feedback.url")
+  lazy val payeLoginUrl = getConf("paye.login.url")
+  lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
+  lazy val identityVerificationUpliftUrl = getConf("paye.iv-uplift-redirect.url")
+  lazy val iVUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
+
+  lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
   //Application name
-  override lazy val appName = getString("appName")
+  lazy val appName = config.getString("appName")
 
-  override val payeYear: Int = getInt("paye.year")
+  val payeYear: Int = config.getInt("paye.year")
+
+  val saShuttered: Boolean = config.getBoolean("shuttering.sa")
+
+  val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
 }

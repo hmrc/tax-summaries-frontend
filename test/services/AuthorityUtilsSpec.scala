@@ -17,6 +17,7 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
+import models.AgentToken
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}

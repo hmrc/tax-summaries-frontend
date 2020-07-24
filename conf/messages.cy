@@ -13,6 +13,8 @@ generic.utr_abbrev=UTR
 generic.minus=llai
 generic.acting_for=Rydych yn gweithredu ar ran
 generic.name_not_defined=enw heb ei ddiffinio
+generic.tax.year.start=6 Ebrill
+generic.tax.year.end=5 Ebrill
 generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} i Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Allgofnodi
@@ -238,6 +240,23 @@ not.authorised.line1=Nid ydych wedi eich awdurdodi i gyrchu Crynodebau Treth Bly
 client_agent.notice.line1=Nid yw’r fersiwn o’r crynodeb treth blynyddol sy’n galluogi asiantau i fwrw golwg ar fanylion eu cleientiaid ar gael eto. Bydd y fersiwn hwn ar gael cyn bo hir.
 client_agent.notice.line2=Bydd y crynodeb treth blynyddol yn dangos dadansoddiad o faint o dreth ac Yswiriant Gwladol mae eich cleient wedi eu talu neu y bydd yn eu talu, a sut mae’r llywodraeth wedi gwario’r rhain, neu sut y bydd yn eu gwario.
 
+# PAYE Not authorised page
+#============================================================
+paye.not.authorised.title=Nid oeddem yn gallu cadarnhau pwy ydych
+paye.not.authorised.h1=Nid oeddem yn gallu cadarnhau pwy ydych
+paye.not.authorised.line1=Nid oes Crynodeb Treth Blynyddol gennych ar gyfer y flwyddyn hon
+paye.not.authorised.line2=Am resymau diogelwch, mae’n rhaid i chi aros 24 awr ac yna mewngofnodi i roi cynnig arall arni.
+
+# Service unavailable page
+#============================================================
+ats.service_unavailable.title=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+ats.service_unavailable.heading=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+ats.service_unavailable.paragraph=Byddwch yn gallu defnyddio’r gwasanaeth nes ymlaen.
+
+paye.ats.service_unavailable.title=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+paye.ats.service_unavailable.heading=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+paye.ats.service_unavailable.paragraph=Byddwch yn gallu defnyddio’r gwasanaeth nes ymlaen.
+
 # Token error page
 #============================================================
 token_error.html.title=Problem dechnegol
@@ -263,4 +282,118 @@ global.page.not.found.error.check.web.address.full=Os gwnaethoch ludo’r cyfeir
 global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, {0} os ydych am siarad â rhywun am eich crynodeb treth blynyddol.
 global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
+
+
+# Paye ATS - landing page
+#===========================================================
+paye.ats.index.html.title=Eich Crynodeb Treth Blynyddol
+paye.generic.tax_year_heading={0} hyd at {1}
+paye.ats.index.html.lede=Mae hwn yn dangos sut y cafodd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol eu cyfrifo, a sut mae’r llywodraeth yn gwario’ch arian.
+paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
+paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich swm rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.
+paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario’ch trethi.
+paye.ats.index.html.tax_spend_link=Sut y gwariwyd eich treth
+generic.paye.ats=Crynodeb Treth Blynyddol
+
+# Paye ATS - your income and taxes page
+#===========================================================
+paye.ats.summary.title=Eich incwm a’ch trethi
+paye.ats.summary.total_income.title=Incwm trethadwy
+paye.ats.summary.total_income.link=Eich incwm trethadwy
+paye.ats.summary.total_income.description=Dyma gyfanswm eich incwm trethadwy am y flwyddyn.
+paye.ats.summary.tax_free.title=Swm rhydd o dreth
+paye.ats.summary.tax_free.link=Eich swm rhydd o dreth
+paye.ats.summary.tax_free.description=Dyma’r swm a gawsoch heb dalu treth.
+paye.ats.summary.nicsheading=Treth Incwm a chyfraniadau Yswiriant Gwladol
+paye.ats.summary.tax_and_nics.link=Eich Treth Incwm a chyfraniadau Yswiriant Gwladol
+paye.ats.summary.tax_and_nics.description=Dyma {0}% o’ch incwm trethadwy. Am bob £1 o incwm, gwnaethoch dalu {0}c o Dreth Incwm a chyfraniadau Yswiriant Gwladol.
+paye.ats.summary.tax_and_nics.description-2=Nid yw hyn yn adlewyrchu unrhyw ad-daliadau na goddefiannau treth derbyniol ac felly gall y ffigur fod yn wahanol i’r dreth sydd wedi’i chyfrifo a’i dangos yn eich dadansoddiad.
+paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Incwm ar ôl Treth a chyfraniadau Yswiriant Gwladol
+paye.ats.summary.lede=Mae hyn er eich gwybodaeth yn unig. Nid oes rhaid i chi gysylltu â ni, gan nad yw hwn yn fil neu’n orchymyn i dalu.
+
+# Paye ATS - government spending page
+#===========================================================
+paye.ats.treasury_spending.title=Sut y gwariwyd eich treth
+paye.ats.treasury_spending.introParagraph=Mae’r wybodaeth ar y dudalen hon yn dangos i chi sut y gwariwyd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol. Nid yw hyn yn cynnwys trethi anuniongyrchol megis TAW a thollau eraill.
+paye.ats.treasury_spending.table.Welfare=Lles
+paye.ats.treasury_spending.table.Health=Iechyd
+paye.ats.treasury_spending.table.StatePensions=Pensiynau’r Wladwriaeth
+paye.ats.treasury_spending.table.Education=Addysg
+paye.ats.treasury_spending.table.NationalDebtInterest=Llog ar y ddyled wladol
+paye.ats.treasury_spending.table.Defence=Amddiffyn
+paye.ats.treasury_spending.table.Transport=Cludiant
+paye.ats.treasury_spending.table.GovernmentAdministration=Gweinyddiaeth y Llywodraeth
+paye.ats.treasury_spending.table.Culture=Diwylliant, megis chwaraeon, llyfrgelloedd, amgueddfeydd
+paye.ats.treasury_spending.table.Environment=Yr amgylchedd
+paye.ats.treasury_spending.table.HousingAndUtilities=Tai a gwasanaethau cyhoeddus, megis goleuadau stryd
+paye.ats.treasury_spending.table.BusinessAndIndustry=Busnes a diwydiant
+paye.ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at gyllideb yr UE
+paye.ats.treasury_spending.table.OverseasAid=Cymorth tramor
+paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a diogelwch cyhoeddus
+paye.ats.treasury_spending.para2=Mae’r holl ffigurau wedi’u talgrynnu i’r bunt agosaf.
+paye.ats.treasury_spending.para1=Mae’r ffigurau hyn yn dangos sut mae’r llywodraeth wedi gwario arian ar draws y DU gyfan, gan gynnwys gwariant gan y gweinyddiaethau datganoledig.
+paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">gael am eich treth a’ch gwariant cyhoeddus yn yr Alban</a> ar wefan Llywodraeth yr Alban.
+paye.ats.treasury_spending.para3=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
+paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
+paye.ats.treasury_spending.total=Cyfanswm
+
+# Paye ATS - no ats page
+#===========================================================
+paye.ats.no_ats.title=Nid oes Crynodeb Treth Blynyddol gennych ar gyfer y flwyddyn hon
+paye.ats.no_ats.heading=Eich Crynodeb Treth Blynyddol
+paye.ats.no_ats.paragraph=Nid oes Crynodeb Treth Blynyddol gennych ar gyfer y flwyddyn hon
+
+# Paye ATS - Income Tax and NICs page
+#===========================================================
+paye.ats.total_income_tax.title=Treth Incwm a chyfraniadau Yswiriant Gwladol
+paye.ats.total_income_tax.introParagraph=Mae hyn yn dangos sut y cyfrifwyd eich treth.
+paye.ats.total_income_tax.scottish_income_tax=Treth Incwm yn yr Alban
+paye.ats.total_income_tax.scottish_starter_rate=Cyfradd cychwyn
+paye.ats.total_income_tax.scottish_basic_rate=Cyfradd sylfaenol
+paye.ats.total_income_tax.scottish_intermediate_rate=Cyfradd ganolradd
+paye.ats.total_income_tax.scottish_higher_rate=Cyfradd uwch
+paye.ats.total_income_tax.uk_income_tax=Treth Incwm yn y DU
+paye.ats.total_income_tax.income_tax=Treth Incwm
+paye.ats.total_income_tax.basic_rate_income_tax=Treth Incwm cyfradd sylfaenol
+paye.ats.total_income_tax.higher_rate_income_tax=Treth Incwm cyfradd uwch
+paye.ats.total_income_tax.ordinary_rate=Treth ar ddifidendau cyfradd sylfaenol
+paye.ats.total_income_tax.upper_rate=Treth ar ddifidendau cyfradd uwch
+paye.ats.adjustments=Addasiad
+paye.ats.adjustments.less_tax_adjustment_previous_year=Llai addasiad treth o flwyddyn gynharach
+paye.ats.adjustments.marriage_allowance_received_amount=Llai Lwfans Priodasol a gafwyd
+paye.ats.adjustments.married_couples_allowance_adjustment=Llai Lwfans Pâr Priod
+paye.ats.adjustments.tax_underpaid_previous_year=Treth a dandalwyd mewn blwyddyn flaenorol
+paye.ats.national_insurance.title=Cyfraniadau Yswiriant Gwladol
+paye.ats.total_income_tax_national_insurance.title=Cyfanswm Treth Incwm a chyfraniadau Yswiriant Gwladol
+paye.ats.total_national_insurance_employer_contribution.title=Yn ogystal, talodd eich cyflogwr £{0} mewn cyfraniadau Yswiriant Gwladol.
+generic.at=ar
+
+# Paye ATS - your taxable page
+#===========================================================
+paye.ats.income_before_tax.title=Incwm trethadwy
+paye.ats.income_before_tax.intro=Rydym wedi cyfrifo hwn gan ddefnyddio’r wybodaeth a roddwyd i ni gennych chi, eich cyflogwyr, neu ffynonellau eraill megis darparwyr pensiwn a banciau neu gymdeithasau adeiladu.
+paye.ats.income_before_tax.table_caption=Eich incwm trethadwy
+paye.ats.income_before_tax.income_from_employment=Cyflogaeth
+paye.ats.income_before_tax.state_pension=Pensiwn y Wladwriaeth
+paye.ats.income_before_tax.other_pension_income=Incwm pensiwn arall
+paye.ats.income_before_tax.personal_pension_income=Pensiwn personol
+paye.ats.income_before_tax.taxable_state_benefits=Budd-daliadau trethadwy’r Wladwriaeth
+paye.ats.income_before_tax.other_income=Incwm arall (gan gynnwys llog)
+paye.ats.income_before_tax.benefits_from_employment=Buddiannau o gyflogaeth
+paye.ats.income_before_tax.total_income_before_tax=Eich incwm cyn treth
+
+# Paye ATS - tax free amount page
+#===========================================================
+paye.ats.tax_free_amount.title=Swm rhydd o dreth
+paye.ats.tax_free_amount.description=Disgrifiad
+paye.ats.tax_free_amount.amount=Swm
+paye.ats.tax_free_amount.personal_tax_free_amount=Lwfans Personol
+paye.ats.tax_free_amount.marriage_allowance_transferred_amount=Lwfans Priodasol wedi’i drosglwyddo
+paye.ats.tax_free_amount.other_allowances_amount=Lwfansau, didyniadau a threuliau eraill
+paye.ats.tax_free_amount.total_tax_free_amount=Cyfanswm yn rhydd o dreth
+paye.ats.tax_free_amount.income_before_tax=Incwm cyn treth
+paye.ats.tax_free_amount.tax_free_amount=Llai eich swm rhydd o dreth
+paye.ats.tax_free_amount.total_tax_liable=Rydych yn talu treth ar y canlynol
+
+
 

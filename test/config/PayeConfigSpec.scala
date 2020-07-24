@@ -17,42 +17,92 @@
 package config
 
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.play.test.UnitSpec
 
-class PayeConfigSpec extends UnitSpec with MockitoSugar {
+class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
+  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
 
   "PayeConfig" should {
     "retrieve spend categories in order for a valid year" in {
       val config = new PayeConfig {
-        override protected val configPath: String = "paye_config.conf"
-        override val payeYear: Int = 2019
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
       }
 
       val expected = List(
-        "welfare",
-        "health",
-        "pension",
-        "education",
-        "defence",
-        "national_debt_interest",
-        "transport",
-        "criminal_justice",
-        "business_and_industry",
-        "government_administration",
-        "housing_and_utilities",
-        "environment",
-        "culture",
-        "overseas_aid",
-        "uk_contribution_to_eu_budget"
+        "Welfare",
+        "Health",
+        "StatePensions",
+        "Education",
+        "Defence",
+        "NationalDebtInterest",
+        "Transport",
+        "PublicOrderAndSafety",
+        "BusinessAndIndustry",
+        "GovernmentAdministration",
+        "HousingAndUtilities",
+        "Environment",
+        "Culture",
+        "OverseasAid",
+        "UkContributionToEuBudget"
       )
 
       config.spendCategories shouldBe expected
     }
 
+    "retrieve scottish tax band keys in order for a valid year" in {
+      val config = new PayeConfig {
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
+      }
+
+      val expected = List(
+        "scottish_starter_rate",
+        "scottish_basic_rate",
+        "scottish_intermediate_rate",
+        "scottish_higher_rate"
+      )
+
+      config.scottishTaxBandKeys shouldBe expected
+    }
+
+    "retrieve UK tax band keys in order for a valid year" in {
+      val config = new PayeConfig {
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
+      }
+
+      val expected = List(
+        "basic_rate_income_tax",
+        "higher_rate_income_tax",
+        "ordinary_rate",
+        "upper_rate"
+      )
+
+      config.ukTaxBandKeys shouldBe expected
+    }
+
+    "retrieve adjustment keys in order for a valid year" in {
+      val config = new PayeConfig {
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2018
+      }
+
+      val expected = List(
+        "less_tax_adjustment_previous_year",
+        "marriage_allowance_received_amount",
+        "married_couples_allowance_adjustment",
+        "tax_underpaid_previous_year"
+      )
+
+      config.adjustmentsKeys shouldBe expected
+    }
+
     "throw an exception for an invalid year" in {
       val config = new PayeConfig {
-        override protected val configPath: String = "paye_config.conf"
-        override val payeYear: Int = 2018
+        override protected val configPath: String = "paye.conf"
+        override val payeYear: Int = 2019
       }
 
       assertThrows[RuntimeException]{config.spendCategories}

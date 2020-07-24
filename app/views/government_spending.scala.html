@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@(viewModel: view_models.GovernmentSpend, percent: (Double, Double, Double), actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@(viewModel: view_models.GovernmentSpend, percent: (Double, Double, Double), actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
     @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
@@ -36,7 +37,7 @@
             <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
         </div>
     }
-    @if(!actingAsAttorney.isDefined){
+    @if(actingAsAttorney.isEmpty){
         <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
     }
 
@@ -74,7 +75,7 @@
                 </thead>
                 <tbody>
 
-                @viewModel.govSpendAmountData.toList.filter(  _._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage).map {
+                @viewModel.filteredDataWithHigherTransport.map {
                     case (key, value) => {
                         @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
                         <tr>

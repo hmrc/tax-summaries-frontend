@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, GovernmentSpendingOutputWrapper}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -24,14 +25,7 @@ import view_models.GovernmentSpend
 
 import scala.concurrent.Future
 
-object GovernmentSpendService extends GovernmentSpendService {
-  override val atsService = AtsService
-  override val atsYearListService = AtsYearListService
-}
-
-trait GovernmentSpendService {
-  def atsService: AtsService
-  def atsYearListService: AtsYearListService
+class GovernmentSpendService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
   def getGovernmentSpendData(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)

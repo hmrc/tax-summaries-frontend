@@ -16,22 +16,15 @@
 
 package services
 
+import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.Allowances
-
 import scala.concurrent.Future
 
-object AllowanceService extends AllowanceService {
-  override val atsService = AtsService
-  override val atsYearListService = AtsYearListService
-}
-
-trait AllowanceService {
-  def atsService: AtsService
-  def atsYearListService: AtsYearListService
+class AllowanceService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
   def getAllowances(taxYear: Int)(implicit request: AuthenticatedRequest[_], hc: HeaderCarrier): Future[GenericViewModel] = {
     atsService.createModel(taxYear, allowanceDataConverter)

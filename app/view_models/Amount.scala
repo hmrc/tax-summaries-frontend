@@ -20,8 +20,9 @@ import java.text.NumberFormat
 import java.util.Locale
 
 import play.api.libs.json.Json
+import utils.BigDecimalUtils
 
-case class Amount(amount: BigDecimal, currency: String) {
+case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils {
 
   private def format(
     decimalNumber: Int,
@@ -35,7 +36,11 @@ case class Amount(amount: BigDecimal, currency: String) {
 
   override def toString = format(0, BigDecimal.RoundingMode.DOWN)
 
-  def isZero = amount == BigDecimal(0)
+  def toHalfRoundedUpAmount = format(0, BigDecimal.RoundingMode.HALF_UP)
+
+  def isZero = amount === BigDecimal(0)
+
+  def isZeroOrLess = isZero || amount < BigDecimal(0)
 
   val nonZero: Boolean = !isZero
 
@@ -53,4 +58,7 @@ object Amount {
 
   val empty: Amount = gbp(0)
   def gbp(value: BigDecimal): Amount = Amount(value, "GBP")
+
+  def apply(amount: Option[Amount]): Amount = amount.getOrElse(empty)
 }
+

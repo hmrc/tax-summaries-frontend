@@ -16,74 +16,68 @@
 
 package controllers
 
-import config.AppFormPartialRetriever
-import controllers.auth.{AuthAction, AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import view_models.NoATSViewModel
-
 import scala.concurrent.Future
 
-class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with I18nSupport {
-
-  override def messagesApi: MessagesApi = fakeApplication.injector.instanceOf[MessagesApi]
+class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
   val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
 
-  trait TestController extends AtsMainController {
-    override lazy val summaryService = mock[SummaryService]
-    override lazy val auditService = mock[AuditService]
-    implicit lazy val formPartialRetriever: FormPartialRetriever = AppFormPartialRetriever
-    override val authAction: AuthAction = FakeAuthAction
-    when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
+  val mockSummaryService = mock[SummaryService]
+  val mockAuditService = mock[AuditService]
 
+  def sut = new AtsMainController(mockSummaryService, mockAuditService, FakeAuthAction,mcc)
+
+  override def beforeEach(): Unit = {
+    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+    ) thenReturn Future.successful(baseModel)
   }
 
   "Calling Index Page" should {
 
-    "return a successful response for a valid request" in new TestController {
-      val result =  Future.successful(show(request))
+    "return a successful response for a valid request" in {
+      val result =  Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("ats.index.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
     }
 
-    "display an error page for an invalid request" in new TestController {
-      val result = Future.successful(show(badRequest))
+    "display an error page for an invalid request" in {
+      val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in new TestController {
+    "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
 
     }
 
-    "have the right user data in the view" in new TestController {
+    "have the right user data in the view" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -97,24 +91,24 @@ class ATSMainControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mocki
       document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
     }
 
-    "display the right years" in new TestController {
+    "display the right years" in {
 
       val model = baseModel.copy(
         year = 2015
       )
 
-      when(summaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
       document.getElementById("index-page-header").text should include("2015")
     }
 
-    "show 'Landing page' page with a correct breadcrumb" in new TestController {
+    "show 'Landing page' page with a correct breadcrumb" in {
 
-      val result = Future.successful(show(request))
+      val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")

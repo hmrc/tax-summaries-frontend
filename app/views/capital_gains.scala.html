@@ -16,9 +16,10 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import config.ApplicationConfig
 @import utils.ViewUtils._
 
-@(viewModel: view_models.CapitalGains, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever)
+@(viewModel: view_models.CapitalGains, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
   @includes.taxs_breadcrumb(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.capital_gains_tax.subtitle", viewModel.taxYear)
