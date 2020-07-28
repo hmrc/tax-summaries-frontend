@@ -42,20 +42,20 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 @fullTitle = {@title - @Messages("generic.ats.browser.title")}
 
 @linkElement = {
-    <!--[if gt IE 8]><!--><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs.css")' /><!--<![endif]-->
-    <!--[if IE 6]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie6.css")' /><![endif]-->
-    <!--[if IE 7]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie7.css")' /><![endif]-->
-    <!--[if IE 8]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.at("stylesheets/taxs-ie8.css")' /><![endif]-->
-    <link rel='stylesheet' href='@controllers.routes.Assets.at("stylesheets/magna-charta/magna-charta.css")' />
-    <link rel='stylesheet' media='print' href='@controllers.routes.Assets.at("stylesheets/taxs-print.css")' />
+    <!--[if gt IE 8]><!--><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs.css")' /><!--<![endif]-->
+    <!--[if IE 6]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs-ie6.css")' /><![endif]-->
+    <!--[if IE 7]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs-ie7.css")' /><![endif]-->
+    <!--[if IE 8]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs-ie8.css")' /><![endif]-->
+    <link rel='stylesheet' href='@controllers.routes.Assets.versioned("stylesheets/magna-charta/magna-charta.css")' />
+    <link rel='stylesheet' media='print' href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")' />
 }
 
 @scriptElement = {
-    <script src='@controllers.routes.Assets.at("javascripts/taxs.js")'></script>
-    <script src='@controllers.routes.Assets.at("javascripts/magna-charta.js")'></script>
-    <script src='@routes.Assets.at("javascripts/jquery.min.js")'></script>
-    <script src='@routes.Assets.at("javascripts/jquery-ui.min.js")'></script>
-    <script src='@routes.Assets.at("javascripts/details.polyfill.js")'></script>
+    <script src='@controllers.routes.Assets.versioned("javascripts/taxs.js")'></script>
+    <script src='@controllers.routes.Assets.versioned("javascripts/magna-charta.js")'></script>
+    <script src='@routes.Assets.versioned("javascripts/jquery.min.js")'></script>
+    <script src='@routes.Assets.versioned("javascripts/jquery-ui.min.js")'></script>
+    <script src='@routes.Assets.versioned("javascripts/details.polyfill.js")'></script>
 }
 
 @headScript = {
