@@ -4,6 +4,8 @@
 @import 'govuk/_typography.scss';
 @import 'govuk/_helpers.scss';
 @import 'govuk/_panels.scss';
+@import 'govuk/focus';
+@import 'govuk/palette';
 @import 'govuk/design-patterns/_buttons.scss';
 @import 'govuk/design-patterns/_alpha-beta.scss';
 @import 'bar-chart/_bar-chart.scss';
@@ -74,22 +76,38 @@ $assets_path: /annual-tax-summary/assets/images;
     max-width: 960px;
 
     li {
-
       @include core-16;
-
-      margin-left: 0;
-      margin-right: 0.5em;
-      margin-bottom: 0.4em;
-      padding-right: 1em;
-      background-image: url("#{$assets_path}/separator.png");
-      background-position: 100% 50%;
-      background-repeat: no-repeat;
-      float: left;
-      list-style: none;
+      display: inline-block;
+      position: relative;
+      margin-bottom: 5px;
+      font-size: 16px;
+      margin-left: 10px;
+      padding-left: 15.655px;
 
       &:last-child {
         margin-right: 0;
         background-image: none;
+      }
+
+      &:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -3.31px;
+        width: 7px;
+        height: 7px;
+        margin: auto 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+        border: solid;
+        border-width: 1px 1px 0 0;
+        border-color: #626a6e;
+      }
+      &:first-child:before {
+        display:none;
       }
 
       a {
