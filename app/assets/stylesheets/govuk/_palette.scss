@@ -238,13 +238,13 @@ button:active,
 .error-summary .error-summary-list a,
 .error-summary .error-summary-list .link-style,
 .error-summary .error-summary-list .button--link-style {
-  color: #d4351c;
+  color: $red;
 }
 .email-form-errors .error-notification,
 .attorneyBanner--client-request-rejected,
 .business-tax .content__body .flag.flag--urgent,
 .form-group-error {
-  border-left-color: #d4351c;
+  border-left-color: $red;
 }
 .business-tax .alert--failure,
 .form-control-error,
@@ -252,11 +252,11 @@ textarea.form-control-error,
 input.form-control-error[type="text"],
 input.form-control-error[type="password"],
 .error-summary {
-  border-color: #d4351c;
+  border-color: $red;
 }
 // override for AF
 .form-control-error.form-control-error.form-control-error {
-  border-color: #d4351c;
+  border-color: $red;
 }
 
 // confirmation panel

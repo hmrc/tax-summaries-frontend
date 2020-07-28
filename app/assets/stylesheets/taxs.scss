@@ -3,9 +3,10 @@
 @import 'govuk/_colours.scss';
 @import 'govuk/_typography.scss';
 @import 'govuk/_helpers.scss';
+@import 'govuk/_errors.scss';
 @import 'govuk/_panels.scss';
-@import 'govuk/focus';
-@import 'govuk/palette';
+@import 'govuk/_focus.scss';
+@import 'govuk/_palette.scss';
 @import 'govuk/design-patterns/_buttons.scss';
 @import 'govuk/design-patterns/_alpha-beta.scss';
 @import 'bar-chart/_bar-chart.scss';
