@@ -21,3 +21,9 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.16")
 
 addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.5.1")
+
+addSbtPlugin("net.ground5hark.sbt" % "sbt-concat" % "0.1.9")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-uglify" % "1.0.3")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.1")
