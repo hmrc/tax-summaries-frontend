@@ -2,11 +2,6 @@ import sbt._
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import com.typesafe.sbt.web.Import._
-import com.typesafe.sbt.web.Import.WebKeys._
-import net.ground5hark.sbt.concat.Import._
-import com.typesafe.sbt.uglify.Import._
-import com.typesafe.sbt.digest.Import._
 
 val appName = "tax-summaries-frontend"
 
@@ -47,7 +42,5 @@ lazy val microservice = Project(appName, file("."))
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo,
       "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"),
-    pipelineStages := Seq(digest),
-    pipelineStages in Assets := Seq(concat),
     scalafmtOnCompile := true
   )
