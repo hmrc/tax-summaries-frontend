@@ -440,6 +440,26 @@ article table {
   }
 }
 
+.paye-ats-data-table {
+  thead {
+    th {
+      font-weight: 700;
+      &:last-child {
+        font-weight: 700;
+      }
+    }
+  }
+  th {
+    font-size: 19px;
+    font-weight: 400;
+  }
+}
+
+.paye-ats-data-table tfoot th, .paye-ats-data-table tfoot td {
+  font-weight: 700;
+  font-size: 19px;
+  padding: 15px 15px 15px 0;
+}
 /*= Tax summary index page
 ----------------------------------------------*/
 #taxable-income,
