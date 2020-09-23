@@ -339,7 +339,7 @@ h1 {
   padding-top: 10px;
   padding-bottom: 10px;
   margin: 0;
-  padding: 25px 0 15px !important; }
+  padding: 25px 0 15px; }
   @media (max-width: 640px) {
     h1 {
       font-size: 32px;
@@ -832,28 +832,16 @@ a, a:visited {color:#005ea5;}
     border-bottom: 0 none;
 }
 
-.validation-summary {
-    border: 5px solid #b10e1e;
-    margin-top: 30px;
-    padding: 20px 15px 15px;
-}
-.validation-summary h1 {
-    margin-top: 10px;
-    padding:0 !important;
-}
-.form-field--error {
-    border-left: 5px solid #b10e1e;
-    margin: 0 0 0.75em;
-    padding-bottom: 0;
+.form-group-error h1 {
     padding-top: 0;
 }
 
-#errors ul li a {
-    font-weight: 700;
+.form-field--error {
+    border-left: 5px solid #b10e1e;
+    padding-bottom: 0;
 }
-.validation-summary-message a, .validation-message a, p.field-error {
-    color: #b10e1e;
-    font-size: 19px;
+
+#errors ul li a {
     font-weight: 700;
 }
 
