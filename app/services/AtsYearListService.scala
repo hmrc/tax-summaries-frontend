@@ -24,23 +24,19 @@ import utils.GenericViewModel
 import view_models.{AtsList, TaxYearEnd}
 import scala.concurrent.Future
 
-
 class AtsYearListService @Inject()(atsListService: AtsListService) {
 
-  def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+  def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsListService.createModel(atsListDataConverter)
-  }
 
-  def storeSelectedAtsTaxYear(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Int] = {
+  def storeSelectedAtsTaxYear(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Int] =
     atsListService.storeSelectedTaxYear(taxYear)
-  }
 
-  private[services] def atsListDataConverter(atsListData: AtsListData): AtsList = {
-      AtsList(
-        atsListData.utr,
-        atsListData.taxPayer.get.taxpayer_name.get("forename"),
-        atsListData.taxPayer.get.taxpayer_name.get("surname"),
-        atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
-      )
-    }
+  private[services] def atsListDataConverter(atsListData: AtsListData): AtsList =
+    AtsList(
+      atsListData.utr,
+      atsListData.taxPayer.get.taxpayer_name.get("forename"),
+      atsListData.taxPayer.get.taxpayer_name.get("surname"),
+      atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+    )
 }

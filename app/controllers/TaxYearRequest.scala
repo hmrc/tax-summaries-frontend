@@ -28,23 +28,25 @@ import view_models.NoATSViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,ec: ExecutionContext)
-  extends TaxsController(mcc)(formPartialRetriever, appConfig, ec) {
+abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents)(
+  implicit formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxsController(mcc)(formPartialRetriever, appConfig, ec) {
 
-  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(implicit request: AuthenticatedRequest[_]):
-    Future[Either[ErrorResponse, GenericViewModel]] = {
-      TaxYearUtil.extractTaxYear match {
-        case Right(taxYear) => genericViewModel(taxYear).map(Right(_))
-        case Left(errorResponse) => Future.successful(Left(errorResponse))
+  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
+    TaxYearUtil.extractTaxYear match {
+      case Right(taxYear)      => genericViewModel(taxYear).map(Right(_))
+      case Left(errorResponse) => Future.successful(Left(errorResponse))
     }
-  }
 
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
-      case Right(result: ViewModel) => obtainResult(result)
-      case Left(InvalidTaxYear) => BadRequest(views.html.errors.generic_error())
+      case Right(result: ViewModel)     => obtainResult(result)
+      case Left(InvalidTaxYear)         => BadRequest(views.html.errors.generic_error())
     }
   }
 }

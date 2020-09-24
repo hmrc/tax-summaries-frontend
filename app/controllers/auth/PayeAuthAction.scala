@@ -29,16 +29,19 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
-                                   cc : MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
-  extends PayeAuthAction with AuthorisedFunctions {
+class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+  implicit ec: ExecutionContext,
+  appConfig: ApplicationConfig)
+    extends PayeAuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
   val payeShuttered: Boolean = appConfig.payeShuttered
 
-  override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] =
     if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable()))
     } else {
@@ -62,32 +65,33 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
             appConfig.payeLoginUrl,
             Map(
               "continue" -> Seq(appConfig.payeLoginCallbackUrl),
-              "origin" -> Seq(appConfig.appName)
+              "origin"   -> Seq(appConfig.appName)
             )
           )
         }
 
         case _: InsufficientConfidenceLevel => {
-      upliftConfidenceLevel(request)
-    }case e: Exception => {
+          upliftConfidenceLevel(request)
+        }
+        case e: Exception => {
           Logger.error(s"Exception in PayeAuthAction: $e", e)
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised())
         }
       }
     }
-  }
 
   private def upliftConfidenceLevel(request: Request[_]) =
-      Redirect(
-        appConfig.identityVerificationUpliftUrl,
-        Map(
-          "origin"          -> Seq(appConfig.appName),
-          "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-          "completionURL" -> Seq(appConfig.payeLoginCallbackUrl),
-          "failureURL" -> Seq(appConfig.iVUpliftFailureCallback)
-        )
+    Redirect(
+      appConfig.identityVerificationUpliftUrl,
+      Map(
+        "origin"          -> Seq(appConfig.appName),
+        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
+        "completionURL"   -> Seq(appConfig.payeLoginCallbackUrl),
+        "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
       )
+    )
 }
 
 @ImplementedBy(classOf[PayeAuthActionImpl])
-trait PayeAuthAction extends ActionBuilder[PayeAuthenticatedRequest, AnyContent] with ActionFunction[Request, PayeAuthenticatedRequest]
+trait PayeAuthAction
+    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent] with ActionFunction[Request, PayeAuthenticatedRequest]

@@ -24,8 +24,11 @@ import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
 
 @Singleton
-class ApplicationConfig @Inject()(environment: Environment, config: ServicesConfig, runMode: RunMode, configuration: Configuration) {
-
+class ApplicationConfig @Inject()(
+  environment: Environment,
+  config: ServicesConfig,
+  runMode: RunMode,
+  configuration: Configuration) {
 
   protected def mode: Mode = environment.mode
 
@@ -46,8 +49,10 @@ class ApplicationConfig @Inject()(environment: Environment, config: ServicesConf
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   // Beta feedback config
-  lazy val betaFeedbackUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.authenticated")
-  lazy val betaFeedbackUnauthenticatedUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf("contact-frontend.beta-feedback-url.unauthenticated")
+  lazy val betaFeedbackUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf(
+    "contact-frontend.beta-feedback-url.authenticated")
+  lazy val betaFeedbackUnauthenticatedUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf(
+    "contact-frontend.beta-feedback-url.unauthenticated")
 
   // Analytics config
   lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))

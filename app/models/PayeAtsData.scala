@@ -18,14 +18,14 @@ package models
 
 import play.api.libs.json.Json
 
-case class PayeAtsData(taxYear: Int,
-                        income_tax: Option[DataHolder],
-                        summary_data: Option[DataHolder],
-                        income_data: Option[DataHolder],
-                        allowance_data: Option[DataHolder],
-                        gov_spending: Option[GovernmentSpendingOutputWrapper])
+case class PayeAtsData(
+  taxYear: Int,
+  income_tax: Option[DataHolder],
+  summary_data: Option[DataHolder],
+  income_data: Option[DataHolder],
+  allowance_data: Option[DataHolder],
+  gov_spending: Option[GovernmentSpendingOutputWrapper])
 
 object PayeAtsData {
   implicit val reads = Json.reads[PayeAtsData]
 }
-

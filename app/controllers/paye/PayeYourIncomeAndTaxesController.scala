@@ -31,24 +31,24 @@ import view_models.paye.PayeYourIncomeAndTaxes
 
 import scala.concurrent.ExecutionContext
 
-
-
-class PayeYourIncomeAndTaxesController @Inject()(payeAtsService: PayeAtsService,
-                                                 payeAuthAction: PayeAuthAction,
-                                                 mcc : MessagesControllerComponents)
-                                                (implicit formPartialRetriever: FormPartialRetriever,
-                                                 appConfig: ApplicationConfig,
-                                                 ec : ExecutionContext) extends FrontendController(mcc) with I18nSupport{
+class PayeYourIncomeAndTaxesController @Inject()(
+  payeAtsService: PayeAtsService,
+  payeAuthAction: PayeAuthAction,
+  mcc: MessagesControllerComponents)(
+  implicit formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
   val payeYear = appConfig.payeYear
-  def show: Action[AnyContent] = payeAuthAction.async {
-    implicit request: PayeAuthenticatedRequest[_] => {
-      implicit  val lang : Lang = request.lang
+  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
+    {
+      implicit val lang: Lang = request.lang
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
           PayeYourIncomeAndTaxes.buildViewModel(successResponse, payeYear) match {
             case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
-            case _  => {
+            case _ => {
               val exception = new InternalServerException("Missing Paye ATS data")
               Logger.error(s"Internal server error ${exception.getMessage}", exception)
               InternalServerError(exception.getMessage)

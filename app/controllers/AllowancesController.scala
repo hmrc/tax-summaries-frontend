@@ -33,7 +33,10 @@ class AllowancesController @Inject()(
   allowanceService: AllowanceService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
     extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedAllowance = authAction.async { request =>
@@ -47,7 +50,7 @@ class AllowancesController @Inject()(
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 

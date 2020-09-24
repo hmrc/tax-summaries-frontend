@@ -67,23 +67,27 @@ case class TotalIncomeTax(
   def additionalRateRate = additionalRateRateRate.percent
   def taxYearFrom = (year - 1).toString
 
-  def showIncomeTaxTable = startingRateForSavings.nonZero ||
-    basicRateIncomeTaxAmount.nonZero ||
-    higherRateIncomeTaxAmount.nonZero ||
-    additionalRateIncomeTaxAmount.nonZero
+  def showIncomeTaxTable =
+    startingRateForSavings.nonZero ||
+      basicRateIncomeTaxAmount.nonZero ||
+      higherRateIncomeTaxAmount.nonZero ||
+      additionalRateIncomeTaxAmount.nonZero
 
   def showDividendsTable = ordinaryRate.nonZero || upperRate.nonZero || additionalRate.nonZero
 
-  def showAdjustmentsTable = otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
+  def showAdjustmentsTable =
+    otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
 
-  def restOfUkTotal: Amount = {
-    Amount(savingsTax.savingsLowerRateTax.amount
-      + savingsTax.savingsHigherRateTax.amount
-      + savingsTax.savingsAdditionalRateTax.amount
-      + ordinaryRateAmount.amount
-      + upperRateAmount.amount
-      + additionalRateAmount.amount, savingsTax.savingsLowerRateTaxAmount.currency)
-  }
+  def restOfUkTotal: Amount =
+    Amount(
+      savingsTax.savingsLowerRateTax.amount
+        + savingsTax.savingsHigherRateTax.amount
+        + savingsTax.savingsAdditionalRateTax.amount
+        + ordinaryRateAmount.amount
+        + upperRateAmount.amount
+        + additionalRateAmount.amount,
+      savingsTax.savingsLowerRateTaxAmount.currency
+    )
 }
 
 case class ScottishTax(
@@ -138,8 +142,8 @@ case class SavingsTax(
 
   val hasTax: Boolean =
     savingsLowerRateTax.nonZero ||
-    savingsHigherRateTax.nonZero ||
-    savingsAdditionalRateTax.nonZero
+      savingsHigherRateTax.nonZero ||
+      savingsAdditionalRateTax.nonZero
 }
 
 object SavingsTax {

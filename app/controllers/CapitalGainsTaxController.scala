@@ -33,8 +33,11 @@ class CapitalGainsTaxController @Inject()(
   capitalGainsService: CapitalGainsService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+  mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedCapitalGains: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -47,7 +50,7 @@ class CapitalGainsTaxController @Inject()(
     extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(views.html.capital_gains(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

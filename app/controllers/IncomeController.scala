@@ -29,9 +29,15 @@ import view_models.IncomeBeforeTax
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction,
-                                 mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+class IncomeController @Inject()(
+  incomeService: IncomeService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -44,7 +50,7 @@ class IncomeController @Inject()(incomeService: IncomeService, val auditService:
     extractViewModelWithTaxYear(incomeService.getIncomeData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(
       views.html
         .income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))

@@ -33,8 +33,11 @@ class TotalIncomeTaxController @Inject()(
   totalIncomeTaxService: TotalIncomeTaxService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+  mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedTotalIncomeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -47,7 +50,7 @@ class TotalIncomeTaxController @Inject()(
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit  val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(
       views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }

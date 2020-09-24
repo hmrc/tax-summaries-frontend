@@ -29,23 +29,27 @@ import view_models.Summary
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NicsController @Inject()(summaryService: SummaryService,
-                               val auditService: AuditService,
-                               authAction: AuthAction,
-                               mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+class NicsController @Inject()(
+  summaryService: SummaryService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
-  def authorisedNics: Action[AnyContent] = authAction.async {
-    request => show(request)
+  def authorisedNics: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = Summary
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit  val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(views.html.nics(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

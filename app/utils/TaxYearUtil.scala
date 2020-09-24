@@ -16,7 +16,6 @@
 
 package utils
 
-
 import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 
@@ -24,7 +23,7 @@ object TaxYearUtil {
 
   private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
 
-  def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] = {
+  def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] =
     request.getQueryString("taxYear") match {
       case Some(taxYearPattern(year, _)) => {
         Right(year.toInt)
@@ -33,5 +32,4 @@ object TaxYearUtil {
         Left(InvalidTaxYear)
       }
     }
-  }
 }

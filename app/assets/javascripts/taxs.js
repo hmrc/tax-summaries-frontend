@@ -104,7 +104,7 @@
 
     });
 
-    $('#errors').focus();
+    $('.error-summary').focus();
 
   });
 })(window.jQuery)

@@ -34,13 +34,16 @@ import scala.concurrent.ExecutionContext
 class PayeAtsMainController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
-  mcc : MessagesControllerComponents)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec : ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport{
+  mcc: MessagesControllerComponents)(
+  implicit formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   val payeYear = appConfig.payeYear
 
   def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    implicit  val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
       case Right(_: PayeAtsData) => {

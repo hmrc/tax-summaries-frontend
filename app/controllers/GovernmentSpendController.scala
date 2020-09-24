@@ -33,8 +33,11 @@ class GovernmentSpendController @Inject()(
   governmentSpendService: GovernmentSpendService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc: MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+  mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -47,7 +50,7 @@ class GovernmentSpendController @Inject()(
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(
       views.html.government_spending(
         result,

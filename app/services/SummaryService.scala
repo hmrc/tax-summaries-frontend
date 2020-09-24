@@ -25,33 +25,34 @@ import view_models.Summary
 
 import scala.concurrent.Future
 
-class SummaryService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService){
+class SummaryService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
-  def getSummaryData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+  def getSummaryData(
+    taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, summaryConverter)
-  }
 
   private[services] def summaryConverter(atsData: AtsData): Summary = {
-      val summaryData: DataHolder = atsData.summary_data.get
+    val summaryData: DataHolder = atsData.summary_data.get
 
-      Summary(atsData.taxYear,
-        atsData.utr.get,
-        summaryData.payload.get("employee_nic_amount"),
-        summaryData.payload.get("total_income_tax_and_nics"),
-        summaryData.payload.get("your_total_tax"),
-        summaryData.payload.get("personal_tax_free_amount"),
-        summaryData.payload.get("total_tax_free_amount"),
-        summaryData.payload.get("total_income_before_tax"),
-        summaryData.payload.get("total_income_tax"),
-        summaryData.payload.get("total_cg_tax"),
-        summaryData.payload.get("taxable_gains"),
-        summaryData.payload.get("cg_tax_per_currency_unit"),
-        summaryData.payload.get("nics_and_tax_per_currency_unit"),
-        summaryData.rates.get("total_cg_tax_rate"),
-        summaryData.rates.get("nics_and_tax_rate"),
-        atsData.taxPayerData.get.taxpayer_name.get("title"),
-        atsData.taxPayerData.get.taxpayer_name.get("forename"),
-        atsData.taxPayerData.get.taxpayer_name.get("surname")
-      )
-    }
+    Summary(
+      atsData.taxYear,
+      atsData.utr.get,
+      summaryData.payload.get("employee_nic_amount"),
+      summaryData.payload.get("total_income_tax_and_nics"),
+      summaryData.payload.get("your_total_tax"),
+      summaryData.payload.get("personal_tax_free_amount"),
+      summaryData.payload.get("total_tax_free_amount"),
+      summaryData.payload.get("total_income_before_tax"),
+      summaryData.payload.get("total_income_tax"),
+      summaryData.payload.get("total_cg_tax"),
+      summaryData.payload.get("taxable_gains"),
+      summaryData.payload.get("cg_tax_per_currency_unit"),
+      summaryData.payload.get("nics_and_tax_per_currency_unit"),
+      summaryData.rates.get("total_cg_tax_rate"),
+      summaryData.rates.get("nics_and_tax_rate"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
+    )
+  }
 }

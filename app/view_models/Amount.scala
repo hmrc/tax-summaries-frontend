@@ -61,4 +61,3 @@ object Amount {
 
   def apply(amount: Option[Amount]): Amount = amount.getOrElse(empty)
 }
-

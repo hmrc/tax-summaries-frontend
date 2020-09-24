@@ -21,8 +21,9 @@ import com.google.inject.name.Named
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-class TAXSSessionCache @Inject()(val http: HttpClient, @Named("appName") appName: String)
-                                (implicit val appConfig: ApplicationConfig) extends SessionCache {
+class TAXSSessionCache @Inject()(val http: HttpClient, @Named("appName") appName: String)(
+  implicit val appConfig: ApplicationConfig)
+    extends SessionCache {
   override lazy val defaultSource: String = appName
   override lazy val baseUri: String = appConfig.sessionCacheHost
   override lazy val domain: String = appConfig.sessionCacheDomain

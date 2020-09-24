@@ -24,10 +24,13 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration, val environment: Environment)
-                            (implicit val formPartialRetriever: FormPartialRetriever,
-                             implicit val appConfig: ApplicationConfig) extends FrontendErrorHandler {
+class ErrorHandler @Inject()(
+  val messagesApi: MessagesApi,
+  val configuration: Configuration,
+  val environment: Environment)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  implicit val appConfig: ApplicationConfig)
+    extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =
     Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
@@ -43,6 +46,6 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Co
     views.html.errors.page_not_found_template()
   }
 
-   def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
+  def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
     app.configuration.getConfig(s"microservice.metrics")
 }

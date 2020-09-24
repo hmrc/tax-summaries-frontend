@@ -19,12 +19,12 @@ package view_models
 import play.api.data.Form
 import play.api.data.Forms._
 
-
 object AtsForms {
 
   val yearChoice = "year"
 
   val atsYearFormMapping: Form[TaxYearEnd] = Form(
-    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", {_.isDefined}))(TaxYearEnd.apply)(TaxYearEnd.unapply)
+    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", { _.isDefined }))(TaxYearEnd.apply)(
+      TaxYearEnd.unapply)
   )
 }

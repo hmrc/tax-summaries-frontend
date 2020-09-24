@@ -32,30 +32,38 @@ import utils._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class TaxsController @Inject()(mcc : MessagesControllerComponents)
-                                       (implicit ormPartialRetriever: FormPartialRetriever,
-                                        appConfig: ApplicationConfig,ec: ExecutionContext)
-                                        extends FrontendController(mcc) with AccountUtils
-          with AttorneyUtils with I18nSupport{
+abstract class TaxsController @Inject()(mcc: MessagesControllerComponents)(
+  implicit ormPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends FrontendController(mcc) with AccountUtils with AttorneyUtils with I18nSupport {
 
   def auditService: AuditService
 
   type ViewModel <: GenericViewModel
 
-  def obtainResult(data:ViewModel)(implicit request: AuthenticatedRequest[_]): Result
+  def obtainResult(data: ViewModel)(implicit request: AuthenticatedRequest[_]): Result
 
   def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result]
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     transformation recover {
       case error =>
         Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
         error match {
           case token_error: AgentTokenException =>
-            auditService.sendEvent(AuditTypes.Tx_FAILED, Map("userId" -> getAccountId(request), "error" -> token_error.message, "time" -> new Date().toString, "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")))
+            auditService.sendEvent(
+              AuditTypes.Tx_FAILED,
+              Map(
+                "userId"         -> getAccountId(request),
+                "error"          -> token_error.message,
+                "time"           -> new Date().toString,
+                "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")
+              )
+            )
             Ok(views.html.errors.token_error())
           case _ => Ok(views.html.errors.generic_error())
         }

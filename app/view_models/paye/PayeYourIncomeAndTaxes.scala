@@ -28,26 +28,28 @@ case class PayeYourIncomeAndTaxes(
   taxableIncome: Amount,
   totalIncomeTax: Amount,
   incomeAfterTaxNics: Amount,
-  averageTaxRate: String) extends TaxYearFormatting
+  averageTaxRate: String)
+    extends TaxYearFormatting
 
 object PayeYourIncomeAndTaxes {
 
-  def buildViewModel(payeAtsData: PayeAtsData , taxYear : Int): Option[PayeYourIncomeAndTaxes] = {
+  def buildViewModel(payeAtsData: PayeAtsData, taxYear: Int): Option[PayeYourIncomeAndTaxes] = {
 
     val taxableIncome = payeAtsData.allowance_data.flatMap { allowanceData =>
-      allowanceData.payload.flatMap { payload => {
-        payload.get("total_tax_free_amount") match {
-          case Some(amount) if amount == Amount.empty => payload.get("personal_tax_free_amount")
-          case _ => payload.get("total_tax_free_amount")
+      allowanceData.payload.flatMap { payload =>
+        {
+          payload.get("total_tax_free_amount") match {
+            case Some(amount) if amount == Amount.empty => payload.get("personal_tax_free_amount")
+            case _                                      => payload.get("total_tax_free_amount")
+          }
         }
-       }
       }
     }
 
     val totalIncomeTax = payeAtsData.gov_spending.map(govSpendingData => govSpendingData.totalAmount)
 
-    payeAtsData.summary_data.flatMap {
-      summaryData => {
+    payeAtsData.summary_data.flatMap { summaryData =>
+      {
         val averageTaxRate = summaryData.rates.map(rates => rates("nics_and_tax_rate"))
         summaryData.payload.map(
           payload => {
@@ -57,7 +59,8 @@ object PayeYourIncomeAndTaxes {
               Amount(taxableIncome),
               Amount(totalIncomeTax),
               Amount(payload.get("income_after_tax_and_nics")),
-              averageTaxRate.getOrElse(Rate.empty).percent.replaceAll("%", ""))
+              averageTaxRate.getOrElse(Rate.empty).percent.replaceAll("%", "")
+            )
           }
         )
       }

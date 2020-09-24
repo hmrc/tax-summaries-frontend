@@ -46,6 +46,6 @@ class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: Applicatio
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
     connectToAtsList(requestedUTR)
 
-  def connectToPayeATS(nino: Nino, taxYear : Int)(implicit hc : HeaderCarrier) : Future[HttpResponse] =
-    http.GET[HttpResponse](url("/taxs/"+ nino + "/" + taxYear + "/paye-ats-data"))
+  def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    http.GET[HttpResponse](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data"))
 }

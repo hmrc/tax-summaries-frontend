@@ -23,7 +23,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
 class AuthorityUtils @Inject()() {
 
-  def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
+  def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean =
     (AccountUtils.getAccount(request), agentToken) match {
       case (agentAccount, None) if (AccountUtils.isAgent(request)) =>
         true
@@ -32,13 +32,12 @@ class AuthorityUtils @Inject()() {
       case (account: SaUtr, _) =>
         SaUtr(utr) == account
     }
-  }
 
-  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean = {
+  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(
+    implicit request: AuthenticatedRequest[_]): Boolean =
     utr.fold { false } { checkUtr(_, agentToken) }
-  }
 
-  def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr = {
+  def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr =
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
       case taxsAgent: Uar =>
@@ -53,5 +52,4 @@ class AuthorityUtils @Inject()() {
         }
       case sa: SaUtr => sa
     }
-  }
 }

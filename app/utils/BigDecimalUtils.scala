@@ -20,8 +20,8 @@ trait BigDecimalUtils {
 
   implicit class Ops(bd: BigDecimal) {
 
-    def === (that: BigDecimal): Boolean = (bd - that).abs <= 1.0e-8 * bd.abs
+    def ===(that: BigDecimal): Boolean = (bd - that).abs <= 1.0e-8 * bd.abs
 
-    def !== (that: BigDecimal): Boolean = !(bd === that)
+    def !==(that: BigDecimal): Boolean = !(bd === that)
   }
 }

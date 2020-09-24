@@ -27,9 +27,10 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
-class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
-                              cc : MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
-  extends MinAuthAction with AuthorisedFunctions {
+class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+  implicit ec: ExecutionContext,
+  appConfig: ApplicationConfig)
+    extends MinAuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -53,14 +54,15 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
         ggSignIn,
         Map(
           "continue" -> Seq(callbackUrl),
-          "origin" -> Seq(appConfig.appName)
+          "origin"   -> Seq(appConfig.appName)
         )
       )
     }
-      
+
     case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
 }
 
 @ImplementedBy(classOf[MinAuthActionImpl])
-trait MinAuthAction extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+trait MinAuthAction
+    extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
