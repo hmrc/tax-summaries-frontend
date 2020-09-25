@@ -52,14 +52,15 @@ lazy val microservice = Project(appName, file("."))
     Concat.groups := Seq(
       "javascripts/ats-app.js" -> group(
         Seq(
-          "javascripts/details.polyfill.js",
           "javascripts/jquery.min.js",
           "javascripts/jquery-ui.min.js",
           "javascripts/magna-charta.js",
+          "javascripts/details.polyfill.js",
           "javascripts/taxs.js"))
     ),
-    pipelineStages := Seq(digest, uglify),
-    pipelineStages in Assets := Seq(concat),
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
+    pipelineStages := Seq(digest),
+    pipelineStages in Assets := Seq(concat, uglify),
     scalafmtOnCompile := true,
     includeFilter in uglify := GlobFilter("ats-*.js")
   )
