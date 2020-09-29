@@ -20,10 +20,13 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
+@import includes.paye.PayeMain
+
+@this(payeMain: PayeMain)
 
 @(viewModel:PayeTaxFreeAmount)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@includes.paye.paye_taxs_main(title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
+@payeMain(title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
 @helpers.back_link(Messages("generic.back"))
 

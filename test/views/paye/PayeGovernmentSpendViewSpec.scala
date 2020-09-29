@@ -22,15 +22,17 @@ import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
 import utils.TestConstants
 import views.ViewSpecBase
+import views.html.paye.PayeGovernmentSpendingView
 
 class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
 
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  lazy val payeGovernmentSpendingView: PayeGovernmentSpendingView = inject[PayeGovernmentSpendingView]
 
   "view" should {
     "have correct data and heading for given taxYear" in {
 
-      val view = views.html.paye.paye_government_spending(PayeAtsTestData.payeGovernmentSpendViewModel).body
+      val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel).body
       val document = Jsoup.parse(view)
 
       document.getElementById("Welfare").text() shouldBe "Welfare (23.5%)"
@@ -89,14 +91,14 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
     }
 
     "link to Scottish government spending page for Scottish users" in {
-      val view = views.html.paye.paye_government_spending(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true)).body
+      val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true)).body
       val document = Jsoup.parse(view)
 
       document.select("#scottish-spending-link a").attr("href") shouldBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {
-      val view = views.html.paye.paye_government_spending(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = false)).body
+      val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = false)).body
       val document = Jsoup.parse(view)
 
       document.select("#scottish-spending-link") shouldBe empty

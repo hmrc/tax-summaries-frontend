@@ -15,12 +15,17 @@
  *@
 
 @import config.ApplicationConfig
+@import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import includes.paye.PayeMain
 
-@()(implicit request: Request[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@this(payeMain: PayeMain)
 
-@includes.paye.paye_taxs_main(title = Messages("paye.ats.service_unavailable.title")) {
-<h1 class="heading-xlarge">@Messages("paye.ats.service_unavailable.heading")</h1>
-<p>@Messages("paye.ats.service_unavailable.paragraph")</p>
+@()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+
+@payeMain(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
+
+	<h1>@Messages("generic.error.html.title")</h1>
+	<p>@Html(Messages("generic.error.try.later"))</p>
+
 }
-

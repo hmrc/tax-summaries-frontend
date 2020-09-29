@@ -23,10 +23,12 @@ import utils.TestConstants
 import view_models.Amount
 import view_models.paye.{AmountRow, PayeTaxFreeAmount}
 import views.ViewSpecBase
+import views.html.paye.PayeTaxFreeAmountView
 
 class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase{
 
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount"))
+  lazy val payeTaxFreeAmountView = inject[PayeTaxFreeAmountView]
 
   "PayeTaxFreeAmountView" should {
     "display correct heading for given taxYear" in {
@@ -38,7 +40,7 @@ class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase{
         Amount.empty
       )
 
-      val view = views.html.paye.paye_tax_free_amount(viewModel).body
+      val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document
@@ -62,7 +64,7 @@ class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase{
         Amount.empty
       )
 
-      val view = views.html.paye.paye_tax_free_amount(viewModel).body
+      val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document.select("#adjustmentRows") should not be empty
@@ -82,7 +84,7 @@ class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase{
         Amount.empty
       )
 
-      val view = views.html.paye.paye_tax_free_amount(viewModel).body
+      val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document.select("#adjustmentRows") should not be empty
@@ -98,7 +100,7 @@ class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase{
         Amount.empty
       )
 
-      val view = views.html.paye.paye_tax_free_amount(viewModel).body
+      val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document.select("#adjustmentRows") shouldBe empty
@@ -116,7 +118,7 @@ class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase{
         Amount.empty
       )
 
-      val view = views.html.paye.paye_tax_free_amount(viewModel).body
+      val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document.select("#summaryRows") should not be empty

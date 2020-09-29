@@ -24,8 +24,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
+import views.html.errors._
 
-class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,mcc : MessagesControllerComponents)
+class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,
+                                     mcc : MessagesControllerComponents,
+                                     payeGenericErrorView: PayeGenericErrorView,
+                                     payeNoAtsErrorView: PayeNoAtsErrorView,
+                                     payeNotAuthorisedView: PayeNotAuthorisedView,
+                                     payeServiceUnavailableView: PayeServiceUnavailableView)
                                     (implicit formPartialRetriever: FormPartialRetriever,appConfig: ApplicationConfig)
                                      extends FrontendController(mcc) with I18nSupport{
   val payeYear = appConfig.payeYear
@@ -34,8 +40,8 @@ class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,mcc : Messag
     implicit request: PayeAuthenticatedRequest[_] =>{
       implicit  val lang : Lang = request.lang
       status match {
-        case INTERNAL_SERVER_ERROR => InternalServerError(views.html.errors.paye_generic_error())
-        case _ => BadGateway(views.html.errors.paye_generic_error())
+        case INTERNAL_SERVER_ERROR => InternalServerError(payeGenericErrorView())
+        case _ => BadGateway(payeGenericErrorView())
       }
     }
   }
@@ -43,21 +49,21 @@ class PayeErrorController  @Inject()(payeAuthAction: PayeAuthAction,mcc : Messag
   def authorisedNoAts: Action[AnyContent] = payeAuthAction {
     implicit request: PayeAuthenticatedRequest[_] => {
       implicit  val lang : Lang = request.lang
-      NotFound(views.html.errors.paye_no_ats_error(PayeAtsMain(payeYear)))
+      NotFound(payeNoAtsErrorView(PayeAtsMain(payeYear)))
     }
   }
 
   def notAuthorised: Action[AnyContent] = Action {
     implicit request: Request[_] => {
       implicit  val lang : Lang = request.lang
-      Ok(views.html.errors.paye_not_authorised())
+      Ok(payeNotAuthorisedView())
     }
   }
 
   def serviceUnavailable: Action[AnyContent] = Action {
     implicit request: Request[_] => {
       implicit  val lang : Lang = request.lang
-      Ok(views.html.errors.paye_service_unavailable())
+      Ok(payeServiceUnavailableView())
     }
   }
 }

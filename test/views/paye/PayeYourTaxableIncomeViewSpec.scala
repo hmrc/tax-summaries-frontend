@@ -23,6 +23,7 @@ import services.atsData.PayeAtsTestData
 import utils.TestConstants
 import view_models.paye.PayeYourTaxableIncome
 import views.ViewSpecBase
+import views.html.paye.PayeYourTaxableIncomeView
 
 class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
@@ -30,8 +31,10 @@ class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
   val payeYourTaxableIncomeViewModel : PayeYourTaxableIncome =PayeAtsTestData.payeYourTaxableIncomeViewModel
 
+  lazy val payeYourTaxableIncomeView = inject[PayeYourTaxableIncomeView]
+
   def view(viewModel:PayeYourTaxableIncome): String =
-    views.html.paye.paye_your_taxable_income(payeYourTaxableIncomeViewModel).body
+    payeYourTaxableIncomeView(payeYourTaxableIncomeViewModel).body
 
   "PayeYourTaxableIncomeView" should {
     "return correct content for Taxable income section" in {
@@ -58,7 +61,7 @@ class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
     "not render taxable income table when they have no taxable income" in {
 
-      val view = views.html.paye.paye_your_taxable_income(PayeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
+      val view = payeYourTaxableIncomeView(PayeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
       val document = Jsoup.parse(view)
 
       document.select("#income-tax-table") shouldBe empty

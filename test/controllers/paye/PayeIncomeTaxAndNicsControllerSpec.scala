@@ -28,11 +28,12 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
+import views.html.paye.PayeIncomeTaxAndNicsView
 
 class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
-  val sut = new PayeIncomeTaxAndNicsController(mockPayeAtsService, FakePayeAuthAction, mcc)
+  val sut = new PayeIncomeTaxAndNicsController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeIncomeTaxAndNicsView])
 
   "Paye your income tax and nics controller" should {
 
