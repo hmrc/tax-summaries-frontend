@@ -21,15 +21,17 @@
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import controllers.auth.PayeAuthenticatedRequest
 @import utils.HtmlFormatter
-@import includes.paye.PayeMain
+@import views.html.includes.paye.PayeMainView
+@import views.html.helpers.BackLinkView
+@import views.html.includes.CurrencyAmountView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
 @(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear")) {
+@payeMainView(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear")) {
 
-@helpers.back_link(Messages("generic.back"))
+@backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.summary.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
@@ -41,7 +43,7 @@
         <h2>@Html(Messages("paye.ats.summary.total_income.title"))</h2>
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show">
-                <span class="bold-xlarge" id="income-before-tax-amount">@includes.currency_amount(viewModel.incomeBeforeTax, true)</span><br>
+                <span class="bold-xlarge" id="income-before-tax-amount">@currencyAmountView(viewModel.incomeBeforeTax, true)</span><br>
                 <span class="bold-small">@Html(Messages("paye.ats.summary.total_income.link"))</span>
             </a>
         </p>
@@ -52,7 +54,7 @@
         <h2>@Html(Messages("paye.ats.summary.tax_free.title"))</h2>
         <p>
             <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show">
-            <span class="bold-xlarge" id="total-tax-free-amount">@includes.currency_amount(viewModel.taxableIncome, true)</span><br>
+            <span class="bold-xlarge" id="total-tax-free-amount">@currencyAmountView(viewModel.taxableIncome, true)</span><br>
             <span class="bold-small">@Html(Messages("paye.ats.summary.tax_free.link"))</span><br>
             </a>
         </p>
@@ -63,7 +65,7 @@
         <h2 id="tax-and-nics-title">@Messages("paye.ats.summary.nicsheading")</h2>
         <p>
             <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show">
-            <span class="bold-xlarge" id="total-income-tax-and-nics">@includes.currency_amount(viewModel.totalIncomeTax, true)</span><br>
+            <span class="bold-xlarge" id="total-income-tax-and-nics">@currencyAmountView(viewModel.totalIncomeTax, true)</span><br>
             <span class="bold-small">@Html(Messages("paye.ats.summary.tax_and_nics.link"))</span><br>
             </a>
         </p>
@@ -73,7 +75,7 @@
 
     <section id="income_after_tax_and_nics">
         <h2>@Html(Messages("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
-        <span class="bold-xlarge" id="income-after-tax-amount">@includes.currency_amount(viewModel.incomeAfterTaxNics, true)</span>
+        <span class="bold-xlarge" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, true)</span>
     </section>
 
 

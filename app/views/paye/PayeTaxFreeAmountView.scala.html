@@ -20,15 +20,17 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
-@import includes.paye.PayeMain
+@import views.html.includes.paye.PayeMainView
+@import views.html.helpers.BackLinkView
+@import views.html.includes.CurrencyAmountView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
 @(viewModel:PayeTaxFreeAmount)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
+@payeMainView(title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
-@helpers.back_link(Messages("generic.back"))
+@backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.tax_free_amount.title"))</h1>
 	<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
@@ -50,7 +52,7 @@
 			<th scope="row">
 				@Messages("paye.ats.tax_free_amount." + row.label)
 			</th>
-			<td class="numeric">@includes.currency_amount(row.amount, true)</td>
+			<td class="numeric">@currencyAmountView(row.amount, true)</td>
 		</tr>
 		}
 		</tbody>
@@ -58,7 +60,7 @@
 			<tfoot>
 			<tr id="totalTaxFreeAmount">
 				<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
-				<td class="numeric">@includes.currency_amount(viewModel.totalTaxFreeAmount, true)</td>
+				<td class="numeric">@currencyAmountView(viewModel.totalTaxFreeAmount, true)</td>
 			</tr>
 			</tfoot>
 		}
@@ -79,14 +81,14 @@
 			<th scope="row">
 				@Messages("paye.ats.tax_free_amount." + row.label)
 			</th>
-			<td class="numeric">@includes.currency_amount(row.amount, true)</td>
+			<td class="numeric">@currencyAmountView(row.amount, true)</td>
 		</tr>
 		}
 		</tbody>
 		<tfoot>
 		<tr id="taxLiableAmount">
 			<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
-			<td class="numeric">@includes.currency_amount(viewModel.liableTaxAmount, true)</td>
+			<td class="numeric">@currencyAmountView(viewModel.liableTaxAmount, true)</td>
 		</tr>
 		</tfoot>
 	</table>

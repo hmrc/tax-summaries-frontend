@@ -28,6 +28,8 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import views.html.TaxsIndexView
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,9 +39,12 @@ class IndexController @Inject()(
   atsListService: AtsListService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
+  mcc : MessagesControllerComponents,
+  taxsIndexView: TaxsIndexView,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
                                       ec : ExecutionContext)
-    extends TaxsController(mcc)(formPartialRetriever, appConfig, ec){
+    extends TaxsController(mcc, genericErrorView, tokenErrorView)(formPartialRetriever, appConfig, ec){
 
   def authorisedIndex: Action[AnyContent] = authAction.async { request =>
     agentAwareShow(request)
@@ -85,7 +90,7 @@ class IndexController @Inject()(
       case _ =>
         Future.successful(
           Ok(
-            views.html.taxs_index(
+            taxsIndexView(
               result,
               atsYearFormMapping,
               getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
@@ -111,7 +116,7 @@ class IndexController @Inject()(
             atsListData.taxPayer.get.taxpayer_name.get("surname"),
             atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
           )
-          Future.successful(Ok(views.html.taxs_index(atsList, formWithErrors)).withSession(session))
+          Future.successful(Ok(taxsIndexView(atsList, formWithErrors)).withSession(session))
         }
         }
       },
@@ -133,7 +138,7 @@ class IndexController @Inject()(
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
     implicit val lang : Lang = request.lang
     Ok(
-      views.html.taxs_index(
+      taxsIndexView(
         result,
         atsYearFormMapping,
         getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))

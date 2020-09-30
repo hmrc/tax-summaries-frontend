@@ -29,10 +29,13 @@ import services._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
-
+import views.html.errors.GenericErrorView
 import scala.concurrent.{ExecutionContext, Future}
+import views.html.errors.TokenErrorView
 
-abstract class TaxsController @Inject()(mcc : MessagesControllerComponents)
+abstract class TaxsController @Inject()(mcc : MessagesControllerComponents,
+                                        genericErrorView: GenericErrorView,
+                                        tokenErrorView: TokenErrorView)
                                        (implicit ormPartialRetriever: FormPartialRetriever,
                                         appConfig: ApplicationConfig,ec: ExecutionContext)
                                         extends FrontendController(mcc) with AccountUtils
@@ -56,8 +59,8 @@ abstract class TaxsController @Inject()(mcc : MessagesControllerComponents)
         error match {
           case token_error: AgentTokenException =>
             auditService.sendEvent(AuditTypes.Tx_FAILED, Map("userId" -> getAccountId(request), "error" -> token_error.message, "time" -> new Date().toString, "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")))
-            Ok(views.html.errors.token_error())
-          case _ => Ok(views.html.errors.generic_error())
+            Ok(tokenErrorView())
+          case _ => Ok(genericErrorView())
         }
     }
   }

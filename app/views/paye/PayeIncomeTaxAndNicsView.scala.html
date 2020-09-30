@@ -20,15 +20,17 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
-@import includes.paye.PayeMain
+@import views.html.includes.paye.PayeMainView
+@import views.html.helpers.BackLinkView
+@import views.html.includes.CurrencyAmountView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
 @(viewModel:PayeIncomeTaxAndNics)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
+@payeMainView(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
-@helpers.back_link(Messages("generic.back"))
+@backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.total_income_tax.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
@@ -51,14 +53,14 @@
                     <th scope="row">
                         @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
                     </th>
-              <td class="numeric">@includes.currency_amount(row.taxPaidInBand, true)</td>
+              <td class="numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
           </tr>
         }
     </tbody>
     <tfoot>
         <tr id="totalScottishIncomeTax">
                 <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
-            <td class="numeric">@includes.currency_amount(viewModel.totalScottishIncomeTax, true)</td>
+            <td class="numeric">@currencyAmountView(viewModel.totalScottishIncomeTax, true)</td>
           </tr>
     </tfoot>
     </table>
@@ -78,14 +80,14 @@
                 <th scope="row">
                     @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
                 </th>
-                <td class="numeric">@includes.currency_amount(row.taxPaidInBand, true)</td>
+                <td class="numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
             </tr>
             }
             </tbody>
             <tfoot>
             <tr id="totalRestOfUkIncomeTax">
             <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
-            <td class="numeric">@includes.currency_amount(viewModel.totalRestOfUKIncomeTax, true)</td>
+            <td class="numeric">@currencyAmountView(viewModel.totalRestOfUKIncomeTax, true)</td>
             </tr>
             </tfoot>
         </table>
@@ -105,14 +107,14 @@
             <th scope="row">
                 @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
             </th>
-            <td class="numeric">@includes.currency_amount(row.taxPaidInBand, true)</td>
+            <td class="numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
         </tr>
         }
         </tbody>
         <tfoot>
         <tr id="totalUkIncomeTax">
                 <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
-                <td class="numeric">@includes.currency_amount(viewModel.totalUKIncomeTax, true)</td>
+                <td class="numeric">@currencyAmountView(viewModel.totalUKIncomeTax, true)</td>
         </tr>
         </tfoot>
     </table>
@@ -133,7 +135,7 @@
                         <th scope="row">
                             @Messages("paye.ats.adjustments." + row.label)
                         </th>
-                        <td class="numeric">@includes.currency_amount(row.adjustmentAmount, true)</td>
+                        <td class="numeric">@currencyAmountView(row.adjustmentAmount, true)</td>
                     </tr>
                 }
             </tbody>
@@ -153,7 +155,7 @@
             <th scope="row">
                 @Messages("paye.ats.national_insurance.title")
             </th>
-            <td class="numeric">@includes.currency_amount(viewModel.employeeContributions, true)</td>
+            <td class="numeric">@currencyAmountView(viewModel.employeeContributions, true)</td>
         </tr>
         </tbody>
         <tfoot>
@@ -161,7 +163,7 @@
             <th scope="row">
                 @Messages("paye.ats.total_income_tax_national_insurance.title")
             </th>
-            <td class="numeric">@includes.currency_amount(viewModel.totalIncomeTax2Nics, true)</td>
+            <td class="numeric">@currencyAmountView(viewModel.totalIncomeTax2Nics, true)</td>
         </tr>
         </tfoot>
     </table>

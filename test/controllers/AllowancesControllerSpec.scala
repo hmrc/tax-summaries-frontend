@@ -32,6 +32,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models._
+import views.html.{TaxFreeAmountView, TaxsMainView}
+import views.html.errors.{GenericErrorView, TokenErrorView}
+
 import scala.concurrent.Future
 
 class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -71,7 +74,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   val mockAllowanceService = mock[AllowanceService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc, taxFreeAmountView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request),Matchers.any())

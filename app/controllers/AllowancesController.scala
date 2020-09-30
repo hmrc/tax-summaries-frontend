@@ -26,6 +26,8 @@ import services.{AllowanceService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Allowances
+import views.html.TaxFreeAmountView
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,8 +35,11 @@ class AllowancesController @Inject()(
   allowanceService: AllowanceService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+  mcc : MessagesControllerComponents,
+  taxFreeAmountView: TaxFreeAmountView,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView)(formPartialRetriever, appConfig, ec) {
 
   def authorisedAllowance = authAction.async { request =>
     show(request)
@@ -48,7 +53,7 @@ class AllowancesController @Inject()(
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
     implicit val lang : Lang = request.lang
-    Ok(views.html.tax_free_amount(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(taxFreeAmountView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 
 }

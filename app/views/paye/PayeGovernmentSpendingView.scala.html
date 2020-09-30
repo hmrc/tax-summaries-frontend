@@ -20,15 +20,16 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
-@import includes.paye.PayeMain
+@import views.html.includes.paye.PayeMainView
+@import views.html.helpers.BackLinkView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView)
 
 @(viewModel:PayeGovernmentSpend)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), mainClasses = Some("selectYear full-width")) {
+@payeMainView(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), mainClasses = Some("selectYear full-width")) {
 
-@helpers.back_link(Messages("generic.back"))
+@backLinkView(Messages("generic.back"))
 
 	<div class="grid-row form-group">
 		<div class="column-two-thirds">

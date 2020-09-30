@@ -62,7 +62,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, nicsView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))

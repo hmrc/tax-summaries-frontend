@@ -43,7 +43,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
   val mockGovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc,
+    governmentSpendingView, genericErrorView, tokenErrorView)
 
   val genericViewModel: GenericViewModel =  AtsList(
       utr = "3000024376",

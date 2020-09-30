@@ -21,14 +21,16 @@
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
 @import view_models.paye.PayeYourTaxableIncome
-@import includes.paye.PayeMain
+@import views.html.includes.paye.PayeMainView
+@import views.html.helpers.BackLinkView
+@import views.html.includes.CurrencyAmountView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
 @(viewModel:PayeYourTaxableIncome)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
-	@helpers.back_link(Messages("generic.back"))
+@payeMainView(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
+	@backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.income_before_tax.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
@@ -51,14 +53,14 @@
                     <th scope="row">
                         @Messages("paye.ats.income_before_tax." + row.messageKey)
                     </th>
-                    <td class="numeric">@includes.currency_amount(row.value, true)</td>
+                    <td class="numeric">@currencyAmountView(row.value, true)</td>
                 </tr>
             }
             </tbody>
             <tfoot id="income-before-tax-foot">
                 <tr>
                     <th scope="row">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
-                    <td id="income-before-tax" class="no-bold">@includes.currency_amount(viewModel.totalIncomeBeforeTax, true)</td>
+                    <td id="income-before-tax" class="no-bold">@currencyAmountView(viewModel.totalIncomeBeforeTax, true)</td>
                 </tr>
             </tfoot>
         </table>

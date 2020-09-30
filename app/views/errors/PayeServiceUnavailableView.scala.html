@@ -16,13 +16,13 @@
 
 @import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import includes.paye.PayeMain
+@import includes.paye.PayeMainView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView)
 
 @()(implicit request: Request[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("paye.ats.service_unavailable.title")) {
+@payeMainView(title = Messages("paye.ats.service_unavailable.title")) {
 <h1 class="heading-xlarge">@Messages("paye.ats.service_unavailable.heading")</h1>
 <p>@Messages("paye.ats.service_unavailable.paragraph")</p>
 }

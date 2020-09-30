@@ -26,13 +26,15 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import view_models.{Amount, CapitalGains}
+import views.html.CapitalGainsView
 
 class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  lazy val capitalGainsView = inject[CapitalGainsView]
 
   def view(cg: CapitalGains): String =
-    views.html.capital_gains(cg).body
+    capitalGainsView(cg).body
 
   "view" should {
     "show lower rate rcpi row" in {

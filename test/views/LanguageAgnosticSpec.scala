@@ -29,17 +29,27 @@ import utils.AttorneyUtils
 import utils.TestConstants._
 import view_models.AtsForms._
 import view_models._
+import views.html.TaxsMainView
+import views.html.GovernmentSpendingView
+import views.html.TaxsIndexView
+import views.html.SummaryView
+import views.html.errors.GenericErrorView
 
 class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with MockitoSugar  {
 
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val language = Lang("en")
   val utr = testUtr
+  lazy val taxsMainView = inject[TaxsMainView]
+  lazy val governmentSpendingView = inject[GovernmentSpendingView]
+  lazy val taxsIndexView = inject[TaxsIndexView]
+  lazy val summaryView = inject[SummaryView]
+  lazy val genericErrorView = inject[GenericErrorView]
 
   "Logging in with English language settings" should {
     "show the correct contents of the generic error page in English" in  {
       val language = Lang("en")
-      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever,appConfig)
+      val result = genericErrorView()(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
@@ -48,7 +58,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
   "Logging in with invalid language settings" should {
     "show the correct contents of the generic error page in English" in  {
       val language = Lang("xy")
-      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever,appConfig)
+      val result = genericErrorView()(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
@@ -58,7 +68,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
     "show the correct contents of the generic error page in Welsh" in {
       implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
       val language = Lang("cy")
-      val result = views.html.errors.generic_error()(language, request, messages, formPartialRetriever,appConfig)
+      val result = genericErrorView()(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
     }
@@ -67,7 +77,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
     "show the English language switch" in {
       val language = Lang("cy-GB")
       val atsList = AtsList("", "", "", List(TaxYearEnd(Some("2014")), TaxYearEnd(Some("2015"))))
-      val result = views.html.taxs_index(atsList, atsYearFormMapping)(request, messages, formPartialRetriever, language,appConfig)
+      val result = taxsIndexView(atsList, atsYearFormMapping)(request, messages, formPartialRetriever, language,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("english-switch").text should include("English")
     }
@@ -80,7 +90,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
       implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
       val language = Lang("cy-GB")
       val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
-      val result = views.html.taxs_main(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
       document.getElementById("index-page-description").text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +
@@ -100,7 +110,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", totalAmount, "", scottishIncomeTax)
-      val result = views.html.government_spending(fakeViewModel, (20.0,20.0,20.0))(language, request, messages, formPartialRetriever,appConfig)
+      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(language, request, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#content h1").text should include("Eich trethi a gwariant cyhoeddus")
       document
@@ -118,7 +128,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
         amount, amount, amount, amount, amount, rate, rate, "", "Forename", "Surname")
       val agentRequestWithSession = AuthenticatedRequest("userId", Some(Uar(testUar)), None, None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
       val actingAsAttorneyFor = AttorneyUtils.getActingAsAttorneyFor(agentRequestWithSession, fakeViewModel.forename, fakeViewModel.surname, fakeViewModel.utr)
-      val result = views.html.summary(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever,appConfig)
+      val result = summaryView(fakeViewModel, actingAsAttorneyFor)(language, agentRequestWithSession, messages, formPartialRetriever,appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("h1").text should include("Eich incwm a’ch trethi")
       document.select(".link-back").text shouldBe "Yn ôl"

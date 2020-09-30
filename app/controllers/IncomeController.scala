@@ -26,12 +26,17 @@ import services.{AuditService, IncomeService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.IncomeBeforeTax
+import views.html.IncomeBeforeTaxView
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction,
-                                 mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+                                 mcc : MessagesControllerComponents,
+                                 incomeBeforeTaxView: IncomeBeforeTaxView,
+                                 genericErrorView: GenericErrorView,
+                                 tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView)(formPartialRetriever, appConfig, ec) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -45,8 +50,6 @@ class IncomeController @Inject()(incomeService: IncomeService, val auditService:
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
     implicit val lang : Lang = request.lang
-    Ok(
-      views.html
-        .income_before_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(incomeBeforeTaxView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

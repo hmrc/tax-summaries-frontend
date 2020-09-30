@@ -24,14 +24,18 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models._
-import views.html.total_income_tax_includes.{savings_table, scottish_table}
+import views.html._
+import views.html.total_income_tax_includes._
 
 class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChecks {
 
   implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  lazy val scottishTableView = inject[ScottishTableView]
+  lazy val savingsTableView = inject[SavingsTableView]
+  lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
 
   def view(tax: TotalIncomeTax): String =
-    views.html.total_income_tax(tax).body
+    totalIncomeTaxView(tax).body
 
   def view: String = view(testTotalIncomeTax)
 
@@ -105,7 +109,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChec
       forAll { (tax: ScottishTax, rates: ScottishRates) =>
 
         val data = testTotalIncomeTax.copy(scottishTax = tax, scottishRates = rates)
-        view(data) should include(scottish_table(tax, rates).body)
+        view(data) should include(scottishTableView(tax, rates).body)
       }
     }
 
@@ -114,7 +118,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChec
       forAll { (tax: SavingsTax, rates: SavingsRates) =>
 
         val data = testTotalIncomeTax.copy(savingsTax = tax, savingsRates = rates)
-        view(data) should include(savings_table(tax, rates).body)
+        view(data) should include(savingsTableView(tax, rates).body)
       }
     }
 

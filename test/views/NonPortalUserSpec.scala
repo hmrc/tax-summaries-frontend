@@ -26,6 +26,8 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models._
+import views.html.TaxsMainView
+import views.html.GovernmentSpendingView
 
 class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
 
@@ -34,6 +36,8 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
+  lazy val taxsMainView = inject[TaxsMainView]
+  lazy val governmentSpendingView = inject[GovernmentSpendingView]
 
   "Logging in as a transitioned user" should {
 
@@ -69,8 +73,7 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         "",
         scottishIncomeTax
       )
-      val result = views.html
-        .government_spending(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever, appConfig)
+      val result = governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -101,7 +104,7 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         "",
         "",
         "")
-      val result = views.html.taxs_main(fakeViewModel)(request, messages, language, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(request, messages, language, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include(

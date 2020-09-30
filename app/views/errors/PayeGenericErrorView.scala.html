@@ -17,13 +17,13 @@
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import includes.paye.PayeMain
+@import includes.paye.PayeMainView
 
-@this(payeMain: PayeMain)
+@this(payeMainView: PayeMainView)
 
 @()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMain(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
+@payeMainView(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
 
 	<h1>@Messages("generic.error.html.title")</h1>
 	<p>@Html(Messages("generic.error.try.later"))</p>
