@@ -44,7 +44,7 @@ class IndexController @Inject()(
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
                                       ec : ExecutionContext)
-    extends TaxsController(mcc, genericErrorView, tokenErrorView)(formPartialRetriever, appConfig, ec){
+    extends TaxsController(mcc, genericErrorView, tokenErrorView){
 
   def authorisedIndex: Action[AnyContent] = authAction.async { request =>
     agentAwareShow(request)

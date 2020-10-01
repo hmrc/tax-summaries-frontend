@@ -39,7 +39,7 @@ class CapitalGainsTaxController @Inject()(
   capitalGainsView: CapitalGainsView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView)(formPartialRetriever, appConfig, ec) {
+  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView){
 
   def authorisedCapitalGains: Action[AnyContent] = authAction.async { request =>
     show(request)
