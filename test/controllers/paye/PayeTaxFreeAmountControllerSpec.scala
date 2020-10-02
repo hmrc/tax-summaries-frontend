@@ -27,12 +27,13 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
+import views.html.paye.PayeTaxFreeAmountView
 
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
   val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show().url)
 
-  val sut = new PayeTaxFreeAmountController(mockPayeAtsService, FakePayeAuthAction, mcc)
+  val sut = new PayeTaxFreeAmountController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeTaxFreeAmountView])
 
   "Tax Free Amount controller" should {
 

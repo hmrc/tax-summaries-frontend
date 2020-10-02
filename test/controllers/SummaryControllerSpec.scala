@@ -69,7 +69,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
   val mockAuditService = mock[AuditService]
 
 
-  def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, summaryView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))

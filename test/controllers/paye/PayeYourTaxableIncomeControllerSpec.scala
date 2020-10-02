@@ -28,12 +28,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
+import views.html.paye.PayeYourTaxableIncomeView
 
 class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val sut = new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc)
+  val sut = new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])
 
   "Government spend controller" should {
 

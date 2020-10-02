@@ -78,7 +78,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc, totalIncomeTaxView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))

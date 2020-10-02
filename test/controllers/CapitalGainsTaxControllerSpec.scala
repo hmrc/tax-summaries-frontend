@@ -30,6 +30,9 @@ import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models.{Amount, NoATSViewModel}
+import views.html.{CapitalGainsView, TaxFreeAmountView}
+import views.html.errors.{GenericErrorView, TokenErrorView}
+
 import scala.concurrent.Future
 
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstants with BeforeAndAfterEach {
@@ -42,7 +45,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
   val mockCapitalGainsService = mock[CapitalGainsService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc, capitalGainsView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))

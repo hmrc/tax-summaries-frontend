@@ -28,12 +28,14 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeIncomeTaxAndNics
+import views.html.paye.PayeIncomeTaxAndNicsView
 
 import scala.concurrent.ExecutionContext
 
 class PayeIncomeTaxAndNicsController @Inject()(payeAtsService: PayeAtsService,
                                                 payeAuthAction: PayeAuthAction,
-                                               mcc : MessagesControllerComponents)
+                                               mcc : MessagesControllerComponents,
+                                               payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView)
                                                (implicit formPartialRetriever: FormPartialRetriever,appConfig: ApplicationConfig, ec : ExecutionContext)
                                                 extends FrontendController(mcc) with I18nSupport{
   val payeYear = appConfig.payeYear
@@ -43,7 +45,7 @@ class PayeIncomeTaxAndNicsController @Inject()(payeAtsService: PayeAtsService,
       implicit  val lang : Lang = request.lang
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
         case Right(successResponse: PayeAtsData) => {
-          Ok(views.html.paye.paye_income_tax_and_nics(PayeIncomeTaxAndNics(successResponse)))
+          Ok(payeIncomeTaxAndNicsView(PayeIncomeTaxAndNics(successResponse)))
         }
         case Left(response: HttpResponse) =>
           response.status match {

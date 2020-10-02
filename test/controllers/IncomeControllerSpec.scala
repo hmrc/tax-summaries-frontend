@@ -56,7 +56,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   val mockIncomeService = mock[IncomeService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc)
+  def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc, incomeBeforeTaxView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))

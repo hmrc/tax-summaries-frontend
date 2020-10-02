@@ -1,0 +1,160 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.auth.AuthenticatedRequest
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import config.ApplicationConfig
+@import utils.ViewUtils._
+@import views.html.includes.SaMainView
+@import views.html.includes.CurrencyAmountView
+@import views.html.includes.TaxsBreadcrumbView
+@import views.html.helpers.BackLinkView
+
+@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+
+@(viewModel: view_models.CapitalGains, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+
+@headerContent = {
+  @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.capital_gains_tax.subtitle", viewModel.taxYear)
+  @if(lang.language == "cy"){
+    <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+  } else {
+    <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+  }
+  @if(!actingAsAttorney.isDefined){
+    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+  }
+
+}
+
+@saMainView(title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+    @backLinkView(Messages("generic.back"))
+    <h1>
+        <span class="gray heading-medium block-heading">
+          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+        </span>
+      @Html(Messages("ats.capital_gains_tax.subtitle"))
+    </h1>
+    <p class="lede">@Html(Messages("ats.capital_gains_tax.lede"))</p>
+    @if(!viewModel.totalCapitalGainsTaxAmount.isZero) {
+      <p id="total-cg-description">@Html(Messages("ats.capital_gains_tax.description",
+        """<span id="total-cg-tax-rate">"""+viewModel.totalCgTaxRate.percent+"""</span>"""))</p>
+    }
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">@Html(Messages("ats.capital_gains_tax.capital_gains"))</th>
+          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>@Html(Messages("ats.capital_gains_tax.table.line1"))</td>
+          <td id="taxable-gains">@currencyAmountView(viewModel.taxableGains)</td>
+        </tr>
+
+        <tr>
+          <td>@Html(Messages("ats.capital_gains_tax.table.line2","""<span id="tax-period">"""+Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)+"""</span>"""))</td>
+          <td id="less-taxable-gains">
+              <span id="gains" class="visuallyhidden">@Html(Messages("generic.minus")) @currencyAmountView(viewModel.lessTaxFreeAmount)</span>
+              <span aria-hidden="true">-@currencyAmountView(viewModel.lessTaxFreeAmount)</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td>@Html(Messages("ats.capital_gains_tax.table.line3"))</td>
+          <td id="cg-pay-tax-on">@currencyAmountView(viewModel.payCgTaxOn)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    @if(!viewModel.payCgTaxOn.isZero) {
+      <table>
+        <thead>
+          <tr id="capital-gains-tax-section">
+            <th scope="col">@Html(Messages("ats.capital_gains_tax.capital_gains_tax"))</th>
+            <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          @if(viewModel.rpciLowerTax.nonZero) {
+          <tr>
+            <td class="width80">@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
+            <td id="rpci-lower-rate-amount" class="width20">@currencyAmountView(viewModel.rpciLowerTax)</td>
+          </tr>
+          }
+
+          @if(viewModel.rpciHigherTax.nonZero) {
+            <tr>
+                <td class="width80">@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
+                <td id="rpci-higher-rate-amount" class="width20">@currencyAmountView(viewModel.rpciHigherTax)</td>
+            </tr>
+          }
+
+
+          @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
+          <tr id="entrepreneurs-relief-rate-section">
+            <td>@Html(Messages("ats.capital_gains_tax.table.line4",
+                """<span id="entrepreneurs-relief-rate-before">"""+currencyAmountView(viewModel.entrepreneursReliefRateBefore)+"""</span>""",
+                """<span id="entrepreneurs-relief-rate">""" + viewModel.entrepreneursReliefRate + """</span>"""))</td>
+            <td id="entrepreneurs-relief-rate-amount">@currencyAmountView(viewModel.entrepreneursReliefRateAmount)</td>
+          </tr>
+          }
+
+          @if(!viewModel.ordinaryRateBefore.isZero) {
+          <tr id="ordinary-rate-section">
+            <td>@Html(Messages("ats.capital_gains_tax.table.line5",
+                """<span id="ordinary-rate-before">"""+currencyAmountView(viewModel.ordinaryRateBefore)+"""</span>""",
+                """<span id="ordinary-rate">""" + viewModel.ordinaryRate + """</span>"""))</td>
+            <td id="ordinary-rate-amount">@currencyAmountView(viewModel.ordinaryRateAmount)</td>
+          </tr>
+          }
+
+          @if(!viewModel.upperRateBefore.isZero) {
+          <tr id="upper-rate-section">
+            <td>@Html(Messages("ats.capital_gains_tax.table.line6",
+                """<span id="upper-rate-before">"""+currencyAmountView(viewModel.upperRateBefore)+"""</span>""",
+                """<span id="upper-rate">""" + viewModel.upperRate + """</span>"""))</td>
+            <td id="upper-rate-amount">@currencyAmountView(viewModel.upperRateAmount)</td>
+          </tr>
+          }
+          
+          @if(!viewModel.adjustmentsAmount.isZero) {
+          <tr id="adjustments-section">
+            <td>@Html(Messages("ats.capital_gains_tax.table.line7"))</td>
+            <td id="adjustment-to-capital-gains-tax-amount">
+              <span id="gains-tax-amount" class="visuallyhidden">@Html(Messages("generic.minus")) @currencyAmountView(viewModel.adjustmentsAmount)</span>
+              <span aria-hidden="true">-@currencyAmountView(viewModel.adjustmentsAmount)</span>
+            </td>
+          </tr>
+          }
+
+        </tbody>
+      </table>
+    }
+
+
+    <table id="total-capital-gains-tax">
+      <tbody>
+        <tr>
+          <th scope="row">@Html(Messages("ats.capital_gains_tax.total_capital_gains_tax"))</th>
+          <td class="no-bold" id="total-capital-gains-tax-amount">@currencyAmountView(viewModel.totalCapitalGainsTaxAmount)</td>
+        </tr>
+      </tbody>
+    </table>
+}

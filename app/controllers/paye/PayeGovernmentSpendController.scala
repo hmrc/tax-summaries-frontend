@@ -28,12 +28,14 @@ package controllers.paye
  import uk.gov.hmrc.play.bootstrap.controller.FrontendController
  import uk.gov.hmrc.play.partials.FormPartialRetriever
  import view_models.paye.PayeGovernmentSpend
+ import views.html.paye.PayeGovernmentSpendingView
 
  import scala.concurrent.ExecutionContext
 
 class PayeGovernmentSpendController @Inject()(payeAtsService: PayeAtsService,
                                               payeAuthAction: PayeAuthAction,
-                                              mcc : MessagesControllerComponents)
+                                              mcc : MessagesControllerComponents,
+                                              payeGovernmentSpendingView: PayeGovernmentSpendingView)
                                              (implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec : ExecutionContext)
                                               extends FrontendController(mcc) with I18nSupport{
   val payeYear = appConfig.payeYear
@@ -44,7 +46,7 @@ class PayeGovernmentSpendController @Inject()(payeAtsService: PayeAtsService,
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          Ok(views.html.paye.paye_government_spending(PayeGovernmentSpend(successResponse)))
+          Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse)))
         }
         case Left(response: HttpResponse) =>
           response.status match {

@@ -29,10 +29,12 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourTaxableIncome
 import scala.concurrent.ExecutionContext
+import views.html.paye.PayeYourTaxableIncomeView
 
 class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
                                                 payeAuthAction: PayeAuthAction,
-                                                mcc : MessagesControllerComponents)
+                                                mcc : MessagesControllerComponents,
+                                                payeYourTaxableIncomeView: PayeYourTaxableIncomeView)
                                                (implicit formPartialRetriever: FormPartialRetriever,
                                                 appConfig: ApplicationConfig,
                                                 ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport{
@@ -47,7 +49,7 @@ class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
 
         case Right(successResponse: PayeAtsData) => {
           val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
-          Ok(views.html.paye.paye_your_taxable_income(viewModel))
+          Ok(payeYourTaxableIncomeView(viewModel))
         }
         case Left(response: HttpResponse) => response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())

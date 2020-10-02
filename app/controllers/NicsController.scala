@@ -26,14 +26,19 @@ import services.{AuditService, SummaryService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.Summary
+import views.html.NicsView
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NicsController @Inject()(summaryService: SummaryService,
                                val auditService: AuditService,
                                authAction: AuthAction,
-                               mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+                               mcc : MessagesControllerComponents,
+                               nicsView: NicsView,
+                               genericErrorView: GenericErrorView,
+                               tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedNics: Action[AnyContent] = authAction.async {
     request => show(request)
@@ -46,6 +51,6 @@ class NicsController @Inject()(summaryService: SummaryService,
   }
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
     implicit  val lang : Lang = request.lang
-    Ok(views.html.nics(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(nicsView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

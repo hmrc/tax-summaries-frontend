@@ -20,22 +20,25 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.prop.PropertyChecks
 import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import utils.ViewUtils.toCurrency
 import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
+import views.html.total_income_tax_includes.SavingsTableView
 
-class SavingsTableSpec extends UnitSpec with OneAppPerSuite with TestConstants with PropertyChecks {
+class SavingsTableSpec extends UnitSpec with GuiceOneAppPerSuite with TestConstants with PropertyChecks {
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
+  lazy val savingsTableView = app.injector.instanceOf[SavingsTableView]
 
   val savingsTaxData = SavingsTax.empty
   val savingsRateData = SavingsRates.empty
 
   def view(tax: SavingsTax, rates: SavingsRates): String =
-    views.html.total_income_tax_includes.savings_table(tax, rates).body
+    savingsTableView(tax, rates).body
 
   def view(tax: SavingsTax): String = view(tax, savingsRateData)
   def view: String = view(savingsTaxData, savingsRateData)

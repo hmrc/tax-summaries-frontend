@@ -29,6 +29,9 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.NoATSViewModel
+import views.html.TaxsMainView
+import views.html.errors.{GenericErrorView, TokenErrorView}
+
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -41,7 +44,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new AtsMainController(mockSummaryService, mockAuditService, FakeAuthAction,mcc)
+  def sut = new AtsMainController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, taxsMainView, genericErrorView, tokenErrorView)
 
   override def beforeEach(): Unit = {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))

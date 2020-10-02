@@ -26,6 +26,8 @@ import services.{AuditService, TotalIncomeTaxService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.TotalIncomeTax
+import views.html.TotalIncomeTaxView
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,8 +35,11 @@ class TotalIncomeTaxController @Inject()(
   totalIncomeTaxService: TotalIncomeTaxService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+  mcc : MessagesControllerComponents,
+  totalIncomeTaxView: TotalIncomeTaxView,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedTotalIncomeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -49,6 +54,6 @@ class TotalIncomeTaxController @Inject()(
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
     implicit  val lang : Lang = request.lang
     Ok(
-      views.html.total_income_tax(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+      totalIncomeTaxView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

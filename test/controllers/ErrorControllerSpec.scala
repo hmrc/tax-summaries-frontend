@@ -25,7 +25,7 @@ import utils.TestConstants._
 
 class ErrorControllerSpec extends ControllerBaseSpec {
 
-  def sut = new ErrorController(FakeAuthAction , FakeMinAuthAction , mcc)
+  def sut = new ErrorController(FakeAuthAction , FakeMinAuthAction , mcc, notAuthorisedView, noAtsErrorView, serviceUnavailableView)
   implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" should {
@@ -38,7 +38,7 @@ class ErrorControllerSpec extends ControllerBaseSpec {
 
       status(result) shouldBe 200
 
-      document shouldBe contentAsString(views.html.errors.no_ats_error())
+      document shouldBe contentAsString(noAtsErrorView())
     }
 
     "show not authorised page" in {
@@ -49,7 +49,7 @@ class ErrorControllerSpec extends ControllerBaseSpec {
 
       status(result) shouldBe 200
 
-      document shouldBe contentAsString(views.html.errors.not_authorised())
+      document shouldBe contentAsString(notAuthorisedView())
     }
   }
 }
