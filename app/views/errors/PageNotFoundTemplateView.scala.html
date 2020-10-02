@@ -27,12 +27,6 @@
 
 @contentHeader = {
 
-    @if(lang.language == "cy"){
-        <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
-    } else {
-        <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
-    }
-
     <h1>@Messages("global.page.not.found.error.heading")</h1>
 }
 

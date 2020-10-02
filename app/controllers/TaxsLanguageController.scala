@@ -16,20 +16,21 @@
 
 package controllers
 
-import com.google.inject.Inject
-import play.api.i18n.{Lang, _}
+import com.google.inject.{Inject, Singleton}
+import config.ApplicationConfig
+import play.api.Configuration
+import play.api.i18n.Lang
 import play.api.mvc.MessagesControllerComponents
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
-class TaxsLanguageController @Inject()(mcc: MessagesControllerComponents)(
-  implicit val formPartialRetriever: FormPartialRetriever)
-    extends FrontendController(mcc) with I18nSupport {
+@Singleton
+class TaxsLanguageController @Inject()(configuration: Configuration,
+                                       languageUtils: LanguageUtils,
+                                       mcc: MessagesControllerComponents,
+                                       appConfig: ApplicationConfig
+                                      ) extends LanguageController(configuration, languageUtils, mcc) {
 
-  def switchLanguage(lang: String) = Action { implicit request =>
-    request.headers.get(REFERER) match {
-      case Some(referrer) => Redirect(referrer).withLang(Lang(lang))
-      case _              => Redirect(routes.IndexController.authorisedIndex()).withLang(Lang(lang))
-    }
-  }
+  override def languageMap: Map[String, Lang] = appConfig.languageMap
+
+  override protected def fallbackURL: String = appConfig.fallbackURL
 }

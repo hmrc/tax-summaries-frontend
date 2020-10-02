@@ -32,11 +32,7 @@
 
 @headerContent = {
   @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary", "breadcrumbs.taxs.nics"), "ats.total_income_tax.income_tax", viewModel.year)
-  @if(lang.language == "cy"){
-    <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
-  } else {
-    <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
-  }
+
   @if(actingAsAttorney.isDefined) {
     <div class="nested-banner">
       <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>

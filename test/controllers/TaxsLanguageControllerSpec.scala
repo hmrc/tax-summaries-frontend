@@ -16,42 +16,48 @@
 
 package controllers
 
+import config.ApplicationConfig
+import play.api.Configuration
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{redirectLocation, status, _}
+import uk.gov.hmrc.play.language.LanguageUtils
 
 class TaxsLanguageControllerSpec extends ControllerBaseSpec {
 
+  val langUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  val config: Configuration = app.injector.instanceOf[Configuration]
+  val applicationConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new TaxsLanguageController(mcc)
+  def sut = new TaxsLanguageController(config, langUtils, mcc, applicationConfig)
 
-  "switchLanguage" should {
+  val fakeRequest = FakeRequest().withHeaders(("Referer", routes.ErrorController.notAuthorised().url))
+  val redirectLocationUrl = routes.ErrorController.notAuthorised().url
 
-    "switch the language to english and redirect to the home page" in {
+  "TaxsLanguageController" should {
 
-      val result = sut.switchLanguage("en")(FakeRequest())
-
-      status(result) shouldBe 303
+    "redirect to English translated page" in {
+      val result =
+        sut.switchToLanguage("english")(fakeRequest)
       cookies(result).get("PLAY_LANG").get.value shouldBe "en"
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe redirectLocationUrl
     }
 
-    "switch the language to welsh and redirect to the home page" in {
-
-      val result = sut.switchLanguage("cy")(FakeRequest())
-
-      status(result) shouldBe 303
+    "redirect to Welsh translated page" in {
+      val result =
+        sut.switchToLanguage("welsh")(fakeRequest)
       cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe redirectLocationUrl
     }
 
-    "switch the language to welsh and redirect to the referring page" in {
+      "redirect back to a fallback url when the Referer is empty " in {
 
-      val request = FakeRequest().withHeaders(REFERER -> "foo")
-      val result = sut.switchLanguage("cy")(request)
+        val result = sut.switchToLanguage("welsh")(FakeRequest())
 
-      status(result) shouldBe 303
-      cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
-      redirectLocation(result) shouldBe Some("foo")
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get shouldBe "/annual-tax-summary"
+
     }
   }
 }

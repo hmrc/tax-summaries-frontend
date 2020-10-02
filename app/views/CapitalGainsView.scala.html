@@ -29,11 +29,7 @@
 
 @headerContent = {
   @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.capital_gains_tax.subtitle", viewModel.taxYear)
-  @if(lang.language == "cy"){
-    <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
-  } else {
-    <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
-  }
+
   @if(!actingAsAttorney.isDefined){
     <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
   }

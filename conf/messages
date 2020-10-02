@@ -33,6 +33,9 @@ generic.hm.customs = Customs
 generic.at=at
 site.back=Back
 generic.error = Error:
+view.languageToggle.english=English
+view.languageToggle.welsh=Cymraeg
+
 
 
 # View ATS - Breadcrumbs

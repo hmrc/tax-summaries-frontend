@@ -20,9 +20,9 @@
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import play.twirl.api.HtmlFormat
 @import views.html.includes.TaxsHeaderNavView
-@import views.html.includes.GoogleTagManagerView
+@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
 
-@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView)
+@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView)
 
 @(title: String,
 utr: String,
@@ -83,10 +83,19 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
 }
 
+@headerContent = {
+
+@languageSelectionView(
+appConfig.languageMap,
+appConfig.routeToSwitchLanguage
+)
+
+}
+
 @mainContentHeader = {
-    @if(contentHeader.isDefined) {
-        @uiLayouts.main_content_header(contentHeader = contentHeader.get)
-    }
+@if(contentHeader.isDefined) {
+@uiLayouts.main_content_header(contentHeader = contentHeader.get)
+}
 }
 
 @content = {

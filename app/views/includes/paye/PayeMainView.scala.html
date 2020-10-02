@@ -20,9 +20,9 @@
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import play.twirl.api.HtmlFormat
 @import views.html.includes.paye.PayeTaxsHeaderNavView
-@import views.html.includes.GoogleTagManagerView
+@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
 
-@this(payeTaxsHeaderNavView: PayeTaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView)
+@this(payeTaxsHeaderNavView: PayeTaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView)
 
 @(title: String,
 userLoggedIn: Boolean = true,
@@ -74,11 +74,12 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }
 
 @contentHeader = {
-  @if(lang.language == "cy"){
-     <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
-   } else {
-     <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
-   }
+
+  @languageSelectionView(
+        appConfig.languageMap,
+        appConfig.routeToSwitchLanguage
+  )
+
 }
 
 @mainContentHeader = {
