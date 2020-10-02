@@ -17,12 +17,14 @@
 @import config.ApplicationConfig
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import uk.gov.hmrc.play.views.html.layouts._
 @import play.twirl.api.HtmlFormat
 @import views.html.includes.TaxsHeaderNavView
 @import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
 
-@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView)
+@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView,
+      uiHead: Head, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
+      uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
 
 @(title: String,
 utr: String,
@@ -63,7 +65,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 }
 
 @head = {
-    @uiLayouts.head(Option(linkElement), Some(headScript))
+    @uiHead(Option(linkElement), Some(headScript))
 }
 
 @insideHeader = {
@@ -90,13 +92,13 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
      appConfig.routeToSwitchLanguage
   )
   @if(contentHeader.isDefined) {
-    @uiLayouts.main_content_header(contentHeader = contentHeader.get)
+    @uiMainContentHeader(contentHeader = contentHeader.get)
   }
 }
 
 @content = {
-        @uiLayouts.main_content(
-        article = uiLayouts.article(mainContent),
+        @uiMainContent(
+        article = uiArticle(mainContent),
         mainClass = mainClasses,
         mainDataAttributes = mainDataAttributes,
         mainContentHeader = mainContentHeader,
@@ -110,7 +112,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 @footerTop = {}
 
 @bodyEnd = {
-    @uiLayouts.footer(
+    @uiFooter(
         analyticsToken = appConfig.analyticsToken,
         analyticsHost = appConfig.analyticsHost,
         ssoUrl = appConfig.ssoUrl,
@@ -120,7 +122,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 }
 
 @betaBanner = {
-    @uiLayouts.betaBanner(
+    @uiBetaBanner(
         userLoggedIn,
 appConfig.betaFeedbackUrl,
 appConfig.betaFeedbackUnauthenticatedUrl,
@@ -129,7 +131,7 @@ appConfig.betaFeedbackUnauthenticatedUrl,
 }
 
 @serviceInfo = {
-    @uiLayouts.serviceInfo(
+    @uiServiceInfo(
         betaBanner = HtmlFormat.empty,
         includeGridWrapper,
         serviceInfoContent,
@@ -137,5 +139,5 @@ appConfig.betaFeedbackUnauthenticatedUrl,
     )
 }
 
-@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiFooterLinks()), true)(content)
 

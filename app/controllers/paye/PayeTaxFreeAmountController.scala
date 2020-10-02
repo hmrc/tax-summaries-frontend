@@ -21,7 +21,7 @@ import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Lang}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeTaxFreeAmount
 import views.html.paye.PayeTaxFreeAmountView
+
 import scala.concurrent.ExecutionContext
 
 class PayeTaxFreeAmountController @Inject()(payeAtsService: PayeAtsService,

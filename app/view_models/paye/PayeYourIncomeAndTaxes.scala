@@ -16,10 +16,7 @@
 
 package view_models.paye
 
-import config.ApplicationConfig
 import models.PayeAtsData
-import play.api.{Configuration, Environment, Play}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.{Amount, Rate}
 
 case class PayeYourIncomeAndTaxes(

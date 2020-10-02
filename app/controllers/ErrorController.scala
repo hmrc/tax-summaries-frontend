@@ -19,13 +19,11 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, MinAuthAction}
-import play.api.i18n.{I18nSupport, Lang}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import views.html.errors.NotAuthorisedView
-import views.html.errors.NoAtsErrorView
-import views.html.errors.ServiceUnavailableView
+import views.html.errors.{NoAtsErrorView, NotAuthorisedView, ServiceUnavailableView}
 
 class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction, mcc : MessagesControllerComponents,
                                 notAuthorisedView: NotAuthorisedView,

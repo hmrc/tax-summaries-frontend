@@ -21,7 +21,7 @@ package controllers.paye
  import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
  import models.PayeAtsData
  import play.api.Logger
- import play.api.i18n.{I18nSupport, Lang}
+ import play.api.i18n.I18nSupport
  import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
  import services.PayeAtsService
  import uk.gov.hmrc.http.HttpResponse
