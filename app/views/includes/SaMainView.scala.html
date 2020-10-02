@@ -83,19 +83,15 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
     @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
 }
 
-@headerContent = {
-
-@languageSelectionView(
-appConfig.languageMap,
-appConfig.routeToSwitchLanguage
-)
-
-}
 
 @mainContentHeader = {
 @if(contentHeader.isDefined) {
 @uiLayouts.main_content_header(contentHeader = contentHeader.get)
 }
+@languageSelectionView(
+appConfig.languageMap,
+appConfig.routeToSwitchLanguage
+)
 }
 
 @content = {
