@@ -299,8 +299,6 @@ main, section, article, aside {
   border-left: 5px solid #dee0e2; }
   #wrapper #content .info-notice p {
     margin: 0; }
-#wrapper #content .page-header #english-switch, #wrapper #content .page-header #welsh-switch {
-  float: right; }
 #wrapper #content .page-header #user-info {
   float: right;
   clear: both;
@@ -310,6 +308,11 @@ main, section, article, aside {
 
 .selectYear #errors h2.heading-medium.error-summary-heading {
     margin-top: 0;
+}
+
+.langToggle {
+  clear: both;
+  float: right;
 }
 
 /*= Footer styles
