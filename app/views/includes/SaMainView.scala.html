@@ -39,7 +39,7 @@ mainDataAttributes: Option[Html] = None,
 articleClasses: Option[String] = None,
 includeGridWrapper: Boolean = false,
 actingAttorney: Option[ActingAsAttorneyFor] = None,
-gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @sidebarLinks = {@HtmlFormat.empty}
 
@@ -85,13 +85,13 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 
 
 @mainContentHeader = {
-@if(contentHeader.isDefined) {
-@uiLayouts.main_content_header(contentHeader = contentHeader.get)
-}
-@languageSelectionView(
-appConfig.languageMap,
-appConfig.routeToSwitchLanguage
-)
+  @languageSelectionView(
+     appConfig.languageMap,
+     appConfig.routeToSwitchLanguage
+  )
+  @if(contentHeader.isDefined) {
+    @uiLayouts.main_content_header(contentHeader = contentHeader.get)
+  }
 }
 
 @content = {

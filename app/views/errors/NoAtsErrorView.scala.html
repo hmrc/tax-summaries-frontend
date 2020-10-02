@@ -23,7 +23,7 @@
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView)
 
-@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
 @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.no_ats", 0)

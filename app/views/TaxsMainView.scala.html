@@ -20,10 +20,11 @@
 @import views.html.includes.SaMainView
 @import views.html.includes.TaxsBreadcrumbView
 @import views.html.helpers.BackLinkView
+@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
 
-@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView)
+@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, languageSelectionView: LanguageSelectionView)
 
-@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
     @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.home", viewModel.year)
@@ -33,6 +34,7 @@
             <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
         </div>
     }
+
     @if(!actingAsAttorney.isDefined){
         <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
     }

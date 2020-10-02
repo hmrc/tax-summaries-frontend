@@ -19,19 +19,16 @@ package views
 import controllers.auth.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
-import org.scalatest.mockito.MockitoSugar
-import play.api.i18n.Lang
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models._
-import views.html.TaxsMainView
-import views.html.GovernmentSpendingView
+import views.html.{GovernmentSpendingView, TaxsMainView}
 
 class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
 
-  val language = Lang("en")
   val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   val utr = testUtr
   val amount = new Amount(0.00, "GBP")
@@ -73,7 +70,7 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         "",
         scottishIncomeTax
       )
-      val result = governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(language, request, messages, formPartialRetriever, appConfig)
+      val result = governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -104,7 +101,7 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         "",
         "",
         "")
-      val result = taxsMainView(fakeViewModel)(request, messages, language, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include(

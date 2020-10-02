@@ -25,7 +25,7 @@
 
 @this(payeMainView: PayeMainView, backLinkView: BackLinkView)
 
-@(viewModel:PayeGovernmentSpend)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel:PayeGovernmentSpend)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), mainClasses = Some("selectYear full-width")) {
 

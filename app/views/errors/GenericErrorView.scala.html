@@ -21,7 +21,7 @@
 
 @this(saMainView: SaMainView)
 
-@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
 <h1 id="generic-error-page-heading">@Html(Messages("generic.error.title"))</h1>

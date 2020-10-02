@@ -28,7 +28,7 @@
 
 @this(saMainView: SaMainView, scottishTableView: ScottishTableView, savingsTableView: SavingsTableView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
-@(viewModel: view_models.TotalIncomeTax, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel: view_models.TotalIncomeTax, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
   @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary", "breadcrumbs.taxs.nics"), "ats.total_income_tax.income_tax", viewModel.year)

@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
-import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -38,11 +37,8 @@ class GovernmentSpendController @Inject()(
   mcc: MessagesControllerComponents,
   governmentSpendingView: GovernmentSpendingView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc,genericErrorView, tokenErrorView) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -55,7 +51,7 @@ class GovernmentSpendController @Inject()(
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang: Lang = request.lang
+
     Ok(
       governmentSpendingView(
         result,

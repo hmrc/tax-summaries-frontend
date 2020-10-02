@@ -44,7 +44,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -56,7 +56,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = new CapitalGains(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, amount, amount, rate, rate, rate, rate, rate, rate, "", "", "")
-      val result = capitalGainsView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = capitalGainsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -79,7 +79,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = new IncomeBeforeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount,
         amount, "", "", "")
-      val result = incomeBeforeTaxView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = incomeBeforeTaxView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -102,7 +102,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = nicsView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = nicsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -123,7 +123,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
     "show the 'exit tax summaries' link on the no ats page" in  {
 
-      val result = noAtsErrorView()(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = noAtsErrorView()(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -140,7 +140,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = summaryView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = summaryView(fakeViewModel)(language,requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -160,7 +160,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
     "show the 'exit tax summaries' link on the tax free amount page" in  {
 
       val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, "", "", "")
-      val result = taxFreeAmountView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = taxFreeAmountView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -186,7 +186,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         "", rate, rate, rate, rate, rate, rate, rate, ScottishRates.empty, SavingsRates.empty,
         "", "", "")
 
-      val result = totalIncomeTaxView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = totalIncomeTaxView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -218,7 +218,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -243,7 +243,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
         ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
         ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(language, requestWithSession, messages, formPartialRetriever, appConfig)
+      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -257,7 +257,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include("annual-tax-summary:portal-user:start")
@@ -270,7 +270,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
         amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, language, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")

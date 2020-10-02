@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -35,14 +34,11 @@ class CapitalGainsTaxController @Inject()(
   capitalGainsService: CapitalGainsService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc: MessagesControllerComponents,
+  mcc : MessagesControllerComponents,
   capitalGainsView: CapitalGainsView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView){
 
   def authorisedCapitalGains: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -55,7 +51,7 @@ class CapitalGainsTaxController @Inject()(
     extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang: Lang = request.lang
+
     Ok(capitalGainsView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

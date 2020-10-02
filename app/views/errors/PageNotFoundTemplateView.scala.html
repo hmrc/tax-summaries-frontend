@@ -21,7 +21,7 @@
 
 @this(saMainView: SaMainView)
 
-@()(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @anchor(text: String, url: String) = {<a href="@url" target="_blank">@text</a>}
 

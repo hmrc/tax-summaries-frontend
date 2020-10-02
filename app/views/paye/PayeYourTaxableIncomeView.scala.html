@@ -27,7 +27,7 @@
 
 @this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
-@(viewModel:PayeYourTaxableIncome)(implicit lang: Lang, messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel:PayeYourTaxableIncome)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 	@backLinkView(Messages("generic.back"))

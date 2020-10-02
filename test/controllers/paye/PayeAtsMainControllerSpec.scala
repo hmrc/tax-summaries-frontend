@@ -54,7 +54,9 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
       document.getElementById("tax-services-link").text shouldBe(Messages("paye.ats.index.html.tax_spend_link"))
 
-      document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
+      document.getElementsByTag("p").get(1).text shouldBe(Messages("English | Cymraeg"))
+      document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.lede"))
+      document.getElementsByTag("p").get(3).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in  {

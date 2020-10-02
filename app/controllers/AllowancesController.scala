@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.i18n.{I18nSupport, Lang, Messages}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{AllowanceService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -35,13 +34,10 @@ class AllowancesController @Inject()(
   allowanceService: AllowanceService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc: MessagesControllerComponents,
+  mcc : MessagesControllerComponents,
   taxFreeAmountView: TaxFreeAmountView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedAllowance = authAction.async { request =>
@@ -55,7 +51,7 @@ class AllowancesController @Inject()(
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang: Lang = request.lang
+
     Ok(taxFreeAmountView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 

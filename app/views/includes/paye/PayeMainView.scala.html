@@ -32,7 +32,7 @@ bodyClasses: Option[String] = None,
 mainClasses: Option[String] = None,
 mainDataAttributes: Option[Html] = None,
 includeGridWrapper: Boolean = false,
-gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @fullTitle = {@title - @Messages("generic.paye.ats.browser.title")}
 

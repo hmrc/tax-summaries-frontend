@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, TotalIncomeTaxService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -35,14 +34,11 @@ class TotalIncomeTaxController @Inject()(
   totalIncomeTaxService: TotalIncomeTaxService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc: MessagesControllerComponents,
+  mcc : MessagesControllerComponents,
   totalIncomeTaxView: TotalIncomeTaxView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedTotalIncomeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -55,7 +51,8 @@ class TotalIncomeTaxController @Inject()(
     extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang: Lang = request.lang
-    Ok(totalIncomeTaxView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+
+    Ok(
+      totalIncomeTaxView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

@@ -23,7 +23,7 @@
 
 @this(payeMainView: PayeMainView)
 
-@(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("paye.ats.no_ats.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
     <h1 class="heading-xlarge flush--bottom">@Messages("paye.ats.no_ats.heading")</h1>

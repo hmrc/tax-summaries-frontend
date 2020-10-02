@@ -28,7 +28,7 @@
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, errorSummaryTemplateView: ErrorSummaryTemplateView, inputRadioGroupView: InputRadioGroupView)
 
-@(atsList: view_models.AtsList, atsYearForm: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, lang: Lang, appConfig: ApplicationConfig)
+@(atsList: view_models.AtsList, atsYearForm: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
     @taxsBreadcrumbView(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
