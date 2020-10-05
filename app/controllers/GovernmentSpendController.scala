@@ -26,6 +26,8 @@ import services.{AuditService, GovernmentSpendService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.GenericViewModel
 import view_models.GovernmentSpend
+import views.html.GovernmentSpendingView
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,11 +35,14 @@ class GovernmentSpendController @Inject()(
   governmentSpendService: GovernmentSpendService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc: MessagesControllerComponents)(
+  mcc: MessagesControllerComponents,
+  governmentSpendingView: GovernmentSpendingView,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(
   implicit val formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends TaxYearRequest(mcc)(formPartialRetriever, appConfig, ec) {
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -52,7 +57,7 @@ class GovernmentSpendController @Inject()(
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
     implicit val lang: Lang = request.lang
     Ok(
-      views.html.government_spending(
+      governmentSpendingView(
         result,
         assignPercentage(result.govSpendAmountData),
         getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))

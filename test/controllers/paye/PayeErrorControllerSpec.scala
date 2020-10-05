@@ -21,12 +21,17 @@ import controllers.auth.FakePayeAuthAction
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import view_models.paye.PayeAtsMain
+import views.html.errors.{PayeGenericErrorView, PayeNoAtsErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
 class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting{
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  def sut = new PayeErrorController(FakePayeAuthAction, mcc)
+  lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
+  lazy val payeNoAtsErrorView: PayeNoAtsErrorView = inject[PayeNoAtsErrorView]
+
+  def sut = new PayeErrorController(FakePayeAuthAction, mcc, payeGenericErrorView, payeNoAtsErrorView, mock[PayeNotAuthorisedView],
+    mock[PayeServiceUnavailableView])
 
   "PayeErrorController" should {
 
@@ -36,7 +41,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerB
       val document = contentAsString(result)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
-      document shouldBe contentAsString(views.html.errors.paye_generic_error())
+      document shouldBe contentAsString(payeGenericErrorView())
     }
 
     "Show generic_error page with status BAD_GATEWAY when GATEWAY_TIMEOUT is received" in {
@@ -45,7 +50,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerB
       val document = contentAsString(result)
 
       status(result) shouldBe BAD_GATEWAY
-      document shouldBe contentAsString(views.html.errors.paye_generic_error())
+      document shouldBe contentAsString(payeGenericErrorView())
     }
 
     "Show generic_error page with status BAD_GATEWAY when BAD_GATEWAY is received" in {
@@ -54,7 +59,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerB
       val document = contentAsString(result)
 
       status(result) shouldBe BAD_GATEWAY
-      document shouldBe contentAsString(views.html.errors.paye_generic_error())
+      document shouldBe contentAsString(payeGenericErrorView())
     }
 
     "Show NO ATS page and return NOT_FOUND" in {
@@ -62,7 +67,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerB
       val document = contentAsString(result)
 
       status(result) shouldBe NOT_FOUND
-      document shouldBe contentAsString(views.html.errors.paye_no_ats_error(PayeAtsMain(taxYear)))
+      document shouldBe contentAsString(payeNoAtsErrorView(PayeAtsMain(taxYear)))
     }
   }
 }

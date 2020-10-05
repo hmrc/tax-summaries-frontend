@@ -23,15 +23,17 @@ import services.atsData.PayeAtsTestData
 import utils.TestConstants
 import view_models.paye.PayeYourIncomeAndTaxes
 import views.ViewSpecBase
+import views.html.paye.PayeYourIncomeAndTaxesView
 
 class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   val payeYourIncomeAndTaxesViewModel : PayeYourIncomeAndTaxes =PayeAtsTestData.payeYourIncomeAndTaxesViewModel
+lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
   def view(viewModel:PayeYourIncomeAndTaxes): String =
-    views.html.paye.paye_your_income_and_taxes(payeYourIncomeAndTaxesViewModel).body
+    payeYourIncomeAndTaxesView(payeYourIncomeAndTaxesViewModel).body
 
   "PayeYourIncomeAndTaxesView" should {
     "return correct content for Taxable income section" in {

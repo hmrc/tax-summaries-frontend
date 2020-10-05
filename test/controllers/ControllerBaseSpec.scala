@@ -27,6 +27,9 @@ import play.api.test.{FakeRequest, Injecting}
 import services.PayeAtsService
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
+import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
+import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
+
 import scala.concurrent.ExecutionContext
 
 trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with MockitoSugar with Injecting {
@@ -51,5 +54,20 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with Mockito
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit val ec: ExecutionContext = mcc.executionContext
+
+  lazy val taxFreeAmountView = inject[TaxFreeAmountView]
+  lazy val genericErrorView = inject[GenericErrorView]
+  lazy val tokenErrorView = inject[TokenErrorView]
+  lazy val taxsMainView = inject[TaxsMainView]
+  lazy val capitalGainsView = inject[CapitalGainsView]
+  lazy val notAuthorisedView = inject[NotAuthorisedView]
+  lazy val noAtsErrorView = inject[NoAtsErrorView]
+  lazy val serviceUnavailableView = inject[ServiceUnavailableView]
+  lazy val governmentSpendingView = inject[GovernmentSpendingView]
+  lazy val incomeBeforeTaxView = inject[IncomeBeforeTaxView]
+  lazy val taxsIndexView = inject[TaxsIndexView]
+  lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
+  lazy val summaryView = inject[SummaryView]
+  lazy val nicsView = inject[NicsView]
 
 }

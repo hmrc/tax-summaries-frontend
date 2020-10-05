@@ -24,14 +24,16 @@ import utils.TestConstants
 import utils.ViewUtils._
 import view_models.{Amount, Rate, ScottishRates, ScottishTax}
 import views.ViewSpecBase
+import views.html.total_income_tax_includes.ScottishTableView
 
 class ScottishTableSpec extends ViewSpecBase with TestConstants with PropertyChecks {
 
   val scottishTaxData = ScottishTax.empty
   val scottishRateData = ScottishRates.empty
+  lazy val scottishTableView = inject[ScottishTableView]
 
   def view(tax: ScottishTax, rates: ScottishRates): String =
-    views.html.total_income_tax_includes.scottish_table(tax, rates).body
+    scottishTableView(tax, rates).body
 
   def view(tax: ScottishTax): String = view(tax, scottishRateData)
   def view: String = view(scottishTaxData, scottishRateData)

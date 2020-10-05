@@ -54,7 +54,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockAllowanceService = mock[AllowanceService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc,taxFreeAmountView, genericErrorView, tokenErrorView)
 
       when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
 
@@ -70,7 +70,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockCapitalGainsService = mock[CapitalGainsService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc, capitalGainsView, genericErrorView, tokenErrorView)
 
       when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -86,7 +86,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockGovernmentSpendService = mock[GovernmentSpendService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc, governmentSpendingView, genericErrorView, tokenErrorView)
 
       when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -102,7 +102,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockIncomeService = mock[IncomeService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc, incomeBeforeTaxView, genericErrorView, tokenErrorView)
 
       when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -118,7 +118,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc, totalIncomeTaxView, genericErrorView, tokenErrorView)
 
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -134,7 +134,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
+      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, summaryView, genericErrorView, tokenErrorView)
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 
@@ -150,7 +150,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, nicsView, genericErrorView, tokenErrorView)
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
 

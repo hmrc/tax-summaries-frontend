@@ -1,0 +1,66 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import controllers.auth.AuthenticatedRequest
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.helpers._
+@import views.html.helpers._
+@import view_models.AtsForms
+@import views.html.includes.SaMainView
+@import views.html.includes.TaxsBreadcrumbView
+@import views.html.helpers.BackLinkView
+@import views.html.helpers.ErrorSummaryTemplateView
+@import views.html.helpers.InputRadioGroupView
+
+@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, errorSummaryTemplateView: ErrorSummaryTemplateView, inputRadioGroupView: InputRadioGroupView)
+
+@(atsList: view_models.AtsList, atsYearForm: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, lang: Lang, appConfig: ApplicationConfig)
+
+@headerContent = {
+    @taxsBreadcrumbView(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
+    @if(lang.language == "cy"){
+        <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
+    } else {
+        <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
+    }
+    @if(actingAsAttorney.isDefined) {
+        <div class="nested-banner">
+            <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+        </div>
+    }
+    @if(!actingAsAttorney.isDefined){
+        <p id="user-info"><strong>@atsList.forename @atsList.surname</strong> <br>@Html(Messages("generic.utr")) @atsList.utr</p>
+    }
+}
+
+@saMainView(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
+    @backLinkView(Messages("generic.back"))
+    @errorSummaryTemplateView(atsYearForm)
+
+    @form(action = controllers.routes.IndexController.authorisedOnSubmit){
+
+            @inputRadioGroupView(
+            atsYearForm(AtsForms.yearChoice),
+            atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
+            '_fieldSetAttributes -> "id=year_field",
+            '_legend -> Messages("ats.select_tax_year.title")
+            )
+    <div class="form-field">
+        <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
+    </div>
+    }
+}

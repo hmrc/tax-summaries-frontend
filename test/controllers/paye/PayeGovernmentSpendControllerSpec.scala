@@ -27,13 +27,14 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
+import views.html.paye.PayeGovernmentSpendingView
 
 class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
 
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  val sut = new PayeGovernmentSpendController(mockPayeAtsService, FakePayeAuthAction, mcc)
+  val sut = new PayeGovernmentSpendController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeGovernmentSpendingView])
 
   "Government spend controller" should {
 

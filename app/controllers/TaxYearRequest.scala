@@ -25,14 +25,18 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.{GenericViewModel, TaxYearUtil}
 import view_models.NoATSViewModel
+import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents)(
+abstract class TaxYearRequest @Inject()(
+  mcc: MessagesControllerComponents,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(
   implicit formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends TaxsController(mcc)(formPartialRetriever, appConfig, ec) {
+    extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
   def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
@@ -46,7 +50,7 @@ abstract class TaxYearRequest @Inject()(mcc: MessagesControllerComponents)(
     extractViewModel map {
       case Right(noAts: NoATSViewModel) => Redirect(routes.ErrorController.authorisedNoAts())
       case Right(result: ViewModel)     => obtainResult(result)
-      case Left(InvalidTaxYear)         => BadRequest(views.html.errors.generic_error())
+      case Left(InvalidTaxYear)         => BadRequest(genericErrorView())
     }
   }
 }

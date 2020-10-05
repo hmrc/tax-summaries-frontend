@@ -39,7 +39,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
   val mockAuditService = mock[AuditService]
   val mockSummaryService = mock[SummaryService]
 
-  def incomeController = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc)
+  def incomeController = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc, incomeBeforeTaxView, genericErrorView, tokenErrorView)
 
   override def beforeEach() = {
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
@@ -51,7 +51,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc)
+      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc, totalIncomeTaxView, genericErrorView, tokenErrorView)
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
       val result = Future.successful(sut.show(request))
@@ -81,7 +81,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     val allowanceService = mock[AllowanceService]
 
-    def sut = new AllowancesController(allowanceService, mockAuditService, FakeAuthAction, mcc)
+    def sut = new AllowancesController(allowanceService, mockAuditService, FakeAuthAction, mcc,taxFreeAmountView, genericErrorView, tokenErrorView)
 
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any())).thenReturn(Future.successful(model))
 
@@ -95,7 +95,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     val mockCapitalGainsService = mock[CapitalGainsService]
 
-    def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc)
+    def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc, capitalGainsView, genericErrorView, tokenErrorView)
 
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
@@ -109,7 +109,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     val mockGovernmentSpendService = mock[GovernmentSpendService]
 
-    def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc)
+    def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc, governmentSpendingView, genericErrorView, tokenErrorView)
 
     when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
@@ -121,7 +121,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "show no ats page for summary page" in {
 
-    def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
+    def sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, summaryView, genericErrorView, tokenErrorView)
 
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 
@@ -133,7 +133,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "show no ats page for nics summary page" in {
 
-    def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc)
+    def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, nicsView, genericErrorView, tokenErrorView)
 
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
 

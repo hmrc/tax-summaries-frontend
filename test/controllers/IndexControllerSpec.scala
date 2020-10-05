@@ -64,7 +64,10 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     mockAtsListService,
     mock[AuditService],
     FakeAuthAction,
-    mcc
+    mcc,
+    taxsIndexView,
+    genericErrorView,
+    tokenErrorView
   )
 
   val model: GenericViewModel = AtsList(

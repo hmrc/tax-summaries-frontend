@@ -25,6 +25,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{Amount, Rate}
+import views.html.errors.GenericErrorView
 
 class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
 
@@ -38,11 +39,13 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
   implicit val messagesEn = MessagesImpl(languageEn, messagesApi)
   implicit val messagesCy = MessagesImpl(languageCy, messagesApi)
 
+  lazy val genericErrorView = inject[GenericErrorView]
+
   "Logging in as a portal user" should {
 
     "show the correct contents of the generic error page in English" in  {
 
-      val resultEn = views.html.errors.generic_error()(languageEn, requestWithSession, messagesEn, formPartialRetriever, appConfig)
+      val resultEn = genericErrorView()(languageEn, requestWithSession, messagesEn, formPartialRetriever, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include("Sorry, there is a problem with the service")
       documentEn.toString should include("Try again later.")
@@ -50,7 +53,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
 
     "show the correct contents of the generic error page in Welsh" in  {
 
-      val resultCy = views.html.errors.generic_error()(languageCy, requestWithSession, messagesCy, formPartialRetriever, appConfig)
+      val resultCy = genericErrorView()(languageCy, requestWithSession, messagesCy, formPartialRetriever, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
       documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")

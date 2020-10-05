@@ -28,13 +28,15 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
+import views.html.paye.PayeTaxsMainView
 
 import scala.concurrent.ExecutionContext
 
 class PayeAtsMainController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
-  mcc: MessagesControllerComponents)(
+  mcc: MessagesControllerComponents,
+  payeTaxsMainView: PayeTaxsMainView)(
   implicit formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
@@ -47,7 +49,7 @@ class PayeAtsMainController @Inject()(
     payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
       case Right(_: PayeAtsData) => {
-        Ok(views.html.paye.paye_taxs_main(PayeAtsMain(payeYear)))
+        Ok(payeTaxsMainView(PayeAtsMain(payeYear)))
       }
       case Left(response: HttpResponse) =>
         response.status match {

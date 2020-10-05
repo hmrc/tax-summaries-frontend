@@ -28,13 +28,14 @@ import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourIncomeAndTaxes
-
+import views.html.paye.PayeYourIncomeAndTaxesView
 import scala.concurrent.ExecutionContext
 
 class PayeYourIncomeAndTaxesController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
-  mcc: MessagesControllerComponents)(
+  mcc: MessagesControllerComponents,
+  payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView)(
   implicit formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
@@ -47,7 +48,7 @@ class PayeYourIncomeAndTaxesController @Inject()(
 
         case Right(successResponse: PayeAtsData) => {
           PayeYourIncomeAndTaxes.buildViewModel(successResponse, payeYear) match {
-            case Some(viewModel) => Ok(views.html.paye.paye_your_income_and_taxes(viewModel))
+            case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
             case _ => {
               val exception = new InternalServerException("Missing Paye ATS data")
               Logger.error(s"Internal server error ${exception.getMessage}", exception)

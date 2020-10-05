@@ -1,0 +1,136 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import layouts.{govuk_template => hmrcGovUkTemplate}
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import play.twirl.api.HtmlFormat
+@import views.html.includes.TaxsHeaderNavView
+@import views.html.includes.GoogleTagManagerView
+
+@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView)
+
+@(title: String,
+utr: String,
+userLoggedIn: Boolean = true,
+supportLinkEnabled: Boolean = true,
+serviceInfoContent: Option[Html] = None,
+contentHeader: Option[Html] = None,
+showFeedbackLinkInBetaBanner: Boolean = false,
+linkElement: Option[Html] = None,
+scriptElement: Option[Html] = None,
+bodyClasses: Option[String] = None,
+mainClasses: Option[String] = None,
+mainDataAttributes: Option[Html] = None,
+articleClasses: Option[String] = None,
+includeGridWrapper: Boolean = false,
+actingAttorney: Option[ActingAsAttorneyFor] = None,
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+
+@sidebarLinks = {@HtmlFormat.empty}
+
+@fullTitle = {@title - @Messages("generic.ats.browser.title")}
+
+@linkElement = {
+    <!--[if gt IE 8]><!--><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs.css")' /><!--<![endif]-->
+    <!--[if IE 6]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs-ie6.css")' /><![endif]-->
+    <!--[if IE 7]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs-ie7.css")' /><![endif]-->
+    <!--[if IE 8]><link rel='stylesheet' media='screen' href='@controllers.routes.Assets.versioned("stylesheets/taxs-ie8.css")' /><![endif]-->
+    <link rel='stylesheet' href='@controllers.routes.Assets.versioned("stylesheets/magna-charta/magna-charta.css")' />
+    <link rel='stylesheet' media='print' href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")' />
+}
+
+@scriptElement = {
+    <script src='@routes.Assets.versioned("javascripts/ats-app.js")'></script>
+}
+
+@headScript = {
+    <script src="https://cdn.optimizely.com/js/@{appConfig.optimizelyProjectId}.js"></script>
+}
+
+@head = {
+    @uiLayouts.head(Option(linkElement), Some(headScript))
+}
+
+@insideHeader = {
+    @taxsHeaderNavView(utr, Messages("generic.ats"))
+}
+
+
+@afterHeader = {
+    <!-- Google Tag Manager -->
+        @if(appConfig.isGtmEnabled == true) {
+            @googleTagManagerView(appConfig.googleTagManagerId)
+        }
+    <!-- End Google Tag Manager -->
+}
+
+@getHelpForm = {
+    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
+}
+
+@mainContentHeader = {
+    @if(contentHeader.isDefined) {
+        @uiLayouts.main_content_header(contentHeader = contentHeader.get)
+    }
+}
+
+@content = {
+        @uiLayouts.main_content(
+        article = uiLayouts.article(mainContent),
+        mainClass = mainClasses,
+        mainDataAttributes = mainDataAttributes,
+        mainContentHeader = mainContentHeader,
+        serviceInfo = serviceInfo,
+        getHelpForm = getHelpForm,
+        sidebar = sidebarLinks
+    )
+}
+
+
+@footerTop = {}
+
+@bodyEnd = {
+    @uiLayouts.footer(
+        analyticsToken = appConfig.analyticsToken,
+        analyticsHost = appConfig.analyticsHost,
+        ssoUrl = appConfig.ssoUrl,
+        scriptElem = Option(scriptElement),
+        gaCalls = gaCalls
+    )
+}
+
+@betaBanner = {
+    @uiLayouts.betaBanner(
+        userLoggedIn,
+appConfig.betaFeedbackUrl,
+appConfig.betaFeedbackUnauthenticatedUrl,
+        showFeedbackLinkInBetaBanner
+    )
+}
+
+@serviceInfo = {
+    @uiLayouts.serviceInfo(
+        betaBanner = HtmlFormat.empty,
+        includeGridWrapper,
+        serviceInfoContent,
+        setLang = messages.lang.code
+    )
+}
+
+@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+
