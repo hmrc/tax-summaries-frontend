@@ -17,11 +17,10 @@
 package config
 
 import com.google.inject.Inject
-import controllers.routes
 import javax.inject.Singleton
-import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
 import play.api.i18n.Lang
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
 
@@ -101,11 +100,13 @@ class ApplicationConfig @Inject()(
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 
-  def routeToSwitchLanguage =
-    (lang: String) => {
+  def payeRouteToSwitchLanguage =
+    (lang: String) => controllers.routes.SaLanguageController.switchToLanguage(lang)
 
-      routes.TaxsLanguageController.switchToLanguage(lang)
-    }
+  def saRouteToSwitchLanguage =
+    (lang: String) => controllers.paye.routes.PayeLanguageController.switchToLanguage(lang)
 
-  def fallbackURL: String = config.getString("language.fallbackUrl")
+  def payeFallbackURL: String = config.getString("paye.language.fallbackUrl")
+
+  def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 }

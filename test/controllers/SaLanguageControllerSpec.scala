@@ -19,21 +19,21 @@ package controllers
 import config.ApplicationConfig
 import play.api.Configuration
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, status, _}
+import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.play.language.LanguageUtils
 
-class TaxsLanguageControllerSpec extends ControllerBaseSpec {
+class SaLanguageControllerSpec extends ControllerBaseSpec {
 
   val langUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   val config: Configuration = app.injector.instanceOf[Configuration]
   val applicationConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new TaxsLanguageController(config, langUtils, mcc, applicationConfig)
+  def sut = new SaLanguageController(config, langUtils, mcc, applicationConfig)
 
   val fakeRequest = FakeRequest().withHeaders(("Referer", routes.ErrorController.notAuthorised().url))
   val redirectLocationUrl = routes.ErrorController.notAuthorised().url
 
-  "TaxsLanguageController" should {
+  "SaLanguageController" should {
 
     "redirect to English translated page" in {
       val result =

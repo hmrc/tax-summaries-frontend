@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.paye
 
 import com.google.inject.{Inject, Singleton}
 import config.ApplicationConfig
 import play.api.Configuration
 import play.api.i18n.Lang
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc._
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 @Singleton
-class TaxsLanguageController @Inject()(configuration: Configuration,
+class PayeLanguageController @Inject()(configuration: Configuration,
                                        languageUtils: LanguageUtils,
                                        mcc: MessagesControllerComponents,
                                        appConfig: ApplicationConfig
@@ -32,5 +32,6 @@ class TaxsLanguageController @Inject()(configuration: Configuration,
 
   override def languageMap: Map[String, Lang] = appConfig.languageMap
 
-  override protected def fallbackURL: String = appConfig.fallbackURL
+  override protected def fallbackURL: String = appConfig.payeFallbackURL
+
 }
