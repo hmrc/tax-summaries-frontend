@@ -26,12 +26,15 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import views.html.errors.ErrorTemplateView
 import views.html.errors.PageNotFoundTemplateView
 
-
-class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Configuration, val environment: Environment,
-                             errorTemplateView: ErrorTemplateView,
-                             pageNotFoundTemplateView: PageNotFoundTemplateView)
-                            (implicit val formPartialRetriever: FormPartialRetriever,
-                             implicit val appConfig: ApplicationConfig) extends FrontendErrorHandler {
+class ErrorHandler @Inject()(
+  val messagesApi: MessagesApi,
+  val configuration: Configuration,
+  val environment: Environment,
+  errorTemplateView: ErrorTemplateView,
+  pageNotFoundTemplateView: PageNotFoundTemplateView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  implicit val appConfig: ApplicationConfig)
+    extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =
     Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
@@ -47,6 +50,6 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi, val configuration: Co
     pageNotFoundTemplateView()
   }
 
-   def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
+  def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
     app.configuration.getConfig(s"microservice.metrics")
 }

@@ -39,12 +39,14 @@ class IndexController @Inject()(
   atsListService: AtsListService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents,
+  mcc: MessagesControllerComponents,
   taxsIndexView: TaxsIndexView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
-                                      ec : ExecutionContext)
-    extends TaxsController(mcc, genericErrorView, tokenErrorView){
+  tokenErrorView: TokenErrorView)(
+  implicit formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedIndex: Action[AnyContent] = authAction.async { request =>
     agentAwareShow(request)
@@ -105,19 +107,20 @@ class IndexController @Inject()(
     }
 
   def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
-        atsListService.getAtsYearList flatMap { atsListData => {
-          val atsList = new AtsList(
-            atsListData.utr,
-            atsListData.taxPayer.get.taxpayer_name.get("forename"),
-            atsListData.taxPayer.get.taxpayer_name.get("surname"),
-            atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
-          )
-          Future.successful(Ok(taxsIndexView(atsList, formWithErrors)).withSession(session))
-        }
+        atsListService.getAtsYearList flatMap { atsListData =>
+          {
+            val atsList = new AtsList(
+              atsListData.utr,
+              atsListData.taxPayer.get.taxpayer_name.get("forename"),
+              atsListData.taxPayer.get.taxpayer_name.get("surname"),
+              atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+            )
+            Future.successful(Ok(taxsIndexView(atsList, formWithErrors)).withSession(session))
+          }
         }
       },
       value => redirectWithYear(value.year.get.toInt)
@@ -136,7 +139,7 @@ class IndexController @Inject()(
 
   // This is unused, it is only implemented to adhere to the interface
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(
       taxsIndexView(
         result,

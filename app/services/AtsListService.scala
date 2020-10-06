@@ -28,27 +28,29 @@ import utils._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AtsListService @Inject()(auditService: AuditService,
-                               middleConnector: MiddleConnector,
-                               dataCache : DataCacheConnector,
-                               authUtils: AuthorityUtils) {
+class AtsListService @Inject()(
+  auditService: AuditService,
+  middleConnector: MiddleConnector,
+  dataCache: DataCacheConnector,
+  authUtils: AuthorityUtils) {
 
   def accountUtils: AccountUtils = AccountUtils
 
-  def createModel(converter: (AtsListData => GenericViewModel))(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+  def createModel(converter: (AtsListData => GenericViewModel))(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     getAtsYearList map {
       checkCreateModel(_, converter)
     }
-  }
 
-  private def checkCreateModel(output: AtsListData, converter: (AtsListData => GenericViewModel)): GenericViewModel = {
+  private def checkCreateModel(output: AtsListData, converter: (AtsListData => GenericViewModel)): GenericViewModel =
     output match {
-      case error if error.errors.nonEmpty => error.errors.get match {
-        case IncomingAtsError(_) => throw new AtsError(error.errors.toString)
-      }
+      case error if error.errors.nonEmpty =>
+        error.errors.get match {
+          case IncomingAtsError(_) => throw new AtsError(error.errors.toString)
+        }
       case atsList => converter(atsList)
     }
-  }
 
   def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
     for {
@@ -63,8 +65,8 @@ class AtsListService @Inject()(auditService: AuditService,
           }
         case _ =>
           if (accountUtils.isAgent(request)) {
-            dataCache.getAgentToken.flatMap {
-              token => getAtsListAndStore(token)
+            dataCache.getAgentToken.flatMap { token =>
+              getAtsListAndStore(token)
             }
           } else {
             getAtsListAndStore()
@@ -74,8 +76,8 @@ class AtsListService @Inject()(auditService: AuditService,
     }
   } flatMap { identity }
 
-
-  private def fetchAgentInfo (data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[AtsListData] = {
+  private def fetchAgentInfo(
+    data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
     for {
       token <- dataCache.getAgentToken
     } yield {
@@ -87,12 +89,14 @@ class AtsListService @Inject()(auditService: AuditService,
     }
   } flatMap (identity)
 
-  private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[AtsListData] = {
     val account = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val gotData = (account: @unchecked) match {
-      case agent: Uar => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
+      case agent: Uar        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
       case individual: SaUtr => middleConnector.connectToAtsList(individual)
     }
 
@@ -108,40 +112,42 @@ class AtsListService @Inject()(auditService: AuditService,
     }
   } flatMap { identity }
 
-  private def storeAtsListData(atsList: AtsListData)(implicit hc: HeaderCarrier): Future[AtsListData] = {
-    dataCache.storeAtsListForSession(atsList) map {
-      data => data.get
+  private def storeAtsListData(atsList: AtsListData)(implicit hc: HeaderCarrier): Future[AtsListData] =
+    dataCache.storeAtsListForSession(atsList) map { data =>
+      data.get
     }
-  }
 
-  def storeSelectedTaxYear(taxYear: Int)(implicit hc: HeaderCarrier): Future[Int] = {
-    dataCache.storeAtsTaxYearForSession(taxYear: Int) map {
-      data => data.get
+  def storeSelectedTaxYear(taxYear: Int)(implicit hc: HeaderCarrier): Future[Int] =
+    dataCache.storeAtsTaxYearForSession(taxYear: Int) map { data =>
+      data.get
     }
-  }
 
-  def fetchSelectedTaxYear(implicit hc: HeaderCarrier): Future[Int] = {
-    dataCache.fetchAndGetAtsTaxYearForSession map {
-      data => data.get
+  def fetchSelectedTaxYear(implicit hc: HeaderCarrier): Future[Int] =
+    dataCache.fetchAndGetAtsTaxYearForSession map { data =>
+      data.get
     }
-  }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
+  private def sendAuditEvent(account: TaxIdentifier, data: AtsListData)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]) =
     (account: @unchecked) match {
       case _: Uar =>
-        auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
-          "agentId" -> AccountUtils.getAccountId(request),
-          "clientUtr" -> data.utr,
-          "time" -> new Date().toString
-        ))
+        auditService.sendEvent(
+          AuditTypes.Tx_SUCCEEDED,
+          Map(
+            "agentId"   -> AccountUtils.getAccountId(request),
+            "clientUtr" -> data.utr,
+            "time"      -> new Date().toString
+          ))
       case _: SaUtr =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
-        auditService.sendEvent(AuditTypes.Tx_SUCCEEDED, Map(
-          "userId" -> request.userId,
-          "userUtr" -> data.utr,
-          "userType" -> userType,
-          "time" -> new Date().toString
-        ))
+        auditService.sendEvent(
+          AuditTypes.Tx_SUCCEEDED,
+          Map(
+            "userId"   -> request.userId,
+            "userUtr"  -> data.utr,
+            "userType" -> userType,
+            "time"     -> new Date().toString
+          ))
     }
-  }
 }

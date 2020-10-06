@@ -35,10 +35,13 @@ class AllowancesController @Inject()(
   allowanceService: AllowanceService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents,
+  mcc: MessagesControllerComponents,
   taxFreeAmountView: TaxFreeAmountView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
+  tokenErrorView: TokenErrorView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedAllowance = authAction.async { request =>
@@ -52,7 +55,7 @@ class AllowancesController @Inject()(
     extractViewModelWithTaxYear(allowanceService.getAllowances(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(taxFreeAmountView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 

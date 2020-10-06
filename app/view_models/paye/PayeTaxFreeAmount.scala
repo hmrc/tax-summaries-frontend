@@ -21,11 +21,13 @@ import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
 import play.api.Play
 import view_models.Amount
 
-case class PayeTaxFreeAmount(taxYear: Int,
-                               adjustmentRows: List[AmountRow],
-                               totalTaxFreeAmount: Amount,
-                               summaryRows: List[AmountRow],
-                               liableTaxAmount: Amount) extends TaxYearFormatting
+case class PayeTaxFreeAmount(
+  taxYear: Int,
+  adjustmentRows: List[AmountRow],
+  totalTaxFreeAmount: Amount,
+  summaryRows: List[AmountRow],
+  liableTaxAmount: Amount)
+    extends TaxYearFormatting
 
 object PayeTaxFreeAmount {
 
@@ -36,23 +38,31 @@ object PayeTaxFreeAmount {
   )
 
   def apply(payeAtsData: PayeAtsData): PayeTaxFreeAmount = {
-    val totalTaxFreeAmount = payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_tax_free_amount")).getOrElse(Amount.empty)
-    val liableTaxAmount = payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("liable_tax_amount")).getOrElse(Amount.empty)
-    val totalIncomeBeforeTax = payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
-    val personalTaxFreeAmount = payeAtsData.allowance_data.flatMap(_.payload).flatMap(_.get("personal_tax_free_amount")).getOrElse(Amount.empty)
+    val totalTaxFreeAmount =
+      payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_tax_free_amount")).getOrElse(Amount.empty)
+    val liableTaxAmount =
+      payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("liable_tax_amount")).getOrElse(Amount.empty)
+    val totalIncomeBeforeTax =
+      payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
+    val personalTaxFreeAmount =
+      payeAtsData.allowance_data.flatMap(_.payload).flatMap(_.get("personal_tax_free_amount")).getOrElse(Amount.empty)
 
     val adjustmentRows = (for {
       allowanceData <- payeAtsData.allowance_data
-      payload <- allowanceData.payload
+      payload       <- allowanceData.payload
     } yield {
-      adjustments.map { adjustment =>
-        AmountRow(adjustment, payload.getOrElse(adjustment, Amount.empty))
-      }.filter(_.amount != Amount.empty)
+      adjustments
+        .map { adjustment =>
+          AmountRow(adjustment, payload.getOrElse(adjustment, Amount.empty))
+        }
+        .filter(_.amount != Amount.empty)
     }).getOrElse(List.empty)
 
     val summaryRows = List(
       AmountRow("income_before_tax", totalIncomeBeforeTax),
-      AmountRow("tax_free_amount", if (totalTaxFreeAmount == Amount.empty) personalTaxFreeAmount else totalTaxFreeAmount)
+      AmountRow(
+        "tax_free_amount",
+        if (totalTaxFreeAmount == Amount.empty) personalTaxFreeAmount else totalTaxFreeAmount)
     )
 
     PayeTaxFreeAmount(payeAtsData.taxYear, adjustmentRows, totalTaxFreeAmount, summaryRows, liableTaxAmount)
@@ -60,4 +70,3 @@ object PayeTaxFreeAmount {
 }
 
 case class AmountRow(label: String, amount: Amount)
-

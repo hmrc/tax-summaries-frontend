@@ -27,26 +27,27 @@ import scala.concurrent.Future
 
 class IncomeService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
-  def getIncomeData(taxYear:Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+  def getIncomeData(
+    taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, createIncomeConverter)
-  }
 
   private[services] def createIncomeConverter(atsData: AtsData): IncomeBeforeTax = {
-      val incomeData: DataHolder = atsData.income_data.get
+    val incomeData: DataHolder = atsData.income_data.get
 
-      IncomeBeforeTax(atsData.taxYear,
-        atsData.utr.get,
-        incomeData.payload.get("self_employment_income"),
-        incomeData.payload.get("income_from_employment"),
-        incomeData.payload.get("state_pension"),
-        incomeData.payload.get("other_pension_income"),
-        incomeData.payload.get("taxable_state_benefits"),
-        incomeData.payload.get("other_income"),
-        incomeData.payload.get("benefits_from_employment"),
-        incomeData.payload.get("total_income_before_tax"),
-        atsData.taxPayerData.get.taxpayer_name.get("title"),
-        atsData.taxPayerData.get.taxpayer_name.get("forename"),
-        atsData.taxPayerData.get.taxpayer_name.get("surname")
-      )
-    }
+    IncomeBeforeTax(
+      atsData.taxYear,
+      atsData.utr.get,
+      incomeData.payload.get("self_employment_income"),
+      incomeData.payload.get("income_from_employment"),
+      incomeData.payload.get("state_pension"),
+      incomeData.payload.get("other_pension_income"),
+      incomeData.payload.get("taxable_state_benefits"),
+      incomeData.payload.get("other_income"),
+      incomeData.payload.get("benefits_from_employment"),
+      incomeData.payload.get("total_income_before_tax"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
+    )
+  }
 }

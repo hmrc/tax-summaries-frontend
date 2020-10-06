@@ -22,7 +22,9 @@ import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-class TaxsLanguageController @Inject()(mcc : MessagesControllerComponents)(implicit val formPartialRetriever: FormPartialRetriever) extends FrontendController(mcc) with I18nSupport {
+class TaxsLanguageController @Inject()(mcc: MessagesControllerComponents)(
+  implicit val formPartialRetriever: FormPartialRetriever)
+    extends FrontendController(mcc) with I18nSupport {
 
   def switchLanguage(lang: String) = Action { implicit request =>
     request.headers.get(REFERER) match {

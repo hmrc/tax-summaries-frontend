@@ -27,13 +27,15 @@ import scala.concurrent.Future
 
 class GovernmentSpendService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
-  def getGovernmentSpendData(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
+  def getGovernmentSpendData(
+    taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
   private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
-    GovernmentSpend(atsData.taxYear,
+    GovernmentSpend(
+      atsData.taxYear,
       atsData.utr.get,
       govSpendingData.govSpendAmountData.get.toList,
       atsData.taxPayerData.get.taxpayer_name.get("title"),

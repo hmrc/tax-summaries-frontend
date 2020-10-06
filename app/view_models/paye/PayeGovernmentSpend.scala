@@ -21,10 +21,8 @@ import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
 import play.api.Play
 import view_models.Amount
 
-case class PayeGovernmentSpend(taxYear: Int,
-                               orderedSpendRows: List[SpendRow],
-                               totalAmount: Amount,
-                               isScottish: Boolean) extends TaxYearFormatting
+case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
+    extends TaxYearFormatting
 
 object PayeGovernmentSpend {
 
@@ -34,10 +32,10 @@ object PayeGovernmentSpend {
 
     val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
       category => {
-        payeAtsData.gov_spending.flatMap {
-          govSpending: GovernmentSpendingOutputWrapper => {
-            govSpending.govSpendAmountData.map {
-              spendDataMap => {
+        payeAtsData.gov_spending.flatMap { govSpending: GovernmentSpendingOutputWrapper =>
+          {
+            govSpending.govSpendAmountData.map { spendDataMap =>
+              {
                 val spendData = spendDataMap(category)
                 SpendRow(category, spendData)
               }
@@ -47,16 +45,18 @@ object PayeGovernmentSpend {
       }
     )
 
-    val totalSpendingAmount = payeAtsData.gov_spending.map {
-      spending =>
+    val totalSpendingAmount = payeAtsData.gov_spending
+      .map { spending =>
         spending.totalAmount
-    }.getOrElse(Amount.empty)
+      }
+      .getOrElse(Amount.empty)
 
-    val isScottish = payeAtsData.income_tax.flatMap(incomeTax => incomeTax.payload.flatMap(_.get("scottish_total_tax"))).exists(_.nonZero)
+    val isScottish = payeAtsData.income_tax
+      .flatMap(incomeTax => incomeTax.payload.flatMap(_.get("scottish_total_tax")))
+      .exists(_.nonZero)
 
     PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount, isScottish)
   }
 }
 
 case class SpendRow(category: String, spendData: SpendData)
-

@@ -27,25 +27,29 @@ import views.html.errors.NotAuthorisedView
 import views.html.errors.NoAtsErrorView
 import views.html.errors.ServiceUnavailableView
 
-class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction, mcc : MessagesControllerComponents,
-                                notAuthorisedView: NotAuthorisedView,
-                                noAtsErrorView: NoAtsErrorView,
-                                serviceUnavailableView: ServiceUnavailableView)(
-  implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+class ErrorController @Inject()(
+  authAction: AuthAction,
+  minAuthAction: MinAuthAction,
+  mcc: MessagesControllerComponents,
+  notAuthorisedView: NotAuthorisedView,
+  noAtsErrorView: NoAtsErrorView,
+  serviceUnavailableView: ServiceUnavailableView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig)
     extends FrontendController(mcc) with I18nSupport {
 
   def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(noAtsErrorView())
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(notAuthorisedView())
   }
 
   def serviceUnavailable: Action[AnyContent] = Action { implicit request: Request[_] =>
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(serviceUnavailableView())
   }
 }

@@ -27,39 +27,40 @@ import scala.concurrent.Future
 
 class CapitalGainsService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
 
-  def getCapitalGains(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+  def getCapitalGains(
+    taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, capitalGains)
-  }
 
   private[services] def capitalGains(atsData: AtsData): CapitalGains = {
-      val capitalGainsData: DataHolder = atsData.capital_gains_data.get
-      CapitalGains(atsData.taxYear,
-        atsData.utr.get,
-        capitalGainsData.payload.get("taxable_gains"),
-        capitalGainsData.payload.get("less_tax_free_amount"),
-        capitalGainsData.payload.get("pay_cg_tax_on"),
-        capitalGainsData.payload.get("amount_at_entrepreneurs_rate"),
-        capitalGainsData.payload.get("amount_due_at_entrepreneurs_rate"),
-        capitalGainsData.payload.get("amount_at_ordinary_rate"),
-        capitalGainsData.payload.get("amount_due_at_ordinary_rate"),
-        capitalGainsData.payload.get("amount_at_higher_rate"),
-        capitalGainsData.payload.get("amount_due_at_higher_rate"),
-        capitalGainsData.payload.get("amount_due_rpci_lower_rate"),
-        capitalGainsData.payload.get("amount_at_rpci_lower_rate"),
-        capitalGainsData.payload.get("amount_due_rpci_higher_rate"),
-        capitalGainsData.payload.get("amount_at_rpci_higher_rate"),
-        capitalGainsData.payload.get("adjustments"),
-        capitalGainsData.payload.get("total_cg_tax"),
-        capitalGainsData.payload.get("cg_tax_per_currency_unit"),
-        capitalGainsData.rates.get("cg_entrepreneurs_rate"),
-        capitalGainsData.rates.get("cg_ordinary_rate"),
-        capitalGainsData.rates.get("cg_upper_rate"),
-        capitalGainsData.rates.get("prop_interest_rate_lower_rate"),
-        capitalGainsData.rates.get("prop_interest_rate_higher_rate"),
-        capitalGainsData.rates.get("total_cg_tax_rate"),
-        atsData.taxPayerData.get.taxpayer_name.get("title"),
-        atsData.taxPayerData.get.taxpayer_name.get("forename"),
-        atsData.taxPayerData.get.taxpayer_name.get("surname")
-      )
-    }
+    val capitalGainsData: DataHolder = atsData.capital_gains_data.get
+    CapitalGains(
+      atsData.taxYear,
+      atsData.utr.get,
+      capitalGainsData.payload.get("taxable_gains"),
+      capitalGainsData.payload.get("less_tax_free_amount"),
+      capitalGainsData.payload.get("pay_cg_tax_on"),
+      capitalGainsData.payload.get("amount_at_entrepreneurs_rate"),
+      capitalGainsData.payload.get("amount_due_at_entrepreneurs_rate"),
+      capitalGainsData.payload.get("amount_at_ordinary_rate"),
+      capitalGainsData.payload.get("amount_due_at_ordinary_rate"),
+      capitalGainsData.payload.get("amount_at_higher_rate"),
+      capitalGainsData.payload.get("amount_due_at_higher_rate"),
+      capitalGainsData.payload.get("amount_due_rpci_lower_rate"),
+      capitalGainsData.payload.get("amount_at_rpci_lower_rate"),
+      capitalGainsData.payload.get("amount_due_rpci_higher_rate"),
+      capitalGainsData.payload.get("amount_at_rpci_higher_rate"),
+      capitalGainsData.payload.get("adjustments"),
+      capitalGainsData.payload.get("total_cg_tax"),
+      capitalGainsData.payload.get("cg_tax_per_currency_unit"),
+      capitalGainsData.rates.get("cg_entrepreneurs_rate"),
+      capitalGainsData.rates.get("cg_ordinary_rate"),
+      capitalGainsData.rates.get("cg_upper_rate"),
+      capitalGainsData.rates.get("prop_interest_rate_lower_rate"),
+      capitalGainsData.rates.get("prop_interest_rate_higher_rate"),
+      capitalGainsData.rates.get("total_cg_tax_rate"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
+    )
+  }
 }

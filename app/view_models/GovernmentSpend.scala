@@ -34,20 +34,18 @@ case class GovernmentSpend(
   def sortedSpendData: List[(String, SpendData)] =
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
-  def filteredDataWithHigherTransport: List[(String, SpendData)] = {
-
+  def filteredDataWithHigherTransport: List[(String, SpendData)] =
     if (taxYear == 2019) {
 
       val transport = "Transport"
       val publicOrder = "PublicOrderAndSafety"
 
       sortedSpendData.map {
-        case (key, data) if key == transport => (publicOrder, data)
+        case (key, data) if key == transport   => (publicOrder, data)
         case (key, data) if key == publicOrder => (transport, data)
-        case default@_ => default
+        case default @ _                       => default
       }
     } else sortedSpendData
-  }
 
   def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
   def taxYearFrom: String = (taxYear - 1).toString

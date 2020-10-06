@@ -51,20 +51,16 @@
     @backLinkView(Messages("generic.back"))
     @errorSummaryTemplateView(atsYearForm)
 
-    <h1>@Html(Messages("ats.select_tax_year.title"))</h1>
-
     @form(action = controllers.routes.IndexController.authorisedOnSubmit){
-        <div class="form-group">
 
             @inputRadioGroupView(
             atsYearForm(AtsForms.yearChoice),
             atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
             '_fieldSetAttributes -> "id=year_field",
-            '_legendClass -> "visuallyhidden",
             '_legend -> Messages("ats.select_tax_year.title")
             )
-
-        </div>
+    <div class="form-field">
         <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
+    </div>
     }
 }

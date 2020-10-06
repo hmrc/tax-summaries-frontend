@@ -2,10 +2,15 @@ import sbt._
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import com.typesafe.sbt.web.Import._
+import com.typesafe.sbt.web.Import.WebKeys._
+import net.ground5hark.sbt.concat.Import._
+import com.typesafe.sbt.uglify.Import._
+import com.typesafe.sbt.digest.Import._
 
 val appName = "tax-summaries-frontend"
 
-lazy val plugins : Seq[Plugins] = Seq(
+lazy val plugins: Seq[Plugins] = Seq(
   play.sbt.PlayScala,
   SbtAutoBuildPlugin,
   SbtGitVersioning,
@@ -24,8 +29,10 @@ lazy val scoverageSettings = {
   )
 }
 
+lazy val root = (project in file(".")).enablePlugins(SbtWeb)
+
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(plugins : _*)
+  .enablePlugins(plugins: _*)
   .settings(
     PlayKeys.playDefaultPort := 9217,
     scoverageSettings,
@@ -38,5 +45,22 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true,
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    resolvers ++= Seq(Resolver.bintrayRepo("hmrc", "releases"),Resolver.jcenterRepo)
+    resolvers ++= Seq(
+      Resolver.bintrayRepo("hmrc", "releases"),
+      Resolver.jcenterRepo,
+      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"),
+    Concat.groups := Seq(
+      "javascripts/ats-app.js" -> group(
+        Seq(
+          "javascripts/jquery.min.js",
+          "javascripts/jquery-ui.min.js",
+          "javascripts/magna-charta.js",
+          "javascripts/details.polyfill.js",
+          "javascripts/taxs.js"))
+    ),
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
+    pipelineStages := Seq(digest),
+    pipelineStages in Assets := Seq(concat, uglify),
+    scalafmtOnCompile := true,
+    includeFilter in uglify := GlobFilter("ats-*.js")
   )

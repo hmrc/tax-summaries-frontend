@@ -29,8 +29,9 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc : MessagesControllerComponents)(
-  implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+  implicit ec: ExecutionContext,
+  appConfig: ApplicationConfig)
     extends AuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
@@ -118,4 +119,5 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+trait AuthAction
+    extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]

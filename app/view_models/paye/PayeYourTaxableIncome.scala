@@ -20,25 +20,22 @@ import models.{DataHolder, PayeAtsData}
 import view_models.Amount
 
 case class PayeYourTaxableIncome(
-                                  taxYear: Int,
-                                  incomeTaxRows: List[IncomeTaxRow],
-                                  totalIncomeBeforeTax: Amount
-                                ) extends TaxYearFormatting {
-}
+  taxYear: Int,
+  incomeTaxRows: List[IncomeTaxRow],
+  totalIncomeBeforeTax: Amount
+) extends TaxYearFormatting {}
 
 object PayeYourTaxableIncome {
   def buildViewModel(payeAtsData: PayeAtsData): PayeYourTaxableIncome = {
     val taxRows = getIncomeTaxRows(payeAtsData.income_data).filter(row => row.value.nonZero)
 
-    PayeYourTaxableIncome(
-      payeAtsData.taxYear,
-      taxRows,
-      getTotalIncomeBeforeTax(payeAtsData.income_data))
+    PayeYourTaxableIncome(payeAtsData.taxYear, taxRows, getTotalIncomeBeforeTax(payeAtsData.income_data))
   }
 
-  def getTotalIncomeBeforeTax(incomeData: Option[DataHolder]) = incomeData.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
+  def getTotalIncomeBeforeTax(incomeData: Option[DataHolder]) =
+    incomeData.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
 
-  def getIncomeTaxRows(incomeData: Option[DataHolder]) : List[IncomeTaxRow] ={
+  def getIncomeTaxRows(incomeData: Option[DataHolder]): List[IncomeTaxRow] = {
     val selfEmploymentIncome = Amount(incomeData.flatMap(_.payload).flatMap(_.get("self_employment_income")))
     val incomeFromEmployment = Amount(incomeData.flatMap(_.payload).flatMap(_.get("income_from_employment")))
     val statePension = Amount(incomeData.flatMap(_.payload).flatMap(_.get("state_pension")))
@@ -51,7 +48,9 @@ object PayeYourTaxableIncome {
       IncomeTaxRow("self_employment_income", selfEmploymentIncome),
       IncomeTaxRow("income_from_employment", incomeFromEmployment),
       IncomeTaxRow("state_pension", statePension),
-      IncomeTaxRow(if(statePension == Amount.empty) "personal_pension_income" else "other_pension_income", otherPensionIncome),
+      IncomeTaxRow(
+        if (statePension == Amount.empty) "personal_pension_income" else "other_pension_income",
+        otherPensionIncome),
       IncomeTaxRow("taxable_state_benefits", taxableStateBenefits),
       IncomeTaxRow("other_income", otherIncome),
       IncomeTaxRow("benefits_from_employment", benefitsFromEmployment)

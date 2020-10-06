@@ -1,5 +1,5 @@
 // No conflict
-(function($) {
+$(function() {
     // This will be used for the back link
       var docReferrer = document.referrer
       if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
@@ -13,8 +13,6 @@
               backLinkElem.setAttribute("href","javascript:void(0);");
           }
       }
-  // Document ready
-  $(function() {
 
     var options = {
           outOf: 65, // number to calculate the bar % out of
@@ -104,7 +102,7 @@
 
     });
 
-    $('#errors').focus();
+    $('.error-summary').focus();
 
-  });
-})(window.jQuery)
+});
+

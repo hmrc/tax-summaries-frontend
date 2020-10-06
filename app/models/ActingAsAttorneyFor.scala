@@ -16,4 +16,4 @@
 
 package models
 
-case class ActingAsAttorneyFor(name:Option[String], identifiers:Map[String, String])
+case class ActingAsAttorneyFor(name: Option[String], identifiers: Map[String, String])

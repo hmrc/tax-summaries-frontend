@@ -35,12 +35,14 @@ class AtsMainController @Inject()(
   summaryService: SummaryService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc : MessagesControllerComponents,
+  mcc: MessagesControllerComponents,
   taxsMainView: TaxsMainView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
-                                      ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView){
+  tokenErrorView: TokenErrorView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedAtsMain: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -53,7 +55,7 @@ class AtsMainController @Inject()(
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-    implicit val lang : Lang = request.lang
+    implicit val lang: Lang = request.lang
     Ok(taxsMainView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
   }
 }

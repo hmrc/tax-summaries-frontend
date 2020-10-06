@@ -25,6 +25,7 @@ generic.hm.revenue = Cyllid
 generic.hm.and = &
 generic.hm.customs = Thollau EM
 site.back=Yn ôl
+generic.error = Gwall:
 
 # View ATS - Breadcrumbs
 #============================================================

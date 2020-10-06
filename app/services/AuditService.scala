@@ -27,7 +27,9 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   val taxsAuditSource = "tax-summaries-frontend"
 
-  def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(implicit request: Request[_], hc: HeaderCarrier) =
+  def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(
+    implicit request: Request[_],
+    hc: HeaderCarrier) =
     auditConnector.sendEvent(eventFor(auditType, details, sessionId))
 
   def eventFor(auditType: String, details: Map[String, String], sessionId: Option[String])(implicit hc: HeaderCarrier) =

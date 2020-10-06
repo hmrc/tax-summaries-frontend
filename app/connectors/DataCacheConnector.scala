@@ -26,7 +26,8 @@ import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: TAXSSessionCache)(implicit ec: ExecutionContext) {
+class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: TAXSSessionCache)(
+  implicit ec: ExecutionContext) {
 
   val sourceId: String = Globals.TAXS_CACHE_KEY
   val sourceAtsListId: String = Globals.TAXS_ATS_LIST_CACHE_KEY
@@ -45,11 +46,11 @@ class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: T
     }
   }
 
-  def fetchAndGetAtsListForSession(implicit hc: HeaderCarrier): Future[Option[AtsListData]] = {
+  def fetchAndGetAtsListForSession(implicit hc: HeaderCarrier): Future[Option[AtsListData]] =
     sessionCache.fetchAndGetEntry[AtsListData](sourceAtsListId)
-  }
 
-  def storeAtsListForSession(data: AtsListData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsListData]] = {
+  def storeAtsListForSession(
+    data: AtsListData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsListData]] = {
     val result = sessionCache.cache[AtsListData](sourceAtsListId, data)
     result flatMap {
       case data: CacheMap => Future.successful(data.getEntry[AtsListData](sourceAtsListId))
@@ -63,16 +64,14 @@ class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: T
     }
   }
 
-  def fetchAndGetAtsTaxYearForSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Int]] = {
+  def fetchAndGetAtsTaxYearForSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Int]] =
     sessionCache.fetchAndGetEntry[Int](sourceAtsSelectedTaxYearId)
-  }
 
   def storeAgentToken(token: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AnyRef] = {
     val agentToken = cryptoService.getAgentToken(token)
     sessionCache.cache[AgentToken](Globals.TAXS_AGENT_TOKEN_KEY, agentToken)
   }
 
-  def getAgentToken(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AgentToken]] = {
+  def getAgentToken(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AgentToken]] =
     sessionCache.fetchAndGetEntry[AgentToken](Globals.TAXS_AGENT_TOKEN_KEY)
-  }
 }
