@@ -22,7 +22,7 @@
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView)
 
-@()(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
     @taxsBreadcrumbView(List("breadcrumbs.taxs.index"), "token_error.html.title", 0)

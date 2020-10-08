@@ -16,8 +16,8 @@ GET     /not-authorised                                        controllers.Error
 GET     /no-ats                                                controllers.ErrorController.authorisedNoAts
 GET     /service-unavailable                                   controllers.ErrorController.serviceUnavailable
 
-GET     /switch-to-welsh                                       controllers.TaxsLanguageController.switchLanguage(lang = "cy")
-GET     /switch-to-english                                     controllers.TaxsLanguageController.switchLanguage(lang = "en")
+GET     /language/:lang                                        controllers.paye.PayeLanguageController.switchToLanguage(lang: String)
+GET     /language/:lang                                        controllers.SaLanguageController.switchToLanguage(lang: String)
 
 GET     /sign-out                                              controllers.AccountController.signOut
 

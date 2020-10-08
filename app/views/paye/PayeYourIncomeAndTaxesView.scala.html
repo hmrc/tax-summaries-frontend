@@ -27,7 +27,7 @@
 
 @this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
-@(viewModel:PayeYourIncomeAndTaxes)(implicit lang: Lang, messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel:PayeYourIncomeAndTaxes)(implicit messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear")) {
 

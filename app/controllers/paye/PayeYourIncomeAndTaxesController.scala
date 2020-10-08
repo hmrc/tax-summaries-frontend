@@ -21,7 +21,7 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import javax.inject.Inject
 import models.PayeAtsData
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Lang}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
@@ -29,27 +29,27 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeYourIncomeAndTaxes
 import views.html.paye.PayeYourIncomeAndTaxesView
+
 import scala.concurrent.ExecutionContext
 
-class PayeYourIncomeAndTaxesController @Inject()(
-  payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction,
-  mcc: MessagesControllerComponents,
-  payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+
+
+class PayeYourIncomeAndTaxesController @Inject()(payeAtsService: PayeAtsService,
+                                                 payeAuthAction: PayeAuthAction,
+                                                 mcc : MessagesControllerComponents,
+                                                 payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView)
+                                                (implicit formPartialRetriever: FormPartialRetriever,
+                                                 appConfig: ApplicationConfig,
+                                                 ec : ExecutionContext) extends FrontendController(mcc) with I18nSupport{
   val payeYear = appConfig.payeYear
-  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    {
-      implicit val lang: Lang = request.lang
+  def show: Action[AnyContent] = payeAuthAction.async {
+    implicit request: PayeAuthenticatedRequest[_] => {
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
         case Right(successResponse: PayeAtsData) => {
           PayeYourIncomeAndTaxes.buildViewModel(successResponse, payeYear) match {
             case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
-            case _ => {
+            case _  => {
               val exception = new InternalServerException("Missing Paye ATS data")
               Logger.error(s"Internal server error ${exception.getMessage}", exception)
               InternalServerError(exception.getMessage)

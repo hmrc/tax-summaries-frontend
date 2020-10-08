@@ -20,7 +20,7 @@
 
 @this()
 
-@(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit lang: Lang, request: AuthenticatedRequest[_], messages: Messages, appConfig: ApplicationConfig)
+@(links: List[String], currentPage: String, taxYear: Int, isLandingPage: Boolean = false)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: ApplicationConfig)
 
 <div id="global-breadcrumb" class="header-context">
       <ol class="group">

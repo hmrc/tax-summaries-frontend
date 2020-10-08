@@ -21,7 +21,7 @@
 
 @this(payeMainView: PayeMainView)
 
-@()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, lang: Lang, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
 

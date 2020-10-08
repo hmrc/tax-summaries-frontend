@@ -16,9 +16,7 @@
 
 package view_models.paye
 
-import config.PayeConfig
-import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
-import play.api.Play
+import models.PayeAtsData
 import view_models.Amount
 
 case class PayeTaxFreeAmount(

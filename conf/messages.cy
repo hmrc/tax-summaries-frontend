@@ -26,6 +26,8 @@ generic.hm.and = &
 generic.hm.customs = Thollau EM
 site.back=Yn ôl
 generic.error = Gwall:
+view.languageToggle.english=English
+view.languageToggle.welsh=Cymraeg
 
 # View ATS - Breadcrumbs
 #============================================================

@@ -18,8 +18,9 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
+import play.api.i18n.Lang
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
 
@@ -95,4 +96,17 @@ class ApplicationConfig @Inject()(
   val saShuttered: Boolean = config.getBoolean("shuttering.sa")
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
+
+  def languageMap: Map[String, Lang] =
+    Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
+
+  def payeRouteToSwitchLanguage =
+    (lang: String) => controllers.routes.SaLanguageController.switchToLanguage(lang)
+
+  def saRouteToSwitchLanguage =
+    (lang: String) => controllers.paye.routes.PayeLanguageController.switchToLanguage(lang)
+
+  def payeFallbackURL: String = config.getString("paye.language.fallbackUrl")
+
+  def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 }

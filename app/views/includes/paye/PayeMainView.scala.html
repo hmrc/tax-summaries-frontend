@@ -17,12 +17,14 @@
 @import config.ApplicationConfig
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
+@import uk.gov.hmrc.play.views.html.layouts._
 @import play.twirl.api.HtmlFormat
 @import views.html.includes.paye.PayeTaxsHeaderNavView
-@import views.html.includes.GoogleTagManagerView
+@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
 
-@this(payeTaxsHeaderNavView: PayeTaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView)
+@this(payeTaxsHeaderNavView: PayeTaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView,
+      uiHead: Head, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
+      uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
 
 @(title: String,
 userLoggedIn: Boolean = true,
@@ -32,7 +34,7 @@ bodyClasses: Option[String] = None,
 mainClasses: Option[String] = None,
 mainDataAttributes: Option[Html] = None,
 includeGridWrapper: Boolean = false,
-gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lang: Lang, request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @fullTitle = {@title - @Messages("generic.paye.ats.browser.title")}
 
@@ -53,7 +55,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }
 
 @head = {
-    @uiLayouts.head(Option(linkElement), Some(headScript))
+    @uiHead(Option(linkElement), Some(headScript))
 }
 
 @insideHeader = {
@@ -74,20 +76,21 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }
 
 @contentHeader = {
-  @if(lang.language == "cy"){
-     <a id="english-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("en") data-journey-click="Language:Select:English">@Html(Messages("generic.english"))</a>
-   } else {
-     <a id="welsh-switch" href=@controllers.routes.TaxsLanguageController.switchLanguage("cy") data-journey-click="Language:Select:Welsh">@Html(Messages("generic.welsh"))</a>
-   }
+
+  @languageSelectionView(
+        appConfig.languageMap,
+        appConfig.payeRouteToSwitchLanguage
+  )
+
 }
 
 @mainContentHeader = {
-        @uiLayouts.main_content_header(contentHeader)
+        @uiMainContentHeader(contentHeader)
 }
 
 @content = {
-    @uiLayouts.main_content(
-        article = uiLayouts.article(mainContent),
+    @uiMainContent(
+        article = uiArticle(mainContent),
         mainClass = mainClasses,
         mainDataAttributes = mainDataAttributes,
         mainContentHeader = mainContentHeader,
@@ -101,7 +104,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 @footerTop = {}
 
 @bodyEnd = {
-    @uiLayouts.footer(
+    @uiFooter(
         analyticsToken = appConfig.analyticsToken,
         analyticsHost = appConfig.analyticsHost,
         ssoUrl = appConfig.ssoUrl,
@@ -111,7 +114,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit lan
 }
 
 @betaBanner = {
-    @uiLayouts.betaBanner(
+    @uiBetaBanner(
         userLoggedIn,
 appConfig.betaFeedbackUrl,
 appConfig.betaFeedbackUnauthenticatedUrl,
@@ -120,7 +123,7 @@ appConfig.betaFeedbackUnauthenticatedUrl,
 }
 
 @serviceInfo = {
-    @uiLayouts.serviceInfo(
+    @uiServiceInfo(
         betaBanner = HtmlFormat.empty,
         includeGridWrapper,
         serviceInfoContent,
@@ -128,5 +131,5 @@ appConfig.betaFeedbackUnauthenticatedUrl,
     )
 }
 
-@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@hmrcGovUkTemplate(Some(fullTitle.toString), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiFooterLinks()), true)(content)
 

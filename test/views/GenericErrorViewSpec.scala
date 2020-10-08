@@ -18,7 +18,7 @@ package views
 
 import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -45,7 +45,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
 
     "show the correct contents of the generic error page in English" in  {
 
-      val resultEn = genericErrorView()(languageEn, requestWithSession, messagesEn, formPartialRetriever, appConfig)
+      val resultEn = genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include("Sorry, there is a problem with the service")
       documentEn.toString should include("Try again later.")
@@ -53,7 +53,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
 
     "show the correct contents of the generic error page in Welsh" in  {
 
-      val resultCy = genericErrorView()(languageCy, requestWithSession, messagesCy, formPartialRetriever, appConfig)
+      val resultCy = genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
       documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")
