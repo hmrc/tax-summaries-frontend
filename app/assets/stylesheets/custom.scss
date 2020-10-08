@@ -1,74 +1,4 @@
-.value {
-  display: block;
-  margin-bottom: 20px;
-  float: left;
-  width: 66.66%; }
 
-.percentage {
-  clear: both;
-  text-align: right;
-  margin-right: 10px;
-  width: 30%; }
-
-.value {
-  position: relative;
-  top: -25px; }
-
-.total {
-  top: 0;
-}
-
-.bar-chart {
-  position: relative;
-  top: 14px;
-  background-color: #28a197;
-  border: 2px solid #296969;
-  display: inline-block;
-  height: 40px;
-  margin-right: 10px; }
-
-/*= Variables
-----------------------------------------------*/
-/*= Mixins
-----------------------------------------------*/
-/*= Header styles
-----------------------------------------------*/
-#global-header #logo {
-  width: 165px; }
-#global-header .header-message {
-  float: right;
-  margin: .65rem 0;
-  color: #fff; }
-  #global-header .header-message p {
-    margin: 0; }
-
-#global-breadcrumb {
-  margin: 0 auto;
-  max-width: 1020px;
-  background-color: #fff;
-  z-index: 50; }
-  #global-breadcrumb ol {
-    margin: 0 30px;
-    margin: 0;
-    padding: 0.75em 0 0;
-    max-width: 960px; }
-    #global-breadcrumb ol li {
-      font-family: "nta", Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.25;
-      font-weight: 300;
-      text-transform: none;
-      margin-left: 0;
-      margin-right: 0.5em;
-      margin-bottom: 0.4em;
-      padding-right: 1em;
-      background-image: url("/annual-tax-summary/assets/images/icon-chevron-right.svg");
-      background-position: 105% 50%;
-      background-repeat: no-repeat;
-      background-size: 25%;
-      float: left;
-      list-style: none; }
-      @media (max-width: 640px) {
 
 @-ms-viewport {
   width: device-width; }
@@ -160,6 +90,79 @@
 @-o-viewport {
   width: device-width; }
 .percentage,
+.value {
+  display: block;
+  margin-bottom: 20px;
+  float: left;
+  width: 66.66%; }
+
+.percentage {
+  clear: both;
+  text-align: right;
+  margin-right: 10px;
+  width: 30%; }
+
+.value {
+  position: relative;
+  top: -25px; }
+
+.total {
+  top: 0;
+}
+
+.bar-chart {
+  position: relative;
+  top: 14px;
+  background-color: #28a197;
+  border: 2px solid #296969;
+  display: inline-block;
+  height: 40px;
+  margin-right: 10px; }
+
+/*= Variables
+----------------------------------------------*/
+/*= Mixins
+----------------------------------------------*/
+/*= Header styles
+----------------------------------------------*/
+#global-header #logo {
+  width: 165px; }
+#global-header .header-message {
+  float: right;
+  margin: .65rem 0;
+  color: #fff; }
+  #global-header .header-message p {
+    margin: 0; }
+
+#global-breadcrumb {
+  margin: 0 auto;
+  max-width: 1020px;
+  background-color: #fff;
+  z-index: 50; }
+  #global-breadcrumb ol {
+    margin: 0 30px;
+    margin: 0;
+    padding: 0.75em 0 0;
+    max-width: 960px; }
+    #global-breadcrumb ol li {
+      font-family: "nta", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 300;
+      text-transform: none;
+      margin-left: 0;
+      margin-right: 0.5em;
+      margin-bottom: 0.4em;
+      padding-right: 1em;
+      background-image: url("/annual-tax-summary/assets/images/icon-chevron-right.svg");
+      background-position: 102% 50%;
+      background-repeat: no-repeat;
+      background-size: contain;
+      float: left;
+      list-style: none;
+    }
+
+    @media (max-width: 640px) {
         #global-breadcrumb ol li {
           font-size: 14px;
           line-height: 1.1428571429; } }
