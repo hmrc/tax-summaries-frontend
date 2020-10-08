@@ -63,12 +63,14 @@
       margin-bottom: 0.4em;
       padding-right: 1em;
       background-image: url("/annual-tax-summary/assets/images/icon-chevron-right.svg");
-      background-position: 105% 50%;
+      background-position: 102% 50%;
       background-repeat: no-repeat;
-      background-size: 25%;
+      background-size: contain;
       float: left;
-      list-style: none; }
-      @media (max-width: 640px) {
+      list-style: none;
+    }
+
+    @media (max-width: 640px) {
 
 @-ms-viewport {
   width: device-width; }
