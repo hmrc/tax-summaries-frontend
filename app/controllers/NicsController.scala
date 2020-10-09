@@ -30,25 +30,28 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NicsController @Inject()(summaryService: SummaryService,
-                               val auditService: AuditService,
-                               authAction: AuthAction,
-                               mcc : MessagesControllerComponents,
-                               nicsView: NicsView,
-                               genericErrorView: GenericErrorView,
-                               tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+class NicsController @Inject()(
+  summaryService: SummaryService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents,
+  nicsView: NicsView,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedNics: Action[AnyContent] = authAction.async {
-    request => show(request)
+  def authorisedNics: Action[AnyContent] = authAction.async { request =>
+    show(request)
   }
 
   type ViewModel = Summary
 
-  override def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse,GenericViewModel]] = {
+  override def extractViewModel()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
-  }
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(nicsView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
 }

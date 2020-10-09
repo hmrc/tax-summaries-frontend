@@ -37,8 +37,11 @@ class GovernmentSpendController @Inject()(
   mcc: MessagesControllerComponents,
   governmentSpendingView: GovernmentSpendingView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc,genericErrorView, tokenErrorView) {
+  tokenErrorView: TokenErrorView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -50,14 +53,12 @@ class GovernmentSpendController @Inject()(
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(
       governmentSpendingView(
         result,
         assignPercentage(result.govSpendAmountData),
         getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
-  }
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
     var percentEnviron = 0.0
