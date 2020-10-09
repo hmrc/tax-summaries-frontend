@@ -30,12 +30,18 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeController @Inject()(incomeService: IncomeService, val auditService: AuditService, authAction: AuthAction,
-                                 mcc : MessagesControllerComponents,
-                                 incomeBeforeTaxView: IncomeBeforeTaxView,
-                                 genericErrorView: GenericErrorView,
-                                 tokenErrorView: TokenErrorView)(implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig, ec: ExecutionContext)
-  extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+class IncomeController @Inject()(
+  incomeService: IncomeService,
+  val auditService: AuditService,
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents,
+  incomeBeforeTaxView: IncomeBeforeTaxView,
+  genericErrorView: GenericErrorView,
+  tokenErrorView: TokenErrorView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
     show(request)
@@ -47,8 +53,6 @@ class IncomeController @Inject()(incomeService: IncomeService, val auditService:
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(incomeService.getIncomeData(_))
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
-
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(incomeBeforeTaxView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
-  }
 }

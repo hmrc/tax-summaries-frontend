@@ -25,25 +25,26 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import views.html.errors.{NoAtsErrorView, NotAuthorisedView, ServiceUnavailableView}
 
-class ErrorController @Inject()(authAction: AuthAction, minAuthAction: MinAuthAction, mcc : MessagesControllerComponents,
-                                notAuthorisedView: NotAuthorisedView,
-                                noAtsErrorView: NoAtsErrorView,
-                                serviceUnavailableView: ServiceUnavailableView)(
-  implicit val formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+class ErrorController @Inject()(
+  authAction: AuthAction,
+  minAuthAction: MinAuthAction,
+  mcc: MessagesControllerComponents,
+  notAuthorisedView: NotAuthorisedView,
+  noAtsErrorView: NoAtsErrorView,
+  serviceUnavailableView: ServiceUnavailableView)(
+  implicit val formPartialRetriever: FormPartialRetriever,
+  appConfig: ApplicationConfig)
     extends FrontendController(mcc) with I18nSupport {
 
   def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
-
     Ok(noAtsErrorView())
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>
-
     Ok(notAuthorisedView())
   }
 
   def serviceUnavailable: Action[AnyContent] = Action { implicit request: Request[_] =>
-
     Ok(serviceUnavailableView())
   }
 }
