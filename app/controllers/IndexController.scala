@@ -38,14 +38,12 @@ class IndexController @Inject()(
   atsListService: AtsListService,
   val auditService: AuditService,
   authAction: AuthAction,
-  mcc: MessagesControllerComponents,
+  mcc : MessagesControllerComponents,
   taxsIndexView: TaxsIndexView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends TaxsController(mcc, genericErrorView, tokenErrorView) {
+  tokenErrorView: TokenErrorView)(implicit formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig,
+                                      ec : ExecutionContext)
+    extends TaxsController(mcc, genericErrorView, tokenErrorView){
 
   def authorisedIndex: Action[AnyContent] = authAction.async { request =>
     agentAwareShow(request)
@@ -84,7 +82,8 @@ class IndexController @Inject()(
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     atsYearListService.getAtsListData.map(Right(_))
 
-  def getViewModel(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Future[Result] =
+  def getViewModel(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+
     result.yearList match {
       case TaxYearEnd(year) :: Nil => redirectWithYear(year.get.toInt)
       case _ =>
@@ -96,6 +95,7 @@ class IndexController @Inject()(
               getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
             .withSession(request.session + ("atsList" -> result.toString)))
     }
+  }
 
   override def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel flatMap {
@@ -103,24 +103,25 @@ class IndexController @Inject()(
       case Right(result: ViewModel)     => getViewModel(result)
     }
 
-  def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
+  def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
-        atsListService.getAtsYearList flatMap { atsListData =>
-          {
-            val atsList = new AtsList(
-              atsListData.utr,
-              atsListData.taxPayer.get.taxpayer_name.get("forename"),
-              atsListData.taxPayer.get.taxpayer_name.get("surname"),
-              atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
-            )
-            Future.successful(Ok(taxsIndexView(atsList, formWithErrors)).withSession(session))
-          }
+        atsListService.getAtsYearList flatMap { atsListData => {
+          val atsList = new AtsList(
+            atsListData.utr,
+            atsListData.taxPayer.get.taxpayer_name.get("forename"),
+            atsListData.taxPayer.get.taxpayer_name.get("surname"),
+            atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+          )
+          Future.successful(Ok(taxsIndexView(atsList, formWithErrors)).withSession(session))
+        }
         }
       },
       value => redirectWithYear(value.year.get.toInt)
     )
+  }
 
   def redirectWithYear(year: Int)(implicit request: AuthenticatedRequest[_]): Future[Result] =
     atsListService.getAtsYearList flatMap { atsListData =>
@@ -133,11 +134,13 @@ class IndexController @Inject()(
     }
 
   // This is unused, it is only implemented to adhere to the interface
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+
     Ok(
       taxsIndexView(
         result,
         atsYearFormMapping,
         getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+  }
 
 }

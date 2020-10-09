@@ -32,20 +32,18 @@ import views.html.paye.PayeYourTaxableIncomeView
 
 import scala.concurrent.ExecutionContext
 
-class PayeYourTaxableIncomeController @Inject()(
-  payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction,
-  mcc: MessagesControllerComponents,
-  payeYourTaxableIncomeView: PayeYourTaxableIncomeView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+class PayeYourTaxableIncomeController @Inject()(payeAtsService: PayeAtsService,
+                                                payeAuthAction: PayeAuthAction,
+                                                mcc : MessagesControllerComponents,
+                                                payeYourTaxableIncomeView: PayeYourTaxableIncomeView)
+                                               (implicit formPartialRetriever: FormPartialRetriever,
+                                                appConfig: ApplicationConfig,
+                                                ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport{
 
   val payeYear: Int = appConfig.payeYear
 
-  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    {
+  def show: Action[AnyContent] = payeAuthAction.async {
+    implicit request: PayeAuthenticatedRequest[_] => {
 
       payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
@@ -53,15 +51,15 @@ class PayeYourTaxableIncomeController @Inject()(
           val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
           Ok(payeYourTaxableIncomeView(viewModel))
         }
-        case Left(response: HttpResponse) =>
-          response.status match {
-            case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
-            case _ => {
-              Logger.error(s"Error received, Http status: ${response.status}")
-              Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
-            }
+        case Left(response: HttpResponse) => response.status match {
+          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+          case _ => {
+            Logger.error(s"Error received, Http status: ${response.status}")
+            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
           }
+        }
       }
     }
   }
 }
+
