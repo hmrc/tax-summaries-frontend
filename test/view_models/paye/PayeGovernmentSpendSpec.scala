@@ -16,14 +16,14 @@
 
 package view_models.paye
 
-import models.DataHolder
+import models.{DataHolder, GovernmentSpendingOutputWrapper, SpendData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
+import services.atsData.PayeAtsTestData
 
 class PayeGovernmentSpendSpec
     extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
@@ -37,7 +37,7 @@ class PayeGovernmentSpendSpec
         val payeGovSpendingData = PayeAtsTestData.govSpendingData
         val result = PayeGovernmentSpend(payeGovSpendingData)
 
-        result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+        result.orderedSpendRows.map(_._2.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
         result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel
       }
 
@@ -47,7 +47,7 @@ class PayeGovernmentSpendSpec
         )
         val result = PayeGovernmentSpend(payeGovSpendingData)
 
-        result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+        result.orderedSpendRows.map(_._2.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
         result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
           isScottish = true
         )
@@ -59,12 +59,21 @@ class PayeGovernmentSpendSpec
         )
         val result = PayeGovernmentSpend(payeGovSpendingData)
 
-        result.orderedSpendRows.size shouldBe PayeGovernmentSpend.orderedSpendCategories.size
+        result.orderedSpendRows.map(_._2.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
         result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
           isScottish = false
         )
       }
 
+    }
+
+    "sort transport above Public Order" in {
+
+      val payeGovSpendingData = PayeAtsTestData.govSpendingData
+      val result = PayeGovernmentSpend(payeGovSpendingData)
+
+      result.orderedSpendRows.map(_._2.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
+      result.orderedSpendRows.map(_._1) shouldBe PayeAtsTestData.expectedCategoryOrder
     }
   }
 }

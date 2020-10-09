@@ -16,34 +16,38 @@
 
 package view_models.paye
 
-import config.PayeConfig
 import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
-import play.api.Play
 import view_models.Amount
 
-case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
+case class PayeGovernmentSpend(
+  taxYear: Int,
+  orderedSpendRows: List[(String, models.SpendData)],
+  totalAmount: Amount,
+  isScottish: Boolean)
     extends TaxYearFormatting
 
 object PayeGovernmentSpend {
 
-  val orderedSpendCategories: List[String] = Play.current.injector.instanceOf[PayeConfig].spendCategories
-
   def apply(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
 
-    val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
-      category => {
-        payeAtsData.gov_spending.flatMap { govSpending: GovernmentSpendingOutputWrapper =>
+    val spendRows: List[(String, SpendData)] = {
+      val govSpendAmountDataList = payeAtsData.gov_spending
+        .flatMap { govSpending: GovernmentSpendingOutputWrapper =>
           {
-            govSpending.govSpendAmountData.map { spendDataMap =>
-              {
-                val spendData = spendDataMap(category)
-                SpendRow(category, spendData)
-              }
-            }
+            govSpending.govSpendAmountData.map(_.toList.sortWith(_._2.percentage > _._2.percentage))
           }
         }
+        .getOrElse(List(("", SpendData(Amount.empty, 0.0))))
+
+      val transport = "Transport"
+      val publicOrder = "PublicOrderAndSafety"
+
+      govSpendAmountDataList.map {
+        case (key, data) if key == transport   => (publicOrder, data)
+        case (key, data) if key == publicOrder => (transport, data)
+        case default @ _                       => default
       }
-    )
+    }
 
     val totalSpendingAmount = payeAtsData.gov_spending
       .map { spending =>
@@ -58,5 +62,3 @@ object PayeGovernmentSpend {
     PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount, isScottish)
   }
 }
-
-case class SpendRow(category: String, spendData: SpendData)
