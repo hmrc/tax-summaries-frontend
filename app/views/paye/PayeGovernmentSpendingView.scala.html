@@ -44,13 +44,8 @@
 
 	<dl class="form-group" id="bar-chart">
 	@for(rowModel <- viewModel.orderedSpendRows){
-		@(rowModel._1, rowModel._2) match {
-		   case (category: String, spendData: SpendData) => {
-		     <dt class="percentage" id="@category">@Messages("paye.ats.treasury_spending.table." + category) (@spendData.percentage%)</dt>
-		     <dd class="value"><span class="bar-chart" aria-hidden="true" style="width: @{spendData.percentage*2}%;"></span> <strong>&pound;@spendData.amount.toHalfRoundedUpAmount</strong></dd>
-	       }
-		   case _                        => {}
-	    }
+		<dt class="percentage" id="@rowModel.category">@Messages("paye.ats.treasury_spending.table." + rowModel.category) (@rowModel.spendData.percentage%)</dt>
+		<dd class="value"><span class="bar-chart" aria-hidden="true" style="width: @{rowModel.spendData.percentage*2}%;"></span> <strong>&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</strong></dd>
 	}
   	<dt class="percentage" id="TotalAmount">@Messages("paye.ats.treasury_spending.total")</dt>
 		<dd class="value total"><strong>&pound;@viewModel.totalAmount</strong></dd>

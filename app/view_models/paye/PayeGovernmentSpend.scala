@@ -19,33 +19,33 @@ package view_models.paye
 import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
 import view_models.Amount
 
-case class PayeGovernmentSpend(
-  taxYear: Int,
-  orderedSpendRows: List[(String, models.SpendData)],
-  totalAmount: Amount,
-  isScottish: Boolean)
+case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
     extends TaxYearFormatting
 
 object PayeGovernmentSpend {
 
   def apply(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
 
-    val spendRows: List[(String, SpendData)] = {
+    val spendRows: List[SpendRow] = {
       val govSpendAmountDataList = payeAtsData.gov_spending
         .flatMap { govSpending: GovernmentSpendingOutputWrapper =>
           {
-            govSpending.govSpendAmountData.map(_.toList.sortWith(_._2.percentage > _._2.percentage))
+            govSpending.govSpendAmountData
+              .map { govSpendAmountDataMap =>
+                for { (category, spendData) <- govSpendAmountDataMap } yield SpendRow(category, spendData)
+              }
+              .map(spendRow => spendRow.toList.sortWith(_.spendData.percentage > _.spendData.percentage))
           }
         }
-        .getOrElse(List(("", SpendData(Amount.empty, 0.0))))
+        .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
 
       val transport = "Transport"
       val publicOrder = "PublicOrderAndSafety"
 
       govSpendAmountDataList.map {
-        case (key, data) if key == transport   => (publicOrder, data)
-        case (key, data) if key == publicOrder => (transport, data)
-        case default @ _                       => default
+        case (SpendRow(category, spendData)) if category == transport   => SpendRow(publicOrder, spendData)
+        case (SpendRow(category, spendData)) if category == publicOrder => SpendRow(transport, spendData)
+        case default @ _                                                => default
       }
     }
 
@@ -62,3 +62,5 @@ object PayeGovernmentSpend {
     PayeGovernmentSpend(payeAtsData.taxYear, spendRows, totalSpendingAmount, isScottish)
   }
 }
+
+case class SpendRow(category: String, spendData: SpendData)
