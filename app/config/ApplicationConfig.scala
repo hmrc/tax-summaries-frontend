@@ -68,6 +68,21 @@ class ApplicationConfig @Inject()(
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
+  lazy val GovSpendingHealth = config.getString("GovSpending.GovSpendingHealth")
+  lazy val GovSpendingStatePensions = config.getString("GovSpending.GovSpendingStatePensions")
+  lazy val GovSpendingEducation = config.getString("GovSpending.GovSpendingEducation")
+  lazy val GovSpendingNationalDebtInterest = config.getString("GovSpending.GovSpendingNationalDebtInterest")
+  lazy val GovSpendingDefence = config.getString("GovSpending.GovSpendingDefence")
+  lazy val GovSpendingPublicOrderAndSafety = config.getString("GovSpending.GovSpendingPublicOrderAndSafety")
+  lazy val GovSpendingTransport = config.getString("GovSpending.GovSpendingTransport")
+  lazy val GovSpendingBusinessAndIndustry = config.getString("GovSpending.GovSpendingBusinessAndIndustry")
+  lazy val GovSpendingGovernmentAdministration = config.getString("GovSpending.GovSpendingGovernmentAdministration")
+  lazy val GovSpendingCulture = config.getString("GovSpending.GovSpendingCulture")
+  lazy val GovSpendingEnvironment = config.getString("GovSpending.GovSpendingEnvironment")
+  lazy val GovSpendingHousingAndUtilities = config.getString("GovSpending.GovSpendingHousingAndUtilities")
+  lazy val GovSpendingOverseasAid = config.getString("GovSpending.GovSpendingOverseasAid")
+  lazy val GovSpendingEuBudget = config.getString("GovSpending.GovSpendingEuBudget")
+
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)

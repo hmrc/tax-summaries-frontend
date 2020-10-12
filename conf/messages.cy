@@ -400,3 +400,24 @@ paye.ats.tax_free_amount.total_tax_liable=Rydych yn talu treth ar y canlynol
 
 
 
+ats.howYourTaxWasSpent.heading = Sut y gwariwyd eich treth
+ats.howYourTaxWasSpent.subheading = Mae hyn yn dangos sut y gwariwyd y Dreth Incwm a’r cyfraniadau Yswiriant Gwladol a dalwyd gennych ar gyfer 6&nbsp;Ebrill&nbsp;{0} i 5&nbsp;Ebrill&nbsp;{1}.
+ats.howYourTaxWasSpent.caveat = Nid yw’n cynnwys TAW, ecséis na thollau eraill.
+ats.howYourTaxWasSpent.table.department.title = Gwariant y llywodraeth
+ats.howYourTaxWasSpent.table.percentage.title  = Canran o’ch treth
+ats.howYourTaxWasSpent.table.department.welfare = Lles
+ats.howYourTaxWasSpent.table.department.health = Iechyd
+ats.howYourTaxWasSpent.table.department.statePensions = Pensiynau’r Wladwriaeth
+ats.howYourTaxWasSpent.table.department.education = Addysg
+ats.howYourTaxWasSpent.table.department.nationalDebtInterest = Llog ar y ddyled wladol
+ats.howYourTaxWasSpent.table.department.defence = Amddiffyn
+ats.howYourTaxWasSpent.table.department.publicOrderAndSafety = Trefn a diogelwch cyhoeddus
+ats.howYourTaxWasSpent.table.department.transport = Cludiant
+ats.howYourTaxWasSpent.table.department.businessAndIndustry = Busnes a diwydiant
+ats.howYourTaxWasSpent.table.department.GovernmentAdministration = Gweinyddiaeth y llywodraeth
+ats.howYourTaxWasSpent.table.department.culture = Diwylliant, fel chwaraeon, llyfrgelloedd ac amgueddfeydd
+ats.howYourTaxWasSpent.table.department.environment = Yr amgylchedd
+ats.howYourTaxWasSpent.table.department.housingAndUtilities = Tai a gwasanaethau cyhoeddus, fel goleuadau stryd
+ats.howYourTaxWasSpent.table.department.overseasAid = Cymorth tramor
+ats.howYourTaxWasSpent.table.department.euBudget = Cyfraniad y DU at gyllideb yr UE
+ats.howYourTaxWasSpent.table.department.total = Cyfanswm
