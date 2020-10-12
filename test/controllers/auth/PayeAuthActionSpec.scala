@@ -45,7 +45,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "paye.login.url" -> "http://localhost:9025/gg/sign-in",
+        "paye.login.url"  -> "http://localhost:9025/gg/sign-in",
         "shuttering.paye" -> "false"
       )
       .build()
@@ -66,8 +66,9 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Option[String]] = Future.successful(Some(nino))
 
-      when(mockAuthConnector
-        .authorise[Option[String]](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -130,12 +131,11 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
     }
   }
 
-
   "A user visiting the service when it is shuttered" should {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc){
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc) {
         override val payeShuttered: Boolean = true
       }
       val controller = new Harness(authAction)

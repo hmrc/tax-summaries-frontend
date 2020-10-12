@@ -39,27 +39,27 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     override lazy val tokenMaxAge: Int = maxAge
   }
 
-    val agentUar = testUar
-    val clientUtr = testUtr
-    val invalidUtr = testInvalidUtr
-    val timestamp = new Date().getTime()
+  val agentUar = testUar
+  val clientUtr = testUtr
+  val invalidUtr = testInvalidUtr
+  val timestamp = new Date().getTime()
 
-    val agentToken = AgentToken(
-      agentUar,
-      clientUtr,
-      timestamp
-    )
+  val agentToken = AgentToken(
+    agentUar,
+    clientUtr,
+    timestamp
+  )
 
-    val crypto = new AesCrypto {
-      override protected val encryptionKey: String = testKey
-    }
+  val crypto = new AesCrypto {
+    override protected val encryptionKey: String = testKey
+  }
 
-    // Common method for creating a valid encryped token
-    def encryptToken(agent: String = agentUar, client: String = clientUtr, timestamp: Long = new Date().getTime()) = {
-      val plain = s"$agent:$client:$timestamp"
-      val encrypted = crypto.encrypt(PlainText(plain)).value
-      UriEncoding.encodePathSegment(encrypted, "UTF-8")
-    }
+  // Common method for creating a valid encryped token
+  def encryptToken(agent: String = agentUar, client: String = clientUtr, timestamp: Long = new Date().getTime()) = {
+    val plain = s"$agent:$client:$timestamp"
+    val encrypted = crypto.encrypt(PlainText(plain)).value
+    UriEncoding.encodePathSegment(encrypted, "UTF-8")
+  }
 
   "getAgentToken" should {
 

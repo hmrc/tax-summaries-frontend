@@ -33,7 +33,15 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
   val utr = testUtr
   implicit val messages: Messages = MessagesImpl(Lang("en"), inject[MessagesApi])
-  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  lazy val requestWithSession = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(utr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val language = Lang("en")
   val amount = new Amount(0.00, "GBP")
   val rate = new Rate("5")
@@ -42,8 +50,25 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
     "show the 'exit tax summaries' link on the landing page" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        "",
+        "",
+        "")
       val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -52,10 +77,37 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
     }
 
-    "show the 'exit tax summaries' link on the capital gains page" in  {
+    "show the 'exit tax summaries' link on the capital gains page" in {
 
-      val fakeViewModel = new CapitalGains(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, amount, rate, rate, rate, rate, rate, rate, "", "", "")
+      val fakeViewModel = new CapitalGains(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        rate,
+        rate,
+        rate,
+        rate,
+        "",
+        "",
+        ""
+      )
       val result = capitalGainsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -66,19 +118,22 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Capital Gains Tax</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
+        "<strong>Capital Gains Tax</strong>")
     }
 
-    "show the 'exit tax summaries' link on the income before tax page" in  {
+    "show the 'exit tax summaries' link on the income before tax page" in {
 
-      val fakeViewModel = new IncomeBeforeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount,
-        amount, "", "", "")
+      val fakeViewModel =
+        new IncomeBeforeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount, "", "", "")
       val result = incomeBeforeTaxView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -89,19 +144,39 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your total income</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
+        "<strong>Your total income</strong>")
     }
 
-    "show the 'exit tax summaries' link on the nics page" in  {
+    "show the 'exit tax summaries' link on the nics page" in {
 
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = new Summary(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        "",
+        "",
+        "")
       val result = nicsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -112,52 +187,59 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
+        "<strong>Your Income Tax and National Insurance</strong>")
     }
 
-    "show the 'exit tax summaries' link on the no ats page" in  {
+    "show the 'exit tax summaries' link on the summaries page" in {
 
-      val result = noAtsErrorView()(requestWithSession, messages, formPartialRetriever, appConfig)
+      val fakeViewModel = new Summary(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        "",
+        "",
+        "")
+      val result = summaryView(fakeViewModel)(language, requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
+
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2)").toString should include("<strong>No ATS available</strong>")
-    }
-
-    "show the 'exit tax summaries' link on the summaries page" in  {
-
-      val fakeViewModel = new Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, rate, rate, "", "", "")
-      val result = summaryView(fakeViewModel)(language,requestWithSession, messages, formPartialRetriever, appConfig)
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
-
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your income and taxes</strong>")
+      document.select("#global-breadcrumb li:nth-child(3)").toString should include(
+        "<strong>Your income and taxes</strong>")
     }
 
-    "show the 'exit tax summaries' link on the tax free amount page" in  {
+    "show the 'exit tax summaries' link on the tax free amount page" in {
 
       val fakeViewModel = new Allowances(2014, utr, amount, amount, amount, amount, "", "", "")
       val result = taxFreeAmountView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
@@ -170,21 +252,58 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your tax-free amount</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
+        "<strong>Your tax-free amount</strong>")
     }
 
-    "show the 'exit tax summaries' link on the total income tax page" in  {
+    "show the 'exit tax summaries' link on the total income tax page" in {
 
-      val fakeViewModel = new TotalIncomeTax(2014, utr, amount, amount, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, amount, amount, amount, amount, ScottishTax.empty, amount, amount, SavingsTax.empty,
-        "", rate, rate, rate, rate, rate, rate, rate, ScottishRates.empty, SavingsRates.empty,
-        "", "", "")
+      val fakeViewModel = new TotalIncomeTax(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        ScottishTax.empty,
+        amount,
+        amount,
+        SavingsTax.empty,
+        "",
+        rate,
+        rate,
+        rate,
+        rate,
+        rate,
+        rate,
+        rate,
+        ScottishRates.empty,
+        SavingsRates.empty,
+        "",
+        "",
+        ""
+      )
 
       val result = totalIncomeTaxView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
@@ -196,29 +315,59 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/nics?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(4) a").text should include("Your Income Tax and National Insurance")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/nics?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").text should include(
+        "Your Income Tax and National Insurance")
 
       document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Income Tax</strong>")
     }
 
-    "show the 'exit tax summaries' link on the treasury spending page" in  {
+    "show the 'exit tax summaries' link on the treasury spending page" in {
 
       val spendData = new SpendData(amount, 20)
       val scottishIncomeTax = new Amount(0.00, "GBP")
-      val fakeViewModel = new GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
-        ("education", spendData), ("pension", spendData), ("national_debt_interest", spendData), ("defence", spendData),
-        ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
-        ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
-        ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
-        ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(requestWithSession, messages, formPartialRetriever, appConfig)
+      val fakeViewModel = new GovernmentSpend(
+        2014,
+        utr,
+        List(
+          ("welfare", spendData),
+          ("health", spendData),
+          ("education", spendData),
+          ("pension", spendData),
+          ("national_debt_interest", spendData),
+          ("defence", spendData),
+          ("criminal_justice", spendData),
+          ("transport", spendData),
+          ("business_and_industry", spendData),
+          ("government_administration", spendData),
+          ("culture", spendData),
+          ("environment", spendData),
+          ("housing_and_utilities", spendData),
+          ("overseas_aid", spendData),
+          ("uk_contribution_to_eu_budget", spendData),
+          ("gov_spend_total", spendData)
+        ),
+        "",
+        "",
+        "",
+        amount,
+        "",
+        scottishIncomeTax
+      )
+      val result = governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(
+        requestWithSession,
+        messages,
+        formPartialRetriever,
+        appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
@@ -228,35 +377,80 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(3)").toString should include("<strong>Your taxes and public spending</strong>")
+      document.select("#global-breadcrumb li:nth-child(3)").toString should include(
+        "<strong>Your taxes and public spending</strong>")
     }
-    "show the menu link in the header if on a mobile device" in  {
+    "show the menu link in the header if on a mobile device" in {
 
       val spendData = new SpendData(amount, 20)
       val scottishIncomeTax = new Amount(0.00, "GBP")
-      val fakeViewModel = new GovernmentSpend(2014, utr, List(("welfare", spendData), ("health", spendData),
-        ("education", spendData), ("pension", spendData), ("national_debt_interest", spendData), ("defence", spendData),
-        ("criminal_justice", spendData), ("transport", spendData), ("business_and_industry", spendData),
-        ("government_administration", spendData), ("culture", spendData), ("environment", spendData),
-        ("housing_and_utilities", spendData), ("overseas_aid", spendData), ("uk_contribution_to_eu_budget", spendData),
-        ("gov_spend_total", spendData)), "", "", "", amount, "", scottishIncomeTax)
-      val result = governmentSpendingView(fakeViewModel, (20.0,20.0,20.0))(requestWithSession, messages, formPartialRetriever, appConfig)
+      val fakeViewModel = new GovernmentSpend(
+        2014,
+        utr,
+        List(
+          ("welfare", spendData),
+          ("health", spendData),
+          ("education", spendData),
+          ("pension", spendData),
+          ("national_debt_interest", spendData),
+          ("defence", spendData),
+          ("criminal_justice", spendData),
+          ("transport", spendData),
+          ("business_and_industry", spendData),
+          ("government_administration", spendData),
+          ("culture", spendData),
+          ("environment", spendData),
+          ("housing_and_utilities", spendData),
+          ("overseas_aid", spendData),
+          ("uk_contribution_to_eu_budget", spendData),
+          ("gov_spend_total", spendData)
+        ),
+        "",
+        "",
+        "",
+        amount,
+        "",
+        scottishIncomeTax
+      )
+      val result = governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(
+        requestWithSession,
+        messages,
+        formPartialRetriever,
+        appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
-          menu_toggle.text should include("Menu")
+      menu_toggle.text should include("Menu")
 
       val href = menu_toggle.attr("href")
-          href should be("#proposition-links")
+      href should be("#proposition-links")
     }
 
-    "contain GA event attribute on the landing page" in  {
+    "contain GA event attribute on the landing page" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        "",
+        "",
+        "")
       val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
@@ -268,8 +462,25 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
     "show the 'back to the Portal' link containing the client's UTR" in {
 
-      val fakeViewModel = Summary(2014, utr, amount, amount, amount, amount, amount, amount,
-        amount, amount, amount, amount, amount, rate, rate, "", "", "")
+      val fakeViewModel = Summary(
+        2014,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        "",
+        "",
+        "")
       val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 

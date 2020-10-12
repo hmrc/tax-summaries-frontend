@@ -23,14 +23,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import view_models.paye.PayeAtsMain
+import views.html.HowTaxIsSpentView
 import views.html.errors._
 
 class PayeErrorController @Inject()(
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeGenericErrorView: PayeGenericErrorView,
-  payeNoAtsErrorView: PayeNoAtsErrorView,
+  howTaxIsSpentView: HowTaxIsSpentView,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView)(
   implicit formPartialRetriever: FormPartialRetriever,
@@ -49,7 +49,7 @@ class PayeErrorController @Inject()(
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>
     {
-      NotFound(payeNoAtsErrorView(PayeAtsMain(payeYear)))
+      Ok(howTaxIsSpentView())
     }
   }
 

@@ -53,14 +53,25 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
   val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
 
   implicit val hc = new HeaderCarrier
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", "?taxYear=2015"))
 
   def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" should {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createModel(Matchers.eq(taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      when(
+        mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
@@ -73,15 +84,15 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
       val result = sut.govSpend(atsData)
 
       result shouldBe GovernmentSpend(
-       2019,
+        2019,
         "1111111111",
         List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
         "Mr",
         "John",
         "Smith",
-        Amount(200,"GBP"),
+        Amount(200, "GBP"),
         "",
-        Amount(500,"GBP")
+        Amount(500, "GBP")
       )
     }
   }

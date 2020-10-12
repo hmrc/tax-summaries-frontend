@@ -34,12 +34,14 @@ import utils.{JsonUtil, WireMockHelper}
 
 import scala.io.Source
 
-class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience with JsonUtil {
+class MiddleConnectorSpec
+    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
+    with JsonUtil {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "microservice.services.tax-summaries.port" -> server.port(),
+        "microservice.services.tax-summaries.port"       -> server.port(),
         "microservice.services.tax-summaries-agent.port" -> server.port()
       )
       .build()
@@ -59,8 +61,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
   val expectedSAResponse = Json.fromJson[AtsData](loadSAJson).get
 
   val loadAtsListData = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
-  val atsListData =  Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
-
+  val atsListData = Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
 
   "connectToPayeTaxSummary" should {
 
@@ -92,7 +93,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withBody("Bad Request"))
       )
 
-      a [BadRequestException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
+      a[BadRequestException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
     }
 
@@ -106,7 +107,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(404)
             .withBody("Not Found"))
       )
-      a [NotFoundException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
+      a[NotFoundException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
     }
 
@@ -120,15 +121,14 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(500)
             .withBody("Internal Server Error"))
       )
-      a [Upstream5xxResponse] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
+      a[Upstream5xxResponse] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
 
     }
   }
 
-
   "connectToAts" should {
 
-    "return successful response" in  {
+    "return successful response" in {
 
       val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
 
@@ -144,7 +144,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
       result shouldBe expectedSAResponse
     }
 
-    "return BadRequest response" in  {
+    "return BadRequest response" in {
 
       val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
 
@@ -154,7 +154,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(400)
             .withBody("Bad Request"))
       )
-      a [BadRequestException] should be thrownBy await(sut.connectToAts(utr, currentYear))
+      a[BadRequestException] should be thrownBy await(sut.connectToAts(utr, currentYear))
     }
   }
 
@@ -186,7 +186,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(400)
             .withBody("Bad Request"))
       )
-      a [BadRequestException] should be thrownBy await(sut.connectToAtsOnBehalfOf(uar, utr, currentYear))
+      a[BadRequestException] should be thrownBy await(sut.connectToAtsOnBehalfOf(uar, utr, currentYear))
     }
   }
 
@@ -218,7 +218,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(400)
             .withBody("Bad Request"))
       )
-      a [BadRequestException] should be thrownBy await(sut.connectToAtsList(utr))
+      a[BadRequestException] should be thrownBy await(sut.connectToAtsList(utr))
     }
   }
 
@@ -250,7 +250,7 @@ class MiddleConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFu
             .withStatus(400)
             .withBody("Bad Request"))
       )
-      a [BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
+      a[BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
     }
   }
 }

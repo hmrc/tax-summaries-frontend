@@ -37,23 +37,46 @@ import scala.concurrent.Future
 class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", "?taxYear=20145"))
 
   val mockGovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc,
-    governmentSpendingView, genericErrorView, tokenErrorView)
+  def sut =
+    new GovernmentSpendController(
+      mockGovernmentSpendService,
+      mockAuditService,
+      FakeAuthAction,
+      mcc,
+      governmentSpendingView,
+      genericErrorView,
+      tokenErrorView)
 
-  val genericViewModel: GenericViewModel =  AtsList(
-      utr = "3000024376",
-      forename = "forename",
-      surname = "surname",
-      yearList = List(
-        TaxYearEnd(Some("2015"))
-      )
+  val genericViewModel: GenericViewModel = AtsList(
+    utr = "3000024376",
+    forename = "forename",
+    surname = "surname",
+    yearList = List(
+      TaxYearEnd(Some("2015"))
     )
+  )
 
   val model = new GovernmentSpend(
     taxYear = 2014,
@@ -83,18 +106,22 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     scottishIncomeTax = new Amount(2000.00, "GBP")
   )
 
-  override def beforeEach() = {
-    when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(model))
-  }
-  
+  override def beforeEach() =
+    when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(model))
+
   "Calling government spend" should {
 
     "return a successful response for a valid request" in {
-      val result =  Future.successful(sut.show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.treasury_spending.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
-   }
+      document.title should include(
+        Messages("ats.treasury_spending.html.title") + Messages(
+          "generic.to_from",
+          (taxYear - 1).toString,
+          taxYear.toString))
+    }
 
     "display an error page for an invalid request" in {
       val result = Future.successful(sut.show(badRequest))
@@ -104,7 +131,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in {
-      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -155,7 +184,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
     "have correct data for 2015" in {
 
-        val model2 = new GovernmentSpend(
+      val model2 = new GovernmentSpend(
         taxYear = 2015,
         userUtr = testUtr,
         govSpendAmountData = List(
@@ -183,8 +212,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
         scottishIncomeTax = new Amount(2000.00, "GBP")
       )
 
-      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
-
+      when(
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model2))
 
       val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
@@ -236,10 +266,12 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("/annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "/annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include("<strong>Your taxes and public spending</strong>")
+      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
+        "<strong>Your taxes and public spending</strong>")
     }
 
     "return zero percentage for Housing, Cultural and Environment when they are not same" in {

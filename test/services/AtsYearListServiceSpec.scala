@@ -45,10 +45,11 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
     val json = Json.parse(source)
     Json.fromJson[AtsListData](json).get
   }
-  val mockAtsListService=mock[AtsListService]
+  val mockAtsListService = mock[AtsListService]
   class TestService extends AtsYearListService(mockAtsListService) {
 
-    implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+    implicit val request =
+      AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
     implicit val hc = new HeaderCarrier
 
     val agentToken = AgentToken(
@@ -74,17 +75,17 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
 
     "Return a failed future when None is returned from the dataCache" in new TestService {
 
-      when(mockAtsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.failed(new Exception("failed")))
+      when(mockAtsListService.storeSelectedTaxYear(eqTo(2014))(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       val result = storeSelectedAtsTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a [Exception]
+        exception shouldBe a[Exception]
       }
     }
 
   }
-
 
   "getAtsListData" should {
 
@@ -100,13 +101,15 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
         )
       )
 
-      override def getAtsListData(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] = {
+      override def getAtsListData(
+        implicit hc: HeaderCarrier,
+        request: AuthenticatedRequest[_]): Future[GenericViewModel] =
         mockAtsListService.createModel(atsList)
-      }
 
       def atsList: AtsListData => GenericViewModel =
         (output: AtsListData) => {
-          new AtsList(output.utr,
+          new AtsList(
+            output.utr,
             output.taxPayer.get.taxpayer_name.get("forename"),
             output.taxPayer.get.taxpayer_name.get("surname"),
             output.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
@@ -120,7 +123,6 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
       val result = getAtsListData(hc, request)
 
       result.toString().trim mustEqual Future.successful(model).toString().trim()
-
 
     }
 

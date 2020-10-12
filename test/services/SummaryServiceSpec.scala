@@ -53,14 +53,25 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
 
   implicit val hc = new HeaderCarrier
   val taxYear = 2015
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=$taxYear"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
 
   def sut = new SummaryService(mockAtsService, mockAtsYearListService)
 
   "SummaryService getSummaryData" should {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
-      when(mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      when(
+        mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(sut.getSummaryData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }

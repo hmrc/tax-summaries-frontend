@@ -39,7 +39,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with PropertyChe
   def view: String = view(scottishTaxData, scottishRateData)
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
-  implicit val arbRate: Arbitrary[Rate]     = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
+  implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
 
   "view" should {
 
@@ -59,11 +59,31 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with PropertyChe
     }
 
     val rowData = List(
-      ("starter", modify[ScottishTax](_.scottishStarterIncomeTax), modify[ScottishTax](_.scottishStarterIncomeTaxAmount), modify[ScottishRates](_.scottishStarterRate)),
-      ("basic", modify[ScottishTax](_.scottishBasicIncomeTax), modify[ScottishTax](_.scottishBasicIncomeTaxAmount), modify[ScottishRates](_.scottishBasicRate)),
-      ("intermediate", modify[ScottishTax](_.scottishIntermediateIncomeTax), modify[ScottishTax](_.scottishIntermediateIncomeTaxAmount), modify[ScottishRates](_.scottishIntermediateRate)),
-      ("higher", modify[ScottishTax](_.scottishHigherIncomeTax), modify[ScottishTax](_.scottishHigherIncomeTaxAmount), modify[ScottishRates](_.scottishHigherRate)),
-      ("additional", modify[ScottishTax](_.scottishAdditionalIncomeTax), modify[ScottishTax](_.scottishAdditionalIncomeTaxAmount), modify[ScottishRates](_.scottishAdditionalRate))
+      (
+        "starter",
+        modify[ScottishTax](_.scottishStarterIncomeTax),
+        modify[ScottishTax](_.scottishStarterIncomeTaxAmount),
+        modify[ScottishRates](_.scottishStarterRate)),
+      (
+        "basic",
+        modify[ScottishTax](_.scottishBasicIncomeTax),
+        modify[ScottishTax](_.scottishBasicIncomeTaxAmount),
+        modify[ScottishRates](_.scottishBasicRate)),
+      (
+        "intermediate",
+        modify[ScottishTax](_.scottishIntermediateIncomeTax),
+        modify[ScottishTax](_.scottishIntermediateIncomeTaxAmount),
+        modify[ScottishRates](_.scottishIntermediateRate)),
+      (
+        "higher",
+        modify[ScottishTax](_.scottishHigherIncomeTax),
+        modify[ScottishTax](_.scottishHigherIncomeTaxAmount),
+        modify[ScottishRates](_.scottishHigherRate)),
+      (
+        "additional",
+        modify[ScottishTax](_.scottishAdditionalIncomeTax),
+        modify[ScottishTax](_.scottishAdditionalIncomeTaxAmount),
+        modify[ScottishRates](_.scottishAdditionalRate))
     )
 
     for ((id, taxLens, totalLens, rateLens) <- rowData) {
@@ -71,7 +91,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with PropertyChe
 
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
           val taxData = (taxLens.setTo(tax) andThen totalLens.setTo(total))(scottishTaxData)
-          val rates   = rateLens.setTo(rate)(scottishRateData)
+          val rates = rateLens.setTo(rate)(scottishRateData)
 
           val result = view(taxData, rates)
 

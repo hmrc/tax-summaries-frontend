@@ -23,18 +23,19 @@ import play.api.i18n
 import play.api.i18n.{MessagesApi, MessagesImpl, _}
 import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.Injecting
 import services.PayeAtsService
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
+import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 
 import scala.concurrent.ExecutionContext
 
-trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with MockitoSugar with Injecting {
+trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with Injecting {
 
-  private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
+  private val messagesActionBuilder: MessagesActionBuilder =
+    new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc: ControllerComponents = stubControllerComponents()
 
   val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
@@ -61,7 +62,7 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with Mockito
   lazy val taxsMainView = inject[TaxsMainView]
   lazy val capitalGainsView = inject[CapitalGainsView]
   lazy val notAuthorisedView = inject[NotAuthorisedView]
-  lazy val noAtsErrorView = inject[NoAtsErrorView]
+  lazy val howTaxIsSpentView = inject[HowTaxIsSpentView]
   lazy val serviceUnavailableView = inject[ServiceUnavailableView]
   lazy val governmentSpendingView = inject[GovernmentSpendingView]
   lazy val incomeBeforeTaxView = inject[IncomeBeforeTaxView]

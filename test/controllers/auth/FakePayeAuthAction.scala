@@ -22,13 +22,12 @@ import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakePayeAuthAction extends PayeAuthAction with ControllerBaseSpec{
+object FakePayeAuthAction extends PayeAuthAction with ControllerBaseSpec {
   override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
-  override def invokeBlock[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(PayeAuthenticatedRequest(testNino, request))
-  }
 }
-
-

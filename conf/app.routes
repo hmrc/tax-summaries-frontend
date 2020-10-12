@@ -12,9 +12,6 @@ GET     /tax-free-amount                                       controllers.Allow
 GET     /total-income-tax                                      controllers.TotalIncomeTaxController.authorisedTotalIncomeTax
 GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
 
-GET     /how-tax-is-spent                                      controllers.HowTaxIsSpentController.authorisedHowTaxIsSpent
-
-
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised
 GET     /no-ats                                                controllers.ErrorController.authorisedNoAts
 GET     /service-unavailable                                   controllers.ErrorController.serviceUnavailable

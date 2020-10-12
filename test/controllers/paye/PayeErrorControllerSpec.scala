@@ -21,17 +21,22 @@ import controllers.auth.FakePayeAuthAction
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import view_models.paye.PayeAtsMain
-import views.html.errors.{PayeGenericErrorView, PayeNoAtsErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
+import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
-class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting{
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting {
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
-  lazy val payeNoAtsErrorView: PayeNoAtsErrorView = inject[PayeNoAtsErrorView]
 
-  def sut = new PayeErrorController(FakePayeAuthAction, mcc, payeGenericErrorView, payeNoAtsErrorView, mock[PayeNotAuthorisedView],
-    mock[PayeServiceUnavailableView])
+  def sut =
+    new PayeErrorController(
+      FakePayeAuthAction,
+      mcc,
+      payeGenericErrorView,
+      howTaxIsSpentView,
+      mock[PayeNotAuthorisedView],
+      mock[PayeServiceUnavailableView])
 
   "PayeErrorController" should {
 
@@ -62,12 +67,12 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerB
       document shouldBe contentAsString(payeGenericErrorView())
     }
 
-    "Show NO ATS page and return NOT_FOUND" in {
+    "Show generic How Tax is Spent page and return OK" in {
       val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
       val document = contentAsString(result)
 
-      status(result) shouldBe NOT_FOUND
-      document shouldBe contentAsString(payeNoAtsErrorView(PayeAtsMain(taxYear)))
+      status(result) shouldBe OK
+      document shouldBe contentAsString(howTaxIsSpentView())
     }
   }
 }
