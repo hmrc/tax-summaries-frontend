@@ -29,6 +29,6 @@ trait ViewSpecBase extends UnitSpec with OneAppPerSuite with Injecting {
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
   implicit val formPartialRetriever: FormPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit val lang : Lang = messages.lang
+  implicit val lang: Lang = messages.lang
 
 }

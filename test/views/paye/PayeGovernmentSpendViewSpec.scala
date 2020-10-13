@@ -26,7 +26,8 @@ import views.html.paye.PayeGovernmentSpendingView
 
 class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
 
-  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  implicit val request =
+    PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   lazy val payeGovernmentSpendingView: PayeGovernmentSpendingView = inject[PayeGovernmentSpendingView]
 
   "view" should {
@@ -65,7 +66,9 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
       document.getElementById("GovernmentAdministration").text() shouldBe "Government administration (2.1%)"
       document.select("#GovernmentAdministration + dd").text() shouldBe "£40"
 
-      document.getElementById("HousingAndUtilities").text() shouldBe "Housing and utilities, like street lighting (1.6%)"
+      document
+        .getElementById("HousingAndUtilities")
+        .text() shouldBe "Housing and utilities, like street lighting (1.6%)"
       document.select("#HousingAndUtilities + dd").text() shouldBe "£31"
 
       document.getElementById("Environment").text() shouldBe "Environment (1.5%)"
@@ -94,7 +97,9 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
       val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true)).body
       val document = Jsoup.parse(view)
 
-      document.select("#scottish-spending-link a").attr("href") shouldBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+      document
+        .select("#scottish-spending-link a")
+        .attr("href") shouldBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {

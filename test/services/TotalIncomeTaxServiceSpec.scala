@@ -38,7 +38,7 @@ import scala.concurrent.duration._
 
 class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
-  val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
@@ -60,15 +60,25 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
   "TotalIncomeTaxService getIncomeData" should {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
-      when(mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
-      lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
+      when(
+        mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any())).thenReturn(genericViewModel)
+      lazy val request = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest("GET", "?taxYear=2015"))
       val result = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
-    "TotalIncomeTaxService.totalIncomeConverter" should {
-
+  "TotalIncomeTaxService.totalIncomeConverter" should {
 
     "return complete TotalIncomeTax data when given complete AtsData" in {
       val incomeData: AtsData = AtsTestData.totalIncomeTaxData

@@ -27,9 +27,17 @@ import utils.TestConstants._
 import view_models.{Amount, Rate}
 import views.html.errors.GenericErrorView
 
-class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
+class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
 
-  lazy val requestWithSession = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+  lazy val requestWithSession = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
   val languageEn = Lang("en")
   val languageCy = Lang("cy")
   val utr = testUtr
@@ -43,7 +51,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
 
   "Logging in as a portal user" should {
 
-    "show the correct contents of the generic error page in English" in  {
+    "show the correct contents of the generic error page in English" in {
 
       val resultEn = genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
@@ -51,7 +59,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar  {
       documentEn.toString should include("Try again later.")
     }
 
-    "show the correct contents of the generic error page in Welsh" in  {
+    "show the correct contents of the generic error page in Welsh" in {
 
       val resultCy = genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))

@@ -51,7 +51,15 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
 
   implicit val hc = HeaderCarrier()
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET",s"?taxYear=${sut.taxYear}"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=${sut.taxYear}"))
 
   val mockAtsService: AtsService = mock[AtsService]
   val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
@@ -65,14 +73,17 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
   "AllowanceService.getAllowances" should {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
-      when(mockAtsService.createModel(Matchers.eq(sut.taxYear),Matchers.any[Function1[AtsData,GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+      when(
+        mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
   "AllowanceService.allowanceDataConverter" should {
-    "return a complete AllowancesData when given complete AtsData" in  {
+    "return a complete AllowancesData when given complete AtsData" in {
 
       val atsData = AtsTestData.atsAllowancesData
       val result = sut.allowanceDataConverter(atsData)

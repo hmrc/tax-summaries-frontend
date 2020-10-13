@@ -142,7 +142,23 @@ trait TestConstants {
     List(23.5, 20.2, 12.8, 11.8, 5.3, 5.1, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
 
   val expectedCategoryOrder: List[String] =
-    List("Welfare", "Health", "Education", "StatePensions", "Defence", "NationalDebtInterest", "Transport", "PublicOrderAndSafety", "BusinessAndIndustry", "GovernmentAdministration", "HousingAndUtilities", "Environment", "Culture", "OverseasAid", "UkContributionToEuBudget")
+    List(
+      "Welfare",
+      "Health",
+      "Education",
+      "StatePensions",
+      "Defence",
+      "NationalDebtInterest",
+      "Transport",
+      "PublicOrderAndSafety",
+      "BusinessAndIndustry",
+      "GovernmentAdministration",
+      "HousingAndUtilities",
+      "Environment",
+      "Culture",
+      "OverseasAid",
+      "UkContributionToEuBudget"
+    )
 }
 
 object TestConstants extends TestConstants

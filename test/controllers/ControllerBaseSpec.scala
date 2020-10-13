@@ -32,9 +32,10 @@ import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 
 import scala.concurrent.ExecutionContext
 
-trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite  with MockitoSugar with Injecting {
+trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with Injecting {
 
-  private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
+  private val messagesActionBuilder: MessagesActionBuilder =
+    new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc: ControllerComponents = stubControllerComponents()
 
   val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(

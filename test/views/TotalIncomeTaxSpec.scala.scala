@@ -29,7 +29,8 @@ import views.html.total_income_tax_includes._
 
 class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChecks {
 
-  implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  implicit val request =
+    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   lazy val scottishTableView = inject[ScottishTableView]
   lazy val savingsTableView = inject[SavingsTableView]
   lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
@@ -40,7 +41,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChec
   def view: String = view(testTotalIncomeTax)
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
-  implicit val arbRate: Arbitrary[Rate]     = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
+  implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
   implicit val arbScottishTax: Arbitrary[ScottishTax] = Arbitrary {
     val st = for {
       a <- arbitrary[Amount]
@@ -107,7 +108,6 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChec
     "include scottish table" in {
 
       forAll { (tax: ScottishTax, rates: ScottishRates) =>
-
         val data = testTotalIncomeTax.copy(scottishTax = tax, scottishRates = rates)
         view(data) should include(scottishTableView(tax, rates).body)
       }
@@ -116,15 +116,21 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChec
     "include savings table" in {
 
       forAll { (tax: SavingsTax, rates: SavingsRates) =>
-
         val data = testTotalIncomeTax.copy(savingsTax = tax, savingsRates = rates)
         view(data) should include(savingsTableView(tax, rates).body)
       }
     }
 
     "include total uk income tax if there are any values (and scottish)" in {
-      val data = testTotalIncomeTax.copy(savingsTax = SavingsTax(Amount(BigDecimal(100.11), "GBP"), Amount.empty,
-        Amount.empty, Amount.empty, Amount.empty, Amount.empty), incomeTaxStatus = "0002")
+      val data = testTotalIncomeTax.copy(
+        savingsTax = SavingsTax(
+          Amount(BigDecimal(100.11), "GBP"),
+          Amount.empty,
+          Amount.empty,
+          Amount.empty,
+          Amount.empty,
+          Amount.empty),
+        incomeTaxStatus = "0002")
       view(data) should include("total-uk-income-tax-amount")
     }
 
@@ -134,8 +140,14 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChec
     }
 
     "not show total uk income tax if there any values (and not scottish)" in {
-      val data = testTotalIncomeTax.copy(savingsTax = SavingsTax(Amount(BigDecimal(100.11), "GBP"), Amount.empty,
-        Amount.empty, Amount.empty, Amount.empty, Amount.empty))
+      val data = testTotalIncomeTax.copy(
+        savingsTax = SavingsTax(
+          Amount(BigDecimal(100.11), "GBP"),
+          Amount.empty,
+          Amount.empty,
+          Amount.empty,
+          Amount.empty,
+          Amount.empty))
       view(data) shouldNot include("total-uk-income-tax-amount")
     }
   }

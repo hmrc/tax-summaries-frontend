@@ -21,7 +21,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class BigDecimalUtilsSpec extends BigDecimalUtils with UnitSpec with PropertyChecks {
 
-
   "BigDecimalUtils" must {
 
     "return true for === and false for !==" when {

@@ -52,12 +52,12 @@ class PayeLanguageControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).get shouldBe redirectLocationUrl
     }
 
-      "redirect back to a fallback url when the Referer is empty " in {
+    "redirect back to a fallback url when the Referer is empty " in {
 
-        val result = sut.switchToLanguage("welsh")(FakeRequest())
+      val result = sut.switchToLanguage("welsh")(FakeRequest())
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get shouldBe "/annual-tax-summary/paye/main"
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe "/annual-tax-summary/paye/main"
 
     }
   }

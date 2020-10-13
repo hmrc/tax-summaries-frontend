@@ -51,11 +51,10 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures wi
   implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
   val mockAuditService: AuditService = mock[AuditService]
 
-  def sut = new PayeAtsService(mockMiddleConnector,mockAuditService)
+  def sut = new PayeAtsService(mockMiddleConnector, mockAuditService)
 
-  override protected def afterEach(): Unit = {
+  override protected def afterEach(): Unit =
     Mockito.reset(mockAuditService)
-  }
 
   "getPayeATSData" should {
 
@@ -64,7 +63,6 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures wi
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
         .thenReturn(Future.successful(
           HttpResponse(responseStatus = 200, responseJson = Some(expectedResponse), responseHeaders = Map.empty)))
-
 
       val result = sut.getPayeATSData(testNino, currentYear).futureValue
 
@@ -75,7 +73,6 @@ class PayeAtsServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures wi
 
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYear))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new JsResultException(List())))
-
 
       val result = sut.getPayeATSData(testNino, currentYear).futureValue
 

@@ -21,12 +21,11 @@ import play.api.mvc.{AnyContent, Request, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeMinAuthAction extends MinAuthAction with ControllerBaseSpec{
+object FakeMinAuthAction extends MinAuthAction with ControllerBaseSpec {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(AuthenticatedRequest("userId", None, None, None, None, None, None, request))
-  }
 }

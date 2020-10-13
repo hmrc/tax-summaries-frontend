@@ -32,14 +32,22 @@ import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=2015"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", "?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   val taxYear = 2014
 
   implicit val hc = new HeaderCarrier
 
-  val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
@@ -54,9 +62,18 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockAllowanceService = mock[AllowanceService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new AllowancesController(mockAllowanceService, mockAuditService, FakeAuthAction, mcc,taxFreeAmountView, genericErrorView, tokenErrorView)
+      def sut =
+        new AllowancesController(
+          mockAllowanceService,
+          mockAuditService,
+          FakeAuthAction,
+          mcc,
+          taxFreeAmountView,
+          genericErrorView,
+          tokenErrorView)
 
-      when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failed")))
+      when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failed")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -70,9 +87,18 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockCapitalGainsService = mock[CapitalGainsService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc, capitalGainsView, genericErrorView, tokenErrorView)
+      def sut =
+        new CapitalGainsTaxController(
+          mockCapitalGainsService,
+          mockAuditService,
+          FakeAuthAction,
+          mcc,
+          capitalGainsView,
+          genericErrorView,
+          tokenErrorView)
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -86,9 +112,18 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockGovernmentSpendService = mock[GovernmentSpendService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new GovernmentSpendController(mockGovernmentSpendService, mockAuditService, FakeAuthAction, mcc, governmentSpendingView, genericErrorView, tokenErrorView)
+      def sut =
+        new GovernmentSpendController(
+          mockGovernmentSpendService,
+          mockAuditService,
+          FakeAuthAction,
+          mcc,
+          governmentSpendingView,
+          genericErrorView,
+          tokenErrorView)
 
-      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -102,9 +137,18 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockIncomeService = mock[IncomeService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc, incomeBeforeTaxView, genericErrorView, tokenErrorView)
+      def sut =
+        new IncomeController(
+          mockIncomeService,
+          mockAuditService,
+          FakeAuthAction,
+          mcc,
+          incomeBeforeTaxView,
+          genericErrorView,
+          tokenErrorView)
 
-      when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -118,9 +162,18 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new TotalIncomeTaxController(mockTotalIncomeTaxService, mockAuditService, FakeAuthAction, mcc, totalIncomeTaxView, genericErrorView, tokenErrorView)
+      def sut =
+        new TotalIncomeTaxController(
+          mockTotalIncomeTaxService,
+          mockAuditService,
+          FakeAuthAction,
+          mcc,
+          totalIncomeTaxView,
+          genericErrorView,
+          tokenErrorView)
 
-      when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -134,9 +187,17 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      val sut = new SummaryController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, summaryView, genericErrorView, tokenErrorView)
+      val sut = new SummaryController(
+        mockSummaryService,
+        mockAuditService,
+        FakeAuthAction,
+        mcc,
+        summaryView,
+        genericErrorView,
+        tokenErrorView)
 
-      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -150,9 +211,18 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val mockSummaryService = mock[SummaryService]
       val mockAuditService = mock[AuditService]
 
-      def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, nicsView, genericErrorView, tokenErrorView)
+      def sut =
+        new NicsController(
+          mockSummaryService,
+          mockAuditService,
+          FakeAuthAction,
+          mcc,
+          nicsView,
+          genericErrorView,
+          tokenErrorView)
 
-      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.failed(new Exception("failure")))
+      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new Exception("failure")))
 
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
