@@ -22,8 +22,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.util.matching.UnanchoredRegex
 
-
-
 class AmountSpec extends UnitSpec with PropertyChecks {
 
   val testCurrency: String = "GBP"

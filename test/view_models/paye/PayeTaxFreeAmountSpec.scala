@@ -24,9 +24,11 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
 
-class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeTaxFreeAmountSpec
+    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    with IntegrationPatience {
 
-  def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData = {
+  def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
     PayeAtsData(
       2018,
       None,
@@ -35,7 +37,6 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       Some(DataHolder(Some(allowance_data), None, None)),
       None
     )
-  }
 
   "PayeTaxFreeAmount" should {
 
@@ -44,18 +45,17 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "total_tax_free_amount" -> Amount(9740, "GBP"),
-          "total_income_before_tax" -> Amount(500, "GBP"),
-          "liable_tax_amount" -> Amount(1200, "GBP")
+          "total_tax_free_amount"    -> Amount(9740, "GBP"),
+          "total_income_before_tax"  -> Amount(500, "GBP"),
+          "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "other_allowances_amount" -> Amount(300, "GBP")
+          "other_allowances_amount"  -> Amount(300, "GBP")
         )
-
       )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
@@ -79,16 +79,17 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "total_tax_free_amount" -> Amount(0, "GBP"),
-          "total_income_before_tax" -> Amount(500, "GBP"),
-          "liable_tax_amount" -> Amount(1200, "GBP")
+          "total_tax_free_amount"    -> Amount(0, "GBP"),
+          "total_income_before_tax"  -> Amount(500, "GBP"),
+          "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "other_allowances_amount" -> Amount(300, "GBP")
-        ))
+          "other_allowances_amount"  -> Amount(300, "GBP")
+        )
+      )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
@@ -112,15 +113,16 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "total_income_before_tax" -> Amount(500, "GBP"),
-          "liable_tax_amount" -> Amount(1200, "GBP")
+          "total_income_before_tax"  -> Amount(500, "GBP"),
+          "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "other_allowances_amount" -> Amount(300, "GBP")
-        ))
+          "other_allowances_amount"  -> Amount(300, "GBP")
+        )
+      )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
@@ -144,19 +146,18 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "total_tax_free_amount" -> Amount(9740, "GBP"),
-          "total_income_before_tax" -> Amount(500, "GBP"),
-          "liable_tax_amount" -> Amount(1200, "GBP")
+          "total_tax_free_amount"    -> Amount(9740, "GBP"),
+          "total_income_before_tax"  -> Amount(500, "GBP"),
+          "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
-          "personal_tax_free_amount" -> Amount(9440, "GBP"),
+          "personal_tax_free_amount"              -> Amount(9440, "GBP"),
           "marriage_allowance_transferred_amount" -> Amount(200, "GBP"),
-          "other_allowances_amount" -> Amount(300, "GBP")
+          "other_allowances_amount"               -> Amount(300, "GBP")
         )
-
       )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
@@ -181,22 +182,21 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "total_tax_free_amount" -> Amount(9740, "GBP"),
-          "total_income_before_tax" -> Amount(500, "GBP"),
-          "liable_tax_amount" -> Amount(1200, "GBP")
+          "total_tax_free_amount"    -> Amount(9740, "GBP"),
+          "total_income_before_tax"  -> Amount(500, "GBP"),
+          "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
-          "personal_tax_free_amount" -> Amount(0, "GBP"),
+          "personal_tax_free_amount"              -> Amount(0, "GBP"),
           "marriage_allowance_transferred_amount" -> Amount(0, "GBP"),
-          "other_allowances_amount" -> Amount(0, "GBP")
+          "other_allowances_amount"               -> Amount(0, "GBP")
         )
-
       )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-        ),
+          ),
         Amount.gbp(9740),
         List(
           AmountRow("income_before_tax", Amount.gbp(500)),
@@ -215,19 +215,18 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(9440, "GBP"),
-          "total_tax_free_amount" -> Amount(9740, "GBP"),
-          "total_income_before_tax" -> Amount(500, "GBP"),
-          "liable_tax_amount" -> Amount(1200, "GBP")
+          "total_tax_free_amount"    -> Amount(9740, "GBP"),
+          "total_income_before_tax"  -> Amount(500, "GBP"),
+          "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
-        )
-
+          )
       )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-        ),
+          ),
         Amount.gbp(9740),
         List(
           AmountRow("income_before_tax", Amount.gbp(500)),
@@ -246,21 +245,20 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
       val data = payeAtsData(
         summary_data = Map(
           "personal_tax_free_amount" -> Amount(0, "GBP"),
-          "total_tax_free_amount" -> Amount(0, "GBP"),
-          "total_income_before_tax" -> Amount(0, "GBP"),
-          "liable_tax_amount" -> Amount(0, "GBP")
+          "total_tax_free_amount"    -> Amount(0, "GBP"),
+          "total_income_before_tax"  -> Amount(0, "GBP"),
+          "liable_tax_amount"        -> Amount(0, "GBP")
         ),
         allowance_data = Map(
           "personal_tax_free_amount" -> Amount(0, "GBP"),
-          "other_allowances_amount" -> Amount(0, "GBP")
+          "other_allowances_amount"  -> Amount(0, "GBP")
         )
-
       )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-        ),
+          ),
         Amount.gbp(0),
         List(
           AmountRow("income_before_tax", Amount.gbp(0)),
@@ -278,16 +276,15 @@ class PayeTaxFreeAmountSpec extends UnitSpec with MockitoSugar with JsonUtil wit
 
       val data = payeAtsData(
         summary_data = Map(
-        ),
+          ),
         allowance_data = Map(
-        )
-
+          )
       )
 
-      val expectedViewModel =  PayeTaxFreeAmount(
+      val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-        ),
+          ),
         Amount.gbp(0),
         List(
           AmountRow("income_before_tax", Amount.gbp(0)),

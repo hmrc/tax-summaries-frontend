@@ -40,10 +40,13 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   class Harness(minAuthAction: MinAuthActionImpl) extends Controller {
-    def onPageLoad(): Action[AnyContent] = minAuthAction { request => Ok }
+    def onPageLoad(): Action[AnyContent] = minAuthAction { request =>
+      Ok
+    }
   }
 
-  val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+  val ggSignInUrl =
+    "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
   "A user with no active session" should {
@@ -77,8 +80,9 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val retrievalResult: Future[Option[String]] =
         Future.successful(Some(""))
 
-      when(mockAuthConnector
-        .authorise[Option[String]](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)

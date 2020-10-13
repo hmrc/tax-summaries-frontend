@@ -39,7 +39,9 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
     "return OK response" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(mock[PayeAtsData]))
 
       val result = sut.show(fakeAuthenticatedRequest)
@@ -48,20 +50,23 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(Messages("paye.ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+      document.title should include(
+        Messages("paye.ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
 
-      document.getElementById("index-page-description").text() shouldBe(Messages("paye.ats.index.html.lede"))
+      document.getElementById("index-page-description").text() shouldBe (Messages("paye.ats.index.html.lede"))
 
-      document.getElementById("tax-services-link").text shouldBe(Messages("paye.ats.index.html.tax_spend_link"))
+      document.getElementById("tax-services-link").text shouldBe (Messages("paye.ats.index.html.tax_spend_link"))
 
-      document.getElementsByTag("p").get(1).text shouldBe(Messages("English | Cymraeg"))
-      document.getElementsByTag("p").get(2).text shouldBe(Messages("paye.ats.index.html.lede"))
-      document.getElementsByTag("p").get(3).text shouldBe(Messages("paye.ats.index.html.tax_calc_description"))
+      document.getElementsByTag("p").get(1).text shouldBe (Messages("English | Cymraeg"))
+      document.getElementsByTag("p").get(2).text shouldBe (Messages("paye.ats.index.html.lede"))
+      document.getElementsByTag("p").get(3).text shouldBe (Messages("paye.ats.index.html.tax_calc_description"))
     }
 
-    "redirect user to noAts page when receiving NOT_FOUND from service" in  {
+    "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
 
       val result = sut.show(fakeAuthenticatedRequest)
@@ -72,7 +77,9 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
       val result = sut.show(fakeAuthenticatedRequest)

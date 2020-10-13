@@ -45,8 +45,24 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   val taxYear = 2015
 
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
-  val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("Get", s"?taxYear=$taxYear"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("Get", s"?taxYear=$taxYear"))
+  val agentRequest = AuthenticatedRequest(
+    "userId",
+    Some(Uar(testUar)),
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("Get", s"?taxYear=$taxYear"))
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -82,7 +98,8 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
   override def beforeEach(): Unit = {
     when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model)
-    when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(None))
+    when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(None))
   }
 
   "Calling with request param" should {
@@ -142,7 +159,9 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         None,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+        FakeRequest(
+          "GET",
+          controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
       val result = Future.successful(sut.agentAwareShow(requestWithQuery))
@@ -228,7 +247,9 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         None,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+        FakeRequest(
+          "GET",
+          controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
       val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
@@ -236,7 +257,8 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
-      verify(mockDataCacheConnector, times(1)).storeAgentToken(Matchers.eq("bxk2Z3Q84R0W2XSklMb7Kg"))(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockDataCacheConnector, times(1))
+        .storeAgentToken(Matchers.eq("bxk2Z3Q84R0W2XSklMb7Kg"))(any[HeaderCarrier], any[ExecutionContext])
     }
 
     "not put TAXS_USER_TYPE or TAXS_AGENT_TOKEN into session when called only with '/?id=bxk2Z3Q84R0W2XSklMb7Kg'" in {
@@ -304,7 +326,8 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(new NoATSViewModel)
+      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+        .thenReturn(new NoATSViewModel)
 
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER

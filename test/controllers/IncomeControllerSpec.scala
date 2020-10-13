@@ -35,8 +35,24 @@ import scala.concurrent.Future
 class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", "?taxYear=20145"))
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,
@@ -56,19 +72,28 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   val mockIncomeService = mock[IncomeService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new IncomeController(mockIncomeService, mockAuditService, FakeAuthAction, mcc, incomeBeforeTaxView, genericErrorView, tokenErrorView)
+  def sut =
+    new IncomeController(
+      mockIncomeService,
+      mockAuditService,
+      FakeAuthAction,
+      mcc,
+      incomeBeforeTaxView,
+      genericErrorView,
+      tokenErrorView)
 
-  override def beforeEach(): Unit = {
-    when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
-  }
+  override def beforeEach(): Unit =
+    when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(baseModel))
 
   "Calling incomes" should {
 
     "return a successful response for a valid request" in {
-      val result =  Future.successful(sut.show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.income_before_tax.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in {
@@ -80,7 +105,8 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
@@ -124,8 +150,8 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(model)
-
+      when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(model)
 
       val result = Future.successful(sut.show(request))
 
@@ -142,7 +168,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.toString should not include "other_income"
       document.toString should not include "total_income_before_tax"
       document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "show 'Income Before Tax' page with a correct breadcrumb" in {
@@ -156,13 +182,16 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your total income</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include(
+        "<strong>Your total income</strong>")
     }
   }
 }

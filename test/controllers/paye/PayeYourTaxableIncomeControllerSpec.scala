@@ -32,15 +32,19 @@ import views.html.paye.PayeYourTaxableIncomeView
 
 class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeControllerSpecHelpers {
 
-  val fakeAuthenticatedRequest = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  val fakeAuthenticatedRequest =
+    PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val sut = new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])
+  val sut =
+    new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])
 
   "Government spend controller" should {
 
     "return OK response" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
       val result = sut.show(fakeAuthenticatedRequest)
@@ -48,12 +52,17 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
       status(result) shouldBe OK
 
       contentAsString(result) should include(
-        Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", taxYear.toString, (taxYear+1).toString))
+        Messages("paye.ats.income_before_tax.title") + Messages(
+          "generic.to_from",
+          taxYear.toString,
+          (taxYear + 1).toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
 
       val result = sut.show(fakeAuthenticatedRequest)
@@ -64,7 +73,9 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
 
-      when(mockPayeAtsService.getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier],any[PayeAuthenticatedRequest[_]]))
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
 
       val result = sut.show(fakeAuthenticatedRequest)

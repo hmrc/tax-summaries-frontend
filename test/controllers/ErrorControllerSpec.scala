@@ -25,14 +25,22 @@ import utils.TestConstants._
 
 class ErrorControllerSpec extends ControllerBaseSpec {
 
-  def sut = new ErrorController(FakeAuthAction , FakeMinAuthAction , mcc, notAuthorisedView, noAtsErrorView, serviceUnavailableView)
+  def sut =
+    new ErrorController(
+      FakeAuthAction,
+      FakeMinAuthAction,
+      mcc,
+      notAuthorisedView,
+      noAtsErrorView,
+      serviceUnavailableView)
   implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" should {
 
     "Show No ATS page" in {
 
-      implicit lazy val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+      implicit lazy val request =
+        AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
       val result = sut.authorisedNoAts()(request)
       val document = contentAsString(result)
 

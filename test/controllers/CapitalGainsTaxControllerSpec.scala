@@ -38,26 +38,54 @@ import scala.concurrent.Future
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstants with BeforeAndAfterEach {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", "?taxYear=20145"))
   val baseModel = capitalGains
 
   val mockCapitalGainsService = mock[CapitalGainsService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new CapitalGainsTaxController(mockCapitalGainsService, mockAuditService, FakeAuthAction, mcc, capitalGainsView, genericErrorView, tokenErrorView)
+  def sut =
+    new CapitalGainsTaxController(
+      mockCapitalGainsService,
+      mockAuditService,
+      FakeAuthAction,
+      mcc,
+      capitalGainsView,
+      genericErrorView,
+      tokenErrorView)
 
-  override def beforeEach(): Unit = {
-    when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(baseModel))
-  }
+  override def beforeEach(): Unit =
+    when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+      .thenReturn(Future.successful(baseModel))
 
   "Calling Capital Gains" should {
 
     "return a successful response for a valid request" in {
-      val result =  Future.successful(sut.show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.capital_gains_tax.html.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.capital_gains_tax.html.title") + Messages(
+          "generic.to_from",
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "display an error page for an invalid request " in {
@@ -68,7 +96,8 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
     }
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in {
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -107,7 +136,8 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
         taxableGains = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model2))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model2))
 
       val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
@@ -142,13 +172,14 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model3))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model3))
 
       val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("entrepreneurs-relief-rate-section") should be(null)
     }
 
@@ -158,13 +189,14 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model4))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model4))
 
       val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("ordinary-rate-section") should be(null)
     }
 
@@ -174,13 +206,14 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model5))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model5))
 
       val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("upper-rate-section") should be(null)
     }
 
@@ -208,13 +241,14 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model6))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model6))
 
       val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("adjustments-section") should be(null)
     }
 
@@ -233,12 +267,13 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(),Matchers.eq(request))).thenReturn(Future.successful(model7))
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(model7))
 
       val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include("Technical Difficulties")
+      document.toString should not include ("Technical Difficulties")
       document.getElementById("total-cg-description") should be(null)
     }
 
@@ -253,13 +288,16 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Capital Gains Tax</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include(
+        "<strong>Capital Gains Tax</strong>")
     }
   }
 }

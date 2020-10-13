@@ -70,7 +70,8 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         "",
         scottishIncomeTax
       )
-      val result = governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(request, messages, formPartialRetriever, appConfig)
+      val result =
+        governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")

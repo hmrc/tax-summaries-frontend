@@ -27,12 +27,13 @@ import views.html.paye.PayeYourIncomeAndTaxesView
 
 class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
 
-  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  implicit val request =
+    PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val payeYourIncomeAndTaxesViewModel : PayeYourIncomeAndTaxes =PayeAtsTestData.payeYourIncomeAndTaxesViewModel
-lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
+  val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes = PayeAtsTestData.payeYourIncomeAndTaxesViewModel
+  lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
-  def view(viewModel:PayeYourIncomeAndTaxes): String =
+  def view(viewModel: PayeYourIncomeAndTaxes): String =
     payeYourIncomeAndTaxesView(payeYourIncomeAndTaxesViewModel).body
 
   "PayeYourIncomeAndTaxesView" should {
@@ -40,7 +41,9 @@ lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
       val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
 
-      document.getElementById("taxable-income").text() shouldBe "Taxable income £1,000.00 Your taxable income This is your total taxable income for the year."
+      document
+        .getElementById("taxable-income")
+        .text() shouldBe "Taxable income £1,000.00 Your taxable income This is your total taxable income for the year."
 
     }
 
@@ -48,7 +51,9 @@ lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
       val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
 
-      document.getElementById("tax-free-amount").text() shouldBe "Tax-free amount £800.00 Your tax-free amount This is the amount you received without paying tax."
+      document
+        .getElementById("tax-free-amount")
+        .text() shouldBe "Tax-free amount £800.00 Your tax-free amount This is the amount you received without paying tax."
 
     }
 
@@ -56,7 +61,9 @@ lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
       val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
 
-      document.getElementById("tax-calculated-as").text() shouldBe "Income Tax and National Insurance contributions £200.00 Your Income Tax and National Insurance contributions This is 20% of your taxable income. For every £1 of income, you paid 20p in Income Tax and National Insurance contributions. This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown."
+      document
+        .getElementById("tax-calculated-as")
+        .text() shouldBe "Income Tax and National Insurance contributions £200.00 Your Income Tax and National Insurance contributions This is 20% of your taxable income. For every £1 of income, you paid 20p in Income Tax and National Insurance contributions. This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown."
 
     }
 
@@ -64,7 +71,9 @@ lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
       val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
 
-      document.getElementById("income_after_tax_and_nics").text() shouldBe "Income after Tax and National Insurance contributions £100.00"
+      document
+        .getElementById("income_after_tax_and_nics")
+        .text() shouldBe "Income after Tax and National Insurance contributions £100.00"
 
     }
   }

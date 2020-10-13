@@ -24,9 +24,11 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
 
-class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeYourIncomeAndTaxesSpec
+    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    with IntegrationPatience {
 
-  val taxYear : Int = 2018
+  val taxYear: Int = 2018
 
   "PayeYourIncomeAndTaxesData" should {
 
@@ -34,9 +36,14 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.yourIncomeAndTaxesData
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
-        Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
-        Amount(1100, "GBP"),"20"))
+      val expectedViewModel = Some(
+        PayeYourIncomeAndTaxes(
+          2018,
+          Amount(500, "GBP"),
+          Amount(9740, "GBP"),
+          Amount(200, "GBP"),
+          Amount(1100, "GBP"),
+          "20"))
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
@@ -47,11 +54,16 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.malformedYourIncomeAndTaxesData
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
-        Amount(0, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
-        Amount(1100, "GBP"),"20"))
+      val expectedViewModel = Some(
+        PayeYourIncomeAndTaxes(
+          2018,
+          Amount(0, "GBP"),
+          Amount(9740, "GBP"),
+          Amount(200, "GBP"),
+          Amount(1100, "GBP"),
+          "20"))
 
-      val result =  PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
       result shouldBe expectedViewModel
     }
@@ -60,9 +72,14 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
-        Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
-        Amount(1100, "GBP"),"20"))
+      val expectedViewModel = Some(
+        PayeYourIncomeAndTaxes(
+          2018,
+          Amount(500, "GBP"),
+          Amount(9740, "GBP"),
+          Amount(200, "GBP"),
+          Amount(1100, "GBP"),
+          "20"))
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
@@ -73,9 +90,14 @@ class PayeYourIncomeAndTaxesSpec extends UnitSpec with MockitoSugar with JsonUti
 
       val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingEmployeeNicAmount
 
-      val expectedViewModel =  Some(PayeYourIncomeAndTaxes(2018,
-        Amount(500, "GBP"),Amount(9740, "GBP"),Amount(200, "GBP"),
-        Amount(1100, "GBP"),"20"))
+      val expectedViewModel = Some(
+        PayeYourIncomeAndTaxes(
+          2018,
+          Amount(500, "GBP"),
+          Amount(9740, "GBP"),
+          Amount(200, "GBP"),
+          Amount(1100, "GBP"),
+          "20"))
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
