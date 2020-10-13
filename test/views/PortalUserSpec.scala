@@ -26,6 +26,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.time.TaxYear
 import utils.TestConstants._
 import view_models._
 
@@ -197,6 +198,18 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include(
         "<strong>Your Income Tax and National Insurance</strong>")
+    }
+
+    "show the 'exit tax summaries' link on the no ats page" in {
+
+      val result =
+        howTaxIsSpentView(TaxYear(fakeTaxYear))(requestWithSession, messages, formPartialRetriever, appConfig)
+      val document = Jsoup.parse(contentAsString(result))
+      println(document)
+      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
+      val href = document.select("#proposition-links a").first().attr("href")
+      href should be("https://online.hmrc.gov.uk/self-assessment/ind/")
+
     }
 
     "show the 'exit tax summaries' link on the summaries page" in {
