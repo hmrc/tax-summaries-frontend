@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, MinAuthAction}
@@ -23,6 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
 
@@ -35,10 +38,12 @@ class ErrorController @Inject()(
   serviceUnavailableView: ServiceUnavailableView)(
   implicit val formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear {
+
+  override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
-    Ok(howTaxIsSpentView())
+    Ok(howTaxIsSpentView(current.previous))
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>

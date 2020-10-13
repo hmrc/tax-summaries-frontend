@@ -16,14 +16,19 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import controllers.auth._
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.time.CurrentTaxYear
 import utils.TestConstants._
 
-class ErrorControllerSpec extends ControllerBaseSpec {
+class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
+
+  override def now: () => LocalDate = () => LocalDate.now()
 
   def sut =
     new ErrorController(
@@ -46,7 +51,7 @@ class ErrorControllerSpec extends ControllerBaseSpec {
 
       status(result) shouldBe 200
 
-      document shouldBe contentAsString(howTaxIsSpentView())
+      document shouldBe contentAsString(howTaxIsSpentView(current.previous))
     }
 
     "show not authorised page" in {

@@ -16,14 +16,19 @@
 
 package controllers.paye
 
+import java.time.LocalDate
+
 import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
 import play.api.test.Helpers._
 import play.api.test.Injecting
-import view_models.paye.PayeAtsMain
+import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
-class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting {
+class PayeErrorControllerSpec
+    extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting with CurrentTaxYear {
+
+  override def now: () => LocalDate = () => LocalDate.now()
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
@@ -72,7 +77,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerB
       val document = contentAsString(result)
 
       status(result) shouldBe OK
-      document shouldBe contentAsString(howTaxIsSpentView())
+      document shouldBe contentAsString(howTaxIsSpentView(current.previous))
     }
   }
 }

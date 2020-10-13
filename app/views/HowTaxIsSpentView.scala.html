@@ -17,13 +17,14 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.time.TaxYear
 @import views.html.includes.SaMainView
 @import views.html.includes.TaxsBreadcrumbView
 @import views.html.helpers.BackLinkView
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView)
 
-@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(taxYear: TaxYear)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @saMainView(Messages("ats.treasury_spending.html.title"), "") {
 
@@ -36,7 +37,7 @@
 
     <h1 class="heading-xlarge">@messages("ats.howYourTaxWasSpent.heading")</h1>
 
-    <p>@messages("ats.howYourTaxWasSpent.subheading")</p>
+    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", taxYear.starts.getYear.toString, taxYear.finishes.getYear.toString))</p>
     <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
 
 

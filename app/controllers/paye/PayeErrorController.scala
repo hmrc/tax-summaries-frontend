@@ -16,6 +16,8 @@
 
 package controllers.paye
 
+import java.time.LocalDate
+
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
@@ -23,6 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.time.{CurrentTaxYear, TaxYear}
 import views.html.HowTaxIsSpentView
 import views.html.errors._
 
@@ -35,8 +38,10 @@ class PayeErrorController @Inject()(
   payeServiceUnavailableView: PayeServiceUnavailableView)(
   implicit formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear {
+
   val payeYear = appConfig.payeYear
+  override def now: () => LocalDate = () => LocalDate.now()
 
   def genericError(status: Int): Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>
     {
@@ -49,7 +54,7 @@ class PayeErrorController @Inject()(
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>
     {
-      Ok(howTaxIsSpentView())
+      Ok(howTaxIsSpentView(current.previous))
     }
   }
 

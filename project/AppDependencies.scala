@@ -18,6 +18,7 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "domain"               % "5.9.0-play-26",
     "uk.gov.hmrc"                %% "auth-client"          % "3.0.0-play-26",
     "uk.gov.hmrc"                %% "json-encryption"      % "4.8.0-play-26",
+    "uk.gov.hmrc"                %% "tax-year"             % "1.2.0",
     "com.mohiva"                 %% "play-html-compressor" % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
     "com.softwaremill.quicklens" %% "quicklens"            % "1.6.0"
   )
