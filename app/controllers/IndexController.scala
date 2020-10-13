@@ -21,7 +21,7 @@ import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthAction, AuthenticatedRequest, RoutingAction}
 import models.ErrorResponse
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
@@ -48,7 +48,7 @@ class IndexController @Inject()(
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedIndex: Action[AnyContent] = (routingAction andThen authAction).async { request =>
+  def authorisedIndex: Action[AnyContent] = (routingAction andThen authAction) { request: AuthenticatedRequest[_] =>
     agentAwareShow(request)
   }
 

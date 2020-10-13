@@ -30,24 +30,23 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: ControllerComponents)(
+class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnector)(
   implicit appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends RoutingAction with AuthorisedFunctions {
 
-  override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
-
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  override def filter[A](request: Request[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments and Retrievals.nino) {
-      case Some(externalId) ~ enrolments ~ optNino =>
+    authorised().retrieve(Retrievals.allEnrolments and Retrievals.nino) {
+      case enrolments ~ optNino =>
         (hasEnrolment(enrolments, "IR-SA") || hasEnrolment(enrolments, "IR-SA-AGENT"), optNino) match {
 
-          case (true, _)        => block(AuthenticatedRequest(externalId, None, None, None, None, None, None, request))
-          case (false, Some(_)) => Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show()))
-          case _                => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
+          case (true, _) => Future.successful(None)
+          case (false, Some(_)) =>
+            Future.successful(Some(Redirect(controllers.paye.routes.PayeAtsMainController.show())))
+          case _ => Future.successful(Some(Redirect(controllers.routes.ErrorController.authorisedNoAts())))
         }
       case _ => throw new RuntimeException("Can not find enrolments")
     }
@@ -55,21 +54,21 @@ class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnect
     case _: NoActiveSession =>
       lazy val ggSignIn = appConfig.loginUrl
       lazy val callbackUrl = appConfig.loginCallback
-      Redirect(
-        ggSignIn,
-        Map(
-          "continue" -> Seq(callbackUrl),
-          "origin"   -> Seq(appConfig.appName)
-        )
-      )
+      Some(
+        Redirect(
+          ggSignIn,
+          Map(
+            "continue" -> Seq(callbackUrl),
+            "origin"   -> Seq(appConfig.appName)
+          )
+        ))
 
-    case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
+    case _: InsufficientEnrolments => Some(Redirect(controllers.routes.ErrorController.notAuthorised()))
   }
 
   private def hasEnrolment(enrolments: Enrolments, key: String): Boolean = enrolments.getEnrolment(key).isDefined
-
   override protected def executionContext: ExecutionContext = ec
 }
 
 @ImplementedBy(classOf[RoutingActionImpl])
-trait RoutingAction extends ActionBuilder[Request, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+trait RoutingAction extends ActionFilter[Request]

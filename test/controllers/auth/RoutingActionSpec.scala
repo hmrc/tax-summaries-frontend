@@ -43,7 +43,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
   val content = "Block completed"
 
   class Harness(routingAction: RoutingActionImpl) extends InjectedController {
-    def onPageLoad(): Action[AnyContent] = routingAction { request =>
+    def onPageLoad(): Action[AnyContent] = routingAction { request: Request[_] =>
       Ok(content)
     }
   }
@@ -62,7 +62,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
         when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val routingAction = new RoutingActionImpl(mockAuthConnector)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -81,7 +81,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
         when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val routingAction = new RoutingActionImpl(mockAuthConnector)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -99,7 +99,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
         when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val routingAction = new RoutingActionImpl(mockAuthConnector)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -118,7 +118,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
         when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val routingAction = new RoutingActionImpl(mockAuthConnector)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -134,7 +134,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn Future
           .failed(InsufficientEnrolments("Oops"))
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val routingAction = new RoutingActionImpl(mockAuthConnector)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -153,7 +153,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         when(mockAuthConnector.authorise(any(), any())(any(), any()))
           .thenReturn(Future.failed(new SessionRecordNotFound))
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val routingAction = new RoutingActionImpl(mockAuthConnector)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))

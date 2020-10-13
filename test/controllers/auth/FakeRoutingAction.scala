@@ -15,16 +15,15 @@
  */
 
 package controllers.auth
+
 import controllers.ControllerBaseSpec
-import play.api.mvc.{AnyContent, BodyParser, Request, Result}
+import play.api.mvc.{Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 object FakeRoutingAction extends RoutingAction with ControllerBaseSpec {
 
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest("userId", None, None, None, None, None, None, request))
+  override def filter[A](request: Request[A]): Future[Option[Result]] = Future.successful(None)
 }
