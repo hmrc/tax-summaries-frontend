@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers
+import controllers.auth.RoutingAction
+import javax.inject.Inject
+import play.api.mvc.MessagesControllerComponents
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import controllers.ControllerBaseSpec
-import play.api.mvc.{AnyContent, Request, _}
+class AtsRoutingController @Inject()(
+  routingAction: RoutingAction,
+  mcc: MessagesControllerComponents
+) extends FrontendController(mcc) {
 
-import scala.concurrent.{ExecutionContext, Future}
-
-object FakeMinAuthAction extends MinAuthAction with ControllerBaseSpec {
-
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
-  override protected val executionContext: ExecutionContext = mcc.executionContext
-
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest("userId", None, None, None, None, None, None, request))
+  def routeToService = routingAction { implicit request =>
+//    Redirect(controllers.routes.ErrorController.authorisedNoAts())
+    Ok("Fallthough to controller")
+  }
 }

@@ -25,7 +25,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
 
-class PayeGovernmentSpendSpec extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience {
+class PayeGovernmentSpendSpec
+    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    with IntegrationPatience {
 
   "PayeGovernmentSpend" should {
 

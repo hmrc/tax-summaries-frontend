@@ -27,13 +27,14 @@ import views.html.paye.PayeYourTaxableIncomeView
 
 class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
-  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+  implicit val request =
+    PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val payeYourTaxableIncomeViewModel : PayeYourTaxableIncome =PayeAtsTestData.payeYourTaxableIncomeViewModel
+  val payeYourTaxableIncomeViewModel: PayeYourTaxableIncome = PayeAtsTestData.payeYourTaxableIncomeViewModel
 
   lazy val payeYourTaxableIncomeView = inject[PayeYourTaxableIncomeView]
 
-  def view(viewModel:PayeYourTaxableIncome): String =
+  def view(viewModel: PayeYourTaxableIncome): String =
     payeYourTaxableIncomeView(payeYourTaxableIncomeViewModel).body
 
   "PayeYourTaxableIncomeView" should {
@@ -61,7 +62,8 @@ class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
     "not render taxable income table when they have no taxable income" in {
 
-      val view = payeYourTaxableIncomeView(PayeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
+      val view =
+        payeYourTaxableIncomeView(PayeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
       val document = Jsoup.parse(view)
 
       document.select("#income-tax-table") shouldBe empty

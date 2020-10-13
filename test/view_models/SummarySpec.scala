@@ -26,24 +26,38 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class SummarySpec extends UnitSpec with PropertyChecks {
 
-  def amountGen: Gen[Amount] = {
+  def amountGen: Gen[Amount] =
     Gen.choose(-100, 100).map { amount =>
       Amount(BigDecimal(amount), "gbp")
     }
-  }
 
-  def summaryGen: Gen[Summary] = {
+  def summaryGen: Gen[Summary] =
     for {
       amount <- amountGen
       utr = new SaUtrGenerator().nextSaUtr.utr
       rate <- Rate(Gen.chooseNum(0, 20).toString)
       year <- Gen.chooseNum(2010, 2099)
     } yield {
-      Summary(year, utr, amount, amount, amount, amount, amount, amount, amount, amount, amount, amount, amount,
-        rate, rate, "Mr", "Fake", "Man"
-      )
+      Summary(
+        year,
+        utr,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        amount,
+        rate,
+        rate,
+        "Mr",
+        "Fake",
+        "Man")
     }
-  }
 
   val zero = BigDecimal(0)
 
@@ -53,7 +67,7 @@ class SummarySpec extends UnitSpec with PropertyChecks {
 
       "provide a correctly formatted string" in {
         forAll(summaryGen) { summary =>
-          summary.taxYearInterval shouldBe s"${summary.year-1}-${summary.year.toString.takeRight(2)}"
+          summary.taxYearInterval shouldBe s"${summary.year - 1}-${summary.year.toString.takeRight(2)}"
         }
       }
     }
@@ -61,7 +75,7 @@ class SummarySpec extends UnitSpec with PropertyChecks {
     "taxYearIntervalTo is called" must {
       "provide a correctly formatted string" in {
         forAll(summaryGen) { summary =>
-          summary.taxYearIntervalTo shouldBe s"${summary.year-1} to ${summary.year}"
+          summary.taxYearIntervalTo shouldBe s"${summary.year - 1} to ${summary.year}"
         }
       }
     }
@@ -275,7 +289,7 @@ class SummarySpec extends UnitSpec with PropertyChecks {
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero &&
-              summary.employeeNicAmount.amount > zero
+                summary.employeeNicAmount.amount > zero
             ) {
               val summaryWithNoCgt = summary.copy(totalCapitalGainsTax = Amount(0, "gbp"))
               summaryWithNoCgt.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
@@ -319,8 +333,8 @@ class SummarySpec extends UnitSpec with PropertyChecks {
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero &&
-              summary.employeeNicAmount.amount > zero &&
-              summary.totalCapitalGainsTax.amount > zero
+                summary.employeeNicAmount.amount > zero &&
+                summary.totalCapitalGainsTax.amount > zero
             ) {
               summary.yourTotalTaxTextKeys._1 shouldBe expectedTitle("ternary")
               summary.yourTotalTaxTextKeys._2 shouldBe
@@ -372,4 +386,3 @@ class SummarySpec extends UnitSpec with PropertyChecks {
     }
   }
 }
-

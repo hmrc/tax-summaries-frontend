@@ -19,10 +19,10 @@ package controllers.auth
 import config.ApplicationConfig
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
@@ -32,22 +32,27 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.RetrievalOps._
 import utils.TestConstants._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
+class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
-  class Harness(authAction: AuthAction) extends Controller {
-    def onPageLoad(): Action[AnyContent] = authAction { request => Ok(s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail").toString}," +
-      s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail").toString}") }
+  class Harness(authAction: AuthAction) extends InjectedController {
+    def onPageLoad(): Action[AnyContent] = authAction { request =>
+      Ok(
+        s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail").toString}," +
+          s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail").toString}")
+    }
   }
 
-  val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+  val ggSignInUrl =
+    "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
   "A user with no active session" should {
@@ -77,14 +82,14 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   "A user with a confidence level 50 and an SA enrolment" should {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
-      val retrievalResult: Future[
-        Enrolments ~ Option[String]] =
+      val retrievalResult: Future[Enrolments ~ Option[String]] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("")
         )
 
-      when(mockAuthConnector
-        .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -99,15 +104,15 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   "A user with a confidence level 50 and an IR-SA-AGENT enrolment" should {
     "create an authenticated request" in {
       val uar = testUar
-      val retrievalResult: Future[
-        Enrolments ~ Option[String]] =
+      val retrievalResult: Future[Enrolments ~ Option[String]] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
             Some("")
         )
 
-      when(mockAuthConnector
-        .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -123,7 +128,7 @@ class AuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc){
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc) {
         override val saShuttered: Boolean = true
       }
       val controller = new Harness(authAction)

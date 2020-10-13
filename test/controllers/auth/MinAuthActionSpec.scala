@@ -20,30 +20,34 @@ import config.ApplicationConfig
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
+class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
-  class Harness(minAuthAction: MinAuthActionImpl) extends Controller {
-    def onPageLoad(): Action[AnyContent] = minAuthAction { request => Ok }
+  class Harness(minAuthAction: MinAuthActionImpl) extends InjectedController {
+    def onPageLoad(): Action[AnyContent] = minAuthAction { request =>
+      Ok
+    }
   }
 
-  val ggSignInUrl = "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+  val ggSignInUrl =
+    "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
   "A user with no active session" should {
@@ -77,8 +81,9 @@ class MinAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       val retrievalResult: Future[Option[String]] =
         Future.successful(Some(""))
 
-      when(mockAuthConnector
-        .authorise[Option[String]](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)

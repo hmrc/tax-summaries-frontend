@@ -41,14 +41,15 @@ object SessionIdFilterSpec {
   class Filters @Inject()(sessionId: SessionIdFilter) extends DefaultHttpFilters(sessionId)
 
   class TestSessionIdFilter @Inject()(
-                                       override val mat: Materializer,
-                                       ec: ExecutionContext,
-                                       sessionCookieBaker: SessionCookieBaker
-                                     ) extends SessionIdFilter(mat, UUID.fromString(sessionId), sessionCookieBaker,  ec)
+    override val mat: Materializer,
+    ec: ExecutionContext,
+    sessionCookieBaker: SessionCookieBaker
+  ) extends SessionIdFilter(mat, UUID.fromString(sessionId), sessionCookieBaker, ec)
 
 }
 
-class SessionIdFilterSpec extends WordSpec with MustMatchers with OptionValues with GuiceOneAppPerSuite with WithApplicationComponents {
+class SessionIdFilterSpec
+    extends WordSpec with MustMatchers with OptionValues with GuiceOneAppPerSuite with WithApplicationComponents {
 
   override def components: BuiltInComponents = new BuiltInComponentsFromContext(context) with NoHttpFiltersComponents {
 

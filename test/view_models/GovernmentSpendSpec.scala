@@ -49,7 +49,7 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants {
           val spendFor2018 = fakeGovernmentSpend.copy(taxYear = 2018)
 
           spendFor2018.filteredDataWithHigherTransport.map(_._1) mustBe
-          spendFor2018.sortedSpendData.map(_._1)
+            spendFor2018.sortedSpendData.map(_._1)
         }
       }
     }

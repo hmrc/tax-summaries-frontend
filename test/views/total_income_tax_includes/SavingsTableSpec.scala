@@ -44,7 +44,7 @@ class SavingsTableSpec extends UnitSpec with GuiceOneAppPerSuite with TestConsta
   def view: String = view(savingsTaxData, savingsRateData)
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
-  implicit val arbRate: Arbitrary[Rate]     = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
+  implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
 
   "view" should {
 
@@ -64,9 +64,21 @@ class SavingsTableSpec extends UnitSpec with GuiceOneAppPerSuite with TestConsta
     }
 
     val rowData = List(
-      ("lower", modify[SavingsTax](_.savingsLowerRateTax), modify[SavingsTax](_.savingsLowerRateTaxAmount), modify[SavingsRates](_.savingsLowerRate)),
-      ("higher", modify[SavingsTax](_.savingsHigherRateTax), modify[SavingsTax](_.savingsHigherRateTaxAmount), modify[SavingsRates](_.savingsHigherRate)),
-      ("additional", modify[SavingsTax](_.savingsAdditionalRateTax), modify[SavingsTax](_.savingsAdditionalRateTaxAmount), modify[SavingsRates](_.savingsAdditionalRate))
+      (
+        "lower",
+        modify[SavingsTax](_.savingsLowerRateTax),
+        modify[SavingsTax](_.savingsLowerRateTaxAmount),
+        modify[SavingsRates](_.savingsLowerRate)),
+      (
+        "higher",
+        modify[SavingsTax](_.savingsHigherRateTax),
+        modify[SavingsTax](_.savingsHigherRateTaxAmount),
+        modify[SavingsRates](_.savingsHigherRate)),
+      (
+        "additional",
+        modify[SavingsTax](_.savingsAdditionalRateTax),
+        modify[SavingsTax](_.savingsAdditionalRateTaxAmount),
+        modify[SavingsRates](_.savingsAdditionalRate))
     )
 
     for ((id, taxLens, totalLens, rateLens) <- rowData) {
@@ -74,7 +86,7 @@ class SavingsTableSpec extends UnitSpec with GuiceOneAppPerSuite with TestConsta
 
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
           val taxData = (taxLens.setTo(tax) andThen totalLens.setTo(total))(savingsTaxData)
-          val rates   = rateLens.setTo(rate)(savingsRateData)
+          val rates = rateLens.setTo(rate)(savingsRateData)
 
           val result = view(taxData, rates)
 

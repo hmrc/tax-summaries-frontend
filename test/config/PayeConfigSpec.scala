@@ -105,7 +105,7 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite
         override val payeYear: Int = 2019
       }
 
-      assertThrows[RuntimeException]{config.spendCategories}
+      assertThrows[RuntimeException] { config.spendCategories }
     }
   }
 

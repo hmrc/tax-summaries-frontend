@@ -30,7 +30,8 @@ import views.html.CapitalGainsView
 
 class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
-  implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  implicit val request =
+    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
   lazy val capitalGainsView = inject[CapitalGainsView]
 
   def view(cg: CapitalGains): String =

@@ -38,8 +38,7 @@ import scala.concurrent.duration._
 
 class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
 
-
-  val genericViewModel: GenericViewModel =  AtsList(
+  val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
@@ -53,14 +52,25 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
   val mockAtsService = mock[AtsService]
   val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val taxYear = 2015
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
 
   val sut = new CapitalGainsService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
   "CapitalGainsService getCapitalGains" should {
 
-    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in{
-      when(mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(Matchers.any(), Matchers.any())).thenReturn(genericViewModel)
+    "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
+      when(
+        mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any())).thenReturn(genericViewModel)
       val result = Await.result(sut.getCapitalGains(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }

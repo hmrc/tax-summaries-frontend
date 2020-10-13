@@ -23,15 +23,21 @@ import play.api.test.Injecting
 import view_models.paye.PayeAtsMain
 import views.html.errors.{PayeGenericErrorView, PayeNoAtsErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
-class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting{
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting {
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
   lazy val payeNoAtsErrorView: PayeNoAtsErrorView = inject[PayeNoAtsErrorView]
 
-  def sut = new PayeErrorController(FakePayeAuthAction, mcc, payeGenericErrorView, payeNoAtsErrorView, mock[PayeNotAuthorisedView],
-    mock[PayeServiceUnavailableView])
+  def sut =
+    new PayeErrorController(
+      FakePayeAuthAction,
+      mcc,
+      payeGenericErrorView,
+      payeNoAtsErrorView,
+      mock[PayeNotAuthorisedView],
+      mock[PayeServiceUnavailableView])
 
   "PayeErrorController" should {
 

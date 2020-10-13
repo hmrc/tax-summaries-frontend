@@ -34,7 +34,8 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
     val nonMatchingUtr = testNonMatchingUtr
 
     val request = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, None, None, None, FakeRequest())
-    val agentRequest = AuthenticatedRequest("userId", Some(Uar(uar)), Some(SaUtr(utr)), None, None, None, None, FakeRequest())
+    val agentRequest =
+      AuthenticatedRequest("userId", Some(Uar(uar)), Some(SaUtr(utr)), None, None, None, None, FakeRequest())
 
     val account = AccountUtils.getAccount(request)
     val agentAccount = AccountUtils.getAccount(agentRequest)

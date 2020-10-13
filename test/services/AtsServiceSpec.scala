@@ -37,7 +37,8 @@ import utils.{AccountUtils, AuthorityUtils}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
+class AtsServiceSpec
+    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
 
   val data = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
@@ -59,7 +60,8 @@ class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures
   }
 
   implicit val hc = new HeaderCarrier
-  implicit val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+  implicit val request =
+    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
   val agentToken = AgentToken(
     agentUar = testUar,
@@ -82,7 +84,8 @@ class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures
 
         when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
         when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
+        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(data)))
 
         val result = sut.getAts(2014)
 
@@ -90,76 +93,110 @@ class AtsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures
           result shouldBe data
         }
 
-        verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-        verify(mockDataCacheConnector, never()).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockAuditService, never())
+          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, never())
+          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
       }
     }
 
-   "write data to the cache" when {
-     "user is not an agent and the retrieved cached utr is different to the requested utr " in {
+    "write data to the cache" when {
+      "user is not an agent and the retrieved cached utr is different to the requested utr " in {
 
-       when(mockAuthUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(false)
+        when(mockAuthUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[AuthenticatedRequest[_]]))
+          .thenReturn(false)
 
-       when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
-       when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-       when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-       when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
+        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
+        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(data)))
+        when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(data))
 
-       val result = sut.getAts(2014)
+        val result = sut.getAts(2014)
 
-       whenReady(result) { result =>
-         result shouldBe data
-       }
+        whenReady(result) { result =>
+          result shouldBe data
+        }
 
-       verify(mockMiddleConnector, times(1)).connectToAts(any[SaUtr], any[Int])(any[HeaderCarrier])
-       verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-       verify(mockDataCacheConnector, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-     }
+        verify(mockMiddleConnector, times(1)).connectToAts(any[SaUtr], any[Int])(any[HeaderCarrier])
+        verify(mockAuditService, times(1))
+          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1))
+          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+      }
 
-     "user is an agent and the retrieved cached utr is different to the requested utr" in {
-       val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+      "user is an agent and the retrieved cached utr is different to the requested utr" in {
+        val agentRequest = AuthenticatedRequest(
+          "userId",
+          Some(Uar(testUar)),
+          Some(SaUtr(testUtr)),
+          None,
+          None,
+          None,
+          None,
+          FakeRequest())
 
-       when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
+        when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]]))
+          .thenReturn(false)
 
-       when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
-       when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-       when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-       when(mockMiddleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Some(agentToken))
+        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
+        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(data)))
+        when(mockMiddleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(data))
 
-       val result = sut.getAts(2014)(hc, agentRequest)
+        val result = sut.getAts(2014)(hc, agentRequest)
 
-       whenReady(result) { result =>
-         result shouldBe data
-       }
+        whenReady(result) { result =>
+          result shouldBe data
+        }
 
-       verify(mockMiddleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
-       verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-       verify(mockDataCacheConnector, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-     }
+        verify(mockMiddleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
+        verify(mockAuditService, times(1))
+          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1))
+          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+      }
 
-     "there is no data in the cache and user is an agent" in {
-       val agentRequest = AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+      "there is no data in the cache and user is an agent" in {
+        val agentRequest = AuthenticatedRequest(
+          "userId",
+          Some(Uar(testUar)),
+          Some(SaUtr(testUtr)),
+          None,
+          None,
+          None,
+          None,
+          FakeRequest())
 
-       when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(None)
-       when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
+        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(None)
+        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Some(agentToken))
 
-       when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]])).thenReturn(false)
+        when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]]))
+          .thenReturn(false)
 
+        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(data)))
+        when(mockMiddleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(data))
 
-       when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Future.successful(Some(data)))
-       when(mockMiddleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier])).thenReturn(Future.successful(data))
+        val result = sut.getAts(2014)(hc, agentRequest)
 
-       val result = sut.getAts(2014)(hc, agentRequest)
+        whenReady(result) { result =>
+          result shouldBe data
+        }
 
-       whenReady(result) { result =>
-         result shouldBe data
-       }
-
-       verify(mockMiddleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
-       verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-       verify(mockDataCacheConnector, times(1)).storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-     }
-   }
+        verify(mockMiddleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
+        verify(mockAuditService, times(1))
+          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
+        verify(mockDataCacheConnector, times(1))
+          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+      }
+    }
 
   }
 }

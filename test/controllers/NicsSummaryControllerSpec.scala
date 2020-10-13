@@ -34,8 +34,24 @@ import scala.concurrent.Future
 class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val taxYear = 2014
-  val request = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest("GET","?taxYear=20145"))
+  val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
+  val badRequest = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    FakeRequest("GET", "?taxYear=20145"))
   val dataPath = "/summary_json_test.json"
 
   val model = Summary(
@@ -62,20 +78,28 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   val mockSummaryService = mock[SummaryService]
   val mockAuditService = mock[AuditService]
 
-  def sut = new NicsController(mockSummaryService, mockAuditService, FakeAuthAction, mcc, nicsView, genericErrorView, tokenErrorView)
+  def sut =
+    new NicsController(
+      mockSummaryService,
+      mockAuditService,
+      FakeAuthAction,
+      mcc,
+      nicsView,
+      genericErrorView,
+      tokenErrorView)
 
-  override def beforeEach(): Unit = {
-    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
-    ) thenReturn Future.successful(model)
-  }
+  override def beforeEach(): Unit =
+    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))) thenReturn Future
+      .successful(model)
 
   "Calling NICs" should {
 
     "return a successful response for a valid request" in {
-      val result =  Future.successful(sut.show(request))
+      val result = Future.successful(sut.show(request))
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("ats.nics.tax_and_nics.title")+ Messages("generic.to_from", (taxYear-1).toString, taxYear.toString))
+      document.title should include(
+        Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in {
@@ -87,7 +111,8 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "redirect to the no ATS page when there is no annual tax summary data returned" in {
 
-      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))).thenReturn(Future.successful(new NoATSViewModel))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
@@ -107,7 +132,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       document.getElementById("employee-nic-amount").text() shouldBe "£1,200"
       document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,572"
       document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: "+testUtr)
+      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "show 'Income Tax and NICs' page with a correct breadcrumb" in {
@@ -121,13 +146,16 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include("annual-tax-summary/main?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+        "annual-tax-summary/main?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include("/annual-tax-summary/summary?taxYear=2014")
+      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+        "/annual-tax-summary/summary?taxYear=2014")
       document.select("#global-breadcrumb li:nth-child(4) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Your Income Tax and National Insurance</strong>")
+      document.select("#global-breadcrumb li:nth-child(5)").toString should include(
+        "<strong>Your Income Tax and National Insurance</strong>")
     }
   }
 }
