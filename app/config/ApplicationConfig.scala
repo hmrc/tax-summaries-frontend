@@ -68,6 +68,7 @@ class ApplicationConfig @Inject()(
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
+  lazy val GovSpendingWelfare = config.getString("GovSpending.GovSpendingWelfare")
   lazy val GovSpendingHealth = config.getString("GovSpending.GovSpendingHealth")
   lazy val GovSpendingStatePensions = config.getString("GovSpending.GovSpendingStatePensions")
   lazy val GovSpendingEducation = config.getString("GovSpending.GovSpendingEducation")

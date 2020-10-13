@@ -41,97 +41,103 @@
     <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
 
 
-    <table>
+    <table id="howTaxIsSpentTable">
         <thead>
         <tr>
-            <th scope="col">@Html(Messages("generic.description"))</th>
-            <th scope="col">@Html(Messages("ats.howYourTaxWasSpent.table.percentage.title"))</th>
+            <th scope="col">@messages("generic.description")</th>
+            <th scope="col">@messages("ats.howYourTaxWasSpent.table.percentage.title")</th>
         </tr>
         </thead>
         <tbody>
             <tr>
                 <td>
+                    @messages("ats.howYourTaxWasSpent.table.department.welfare")
+                </td>
+                <td>@appConfig.GovSpendingWelfare%</td>
+            </tr>
+            <tr>
+                <td>
                     @messages("ats.howYourTaxWasSpent.table.department.health")
                 </td>
-                <td>@appConfig.GovSpendingHealth</td>
+                <td>@appConfig.GovSpendingHealth%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.statePensions")
                 </td>
-                <td>@appConfig.GovSpendingStatePensions</td>
+                <td>@appConfig.GovSpendingStatePensions%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.education")
                 </td>
-                <td>@appConfig.GovSpendingEducation</td>
+                <td>@appConfig.GovSpendingEducation%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.nationalDebtInterest")
                 </td>
-                <td>@appConfig.GovSpendingNationalDebtInterest</td>
+                <td>@appConfig.GovSpendingNationalDebtInterest%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.defence")
                 </td>
-                <td>@appConfig.GovSpendingDefence</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.publicOrderAndSafety")
-                </td>
-                <td>@appConfig.GovSpendingPublicOrderAndSafety</td>
+                <td>@appConfig.GovSpendingDefence%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.transport")
                 </td>
-                <td>@appConfig.GovSpendingTransport</td>
+                <td>@appConfig.GovSpendingTransport%</td>
+            </tr>
+            <tr>
+                <td>
+                    @messages("ats.howYourTaxWasSpent.table.department.publicOrderAndSafety")
+                </td>
+                <td>@appConfig.GovSpendingPublicOrderAndSafety%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.businessAndIndustry")
                 </td>
-                <td>@appConfig.GovSpendingBusinessAndIndustry</td>
+                <td>@appConfig.GovSpendingBusinessAndIndustry%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.GovernmentAdministration")
                 </td>
-                <td>@appConfig.GovSpendingGovernmentAdministration</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.culture")
-                </td>
-                <td>@appConfig.GovSpendingCulture</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.environment")
-                </td>
-                <td>@appConfig.GovSpendingEnvironment</td>
+                <td>@appConfig.GovSpendingGovernmentAdministration%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.housingAndUtilities")
                 </td>
-                <td>@appConfig.GovSpendingHousingAndUtilities</td>
+                <td>@appConfig.GovSpendingHousingAndUtilities%</td>
+            </tr>
+            <tr>
+                <td>
+                    @messages("ats.howYourTaxWasSpent.table.department.culture")
+                </td>
+                <td>@appConfig.GovSpendingCulture%</td>
+            </tr>
+            <tr>
+                <td>
+                    @messages("ats.howYourTaxWasSpent.table.department.environment")
+                </td>
+                <td>@appConfig.GovSpendingEnvironment%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.overseasAid")
                 </td>
-                <td>@appConfig.GovSpendingOverseasAid</td>
+                <td>@appConfig.GovSpendingOverseasAid%</td>
             </tr>
             <tr>
                 <td>
                     @messages("ats.howYourTaxWasSpent.table.department.euBudget")
                 </td>
-                <td>@appConfig.GovSpendingEuBudget</td>
+                <td>@appConfig.GovSpendingEuBudget%</td>
             </tr>
 
         </tbody>
