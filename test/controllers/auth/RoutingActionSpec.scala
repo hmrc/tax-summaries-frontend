@@ -50,9 +50,27 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
   "RoutingAction" should {
 
-    "redirect a user to SA ATS" when {
+    "default to the given block (continue to ATS SA)" when {
 
-      "a user has an IR-SA enrolment" in {
+      "a user only has an IR-SA enrolment" in {
+
+        val retrievalResult: Future[Option[String] ~ Enrolments ~ Option[String]] =
+          Future.successful(
+            Some("123456789") ~ Enrolments(
+              Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated", None))) ~ None
+          )
+
+        when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
+
+        val routingAction = new RoutingActionImpl(mockAuthConnector, stubControllerComponents())
+        val controller = new Harness(routingAction)
+
+        val result = controller.onPageLoad()(FakeRequest("", ""))
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe content
+      }
+
+      "a user has an IR-SA enrolment and a nino" in {
 
         val retrievalResult: Future[Option[String] ~ Enrolments ~ Option[String]] =
           Future.successful(
@@ -67,8 +85,8 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.IndexController.authorisedIndex().url)
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe content
       }
     }
 
@@ -91,7 +109,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
       }
     }
 
-    "default to the given block" when {
+    "redirect to the no ATS page" when {
 
       "a user had no nino or IR-SA enrolment" in {
 
@@ -104,8 +122,8 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
-        status(result) shouldBe OK
-        contentAsString(result) shouldBe content
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.authorisedNoAts().url)
       }
     }
 

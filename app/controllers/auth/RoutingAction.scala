@@ -45,9 +45,9 @@ class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnect
       case Some(externalId) ~ enrolments ~ optNino =>
         (hasEnrolment(enrolments, "IR-SA") || hasEnrolment(enrolments, "IR-SA-AGENT"), optNino) match {
 
-          case (true, _)        => Future.successful(Redirect(controllers.routes.IndexController.authorisedIndex()))
+          case (true, _)        => block(AuthenticatedRequest(externalId, None, None, None, None, None, None, request))
           case (false, Some(_)) => Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show()))
-          case _                => block(AuthenticatedRequest(externalId, None, None, None, None, None, None, request))
+          case _                => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
         }
       case _ => throw new RuntimeException("Can not find enrolments")
     }
