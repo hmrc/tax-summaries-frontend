@@ -205,7 +205,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
       val result =
         howTaxIsSpentView(TaxYear(fakeTaxYear))(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
-      println(document)
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
       val href = document.select("#proposition-links a").first().attr("href")
       href should be("https://online.hmrc.gov.uk/self-assessment/ind/")
