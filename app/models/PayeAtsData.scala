@@ -24,7 +24,12 @@ case class PayeAtsData(
   summary_data: Option[DataHolder],
   income_data: Option[DataHolder],
   allowance_data: Option[DataHolder],
-  gov_spending: Option[GovernmentSpendingOutputWrapper])
+  gov_spending: Option[GovernmentSpendingOutputWrapper]) {
+  def isWelshTaxPayer: Boolean =
+    income_data
+      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
+      .exists(_.nonZero)
+}
 
 object PayeAtsData {
   implicit val reads = Json.reads[PayeAtsData]

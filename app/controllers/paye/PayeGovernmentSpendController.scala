@@ -47,7 +47,7 @@ class PayeGovernmentSpendController @Inject()(
     payeAtsService.getPayeATSData(request.nino, payeYear).map {
 
       case Right(successResponse: PayeAtsData) => {
-        Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse)))
+        Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse), successResponse.isWelshTaxPayer))
       }
       case Left(response: HttpResponse) =>
         response.status match {
