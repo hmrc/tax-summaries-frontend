@@ -51,7 +51,7 @@ class ErrorController @Inject()(
   val logger = Logger(this.getClass)
 
   def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
-    val taxYear = current.previous.startYear
+    val taxYear = current.back(2).startYear
 
     governmentSpendService.getGovernmentSpendDataV2(taxYear, request.saUtr) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))

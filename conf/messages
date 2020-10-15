@@ -422,26 +422,8 @@ global.page.not.found.error.contact=If the web address is correct or you selecte
 global.page.not.found.error.contact.link.text=contact the Self Assessment helpline
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
-
-
 ats.howYourTaxWasSpent.heading = How your tax was spent
 ats.howYourTaxWasSpent.subheading = This shows how the Income Tax and National Insurance contributions you paid for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
 ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties
 ats.howYourTaxWasSpent.table.department.title = Department spend
 ats.howYourTaxWasSpent.table.percentage.title  = Percentage of your tax
-ats.howYourTaxWasSpent.table.department.Welfare = Welfare
-ats.howYourTaxWasSpent.table.department.Health = Health
-ats.howYourTaxWasSpent.table.department.StatePensions = State Pensions
-ats.howYourTaxWasSpent.table.department.Education = Education
-ats.howYourTaxWasSpent.table.department.NationalDebtInterest = National debt interest
-ats.howYourTaxWasSpent.table.department.Defence = Defence
-ats.howYourTaxWasSpent.table.department.PublicOrderAndSafety = Public order and safety
-ats.howYourTaxWasSpent.table.department.Transport = Transport
-ats.howYourTaxWasSpent.table.department.BusinessAndIndustry = Business and industry
-ats.howYourTaxWasSpent.table.department.GovernmentAdministration = Government administration
-ats.howYourTaxWasSpent.table.department.Culture = Culture, like sports, libraries and museums
-ats.howYourTaxWasSpent.table.department.Environment = Environment
-ats.howYourTaxWasSpent.table.department.HousingAndUtilities = Housing and utilities, like street lighting
-ats.howYourTaxWasSpent.table.department.OverseasAid = Overseas aid
-ats.howYourTaxWasSpent.table.department.UkContributionToEuBudget = UK contribution to the EU budget
-ats.howYourTaxWasSpent.table.department.Total = Total

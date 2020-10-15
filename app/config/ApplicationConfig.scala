@@ -18,7 +18,6 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
@@ -30,8 +29,6 @@ class ApplicationConfig @Inject()(
   config: ServicesConfig,
   runMode: RunMode,
   configuration: Configuration) {
-
-  protected def mode: Mode = environment.mode
 
   def getConf(key: String) = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
@@ -67,22 +64,6 @@ class ApplicationConfig @Inject()(
   lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
-
-  lazy val GovSpendingWelfare = config.getString("GovSpending.GovSpendingWelfare")
-  lazy val GovSpendingHealth = config.getString("GovSpending.GovSpendingHealth")
-  lazy val GovSpendingStatePensions = config.getString("GovSpending.GovSpendingStatePensions")
-  lazy val GovSpendingEducation = config.getString("GovSpending.GovSpendingEducation")
-  lazy val GovSpendingNationalDebtInterest = config.getString("GovSpending.GovSpendingNationalDebtInterest")
-  lazy val GovSpendingDefence = config.getString("GovSpending.GovSpendingDefence")
-  lazy val GovSpendingPublicOrderAndSafety = config.getString("GovSpending.GovSpendingPublicOrderAndSafety")
-  lazy val GovSpendingTransport = config.getString("GovSpending.GovSpendingTransport")
-  lazy val GovSpendingBusinessAndIndustry = config.getString("GovSpending.GovSpendingBusinessAndIndustry")
-  lazy val GovSpendingGovernmentAdministration = config.getString("GovSpending.GovSpendingGovernmentAdministration")
-  lazy val GovSpendingCulture = config.getString("GovSpending.GovSpendingCulture")
-  lazy val GovSpendingEnvironment = config.getString("GovSpending.GovSpendingEnvironment")
-  lazy val GovSpendingHousingAndUtilities = config.getString("GovSpending.GovSpendingHousingAndUtilities")
-  lazy val GovSpendingOverseasAid = config.getString("GovSpending.GovSpendingOverseasAid")
-  lazy val GovSpendingEuBudget = config.getString("GovSpending.GovSpendingEuBudget")
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
