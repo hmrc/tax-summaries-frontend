@@ -15,16 +15,14 @@
  *@
 
 @import config.ApplicationConfig
-@import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.time.TaxYear
 @import views.html.includes.SaMainView
 @import views.html.includes.TaxsBreadcrumbView
 @import views.html.helpers.BackLinkView
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView)
 
-@(taxYear: TaxYear)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(spendData: Seq[(String, Double)], taxYear: Int)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @saMainView(Messages("ats.treasury_spending.html.title"), "") {
 
@@ -37,7 +35,7 @@
 
     <h1 class="heading-xlarge">@messages("ats.howYourTaxWasSpent.heading")</h1>
 
-    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", taxYear.starts.getYear.toString, taxYear.finishes.getYear.toString))</p>
+    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", taxYear.toString, (taxYear+1).toString))</p>
     <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
 
 
@@ -49,96 +47,20 @@
         </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.welfare")
-                </td>
-                <td>@appConfig.GovSpendingWelfare%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.health")
-                </td>
-                <td>@appConfig.GovSpendingHealth%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.statePensions")
-                </td>
-                <td>@appConfig.GovSpendingStatePensions%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.education")
-                </td>
-                <td>@appConfig.GovSpendingEducation%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.nationalDebtInterest")
-                </td>
-                <td>@appConfig.GovSpendingNationalDebtInterest%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.defence")
-                </td>
-                <td>@appConfig.GovSpendingDefence%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.transport")
-                </td>
-                <td>@appConfig.GovSpendingTransport%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.publicOrderAndSafety")
-                </td>
-                <td>@appConfig.GovSpendingPublicOrderAndSafety%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.businessAndIndustry")
-                </td>
-                <td>@appConfig.GovSpendingBusinessAndIndustry%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.GovernmentAdministration")
-                </td>
-                <td>@appConfig.GovSpendingGovernmentAdministration%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.housingAndUtilities")
-                </td>
-                <td>@appConfig.GovSpendingHousingAndUtilities%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.culture")
-                </td>
-                <td>@appConfig.GovSpendingCulture%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.environment")
-                </td>
-                <td>@appConfig.GovSpendingEnvironment%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.overseasAid")
-                </td>
-                <td>@appConfig.GovSpendingOverseasAid%</td>
-            </tr>
-            <tr>
-                <td>
-                    @messages("ats.howYourTaxWasSpent.table.department.euBudget")
-                </td>
-                <td>@appConfig.GovSpendingEuBudget%</td>
-            </tr>
+
+        @{
+            spendData.map { case (name, percentage) =>
+                <tr>
+                    <td>
+                        {messages(s"ats.howYourTaxWasSpent.table.department.$name")}
+                    </td>
+                    <td>
+                        {percentage}%
+                    </td>
+                </tr>
+            }
+
+        }
 
         </tbody>
     </table>

@@ -7,6 +7,8 @@
 
     <logger name="uk.gov" level="DEBUG"/>
 
+    <logger name="ErrorController" level="DEBUG"/>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>

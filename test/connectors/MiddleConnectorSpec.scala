@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.{testNino, testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
 
+import scala.concurrent.ExecutionContext
 import scala.io.Source
 
 class MiddleConnectorSpec
@@ -48,6 +49,7 @@ class MiddleConnectorSpec
 
   implicit val hc = HeaderCarrier()
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
   private val currentYear = 2018
 
   def sut = new MiddleConnector(app.injector.instanceOf[HttpClient])
@@ -251,6 +253,25 @@ class MiddleConnectorSpec
             .withBody("Bad Request"))
       )
       a[BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
+    }
+  }
+
+  "connectToGovernmentSpend" should {
+
+    "return a successful response" in {
+
+      val url = s"/taxs/government-spend/$currentYear/$testNino"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody("""{"Environment" : 5.5}""")
+        )
+      )
+
+      val result = sut.connectToGovernmentSpend(currentYear, testNino).futureValue
+      result.json.as[Map[String, Double]] shouldBe Map("Environment" -> 5.5)
     }
   }
 }

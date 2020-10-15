@@ -57,6 +57,8 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name="ErrorController" level="DEBUG"/>
+
     <root level="DEBUG">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>

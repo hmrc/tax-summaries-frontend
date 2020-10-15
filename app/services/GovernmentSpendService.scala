@@ -17,19 +17,36 @@
 package services
 
 import com.google.inject.Inject
+import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, GovernmentSpendingOutputWrapper}
+import uk.gov.hmrc.domain.TaxIdentifier
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.GovernmentSpend
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentSpendService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
+class GovernmentSpendService @Inject()(
+  atsService: AtsService,
+  atsYearListService: AtsYearListService,
+  middleConnector: MiddleConnector) {
 
+  @deprecated("Please use getGovernmentSpendDataV2 instead")
   def getGovernmentSpendData(
     taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
+
+  def getGovernmentSpendDataV2(taxYear: Int, taxIdentifier: Option[TaxIdentifier])(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext): Future[Seq[(String, Double)]] =
+    taxIdentifier match {
+      case Some(value) =>
+        middleConnector.connectToGovernmentSpend(taxYear, value).map { response =>
+          response.json.as[Map[String, Double]].toSeq.sortBy(_._2).reverse
+        }
+      case _ => Future.failed(new IllegalArgumentException("No tax identifier was found, cannot complete request"))
+    }
 
   private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get

@@ -20,10 +20,16 @@ import java.time.LocalDate
 
 import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import play.api.test.Injecting
+import services.GovernmentSpendService
+import services.atsData.PayeAtsTestData.govSpendingData
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
+
+import scala.concurrent.Future
 
 class PayeErrorControllerSpec
     extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting with CurrentTaxYear {
@@ -34,8 +40,11 @@ class PayeErrorControllerSpec
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
+  val mockGovSpendService = mock[GovernmentSpendService]
+
   def sut =
     new PayeErrorController(
+      mockGovSpendService,
       FakePayeAuthAction,
       mcc,
       payeGenericErrorView,
@@ -72,12 +81,23 @@ class PayeErrorControllerSpec
       document shouldBe contentAsString(payeGenericErrorView())
     }
 
-    "Show generic How Tax is Spent page and return OK" in {
-      val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+    "Show generic How Tax is Spent page and return OK" when {
 
-      status(result) shouldBe OK
-      document shouldBe contentAsString(howTaxIsSpentView(current.previous))
+      "the service returns Government Spend data" in {
+
+        val spendCategory: String = "Environment"
+        val spendPercentage: Double = 5.5
+        val response: Seq[(String, Double)] = Seq((spendCategory, spendPercentage))
+
+        when(mockGovSpendService.getGovernmentSpendDataV2(any(), any())(any(), any())) thenReturn Future
+          .successful(response)
+
+        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe OK
+        document shouldBe contentAsString(howTaxIsSpentView(response, govSpendingData.taxYear))
+      }
     }
   }
 }

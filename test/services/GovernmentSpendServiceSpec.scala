@@ -16,24 +16,27 @@
 
 package services
 
+import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
-import org.mockito.Matchers
+import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.libs.json.Json
+import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
@@ -51,8 +54,11 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
 
   val mockAtsService = mock[AtsService]
   val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
+  val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
+  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+
   val request = AuthenticatedRequest(
     "userId",
     None,
@@ -63,15 +69,13 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
     None,
     FakeRequest("GET", "?taxYear=2015"))
 
-  def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService) with MockitoSugar
+  def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService, mockMiddleConnector) with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" should {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(
-        mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
-          Matchers.any(),
-          Matchers.any())).thenReturn(genericViewModel)
+      when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
+        .thenReturn(genericViewModel)
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
@@ -94,6 +98,34 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
         "",
         Amount(500, "GBP")
       )
+    }
+  }
+
+  "GovernmentSpendService getGovernmentSpendDataV2" should {
+
+    "return a government spend map" in {
+
+      val expectedBody = Seq(("Environment", 5.5))
+
+      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
+        .successful(HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> Seq(""))))
+
+      val result = sut.getGovernmentSpendDataV2(taxYear, Some(testNino)).futureValue
+
+      result shouldBe expectedBody
+    }
+
+    "sort data by percentage" in {
+
+      val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 2.3))
+
+      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
+        .successful(
+          HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq(""))))
+
+      val result = sut.getGovernmentSpendDataV2(taxYear, Some(testNino)).futureValue
+
+      result shouldBe expectedBody
     }
   }
 }

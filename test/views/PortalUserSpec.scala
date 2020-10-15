@@ -26,7 +26,6 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.time.TaxYear
 import utils.TestConstants._
 import view_models._
 
@@ -202,8 +201,13 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
     "show the 'exit tax summaries' link on the no ats page" in {
 
+      val spendData = fakeGovernmentSpend.govSpendAmountData.map {
+        case (k, v) =>
+          k -> v.percentage.toDouble
+      }
+
       val result =
-        howTaxIsSpentView(TaxYear(fakeTaxYear))(requestWithSession, messages, formPartialRetriever, appConfig)
+        howTaxIsSpentView(spendData, fakeTaxYear)(requestWithSession, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
       val href = document.select("#proposition-links a").first().attr("href")
