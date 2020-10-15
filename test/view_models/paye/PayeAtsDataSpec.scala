@@ -16,10 +16,8 @@
 
 package view_models.paye
 
-import models.DataHolder
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.test.UnitSpec
-import view_models.Amount
 
 class PayeAtsDataSpec extends UnitSpec {
 
@@ -33,10 +31,8 @@ class PayeAtsDataSpec extends UnitSpec {
       }
 
       "the user is not welsh tax payer since scottish_income_tax does not exist in the payload" in {
-        val payeAtsData = PayeAtsTestData.incomeData.copy(
-          income_tax = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(0.00))), None, None))
-        )
-        payeAtsData.isWelshTaxPayer shouldBe true
+        val payeAtsData = PayeAtsTestData.incomeDataWithoutScottishIncomeTax
+        payeAtsData.isWelshTaxPayer shouldBe false
       }
 
     }
