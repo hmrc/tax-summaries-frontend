@@ -51,27 +51,31 @@
 		<dd class="value total"><strong>&pound;@viewModel.totalAmount</strong></dd>
 	</dl>
 
-@if(!isWelshTaxPayer){
-	<div class="grid-row">
-		<div class="column-two-thirds">
-			<p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
-			<p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
-			@if(viewModel.isScottish) {
-			  <p id="scottish-spending-link">@Html(Messages("paye.ats.treasury_spending.scottish.spending.1"))</p>
-			}
-			<p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
-			<p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>
-		</div>
-	</div>
+@if(isWelshTaxPayer){
+
+   <div class="grid-row">
+	  <div class="column-two-thirds">
+		<p id="welsh-tax-payer-paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
+		<p id="welsh-tax-payer-paragraph-1">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para1")</p>
+		<p id="welsh-tax-payer-paragraph-3">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para3")</p>
+		<p id="welsh-tax-payer-paragraph-4">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para4")</p>
+	  </div>
+   </div>
+
 } else {
+
     <div class="grid-row">
-	    <div class="column-two-thirds">
-		    <p id="welsh-tax-payer-paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
-		    <p id="welsh-tax-payer-paragraph-1">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para1")</p>
-		  <p id="welsh-tax-payer-paragraph-3">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para3")</p>
-		  <p id="welsh-tax-payer-paragraph-4">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para4")</p>
-	    </div>
-	</div>
-}
+	   <div class="column-two-thirds">
+		 <p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
+		 <p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
+		 @if(viewModel.isScottish) {
+		 <p id="scottish-spending-link">@Html(Messages("paye.ats.treasury_spending.scottish.spending.1"))</p>
+		 }
+		 <p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
+		 <p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>
+	   </div>
+    </div>
+
+  }
 
 }
