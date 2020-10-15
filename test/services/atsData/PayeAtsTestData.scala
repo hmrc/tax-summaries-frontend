@@ -482,4 +482,49 @@ object PayeAtsTestData {
     ),
     Amount(1000, "GBP")
   )
+
+  val incomeData = PayeAtsData(
+    2018,
+    None,
+    None,
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "income_from_employment" -> Amount(4500, "GBP"),
+            "state_pension"          -> Amount(1000, "GBP"),
+            "other_pension_income"   -> Amount(1000, "GBP"),
+            "other_income"           -> Amount(15000, "GBP"),
+            "scottish_income_tax"    -> Amount(2500, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    None,
+    None
+  )
+
+  val incomeDataWithoutScottishIncomeTax = PayeAtsData(
+    2018,
+    None,
+    None,
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "income_from_employment" -> Amount(4500, "GBP"),
+            "state_pension"          -> Amount(1000, "GBP"),
+            "other_pension_income"   -> Amount(1000, "GBP"),
+            "other_income"           -> Amount(15000, "GBP")
+          )
+        ),
+        None,
+        None
+      )
+    ),
+    None,
+    None
+  )
 }
