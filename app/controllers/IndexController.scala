@@ -48,8 +48,9 @@ class IndexController @Inject()(
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedIndex: Action[AnyContent] = (routingAction andThen authAction) { request: AuthenticatedRequest[_] =>
-    agentAwareShow(request)
+  def authorisedIndex: Action[AnyContent] = (routingAction andThen authAction).async {
+    request: AuthenticatedRequest[_] =>
+      agentAwareShow(request)
   }
 
   def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>

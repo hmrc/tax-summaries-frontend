@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnector)(
+class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnector, mcc: MessagesControllerComponents)(
   implicit appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends RoutingAction with AuthorisedFunctions {
@@ -68,7 +68,9 @@ class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnect
 
   private def hasEnrolment(enrolments: Enrolments, key: String): Boolean = enrolments.getEnrolment(key).isDefined
   override protected def executionContext: ExecutionContext = ec
+
+  override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 }
 
 @ImplementedBy(classOf[RoutingActionImpl])
-trait RoutingAction extends ActionFilter[Request]
+trait RoutingAction extends ActionBuilder[Request, AnyContent] with ActionFilter[Request]
