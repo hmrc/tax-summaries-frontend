@@ -32,12 +32,11 @@ class GovernmentSpendService @Inject()(
   atsYearListService: AtsYearListService,
   middleConnector: MiddleConnector) {
 
-  @deprecated("Please use getGovernmentSpendDataV2 instead")
   def getGovernmentSpendData(
     taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
-  def getGovernmentSpendDataV2(taxYear: Int, taxIdentifier: Option[TaxIdentifier])(
+  def getGovernmentSpendFigures(taxYear: Int, taxIdentifier: Option[TaxIdentifier])(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Seq[(String, Double)]] =
     taxIdentifier match {

@@ -19,9 +19,9 @@ package controllers
 import java.time.LocalDate
 
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, MinAuthAction}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
@@ -44,16 +44,14 @@ class ErrorController @Inject()(
   implicit val formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear {
+    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
   override def now: () => LocalDate = () => LocalDate.now()
-
-  val logger = Logger(this.getClass)
 
   def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
     val taxYear = current.back(2).startYear
 
-    governmentSpendService.getGovernmentSpendDataV2(taxYear, request.saUtr) map { spendData =>
+    governmentSpendService.getGovernmentSpendFigures(taxYear, request.saUtr) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))
     } recover {
       case e: IllegalArgumentException =>

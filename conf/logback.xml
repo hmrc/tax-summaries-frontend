@@ -58,6 +58,7 @@
     </logger>
 
     <logger name="ErrorController" level="DEBUG"/>
+    <logger name="PayeErrorController" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="FILE"/>

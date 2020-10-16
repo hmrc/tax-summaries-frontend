@@ -17,12 +17,13 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
 import models.{AtsData, AtsListData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{SaUtr, Uar}
@@ -91,7 +92,7 @@ class MiddleConnectorSpec
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(400)
+            .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
 
@@ -153,7 +154,7 @@ class MiddleConnectorSpec
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(400)
+            .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
       a[BadRequestException] should be thrownBy await(sut.connectToAts(utr, currentYear))
@@ -185,7 +186,7 @@ class MiddleConnectorSpec
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(400)
+            .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
       a[BadRequestException] should be thrownBy await(sut.connectToAtsOnBehalfOf(uar, utr, currentYear))
@@ -217,7 +218,7 @@ class MiddleConnectorSpec
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(400)
+            .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
       a[BadRequestException] should be thrownBy await(sut.connectToAtsList(utr))
@@ -249,7 +250,7 @@ class MiddleConnectorSpec
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(400)
+            .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
       a[BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
@@ -258,9 +259,9 @@ class MiddleConnectorSpec
 
   "connectToGovernmentSpend" should {
 
-    "return a successful response" in {
+    val url = s"/taxs/government-spend/$currentYear/$testNino"
 
-      val url = s"/taxs/government-spend/$currentYear/$testNino"
+    "return a successful response" in {
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -271,7 +272,52 @@ class MiddleConnectorSpec
       )
 
       val result = sut.connectToGovernmentSpend(currentYear, testNino).futureValue
+      result.status shouldBe OK
       result.json.as[Map[String, Double]] shouldBe Map("Environment" -> 5.5)
+    }
+
+    "return a BadRequest response" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(BAD_REQUEST)
+            .withBody("Oops")
+        )
+      )
+
+      intercept[BadRequestException] {
+        await(sut.connectToGovernmentSpend(currentYear, testNino))
+      }
+    }
+
+    "return a InternalServerError response" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(INTERNAL_SERVER_ERROR)
+            .withBody("Oops")
+        )
+      )
+
+      intercept[Upstream5xxResponse] {
+        await(sut.connectToGovernmentSpend(currentYear, testNino))
+      }
+    }
+
+    "return an exception when a fault with the request occurs" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withFault(Fault.MALFORMED_RESPONSE_CHUNK)
+        )
+      )
+
+      intercept[Exception] {
+        await(sut.connectToGovernmentSpend(currentYear, testNino))
+      }
     }
   }
 }

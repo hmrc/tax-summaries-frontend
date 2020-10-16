@@ -110,7 +110,7 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
       when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
         .successful(HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> Seq(""))))
 
-      val result = sut.getGovernmentSpendDataV2(taxYear, Some(testNino)).futureValue
+      val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
       result shouldBe expectedBody
     }
@@ -123,7 +123,7 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
         .successful(
           HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq(""))))
 
-      val result = sut.getGovernmentSpendDataV2(taxYear, Some(testNino)).futureValue
+      val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
       result shouldBe expectedBody
     }

@@ -19,6 +19,7 @@ package controllers.paye
 import java.time.LocalDate
 
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.i18n.I18nSupport
@@ -43,7 +44,7 @@ class PayeErrorController @Inject()(
   implicit formPartialRetriever: FormPartialRetriever,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear {
+    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
   val payeYear = appConfig.payeYear
   override def now: () => LocalDate = () => LocalDate.now()
@@ -59,11 +60,15 @@ class PayeErrorController @Inject()(
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
-
-      governmentSpendService.getGovernmentSpendDataV2(payeYear, Some(request.nino)) map { data =>
+      governmentSpendService.getGovernmentSpendFigures(payeYear, Some(request.nino)) map { data =>
         Ok(howTaxIsSpentView(data, payeYear))
       } recover {
-        case _ => InternalServerError(payeGenericErrorView())
+        case e: IllegalArgumentException =>
+          logger.error(e.getMessage)
+          BadRequest(payeGenericErrorView())
+        case e =>
+          logger.error(e.getMessage)
+          InternalServerError(payeGenericErrorView())
       }
     }
   }

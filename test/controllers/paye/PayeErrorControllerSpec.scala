@@ -54,31 +54,34 @@ class PayeErrorControllerSpec
 
   "PayeErrorController" should {
 
-    "Show generic_error page with status INTERNAL_SERVER_ERROR when INTERNAL_SERVER_ERROR is received" in {
+    "show generic_error page" when {
 
-      val result = sut.genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+      "INTERNAL_SERVER_ERROR is received" in {
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document shouldBe contentAsString(payeGenericErrorView())
-    }
+        val result = sut.genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
 
-    "Show generic_error page with status BAD_GATEWAY when GATEWAY_TIMEOUT is received" in {
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
 
-      val result = sut.genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+      "GATEWAY_TIMEOUT is received" in {
 
-      status(result) shouldBe BAD_GATEWAY
-      document shouldBe contentAsString(payeGenericErrorView())
-    }
+        val result = sut.genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
 
-    "Show generic_error page with status BAD_GATEWAY when BAD_GATEWAY is received" in {
+        status(result) shouldBe BAD_GATEWAY
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
 
-      val result = sut.genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+      "BAD_GATEWAY is received" in {
 
-      status(result) shouldBe BAD_GATEWAY
-      document shouldBe contentAsString(payeGenericErrorView())
+        val result = sut.genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe BAD_GATEWAY
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
     }
 
     "Show generic How Tax is Spent page and return OK" when {
@@ -89,7 +92,7 @@ class PayeErrorControllerSpec
         val spendPercentage: Double = 5.5
         val response: Seq[(String, Double)] = Seq((spendCategory, spendPercentage))
 
-        when(mockGovSpendService.getGovernmentSpendDataV2(any(), any())(any(), any())) thenReturn Future
+        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
           .successful(response)
 
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
@@ -99,5 +102,33 @@ class PayeErrorControllerSpec
         document shouldBe contentAsString(howTaxIsSpentView(response, govSpendingData.taxYear))
       }
     }
+
+    "show the generic error view" when {
+
+      "the service throws an IllegalArgumentException" in {
+
+        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          .failed(new IllegalArgumentException("Oops"))
+
+        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe BAD_REQUEST
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
+
+      "the service throws any other kind of exception" in {
+
+        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          .failed(new Exception("Oops"))
+
+        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
+    }
+
   }
 }
