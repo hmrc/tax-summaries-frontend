@@ -24,13 +24,6 @@ class PayeConfig @Inject()()(implicit val appConfig: ApplicationConfig) {
   val payeYear: Int = appConfig.payeYear
   protected val configPath = "paye.conf"
 
-  lazy val spendCategories: List[String] = {
-    val config: Config = ConfigFactory.load(configPath)
-    val correctYearForGovSpendCategories = payeYear + 1
-    val categories = Option(config.getStringList(s"categoryOrder.$correctYearForGovSpendCategories")).map(_.toList)
-    categories.getOrElse(throw new RuntimeException(s"No spend categories specified for $payeYear"))
-  }
-
   lazy val scottishTaxBandKeys: List[String] = {
     val config: Config = ConfigFactory.load(configPath)
     val taxBands = Option(config.getStringList(s"scottishTaxBandKeys.$payeYear")).map(_.toList)

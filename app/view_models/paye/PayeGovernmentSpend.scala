@@ -16,9 +16,7 @@
 
 package view_models.paye
 
-import config.PayeConfig
 import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
-import play.api.Play
 import view_models.Amount
 
 case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
@@ -26,24 +24,30 @@ case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], t
 
 object PayeGovernmentSpend {
 
-  val orderedSpendCategories: List[String] = Play.current.injector.instanceOf[PayeConfig].spendCategories
-
   def apply(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
 
-    val spendRows: List[SpendRow] = orderedSpendCategories.flatMap(
-      category => {
-        payeAtsData.gov_spending.flatMap { govSpending: GovernmentSpendingOutputWrapper =>
+    val spendRows: List[SpendRow] = {
+      val govSpendAmountDataList = payeAtsData.gov_spending
+        .flatMap { govSpending: GovernmentSpendingOutputWrapper =>
           {
-            govSpending.govSpendAmountData.map { spendDataMap =>
-              {
-                val spendData = spendDataMap(category)
-                SpendRow(category, spendData)
+            govSpending.govSpendAmountData
+              .map { govSpendAmountDataMap =>
+                for { (category, spendData) <- govSpendAmountDataMap } yield SpendRow(category, spendData)
               }
-            }
+              .map(spendRow => spendRow.toList.sortWith(_.spendData.percentage > _.spendData.percentage))
           }
         }
+        .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
+
+      val transport = "Transport"
+      val publicOrder = "PublicOrderAndSafety"
+
+      govSpendAmountDataList.map {
+        case (SpendRow(category, spendData)) if category == transport   => SpendRow(publicOrder, spendData)
+        case (SpendRow(category, spendData)) if category == publicOrder => SpendRow(transport, spendData)
+        case default @ _                                                => default
       }
-    )
+    }
 
     val totalSpendingAmount = payeAtsData.gov_spending
       .map { spending =>
