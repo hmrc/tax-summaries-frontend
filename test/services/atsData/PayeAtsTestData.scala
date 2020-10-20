@@ -483,6 +483,29 @@ object PayeAtsTestData {
     Amount(1000, "GBP")
   )
 
+  val expectedPercentageOrder: List[BigDecimal] =
+    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.1, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
+
+  val expectedCategoryOrder: List[String] =
+    List(
+      "Welfare",
+      "Health",
+      "StatePensions",
+      "Education",
+      "Defence",
+      "NationalDebtInterest",
+      "Transport",
+      "PublicOrderAndSafety",
+      "BusinessAndIndustry",
+      "GovernmentAdministration",
+      "HousingAndUtilities",
+      "Environment",
+      "Culture",
+      "OverseasAid",
+      "UkContributionToEuBudget"
+    )
+
+
   val incomeData = PayeAtsData(
     2018,
     None,
@@ -528,3 +551,8 @@ object PayeAtsTestData {
     None
   )
 }
+
+
+
+
+
