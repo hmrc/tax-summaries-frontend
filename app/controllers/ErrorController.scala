@@ -19,17 +19,22 @@ package controllers
 import java.time.LocalDate
 
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import controllers.auth.{AuthAction, MinAuthAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
 
+import scala.concurrent.ExecutionContext
+
 class ErrorController @Inject()(
+  governmentSpendService: GovernmentSpendService,
   authAction: AuthAction,
   minAuthAction: MinAuthAction,
   mcc: MessagesControllerComponents,
@@ -37,13 +42,25 @@ class ErrorController @Inject()(
   howTaxIsSpentView: HowTaxIsSpentView,
   serviceUnavailableView: ServiceUnavailableView)(
   implicit val formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig)
-    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear {
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def authorisedNoAts: Action[AnyContent] = authAction { implicit request =>
-    Ok(howTaxIsSpentView(current.previous))
+  def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
+    val taxYear = current.back(2).startYear
+
+    governmentSpendService.getGovernmentSpendFigures(taxYear, request.saUtr) map { spendData =>
+      Ok(howTaxIsSpentView(spendData, taxYear))
+    } recover {
+      case e: IllegalArgumentException =>
+        logger.error(e.getMessage)
+        BadRequest(serviceUnavailableView())
+      case e =>
+        logger.error(e.getMessage)
+        InternalServerError(serviceUnavailableView())
+    }
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>

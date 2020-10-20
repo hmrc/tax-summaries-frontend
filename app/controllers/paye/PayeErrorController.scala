@@ -19,17 +19,22 @@ package controllers.paye
 import java.time.LocalDate
 
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc._
+import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.time.{CurrentTaxYear, TaxYear}
+import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors._
 
+import scala.concurrent.ExecutionContext
+
 class PayeErrorController @Inject()(
+  governmentSpendService: GovernmentSpendService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeGenericErrorView: PayeGenericErrorView,
@@ -37,8 +42,9 @@ class PayeErrorController @Inject()(
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView)(
   implicit formPartialRetriever: FormPartialRetriever,
-  appConfig: ApplicationConfig)
-    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear {
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
   val payeYear = appConfig.payeYear
   override def now: () => LocalDate = () => LocalDate.now()
@@ -52,9 +58,18 @@ class PayeErrorController @Inject()(
     }
   }
 
-  def authorisedNoAts: Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>
+  def authorisedNoAts: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
-      Ok(howTaxIsSpentView(current.previous))
+      governmentSpendService.getGovernmentSpendFigures(payeYear, Some(request.nino)) map { data =>
+        Ok(howTaxIsSpentView(data, payeYear))
+      } recover {
+        case e: IllegalArgumentException =>
+          logger.error(e.getMessage)
+          BadRequest(payeGenericErrorView())
+        case e =>
+          logger.error(e.getMessage)
+          InternalServerError(payeGenericErrorView())
+      }
     }
   }
 

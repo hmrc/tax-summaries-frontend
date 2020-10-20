@@ -20,10 +20,16 @@ import java.time.LocalDate
 
 import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import play.api.test.Injecting
+import services.GovernmentSpendService
+import services.atsData.PayeAtsTestData.govSpendingData
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
+
+import scala.concurrent.Future
 
 class PayeErrorControllerSpec
     extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting with CurrentTaxYear {
@@ -34,8 +40,11 @@ class PayeErrorControllerSpec
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
+  val mockGovSpendService = mock[GovernmentSpendService]
+
   def sut =
     new PayeErrorController(
+      mockGovSpendService,
       FakePayeAuthAction,
       mcc,
       payeGenericErrorView,
@@ -45,39 +54,81 @@ class PayeErrorControllerSpec
 
   "PayeErrorController" should {
 
-    "Show generic_error page with status INTERNAL_SERVER_ERROR when INTERNAL_SERVER_ERROR is received" in {
+    "show generic_error page" when {
 
-      val result = sut.genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+      "INTERNAL_SERVER_ERROR is received" in {
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document shouldBe contentAsString(payeGenericErrorView())
+        val result = sut.genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
+
+      "GATEWAY_TIMEOUT is received" in {
+
+        val result = sut.genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe BAD_GATEWAY
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
+
+      "BAD_GATEWAY is received" in {
+
+        val result = sut.genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe BAD_GATEWAY
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
     }
 
-    "Show generic_error page with status BAD_GATEWAY when GATEWAY_TIMEOUT is received" in {
+    "Show generic How Tax is Spent page and return OK" when {
 
-      val result = sut.genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+      "the service returns Government Spend data" in {
 
-      status(result) shouldBe BAD_GATEWAY
-      document shouldBe contentAsString(payeGenericErrorView())
+        val spendCategory: String = "Environment"
+        val spendPercentage: Double = 5.5
+        val response: Seq[(String, Double)] = Seq((spendCategory, spendPercentage))
+
+        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          .successful(response)
+
+        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe OK
+        document shouldBe contentAsString(howTaxIsSpentView(response, govSpendingData.taxYear))
+      }
     }
 
-    "Show generic_error page with status BAD_GATEWAY when BAD_GATEWAY is received" in {
+    "show the generic error view" when {
 
-      val result = sut.genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
+      "the service throws an IllegalArgumentException" in {
 
-      status(result) shouldBe BAD_GATEWAY
-      document shouldBe contentAsString(payeGenericErrorView())
+        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          .failed(new IllegalArgumentException("Oops"))
+
+        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe BAD_REQUEST
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
+
+      "the service throws any other kind of exception" in {
+
+        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          .failed(new Exception("Oops"))
+
+        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
+        val document = contentAsString(result)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document shouldBe contentAsString(payeGenericErrorView())
+      }
     }
 
-    "Show generic How Tax is Spent page and return OK" in {
-      val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
-      val document = contentAsString(result)
-
-      status(result) shouldBe OK
-      document shouldBe contentAsString(howTaxIsSpentView(current.previous))
-    }
   }
 }
