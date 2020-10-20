@@ -29,7 +29,8 @@ case class PayeAtsData(
   //using scottish_income_tax to identify WelshTaxPayer is not a bug and we expect the field to be changed in the backend in 2021.
   def isWelshTaxPayer: Boolean =
     income_data
-      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax"))) isDefined
+      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
+      .exists(_.nonZero)
 }
 
 object PayeAtsData {
