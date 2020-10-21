@@ -419,7 +419,8 @@ object PayeAtsTestData {
     ),
     Amount(70, "GBP"),
     Amount(90, "GBP"),
-    Amount(431, "GBP")
+    Amount(431, "GBP"),
+    Amount(2550, "GBP")
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
@@ -442,7 +443,8 @@ object PayeAtsTestData {
     ),
     Amount(70, "GBP"),
     Amount(90, "GBP"),
-    Amount(431, "GBP")
+    Amount(431, "GBP"),
+    Amount(2550, "GBP")
   )
 
   val payeEmployeeContributionNicsViewModel = PayeIncomeTaxAndNics(
@@ -455,7 +457,8 @@ object PayeAtsTestData {
     List.empty,
     Amount(70, "GBP"),
     Amount(90, "GBP"),
-    Amount(431, "GBP"))
+    Amount(431, "GBP"),
+    Amount(2550, "GBP"))
 
   val payeEmptyNicsViewModel = PayeIncomeTaxAndNics(
     2018,
@@ -465,6 +468,7 @@ object PayeAtsTestData {
     Amount.empty,
     Amount.empty,
     List.empty,
+    Amount.empty,
     Amount.empty,
     Amount.empty,
     Amount.empty)
@@ -504,7 +508,6 @@ object PayeAtsTestData {
       "OverseasAid",
       "UkContributionToEuBudget"
     )
-
 
   val incomeData = PayeAtsData(
     2018,
@@ -551,8 +554,3 @@ object PayeAtsTestData {
     None
   )
 }
-
-
-
-
-

@@ -46,7 +46,7 @@ class PayeIncomeTaxAndNicsController @Inject()(
   def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, payeYear).map {
       case Right(successResponse: PayeAtsData) => {
-        Ok(payeIncomeTaxAndNicsView(PayeIncomeTaxAndNics(successResponse)))
+        Ok(payeIncomeTaxAndNicsView(PayeIncomeTaxAndNics(successResponse), successResponse.isWelshTaxPayer))
       }
       case Left(response: HttpResponse) =>
         response.status match {

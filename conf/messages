@@ -206,6 +206,7 @@ paye.ats.adjustments.tax_underpaid_previous_year=Tax underpaid in a previous yea
 paye.ats.national_insurance.title=National Insurance contributions
 paye.ats.total_income_tax_national_insurance.title=Total Income Tax and National Insurance contributions
 paye.ats.total_national_insurance_employer_contribution.title=In addition to this, your employers paid £{0} in National Insurance contributions.
+paye.ats.welsh_income_tax=This includes Welsh Income Tax of
 
 # View ATS - scottish income tax
 #============================================================
