@@ -253,4 +253,70 @@ class MiddleConnectorSpec
       a[BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
     }
   }
+
+  "connectToPayeATSMultipleYears" should {
+
+    "return successful response" in {
+
+      val expectedResponse: String = loadAndReplace("/paye_ats_multiple_years.json", Map("$nino" -> testNino.nino))
+      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(expectedResponse))
+      )
+
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1).futureValue
+
+      result.json shouldBe Json.parse(expectedResponse)
+    }
+
+    "return BadRequest response" in {
+
+      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(400)
+            .withBody("Bad Request"))
+      )
+
+      a[BadRequestException] should be thrownBy await(
+        sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1))
+
+    }
+
+    "return NotFound response" in {
+
+      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(404)
+            .withBody("Not Found"))
+      )
+      a[NotFoundException] should be thrownBy await(
+        sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1))
+
+    }
+
+    "return InternalServerError response" in {
+
+      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(500)
+            .withBody("Internal Server Error"))
+      )
+      a[Upstream5xxResponse] should be thrownBy await(
+        sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1))
+
+    }
+  }
 }

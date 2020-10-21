@@ -20,13 +20,17 @@
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
 @import includes.paye.PayeMainView
+@import helpers.BackLinkView
 
-@this(payeMainView: PayeMainView)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView)
 
-@(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel: PayeAtsMain, needsBackButton: Boolean = true)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
+    @{if(needsBackButton) {
+        backLinkView(Messages("generic.back"))
+    }}
     <h1 class="heading-xlarge flush--bottom" id="index-page-header">@Messages("paye.ats.index.html.title")</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),

@@ -97,6 +97,8 @@ class ApplicationConfig @Inject()(
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
 
+  val payeMultipleYears: Boolean = config.getBoolean("paye.multipleYearsEnabled")
+
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 

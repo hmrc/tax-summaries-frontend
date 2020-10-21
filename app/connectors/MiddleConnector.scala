@@ -48,4 +48,8 @@ class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: Applicatio
 
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data"))
+
+  def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(
+    implicit hc: HeaderCarrier): Future[HttpResponse] =
+    http.GET[HttpResponse](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data"))
 }

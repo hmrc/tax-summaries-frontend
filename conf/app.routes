@@ -24,6 +24,7 @@ GET     /sign-out                                              controllers.Accou
 GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
 
 GET     /paye/main                                             controllers.paye.PayeAtsMainController.show
+POST    /paye/main                                             controllers.paye.PayeAtsMainController.onSubmit
 
 GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
 
