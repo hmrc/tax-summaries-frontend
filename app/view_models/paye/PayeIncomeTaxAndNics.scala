@@ -55,12 +55,12 @@ object PayeIncomeTaxAndNics {
       getNationalInsuranceContribution(payeAtsData, "employee_nic_amount"),
       getNationalInsuranceContribution(payeAtsData, "employer_nic_amount"),
       getNationalInsuranceContribution(payeAtsData, "total_income_tax_2_nics"),
-      getWelshIncomeTax(payeAtsData, "scottish_income_tax")
+      getWelshIncomeTax(payeAtsData)
     )
 
-  private def getWelshIncomeTax(payeAtsData: PayeAtsData, totalTaxKey: String): Amount =
+  private def getWelshIncomeTax(payeAtsData: PayeAtsData): Amount =
     payeAtsData.income_data
-      .flatMap(incomeData => incomeData.payload.flatMap(_.get(totalTaxKey)))
+      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
       .getOrElse(Amount.empty)
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData, totalTaxKey: String): Amount =
