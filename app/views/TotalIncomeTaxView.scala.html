@@ -200,13 +200,19 @@
     <table id="total-income-tax">
       <tbody>
         <tr>
-          <th scope="row">@Html(Messages("ats.total_income_tax.total_income_tax"))</th>
+          <th scope="row">@Messages("ats.total_income_tax.total_income_tax")</th>
           <td id="total-income-tax-amount" class="no-bold">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTax))</td>
         </tr>
         @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
         <tr>
-          <td class="scottish-income-tax">@Html(Messages("ats.total_income_tax.table.scottish_income_tax"))</td>
+          <td class="scottish-income-tax">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
           <td id="scottish-income-tax-amount" class="scottish-income-tax">@currencyAmountView(viewModel.scottishIncomeTax)</td>
+        </tr>
+        }
+        @if(viewModel.incomeTaxStatus == "0003" && !viewModel.welshIncomeTax.isZero) {
+        <tr>
+            <td class="scottish-income-tax">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
+            <td id="welsh-income-tax-amount" class="scottish-income-tax">@currencyAmountView(viewModel.welshIncomeTax)</td>
         </tr>
         }
       </tbody>

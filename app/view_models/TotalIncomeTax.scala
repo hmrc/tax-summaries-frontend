@@ -41,6 +41,7 @@ case class TotalIncomeTax(
   scottishTax: ScottishTax,
   totalIncomeTax: Amount,
   scottishIncomeTax: Amount,
+  welshIncomeTax: Amount,
   savingsTax: SavingsTax,
   incomeTaxStatus: String,
   startingRateForSavingsRateRate: Rate,

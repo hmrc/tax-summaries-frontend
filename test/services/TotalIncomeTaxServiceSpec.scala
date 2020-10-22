@@ -17,7 +17,7 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.AtsData
+import models.{AtsData, DataHolder}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
@@ -80,7 +80,22 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
 
   "TotalIncomeTaxService.totalIncomeConverter" should {
 
-    "return complete TotalIncomeTax data when given complete AtsData" in {
+    val savingsTax = SavingsTax(
+      Amount.gbp(2900),
+      Amount.gbp(3000),
+      Amount.gbp(3100),
+      Amount.gbp(3200),
+      Amount.gbp(3300),
+      Amount.gbp(3400)
+    )
+
+    val savingsRates = SavingsRates(
+      Rate("130%"),
+      Rate("140%"),
+      Rate("150%")
+    )
+
+    "return complete TotalIncomeTax data when given complete AtsData for scottish tax payer" in {
       val incomeData: AtsData = AtsTestData.totalIncomeTaxData
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
@@ -98,27 +113,12 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Amount.gbp(2800)
       )
 
-      val savingsTax = SavingsTax(
-        Amount.gbp(2900),
-        Amount.gbp(3000),
-        Amount.gbp(3100),
-        Amount.gbp(3200),
-        Amount.gbp(3300),
-        Amount.gbp(3400)
-      )
-
       val scottishRates = ScottishRates(
         Rate("80%"),
         Rate("90%"),
         Rate("100%"),
         Rate("110%"),
         Rate("120%")
-      )
-
-      val savingsRates = SavingsRates(
-        Rate("130%"),
-        Rate("140%"),
-        Rate("150%")
       )
 
       result mustEqual TotalIncomeTax(
@@ -144,6 +144,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         scottishTax,
         Amount.gbp(3500),
         Amount.gbp(3600),
+        Amount.empty,
         savingsTax,
         "0002",
         Rate("10%"),
@@ -154,6 +155,51 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Rate("60%"),
         Rate("70%"),
         scottishRates,
+        savingsRates,
+        "Mr",
+        "John",
+        "Smith"
+      )
+    }
+
+    "return complete TotalIncomeTax data when given complete AtsData for welsh tax payer" in {
+      val incomeData: AtsData = AtsTestData.incomeTaxDataForWelshTaxPayer
+      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+
+      result mustEqual TotalIncomeTax(
+        2019,
+        "1111111111",
+        Amount(100, "GBP"),
+        Amount(200, "GBP"),
+        Amount(300, "GBP"),
+        Amount(400, "GBP"),
+        Amount(500, "GBP"),
+        Amount(600, "GBP"),
+        Amount(700, "GBP"),
+        Amount(800, "GBP"),
+        Amount(900, "GBP"),
+        Amount(1000, "GBP"),
+        Amount(1100, "GBP"),
+        Amount(1200, "GBP"),
+        Amount(1300, "GBP"),
+        Amount(1400, "GBP"),
+        Amount(1500, "GBP"),
+        Amount(1600, "GBP"),
+        Amount(1700, "GBP"),
+        ScottishTax.empty,
+        Amount.gbp(3500),
+        Amount.empty,
+        Amount.gbp(2600),
+        savingsTax,
+        "0003",
+        Rate("10%"),
+        Rate("20%"),
+        Rate("30%"),
+        Rate("40%"),
+        Rate("50%"),
+        Rate("60%"),
+        Rate("70%"),
+        ScottishRates.empty,
         savingsRates,
         "Mr",
         "John",
