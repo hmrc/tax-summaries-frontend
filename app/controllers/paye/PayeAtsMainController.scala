@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.AtsForms.atsYearFormMapping
+import view_models.TaxYearEnd
 import view_models.paye.PayeAtsMain
 import views.html.paye.{PayeMultipleYearsView, PayeTaxsMainView}
 
@@ -44,10 +45,10 @@ class PayeAtsMainController @Inject()(
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  val payeYear: Int = appConfig.payeYear
-  val isMultipleYearsEnabled: Boolean = appConfig.payeMultipleYears
-  val taxYearFromKey = "taxYearFrom"
-  val taxYearToKey = "taxYearTo"
+  private val payeYear: Int = appConfig.payeYear
+  private val isMultipleYearsEnabled: Boolean = appConfig.payeMultipleYears
+  private val taxYearFromKey = "taxYearFrom"
+  private val taxYearToKey = "taxYearTo"
 
   def show: Action[AnyContent] = payeAuthAction.async { implicit request =>
     if (isMultipleYearsEnabled) getPayeAtsMultipleYear else getPayeAts(payeYear)
@@ -57,7 +58,7 @@ class PayeAtsMainController @Inject()(
     handleOnSubmit(request)
   }
 
-  private def getPayeAts(taxYear: Int = payeYear)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
+  private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
 
       case Right(_: PayeAtsData) =>
@@ -67,19 +68,19 @@ class PayeAtsMainController @Inject()(
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
           case _ =>
             Logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
+            redirectToError(response.status)
         }
     }
 
   private def getPayeAtsMultipleYear(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
-    payeAtsService.getPayeATSMultipleYearData(request.nino, payeYear, payeYear + 1) map {
+    payeAtsService.getPayeATSMultipleYearData(request.nino, payeYear - 1, payeYear) map {
       case Right(value) => routeMultipleYearResponse(value)
       case Left(response) =>
         response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
           case _ =>
             Logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
+            redirectToError(response.status)
         }
     }
 
@@ -87,7 +88,7 @@ class PayeAtsMainController @Inject()(
     implicit request: PayeAuthenticatedRequest[_]): Result =
     data.length match {
       case 0 => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
-      case 1 => Ok(payeTaxsMainView(PayeAtsMain(payeYear), needsBackButton = false))
+      case 1 => Ok(payeTaxsMainView(PayeAtsMain(data.head.taxYear), needsBackButton = false))
       case _ =>
         val taxYears = data.map(_.taxYear)
         Ok(payeMultipleYearsView(taxYears, atsYearFormMapping)).addingToSession(
@@ -96,16 +97,24 @@ class PayeAtsMainController @Inject()(
         )
     }
 
-  private def handleOnSubmit(implicit request: PayeAuthenticatedRequest[_]): Result =
+  private def handleOnSubmit(implicit request: PayeAuthenticatedRequest[_]): Result = {
+    def yearsFrom: Int = request.session(taxYearFromKey).toInt
+    def yearsTo: Int = request.session(taxYearToKey).toInt
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
-        def yearsFrom: Int = request.session(taxYearFromKey).toInt
-        def yearsTo: Int = request.session(taxYearToKey).toInt
         BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList, formWithErrors))
       },
       value => {
-        val year = value.year.map(_.toInt).getOrElse(payeYear)
-        Ok(payeTaxsMainView(PayeAtsMain(year)))
+        value.year.map(_.toInt) match {
+          case Some(taxYear) => Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
+          case _ =>
+            val emptyForm = atsYearFormMapping.fill(TaxYearEnd(None))
+            BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList, emptyForm))
+        }
       }
     )
+  }
+
+  private def redirectToError(status: Int): Result =
+    Redirect(controllers.paye.routes.PayeErrorController.genericError(status))
 }

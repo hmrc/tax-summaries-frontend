@@ -48,6 +48,7 @@ class MiddleConnectorSpec
 
   implicit val hc = HeaderCarrier()
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  private val currentYearMinus1 = 2017
   private val currentYear = 2018
 
   def sut = new MiddleConnector(app.injector.instanceOf[HttpClient])
@@ -259,7 +260,7 @@ class MiddleConnectorSpec
     "return successful response" in {
 
       val expectedResponse: String = loadAndReplace("/paye_ats_multiple_years.json", Map("$nino" -> testNino.nino))
-      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+      val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -268,14 +269,14 @@ class MiddleConnectorSpec
             .withBody(expectedResponse))
       )
 
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1).futureValue
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
 
       result.json shouldBe Json.parse(expectedResponse)
     }
 
     "return BadRequest response" in {
 
-      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+      val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -285,13 +286,13 @@ class MiddleConnectorSpec
       )
 
       a[BadRequestException] should be thrownBy await(
-        sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1))
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
 
     }
 
     "return NotFound response" in {
 
-      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+      val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -300,13 +301,13 @@ class MiddleConnectorSpec
             .withBody("Not Found"))
       )
       a[NotFoundException] should be thrownBy await(
-        sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1))
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
 
     }
 
     "return InternalServerError response" in {
 
-      val url = s"/taxs/$testNino/$currentYear/${currentYear + 1}/paye-ats-data"
+      val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -315,7 +316,7 @@ class MiddleConnectorSpec
             .withBody("Internal Server Error"))
       )
       a[Upstream5xxResponse] should be thrownBy await(
-        sut.connectToPayeATSMultipleYears(testNino, currentYear, currentYear + 1))
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
 
     }
   }

@@ -16,18 +16,21 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.http.Status._
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, Reads}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import utils.JsonUtil
 import utils.TestConstants.testNino
 import view_models.AtsForms
@@ -40,8 +43,13 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  val taxYearPlus1: Int = taxYear + 1
-  val taxYearList = (taxYear to taxYearPlus1).toList
+  val taxYearMinus1: Int = taxYear - 1
+  val taxYearList: List[Int] = (taxYearMinus1 to taxYear).toList
+
+  class StubAppConfig(multiYearEnabled: Boolean)
+      extends ApplicationConfig(inject[ServicesConfig], inject[RunMode], inject[Configuration]) {
+    override val payeMultipleYears: Boolean = multiYearEnabled
+  }
 
   lazy val multipleYearsView = inject[PayeMultipleYearsView]
   lazy val mainView = inject[PayeTaxsMainView]
@@ -58,10 +66,17 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
   private def parseData[A](str: String)(implicit reads: Reads[A]): A = Json.parse(str).as[A]
 
-  def sut(multipleYearsEnabled: Boolean): PayeAtsMainController =
-    new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mcc, mainView, multipleYearsView) {
-      override val isMultipleYearsEnabled: Boolean = multipleYearsEnabled
-    }
+  trait LocalSetup {
+
+    def multipleYearsEnabled: Boolean
+
+    def sut: PayeAtsMainController =
+      new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mcc, mainView, multipleYearsView)(
+        formPartialRetriever,
+        new StubAppConfig(multipleYearsEnabled),
+        ec
+      )
+  }
 
   "AtsMain controller" when {
 
@@ -69,16 +84,18 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
       "return OK and show multiple years page" when {
 
-        "multiple years of data are returned" in {
+        "multiple years of data are returned" in new LocalSetup {
+
+          override def multipleYearsEnabled: Boolean = true
 
           when(
             mockPayeAtsService
-              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYear), eqTo(taxYearPlus1))(
+              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
                 any[HeaderCarrier],
                 any[PayeAuthenticatedRequest[_]]))
             .thenReturn(Future.successful(Right(getMultiYearData)))
 
-          val result = sut(true).show(fakeAuthenticatedRequest)
+          val result = sut.show(fakeAuthenticatedRequest)
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe multipleYearsView(taxYearList, AtsForms.atsYearFormMapping).toString
@@ -87,64 +104,72 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
       "return OK and ATS main page" when {
 
-        "a single year of data is returned" in {
+        "a single year of data is returned" in new LocalSetup {
+
+          override def multipleYearsEnabled: Boolean = true
 
           when(
             mockPayeAtsService
-              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYear), eqTo(taxYearPlus1))(
+              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
                 any[HeaderCarrier],
                 any[PayeAuthenticatedRequest[_]]))
             .thenReturn(Future.successful(Right(List(getSingleYearData))))
 
-          val result = sut(true).show(fakeAuthenticatedRequest)
+          val result = sut.show(fakeAuthenticatedRequest)
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe mainView(PayeAtsMain(taxYear), needsBackButton = false).toString
         }
 
-        "the form for multiple years is successfully submitted" in {
+        "the form for multiple years is successfully submitted" in new LocalSetup {
+
+          override def multipleYearsEnabled: Boolean = true
 
           val request =
             PayeAuthenticatedRequest(
               testNino,
               FakeRequest("POST", "/annual-tax-summary/paye/treasury-spending")
-                .withSession("taxYearFrom" -> taxYear.toString, "taxYearTo" -> taxYearPlus1.toString)
-                .withFormUrlEncodedBody("year" -> taxYearPlus1.toString)
+                .withSession("taxYearFrom" -> taxYearMinus1.toString, "taxYearTo" -> taxYear.toString)
+                .withFormUrlEncodedBody("year" -> taxYear.toString)
             )
-          val result = sut(true).onSubmit(request)
+          val result = sut.onSubmit(request)
 
           status(result) shouldBe OK
-          contentAsString(result) shouldBe mainView(PayeAtsMain(taxYearPlus1)).toString
+          contentAsString(result) shouldBe mainView(PayeAtsMain(taxYear)).toString
         }
       }
 
       "redirect user to noAts page" when {
 
-        "the data returned is empty" in {
+        "the data returned is empty" in new LocalSetup {
+
+          override def multipleYearsEnabled: Boolean = true
 
           when(
             mockPayeAtsService
-              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYear), eqTo(taxYearPlus1))(
+              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
                 any[HeaderCarrier],
                 any[PayeAuthenticatedRequest[_]]))
             .thenReturn(Right(List[PayeAtsData]()))
 
-          val result = sut(true).show(fakeAuthenticatedRequest)
+          val result = sut.show(fakeAuthenticatedRequest)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.PayeErrorController.authorisedNoAts().url)
         }
 
-        "receiving NOT_FOUND from service" in {
+        "receiving NOT_FOUND from service" in new LocalSetup {
+
+          override def multipleYearsEnabled: Boolean = true
 
           when(
             mockPayeAtsService
-              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYear), eqTo(taxYearPlus1))(
+              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
                 any[HeaderCarrier],
                 any[PayeAuthenticatedRequest[_]]))
-            .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
+            .thenReturn(Left(HttpResponse(NOT_FOUND, "Not found")))
 
-          val result = sut(true).show(fakeAuthenticatedRequest)
+          val result = sut.show(fakeAuthenticatedRequest)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.PayeErrorController.authorisedNoAts().url)
@@ -153,53 +178,62 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
 
       "return BAD_REQUEST" when {
 
-        "the form on the multiple years page is submitted with an error" in {
+        "the form on the multiple years page is submitted with an error" in new LocalSetup {
+
+          override def multipleYearsEnabled: Boolean = true
+
           val request =
             PayeAuthenticatedRequest(
               testNino,
               FakeRequest("POST", "/")
-                .withSession("taxYearFrom" -> taxYear.toString, "taxYearTo" -> taxYearPlus1.toString)
+                .withSession("taxYearFrom" -> taxYearMinus1.toString, "taxYearTo" -> taxYear.toString)
                 .withFormUrlEncodedBody("year" -> ""))
-          val result = sut(true).onSubmit(request)
+          val result = sut.onSubmit(request)
 
           status(result) shouldBe BAD_REQUEST
           contentAsString(result) should include(testMessages("ats.select_tax_year.required.summary"))
         }
       }
 
-      "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
+      "show Generic Error page and return INTERNAL_SERVER_ERROR" when {
+        "error received from NPS service" in new LocalSetup {
 
-        when(
-          mockPayeAtsService
-            .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYear), eqTo(taxYearPlus1))(
-              any[HeaderCarrier],
-              any[PayeAuthenticatedRequest[_]]))
-          .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+          override def multipleYearsEnabled: Boolean = true
 
-        val result = sut(true).show(fakeAuthenticatedRequest)
+          when(
+            mockPayeAtsService
+              .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
+                any[HeaderCarrier],
+                any[PayeAuthenticatedRequest[_]]))
+            .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred")))
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
+          val result = sut.show(fakeAuthenticatedRequest)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
+        }
       }
     }
 
     "multiple years is disabled" should {
 
-      "return OK response" in {
+      "return OK response" in new LocalSetup {
+
+        override def multipleYearsEnabled: Boolean = false
 
         when(
           mockPayeAtsService
             .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
           .thenReturn(Right(mock[PayeAtsData]))
 
-        val result = sut(false).show(fakeAuthenticatedRequest)
+        val result = sut.show(fakeAuthenticatedRequest)
 
         status(result) shouldBe OK
 
         val document = Jsoup.parse(contentAsString(result))
 
         document.title should include(
-          Messages("paye.ats.index.html.title") + Messages("generic.to_from", taxYear.toString, taxYearPlus1.toString))
+          Messages("paye.ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
 
         document.getElementById("index-page-description").text() shouldBe (Messages("paye.ats.index.html.lede"))
 
@@ -210,27 +244,31 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
         document.getElementsByTag("p").get(3).text shouldBe (Messages("paye.ats.index.html.tax_calc_description"))
       }
 
-      "redirect user to noAts page when receiving NOT_FOUND from service" in {
+      "redirect user to noAts page when receiving NOT_FOUND from service" in new LocalSetup {
+
+        override def multipleYearsEnabled: Boolean = false
 
         when(
           mockPayeAtsService
             .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-          .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
+          .thenReturn(Left(HttpResponse(NOT_FOUND, "Not found")))
 
-        val result = sut(false).show(fakeAuthenticatedRequest)
+        val result = sut.show(fakeAuthenticatedRequest)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.PayeErrorController.authorisedNoAts().url)
       }
 
-      "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
+      "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in new LocalSetup {
+
+        override def multipleYearsEnabled: Boolean = false
 
         when(
           mockPayeAtsService
             .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-          .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+          .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred")))
 
-        val result = sut(false).show(fakeAuthenticatedRequest)
+        val result = sut.show(fakeAuthenticatedRequest)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
