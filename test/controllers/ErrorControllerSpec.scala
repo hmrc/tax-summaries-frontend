@@ -16,48 +16,136 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import controllers.auth._
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
+import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.GovernmentSpendService
 import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants._
+import uk.gov.hmrc.time.CurrentTaxYear
+import utils.TestConstants.{testUtr, _}
 
-class ErrorControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def sut =
+class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with CurrentTaxYear {
+
+  override def now: () => LocalDate = () => LocalDate.now()
+
+  val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
+
+  class CustomAuthAction(utr: Option[SaUtr]) extends AuthAction with ControllerBaseSpec {
+    override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
+      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, request))
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  def sut(utr: Option[SaUtr] = Some(SaUtr(testUtr))) =
     new ErrorController(
-      FakeAuthAction,
+      mockGovernmentSpendService,
+      new CustomAuthAction(utr),
       FakeMinAuthAction,
       mcc,
       notAuthorisedView,
-      noAtsErrorView,
+      howTaxIsSpentView,
       serviceUnavailableView)
   implicit lazy val messageApi = inject[MessagesApi]
 
-  "ErrorController" should {
+  "ErrorController" when {
 
-    "Show No ATS page" in {
+    "authorisedNoAts is called" should {
 
-      implicit lazy val request =
-        AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
-      val result = sut.authorisedNoAts()(request)
-      val document = contentAsString(result)
+      "show the how tax was spent page" when {
 
-      status(result) shouldBe 200
+        "the service returns the government spend data" in {
 
-      document shouldBe contentAsString(noAtsErrorView())
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
+            case (key, value) =>
+              key -> value.percentage.toDouble
+          }
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+            .successful(response)
+
+          implicit lazy val request =
+            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+          val result = sut().authorisedNoAts()(request)
+          val document = contentAsString(result)
+
+          status(result) shouldBe OK
+          document shouldBe contentAsString(howTaxIsSpentView(response, current.back(2).startYear))
+        }
+      }
+
+      "return bad request" when {
+
+        "the service throws an illegal argument exception" in {
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+            .failed(new IllegalArgumentException("Oops"))
+
+          implicit lazy val request =
+            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+
+          val result = sut(None).authorisedNoAts()(request)
+          val document = contentAsString(result)
+
+          status(result) shouldBe BAD_REQUEST
+          document shouldBe contentAsString(serviceUnavailableView())
+        }
+      }
+
+      "return internal server error" when {
+
+        "the service throws another exception" in {
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+            .failed(new Exception("Oops"))
+
+          implicit lazy val request =
+            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+
+          val result = sut(None).authorisedNoAts()(request)
+          val document = contentAsString(result)
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+          document shouldBe contentAsString(serviceUnavailableView())
+        }
+      }
     }
 
-    "show not authorised page" in {
+    "notAuthorised is called" should {
 
-      implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
-      val result = sut.notAuthorised()(request)
-      val document = contentAsString(result)
+      "show the not authorised view" in {
 
-      status(result) shouldBe 200
+        implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
+        val result = sut().notAuthorised()(request)
+        val document = contentAsString(result)
 
-      document shouldBe contentAsString(notAuthorisedView())
+        status(result) shouldBe OK
+
+        document shouldBe contentAsString(notAuthorisedView())
+      }
+    }
+
+    "serviceUnavailable is called" should {
+
+      "show the service unavailable view" in {
+
+        implicit val request = FakeRequest()
+        val result = sut().serviceUnavailable()(request)
+        val document = contentAsString(result)
+
+        status(result) shouldBe OK
+        document shouldBe contentAsString(serviceUnavailableView())
+      }
     }
   }
 }

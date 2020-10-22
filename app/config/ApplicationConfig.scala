@@ -18,7 +18,6 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Mode.Mode
 import play.api.i18n.Lang
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
@@ -30,8 +29,6 @@ class ApplicationConfig @Inject()(
   config: ServicesConfig,
   runMode: RunMode,
   configuration: Configuration) {
-
-  protected def mode: Mode = environment.mode
 
   def getConf(key: String) = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
