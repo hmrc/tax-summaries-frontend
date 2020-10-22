@@ -63,7 +63,7 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 
@@ -76,7 +76,7 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 

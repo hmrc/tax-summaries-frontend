@@ -22,18 +22,18 @@ import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils._
 import view_models.NoATSViewModel
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AtsService @Inject()(
   middleConnector: MiddleConnector,
   dataCacheConnector: DataCacheConnector,
   val auditService: AuditService,
-  val authUtils: AuthorityUtils) {
+  val authUtils: AuthorityUtils)(implicit ex: ExecutionContext) {
   val accountUtils: AccountUtils = AccountUtils
 
   def createModel(taxYear: Int, converter: AtsData => GenericViewModel)(

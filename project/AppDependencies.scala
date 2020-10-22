@@ -8,6 +8,7 @@ object AppDependencies {
     filters,
     ws,
     "com.typesafe.play"          %% "anorm"                % "2.5.3",
+    "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.2",
     "uk.gov.hmrc"                %% "url-builder"          % "3.4.0-play-26",
     "uk.gov.hmrc"                %% "http-caching-client"  % "9.1.0-play-26",
     "uk.gov.hmrc"                %% "bootstrap-play-26"    % "1.14.0",
@@ -18,6 +19,7 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "domain"               % "5.9.0-play-26",
     "uk.gov.hmrc"                %% "auth-client"          % "3.0.0-play-26",
     "uk.gov.hmrc"                %% "json-encryption"      % "4.8.0-play-26",
+    "uk.gov.hmrc"                %% "tax-year"             % "1.2.0",
     "com.mohiva"                 %% "play-html-compressor" % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
     "com.softwaremill.quicklens" %% "quicklens"            % "1.6.0"
   )

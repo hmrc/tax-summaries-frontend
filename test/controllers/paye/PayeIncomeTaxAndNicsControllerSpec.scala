@@ -63,7 +63,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 
@@ -76,11 +76,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(
-          Left(
-            HttpResponse(
-              responseStatus = INTERNAL_SERVER_ERROR,
-              responseJson = Some(Json.toJson(INTERNAL_SERVER_ERROR)))))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 
@@ -93,7 +89,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.toJson(BAD_REQUEST)))))
+        .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 

@@ -91,7 +91,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
       val document = Jsoup.parse(contentAsString(result))
@@ -105,7 +105,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST)))
+        .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 
@@ -118,7 +118,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
       val result = sut.show(fakeAuthenticatedRequest)
 

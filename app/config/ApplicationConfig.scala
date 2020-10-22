@@ -18,9 +18,8 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Mode.Mode
+import play.api.Configuration
 import play.api.i18n.Lang
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
 
