@@ -370,6 +370,7 @@ paye.ats.national_insurance.title=Cyfraniadau Yswiriant Gwladol
 paye.ats.total_income_tax_national_insurance.title=Cyfanswm Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.total_national_insurance_employer_contribution.title=Yn ogystal, talodd eich cyflogwr £{0} mewn cyfraniadau Yswiriant Gwladol.
 generic.at=ar
+paye.ats.welsh_income_tax=Mae hyn yn cynnwys Treth Incwm yng Nghymru o
 
 # Paye ATS - your taxable page
 #===========================================================
