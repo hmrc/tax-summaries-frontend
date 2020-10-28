@@ -32,7 +32,7 @@ trait PayeControllerSpecHelpers {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val taxYear: Int = 2018
+  val taxYear: Int = 2019
 
   val expectedResponse: JsValue = readJson("/paye_ats.json")
 

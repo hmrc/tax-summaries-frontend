@@ -385,8 +385,8 @@ object PayeAtsTestData {
       SpendRow("BusinessAndIndustry", SpendData(Amount(69, "GBP"), 3.6)),
       SpendRow("GovernmentAdministration", SpendData(Amount(40, "GBP"), 2.1)),
       SpendRow("HousingAndUtilities", SpendData(Amount(31, "GBP"), 1.6)),
-      SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
       SpendRow("Culture", SpendData(Amount(29, "GBP"), 1.5)),
+      SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
       SpendRow("OverseasAid", SpendData(Amount(23, "GBP"), 1.2)),
       SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"), 1))
     ),
@@ -503,8 +503,8 @@ object PayeAtsTestData {
       "BusinessAndIndustry",
       "GovernmentAdministration",
       "HousingAndUtilities",
-      "Environment",
       "Culture",
+      "Environment",
       "OverseasAid",
       "UkContributionToEuBudget"
     )

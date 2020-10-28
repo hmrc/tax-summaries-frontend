@@ -41,10 +41,14 @@ object PayeGovernmentSpend {
 
       val transport = "Transport"
       val publicOrder = "PublicOrderAndSafety"
+      val environment = "Environment"
+      val culture = "Culture"
 
       govSpendAmountDataList.map {
         case (SpendRow(category, spendData)) if category == transport   => SpendRow(publicOrder, spendData)
         case (SpendRow(category, spendData)) if category == publicOrder => SpendRow(transport, spendData)
+        case (SpendRow(category, spendData)) if category == environment => SpendRow(culture, spendData)
+        case (SpendRow(category, spendData)) if category == culture     => SpendRow(environment, spendData)
         case default @ _                                                => default
       }
     }
