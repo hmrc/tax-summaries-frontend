@@ -103,7 +103,7 @@ class PayeIncomeTaxAndNicsViewSpec extends TestConstants with ViewSpecBase {
 
       document
         .getElementById("welshIncomeTax")
-        .text() shouldBe "This includes Welsh Income Tax of £2,550"
+        .text() shouldBe "This includes Welsh Income Tax of £2,550.00"
 
     }
 
@@ -134,6 +134,10 @@ class PayeIncomeTaxAndNicsViewSpec extends TestConstants with ViewSpecBase {
       document
         .getElementById("employerContributions")
         .text() shouldBe "In addition to this, your employers paid £90.00 in National Insurance contributions."
+
+      document
+        .getElementById("incomeTaxBreakdownText")
+        .text() shouldBe "Your total income tax and NIC’s on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown."
 
     }
 

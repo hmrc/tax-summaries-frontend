@@ -90,7 +90,7 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
         .text shouldBe "How your tax was spent"
       document
         .select("h2.heading-xlarge")
-        .text shouldBe "6 April 2018 to 5 April 2019"
+        .text shouldBe "6 April 2019 to 5 April 2020"
     }
 
     "link to Scottish government spending page for Scottish users" in {

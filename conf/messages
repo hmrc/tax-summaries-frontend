@@ -109,7 +109,7 @@ ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 paye.ats.summary.total_income.paye.title=Taxable income
 paye.ats.summary.nicsheading=Income Tax and National Insurance contributions
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance contributions
-paye.ats.summary.tax_and_nics.description-2=This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown.
+paye.ats.summary.tax_and_nics.description-2=Your total income tax and NIC’s on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown.
 
 # View NICS page
 #=============================================================
@@ -192,7 +192,7 @@ paye.ats.total_income_tax.scottish_starter_rate=Starter rate
 paye.ats.total_income_tax.scottish_basic_rate=Basic rate
 paye.ats.total_income_tax.scottish_intermediate_rate=Intermediate rate
 paye.ats.total_income_tax.scottish_higher_rate=Higher rate
-paye.ats.total_income_tax.uk_income_tax=UK Income Tax
+paye.ats.total_income_tax.uk_income_tax=UK Income Tax(including savings)
 paye.ats.total_income_tax.income_tax=Income Tax
 paye.ats.total_income_tax.basic_rate_income_tax=Basic rate Income Tax
 paye.ats.total_income_tax.higher_rate_income_tax=Higher rate Income Tax
