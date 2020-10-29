@@ -119,7 +119,7 @@
         @if(isWelshTaxPayer){
         <tr id="welshIncomeTax">
             <td class="scottish-income-tax">@Messages("paye.ats.welsh_income_tax")</td>
-            <td class="welsh-income-tax">@currencyAmountView(viewModel.welshIncomeTax)</td>
+            <td class="welsh-income-tax">@currencyAmountView(viewModel.welshIncomeTax, true)</td>
         </tr>
         }
         </tfoot>
