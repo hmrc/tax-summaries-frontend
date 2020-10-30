@@ -30,7 +30,7 @@ case class PayeAtsData(
   def isWelshTaxPayer: Boolean =
     income_data
       .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
-      .exists(_.nonZero)
+      .exists(!_.isZeroOrLess)
 }
 
 object PayeAtsData {

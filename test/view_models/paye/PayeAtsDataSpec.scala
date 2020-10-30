@@ -38,6 +38,12 @@ class PayeAtsDataSpec extends UnitSpec {
         payeAtsData.isWelshTaxPayer shouldBe false
       }
 
+      "the user is not welsh tax payer since scottish_income_tax exists with negative value in the payload" in {
+        val payeAtsData = PayeAtsTestData.incomeData.copy(
+          income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(-2550))), None, None)))
+        payeAtsData.isWelshTaxPayer shouldBe false
+      }
+
       "the user is not welsh tax payer since scottish_income_tax does not exist in the payload" in {
         val payeAtsData = PayeAtsTestData.incomeDataWithoutScottishIncomeTax
         payeAtsData.isWelshTaxPayer shouldBe false
