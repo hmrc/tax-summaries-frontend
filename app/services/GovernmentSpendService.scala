@@ -43,7 +43,9 @@ class GovernmentSpendService @Inject()(
       case Some(value) =>
         middleConnector.connectToGovernmentSpend(taxYear, value).map { response =>
           val sortedSpendData = response.json.as[Map[String, Double]].toList.sortBy(_._2).reverse
-          GovernmentSpendUtils.reorderDataBasedOnCategories(sortedSpendData, "Culture", "Environment", taxYear)
+          if (taxYear == 2018) {
+            GovernmentSpendUtils.reorderDataBasedOnCategories(sortedSpendData, "Culture", "Environment")
+          } else sortedSpendData
         }
       case _ => Future.failed(new IllegalArgumentException("No tax identifier was found, cannot complete request"))
     }

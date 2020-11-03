@@ -35,8 +35,9 @@ case class GovernmentSpend(
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
   def filteredDataWithHigherTransport: List[(String, SpendData)] =
-    GovernmentSpendUtils
-      .reorderDataBasedOnCategories(sortedSpendData, "Transport", "PublicOrderAndSafety", taxYear)
+    if (taxYear == 2019) {
+      GovernmentSpendUtils.reorderDataBasedOnCategories(sortedSpendData, "Transport", "PublicOrderAndSafety")
+    } else sortedSpendData
 
   def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
   def taxYearFrom: String = (taxYear - 1).toString
