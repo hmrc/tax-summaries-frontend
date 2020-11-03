@@ -20,12 +20,18 @@ import view_models.paye.SpendRow
 
 object GovernmentSpendUtils {
 
-  def reorderDataBasedOnCategories[A](coll: List[(String, A)], key1: String, key2: String): List[(String, A)] =
-    coll.map {
-      case (category, spendData) if category == key1 => (key2, spendData)
-      case (category, spendData) if category == key2 => (key1, spendData)
-      case default @ _                               => default
-    }
+  def reorderDataBasedOnCategories[A](
+    coll: List[(String, A)],
+    key1: String,
+    key2: String,
+    taxYear: Int): List[(String, A)] =
+    if (taxYear == 2018 || taxYear == 2019) {
+      coll.map {
+        case (category, spendData) if category == key1 => (key2, spendData)
+        case (category, spendData) if category == key2 => (key1, spendData)
+        case default @ _                               => default
+      }
+    } else coll
 
   def reorderPayeDataBasedOnCategories[A](coll: List[SpendRow], key1: String, key2: String): List[SpendRow] =
     coll.map {
