@@ -339,6 +339,10 @@ paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar <a href
 paye.ats.treasury_spending.para3=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
 paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
 paye.ats.treasury_spending.total=Cyfanswm
+paye.ats.treasury_spending.welsh.tax.payer.para1=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
+paye.ats.treasury_spending.welsh.tax.payer.para3=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
+paye.ats.treasury_spending.welsh.tax.payer.para4=Cyfrifoldeb Llywodraeth Cymru yw’r polisi a’r cyllid ar gyfer y rhan fwyaf o’r gwasanaethau cyhoeddus allweddol a ddarperir yng Nghymru. I gael rhagor o wybodaeth am wariant Llywodraeth Cymru, ewch i <a href="https://www.gov.wales/calculate-welsh-income-tax-spend" target="blank" rel="noopener noreferrer">https://www.gov.wales/calculate-welsh-income-tax-spend</a>
+
 
 # Paye ATS - no ats page
 #===========================================================
