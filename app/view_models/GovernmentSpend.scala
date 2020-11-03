@@ -17,7 +17,7 @@
 package view_models
 
 import models.SpendData
-import utils.{GenericViewModel, GovernmentSpendUtils}
+import utils.{GenericViewModel, SwapDataUtils}
 
 case class GovernmentSpend(
   taxYear: Int,
@@ -36,7 +36,7 @@ case class GovernmentSpend(
 
   def filteredDataWithHigherTransport: List[(String, SpendData)] =
     if (taxYear == 2019) {
-      GovernmentSpendUtils.reorderDataBasedOnCategories(sortedSpendData, "Transport", "PublicOrderAndSafety")
+      SwapDataUtils.swapDataForSa(sortedSpendData, "Transport", "PublicOrderAndSafety")
     } else sortedSpendData
 
   def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
