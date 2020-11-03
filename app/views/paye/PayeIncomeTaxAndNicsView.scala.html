@@ -110,19 +110,17 @@
             <td class="numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
         </tr>
         }
-        </tbody>
-        <tfoot>
         <tr id="totalUkIncomeTax">
                 <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
                 <td class="numeric">@currencyAmountView(viewModel.totalUKIncomeTax, true)</td>
         </tr>
         @if(isWelshTaxPayer){
         <tr id="welshIncomeTax">
-            <td class="scottish-income-tax">@Messages("paye.ats.welsh_income_tax")</td>
-            <td class="welsh-income-tax">@currencyAmountView(viewModel.welshIncomeTax, true)</td>
+            <th scope="row" >@Messages("paye.ats.welsh_income_tax")</th>
+            <td class="numeric">@currencyAmountView(viewModel.welshIncomeTax, true)</td>
         </tr>
         }
-        </tfoot>
+        </tbody>
     </table>
   }
 
