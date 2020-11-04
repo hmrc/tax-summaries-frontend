@@ -145,7 +145,7 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
         .text() shouldBe "Spending information is published by HM Treasury."
       document
         .getElementById("welsh-tax-payer-paragraph-4")
-        .text() shouldBe "The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit www.gov.wales/calculate-welsh-income-tax-spend"
+        .text() shouldBe "The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit https://www.gov.wales/calculate-welsh-income-tax-spend"
 
     }
   }

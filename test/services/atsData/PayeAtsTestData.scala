@@ -30,7 +30,7 @@ object PayeAtsTestData {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2018,
+        2019,
         Some(
           Map(
             "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 1.00),
