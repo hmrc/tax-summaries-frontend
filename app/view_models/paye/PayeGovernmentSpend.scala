@@ -40,7 +40,10 @@ object PayeGovernmentSpend {
         }
         .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
 
-      SwapDataUtils.swapDataForPaye(govSpendAmountDataList, "Transport", "PublicOrderAndSafety")
+      val list = SwapDataUtils.swapDataForPaye(govSpendAmountDataList, "Transport", "PublicOrderAndSafety")
+      if (payeAtsData.taxYear == 2019) {
+        SwapDataUtils.swapDataForPaye(list, "Culture", "Environment")
+      } else list
     }
 
     val totalSpendingAmount = payeAtsData.gov_spending
