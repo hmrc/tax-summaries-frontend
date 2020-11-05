@@ -794,7 +794,7 @@ a {
 #global-breadcrumb,
 .mc-chart, .mc-toggle-link,
 .back,
-.report-error {
+.report-error, .langToggle, .link-back {
   display: none !important; }
 
 /*= Remove urls being pasted after links

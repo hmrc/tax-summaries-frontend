@@ -17,6 +17,7 @@
 package view_models.paye
 
 import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
+import utils.SwapDataUtils
 import view_models.Amount
 
 case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
@@ -39,14 +40,7 @@ object PayeGovernmentSpend {
         }
         .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
 
-      val transport = "Transport"
-      val publicOrder = "PublicOrderAndSafety"
-
-      govSpendAmountDataList.map {
-        case (SpendRow(category, spendData)) if category == transport   => SpendRow(publicOrder, spendData)
-        case (SpendRow(category, spendData)) if category == publicOrder => SpendRow(transport, spendData)
-        case default @ _                                                => default
-      }
+      SwapDataUtils.swapDataForPaye(govSpendAmountDataList, "Transport", "PublicOrderAndSafety")
     }
 
     val totalSpendingAmount = payeAtsData.gov_spending
