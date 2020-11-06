@@ -423,7 +423,7 @@ global.page.not.found.error.contact.link.text=contact the Self Assessment helpli
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
 ats.howYourTaxWasSpent.heading = How tax was spent
-ats.howYourTaxWasSpent.subheading = This shows how the Income Tax and National Insurance contributions you paid for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
+ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insurance contributions for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
 ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties
 ats.howYourTaxWasSpent.table.department.title = Department spend
-ats.howYourTaxWasSpent.table.percentage.title  = Percentage of your tax
+ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
