@@ -207,5 +207,19 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
       )
     }
 
+    "return a isScottishTaxPayer as true and isWelshTaxPayer as false when incomeTaxStatus is 0002" in {
+      val incomeData: AtsData = AtsTestData.totalIncomeTaxData
+      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+      result.isScottishTaxPayer mustEqual true
+      result.isWelshTaxPayer mustEqual false
+    }
+
+    "return a isScottishTaxPayer as false and isWelshTaxPayer as true when incomeTaxStatus is 0003" in {
+      val incomeData: AtsData = AtsTestData.incomeTaxDataForWelshTaxPayer
+      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+      result.isScottishTaxPayer mustEqual false
+      result.isWelshTaxPayer mustEqual true
+    }
+
   }
 }

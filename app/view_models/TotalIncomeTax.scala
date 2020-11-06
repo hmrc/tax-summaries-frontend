@@ -57,6 +57,10 @@ case class TotalIncomeTax(
   forename: String,
   surname: String)
     extends GenericViewModel {
+
+  val isScottishTaxPayer: Boolean = (incomeTaxStatus == "0002")
+  val isWelshTaxPayer: Boolean = (incomeTaxStatus == "0003")
+
   def taxYear = year.toString
 
   def startingRateForSavingsRate = startingRateForSavingsRateRate.percent
@@ -79,7 +83,7 @@ case class TotalIncomeTax(
   def showAdjustmentsTable =
     otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
 
-  def restOfUkTotal: Amount =
+  def scottishAndRestOfUkTotal: Amount =
     Amount(
       savingsTax.savingsLowerRateTax.amount
         + savingsTax.savingsHigherRateTax.amount

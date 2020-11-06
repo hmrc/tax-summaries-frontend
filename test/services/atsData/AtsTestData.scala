@@ -183,6 +183,51 @@ object AtsTestData {
     None
   )
 
+  val govSpendingDataForWelshUser = AtsData(
+    2019,
+    Some("1111111111"),
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "scottish_income_tax" -> Amount(0, "GBP"),
+            "welsh_income_tax"    -> Amount(500, "GBP")
+          )
+        ),
+        None,
+        Some("0003")
+      )
+    ),
+    None,
+    None,
+    None,
+    None,
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        Some(
+          Map(
+            "welfare" -> SpendData(Amount(100, "GBP"), 10)
+          )
+        ),
+        Amount(200, "GBP"),
+        None
+      )
+    ),
+    Some(
+      UserData(
+        Some(
+          Map(
+            "title"    -> "Mr",
+            "forename" -> "John",
+            "surname"  -> "Smith"
+          )
+        )
+      )
+    ),
+    None
+  )
+
   val govSpendingData = AtsData(
     2019,
     Some("1111111111"),
@@ -194,7 +239,7 @@ object AtsTestData {
           )
         ),
         None,
-        None
+        Some("0002")
       )
     ),
     None,
