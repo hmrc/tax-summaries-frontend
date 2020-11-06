@@ -28,7 +28,7 @@ class PayeYourIncomeAndTaxesSpec
     extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience {
 
-  val taxYear: Int = 2018
+  val taxYear: Int = 2019
 
   "PayeYourIncomeAndTaxesData" should {
 
@@ -38,7 +38,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          2018,
+          taxYear,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -56,7 +56,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          2018,
+          taxYear,
           Amount(0, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -74,7 +74,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          2018,
+          taxYear,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -92,7 +92,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          2018,
+          taxYear,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),

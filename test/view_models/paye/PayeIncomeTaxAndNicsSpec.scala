@@ -57,7 +57,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         ),
         Amount(70, "GBP"),
         Amount(90, "GBP"),
-        Amount(431, "GBP")
+        Amount(431, "GBP"),
+        Amount(0, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -134,7 +135,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
           AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
         Amount(70, "GBP"),
         Amount(90, "GBP"),
-        Amount(431, "GBP")
+        Amount(431, "GBP"),
+        Amount(0, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -218,7 +220,8 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         List.empty,
         Amount(70, "GBP"),
         Amount(90, "GBP"),
-        Amount(431, "GBP")
+        Amount(431, "GBP"),
+        Amount(0, "GBP")
       )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
@@ -297,7 +300,9 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         List.empty,
         Amount(70, "GBP"),
         Amount(90, "GBP"),
-        Amount(431, "GBP"))
+        Amount(431, "GBP"),
+        Amount(0, "GBP")
+      )
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
 
@@ -322,6 +327,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         Amount.empty,
         Amount.empty,
         List.empty,
+        Amount.empty,
         Amount.empty,
         Amount.empty,
         Amount.empty)
@@ -351,9 +357,31 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         List.empty,
         Amount.empty,
         Amount.empty,
+        Amount.empty,
         Amount.empty)
 
       val result = PayeIncomeTaxAndNics(incomeTaxData)
+
+      result shouldBe expectedViewModel
+    }
+
+    "transform to view model with the correct value for welsh income tax" in {
+      val incomeData = PayeAtsTestData.incomeData
+
+      val expectedViewModel = PayeIncomeTaxAndNics(
+        2018,
+        List.empty,
+        List.empty,
+        Amount.empty,
+        Amount.empty,
+        Amount.empty,
+        List.empty,
+        Amount.empty,
+        Amount.empty,
+        Amount.empty,
+        Amount(2500, "GBP"))
+
+      val result = PayeIncomeTaxAndNics(incomeData)
 
       result shouldBe expectedViewModel
     }
