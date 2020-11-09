@@ -310,7 +310,7 @@ paye.ats.summary.tax_free.description=Dyma’r swm a gawsoch heb dalu treth.
 paye.ats.summary.nicsheading=Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.tax_and_nics.link=Eich Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.tax_and_nics.description=Dyma {0}% o’ch incwm trethadwy. Am bob £1 o incwm, gwnaethoch dalu {0}c o Dreth Incwm a chyfraniadau Yswiriant Gwladol.
-paye.ats.summary.tax_and_nics.description-2=Nid yw hyn yn adlewyrchu unrhyw ad-daliadau na goddefiannau treth derbyniol ac felly gall y ffigur fod yn wahanol i’r dreth sydd wedi’i chyfrifo a’i dangos yn eich dadansoddiad.
+paye.ats.summary.tax_and_nics.description-2=Nid yw cyfanswm eich Treth Incwm a’ch CYG ar eich tudalen grynodeb yn adlewyrchu unrhyw ad-daliadau i chi nac ad-daliadau gennych, ac felly gall fod yn wahanol i’r dreth a gyfrifir sy’n cael ei dangos yn y dadansoddiad hwn.
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Incwm ar ôl Treth a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.lede=Mae hyn er eich gwybodaeth yn unig. Nid oes rhaid i chi gysylltu â ni, gan nad yw hwn yn fil neu’n orchymyn i dalu.
 
@@ -339,6 +339,10 @@ paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar <a href
 paye.ats.treasury_spending.para3=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
 paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
 paye.ats.treasury_spending.total=Cyfanswm
+paye.ats.treasury_spending.welsh.tax.payer.para1=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
+paye.ats.treasury_spending.welsh.tax.payer.para3=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
+paye.ats.treasury_spending.welsh.tax.payer.para4=Cyfrifoldeb Llywodraeth Cymru yw’r polisi a’r cyllid ar gyfer y rhan fwyaf o’r gwasanaethau cyhoeddus allweddol a ddarperir yng Nghymru. I gael rhagor o wybodaeth am wariant Llywodraeth Cymru, ewch i <a href="https://www.gov.wales/calculate-welsh-income-tax-spend" target="blank" rel="noopener noreferrer">https://www.gov.wales/calculate-welsh-income-tax-spend</a>
+
 
 # Paye ATS - no ats page
 #===========================================================
@@ -355,7 +359,7 @@ paye.ats.total_income_tax.scottish_starter_rate=Cyfradd cychwyn
 paye.ats.total_income_tax.scottish_basic_rate=Cyfradd sylfaenol
 paye.ats.total_income_tax.scottish_intermediate_rate=Cyfradd ganolradd
 paye.ats.total_income_tax.scottish_higher_rate=Cyfradd uwch
-paye.ats.total_income_tax.uk_income_tax=Treth Incwm yn y DU
+paye.ats.total_income_tax.uk_income_tax=Treth Incwm y DU (gan gynnwys cynilion)
 paye.ats.total_income_tax.income_tax=Treth Incwm
 paye.ats.total_income_tax.basic_rate_income_tax=Treth Incwm cyfradd sylfaenol
 paye.ats.total_income_tax.higher_rate_income_tax=Treth Incwm cyfradd uwch
@@ -370,6 +374,7 @@ paye.ats.national_insurance.title=Cyfraniadau Yswiriant Gwladol
 paye.ats.total_income_tax_national_insurance.title=Cyfanswm Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.total_national_insurance_employer_contribution.title=Yn ogystal, talodd eich cyflogwr £{0} mewn cyfraniadau Yswiriant Gwladol.
 generic.at=ar
+paye.ats.welsh_income_tax=Mae hyn yn cynnwys Treth Incwm yng Nghymru o
 
 # Paye ATS - your taxable page
 #===========================================================
@@ -398,7 +403,7 @@ paye.ats.tax_free_amount.income_before_tax=Incwm cyn treth
 paye.ats.tax_free_amount.tax_free_amount=Llai eich swm rhydd o dreth
 paye.ats.tax_free_amount.total_tax_liable=Rydych yn talu treth ar y canlynol
 
-ats.howYourTaxWasSpent.heading = Sut y gwariwyd eich treth
+ats.howYourTaxWasSpent.heading = Sut y gwariwyd treth
 ats.howYourTaxWasSpent.subheading = Mae hyn yn dangos sut y gwariwyd y Dreth Incwm a’r cyfraniadau Yswiriant Gwladol a dalwyd gennych ar gyfer 6&nbsp;Ebrill&nbsp;{0} i 5&nbsp;Ebrill&nbsp;{1}.
 ats.howYourTaxWasSpent.caveat = Nid yw’n cynnwys TAW, ecséis na thollau eraill.
 ats.howYourTaxWasSpent.table.department.title = Gwariant y llywodraeth

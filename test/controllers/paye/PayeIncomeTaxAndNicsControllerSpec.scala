@@ -42,7 +42,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(2018))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
       val result = sut.show(fakeAuthenticatedRequest)

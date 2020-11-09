@@ -76,7 +76,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(2018))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
 
       val result = sut.show(fakeAuthenticatedRequest)

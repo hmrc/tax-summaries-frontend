@@ -1,5 +1,5 @@
 {
- "taxYear":2018,
+ "taxYear":2019,
   "income_tax":{
     "payload":{
       "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -57,7 +57,8 @@
       "taxable_state_benefits":{"amount":3000.0,"currency":"GBP"},
       "income_from_employment":{"amount":10500.0,"currency":"GBP"},
       "other_income":{"amount":1500.0,"currency":"GBP"},
-      "total_income_before_tax":{"amount":11600.0,"currency":"GBP"}
+      "total_income_before_tax":{"amount":11600.0,"currency":"GBP"},
+      "scottish_income_tax":{"amount":1960.0,"currency":"GBP"}
     }
   },
   "allowance_data": {

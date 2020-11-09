@@ -75,5 +75,14 @@ class PayeGovernmentSpendSpec
       result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
       result.orderedSpendRows.map(_.category) shouldBe PayeAtsTestData.expectedCategoryOrder
     }
+
+    "sort Culture above Environment" in {
+
+      val payeGovSpendingData = PayeAtsTestData.govSpendingData
+      val result = PayeGovernmentSpend(payeGovSpendingData)
+
+      result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
+      result.orderedSpendRows.map(_.category) shouldBe PayeAtsTestData.expectedCategoryOrder
+    }
   }
 }

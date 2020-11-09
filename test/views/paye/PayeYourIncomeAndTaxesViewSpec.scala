@@ -63,7 +63,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .getElementById("tax-calculated-as")
-        .text() shouldBe "Income Tax and National Insurance contributions £200.00 Your Income Tax and National Insurance contributions This is 20% of your taxable income. For every £1 of income, you paid 20p in Income Tax and National Insurance contributions. This does not reflect any refunds, repayments or accepted tax tolerances and therefore may be a different figure to the calculated tax shown in your breakdown."
+        .text() shouldBe "Income Tax and National Insurance contributions £200.00 Your Income Tax and National Insurance contributions This is 20% of your taxable income. For every £1 of income, you paid 20p in Income Tax and National Insurance contributions."
 
     }
 

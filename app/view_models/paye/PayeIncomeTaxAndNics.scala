@@ -31,7 +31,8 @@ case class PayeIncomeTaxAndNics(
   adjustments: List[AdjustmentRow],
   employeeContributions: Amount,
   employerContributions: Amount,
-  totalIncomeTax2Nics: Amount)
+  totalIncomeTax2Nics: Amount,
+  welshIncomeTax: Amount)
     extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
@@ -53,8 +54,14 @@ object PayeIncomeTaxAndNics {
       getAdjustments(payeAtsData),
       getNationalInsuranceContribution(payeAtsData, "employee_nic_amount"),
       getNationalInsuranceContribution(payeAtsData, "employer_nic_amount"),
-      getNationalInsuranceContribution(payeAtsData, "total_income_tax_2_nics")
+      getNationalInsuranceContribution(payeAtsData, "total_income_tax_2_nics"),
+      getWelshIncomeTax(payeAtsData)
     )
+
+  private def getWelshIncomeTax(payeAtsData: PayeAtsData): Amount =
+    payeAtsData.income_data
+      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
+      .getOrElse(Amount.empty)
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData, totalTaxKey: String): Amount =
     payeAtsData.income_tax
