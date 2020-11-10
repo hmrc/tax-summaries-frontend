@@ -37,7 +37,7 @@
     <p id="index-page-description">@Html(Messages("paye.ats.index.html.lede"))</p>
     <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear)" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
     <p>@Messages("paye.ats.index.html.tax_calc_description")</p>
-    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.paye.routes.PayeGovernmentSpendController.show()" data-journey-click="link - click:@Messages("paye.ats.index.html.title"):@Messages("paye.ats.index.html.tax_spend_link")">@Messages("paye.ats.index.html.tax_spend_link")</a></h2>
+    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.paye.routes.PayeGovernmentSpendController.show(viewModel.taxYear)" data-journey-click="link - click:@Messages("paye.ats.index.html.title"):@Messages("paye.ats.index.html.tax_spend_link")">@Messages("paye.ats.index.html.tax_spend_link")</a></h2>
     <p>@Messages("paye.ats.index.html.tax_spend_description")</p>
 
 }

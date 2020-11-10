@@ -36,7 +36,7 @@
 
             @inputRadioGroupView(
             atsYearForm(AtsForms.yearChoice),
-            years.map(year => year.toString -> messages("generic.to_from", year.toString, s"${year + 1}")),
+            years.map(year => year.toString -> messages("ats.select_tax_year.label", year.toString, s"${year + 1}")),
             '_fieldSetAttributes -> "id=year_field",
             '_legend -> messages("ats.select_tax_year.title"),
             '_headingClass -> "heading-48"

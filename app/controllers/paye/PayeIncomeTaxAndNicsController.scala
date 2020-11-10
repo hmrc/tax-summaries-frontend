@@ -41,13 +41,11 @@ class PayeIncomeTaxAndNicsController @Inject()(
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
-  val payeYear = appConfig.payeYear
 
-  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    payeAtsService.getPayeATSData(request.nino, payeYear).map {
-      case Right(successResponse: PayeAtsData) => {
+  def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
+    payeAtsService.getPayeATSData(request.nino, taxYear).map {
+      case Right(successResponse: PayeAtsData) =>
         Ok(payeIncomeTaxAndNicsView(PayeIncomeTaxAndNics(successResponse), successResponse.isWelshTaxPayer))
-      }
       case Left(response: HttpResponse) =>
         response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
