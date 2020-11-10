@@ -404,8 +404,8 @@ paye.ats.tax_free_amount.tax_free_amount=Llai eich swm rhydd o dreth
 paye.ats.tax_free_amount.total_tax_liable=Rydych yn talu treth ar y canlynol
 
 ats.howYourTaxWasSpent.heading = Sut y gwariwyd treth
-ats.howYourTaxWasSpent.subheading = Mae hyn yn dangos sut y gwariwyd y Dreth Incwm a’r cyfraniadau Yswiriant Gwladol a dalwyd gennych ar gyfer 6&nbsp;Ebrill&nbsp;{0} i 5&nbsp;Ebrill&nbsp;{1}.
+ats.howYourTaxWasSpent.subheading = Mae hyn yn dangos sut y gwariwyd Treth Incwm a chyfraniadau Yswiriant Gwladol ar gyfer 6&nbsp;Ebrill&nbsp;{0} i 5&nbsp;Ebrill&nbsp;{1}.
 ats.howYourTaxWasSpent.caveat = Nid yw’n cynnwys TAW, ecséis na thollau eraill.
 ats.howYourTaxWasSpent.table.department.title = Gwariant y llywodraeth
-ats.howYourTaxWasSpent.table.percentage.title  = Canran o’ch treth
+ats.howYourTaxWasSpent.table.percentage.title  = Canran o’r dreth
 ats.howYourTaxWasSpent.table.department.Total = Cyfanswm
