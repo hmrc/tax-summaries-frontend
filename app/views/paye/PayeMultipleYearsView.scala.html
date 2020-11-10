@@ -32,13 +32,13 @@
 @payeMainView(title = Messages("ats.select_tax_year.title"), mainClasses = Some("selectYear")) {
     @errorSummaryTemplateView(atsYearForm)
 
-    @form(action = controllers.paye.routes.PayeAtsMainController.onSubmit){
+    @form(action = controllers.paye.routes.PayeMultipleYearsController.onSubmit){
 
             @inputRadioGroupView(
             atsYearForm(AtsForms.yearChoice),
-            years.map(year => year.toString -> s"$year/${year + 1}"),
+            years.map(year => year.toString -> messages("generic.to_from", year.toString, s"${year + 1}")),
             '_fieldSetAttributes -> "id=year_field",
-            '_legend -> Messages("ats.select_tax_year.title"),
+            '_legend -> messages("ats.select_tax_year.title"),
             '_headingClass -> "heading-48"
             )
     <div class="form-field">

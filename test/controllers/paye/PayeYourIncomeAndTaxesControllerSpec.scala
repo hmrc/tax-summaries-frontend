@@ -24,7 +24,6 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -50,7 +49,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
@@ -67,7 +66,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
     }
@@ -79,7 +78,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
 
@@ -93,8 +92,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
-      val document = Jsoup.parse(contentAsString(result))
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
@@ -107,7 +105,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(BAD_REQUEST).url)
@@ -120,7 +118,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)

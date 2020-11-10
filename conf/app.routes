@@ -23,10 +23,12 @@ GET     /sign-out                                              controllers.Accou
 
 GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
 
-GET     /paye/main                                             controllers.paye.PayeAtsMainController.show
-POST    /paye/main                                             controllers.paye.PayeAtsMainController.onSubmit
+GET     /paye/select-tax-year                                  controllers.paye.PayeMultipleYearsController.onPageLoad
+POST    /paye/select-tax-year                                  controllers.paye.PayeMultipleYearsController.onSubmit
 
-GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
+GET     /paye/main/:taxYear                                    controllers.paye.PayeAtsMainController.show(taxYear: Int)
+
+GET     /paye/summary/:taxYear                                 controllers.paye.PayeYourIncomeAndTaxesController.show(taxYear: Int)
 
 GET     /paye/income-tax-and-national-insurance                controllers.paye.PayeIncomeTaxAndNicsController.show
 
