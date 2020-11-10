@@ -428,6 +428,6 @@ global.page.not.found.error.contact.link=https://www.gov.uk/government/organisat
 
 ats.howYourTaxWasSpent.heading = How tax was spent
 ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insurance contributions for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
-ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties
+ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties.
 ats.howYourTaxWasSpent.table.department.title = Department spend
 ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
