@@ -349,7 +349,6 @@ object AtsTestData {
       List(
         2018
       )
-    ),
-    None
+    )
   )
 }

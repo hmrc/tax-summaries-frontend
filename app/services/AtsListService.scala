@@ -21,18 +21,20 @@ import java.util.Date
 import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AgentToken, AtsListData, IncomingAtsError}
+import models._
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import view_models.{ATSUnavailableViewModel, NoATSViewModel}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AtsListService @Inject()(
   auditService: AuditService,
   middleConnector: MiddleConnector,
   dataCache: DataCacheConnector,
-  authUtils: AuthorityUtils) {
+  authUtils: AuthorityUtils)(implicit ec: ExecutionContext) {
 
   def accountUtils: AccountUtils = AccountUtils
 
@@ -43,16 +45,16 @@ class AtsListService @Inject()(
       checkCreateModel(_, converter)
     }
 
-  private def checkCreateModel(output: AtsListData, converter: (AtsListData => GenericViewModel)): GenericViewModel =
+  private def checkCreateModel(
+    output: Either[Int, AtsListData],
+    converter: AtsListData => GenericViewModel): GenericViewModel =
     output match {
-      case error if error.errors.nonEmpty =>
-        error.errors.get match {
-          case IncomingAtsError(_) => throw new AtsError(error.errors.toString)
-        }
-      case atsList => converter(atsList)
+      case Right(atsList)  => converter(atsList)
+      case Left(NOT_FOUND) => new NoATSViewModel
+      case Left(_)         => new ATSUnavailableViewModel
     }
 
-  def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
     for {
       data <- dataCache.fetchAndGetAtsListForSession
     } yield {
@@ -70,19 +72,19 @@ class AtsListService @Inject()(
             }
           } else {
             getAtsListAndStore()
-
           }
       }
     }
   } flatMap { identity }
 
-  private def fetchAgentInfo(
-    data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  private def fetchAgentInfo(data: AtsListData)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
     for {
       token <- dataCache.getAgentToken
     } yield {
       if (authUtils.checkUtr(data.utr, token)) {
-        Future.successful(data)
+        Future.successful(Right(data))
       } else {
         getAtsListAndStore(token)
       }
@@ -91,7 +93,7 @@ class AtsListService @Inject()(
 
   private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[AtsListData] = {
+    request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
     val account = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
@@ -101,16 +103,18 @@ class AtsListService @Inject()(
     }
 
     // TODO: Audit Events
-    for (data <- gotData) yield {
-      data.errors match {
-        case None =>
-          sendAuditEvent(account, data)
-          storeAtsListData(data)
-        case Some(IncomingAtsError("NoAtsError")) => storeAtsListData(data)
-        case Some(_)                              => Future(data)
-      }
+    gotData flatMap {
+      case AtsSuccessResponseWithPayload(payload: AtsListData) =>
+        for {
+          _    <- sendAuditEvent(account, payload)
+          data <- storeAtsListData(payload)
+        } yield {
+          Right(data)
+        }
+      case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
+      case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
     }
-  } flatMap { identity }
+  }
 
   private def storeAtsListData(atsList: AtsListData)(implicit hc: HeaderCarrier): Future[AtsListData] =
     dataCache.storeAtsListForSession(atsList) map { data =>

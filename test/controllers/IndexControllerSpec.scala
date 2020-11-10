@@ -204,7 +204,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
       )
 
       when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
 
       val result = sut.agentAwareShow(request)
 
@@ -305,7 +305,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     "give a Ok status and stay on the same page if form errors and display the error" in {
 
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
       val atsYear = Map("atsYear" -> "")
       val form = atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(

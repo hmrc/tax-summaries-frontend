@@ -18,10 +18,11 @@ package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AgentToken, AtsListData}
+import models.{AgentToken, AtsErrorResponse, AtsListData, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
@@ -35,10 +36,12 @@ import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 class AtsListServiceSpec
     extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
+
+  implicit lazy val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -76,9 +79,11 @@ class AtsListServiceSpec
     when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(None))
 
-    when(mockMiddleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])).thenReturn(Future.successful(data))
-    when(mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier]))
-      .thenReturn(Future.successful(data))
+    when(mockMiddleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])) thenReturn Future.successful(
+      AtsSuccessResponseWithPayload[AtsListData](data))
+
+    when(mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])) thenReturn Future
+      .successful(AtsSuccessResponseWithPayload[AtsListData](data))
 
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
 
@@ -94,9 +99,10 @@ class AtsListServiceSpec
     timestamp = 0
   )
 
-  def sut = new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils) {
-    override lazy val accountUtils: AccountUtils = mockAccountUtils
-  }
+  def sut: AtsListService =
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils) {
+      override lazy val accountUtils: AccountUtils = mockAccountUtils
+    }
 
   "storeSelectedTaxYear" should {
 
@@ -218,7 +224,7 @@ class AtsListServiceSpec
         when(mockAccountUtils.isAgent(request)).thenReturn(true)
 
         whenReady(sut.getAtsYearList) { result =>
-          result shouldBe data
+          result shouldBe Right(data)
         }
 
         verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
@@ -236,7 +242,7 @@ class AtsListServiceSpec
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
       whenReady(sut.getAtsYearList) { result =>
-        result shouldBe data
+        result shouldBe Right(data)
 
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
           any[Request[AnyRef]],
@@ -255,7 +261,7 @@ class AtsListServiceSpec
       when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       whenReady(sut.getAtsYearList) { result =>
-        result shouldBe data
+        result shouldBe Right(data)
 
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
           any[Request[AnyRef]],
@@ -277,7 +283,7 @@ class AtsListServiceSpec
         when(mockAccountUtils.isAgent(agentRequest)).thenReturn(true)
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe data
+          result shouldBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never())
@@ -292,7 +298,7 @@ class AtsListServiceSpec
           .thenReturn(Future.successful(None))
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe data
+          result shouldBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
@@ -307,12 +313,60 @@ class AtsListServiceSpec
           .thenReturn(false)
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe data
+          result shouldBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
           verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+        }
+      }
+
+      "Return a left" when {
+
+        "the connector returns a 404" in {
+
+          when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(
+            None)
+
+          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+            .successful(AtsNotFoundResponse("Not found"))
+
+          whenReady(sut.getAtsYearList) { result =>
+            result shouldBe Left(NOT_FOUND)
+
+            verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+              any[Request[AnyRef]],
+              any[HeaderCarrier])
+            verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+            verify(mockDataCacheConnector, never())
+              .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+            verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+          }
+        }
+      }
+
+      "Return a left" when {
+
+        "the connector returns a 500" in {
+
+          when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(
+            None)
+
+          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+            .successful(AtsErrorResponse("Something went wrong"))
+
+          whenReady(sut.getAtsYearList) { result =>
+            result shouldBe Left(INTERNAL_SERVER_ERROR)
+
+            verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+              any[Request[AnyRef]],
+              any[HeaderCarrier])
+            verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+            verify(mockDataCacheConnector, never())
+              .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+            verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+          }
         }
       }
 
