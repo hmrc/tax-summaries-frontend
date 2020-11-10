@@ -34,10 +34,15 @@ case class GovernmentSpend(
   def sortedSpendData: List[(String, SpendData)] =
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
-  def filteredDataWithHigherTransport: List[(String, SpendData)] =
-    if (taxYear == 2019) {
+  def filteredDataWithHigherTransport: List[(String, SpendData)] = {
+    val listAfterFirstSwap = if (taxYear == 2019 || taxYear == 2020) {
       SwapDataUtils.swapDataForSa(sortedSpendData, "Transport", "PublicOrderAndSafety")
     } else sortedSpendData
+
+    if (taxYear == 2020) {
+      SwapDataUtils.swapDataForSa(listAfterFirstSwap, "Culture", "Environment")
+    } else listAfterFirstSwap
+  }
 
   def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
   def taxYearFrom: String = (taxYear - 1).toString

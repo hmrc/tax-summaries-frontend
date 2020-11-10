@@ -159,6 +159,25 @@ trait TestConstants {
       "OverseasAid",
       "UkContributionToEuBudget"
     )
+
+  val expectedCategoryOrderfor2020: List[String] =
+    List(
+      "Welfare",
+      "Health",
+      "Education",
+      "StatePensions",
+      "Defence",
+      "NationalDebtInterest",
+      "Transport",
+      "PublicOrderAndSafety",
+      "BusinessAndIndustry",
+      "GovernmentAdministration",
+      "HousingAndUtilities",
+      "Culture",
+      "Environment",
+      "OverseasAid",
+      "UkContributionToEuBudget"
+    )
 }
 
 object TestConstants extends TestConstants
