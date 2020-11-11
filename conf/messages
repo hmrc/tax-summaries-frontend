@@ -391,7 +391,7 @@ ats.service_unavailable.paragraph=You will be able to use the service later.
 
 paye.ats.service_unavailable.title=Sorry, the service is unavailable
 paye.ats.service_unavailable.heading=Sorry, the service is unavailable
-paye.ats.service_unavailable.paragraph=You will be able to use the service from 9am on Friday 13 November 2020.
+paye.ats.service_unavailable.paragraph=You will be able to use the service from 9am on 13&nbsp;November&nbsp;2020.
 
 # PAYE Not authorised page
 #============================================================
