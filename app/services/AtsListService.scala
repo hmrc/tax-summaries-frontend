@@ -34,9 +34,8 @@ class AtsListService @Inject()(
   auditService: AuditService,
   middleConnector: MiddleConnector,
   dataCache: DataCacheConnector,
-  authUtils: AuthorityUtils)(implicit ec: ExecutionContext) {
-
-  def accountUtils: AccountUtils = AccountUtils
+  authUtils: AuthorityUtils)(implicit ec: ExecutionContext)
+    extends AccountUtils {
 
   def createModel(converter: (AtsListData => GenericViewModel))(
     implicit hc: HeaderCarrier,
@@ -60,13 +59,13 @@ class AtsListService @Inject()(
     } yield {
       data match {
         case Some(data) =>
-          if (accountUtils.isAgent(request)) {
+          if (isAgent(request)) {
             fetchAgentInfo(data)
           } else {
             getAtsListAndStore()
           }
         case _ =>
-          if (accountUtils.isAgent(request)) {
+          if (isAgent(request)) {
             dataCache.getAgentToken.flatMap { token =>
               getAtsListAndStore(token)
             }
@@ -94,7 +93,7 @@ class AtsListService @Inject()(
   private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
-    val account = utils.AccountUtils.getAccount(request)
+    val account = getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val gotData = (account: @unchecked) match {

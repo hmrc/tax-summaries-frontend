@@ -102,7 +102,7 @@ class IndexController @Inject()(
       case Right(noATS: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
       case Right(result: ViewModel)     => getViewModel(result)
     }
-//TODO test this
+
   def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
@@ -124,7 +124,7 @@ class IndexController @Inject()(
       },
       value => redirectWithYear(value.year.get.toInt)
     )
-//TODO test this
+
   def redirectWithYear(year: Int)(implicit request: AuthenticatedRequest[_]): Future[Result] =
     atsListService.getAtsYearList map { atsListData =>
       handleServiceResult(

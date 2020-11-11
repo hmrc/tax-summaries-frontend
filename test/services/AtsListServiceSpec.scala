@@ -32,11 +32,13 @@ import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import uk.gov.hmrc.domain
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 class AtsListServiceSpec
     extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
@@ -53,14 +55,12 @@ class AtsListServiceSpec
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
-  val mockAccountUtils: AccountUtils = mock[AccountUtils]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
     reset(mockDataCacheConnector)
     reset(mockAuditService)
     reset(mockAuthUtils)
-    reset(mockAccountUtils)
 
     when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(2014)))
@@ -85,8 +85,11 @@ class AtsListServiceSpec
     when(mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])) thenReturn Future
       .successful(AtsSuccessResponseWithPayload[AtsListData](data))
 
-    when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
+    when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(
+      AuditResult.Success)
 
+    when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
+    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
   }
 
   implicit val request =
@@ -100,9 +103,7 @@ class AtsListServiceSpec
   )
 
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils) {
-      override lazy val accountUtils: AccountUtils = mockAccountUtils
-    }
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils)
 
   "storeSelectedTaxYear" should {
 
@@ -193,12 +194,12 @@ class AtsListServiceSpec
 
       whenReady(sut.getAtsYearList.failed) { exception =>
         exception shouldBe an[Exception]
-
-        verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, times(1))
-          .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
+
+      verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+      verify(mockDataCacheConnector, times(1))
+        .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+      verify(mockMiddleConnector).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
     }
 
     "Return a failed future when the call to the MS fails" in {
@@ -221,9 +222,18 @@ class AtsListServiceSpec
 
       "Return the ats year list data for a user from the cache" in {
 
-        when(mockAccountUtils.isAgent(request)).thenReturn(true)
+        implicit val agentRequest =
+          AuthenticatedRequest(
+            "userId",
+            Some(Uar(testUtr)),
+            Some(SaUtr(testUtr)),
+            None,
+            None,
+            None,
+            None,
+            FakeRequest())
 
-        whenReady(sut.getAtsYearList) { result =>
+        whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe Right(data)
         }
 
@@ -279,8 +289,6 @@ class AtsListServiceSpec
         AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
 
       "Return the ats year list data for a user from the cache" in {
-
-        when(mockAccountUtils.isAgent(agentRequest)).thenReturn(true)
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result shouldBe Right(data)
