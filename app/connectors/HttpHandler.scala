@@ -33,8 +33,9 @@ class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionC
       response.status match {
         case OK => extractJson[A](response.json)
         case e @ _ =>
-          logger.error(s"Connector returned $e")
-          AtsErrorResponse(s"Connector returned $e")
+          val message = s"Connector returned $e: $url"
+          logger.error(message)
+          AtsErrorResponse(message)
       }
     } recover {
       case e: NotFoundException =>

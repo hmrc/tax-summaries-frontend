@@ -25,6 +25,7 @@ import models._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
@@ -101,17 +102,20 @@ class AtsListService @Inject()(
       case individual: SaUtr => middleConnector.connectToAtsList(individual)
     }
 
-    // TODO: Audit Events
-    gotData flatMap {
+    val result = gotData flatMap {
       case AtsSuccessResponseWithPayload(payload: AtsListData) =>
         for {
-          _    <- sendAuditEvent(account, payload)
           data <- storeAtsListData(payload)
         } yield {
           Right(data)
         }
       case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
       case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
+    }
+
+    result map { res =>
+      sendAuditEvent(account, res)
+      res
     }
   }
 
@@ -130,27 +134,32 @@ class AtsListService @Inject()(
       data.get
     }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsListData)(
+  private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[Int, AtsListData])(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]) =
-    (account: @unchecked) match {
-      case _: Uar =>
+    request: AuthenticatedRequest[_]): Future[AuditResult] =
+    (dataOpt, account: @unchecked) match {
+      case (Right(data), _: Uar) =>
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
             "agentId"   -> AccountUtils.getAccountId(request),
-            "clientUtr" -> data.utr,
-            "time"      -> new Date().toString
+            "clientUtr" -> data.utr
           ))
-      case _: SaUtr =>
+      case (Right(data), _: SaUtr) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
             "userId"   -> request.userId,
             "userUtr"  -> data.utr,
-            "userType" -> userType,
-            "time"     -> new Date().toString
+            "userType" -> userType
+          ))
+      case (Left(_), identifier) =>
+        auditService.sendEvent(
+          AuditTypes.Tx_FAILED,
+          Map(
+            "userId"         -> request.userId,
+            "userIdentifier" -> identifier.value
           ))
     }
 }

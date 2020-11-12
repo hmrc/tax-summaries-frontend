@@ -26,6 +26,7 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Reads}
+import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.UnitSpec
@@ -34,9 +35,7 @@ import utils.WireMockHelper
 import scala.concurrent.ExecutionContext
 
 class HttpHandlerSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience {
-
-  //TODO look at MiddleConnectorSpec to test HttpHandler correctly
+    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -47,10 +46,10 @@ class HttpHandlerSpec
       .build()
 
   implicit val hc = HeaderCarrier()
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+  implicit lazy val appConfig = inject[ApplicationConfig]
+  implicit lazy val ec = inject[ExecutionContext]
 
-  def sut: HttpHandler = new HttpHandler(app.injector.instanceOf[DefaultHttpClient])
+  def sut: HttpHandler = new HttpHandler(inject[DefaultHttpClient])
 
   case class TestClass(str: String)
 

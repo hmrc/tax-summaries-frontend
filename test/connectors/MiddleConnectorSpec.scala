@@ -26,6 +26,7 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.test.UnitSpec
@@ -37,7 +38,7 @@ import scala.io.Source
 
 class MiddleConnectorSpec
     extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
-    with JsonUtil {
+    with JsonUtil with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -48,11 +49,11 @@ class MiddleConnectorSpec
       .build()
 
   implicit val hc = HeaderCarrier()
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+  implicit lazy val appConfig = inject[ApplicationConfig]
+  implicit lazy val ec = inject[ExecutionContext]
   private val currentYear = 2018
 
-  def sut = new MiddleConnector(app.injector.instanceOf[HttpHandler])
+  def sut = new MiddleConnector(inject[HttpHandler])
 
   val utr = SaUtr(testUtr)
 
