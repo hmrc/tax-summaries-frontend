@@ -305,6 +305,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         ScottishTax.empty,
         amount,
         amount,
+        amount,
         SavingsTax.empty,
         "",
         rate,
