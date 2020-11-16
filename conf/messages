@@ -64,7 +64,7 @@ ats.select_tax_year.title=Select the tax year
 ats.select_tax_year.continue=Continue
 ats.select_tax_year.required.summary=Please select the tax year
 ats.select_tax_year.required=Select an option for the tax year
-
+ats.select_tax_year.label={0} to {1}
 
 # View ATS - Landing page
 #============================================================
