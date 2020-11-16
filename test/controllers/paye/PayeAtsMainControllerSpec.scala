@@ -51,7 +51,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
       val document = Jsoup.parse(contentAsString(result))
 
       document.title should include(
-        Messages("paye.ats.index.html.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+        Messages("paye.ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
 
       document.getElementById("index-page-description").text() shouldBe (Messages("paye.ats.index.html.lede"))
 

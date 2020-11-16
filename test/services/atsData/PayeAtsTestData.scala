@@ -23,14 +23,14 @@ import view_models.{Amount, Rate}
 object PayeAtsTestData {
 
   val govSpendingData = PayeAtsData(
-    2019,
+    2020,
     None,
     None,
     None,
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2019,
+        2020,
         Some(
           Map(
             "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 1.00),
@@ -57,7 +57,7 @@ object PayeAtsTestData {
   )
 
   val yourIncomeAndTaxesData = PayeAtsData(
-    2018,
+    2020,
     None,
     Some(
       DataHolder(
@@ -104,7 +104,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2018,
+        2020,
         None,
         Amount(200, "GBP"),
         None
@@ -113,7 +113,7 @@ object PayeAtsTestData {
   )
 
   val malformedYourIncomeAndTaxesData = PayeAtsData(
-    2018,
+    2020,
     None,
     Some(
       DataHolder(
@@ -159,7 +159,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2018,
+        2020,
         None,
         Amount(200, "GBP"),
         None
@@ -168,7 +168,7 @@ object PayeAtsTestData {
   )
 
   val missingYourIncomeAndTaxesData = PayeAtsData(
-    2018,
+    2020,
     None,
     None,
     None,
@@ -187,7 +187,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2018,
+        2020,
         None,
         Amount(200, "GBP"),
         None
@@ -196,7 +196,7 @@ object PayeAtsTestData {
   )
 
   val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount = PayeAtsData(
-    2018,
+    2020,
     None,
     Some(
       DataHolder(
@@ -242,7 +242,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2018,
+        2020,
         None,
         Amount(200, "GBP"),
         None
@@ -251,7 +251,7 @@ object PayeAtsTestData {
   )
 
   val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount = PayeAtsData(
-    2018,
+    2020,
     None,
     Some(
       DataHolder(
@@ -296,7 +296,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2018,
+        2020,
         None,
         Amount(200, "GBP"),
         None
@@ -305,7 +305,7 @@ object PayeAtsTestData {
   )
 
   val totalIncomeTaxAndSummaryData = PayeAtsData(
-    2018,
+    2020,
     Some(
       DataHolder(
         Some(
@@ -369,10 +369,10 @@ object PayeAtsTestData {
   )
 
   val payeYourIncomeAndTaxesViewModel =
-    PayeYourIncomeAndTaxes(2018, Amount(1000, "GBP"), Amount(800, "GBP"), Amount(200, "GBP"), Amount(100, "GBP"), "20")
+    PayeYourIncomeAndTaxes(2020, Amount(1000, "GBP"), Amount(800, "GBP"), Amount(200, "GBP"), Amount(100, "GBP"), "20")
 
   val payeGovernmentSpendViewModel = PayeGovernmentSpend(
-    2019,
+    2020,
     List(
       SpendRow("Welfare", SpendData(Amount(451, "GBP"), 23.5)),
       SpendRow("Health", SpendData(Amount(388, "GBP"), 20.2)),
@@ -385,8 +385,8 @@ object PayeAtsTestData {
       SpendRow("BusinessAndIndustry", SpendData(Amount(69, "GBP"), 3.6)),
       SpendRow("GovernmentAdministration", SpendData(Amount(40, "GBP"), 2.1)),
       SpendRow("HousingAndUtilities", SpendData(Amount(31, "GBP"), 1.6)),
-      SpendRow("Culture", SpendData(Amount(29, "GBP"), 1.5)),
       SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
+      SpendRow("Culture", SpendData(Amount(29, "GBP"), 1.5)),
       SpendRow("OverseasAid", SpendData(Amount(23, "GBP"), 1.2)),
       SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"), 1))
     ),
@@ -395,7 +395,7 @@ object PayeAtsTestData {
   )
 
   val payeIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
-    2018,
+    2020,
     List(
       TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
       TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -424,7 +424,7 @@ object PayeAtsTestData {
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
-    2018,
+    2020,
     List.empty,
     List(
       TaxBand("ordinary_rate", Amount(19430, "GBP"), Amount(4080, "GBP"), Rate("19%")),
@@ -448,7 +448,7 @@ object PayeAtsTestData {
   )
 
   val payeEmployeeContributionNicsViewModel = PayeIncomeTaxAndNics(
-    2018,
+    2020,
     List.empty,
     List.empty,
     Amount.empty,
@@ -461,7 +461,7 @@ object PayeAtsTestData {
     Amount(2550, "GBP"))
 
   val payeEmptyNicsViewModel = PayeIncomeTaxAndNics(
-    2018,
+    2020,
     List.empty,
     List.empty,
     Amount.empty,
@@ -474,7 +474,7 @@ object PayeAtsTestData {
     Amount.empty)
 
   val payeYourTaxableIncomeViewModel = PayeYourTaxableIncome(
-    2018,
+    2020,
     List(
       IncomeTaxRow("self_employment_income", Amount(450, "GBP")),
       IncomeTaxRow("income_from_employment", Amount(550, "GBP")),
@@ -503,14 +503,14 @@ object PayeAtsTestData {
       "BusinessAndIndustry",
       "GovernmentAdministration",
       "HousingAndUtilities",
-      "Culture",
       "Environment",
+      "Culture",
       "OverseasAid",
       "UkContributionToEuBudget"
     )
 
   val incomeData = PayeAtsData(
-    2018,
+    2020,
     None,
     None,
     Some(
@@ -533,7 +533,7 @@ object PayeAtsTestData {
   )
 
   val incomeDataWithoutScottishIncomeTax = PayeAtsData(
-    2018,
+    2020,
     None,
     None,
     Some(

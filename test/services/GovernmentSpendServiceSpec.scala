@@ -16,6 +16,7 @@
 
 package services
 
+import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
@@ -58,6 +59,8 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
 
   implicit val hc = new HeaderCarrier
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+
+  implicit val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   val request = AuthenticatedRequest(
     "userId",

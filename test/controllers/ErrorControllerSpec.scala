@@ -69,7 +69,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
           val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
             case (key, value) =>
               key -> value.percentage.toDouble
-          }
+          }.toSeq
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
             .successful(response)

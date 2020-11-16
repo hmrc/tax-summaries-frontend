@@ -17,6 +17,7 @@
 package view_models
 
 import utils.GenericViewModel
+import view_models.paye.TaxYearFormatting
 
 case class IncomeBeforeTax(
   taxYear: Int,
@@ -32,8 +33,4 @@ case class IncomeBeforeTax(
   title: String,
   forename: String,
   surname: String)
-    extends GenericViewModel {
-
-  def taxYearTo = taxYear.toString
-  def taxYearFrom = (taxYear - 1).toString
-}
+    extends GenericViewModel with TaxYearFormatting
