@@ -16,6 +16,7 @@
 
 package view_models.paye
 
+import config.ApplicationConfig
 import models.DataHolder
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,13 +30,15 @@ class PayeGovernmentSpendSpec
     extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience {
 
+  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+
   "PayeGovernmentSpend" should {
 
     "Transform PayeAtsData to view model" when {
 
       "Scottish income is not present" in {
         val payeGovSpendingData = PayeAtsTestData.govSpendingData
-        val result = PayeGovernmentSpend(payeGovSpendingData)
+        val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
         result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
         result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel
@@ -45,7 +48,7 @@ class PayeGovernmentSpendSpec
         val payeGovSpendingData = PayeAtsTestData.govSpendingData.copy(
           income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(500.00))), None, None))
         )
-        val result = PayeGovernmentSpend(payeGovSpendingData)
+        val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
         result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
         result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
@@ -57,7 +60,7 @@ class PayeGovernmentSpendSpec
         val payeGovSpendingData = PayeAtsTestData.govSpendingData.copy(
           income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(0.00))), None, None))
         )
-        val result = PayeGovernmentSpend(payeGovSpendingData)
+        val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
         result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
         result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
@@ -70,7 +73,7 @@ class PayeGovernmentSpendSpec
     "sort transport above Public Order" in {
 
       val payeGovSpendingData = PayeAtsTestData.govSpendingData
-      val result = PayeGovernmentSpend(payeGovSpendingData)
+      val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
       result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
       result.orderedSpendRows.map(_.category) shouldBe PayeAtsTestData.expectedCategoryOrder
@@ -79,7 +82,7 @@ class PayeGovernmentSpendSpec
     "sort Culture above Environment" in {
 
       val payeGovSpendingData = PayeAtsTestData.govSpendingData
-      val result = PayeGovernmentSpend(payeGovSpendingData)
+      val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
       result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
       result.orderedSpendRows.map(_.category) shouldBe PayeAtsTestData.expectedCategoryOrder

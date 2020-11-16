@@ -22,6 +22,7 @@ import play.api.i18n.Lang
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
+import scala.collection.JavaConverters._
 
 @Singleton
 class ApplicationConfig @Inject()(
@@ -106,4 +107,9 @@ class ApplicationConfig @Inject()(
   def payeFallbackURL: String = config.getString("paye.language.fallbackUrl")
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
+
+  val saYear: Int = config.getInt("sa.year")
+
+  def spendCategories(taxYear: Int): Option[List[String]] =
+    Option(configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList)
 }

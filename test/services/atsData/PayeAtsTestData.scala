@@ -38,7 +38,7 @@ object PayeAtsTestData {
             "GovernmentAdministration" -> SpendData(Amount(40.00, "GBP"), 2.10),
             "Education"                -> SpendData(Amount(226.00, "GBP"), 11.80),
             "StatePensions"            -> SpendData(Amount(246.00, "GBP"), 12.80),
-            "NationalDebtInterest"     -> SpendData(Amount(98.00, "GBP"), 5.10),
+            "NationalDebtInterest"     -> SpendData(Amount(102.00, "GBP"), 5.30),
             "Defence"                  -> SpendData(Amount(102.00, "GBP"), 5.30),
             "PublicOrderAndSafety"     -> SpendData(Amount(83.00, "GBP"), 4.30),
             "Transport"                -> SpendData(Amount(83.00, "GBP"), 4.30),
@@ -378,15 +378,15 @@ object PayeAtsTestData {
       SpendRow("Health", SpendData(Amount(388, "GBP"), 20.2)),
       SpendRow("StatePensions", SpendData(Amount(246, "GBP"), 12.8)),
       SpendRow("Education", SpendData(Amount(226, "GBP"), 11.8)),
+      SpendRow("NationalDebtInterest", SpendData(Amount(102, "GBP"), 5.3)),
       SpendRow("Defence", SpendData(Amount(102, "GBP"), 5.3)),
-      SpendRow("NationalDebtInterest", SpendData(Amount(98, "GBP"), 5.1)),
       SpendRow("Transport", SpendData(Amount(83, "GBP"), 4.3)),
       SpendRow("PublicOrderAndSafety", SpendData(Amount(83, "GBP"), 4.3)),
       SpendRow("BusinessAndIndustry", SpendData(Amount(69, "GBP"), 3.6)),
       SpendRow("GovernmentAdministration", SpendData(Amount(40, "GBP"), 2.1)),
       SpendRow("HousingAndUtilities", SpendData(Amount(31, "GBP"), 1.6)),
-      SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
       SpendRow("Culture", SpendData(Amount(29, "GBP"), 1.5)),
+      SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
       SpendRow("OverseasAid", SpendData(Amount(23, "GBP"), 1.2)),
       SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"), 1))
     ),
@@ -488,7 +488,7 @@ object PayeAtsTestData {
   )
 
   val expectedPercentageOrder: List[BigDecimal] =
-    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.1, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
+    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
 
   val expectedCategoryOrder: List[String] =
     List(
@@ -496,15 +496,15 @@ object PayeAtsTestData {
       "Health",
       "StatePensions",
       "Education",
-      "Defence",
       "NationalDebtInterest",
+      "Defence",
       "Transport",
       "PublicOrderAndSafety",
       "BusinessAndIndustry",
       "GovernmentAdministration",
       "HousingAndUtilities",
-      "Environment",
       "Culture",
+      "Environment",
       "OverseasAid",
       "UkContributionToEuBudget"
     )

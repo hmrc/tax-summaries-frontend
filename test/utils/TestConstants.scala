@@ -16,6 +16,7 @@
 
 package utils
 
+import config.ApplicationConfig
 import models.SpendData
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import utils.TestConstants.testUtr
@@ -108,7 +109,7 @@ trait TestConstants {
 
   val fakeTaxYear = 2019
 
-  val fakeGovernmentSpend: GovernmentSpend =
+  def fakeGovernmentSpend(implicit appConfig: ApplicationConfig): GovernmentSpend =
     GovernmentSpend(
       fakeTaxYear,
       testUtr,
@@ -145,8 +146,8 @@ trait TestConstants {
     List(
       "Welfare",
       "Health",
-      "Education",
       "StatePensions",
+      "Education",
       "Defence",
       "NationalDebtInterest",
       "Transport",
@@ -164,10 +165,10 @@ trait TestConstants {
     List(
       "Welfare",
       "Health",
-      "Education",
       "StatePensions",
-      "Defence",
+      "Education",
       "NationalDebtInterest",
+      "Defence",
       "Transport",
       "PublicOrderAndSafety",
       "BusinessAndIndustry",

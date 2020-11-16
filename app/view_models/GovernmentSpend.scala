@@ -16,8 +16,10 @@
 
 package view_models
 
+import config.ApplicationConfig
 import models.SpendData
-import utils.{GenericViewModel, SwapDataUtils}
+import utils.{GenericViewModel, SwapCategoriesUtils}
+import view_models.paye.TaxYearFormatting
 
 case class GovernmentSpend(
   taxYear: Int,
@@ -28,23 +30,12 @@ case class GovernmentSpend(
   userSurname: String,
   totalAmount: Amount,
   incomeTaxStatus: String,
-  scottishIncomeTax: Amount)
-    extends GenericViewModel {
+  scottishIncomeTax: Amount)(implicit val appConfig: ApplicationConfig)
+    extends GenericViewModel with TaxYearFormatting {
 
   def sortedSpendData: List[(String, SpendData)] =
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
-  def filteredDataWithHigherTransport: List[(String, SpendData)] = {
-    val listAfterFirstSwap = if (taxYear == 2019 || taxYear == 2020) {
-      SwapDataUtils.swapDataForSa(sortedSpendData, "Transport", "PublicOrderAndSafety")
-    } else sortedSpendData
-
-    if (taxYear == 2020) {
-      SwapDataUtils.swapDataForSa(listAfterFirstSwap, "Culture", "Environment")
-    } else listAfterFirstSwap
-  }
-
-  def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
-  def taxYearFrom: String = (taxYear - 1).toString
-  def taxYearTo: String = taxYear.toString
+  def filteredDataWithHigherTransport: List[(String, SpendData)] =
+    SwapCategoriesUtils.getAndSwapCategories(appConfig, taxYear, sortedSpendData)
 }
