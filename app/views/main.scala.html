@@ -1,0 +1,188 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.layouts._
+@import play.twirl.api.HtmlFormat
+
+
+@import views.html.includes.TaxsHeaderNavView
+@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
+
+@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView,
+uiHead: Head, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
+uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
+
+
+@(
+    title: String,
+    utr: String,
+    userLoggedIn: Boolean = true,
+    serviceInfoContent: Option[Html] = None,
+    contentHeader: Option[Html] = None,
+    showFeedbackLinkInBetaBanner: Boolean = false,
+    bodyClasses: Option[String] = None,
+    mainClasses: Option[String] = None,
+    mainDataAttributes: Option[Html] = None,
+    includeGridWrapper: Boolean = false,
+    gaCalls: Option[(String,String) => Html] = None,
+    pageName:Option[String] = None,
+    sidebarLinks: Option[Html] = None,
+    disableSessionExpired: Boolean = false,
+    gaDimensions: Option[Map[String, Any]] = None
+)(
+    mainContent: Html
+)(
+    implicit request: Request[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
+
+
+@mustacheCheck(str: String) = @{
+    if(str.trim=="") false else str
+}
+
+
+@scriptElement = @{
+    Seq(Map("url" -> controllers.routes.Assets.versioned("javascripts/banner_close.js")),
+    Map("url" -> controllers.routes.Assets.versioned("javascripts/benefits.js")))
+}
+
+
+@linkElems = @{
+    Map("url" -> controllers.routes.Assets.versioned("stylesheets/benefits.css"))
+}
+
+
+@links = @{
+    Map("url" -> controllers.routes.AccountController.signOut() , "text" -> messages("generic.sign_out"))
+}
+
+
+
+@getHelpForm = {
+    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
+}
+
+@pageTitle = {@title - @Messages("label.service_name") - GOV.UK}
+
+@sidebar = @{
+
+}
+
+@mainContentHeader = {
+}
+
+@isWelsh = {
+}
+
+@inlineScript = {
+
+    @if(appConfig.isGtmEnabled == true) {
+        @googleTagManagerView(appConfig.googleTagManagerId)
+    }
+
+
+}
+
+@betaHeaderEnable = @{
+    true
+}
+
+@article = @{
+    uiArticle(mainContent, includeGridWrapper)
+}
+
+
+@googleAnalytics = @{
+    Map[String, Any](
+        "trackingId" -> appConfig.analyticsToken,
+        "cookieDomain" -> appConfig.analyticsHost
+    ) ++ gaDimensions.getOrElse(Map.empty)
+}
+
+
+
+@userDisplayName = {}
+
+@navTitle = @{
+    Some(pageName)
+}
+
+
+
+@accessibilityFooterUrl = {
+
+}
+
+@{
+
+    val languageSelectorLanguages = if (appConfig.isWelshEnabled) {
+        Map("enUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("english"),
+            "cyUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("cymraeg")
+        )
+        } else {
+            Map.empty
+        }
+
+        val arguments:Map[String,Any] = Map[String, Any](
+        "pageTitle" -> Some(pageTitle),
+        "linkElems" -> linkElems,
+        "scriptElems" -> scriptElement,
+        "assetsPath" -> appConfig.assetsPrefix,
+
+        "fullWidthBannerText" -> messages("paye.benefits.medben.home.banner.recruitment.link"),
+        "fullWidthBannerLink" -> messages("paye.benefits.medben.home.banner.recruitment.linkURL"),
+        "fullWidthBannerDismissText" -> messages("paye.benefits.medben.home.banner.recruitment.reject"),
+
+        "mainClass" -> mainClasses,
+        "mainAttributes" -> mainDataAttributes,
+        "mainContentHeader" -> mainContentHeader,
+
+        "isWelsh" -> isWelsh,
+        "signOutUrl" -> controllers.routes.AccountController.signOut(),
+        "googleAnalytics" -> googleAnalytics,
+        "ssoUrl" -> None,
+
+        "betaBanner" -> betaHeaderEnable,
+        "includeHMRCBranding" -> true,
+
+        "inlineScript" -> inlineScript,
+        "getHelpForm" -> getHelpForm,
+
+        "navTitle" -> navTitle,
+        "navLinks" -> links,
+        "hasNavLinks" -> true,
+        "sidebar" -> sidebar,
+        "showPropositionLinks" -> true,
+        "langSelector" -> languageSelectorLanguages,
+        "optimizelyProjectId" -> "8427335536"
+    )
+
+    val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {
+        arguments ++ Map[String,Any](
+           "accessibilityFooterUrl" -> accessibilityFooterUrl
+            )
+    } else {
+        arguments
+    }
+
+    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article, extraArguments)
+}

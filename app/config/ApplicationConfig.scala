@@ -85,6 +85,9 @@ class ApplicationConfig @Inject()(
 
   lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
+  lazy val frontendTemplatePath: String =
+    config.getString("microservice.services.frontend-template-provider.path")
+
   //Application name
   lazy val appName = config.getString("appName")
 
@@ -93,6 +96,10 @@ class ApplicationConfig @Inject()(
   val saShuttered: Boolean = config.getBoolean("shuttering.sa")
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
+
+  val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
+
+  val accessibilityStatementToggle: Boolean = config.getBoolean("accessibilityStatement.enabled")
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
