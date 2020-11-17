@@ -77,10 +77,10 @@ class PayeMultipleYearsController @Inject()(
       case 0 => redirectToNoAts
       case 1 => redirectToMain(data.head.taxYear)
       case _ =>
-        val taxYears = data.map(_.taxYear)
+        val taxYears = data.map(_.taxYear).reverse
         Ok(payeMultipleYearsView(taxYears, atsYearFormMapping)).addingToSession(
-          taxYearFromKey -> taxYears.head.toString,
-          taxYearToKey   -> taxYears.last.toString
+          taxYearFromKey -> taxYears.last.toString,
+          taxYearToKey   -> taxYears.head.toString
         )
     }
 
@@ -89,14 +89,14 @@ class PayeMultipleYearsController @Inject()(
     def yearsTo: Int = request.session(taxYearToKey).toInt
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList, formWithErrors))
+        BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList.reverse, formWithErrors))
       },
       value => {
         value.year.map(_.toInt) match {
           case Some(taxYear) => redirectToMain(taxYear)
           case _ =>
             val emptyForm = atsYearFormMapping.fill(TaxYearEnd(None))
-            BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList, emptyForm))
+            BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList.reverse, emptyForm))
         }
       }
     )

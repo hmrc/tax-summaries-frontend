@@ -88,7 +88,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Con
           val result = sut().onPageLoad(fakeAuthenticatedRequest)
 
           status(result) shouldBe OK
-          contentAsString(result) shouldBe multipleYearsView(taxYearList, AtsForms.atsYearFormMapping).toString
+          contentAsString(result) shouldBe multipleYearsView(taxYearList.reverse, AtsForms.atsYearFormMapping).toString
         }
       }
 
