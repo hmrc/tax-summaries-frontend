@@ -27,6 +27,7 @@ import utils.GenericViewModel
 import view_models.Allowances
 import views.html.TaxFreeAmountView
 import views.html.errors.{GenericErrorView, TokenErrorView}
+import uk.gov.hmrc.renderer.TemplateRenderer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,6 +40,7 @@ class AllowancesController @Inject()(
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
   implicit val formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {

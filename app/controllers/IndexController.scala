@@ -24,6 +24,7 @@ import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
@@ -43,6 +44,7 @@ class IndexController @Inject()(
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  override val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {

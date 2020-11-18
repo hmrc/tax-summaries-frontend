@@ -22,7 +22,7 @@
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView)
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
 
 @headerContent = {
     @taxsBreadcrumbView(List("breadcrumbs.taxs.index"), "token_error.html.title", 0)

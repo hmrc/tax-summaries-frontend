@@ -22,7 +22,7 @@
 
 @this(saMainView: SaMainView, backLinkView: BackLinkView)
 
-@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
 
 @headerContent = {
 @backLinkView(Messages("generic.back"))

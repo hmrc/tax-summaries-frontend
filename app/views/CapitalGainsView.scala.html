@@ -25,7 +25,7 @@
 
 @this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
-@(viewModel: view_models.CapitalGains, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel: view_models.CapitalGains, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
 
 @headerContent = {
   @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.capital_gains_tax.subtitle", viewModel.taxYear)

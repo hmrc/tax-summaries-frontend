@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
@@ -42,6 +43,7 @@ class ErrorController @Inject()(
   howTaxIsSpentView: HowTaxIsSpentView,
   serviceUnavailableView: ServiceUnavailableView)(
   implicit val formPartialRetriever: FormPartialRetriever,
+  implicit val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {

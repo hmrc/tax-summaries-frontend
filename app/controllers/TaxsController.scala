@@ -28,6 +28,7 @@ import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -38,6 +39,7 @@ abstract class TaxsController @Inject()(
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
   implicit ormPartialRetriever: FormPartialRetriever,
+  implicit val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with AccountUtils with AttorneyUtils with I18nSupport {

@@ -22,6 +22,7 @@ import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{GenericViewModel, TaxYearUtil}
 import view_models.NoATSViewModel
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -33,6 +34,7 @@ abstract class TaxYearRequest @Inject()(
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
