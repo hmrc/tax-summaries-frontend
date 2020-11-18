@@ -26,7 +26,7 @@
 
 @this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
 
-@(viewModel:PayeIncomeTaxAndNics)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(viewModel:PayeIncomeTaxAndNics, isWelshTaxPayer: Boolean)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @payeMainView(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
 
@@ -110,13 +110,17 @@
             <td class="numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
         </tr>
         }
-        </tbody>
-        <tfoot>
         <tr id="totalUkIncomeTax">
                 <th scope="row">@Messages("paye.ats.treasury_spending.total")</th>
                 <td class="numeric">@currencyAmountView(viewModel.totalUKIncomeTax, true)</td>
         </tr>
-        </tfoot>
+        @if(isWelshTaxPayer){
+        <tr id="welshIncomeTax">
+            <th scope="row" >@Messages("paye.ats.welsh_income_tax")</th>
+            <td class="numeric">@currencyAmountView(viewModel.welshIncomeTax, true)</td>
+        </tr>
+        }
+        </tbody>
     </table>
   }
 
@@ -171,4 +175,5 @@
     @if(viewModel.employerContributions.nonZero) {
       <p id="employerContributions">@Messages("paye.ats.total_national_insurance_employer_contribution.title",viewModel.employerContributions.toTwoDecimalString)</p>
     }
+    <p id="incomeTaxBreakdownText">@Messages("paye.ats.summary.tax_and_nics.description-2")</p>
 }

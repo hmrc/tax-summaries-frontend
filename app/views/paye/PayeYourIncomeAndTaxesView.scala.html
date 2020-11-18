@@ -31,7 +31,17 @@
 
 @payeMainView(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear")) {
 
-@backLinkView(Messages("generic.back"))
+    <div class="hmrc-logo-print" aria-hidden="true">
+        <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
+        <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
+    </div>
+
+    @backLinkView(Messages("generic.back"))
+
+    <div class="print-this">
+        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
+        <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("paye.ats.summary.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
+    </div>
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.summary.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
@@ -69,8 +79,7 @@
             <span class="bold-small">@Html(Messages("paye.ats.summary.tax_and_nics.link"))</span><br>
             </a>
         </p>
-        <p>@Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate)</p>
-        <p>@Html(Messages("paye.ats.summary.tax_and_nics.description-2"))</p>
+        <p class="panel panel-border-wide">@Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate)</p>
     </section>
 
     <section id="income_after_tax_and_nics">

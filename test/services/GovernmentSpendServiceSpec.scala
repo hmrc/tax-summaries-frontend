@@ -95,9 +95,23 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
         "John",
         "Smith",
         Amount(200, "GBP"),
-        "",
+        "0002",
         Amount(500, "GBP")
       )
+    }
+
+    "return a isScottishTaxPayer as true when incomeTaxStatus is 0002" in {
+      val atsData = AtsTestData.govSpendingData
+      val result = sut.govSpend(atsData)
+
+      result.isScottishTaxPayer shouldBe true
+    }
+
+    "return a isScottishTaxPayer as false when incomeTaxStatus is not 0002" in {
+      val atsData = AtsTestData.govSpendingDataForWelshUser
+      val result = sut.govSpend(atsData)
+
+      result.isScottishTaxPayer shouldBe false
     }
   }
 
@@ -122,6 +136,21 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
       when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
         .successful(
           HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq(""))))
+
+      val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
+
+      result shouldBe expectedBody
+    }
+
+    "sort the categories in correct order for taxYear 18/19" in {
+
+      val taxYear = 2018
+
+      val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 5.5))
+
+      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
+        .successful(
+          HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":5.5, "Welfare":23.4}"""), Map("" -> Seq(""))))
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
