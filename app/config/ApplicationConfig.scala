@@ -69,7 +69,7 @@ class ApplicationConfig @Inject()(
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
-  lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
+  lazy val assetsPrefix = config.getString(s"assets.url") + config.getString(s"assets.version") + '/'
 
   // External urls
   lazy val loginCallback = getConf(s"login-callback.url")
