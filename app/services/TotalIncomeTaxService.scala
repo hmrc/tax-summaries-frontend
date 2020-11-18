@@ -101,6 +101,7 @@ class TotalIncomeTaxService @Inject()(atsService: AtsService, atsYearListService
       scottishTax,
       payload("total_income_tax"),
       payload("scottish_income_tax"),
+      payload("welsh_income_tax"),
       savingsTax,
       atsData.income_tax.flatMap(_.incomeTaxStatus).getOrElse(""),
       rates("starting_rate_for_savings_rate"),

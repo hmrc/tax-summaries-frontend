@@ -149,12 +149,12 @@
     </table>
     }
 
-    @if(viewModel.incomeTaxStatus == "0002" && viewModel.restOfUkTotal.nonZero) {
+    @if(viewModel.isScottishTaxPayer && viewModel.scottishAndRestOfUkTotal.nonZero) {
         <table id="total-uk-income-tax">
             <tbody>
             <tr>
                 <th scope="row">@Html(Messages("ats.total_income_tax.scottish_income_uk_income_tax.table.total"))</th>
-                <td id="total-uk-income-tax-amount" class="no-bold">@currencyAmountView(viewModel.restOfUkTotal)</td>
+                <td id="total-uk-income-tax-amount" class="no-bold">@currencyAmountView(viewModel.scottishAndRestOfUkTotal)</td>
             </tr>
             </tbody>
         </table>
@@ -200,13 +200,19 @@
     <table id="total-income-tax">
       <tbody>
         <tr>
-          <th scope="row">@Html(Messages("ats.total_income_tax.total_income_tax"))</th>
+          <th scope="row">@Messages("ats.total_income_tax.total_income_tax")</th>
           <td id="total-income-tax-amount" class="no-bold">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTax))</td>
         </tr>
-        @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
+        @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
         <tr>
-          <td class="scottish-income-tax">@Html(Messages("ats.total_income_tax.table.scottish_income_tax"))</td>
+          <td class="scottish-income-tax">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
           <td id="scottish-income-tax-amount" class="scottish-income-tax">@currencyAmountView(viewModel.scottishIncomeTax)</td>
+        </tr>
+        }
+        @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
+        <tr>
+            <td class="scottish-income-tax">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
+            <td id="welsh-income-tax-amount" class="scottish-income-tax">@currencyAmountView(viewModel.welshIncomeTax)</td>
         </tr>
         }
       </tbody>

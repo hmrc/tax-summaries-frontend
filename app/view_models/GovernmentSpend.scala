@@ -31,6 +31,8 @@ case class GovernmentSpend(
   scottishIncomeTax: Amount)
     extends GenericViewModel {
 
+  val isScottishTaxPayer: Boolean = (incomeTaxStatus == "0002")
+
   def sortedSpendData: List[(String, SpendData)] =
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
