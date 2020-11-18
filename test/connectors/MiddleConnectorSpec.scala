@@ -19,16 +19,16 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
-import models.{AtsData, AtsListData}
+import models.{AtsData, AtsErrorResponse, AtsListData, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.{testNino, testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
@@ -38,7 +38,7 @@ import scala.io.Source
 
 class MiddleConnectorSpec
     extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
-    with JsonUtil {
+    with JsonUtil with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -49,11 +49,11 @@ class MiddleConnectorSpec
       .build()
 
   implicit val hc = HeaderCarrier()
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+  implicit lazy val appConfig = inject[ApplicationConfig]
+  implicit lazy val ec = inject[ExecutionContext]
   private val currentYear = 2018
 
-  def sut = new MiddleConnector(app.injector.instanceOf[HttpClient])
+  def sut = new MiddleConnector(inject[HttpHandler])
 
   val utr = SaUtr(testUtr)
 
@@ -208,7 +208,41 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsList(utr).futureValue
 
-      result shouldBe atsListData
+      result shouldBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
+    }
+
+    "return 4xx response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+      val body = "No ATS List found"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(NOT_FOUND)
+            .withBody(body))
+      )
+
+      val result = sut.connectToAtsList(utr).futureValue
+
+      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+    }
+
+    "return 5xx response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+      val body = "Something went wrong"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(INTERNAL_SERVER_ERROR)
+            .withBody(body))
+      )
+
+      val result = sut.connectToAtsList(utr).futureValue
+
+      result shouldBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
@@ -221,7 +255,8 @@ class MiddleConnectorSpec
             .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
-      a[BadRequestException] should be thrownBy await(sut.connectToAtsList(utr))
+
+      sut.connectToAtsList(utr).futureValue shouldBe a[AtsErrorResponse]
     }
   }
 
@@ -240,20 +275,41 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
-      result shouldBe atsListData
+      result shouldBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
-    "return BadRequest response" in {
+    "return 4xx response" in {
 
       val url = s"/taxs/" + utr + "/" + "ats-list"
+      val body = "No ATS List found"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Bad Request"))
+            .withStatus(NOT_FOUND)
+            .withBody(body))
       )
-      a[BadRequestException] should be thrownBy await(sut.connectToAtsListOnBehalfOf(uar, utr))
+
+      val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
+
+      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+    }
+
+    "return 5xx response" in {
+
+      val url = s"/taxs/" + utr + "/" + "ats-list"
+      val body = "Something went wrong"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(INTERNAL_SERVER_ERROR)
+            .withBody(body))
+      )
+
+      val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
+
+      result shouldBe a[AtsErrorResponse]
     }
   }
 
