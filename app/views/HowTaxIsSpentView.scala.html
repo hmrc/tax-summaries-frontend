@@ -1,0 +1,67 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import views.html.includes.SaMainView
+@import views.html.includes.TaxsBreadcrumbView
+@import views.html.helpers.BackLinkView
+
+@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView)
+
+@(spendData: Seq[(String, Double)], taxYear: Int)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+
+@saMainView(Messages("ats.howYourTaxWasSpent.heading"), "") {
+
+@backLinkView(Messages("generic.back"))
+
+    <div class="print-this">
+        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
+        <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("ats.treasury_spending.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
+    </div>
+
+    <h1 class="heading-xlarge">@messages("ats.howYourTaxWasSpent.heading")</h1>
+
+    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", taxYear.toString, (taxYear+1).toString))</p>
+    <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
+
+
+    <table id="howTaxIsSpentTable">
+        <thead>
+        <tr>
+            <th scope="col">@messages("generic.description")</th>
+            <th scope="col">@messages("ats.howYourTaxWasSpent.table.percentage.title")</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        @{
+            spendData.map { case (name, percentage) =>
+                <tr>
+                    <td>
+                        {messages(s"ats.treasury_spending.table.$name")}
+                    </td>
+                    <td>
+                        {percentage}%
+                    </td>
+                </tr>
+            }
+
+        }
+
+        </tbody>
+    </table>
+}

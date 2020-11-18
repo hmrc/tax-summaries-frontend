@@ -19,14 +19,13 @@ package connectors
 import com.google.inject.Inject
 import config.ApplicationConfig
 import models.{AtsData, AtsListData}
-import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: ApplicationConfig) {
+class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: ApplicationConfig, ec: ExecutionContext) {
 
   val serviceUrl = appConfig.serviceUrl
   val agentServiceUrl = appConfig.agentServiceUrl
@@ -48,4 +47,8 @@ class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: Applicatio
 
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data"))
+
+  def connectToGovernmentSpend(taxYear: Int, taxIdentifier: TaxIdentifier)(
+    implicit hc: HeaderCarrier): Future[HttpResponse] =
+    http.GET[HttpResponse](url(s"/taxs/government-spend/$taxYear/${taxIdentifier.value}"))
 }

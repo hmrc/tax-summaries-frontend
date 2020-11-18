@@ -201,17 +201,18 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
     "show the 'exit tax summaries' link on the no ats page" in {
 
-      val result = noAtsErrorView()(requestWithSession, messages, formPartialRetriever, appConfig)
-      val document = Jsoup.parse(contentAsString(result))
+      val spendData = fakeGovernmentSpend.govSpendAmountData.map {
+        case (k, v) =>
+          k -> v.percentage.toDouble
+      }
 
+      val result =
+        howTaxIsSpentView(spendData, fakeTaxYear)(requestWithSession, messages, formPartialRetriever, appConfig)
+      val document = Jsoup.parse(contentAsString(result))
       document.select("#proposition-links a").text should include("Back to HMRC Online Services")
       val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
+      href should be("https://online.hmrc.gov.uk/self-assessment/ind/")
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
-
-      document.select("#global-breadcrumb li:nth-child(2)").toString should include("<strong>No ATS available</strong>")
     }
 
     "show the 'exit tax summaries' link on the summaries page" in {
@@ -302,6 +303,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         amount,
         amount,
         ScottishTax.empty,
+        amount,
         amount,
         amount,
         SavingsTax.empty,

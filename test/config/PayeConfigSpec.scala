@@ -24,32 +24,6 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite
   implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
 
   "PayeConfig" should {
-    "retrieve spend categories in order for a valid year" in {
-      val config = new PayeConfig {
-        override protected val configPath: String = "paye.conf"
-        override val payeYear: Int = 2018
-      }
-
-      val expected = List(
-        "Welfare",
-        "Health",
-        "StatePensions",
-        "Education",
-        "Defence",
-        "NationalDebtInterest",
-        "Transport",
-        "PublicOrderAndSafety",
-        "BusinessAndIndustry",
-        "GovernmentAdministration",
-        "HousingAndUtilities",
-        "Environment",
-        "Culture",
-        "OverseasAid",
-        "UkContributionToEuBudget"
-      )
-
-      config.spendCategories shouldBe expected
-    }
 
     "retrieve scottish tax band keys in order for a valid year" in {
       val config = new PayeConfig {
@@ -97,15 +71,6 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite
       )
 
       config.adjustmentsKeys shouldBe expected
-    }
-
-    "throw an exception for an invalid year" in {
-      val config = new PayeConfig {
-        override protected val configPath: String = "paye.conf"
-        override val payeYear: Int = 2019
-      }
-
-      assertThrows[RuntimeException] { config.spendCategories }
     }
   }
 
