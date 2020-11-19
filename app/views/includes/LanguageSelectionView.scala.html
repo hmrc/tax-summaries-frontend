@@ -19,6 +19,7 @@
 @(
     langMap: Map[String, Lang],
     langToCall: String => Call,
+    includeLanguageSwitch: Boolean = true,
     dataAttr: Option[Map[String, String]] = None
 )(implicit
     messages: Messages
@@ -26,18 +27,20 @@
 
 <p class="langToggle">
 
-    @langMap.map { case (key: String, value: Lang) =>
-        @if(messages.lang != value) {
-            @Link.toInternalPage(
-                id      = Some(s"$key-switch"),
-                url     = s"${langToCall(key)}",
-                dataAttributes = dataAttr,
-                value   = Some(messages(s"view.languageToggle.$key"))
-            ).toHtml
-        } else {
-            @messages(s"view.languageToggle.$key")
-        }
+    @if(includeLanguageSwitch == true) {
+        @langMap.map { case (key: String, value: Lang) =>
+            @if(messages.lang != value) {
+                @Link.toInternalPage(
+                    id      = Some(s"$key-switch"),
+                    url     = s"${langToCall(key)}",
+                    dataAttributes = dataAttr,
+                    value   = Some(messages(s"view.languageToggle.$key"))
+                ).toHtml
+            } else {
+                @messages(s"view.languageToggle.$key")
+            }
 
-        @if(key != langMap.last._1) { | }
+            @if(key != langMap.last._1) { | }
+        }
     }
 </p>

@@ -28,6 +28,7 @@
 
 @(title: String,
 userLoggedIn: Boolean = true,
+includeLanguageSwitch: Boolean = true,
 serviceInfoContent: Option[Html] = None,
 showFeedbackLinkInBetaBanner: Boolean = false,
 bodyClasses: Option[String] = None,
@@ -79,7 +80,8 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 
   @languageSelectionView(
         appConfig.languageMap,
-        appConfig.payeRouteToSwitchLanguage
+        appConfig.payeRouteToSwitchLanguage,
+        includeLanguageSwitch
   )
 
 }
