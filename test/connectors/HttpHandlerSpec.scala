@@ -35,7 +35,8 @@ import utils.WireMockHelper
 import scala.concurrent.ExecutionContext
 
 class HttpHandlerSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience with Injecting {
+    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
+    with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
