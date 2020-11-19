@@ -343,7 +343,7 @@ class AtsListServiceSpec
           whenReady(sut.getAtsYearList) { result =>
             result shouldBe Left(NOT_FOUND)
 
-            verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+            verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
               any[Request[AnyRef]],
               any[HeaderCarrier])
             verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -367,7 +367,7 @@ class AtsListServiceSpec
           whenReady(sut.getAtsYearList) { result =>
             result shouldBe Left(INTERNAL_SERVER_ERROR)
 
-            verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+            verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
               any[Request[AnyRef]],
               any[HeaderCarrier])
             verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
