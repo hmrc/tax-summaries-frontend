@@ -80,11 +80,12 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 }
 
 @contentHeader = {
-  @languageSelectionView(
-        appConfig.languageMap,
-        appConfig.payeRouteToSwitchLanguage,
-        includeLanguageSwitch
-  )
+    @if(includeLanguageSwitch) {
+        @languageSelectionView(
+            appConfig.languageMap,
+            appConfig.payeRouteToSwitchLanguage,
+        )
+    }
 }
 
 @mainContentHeader = {

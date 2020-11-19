@@ -27,9 +27,8 @@
 
 <p class="langToggle">
 
-    @if(includeLanguageSwitch == true) {
-        @langMap.map { case (key: String, value: Lang) =>
-            @if(messages.lang != value) {
+    @langMap.map { case (key: String, value: Lang) =>
+        @if(messages.lang != value) {
                 @Link.toInternalPage(
                     id      = Some(s"$key-switch"),
                     url     = s"${langToCall(key)}",
@@ -39,8 +38,7 @@
             } else {
                 @messages(s"view.languageToggle.$key")
             }
-
             @if(key != langMap.last._1) { | }
         }
-    }
+
 </p>
