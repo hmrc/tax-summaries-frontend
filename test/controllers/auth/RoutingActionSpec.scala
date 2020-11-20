@@ -16,6 +16,7 @@
 
 package controllers.auth
 import config.ApplicationConfig
+import controllers.auth.FakeAuthAction.mcc
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -54,15 +55,14 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
       "a user only has an IR-SA enrolment" in {
 
-        val retrievalResult: Future[Option[String] ~ Enrolments ~ Option[String]] =
+        val retrievalResult: Future[Enrolments ~ Option[String]] =
           Future.successful(
-            Some("123456789") ~ Enrolments(
-              Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated", None))) ~ None
+            Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated", None))) ~ None
           )
 
-        when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector)
+        val routingAction = new RoutingActionImpl(mockAuthConnector, mcc)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -72,16 +72,15 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
       "a user has an IR-SA enrolment and a nino" in {
 
-        val retrievalResult: Future[Option[String] ~ Enrolments ~ Option[String]] =
+        val retrievalResult: Future[Enrolments ~ Option[String]] =
           Future.successful(
-            Some("123456789") ~ Enrolments(
-              Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated", None))) ~ Some(
+            Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated", None))) ~ Some(
               testNino.nino)
           )
 
-        when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector)
+        val routingAction = new RoutingActionImpl(mockAuthConnector, mcc)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -94,12 +93,12 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
       "a user has a nino without an IR-SA enrolement" in {
 
-        val retrievalResult: Future[Option[String] ~ Enrolments ~ Option[String]] =
-          Future.successful(Some("123456789") ~ Enrolments(Set[Enrolment]()) ~ Some(testNino.nino))
+        val retrievalResult: Future[Enrolments ~ Option[String]] =
+          Future.successful(Enrolments(Set[Enrolment]()) ~ Some(testNino.nino))
 
-        when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector)
+        val routingAction = new RoutingActionImpl(mockAuthConnector, mcc)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -113,12 +112,12 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
       "a user had no nino or IR-SA enrolment" in {
 
-        val retrievalResult: Future[Option[String] ~ Enrolments ~ Option[String]] =
-          Future.successful(Some("123456789") ~ Enrolments(Set[Enrolment]()) ~ None)
+        val retrievalResult: Future[Enrolments ~ Option[String]] =
+          Future.successful(Enrolments(Set[Enrolment]()) ~ None)
 
-        when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn retrievalResult
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector)
+        val routingAction = new RoutingActionImpl(mockAuthConnector, mcc)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -131,10 +130,10 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
       "auth throws InsufficientEnrolments" in {
 
-        when(mockAuthConnector.authorise[Option[String] ~ Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn Future
+        when(mockAuthConnector.authorise[Enrolments ~ Option[String]](any(), any())(any(), any())) thenReturn Future
           .failed(InsufficientEnrolments("Oops"))
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector)
+        val routingAction = new RoutingActionImpl(mockAuthConnector, mcc)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -153,7 +152,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
         when(mockAuthConnector.authorise(any(), any())(any(), any()))
           .thenReturn(Future.failed(new SessionRecordNotFound))
 
-        val routingAction = new RoutingActionImpl(mockAuthConnector)
+        val routingAction = new RoutingActionImpl(mockAuthConnector, mcc)
         val controller = new Harness(routingAction)
 
         val result = controller.onPageLoad()(FakeRequest("", ""))

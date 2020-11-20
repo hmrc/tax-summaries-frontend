@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthAction, AuthenticatedRequest, RoutingAction}
-import models.ErrorResponse
-import play.api.mvc._
+import models.{AtsListData, ErrorResponse}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils._
@@ -109,29 +109,34 @@ class IndexController @Inject()(
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
-        atsListService.getAtsYearList flatMap { atsListData =>
-          {
-            val atsList = new AtsList(
-              atsListData.utr,
-              atsListData.taxPayer.get.taxpayer_name.get("forename"),
-              atsListData.taxPayer.get.taxpayer_name.get("surname"),
-              atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
-            )
-            Future.successful(Ok(taxsIndexView(atsList, formWithErrors)).withSession(session))
-          }
+        atsListService.getAtsYearList map { atsListData =>
+          handleServiceResult(
+            atsListData,
+            data => {
+              val atsList = AtsList(
+                data.utr,
+                data.taxPayer.get.taxpayer_name.get("forename"),
+                data.taxPayer.get.taxpayer_name.get("surname"),
+                data.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+              )
+              Ok(taxsIndexView(atsList, formWithErrors)).withSession(session)
+            }
+          )
         }
       },
       value => redirectWithYear(value.year.get.toInt)
     )
 
   def redirectWithYear(year: Int)(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    atsListService.getAtsYearList flatMap { atsListData =>
-      {
-        val taxYearListLength = atsListData.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))).length
-        Future(
+    atsListService.getAtsYearList map { atsListData =>
+      handleServiceResult(
+        atsListData,
+        data => {
+          val taxYearListLength = data.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))).length
           Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + year)
-            .withSession(request.session + ("TaxYearListLength" -> taxYearListLength.toString)))
-      }
+            .withSession(request.session + ("TaxYearListLength" -> taxYearListLength.toString))
+        }
+      )
     }
 
   // This is unused, it is only implemented to adhere to the interface
@@ -141,5 +146,12 @@ class IndexController @Inject()(
         result,
         atsYearFormMapping,
         getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+
+  private def handleServiceResult(optData: Either[Int, AtsListData], block: AtsListData => Result): Result =
+    optData match {
+      case Right(value)                      => block(value)
+      case Left(value) if value == NOT_FOUND => NotFound(routes.ErrorController.authorisedNoAts().url)
+      case _                                 => InternalServerError(routes.ErrorController.serviceUnavailable().url)
+    }
 
 }

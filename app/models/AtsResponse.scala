@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package models
 
-import controllers.ControllerBaseSpec
-import play.api.mvc.{AnyContent, BodyParser, Request, Result}
+sealed trait AtsResponse
 
-import scala.concurrent.{ExecutionContext, Future}
+sealed trait AtsSuccessResponse extends AtsResponse
 
-object FakeRoutingAction extends RoutingAction with ControllerBaseSpec {
+case object AtsSuccessResponse extends AtsSuccessResponse
 
-  override protected val executionContext: ExecutionContext = mcc.executionContext
+case class AtsSuccessResponseWithPayload[T](payload: T) extends AtsSuccessResponse
 
-  override def filter[A](request: Request[A]): Future[Option[Result]] = Future.successful(None)
-
-  override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+sealed trait AtsFailureResponse extends AtsResponse {
+  val message: String
 }
+
+case class AtsNotFoundResponse(message: String) extends AtsFailureResponse
+case class AtsErrorResponse(message: String) extends AtsFailureResponse
