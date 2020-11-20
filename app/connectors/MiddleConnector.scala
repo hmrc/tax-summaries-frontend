@@ -18,20 +18,20 @@ package connectors
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import models.{AtsData, AtsListData}
+import models.{AtsData, AtsListData, AtsResponse}
 import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: ApplicationConfig, ec: ExecutionContext) {
+class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: ApplicationConfig, ec: ExecutionContext) {
 
   val serviceUrl = appConfig.serviceUrl
-  val agentServiceUrl = appConfig.agentServiceUrl
+
+  def http: DefaultHttpClient = httpHandler.http
 
   def url(path: String) = s"$serviceUrl$path"
-  def agentUrl(path: String) = s"$agentServiceUrl$path"
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
     http.GET[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
@@ -39,10 +39,10 @@ class MiddleConnector @Inject()(http: HttpClient)(implicit appConfig: Applicatio
   def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
     connectToAts(requestedUTR, taxYear)
 
-  def connectToAtsList(UTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
-    http.GET[AtsListData](url("/taxs/" + UTR + "/ats-list"))
+  def connectToAtsList(UTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+    httpHandler.get[AtsListData](url("/taxs/" + UTR + "/ats-list"))
 
-  def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsListData] =
+  def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     connectToAtsList(requestedUTR)
 
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =

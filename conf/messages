@@ -185,6 +185,7 @@ ats.total_income_tax.table.other.increasing=Other adjustments that increase your
 ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Income Tax
 ats.total_income_tax.table.marriage_allowance_received=Less Your Marriage Allowance Received
 ats.total_income_tax.table.scottish_income_tax=This includes Scottish Income Tax of
+ats.total_income_tax.table.welsh_income_tax=This includes Welsh Income Tax of
 
 paye.ats.total_income_tax.title=Income Tax and National Insurance contributions
 paye.ats.total_income_tax.introParagraph=This shows how your tax was calculated.
@@ -428,7 +429,7 @@ global.page.not.found.error.contact.link.text=contact the Self Assessment helpli
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
 ats.howYourTaxWasSpent.heading = How tax was spent
-ats.howYourTaxWasSpent.subheading = This shows how the Income Tax and National Insurance contributions you paid for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
-ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties
+ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insurance contributions for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
+ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties.
 ats.howYourTaxWasSpent.table.department.title = Department spend
-ats.howYourTaxWasSpent.table.percentage.title  = Percentage of your tax
+ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
