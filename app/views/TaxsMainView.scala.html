@@ -18,50 +18,54 @@
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import views.html.main
-@import views.html.includes.TaxsBreadcrumbView
-@import views.html.helpers.BackLinkView
-@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
+@import views.html.helpers.HeaderSection
 
-@this(main: main, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, languageSelectionView: LanguageSelectionView)
+@this(
+    main: main,
+    headerSection: HeaderSection
+)
 
-@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
+@(  viewModel: view_models.Summary,
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-    @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.home", viewModel.year)
-
-    @if(actingAsAttorney.isDefined) {
-        <div class="nested-banner">
-            <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
-        </div>
-    }
-
-    @if(!actingAsAttorney.isDefined){
-        <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
-    }
-
-}
 
 @dataAttributes = {
     data-journey="@utils.Analytics.getAnalyticsAttribute(request, actingAsAttorney)"
 }
 
-@main(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
+@main(
+        title = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        mainDataAttributes = Option(dataAttributes),
+        actingAttorney = actingAsAttorney,
+        articleClasses = Some("full-width")
+    ) {
 
-    @backLinkView(Messages("generic.back"))
-    <h1 id="index-page-header">
-            <span class="gray heading-medium block-heading">
-                @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
-            </span>
-        @Html(Messages("ats.index.html.title"))
-    </h1>
-    <p class="lede" id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
+    @headerSection(Messages("generic.back"), viewModel, actingAsAttorney)
 
-    <div id="tax-summary">
-      <h2><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
-       <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>
-    </div>
-    <div id="tax-spent">
-      <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_spend_link")">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
-      <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
+    <div class="main-content">
+
+        <h1 id="index-page-header">
+                <span class="gray heading-medium block-heading">
+                    @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+                </span>
+            @Html(Messages("ats.index.html.title"))
+        </h1>
+        <p class="lede" id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
+
+        <div id="tax-summary">
+          <h2><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
+           <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>
+        </div>
+        <div id="tax-spent">
+          <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_spend_link")">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
+          <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
+        </div>
     </div>
 }

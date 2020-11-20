@@ -18,33 +18,22 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.layouts._
 @import play.twirl.api.HtmlFormat
+@import views.html.includes.{GoogleTagManagerView}
 
-
-@import views.html.includes.TaxsHeaderNavView
-@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
-
-@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView,
-uiHead: Head, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
-uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
+@this(
+    googleTagManagerView: GoogleTagManagerView,
+    uiArticle: Article
+)
 
 
 @(
     title: String,
-    utr: String,
-    userLoggedIn: Boolean = true,
-    serviceInfoContent: Option[Html] = None,
-    contentHeader: Option[Html] = None,
-    showFeedbackLinkInBetaBanner: Boolean = false,
-    bodyClasses: Option[String] = None,
     mainClasses: Option[String] = None,
     mainDataAttributes: Option[Html] = None,
     includeGridWrapper: Boolean = false,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
-    gaCalls: Option[(String,String) => Html] = None,
-    pageName:Option[String] = None,
-    sidebarLinks: Option[Html] = None,
-    disableSessionExpired: Boolean = false,
-    gaDimensions: Option[Map[String, Any]] = None
+    gaDimensions: Option[Map[String, Any]] = None,
+    articleClasses: Option[String] = None
 )(
     mainContent: Html
 )(
@@ -56,59 +45,44 @@ uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
 )
 
 
-@mustacheCheck(str: String) = @{
-    if(str.trim=="") false else str
-}
-
-
 @scriptElement = @{
-    Seq(Map("url" -> controllers.routes.Assets.versioned("javascripts/banner_close.js")),
-    Map("url" -> controllers.routes.Assets.versioned("javascripts/benefits.js")))
+    Map("url" -> routes.Assets.versioned("javascripts/ats-app.js"))
 }
 
 
 @linkElems = @{
-    Map("url" -> controllers.routes.Assets.versioned("stylesheets/benefits.css"))
+    Seq(
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs.css")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-ie6.css"), "ieVersionCondition" -> Some("6")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-ie7.css"), "ieVersionCondition" -> Some("7")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-ie8.css"), "ieVersionCondition" -> Some("8")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/magna-charta/magna-charta.css")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-print.css"), "print" -> Some("print"))
+    )
 }
-
-
-@links = @{
-    Map("url" -> controllers.routes.AccountController.signOut() , "text" -> messages("generic.sign_out"))
-}
-
 
 
 @getHelpForm = {
     @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
 }
 
-@pageTitle = {@title - @Messages("label.service_name") - GOV.UK}
+@pageTitle = {@title - @Messages("generic.ats") - GOV.UK}
 
-@sidebar = @{
 
+@isWelsh = @{
+    messages.lang.code == "cy" && appConfig.isWelshEnabled
 }
 
-@mainContentHeader = {
-}
-
-@isWelsh = {
-}
 
 @inlineScript = {
-
     @if(appConfig.isGtmEnabled == true) {
         @googleTagManagerView(appConfig.googleTagManagerId)
     }
-
-
 }
 
-@betaHeaderEnable = @{
-    true
-}
 
 @article = @{
-    uiArticle(mainContent, includeGridWrapper)
+    uiArticle(mainContent, includeGridWrapper, articleClasses)
 }
 
 
@@ -119,15 +93,9 @@ uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
     ) ++ gaDimensions.getOrElse(Map.empty)
 }
 
-
-
-@userDisplayName = {}
-
 @navTitle = @{
-    Some(pageName)
+    Some(messages("generic.ats"))
 }
-
-
 
 @accessibilityFooterUrl = {
 
@@ -137,44 +105,29 @@ uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
 
     val languageSelectorLanguages = if (appConfig.isWelshEnabled) {
         Map("enUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("english"),
-            "cyUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("cymraeg")
+            "cyUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("welsh")
         )
         } else {
             Map.empty
         }
 
-        val arguments:Map[String,Any] = Map[String, Any](
+    val arguments:Map[String,Any] = Map[String, Any](
         "pageTitle" -> Some(pageTitle),
         "linkElems" -> linkElems,
         "scriptElems" -> scriptElement,
         "assetsPath" -> appConfig.assetsPrefix,
-
-        "fullWidthBannerText" -> messages("paye.benefits.medben.home.banner.recruitment.link"),
-        "fullWidthBannerLink" -> messages("paye.benefits.medben.home.banner.recruitment.linkURL"),
-        "fullWidthBannerDismissText" -> messages("paye.benefits.medben.home.banner.recruitment.reject"),
-
         "mainClass" -> mainClasses,
         "mainAttributes" -> mainDataAttributes,
-        "mainContentHeader" -> mainContentHeader,
-
         "isWelsh" -> isWelsh,
         "signOutUrl" -> controllers.routes.AccountController.signOut(),
         "googleAnalytics" -> googleAnalytics,
         "ssoUrl" -> None,
-
-        "betaBanner" -> betaHeaderEnable,
-        "includeHMRCBranding" -> true,
-
         "inlineScript" -> inlineScript,
         "getHelpForm" -> getHelpForm,
-
         "navTitle" -> navTitle,
-        "navLinks" -> links,
-        "hasNavLinks" -> true,
-        "sidebar" -> sidebar,
         "showPropositionLinks" -> true,
         "langSelector" -> languageSelectorLanguages,
-        "optimizelyProjectId" -> "8427335536"
+        "optimizelyProjectId" -> appConfig.optimizelyProjectId
     )
 
     val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {
