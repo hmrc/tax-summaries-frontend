@@ -83,7 +83,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
     @if(includeLanguageSwitch) {
         @languageSelectionView(
             appConfig.languageMap,
-            appConfig.payeRouteToSwitchLanguage,
+            appConfig.payeRouteToSwitchLanguage
         )
     }
 }
