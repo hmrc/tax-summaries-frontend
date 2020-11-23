@@ -38,7 +38,7 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
     new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc: ControllerComponents = stubControllerComponents()
 
-  val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
+  lazy val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
     messagesActionBuilder,
     DefaultActionBuilder(stubBodyParser[AnyContent]()),
     cc.parsers,
