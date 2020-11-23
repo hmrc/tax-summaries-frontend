@@ -22,7 +22,7 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.paye.PayeAtsMain
 import views.html.paye.PayeTaxsMainView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAtsMainController @Inject()(
   payeAtsService: PayeAtsService,
@@ -42,22 +42,21 @@ class PayeAtsMainController @Inject()(
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  val payeYear = appConfig.payeYear
+  def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request =>
+    getPayeAts(taxYear)
+  }
 
-  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    payeAtsService.getPayeATSData(request.nino, payeYear).map {
+  private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
+    payeAtsService.getPayeATSData(request.nino, taxYear).map {
 
-      case Right(_: PayeAtsData) => {
-        Ok(payeTaxsMainView(PayeAtsMain(payeYear)))
-      }
+      case Right(_: PayeAtsData) =>
+        Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(response: HttpResponse) =>
         response.status match {
-          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
-          case _ => {
+          case NOT_FOUND => Redirect(routes.PayeErrorController.authorisedNoAts())
+          case _ =>
             Logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
-          }
+            Redirect(routes.PayeErrorController.genericError(response.status))
         }
     }
-  }
 }
