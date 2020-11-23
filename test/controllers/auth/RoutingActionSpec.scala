@@ -103,7 +103,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
         val result = controller.onPageLoad()(FakeRequest("", ""))
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeAtsMainController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeMultipleYearsController.onPageLoad().url)
 
       }
     }

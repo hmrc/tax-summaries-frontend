@@ -45,7 +45,7 @@ class RoutingActionImpl @Inject()(override val authConnector: DefaultAuthConnect
 
           case (true, _) => Future.successful(None)
           case (false, Some(_)) =>
-            Future.successful(Some(Redirect(controllers.paye.routes.PayeAtsMainController.show())))
+            Future.successful(Some(Redirect(controllers.paye.routes.PayeMultipleYearsController.onPageLoad())))
           case _ => Future.successful(Some(Redirect(controllers.routes.ErrorController.authorisedNoAts())))
         }
       case _ => throw new RuntimeException("Can not find enrolments")
