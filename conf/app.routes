@@ -21,17 +21,20 @@ GET     /language/:lang                                        controllers.SaLan
 
 GET     /sign-out                                              controllers.AccountController.signOut
 
-GET     /paye/treasury-spending                                controllers.paye.PayeGovernmentSpendController.show
+GET     /paye/treasury-spending/:taxYear                       controllers.paye.PayeGovernmentSpendController.show(taxYear: Int)
 
-GET     /paye/main                                             controllers.paye.PayeAtsMainController.show
+GET     /paye/main                                             controllers.paye.PayeMultipleYearsController.onPageLoad
+POST    /paye/main                                             controllers.paye.PayeMultipleYearsController.onSubmit
 
-GET     /paye/summary                                          controllers.paye.PayeYourIncomeAndTaxesController.show
+GET     /paye/main/:taxYear                                    controllers.paye.PayeAtsMainController.show(taxYear: Int)
 
-GET     /paye/income-tax-and-national-insurance                controllers.paye.PayeIncomeTaxAndNicsController.show
+GET     /paye/summary/:taxYear                                 controllers.paye.PayeYourIncomeAndTaxesController.show(taxYear: Int)
 
-GET     /paye/income-before-tax                                controllers.paye.PayeYourTaxableIncomeController.show
+GET     /paye/income-tax-and-national-insurance/:taxYear       controllers.paye.PayeIncomeTaxAndNicsController.show(taxYear: Int)
 
-GET     /paye/tax-free-amount                                  controllers.paye.PayeTaxFreeAmountController.show
+GET     /paye/income-before-tax/:taxYear                       controllers.paye.PayeYourTaxableIncomeController.show(taxYear: Int)
+
+GET     /paye/tax-free-amount/:taxYear                         controllers.paye.PayeTaxFreeAmountController.show(taxYear: Int)
 
 GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 

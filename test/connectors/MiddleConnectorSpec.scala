@@ -23,7 +23,7 @@ import models.{AtsData, AtsErrorResponse, AtsListData, AtsNotFoundResponse, AtsS
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Injecting
@@ -52,6 +52,7 @@ class MiddleConnectorSpec
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit lazy val ec = inject[ExecutionContext]
   private val currentYear = 2018
+  private val currentYearMinus1 = currentYear - 1
 
   def sut = new MiddleConnector(inject[HttpHandler])
 
@@ -310,6 +311,83 @@ class MiddleConnectorSpec
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
       result shouldBe a[AtsErrorResponse]
+    }
+  }
+
+  "connectToPayeATSMultipleYears" should {
+
+    val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
+
+    "return successful response" in {
+
+      val expectedResponse: String = loadAndReplace("/paye_ats_multiple_years.json", Map("$nino" -> testNino.nino))
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(expectedResponse))
+      )
+
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+
+      result.json shouldBe Json.parse(expectedResponse)
+    }
+
+    "return BadRequest response" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(BAD_REQUEST)
+            .withBody("Bad Request"))
+      )
+
+      a[BadRequestException] should be thrownBy await(
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
+
+    }
+
+    "return NotFound response" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(NOT_FOUND)
+            .withBody("Not found")
+        )
+      )
+
+      intercept[NotFoundException] {
+        await(sut.connectToGovernmentSpend(currentYear, testNino))
+      }
+    }
+
+    "return a InternalServerError response" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(INTERNAL_SERVER_ERROR)
+            .withBody("An error occurred"))
+      )
+      a[Upstream5xxResponse] should be thrownBy await(
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
+
+    }
+
+    "return an exception when a fault with the request occurs" in {
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withFault(Fault.MALFORMED_RESPONSE_CHUNK)
+        )
+      )
+
+      intercept[Exception] {
+        await(sut.connectToGovernmentSpend(currentYear, testNino))
+      }
     }
   }
 
