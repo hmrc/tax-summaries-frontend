@@ -161,7 +161,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       document.getElementById("additional-rate-income-tax-rate").text() shouldBe "45%"
 
       document.getElementById("ordinary-rate-amount").text() shouldBe "£50"
-      document.getElementById("total-income-tax-amount").text() shouldBe "£372"
+      document.getElementById("total-income-tax-amount-nics").text() shouldBe "£372"
 
       document.toString should include("Total Income Tax")
       document.getElementById("user-info").text should include("forename surname")
@@ -385,7 +385,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-income-tax-amount").text() should equal("£0")
+      document.getElementById("total-income-tax-amount-nics").text() should equal("£0")
     }
 
   }
