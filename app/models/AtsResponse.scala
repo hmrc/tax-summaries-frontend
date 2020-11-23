@@ -16,10 +16,17 @@
 
 package models
 
-import play.api.libs.json.Json
+sealed trait AtsResponse
 
-case class AtsListData(utr: String, taxPayer: Option[TaxpayerFrontTierData], atsYearList: Option[List[Int]])
+sealed trait AtsSuccessResponse extends AtsResponse
 
-object AtsListData {
-  implicit val formats = Json.format[AtsListData]
+case object AtsSuccessResponse extends AtsSuccessResponse
+
+case class AtsSuccessResponseWithPayload[T](payload: T) extends AtsSuccessResponse
+
+sealed trait AtsFailureResponse extends AtsResponse {
+  val message: String
 }
+
+case class AtsNotFoundResponse(message: String) extends AtsFailureResponse
+case class AtsErrorResponse(message: String) extends AtsFailureResponse

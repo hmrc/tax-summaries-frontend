@@ -958,6 +958,14 @@ a, a:visited {color:#005ea5;}
     margin-bottom: 0.5em;
 }
 
+.heading-48 {
+    margin-bottom: 15px;
+}
+
+.form-group-error .heading-48 {
+    margin-top: 0;
+}
+
 #howTaxIsSpentTable td:first-child, #totalUkIncomeTax th {
     font-weight: 700;
 }
@@ -969,4 +977,3 @@ a, a:visited {color:#005ea5;}
 #national-insurance-contribution-table {
     margin-top: 2.0em;
 }
-

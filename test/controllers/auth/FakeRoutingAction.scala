@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package controllers.auth
 
-import play.api.libs.json.Json
+import controllers.ControllerBaseSpec
+import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 
-case class AtsListData(utr: String, taxPayer: Option[TaxpayerFrontTierData], atsYearList: Option[List[Int]])
+import scala.concurrent.{ExecutionContext, Future}
 
-object AtsListData {
-  implicit val formats = Json.format[AtsListData]
+object FakeRoutingAction extends RoutingAction with ControllerBaseSpec {
+
+  override protected val executionContext: ExecutionContext = mcc.executionContext
+
+  override def filter[A](request: Request[A]): Future[Option[Result]] = Future.successful(None)
+
+  override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 }

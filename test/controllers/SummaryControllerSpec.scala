@@ -22,7 +22,7 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,6 +30,7 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{Amount, NoATSViewModel, Rate, Summary}
+
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 
@@ -57,7 +58,7 @@ object SummaryControllerSpec {
   )
 }
 
-class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with PropertyChecks {
+class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with ScalaCheckPropertyChecks {
 
   val taxYear = 2014
   val request = AuthenticatedRequest(
