@@ -19,10 +19,24 @@
 @import config.ApplicationConfig
 
 @this(taxsBreadcrumbView: TaxsBreadcrumbView)
-@(pageHeading: String=null, viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit messages: Messages, request: AuthenticatedRequest[_], appConfig: ApplicationConfig)
+
+@(  pageHeading: String=null,
+    taxYear: Int,
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+    breadcrumbLinks: List[String],
+    currentBreadcrumbLink: String
+    )(
+    implicit messages: Messages,
+    request: AuthenticatedRequest[_],
+    appConfig: ApplicationConfig
+)
 
 
-@taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.home", viewModel.year)
+@taxsBreadcrumbView(
+    breadcrumbLinks,
+    currentBreadcrumbLink,
+    taxYear
+)
 
 @if(actingAsAttorney.isDefined) {
     <div class="nested-banner">
@@ -31,7 +45,14 @@
 }
 
 @if(!actingAsAttorney.isDefined){
-    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
+    @(request.name) map { name =>
+        (name.name, name.lastName, request.utr) match {
+            case (Some(foreName), Some(surName), Some(utr)) =>
+            <p id="user-info"><strong>@foreName @surName</strong> <br>@Html(Messages("generic.utr")) @utr.value</p>
+            case _ => ""
+        }
+    }
+
 }
 
 <div class="js-visible">

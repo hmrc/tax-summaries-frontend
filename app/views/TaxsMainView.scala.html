@@ -40,6 +40,7 @@
     data-journey="@utils.Analytics.getAnalyticsAttribute(request, actingAsAttorney)"
 }
 
+
 @main(
         title = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         mainDataAttributes = Option(dataAttributes),
@@ -47,7 +48,15 @@
         articleClasses = Some("full-width")
     ) {
 
-    @headerSection(Messages("generic.back"), viewModel, actingAsAttorney)
+    @headerSection(
+        pageHeading = Messages("ats.index.html.title"),
+        taxYear = viewModel.year,
+        actingAsAttorney = actingAsAttorney,
+        breadcrumbLinks = List(
+            "breadcrumbs.taxs.select_tax_year"
+        ),
+        currentBreadcrumbLink = "breadcrumbs.taxs.home"
+    )
 
     <div class="main-content">
 

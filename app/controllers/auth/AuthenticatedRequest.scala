@@ -17,6 +17,7 @@
 package controllers.auth
 
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.domain.{CtUtr, EmpRef, Nino, SaUtr, Uar, Vrn}
 
 case class AuthenticatedRequest[A](
@@ -27,5 +28,6 @@ case class AuthenticatedRequest[A](
   payeEmpRef: Option[EmpRef],
   ctUtr: Option[CtUtr],
   vrn: Option[Vrn],
+  name: Option[Name],
   request: Request[A])
     extends WrappedRequest[A](request)
