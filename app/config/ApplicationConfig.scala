@@ -18,19 +18,15 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
+import play.api.Configuration
 import play.api.i18n.Lang
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
 
 @Singleton
-class ApplicationConfig @Inject()(
-  environment: Environment,
-  config: ServicesConfig,
-  runMode: RunMode,
-  configuration: Configuration) {
+class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, configuration: Configuration) {
 
-  def getConf(key: String) = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, runMode, appName).get()
 
@@ -100,6 +96,8 @@ class ApplicationConfig @Inject()(
   val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
 
   val accessibilityStatementToggle: Boolean = config.getBoolean("accessibilityStatement.enabled")
+
+  val payeMultipleYears: Boolean = config.getBoolean("paye.multipleYearsEnabled")
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))

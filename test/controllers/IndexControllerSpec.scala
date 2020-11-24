@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.DataCacheConnector
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction, FakeRoutingAction}
 import models.AtsListData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -37,6 +37,7 @@ import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
@@ -79,6 +80,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     mockAtsYearListService,
     mockAtsListService,
     mock[AuditService],
+    FakeRoutingAction,
     FakeAuthAction,
     mcc,
     taxsIndexView,

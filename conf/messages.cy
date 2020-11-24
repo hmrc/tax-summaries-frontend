@@ -54,6 +54,7 @@ ats.select_tax_year.title=Dewiswch y Flwyddyn Dreth
 ats.select_tax_year.continue=Parhau
 ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
 ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth
+ats.select_tax_year.label={0} i {1}
 
 # View ATS - Landing page
 #============================================================

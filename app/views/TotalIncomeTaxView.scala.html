@@ -215,22 +215,22 @@
         </table>
         }
 
-        <table id="total-income-tax">
+        <table id="total-income-tax-nics">
           <tbody>
             <tr>
               <th scope="row">@Messages("ats.total_income_tax.total_income_tax")</th>
-              <td id="total-income-tax-amount" class="no-bold">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTax))</td>
+              <td id="total-income-tax-amount-nics" class="no-bold">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTax))</td>
             </tr>
             @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
             <tr>
-              <td class="scottish-income-tax">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
-              <td id="scottish-income-tax-amount" class="scottish-income-tax">@currencyAmountView(viewModel.scottishIncomeTax)</td>
+              <td>@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
+              <td id="scottish-income-tax-amount">@currencyAmountView(viewModel.scottishIncomeTax)</td>
             </tr>
             }
             @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
             <tr>
-                <td class="scottish-income-tax">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
-                <td id="welsh-income-tax-amount" class="scottish-income-tax">@currencyAmountView(viewModel.welshIncomeTax)</td>
+                <td>@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
+                <td id="welsh-income-tax-amount">@currencyAmountView(viewModel.welshIncomeTax)</td>
             </tr>
             }
           </tbody>
