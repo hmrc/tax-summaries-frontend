@@ -26,9 +26,9 @@
 
 @headerContent = {
 @backLinkView(Messages("generic.back"))
-<h1>@Messages("ats.service_unavailable.heading")</h1>
+<h1>@appConfig.saAtsUnavailableHeadingUrl</h1>
 }
 
-@saMainView(title = Messages("ats.service_unavailable.title"), "", contentHeader = Option(headerContent)) {
-  <p>@Messages("ats.service_unavailable.paragraph")</p>
+@saMainView(title = appConfig.saAtsUnavailableParagraphUrl, "", contentHeader = Option(headerContent)) {
+  <p>@appConfig.saAtsUnavailableParagraphUrl</p>
 }

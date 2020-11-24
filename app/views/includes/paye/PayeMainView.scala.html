@@ -120,8 +120,8 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 @betaBanner = {
     @uiBetaBanner(
         userLoggedIn,
-appConfig.betaFeedbackUrl,
-appConfig.betaFeedbackUnauthenticatedUrl,
+        appConfig.betaFeedbackUrl,
+        appConfig.betaFeedbackUnauthenticatedUrl,
         showFeedbackLinkInBetaBanner
     )
 }
