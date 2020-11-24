@@ -24,7 +24,6 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
@@ -45,7 +44,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
@@ -63,9 +62,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
@@ -76,13 +75,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(
-          Left(
-            HttpResponse(
-              responseStatus = INTERNAL_SERVER_ERROR,
-              responseJson = Some(Json.toJson(INTERNAL_SERVER_ERROR)))))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(500).url
@@ -93,9 +88,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.toJson(BAD_REQUEST)))))
+        .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(400).url

@@ -41,19 +41,18 @@ class PayeYourIncomeAndTaxesController @Inject()(
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
-  val payeYear = appConfig.payeYear
-  def show: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
+
+  def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
-      payeAtsService.getPayeATSData(request.nino, payeYear).map {
+      payeAtsService.getPayeATSData(request.nino, taxYear).map {
 
         case Right(successResponse: PayeAtsData) => {
-          PayeYourIncomeAndTaxes.buildViewModel(successResponse, payeYear) match {
+          PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
             case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
-            case _ => {
+            case _ =>
               val exception = new InternalServerException("Missing Paye ATS data")
               Logger.error(s"Internal server error ${exception.getMessage}", exception)
               InternalServerError(exception.getMessage)
-            }
           }
         }
         case Left(response: HttpResponse) =>

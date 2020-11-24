@@ -183,6 +183,51 @@ object AtsTestData {
     None
   )
 
+  val govSpendingDataForWelshUser = AtsData(
+    2019,
+    Some("1111111111"),
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "scottish_income_tax" -> Amount(0, "GBP"),
+            "welsh_income_tax"    -> Amount(500, "GBP")
+          )
+        ),
+        None,
+        Some("0003")
+      )
+    ),
+    None,
+    None,
+    None,
+    None,
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        Some(
+          Map(
+            "welfare" -> SpendData(Amount(100, "GBP"), 10)
+          )
+        ),
+        Amount(200, "GBP"),
+        None
+      )
+    ),
+    Some(
+      UserData(
+        Some(
+          Map(
+            "title"    -> "Mr",
+            "forename" -> "John",
+            "surname"  -> "Smith"
+          )
+        )
+      )
+    ),
+    None
+  )
+
   val govSpendingData = AtsData(
     2019,
     Some("1111111111"),
@@ -194,7 +239,7 @@ object AtsTestData {
           )
         ),
         None,
-        None
+        Some("0002")
       )
     ),
     None,
@@ -348,6 +393,75 @@ object AtsTestData {
     Some(
       List(
         2018
+      )
+    )
+  )
+
+  val incomeTaxDataForWelshTaxPayer = AtsData(
+    2019,
+    Some("1111111111"),
+    Some(
+      DataHolder(
+        Some(
+          Map(
+            "starting_rate_for_savings"          -> Amount(100, "GBP"),
+            "starting_rate_for_savings_amount"   -> Amount(200, "GBP"),
+            "basic_rate_income_tax"              -> Amount(300, "GBP"),
+            "basic_rate_income_tax_amount"       -> Amount(400, "GBP"),
+            "higher_rate_income_tax"             -> Amount(500, "GBP"),
+            "higher_rate_income_tax_amount"      -> Amount(600, "GBP"),
+            "additional_rate_income_tax"         -> Amount(700, "GBP"),
+            "additional_rate_income_tax_amount"  -> Amount(800, "GBP"),
+            "ordinary_rate"                      -> Amount(900, "GBP"),
+            "ordinary_rate_amount"               -> Amount(1000, "GBP"),
+            "upper_rate"                         -> Amount(1100, "GBP"),
+            "upper_rate_amount"                  -> Amount(1200, "GBP"),
+            "additional_rate"                    -> Amount(1300, "GBP"),
+            "additional_rate_amount"             -> Amount(1400, "GBP"),
+            "other_adjustments_increasing"       -> Amount(1500, "GBP"),
+            "marriage_allowance_received_amount" -> Amount(1600, "GBP"),
+            "other_adjustments_reducing"         -> Amount(1700, "GBP"),
+            "savings_lower_rate_tax"             -> Amount.gbp(2900),
+            "savings_lower_income"               -> Amount.gbp(3000),
+            "savings_higher_rate_tax"            -> Amount.gbp(3100),
+            "savings_higher_income"              -> Amount.gbp(3200),
+            "savings_additional_rate_tax"        -> Amount.gbp(3300),
+            "savings_additional_income"          -> Amount.gbp(3400),
+            "total_income_tax"                   -> Amount(3500, "GBP"),
+            "welsh_income_tax"                   -> Amount(2600, "GBP")
+          )
+        ),
+        Some(
+          Map(
+            "starting_rate_for_savings_rate"  -> Rate("10%"),
+            "basic_rate_income_tax_rate"      -> Rate("20%"),
+            "higher_rate_income_tax_rate"     -> Rate("30%"),
+            "additional_rate_income_tax_rate" -> Rate("40%"),
+            "ordinary_rate_tax_rate"          -> Rate("50%"),
+            "upper_rate_rate"                 -> Rate("60%"),
+            "additional_rate_rate"            -> Rate("70%"),
+            "savings_lower_rate"              -> Rate("130%"),
+            "savings_higher_rate"             -> Rate("140%"),
+            "savings_additional_rate"         -> Rate("150%")
+          )
+        ),
+        Some("0003")
+      )
+    ),
+    None,
+    None,
+    None,
+    None,
+    None,
+    Some(
+      UserData(
+        Some(
+          Map(
+            "title"    -> "Mr",
+            "forename" -> "John",
+            "surname"  -> "Smith"
+          )
+        )
       )
     ),
     None

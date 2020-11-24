@@ -75,6 +75,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     ScottishTax.empty,
     totalIncomeTax = Amount(372, "GBP"),
     scottishIncomeTax = Amount(100, "GBP"),
+    welshIncomeTax = Amount(100, "GBP"),
     SavingsTax.empty,
     incomeTaxStatus = "0002",
     startingRateForSavingsRateRate = Rate("10%"),

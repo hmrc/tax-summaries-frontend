@@ -30,8 +30,6 @@ import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models.{Amount, NoATSViewModel}
-import views.html.{CapitalGainsView, TaxFreeAmountView}
-import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.Future
 

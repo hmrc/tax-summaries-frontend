@@ -19,23 +19,34 @@ package controllers.paye
 import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
-import play.api.i18n.Messages
+import play.api.libs.json.{Json, Reads}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import utils.JsonUtil
 import utils.TestConstants.testNino
+import view_models.paye.PayeAtsMain
 import views.html.paye.PayeTaxsMainView
 
-class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
+class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with JsonUtil {
 
-  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  def sut = new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeTaxsMainView])
+  lazy val mainView = inject[PayeTaxsMainView]
 
-  "AtsMain controller" should {
+  def getSingleYearData: PayeAtsData =
+    parseData[PayeAtsData](
+      loadAndReplace("/paye_ats.json", Map("$nino" -> testNino.nino))
+    )
+
+  private def parseData[A](str: String)(implicit reads: Reads[A]): A = Json.parse(str).as[A]
+
+  def sut: PayeAtsMainController =
+    new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mcc, mainView)
+
+  "AtsMain controller" when {
 
     "return OK response" in {
 
@@ -44,22 +55,10 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(mock[PayeAtsData]))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe 200
-
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.title should include(
-        Messages("paye.ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
-
-      document.getElementById("index-page-description").text() shouldBe (Messages("paye.ats.index.html.lede"))
-
-      document.getElementById("tax-services-link").text shouldBe (Messages("paye.ats.index.html.tax_spend_link"))
-
-      document.getElementsByTag("p").get(1).text shouldBe (Messages("English | Cymraeg"))
-      document.getElementsByTag("p").get(2).text shouldBe (Messages("paye.ats.index.html.lede"))
-      document.getElementsByTag("p").get(3).text shouldBe (Messages("paye.ats.index.html.tax_calc_description"))
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe mainView(PayeAtsMain(taxYear)).toString
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
@@ -67,9 +66,9 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND)))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "Not found")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.PayeErrorController.authorisedNoAts().url)
@@ -80,9 +79,9 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with Controlle
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)

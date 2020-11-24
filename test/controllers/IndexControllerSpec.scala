@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.DataCacheConnector
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction, FakeRoutingAction}
 import models.AtsListData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -37,6 +37,7 @@ import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.AtsForms._
 import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
@@ -79,6 +80,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     mockAtsYearListService,
     mockAtsListService,
     mock[AuditService],
+    FakeRoutingAction,
     FakeAuthAction,
     mcc,
     taxsIndexView,
@@ -204,7 +206,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
       )
 
       when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
 
       val result = sut.agentAwareShow(request)
 
@@ -305,7 +307,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     "give a Ok status and stay on the same page if form errors and display the error" in {
 
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(data)
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
       val atsYear = Map("atsYear" -> "")
       val form = atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(
@@ -333,6 +335,91 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+    }
+
+    "return 404 if service returns 404" in {
+
+      val atsYear = Map("atsYear" -> "")
+      val form = atsYearFormMapping.bind(atsYear)
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
+
+      when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(NOT_FOUND))
+
+      val result = sut.onSubmit(requestWithQuery)
+
+      status(result) shouldBe NOT_FOUND
+    }
+
+    "return 500 if service returns 500" in {
+
+      val atsYear = Map("atsYear" -> "")
+      val form = atsYearFormMapping.bind(atsYear)
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
+
+      when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(INTERNAL_SERVER_ERROR))
+
+      val result = sut.onSubmit(requestWithQuery)
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+    }
+  }
+
+  "redirectWithYear" should {
+
+    "redirect to main page with tax year" when {
+
+      "connector returns list data" in {
+
+        when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Right(data))
+
+        val result = sut.redirectWithYear(taxYear)(request)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe
+          Some(s"${routes.AtsMainController.authorisedAtsMain().url}?taxYear=$taxYear")
+      }
+    }
+
+    "return 404" when {
+
+      "the connector returns 404" in {
+
+        when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(NOT_FOUND))
+
+        val result = sut.redirectWithYear(taxYear)(request)
+
+        status(result) shouldBe NOT_FOUND
+      }
+    }
+
+    "return 500" when {
+
+      "the connector returns 500" in {
+
+        when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(INTERNAL_SERVER_ERROR))
+
+        val result = sut.redirectWithYear(taxYear)(request)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 }

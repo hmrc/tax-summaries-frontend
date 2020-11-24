@@ -59,6 +59,7 @@ trait TestConstants {
     ScottishTax.empty,
     Amount.empty,
     Amount.empty,
+    Amount.empty,
     SavingsTax.empty,
     "",
     Rate.empty,
