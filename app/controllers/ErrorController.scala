@@ -43,7 +43,7 @@ class ErrorController @Inject()(
   howTaxIsSpentView: HowTaxIsSpentView,
   serviceUnavailableView: ServiceUnavailableView)(
   implicit val formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
+  implicit val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
