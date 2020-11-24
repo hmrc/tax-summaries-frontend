@@ -17,113 +17,130 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import views.html.includes.SaMainView
-@import views.html.includes.TaxsBreadcrumbView
-@import views.html.helpers.BackLinkView
 @import views.html.includes.CurrencyAmountView
+@import views.html.main
+@import views.html.helpers.HeaderSection
 
-@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+@this(
+    main: main,
+    headerSection: HeaderSection,
+    currencyAmountView: CurrencyAmountView
+)
 
-@(viewModel: view_models.GovernmentSpend, percent: (Double, Double, Double), actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(  viewModel: view_models.GovernmentSpend, percent: (Double, Double, Double),
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-    @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index"), "breadcrumbs.taxs.treasury_spending", viewModel.taxYear)
+
+@main(
+        Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        actingAttorney = actingAsAttorney,
+        articleClasses = Some("full-width")
+    ) {
+
 
     <div class="hmrc-logo-print" aria-hidden="true">
         <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
         <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
     </div>
 
-    @if(actingAsAttorney.isDefined) {
-        <div class="nested-banner">
-            <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+    @headerSection(
+        pageHeading = Messages("ats.treasury_spending.title"),
+        name = viewModel.userForename + ' ' + viewModel.userSurname,
+        utr = viewModel.userUtr,
+        taxYear = viewModel.taxYear,
+        actingAsAttorney = actingAsAttorney,
+        breadcrumbLinks = List(
+            "breadcrumbs.taxs.select_tax_year",
+            "breadcrumbs.taxs.index"
+        ),
+        currentBreadcrumbLink = "breadcrumbs.taxs.treasury_spending"
+    )
+
+    <div class="main-content">
+
+        <div class="print-this">
+            <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
+            <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("paye.ats.summary.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
         </div>
-    }
-    @if(actingAsAttorney.isEmpty){
-        <p id="user-info"><strong>@viewModel.userForename  @viewModel.userSurname</strong> <br>@Html(Messages("generic.utr")) @viewModel.userUtr</p>
-    }
 
 
-}
-
-@saMainView(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
-
-    @backLinkView(Messages("generic.back"))
-
-    <div class="print-this">
-        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
-        <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("ats.treasury_spending.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
-    </div>
-
-    <h1>
-            <span class="gray heading-medium block-heading">
-                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-            </span>
-        @Html(Messages("ats.treasury_spending.title"))
-    </h1>
-            @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
-                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
-                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
-            } else {
-                <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
-            }
-
-            <table id="tax-spent" aria-hidden="false">
-                <thead>
-                <tr>
-                    <th scope="col">@Html(Messages("generic.description"))</th>
-                    <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                @viewModel.filteredDataWithHigherTransport.map {
-                    case (key, value) => {
-                        @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
-                        } else {
-                        @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
-                        } else {
-                        @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
-                        } else {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
-                        }
-                    } }
-                    }
+        <h1>
+                <span class="gray heading-medium block-heading">
+                    @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+                </span>
+            @Html(Messages("ats.treasury_spending.title"))
+        </h1>
+                @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
+                    <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
+                    <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
+                } else {
+                    <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
                 }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th scope="row" id="gov-spend-total">@Html(Messages("ats.treasury_spending.total"))</th>
-                        <td class="no-bold">@currencyAmountView(viewModel.totalAmount, true)</td>
-                    </tr>
-                </tfoot>
-            </table>
 
-            <script>
-                var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];
-                var chart_toggle_text_ga = ['View this information as a table', 'View this information as a chart'];
-            </script>
+                <table id="tax-spent" aria-hidden="false">
+                    <thead>
+                    <tr>
+                        <th scope="col">@Html(Messages("generic.description"))</th>
+                        <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    @viewModel.filteredDataWithHigherTransport.map {
+                        case (key, value) => {
+                            @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
+                            <tr>
+                                <td id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
+                                    <span class="gray">(@value.percentage%)</span>
+                                </td>
+                                <td>@currencyAmountView(value.amount, true)</td>
+                            </tr>
+                            } else {
+                            @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
+                            <tr>
+                                <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
+                                    <span class="gray">(@value.percentage%)</span>
+                                </td>
+                                <td>@currencyAmountView(value.amount, true)</td>
+                            </tr>
+                            } else {
+                            @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
+                            <tr>
+                                <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
+                                    <span class="gray">(@value.percentage%)</span>
+                                </td>
+                                <td>@currencyAmountView(value.amount, true)</td>
+                            </tr>
+                            } else {
+                            <tr>
+                                <td id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
+                                    <span class="gray">(@value.percentage%)</span>
+                                </td>
+                                <td>@currencyAmountView(value.amount, true)</td>
+                            </tr>
+                            }
+                        } }
+                        }
+                    }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th scope="row" id="gov-spend-total">@Html(Messages("ats.treasury_spending.total"))</th>
+                            <td class="no-bold">@currencyAmountView(viewModel.totalAmount, true)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+    </div>
+    <script>
+        var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];
+        var chart_toggle_text_ga = ['View this information as a table', 'View this information as a chart'];
+    </script>
+
 }
