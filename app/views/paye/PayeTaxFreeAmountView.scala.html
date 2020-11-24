@@ -16,21 +16,32 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeTaxFreeAmount
-@import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
-@import views.html.includes.paye.PayeMainView
+@import views.html.main
 @import views.html.helpers.BackLinkView
 @import views.html.includes.CurrencyAmountView
 
-@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+@this(
+    main: main,
+	backLinkView: BackLinkView,
+	currencyAmountView: CurrencyAmountView
+)
 
-@(viewModel:PayeTaxFreeAmount)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(	viewModel:PayeTaxFreeAmount
+	)(
+	implicit messages: Messages,
+	request: Request[_],
+	formPartialRetriever: FormPartialRetriever,
+	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+	appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)) {
+@main(
+		title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd)
+	) {
 
-@backLinkView(Messages("generic.back"))
+	@backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.tax_free_amount.title"))</h1>
 	<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",

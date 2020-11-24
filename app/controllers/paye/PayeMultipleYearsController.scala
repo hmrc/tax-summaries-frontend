@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import view_models.AtsForms.atsYearFormMapping
 import view_models.TaxYearEnd
 import views.html.paye.PayeMultipleYearsView
+import uk.gov.hmrc.renderer.TemplateRenderer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,6 +39,7 @@ class PayeMultipleYearsController @Inject()(
   mcc: MessagesControllerComponents,
   payeMultipleYearsView: PayeMultipleYearsView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with LazyLogging {

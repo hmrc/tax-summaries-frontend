@@ -17,18 +17,26 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import includes.SaMainView
+@import views.html.main
 
-@this(saMainView: SaMainView)
+@this(main: main)
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
+@(
+  )(
+  implicit request: AuthenticatedRequest[_],
+  messages: Messages,
+  formPartialRetriever: FormPartialRetriever,
+  templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+  appConfig: ApplicationConfig
+)
 
-@headerContent = {
-<h1 id="generic-error-page-heading">@Html(Messages("generic.error.title"))</h1>
-}
 
-@saMainView(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent)) {
+@main(
+    title = Messages("generic.error.html.title")
+  ) {
 
-<p>@Html(Messages("generic.error.try.later"))</p>
+  <h1 id="generic-error-page-heading" class="heading-xlarge">@Html(Messages("generic.error.title"))</h1>
+
+  <p>@Html(Messages("generic.error.try.later"))</p>
 
 }

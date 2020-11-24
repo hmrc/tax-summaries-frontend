@@ -27,6 +27,7 @@ import services.PayeAtsService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeYourTaxableIncome
 import views.html.paye.PayeYourTaxableIncomeView
 
@@ -38,6 +39,7 @@ class PayeYourTaxableIncomeController @Inject()(
   mcc: MessagesControllerComponents,
   payeYourTaxableIncomeView: PayeYourTaxableIncomeView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {

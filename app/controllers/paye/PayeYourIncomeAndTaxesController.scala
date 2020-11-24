@@ -27,6 +27,7 @@ import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeYourIncomeAndTaxes
 import views.html.paye.PayeYourIncomeAndTaxesView
 
@@ -38,6 +39,7 @@ class PayeYourIncomeAndTaxesController @Inject()(
   mcc: MessagesControllerComponents,
   payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {

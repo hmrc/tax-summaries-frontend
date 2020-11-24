@@ -16,27 +16,39 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeYourIncomeAndTaxes
-@import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import controllers.auth.PayeAuthenticatedRequest
 @import utils.HtmlFormatter
-@import views.html.includes.paye.PayeMainView
+@import views.html.main
 @import views.html.helpers.BackLinkView
 @import views.html.includes.CurrencyAmountView
 
-@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+@this(
+    main: main,
+    backLinkView: BackLinkView,
+    currencyAmountView: CurrencyAmountView
+)
 
-@(viewModel:PayeYourIncomeAndTaxes)(implicit messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(  viewModel:PayeYourIncomeAndTaxes
+    )(
+    implicit messages: Messages,
+    request: PayeAuthenticatedRequest[_],
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear")) {
+@main(
+        title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd),
+        articleClasses = Some("selectYear")
+    ) {
 
     <div class="hmrc-logo-print" aria-hidden="true">
         <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
         <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
     </div>
 
-    @backLinkView(Messages("generic.back"))
+    @backLinkView(Messages("paye.ats.summary.title"))
 
     <div class="print-this">
         <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
