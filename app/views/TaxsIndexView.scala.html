@@ -20,43 +20,61 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import views.html.helpers._
 @import view_models.AtsForms
-@import views.html.includes.SaMainView
-@import views.html.includes.TaxsBreadcrumbView
-@import views.html.helpers.BackLinkView
 @import views.html.helpers.ErrorSummaryTemplateView
 @import views.html.helpers.InputRadioGroupView
+@import views.html.main
+@import views.html.helpers.HeaderSection
 
-@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, errorSummaryTemplateView: ErrorSummaryTemplateView, inputRadioGroupView: InputRadioGroupView)
+@this(
+    main: main,
+    headerSection: HeaderSection,
+    errorSummaryTemplateView: ErrorSummaryTemplateView,
+    inputRadioGroupView: InputRadioGroupView
+)
 
-@(atsList: view_models.AtsList, atsYearForm: Form[view_models.TaxYearEnd], actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
+@(  atsList: view_models.AtsList,
+    atsYearForm: Form[view_models.TaxYearEnd],
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-    @taxsBreadcrumbView(List(), "breadcrumbs.taxs.select_tax_year", 0, isLandingPage=true)
+@main(
+        title = Messages("ats.select_tax_year.title"),
+        actingAttorney = actingAsAttorney,
+        articleClasses = Some("full-width selectYear")
 
-    @if(actingAsAttorney.isDefined) {
-        <div class="nested-banner">
-            <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+    ) {
+
+    @headerSection(
+        pageHeading = Messages("ats.summary.title"),
+        name = atsList.forename + ' ' + atsList.surname,
+        utr = atsList.utr,
+        taxYear = 0,
+        actingAsAttorney = actingAsAttorney,
+        breadcrumbLinks = List(),
+        currentBreadcrumbLink = "breadcrumbs.taxs.select_tax_year"
+    )
+
+    <div class="main-content">
+
+        @errorSummaryTemplateView(atsYearForm)
+
+        @form(action = controllers.routes.IndexController.authorisedOnSubmit){
+
+                @inputRadioGroupView(
+                atsYearForm(AtsForms.yearChoice),
+                atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
+                '_fieldSetAttributes -> "id=year_field",
+                '_legend -> Messages("ats.select_tax_year.title")
+                )
+        <div class="form-field">
+            <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
         </div>
-    }
-    @if(!actingAsAttorney.isDefined){
-        <p id="user-info"><strong>@atsList.forename @atsList.surname</strong> <br>@Html(Messages("generic.utr")) @atsList.utr</p>
-    }
-}
-
-@saMainView(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
-    @backLinkView(Messages("generic.back"))
-    @errorSummaryTemplateView(atsYearForm)
-
-    @form(action = controllers.routes.IndexController.authorisedOnSubmit){
-
-            @inputRadioGroupView(
-            atsYearForm(AtsForms.yearChoice),
-            atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
-            '_fieldSetAttributes -> "id=year_field",
-            '_legend -> Messages("ats.select_tax_year.title")
-            )
-    <div class="form-field">
-        <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
+        }
     </div>
-    }
 }

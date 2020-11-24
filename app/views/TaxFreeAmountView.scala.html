@@ -17,74 +17,93 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import views.html.includes.SaMainView
-@import views.html.includes.TaxsBreadcrumbView
-@import views.html.helpers.BackLinkView
 @import views.html.includes.CurrencyAmountView
+@import views.html.main
+@import views.html.helpers.HeaderSection
 
-@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+@this(
+    main: main,
+    headerSection: HeaderSection,
+    currencyAmountView: CurrencyAmountView
+)
 
-@(viewModel: view_models.Allowances, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, appConfig: ApplicationConfig)
+@(  viewModel: view_models.Allowances,
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-  @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.tax_free_amount.subtitle", viewModel.year)
+@main(
+        title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        actingAttorney = actingAsAttorney,
+        articleClasses = Some("full-width")
+    ) {
 
-  @if(actingAsAttorney.isDefined) {
-    <div class="nested-banner">
-      <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
-    </div>
-  }
-  @if(!actingAsAttorney.isDefined){
-    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
-  }
-}
 
-@saMainView(title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+    @headerSection(
+        pageHeading = Messages("ats.tax_free_amount.tax_free_amount"),
+        name = viewModel.forename + ' ' + viewModel.surname,
+        utr = viewModel.utr,
+        taxYear = viewModel.year,
+        actingAsAttorney = actingAsAttorney,
+        breadcrumbLinks = List(
+            "breadcrumbs.taxs.select_tax_year",
+            "breadcrumbs.taxs.index",
+            "breadcrumbs.taxs.summary"
+        ),
+        currentBreadcrumbLink = "ats.tax_free_amount.subtitle"
+    )
 
-    @backLinkView(Messages("generic.back"))
-    <h1>
-        <span class="gray heading-medium block-heading">
-            @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-        </span>
-        @Html(Messages("ats.tax_free_amount.tax_free_amount"))
-    </h1>
+    <div class="main-content">
 
-      <p class="lede">@Html(Messages("ats.tax_free_amount.lede"))</p>
-      <p>@Html(Messages("ats.tax_free_amount.description"))</p>
+        <h1>
+            <span class="gray heading-medium block-heading">
+                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+            </span>
+            @Html(Messages("ats.tax_free_amount.tax_free_amount"))
+        </h1>
 
-      <table id="tax-free-allowance">
-        <thead>
-          <tr>
-            <th scope="col">@Html(Messages("generic.description"))</th>
-            <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if(!viewModel.taxFreeAllowance.isZero) {
-          <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line1", viewModel.year.toString))</td>
-            <td id="tax-free-allowance-amount">@currencyAmountView(viewModel.taxFreeAllowance)</td>
-          </tr>
-          }
-          @if(!viewModel.marriageAllowanceTransferred.isZero) {
-          <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
-            <td id="marriage_allowance_transferred_amount">@currencyAmountView(viewModel.marriageAllowanceTransferred)</td>
-          </tr>
-          }
-          @if(!viewModel.otherAllowances.isZero) {
-          <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line2"))</td>
-            <td id="other-allowances">@currencyAmountView(viewModel.otherAllowances)</td>
-          </tr>
-          }
-        </tbody>
-        <tfoot>
-          <tr>
-            <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
-            <td id="tax-free-total" class="no-bold">@currencyAmountView(viewModel.totalTaxFree)</td>
-          </tr>
-        </tfoot>
-      </table>
+          <p class="lede">@Html(Messages("ats.tax_free_amount.lede"))</p>
+          <p>@Html(Messages("ats.tax_free_amount.description"))</p>
+
+          <table id="tax-free-allowance">
+            <thead>
+              <tr>
+                <th scope="col">@Html(Messages("generic.description"))</th>
+                <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if(!viewModel.taxFreeAllowance.isZero) {
+              <tr>
+                <td>@Html(Messages("ats.tax_free_amount.table.line1", viewModel.year.toString))</td>
+                <td id="tax-free-allowance-amount">@currencyAmountView(viewModel.taxFreeAllowance)</td>
+              </tr>
+              }
+              @if(!viewModel.marriageAllowanceTransferred.isZero) {
+              <tr>
+                <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
+                <td id="marriage_allowance_transferred_amount">@currencyAmountView(viewModel.marriageAllowanceTransferred)</td>
+              </tr>
+              }
+              @if(!viewModel.otherAllowances.isZero) {
+              <tr>
+                <td>@Html(Messages("ats.tax_free_amount.table.line2"))</td>
+                <td id="other-allowances">@currencyAmountView(viewModel.otherAllowances)</td>
+              </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
+                <td id="tax-free-total" class="no-bold">@currencyAmountView(viewModel.totalTaxFree)</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
 
 }

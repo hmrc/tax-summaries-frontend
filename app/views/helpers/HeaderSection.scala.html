@@ -17,10 +17,13 @@
 @import views.html.includes.TaxsBreadcrumbView
 @import controllers.auth.AuthenticatedRequest
 @import config.ApplicationConfig
+@import utils.GenericViewModel
 
 @this(taxsBreadcrumbView: TaxsBreadcrumbView)
 
 @(  pageHeading: String=null,
+    name: String,
+    utr: String,
     taxYear: Int,
     actingAsAttorney: Option[ActingAsAttorneyFor] = None,
     breadcrumbLinks: List[String],
@@ -45,13 +48,7 @@
 }
 
 @if(!actingAsAttorney.isDefined){
-    @(request.name) map { name =>
-        (name.name, name.lastName, request.utr) match {
-            case (Some(foreName), Some(surName), Some(utr)) =>
-            <p id="user-info"><strong>@foreName @surName</strong> <br>@Html(Messages("generic.utr")) @utr.value</p>
-            case _ => ""
-        }
-    }
+        <p id="user-info"><strong>@name</strong> <br>@Html(Messages("generic.utr")) @utr</p>
 
 }
 

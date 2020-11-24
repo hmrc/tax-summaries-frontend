@@ -42,7 +42,7 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
 
     authorised(ConfidenceLevel.L50).retrieve(Retrievals.externalId) {
       case Some(externalId) =>
-        block(AuthenticatedRequest(externalId, None, None, None, None, None, None, None, request))
+        block(AuthenticatedRequest(externalId, None, None, None, None, None, None, request))
 
       case _ => throw new RuntimeException("Can't find credentials for user")
     }
