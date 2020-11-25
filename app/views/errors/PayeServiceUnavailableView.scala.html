@@ -17,15 +17,18 @@
 @import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import includes.paye.PayeMainView
+@import views.html.helpers.BackLinkView
 
-@this(payeMainView: PayeMainView)
+@this(payeMainView: PayeMainView, backLinkView: BackLinkView)
 
 @()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
+@headerContent = {
+     @backLinkView(Messages("generic.back"))
+}
 
-
-@payeMainView(title = appConfig.payeAtsUnavailableTitleUrl, mainViewParameters = MainViewParameters(false, false)) {
-<h1 class="heading-xlarge">@appConfig.payeAtsUnavailableHeadingUrl</h1>
-<p>@appConfig.payeAtsUnavailableParagraphUrl</p>
+@payeMainView(title = appConfig.payeAtsUnavailableTitleUrl, contentHeader = Option(headerContent), mainViewParameters = MainViewParameters(false, false)) {
+     <h1 class="heading-xlarge">@appConfig.payeAtsUnavailableHeadingUrl</h1>
+     <p>@appConfig.payeAtsUnavailableParagraphUrl</p>
 }
 

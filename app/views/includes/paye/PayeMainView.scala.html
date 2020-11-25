@@ -30,6 +30,7 @@
 userLoggedIn: Boolean = true,
 mainViewParameters: MainViewParameters,
 serviceInfoContent: Option[Html] = None,
+contentHeader: Option[Html] = None,
 showFeedbackLinkInBetaBanner: Boolean = false,
 bodyClasses: Option[String] = None,
 mainClasses: Option[String] = None,
@@ -78,17 +79,16 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
     }
 }
 
-@contentHeader = {
+@mainContentHeader = {
     @if(mainViewParameters.includeLanguageSwitch) {
         @languageSelectionView(
             appConfig.languageMap,
             appConfig.payeRouteToSwitchLanguage,
         )
     }
-}
-
-@mainContentHeader = {
-        @uiMainContentHeader(contentHeader)
+    @if(contentHeader.isDefined) {
+        @uiMainContentHeader(contentHeader = contentHeader.get)
+    }
 }
 
 @content = {
