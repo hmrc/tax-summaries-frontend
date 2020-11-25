@@ -24,7 +24,7 @@
 
 
 
-@payeMainView(title = appConfig.payeAtsUnavailableTitleUrl, includeLanguageSwitch = false, includeDeskPro = false) {
+@payeMainView(title = appConfig.payeAtsUnavailableTitleUrl, mainViewParameters = MainViewParameters(true, true)) {
 <h1 class="heading-xlarge">@appConfig.payeAtsUnavailableHeadingUrl</h1>
 <p>@appConfig.payeAtsUnavailableParagraphUrl</p>
 }

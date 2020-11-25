@@ -29,7 +29,7 @@
     <h1 id="error-page-heading">@Html(Messages("token_error.title"))</h1>
 }
 
-@saMainView(title = Messages("token_error.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent)) {
+@saMainView(title = Messages("token_error.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent), mainViewParameters = MainViewParameters(true, true)) {
 
 <p>@Html(Messages("token_error.lede"))</p>
 

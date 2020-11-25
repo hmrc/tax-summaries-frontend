@@ -25,10 +25,10 @@
 @()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
-@backLinkView(Messages("generic.back"))
-<h1>@appConfig.saAtsUnavailableHeadingUrl</h1>
+   @backLinkView(Messages("generic.back"))
+   <h1>@appConfig.saAtsUnavailableHeadingUrl</h1>
 }
 
-@saMainView(title = appConfig.saAtsUnavailableParagraphUrl, "", contentHeader = Option(headerContent)) {
-  <p>@appConfig.saAtsUnavailableParagraphUrl</p>
+@saMainView(title = appConfig.saAtsUnavailableParagraphUrl, "", contentHeader = Option(headerContent), mainViewParameters = MainViewParameters(true, true)) {
+   <p>@appConfig.saAtsUnavailableParagraphUrl</p>
 }

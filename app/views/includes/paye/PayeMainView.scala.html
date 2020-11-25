@@ -28,8 +28,7 @@
 
 @(title: String,
 userLoggedIn: Boolean = true,
-includeLanguageSwitch: Boolean = true,
-includeDeskPro: Boolean = true,
+mainViewParameters: MainViewParameters,
 serviceInfoContent: Option[Html] = None,
 showFeedbackLinkInBetaBanner: Boolean = false,
 bodyClasses: Option[String] = None,
@@ -74,13 +73,13 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 }
 
 @getHelpForm = {
-    @if(includeDeskPro) {
+    @if(mainViewParameters.includeDeskPro) {
         @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
     }
 }
 
 @contentHeader = {
-    @if(includeLanguageSwitch) {
+    @if(mainViewParameters.includeLanguageSwitch) {
         @languageSelectionView(
             appConfig.languageMap,
             appConfig.payeRouteToSwitchLanguage,

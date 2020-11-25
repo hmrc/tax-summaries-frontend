@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.urls.Link
-@this()
-@(
-    includeLanguageSwitch: Boolean = true,
-    includeDeskPro: Boolean = true,
-)(implicit
-    messages: Messages
+package models
+
+final case class MainViewParameters(
+  includeLanguageSwitch: Boolean,
+  includeDeskPro: Boolean
 )
-
-@contentHeader = {
-    @if(includeLanguageSwitch) {
-        @languageSelectionView(
-            appConfig.languageMap,
-            appConfig.payeRouteToSwitchLanguage,
-        )
-    }
-}

@@ -20,16 +20,16 @@
 @import uk.gov.hmrc.play.views.html.layouts._
 @import play.twirl.api.HtmlFormat
 @import views.html.includes.TaxsHeaderNavView
-@import views.html.includes.MainViewParameters
 @import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
 
 @this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView,
       uiHead: Head, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
-      uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks, mainViewParameters: MainViewParameters)
+      uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
 
 @(title: String,
 utr: String,
 userLoggedIn: Boolean = true,
+mainViewParameters: MainViewParameters,
 supportLinkEnabled: Boolean = true,
 serviceInfoContent: Option[Html] = None,
 contentHeader: Option[Html] = None,
@@ -88,17 +88,15 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 
 
 @mainContentHeader = {
-    @languageSelectionView(
-        appConfig.languageMap,
-        appConfig.saRouteToSwitchLanguage
-    )
+    @if(mainViewParameters.includeLanguageSwitch) {
+        @languageSelectionView(
+            appConfig.languageMap,
+            appConfig.saRouteToSwitchLanguage
+        )
+    }
     @if(contentHeader.isDefined) {
         @uiMainContentHeader(contentHeader = contentHeader.get)
     }
-    @mainViewParameters(
-
-    )
-
 }
 
 @content = {
