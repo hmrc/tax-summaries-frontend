@@ -29,7 +29,10 @@
 
 @(viewModel:PayeYourTaxableIncome)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMainView(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), mainViewParameters = MainViewParameters(true, true)) {
+@payeMainView(
+    title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearStart,viewModel.taxYearEnd),
+    mainViewParameters = MainViewParameters(true, true)
+) {
 	@backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.income_before_tax.title"))</h1>

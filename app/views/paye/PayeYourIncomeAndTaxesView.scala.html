@@ -29,7 +29,12 @@
 
 @(viewModel:PayeYourIncomeAndTaxes)(implicit messages: Messages, request: PayeAuthenticatedRequest[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMainView(title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd), "", mainClasses = Some("selectYear"), mainViewParameters = MainViewParameters(true, true)) {
+@payeMainView(
+    title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd),
+    "",
+    mainClasses = Some("selectYear"),
+    mainViewParameters = MainViewParameters(true, true)
+) {
 
     <div class="hmrc-logo-print" aria-hidden="true">
         <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
