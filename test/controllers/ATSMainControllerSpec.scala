@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
   val request = AuthenticatedRequest(
     "userId",

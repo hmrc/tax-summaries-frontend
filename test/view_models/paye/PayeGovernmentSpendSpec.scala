@@ -21,16 +21,18 @@ import models.DataHolder
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
+import utils.TestConstants
 
 class PayeGovernmentSpendSpec
-    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
-    with IntegrationPatience {
+    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience
+    with Injecting {
 
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit lazy val appConfig = inject[ApplicationConfig]
 
   "PayeGovernmentSpend" should {
 
@@ -40,8 +42,8 @@ class PayeGovernmentSpendSpec
         val payeGovSpendingData = PayeAtsTestData.govSpendingData
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-        result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
-        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel
+        result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
+        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel2020
       }
 
       "Scottish income is present and greater than 0" in {
@@ -50,8 +52,8 @@ class PayeGovernmentSpendSpec
         )
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-        result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
-        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
+        result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
+        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel2020.copy(
           isScottish = true
         )
       }
@@ -62,30 +64,30 @@ class PayeGovernmentSpendSpec
         )
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-        result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
-        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel.copy(
+        result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
+        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel2020.copy(
           isScottish = false
         )
       }
 
     }
 
-    "sort transport above Public Order" in {
+    "reorder categories for tax year 2020" in {
 
       val payeGovSpendingData = PayeAtsTestData.govSpendingData
       val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-      result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
-      result.orderedSpendRows.map(_.category) shouldBe PayeAtsTestData.expectedCategoryOrder
+      result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
+      result.orderedSpendRows.map(_.category) shouldBe TestConstants.expectedCategoryOrderfor2020
     }
 
-    "sort Culture above Environment" in {
+    "reorder categories for tax year 2019" in {
 
-      val payeGovSpendingData = PayeAtsTestData.govSpendingData
+      val payeGovSpendingData = PayeAtsTestData.govSpendingDataFor2019
       val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-      result.orderedSpendRows.map(_.spendData.percentage) shouldBe PayeAtsTestData.expectedPercentageOrder
-      result.orderedSpendRows.map(_.category) shouldBe PayeAtsTestData.expectedCategoryOrder
+      result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2019
+      result.orderedSpendRows.map(_.category) shouldBe TestConstants.expectedCategoryOrderFor2019
     }
   }
 }

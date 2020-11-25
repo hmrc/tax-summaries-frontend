@@ -16,9 +16,10 @@
 
 package utils
 
+import com.typesafe.config.ConfigException
 import config.ApplicationConfig
 
-object SwapCategoriesUtils {
+object CategoriesUtils {
 
   private def swapCategories[A](configList: List[String], sortedSpendDataMap: Map[String, A]): List[(String, A)] =
     configList.map { category =>
@@ -28,15 +29,17 @@ object SwapCategoriesUtils {
       }
     }
 
-  def getAndSwapCategories[A](
+  def reorderCategories[A](
     appConfig: ApplicationConfig,
     taxYear: Int,
     sortedSpendDataList: List[(String, A)]): List[(String, A)] = {
     val orderOfSpendCategories = try {
       appConfig
         .spendCategories(taxYear)
-    } catch { case _: Exception => None }
+    } catch { case _: ConfigException.Missing => List.empty }
 
-    orderOfSpendCategories.fold(sortedSpendDataList)(swapCategories(_, sortedSpendDataList.toMap))
+    if (orderOfSpendCategories.isEmpty) sortedSpendDataList
+    else swapCategories(orderOfSpendCategories, sortedSpendDataList.toMap)
+
   }
 }

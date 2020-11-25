@@ -28,7 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.http.Status.OK
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Injecting}
 import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -40,7 +40,8 @@ import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 
-class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
+class GovernmentSpendServiceSpec
+    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with Injecting {
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -58,9 +59,9 @@ class GovernmentSpendServiceSpec extends UnitSpec with GuiceOneAppPerSuite with 
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+  implicit lazy val ec = inject[ExecutionContext]
 
-  implicit val appConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit val appConfig = inject[ApplicationConfig]
 
   val request = AuthenticatedRequest(
     "userId",

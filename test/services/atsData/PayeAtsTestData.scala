@@ -16,38 +16,39 @@
 
 package services.atsData
 
+import controllers.paye.AppConfigBaseSpec
 import models._
 import view_models.paye._
 import view_models.{Amount, Rate}
 
-object PayeAtsTestData {
+object PayeAtsTestData extends AppConfigBaseSpec {
 
   val govSpendingData = PayeAtsData(
-    2020,
+    taxYear,
     None,
     None,
     None,
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2020,
+        taxYear,
         Some(
           Map(
-            "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 1.00),
-            "Welfare"                  -> SpendData(Amount(451.00, "GBP"), 23.5),
+            "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 0.80),
+            "Welfare"                  -> SpendData(Amount(451.00, "GBP"), 22.1),
             "GovernmentAdministration" -> SpendData(Amount(40.00, "GBP"), 2.10),
-            "Education"                -> SpendData(Amount(226.00, "GBP"), 11.80),
-            "StatePensions"            -> SpendData(Amount(246.00, "GBP"), 12.80),
-            "NationalDebtInterest"     -> SpendData(Amount(102.00, "GBP"), 5.30),
+            "Education"                -> SpendData(Amount(226.00, "GBP"), 11.60),
+            "StatePensions"            -> SpendData(Amount(246.00, "GBP"), 12.40),
+            "NationalDebtInterest"     -> SpendData(Amount(102.00, "GBP"), 6.90),
             "Defence"                  -> SpendData(Amount(102.00, "GBP"), 5.30),
             "PublicOrderAndSafety"     -> SpendData(Amount(83.00, "GBP"), 4.30),
             "Transport"                -> SpendData(Amount(83.00, "GBP"), 4.30),
-            "BusinessAndIndustry"      -> SpendData(Amount(69.00, "GBP"), 3.60),
+            "BusinessAndIndustry"      -> SpendData(Amount(69.00, "GBP"), 3.80),
             "Culture"                  -> SpendData(Amount(29.00, "GBP"), 1.50),
-            "HousingAndUtilities"      -> SpendData(Amount(31.00, "GBP"), 1.60),
+            "HousingAndUtilities"      -> SpendData(Amount(31.00, "GBP"), 1.80),
             "Environment"              -> SpendData(Amount(29.00, "GBP"), 1.50),
-            "OverseasAid"              -> SpendData(Amount(23.00, "GBP"), 1.20),
-            "Health"                   -> SpendData(Amount(388.00, "GBP"), 20.2)
+            "OverseasAid"              -> SpendData(Amount(23.00, "GBP"), 1.10),
+            "Health"                   -> SpendData(Amount(388.00, "GBP"), 20.5)
           )
         ),
         Amount(200, "GBP"),
@@ -57,7 +58,7 @@ object PayeAtsTestData {
   )
 
   val yourIncomeAndTaxesData = PayeAtsData(
-    2020,
+    taxYear,
     None,
     Some(
       DataHolder(
@@ -104,7 +105,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2020,
+        taxYear,
         None,
         Amount(200, "GBP"),
         None
@@ -113,7 +114,7 @@ object PayeAtsTestData {
   )
 
   val malformedYourIncomeAndTaxesData = PayeAtsData(
-    2020,
+    taxYear,
     None,
     Some(
       DataHolder(
@@ -159,7 +160,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2020,
+        taxYear,
         None,
         Amount(200, "GBP"),
         None
@@ -168,7 +169,7 @@ object PayeAtsTestData {
   )
 
   val missingYourIncomeAndTaxesData = PayeAtsData(
-    2020,
+    taxYear,
     None,
     None,
     None,
@@ -187,7 +188,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2020,
+        taxYear,
         None,
         Amount(200, "GBP"),
         None
@@ -196,7 +197,7 @@ object PayeAtsTestData {
   )
 
   val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount = PayeAtsData(
-    2020,
+    taxYear,
     None,
     Some(
       DataHolder(
@@ -242,7 +243,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2020,
+        taxYear,
         None,
         Amount(200, "GBP"),
         None
@@ -251,7 +252,7 @@ object PayeAtsTestData {
   )
 
   val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount = PayeAtsData(
-    2020,
+    taxYear,
     None,
     Some(
       DataHolder(
@@ -296,7 +297,7 @@ object PayeAtsTestData {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        2020,
+        taxYear,
         None,
         Amount(200, "GBP"),
         None
@@ -305,7 +306,7 @@ object PayeAtsTestData {
   )
 
   val totalIncomeTaxAndSummaryData = PayeAtsData(
-    2020,
+    taxYear,
     Some(
       DataHolder(
         Some(
@@ -369,10 +370,16 @@ object PayeAtsTestData {
   )
 
   val payeYourIncomeAndTaxesViewModel =
-    PayeYourIncomeAndTaxes(2020, Amount(1000, "GBP"), Amount(800, "GBP"), Amount(200, "GBP"), Amount(100, "GBP"), "20")
+    PayeYourIncomeAndTaxes(
+      taxYear,
+      Amount(1000, "GBP"),
+      Amount(800, "GBP"),
+      Amount(200, "GBP"),
+      Amount(100, "GBP"),
+      "20")
 
   val payeGovernmentSpendViewModel = PayeGovernmentSpend(
-    2020,
+    taxYear,
     List(
       SpendRow("Welfare", SpendData(Amount(451, "GBP"), 23.5)),
       SpendRow("Health", SpendData(Amount(388, "GBP"), 20.2)),
@@ -394,8 +401,31 @@ object PayeAtsTestData {
     isScottish = false
   )
 
+  val payeGovernmentSpendViewModel2020 = PayeGovernmentSpend(
+    taxYear,
+    List(
+      SpendRow("Welfare", SpendData(Amount(451, "GBP"), 22.1)),
+      SpendRow("Health", SpendData(Amount(388, "GBP"), 20.5)),
+      SpendRow("StatePensions", SpendData(Amount(246, "GBP"), 12.4)),
+      SpendRow("Education", SpendData(Amount(226, "GBP"), 11.6)),
+      SpendRow("NationalDebtInterest", SpendData(Amount(102, "GBP"), 6.9)),
+      SpendRow("Defence", SpendData(Amount(102, "GBP"), 5.3)),
+      SpendRow("Transport", SpendData(Amount(83, "GBP"), 4.3)),
+      SpendRow("PublicOrderAndSafety", SpendData(Amount(83, "GBP"), 4.3)),
+      SpendRow("BusinessAndIndustry", SpendData(Amount(69, "GBP"), 3.8)),
+      SpendRow("GovernmentAdministration", SpendData(Amount(40, "GBP"), 2.1)),
+      SpendRow("HousingAndUtilities", SpendData(Amount(31, "GBP"), 1.8)),
+      SpendRow("Culture", SpendData(Amount(29, "GBP"), 1.5)),
+      SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
+      SpendRow("OverseasAid", SpendData(Amount(23, "GBP"), 1.1)),
+      SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"), 0.8))
+    ),
+    totalAmount = Amount(200, "GBP"),
+    isScottish = false
+  )
+
   val payeIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
-    2020,
+    taxYear,
     List(
       TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
       TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -424,7 +454,7 @@ object PayeAtsTestData {
   )
 
   val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
-    2020,
+    taxYear,
     List.empty,
     List(
       TaxBand("ordinary_rate", Amount(19430, "GBP"), Amount(4080, "GBP"), Rate("19%")),
@@ -448,7 +478,7 @@ object PayeAtsTestData {
   )
 
   val payeEmployeeContributionNicsViewModel = PayeIncomeTaxAndNics(
-    2020,
+    taxYear,
     List.empty,
     List.empty,
     Amount.empty,
@@ -458,10 +488,11 @@ object PayeAtsTestData {
     Amount(70, "GBP"),
     Amount(90, "GBP"),
     Amount(431, "GBP"),
-    Amount(2550, "GBP"))
+    Amount(2550, "GBP")
+  )
 
   val payeEmptyNicsViewModel = PayeIncomeTaxAndNics(
-    2020,
+    taxYear,
     List.empty,
     List.empty,
     Amount.empty,
@@ -474,7 +505,7 @@ object PayeAtsTestData {
     Amount.empty)
 
   val payeYourTaxableIncomeViewModel = PayeYourTaxableIncome(
-    2020,
+    taxYear,
     List(
       IncomeTaxRow("self_employment_income", Amount(450, "GBP")),
       IncomeTaxRow("income_from_employment", Amount(550, "GBP")),
@@ -487,30 +518,8 @@ object PayeAtsTestData {
     Amount(1000, "GBP")
   )
 
-  val expectedPercentageOrder: List[BigDecimal] =
-    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
-
-  val expectedCategoryOrder: List[String] =
-    List(
-      "Welfare",
-      "Health",
-      "StatePensions",
-      "Education",
-      "NationalDebtInterest",
-      "Defence",
-      "Transport",
-      "PublicOrderAndSafety",
-      "BusinessAndIndustry",
-      "GovernmentAdministration",
-      "HousingAndUtilities",
-      "Culture",
-      "Environment",
-      "OverseasAid",
-      "UkContributionToEuBudget"
-    )
-
   val incomeData = PayeAtsData(
-    2020,
+    taxYear,
     None,
     None,
     Some(
@@ -533,7 +542,7 @@ object PayeAtsTestData {
   )
 
   val incomeDataWithoutScottishIncomeTax = PayeAtsData(
-    2020,
+    taxYear,
     None,
     None,
     Some(
@@ -552,5 +561,39 @@ object PayeAtsTestData {
     ),
     None,
     None
+  )
+
+  val govSpendingDataFor2019 = PayeAtsData(
+    2019,
+    None,
+    None,
+    None,
+    None,
+    Some(
+      GovernmentSpendingOutputWrapper(
+        2019,
+        Some(
+          Map(
+            "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 1.00),
+            "Welfare"                  -> SpendData(Amount(451.00, "GBP"), 23.5),
+            "GovernmentAdministration" -> SpendData(Amount(40.00, "GBP"), 2.10),
+            "Education"                -> SpendData(Amount(226.00, "GBP"), 11.80),
+            "StatePensions"            -> SpendData(Amount(246.00, "GBP"), 12.80),
+            "NationalDebtInterest"     -> SpendData(Amount(102.00, "GBP"), 5.30),
+            "Defence"                  -> SpendData(Amount(102.00, "GBP"), 5.30),
+            "PublicOrderAndSafety"     -> SpendData(Amount(83.00, "GBP"), 4.30),
+            "Transport"                -> SpendData(Amount(83.00, "GBP"), 4.30),
+            "BusinessAndIndustry"      -> SpendData(Amount(69.00, "GBP"), 3.60),
+            "Culture"                  -> SpendData(Amount(29.00, "GBP"), 1.50),
+            "HousingAndUtilities"      -> SpendData(Amount(31.00, "GBP"), 1.60),
+            "Environment"              -> SpendData(Amount(29.00, "GBP"), 1.50),
+            "OverseasAid"              -> SpendData(Amount(23.00, "GBP"), 1.20),
+            "Health"                   -> SpendData(Amount(388.00, "GBP"), 20.2)
+          )
+        ),
+        Amount(200, "GBP"),
+        None
+      )
+    )
   )
 }

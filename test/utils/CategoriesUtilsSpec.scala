@@ -21,7 +21,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
-class SwapCategoriesUtilsSpec extends UnitSpec with MockitoSugar {
+class CategoriesUtilsSpec extends UnitSpec with MockitoSugar {
 
   val appConfig = mock[ApplicationConfig]
 
@@ -34,13 +34,13 @@ class SwapCategoriesUtilsSpec extends UnitSpec with MockitoSugar {
       when(
         appConfig
           .spendCategories(taxYear))
-        .thenReturn(Some(List("A", "C", "B", "D")))
+        .thenReturn(List("A", "C", "B", "D"))
 
       val collection = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)
 
       val expectedResponse = Map("A" -> 1.5, "C" -> 1.20, "B" -> 1.20, "D" -> 0.5).toList
 
-      val result = SwapCategoriesUtils.getAndSwapCategories(appConfig, taxYear, collection)
+      val result = CategoriesUtils.reorderCategories(appConfig, taxYear, collection)
 
       result shouldBe expectedResponse
     }

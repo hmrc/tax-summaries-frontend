@@ -30,7 +30,7 @@ import scala.concurrent.Future
 
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2015
+  override val taxYear = 2015
   val request = AuthenticatedRequest(
     "userId",
     None,

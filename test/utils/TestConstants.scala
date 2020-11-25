@@ -110,7 +110,7 @@ trait TestConstants {
 
   val fakeTaxYear = 2019
 
-  def fakeGovernmentSpend(implicit appConfig: ApplicationConfig): GovernmentSpend =
+  val fakeGovernmentSpend: GovernmentSpend =
     GovernmentSpend(
       fakeTaxYear,
       testUtr,
@@ -120,7 +120,7 @@ trait TestConstants {
         ("StatePensions", SpendData(Amount(2898.13, "GBP"), 11.8)),
         ("Education", SpendData(Amount(2898.13, "GBP"), 12.8)),
         ("Defence", SpendData(Amount(2898.13, "GBP"), 5.3)),
-        ("NationalDebtInterest", SpendData(Amount(2898.13, "GBP"), 5.1)),
+        ("NationalDebtInterest", SpendData(Amount(2898.13, "GBP"), 5.3)),
         ("PublicOrderAndSafety", SpendData(Amount(2898.13, "GBP"), 4.3)),
         ("Transport", SpendData(Amount(2898.13, "GBP"), 4.3)),
         ("BusinessAndIndustry", SpendData(Amount(2898.13, "GBP"), 3.6)),
@@ -140,10 +140,13 @@ trait TestConstants {
       Amount(2000.00, "GBP")
     )
 
-  val expectedPercentageOrder: List[BigDecimal] =
-    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.1, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
+  val expectedPercentageOrder2019: List[BigDecimal] =
+    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
 
-  val expectedCategoryOrder: List[String] =
+  val expectedPercentageOrder2020: List[BigDecimal] =
+    List(22.1, 20.5, 12.4, 11.6, 6.9, 5.3, 4.3, 4.3, 3.8, 2.1, 1.8, 1.5, 1.5, 1.1, 0.8)
+
+  val expectedCategoryOrderFor2019: List[String] =
     List(
       "Welfare",
       "Health",

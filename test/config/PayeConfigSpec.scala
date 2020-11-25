@@ -16,16 +16,12 @@
 
 package config
 
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import uk.gov.hmrc.play.test.UnitSpec
+import controllers.paye.AppConfigBaseSpec
+import org.scalatestplus.mockito.MockitoSugar
 
-class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
-  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
-  val config = new PayeConfig {
-    override protected val configPath: String = "paye.conf"
-    override val payeYear: Int = 2020
-  }
+class PayeConfigSpec extends AppConfigBaseSpec with MockitoSugar {
+
+  implicit val config: PayeConfig = inject[PayeConfig]
 
   "PayeConfig" should {
 

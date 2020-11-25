@@ -108,6 +108,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
 
   val saYear: Int = config.getInt("sa.year")
 
-  def spendCategories(taxYear: Int): Option[List[String]] =
-    Option(configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList)
+  def spendCategories(taxYear: Int): List[String] =
+    configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
 }

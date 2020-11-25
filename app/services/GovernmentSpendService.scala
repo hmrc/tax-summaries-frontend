@@ -23,7 +23,7 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, GovernmentSpendingOutputWrapper}
 import uk.gov.hmrc.domain.TaxIdentifier
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{GenericViewModel, SwapCategoriesUtils}
+import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,7 @@ class GovernmentSpendService @Inject()(
       case Some(value) =>
         middleConnector.connectToGovernmentSpend(taxYear, value).map { response =>
           val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
-          SwapCategoriesUtils.getAndSwapCategories(appConfig, taxYear, sortedGovSpendingData)
+          CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
         }
       case _ => Future.failed(new IllegalArgumentException("No tax identifier was found, cannot complete request"))
     }

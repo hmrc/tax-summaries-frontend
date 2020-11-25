@@ -77,7 +77,7 @@
                 </thead>
                 <tbody>
 
-                @viewModel.filteredDataWithHigherTransport.map {
+                @viewModel.filteredDataWithHigherTransport(appConfig).map {
                     case (key, value) => {
                         @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
                         <tr>
