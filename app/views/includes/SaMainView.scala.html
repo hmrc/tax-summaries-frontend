@@ -83,9 +83,10 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 }
 
 @getHelpForm = {
-    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
+    @if(mainViewParameters.includeDeskPro) {
+        @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
+    }
 }
-
 
 @mainContentHeader = {
     @if(mainViewParameters.includeLanguageSwitch) {

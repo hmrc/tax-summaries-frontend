@@ -45,7 +45,14 @@
     data-journey="@utils.Analytics.getAnalyticsAttribute(request, actingAsAttorney)"
 }
 
-@saMainView(Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney, mainDataAttributes = Option(dataAttributes)) {
+@saMainView(
+    Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    viewModel.utr,
+    contentHeader = Option(headerContent),
+    actingAttorney = actingAsAttorney,
+    mainDataAttributes = Option(dataAttributes),
+    mainViewParameters = MainViewParameters(true, true)
+) {
 
     @backLinkView(Messages("generic.back"))
     <h1 id="index-page-header">

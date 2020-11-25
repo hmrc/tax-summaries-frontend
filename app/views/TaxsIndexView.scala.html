@@ -43,7 +43,14 @@
     }
 }
 
-@saMainView(title = Messages("ats.select_tax_year.title"), "", contentHeader = Option(headerContent), mainClasses = Some("selectYear"), actingAttorney = actingAsAttorney) {
+@saMainView(
+    title = Messages("ats.select_tax_year.title"),
+    "",
+    contentHeader = Option(headerContent),
+    mainClasses = Some("selectYear"),
+    actingAttorney = actingAsAttorney,
+    mainViewParameters = MainViewParameters(true, true)
+) {
     @backLinkView(Messages("generic.back"))
     @errorSummaryTemplateView(atsYearForm)
 

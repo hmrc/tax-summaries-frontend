@@ -36,7 +36,13 @@
 
 }
 
-@saMainView(title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@saMainView(
+    title = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    viewModel.utr,
+    contentHeader = Option(headerContent),
+    actingAttorney = actingAsAttorney,
+    mainViewParameters = MainViewParameters(true, true)
+) {
     @backLinkView(Messages("generic.back"))
     <h1>
         <span class="gray heading-medium block-heading">

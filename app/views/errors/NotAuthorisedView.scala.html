@@ -30,7 +30,13 @@
 <h1>@Html(Messages("generic.not_authorised"))</h1>
 }
 
-@saMainView(title = Messages("generic.not_authorised"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
+@saMainView(
+     title = Messages("generic.not_authorised"),
+     null,
+     contentHeader = Option(headerContent),
+     userLoggedIn = false,
+     mainViewParameters = MainViewParameters(true, true)
+) {
     <p class="lede">@Html(Messages("not.authorised.line1"))</p>
 
     <p>@Html(Messages("client_agent.notice.line1"))</p>

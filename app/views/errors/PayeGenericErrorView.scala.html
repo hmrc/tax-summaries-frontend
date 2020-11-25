@@ -23,7 +23,11 @@
 
 @()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMainView(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
+@payeMainView(
+     title = Messages("generic.error.title"),
+     mainClasses = Some("selectYear full-width"),
+     mainViewParameters = MainViewParameters(true, true)
+) {
 
 	<h1>@Messages("generic.error.html.title")</h1>
 	<p>@Html(Messages("generic.error.try.later"))</p>

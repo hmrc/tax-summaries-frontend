@@ -39,7 +39,13 @@
   }
 }
 
-@saMainView(title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@saMainView(
+    title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    viewModel.utr,
+    contentHeader = Option(headerContent),
+    actingAttorney = actingAsAttorney,
+    mainViewParameters = MainViewParameters(true, true)
+) {
 
     @backLinkView(Messages("generic.back"))
     <h1>

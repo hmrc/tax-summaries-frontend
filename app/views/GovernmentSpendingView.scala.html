@@ -46,7 +46,13 @@
 
 }
 
-@saMainView(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.userUtr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
+@saMainView(
+    Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    viewModel.userUtr,
+    contentHeader = Option(headerContent),
+    actingAttorney = actingAsAttorney,
+    mainViewParameters = MainViewParameters(true, true)
+) {
 
     @backLinkView(Messages("generic.back"))
 

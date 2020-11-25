@@ -39,4 +39,8 @@
 
 
 
-@saMainView(title = Messages("global.page.not.found.error.title"), "", contentHeader = Some(contentHeader)){@mainContent}
+@saMainView(
+    title = Messages("global.page.not.found.error.title"), "",
+    contentHeader = Some(contentHeader),
+    mainViewParameters = MainViewParameters(true, true)
+){@mainContent}
