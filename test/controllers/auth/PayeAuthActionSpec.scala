@@ -21,41 +21,29 @@ import controllers.auth.{FakePayeAuthAction, PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.Application
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.postfixOps
 
-class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
+class PayeAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
-  override def fakeApplication(): Application =
-    new GuiceApplicationBuilder()
-      .configure(
-        "paye.login.url"  -> "http://localhost:9025/gg/sign-in",
-        "shuttering.paye" -> "false"
-      )
-      .build()
-
-  val ggSignInUrl = fakeApplication.configuration.getString("paye.login.url").getOrElse("Config key not found")
-  val identityVerificationServiceUrl = "http://localhost:9948/mdtp/uplift"
-
   val unauthorisedRoute = routes.PayeErrorController.notAuthorised().url
 
-  class Harness(authAction: PayeAuthAction) extends Controller {
+  class Harness(authAction: PayeAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
       Ok(s"Nino: ${request.nino.nino}")
     }
@@ -101,7 +89,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
 
-      redirectLocation(result).get should startWith(ggSignInUrl)
+      redirectLocation(result).get should startWith(appConfig.payeLoginUrl)
     }
   }
 
@@ -114,7 +102,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
 
-      redirectLocation(result).get should startWith(identityVerificationServiceUrl)
+      redirectLocation(result).get should startWith(appConfig.identityVerificationUpliftUrl)
     }
   }
 
@@ -138,6 +126,7 @@ class PayeAuthActionSpec extends UnitSpec with OneAppPerSuite with MockitoSugar 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc) {
         override val payeShuttered: Boolean = true
       }
+
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
       status(result) shouldBe SEE_OTHER
