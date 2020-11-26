@@ -54,7 +54,7 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
-  implicit lazy val templateRenderer = mock[TemplateRenderer]
+  implicit lazy val templateRenderer = inject[TemplateRenderer]
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit val ec: ExecutionContext = mcc.executionContext
 
