@@ -50,6 +50,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
 
       val document = Jsoup.parse(contentAsString(result))
 
+
       document.title should include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",

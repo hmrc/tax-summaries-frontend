@@ -46,7 +46,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
 
   "Logging in with English language settings" should {
     "show the correct contents of the generic error page in English with welsh language switch enabled" in {
-      val result = genericErrorView()(request, messages, formPartialRetriever, appConfig)
+      val result = genericErrorView()(request, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
       document.getElementById("welsh-switch").text should include("Cymraeg")
@@ -55,7 +55,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
 
   "Logging in with invalid language settings" should {
     "show the correct contents of the generic error page in English" in {
-      val result = genericErrorView()(request, messages, formPartialRetriever, appConfig)
+      val result = genericErrorView()(request, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
     }
@@ -64,7 +64,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
   "Logging in with Welsh language settings" should {
     "show the correct contents of the generic error page in Welsh with english language switch enabled" in {
       implicit val messages: Messages = MessagesImpl(Lang("cy"), messagesApi)
-      val result = genericErrorView()(request, messages, formPartialRetriever, appConfig)
+      val result = genericErrorView()(request, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include(
         "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
@@ -104,7 +104,8 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
         None,
         None,
         FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
-      val result = taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, appConfig)
+      val result =
+        taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
       document
@@ -148,7 +149,12 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
         scottishIncomeTax
       )
       val result =
-        governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(request, messages, formPartialRetriever, appConfig)
+        governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(
+          request,
+          messages,
+          formPartialRetriever,
+          templateRenderer,
+          appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#content h1").text should include("Eich trethi a gwariant cyhoeddus")
       document
@@ -200,6 +206,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
         agentRequestWithSession,
         messages,
         formPartialRetriever,
+        templateRenderer,
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("h1").text should include("Eich incwm a’ch trethi")

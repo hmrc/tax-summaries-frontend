@@ -71,7 +71,12 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         scottishIncomeTax
       )
       val result =
-        governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(request, messages, formPartialRetriever, appConfig)
+        governmentSpendingView(fakeViewModel, (20.0, 20.0, 20.0))(
+          request,
+          messages,
+          formPartialRetriever,
+          templateRenderer,
+          appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       val menu_toggle = document.select(".js-header-toggle.menu")
@@ -102,7 +107,7 @@ class NonPortalUserSpec extends ViewSpecBase with MockitoSugar {
         "",
         "",
         "")
-      val result = taxsMainView(fakeViewModel)(request, messages, formPartialRetriever, appConfig)
+      val result = taxsMainView(fakeViewModel)(request, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("wrapper").attr("data-journey") should include(
