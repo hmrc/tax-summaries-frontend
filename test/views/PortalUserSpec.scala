@@ -48,36 +48,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
   "Logging in as a portal user" should {
 
-    "show the 'exit tax summaries' link on the landing page" in {
-
-      val fakeViewModel = Summary(
-        2014,
-        utr,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        rate,
-        rate,
-        "",
-        "",
-        "")
-      val result =
-        taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-    }
-
     "show the 'exit tax summaries' link on the capital gains page" in {
 
       val fakeViewModel = new CapitalGains(
@@ -113,10 +83,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         capitalGainsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
@@ -143,10 +109,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         templateRenderer,
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
@@ -188,10 +150,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         nicsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
@@ -205,27 +163,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(4)").toString should include(
         "<strong>Your Income Tax and National Insurance</strong>")
-    }
-
-    "show the 'exit tax summaries' link on the no ats page" in {
-
-      val spendData = fakeGovernmentSpend.govSpendAmountData.map {
-        case (k, v) =>
-          k -> v.percentage.toDouble
-      }
-
-      val result =
-        howTaxIsSpentView(spendData, fakeTaxYear)(
-          requestWithSession,
-          messages,
-          formPartialRetriever,
-          templateRenderer,
-          appConfig)
-      val document = Jsoup.parse(contentAsString(result))
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/")
-
     }
 
     "show the 'exit tax summaries' link on the summaries page" in {
@@ -258,11 +195,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
@@ -284,10 +216,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         templateRenderer,
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
 
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
@@ -354,10 +282,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
@@ -416,11 +340,6 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         templateRenderer,
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-
       document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
       document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
 
@@ -507,36 +426,4 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
     }
   }
 
-  "Logging into the portal as an agent" should {
-
-    "show the 'back to the Portal' link containing the client's UTR" in {
-
-      val fakeViewModel = Summary(
-        2014,
-        utr,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        amount,
-        rate,
-        rate,
-        "",
-        "",
-        "")
-      val result =
-        taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select("#proposition-links a").text should include("Back to HMRC Online Services")
-      val href = document.select("#proposition-links a").first().attr("href")
-      href should be("https://online.hmrc.gov.uk/self-assessment/ind/" + utr)
-    }
-  }
 }

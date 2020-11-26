@@ -49,7 +49,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
       val result = genericErrorView()(request, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
-      document.getElementById("welsh-switch").text should include("Cymraeg")
+      document.getElementById("switchToWelsh").text should include("Cymraeg")
     }
   }
 
@@ -68,7 +68,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include(
         "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
-      document.getElementById("english-switch").text should include("English")
+      document.getElementById("switchToEnglish").text should include("English")
     }
 
     "show the index page in welsh language" in {
