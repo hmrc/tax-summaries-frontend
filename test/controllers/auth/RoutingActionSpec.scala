@@ -147,7 +147,7 @@ class RoutingActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
       "auth throws NoActiveSession" in {
 
         val ggSignInUrl =
-          "http://localhost:9025/gg/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+          "http://localhost:9553/bas-gateway/sign-in?continue=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
 
         when(mockAuthConnector.authorise(any(), any())(any(), any()))
           .thenReturn(Future.failed(new SessionRecordNotFound))
