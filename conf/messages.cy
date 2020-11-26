@@ -250,16 +250,6 @@ paye.not.authorised.h1=Nid oeddem yn gallu cadarnhau pwy ydych
 paye.not.authorised.line1=Nid oes Crynodeb Treth Blynyddol gennych ar gyfer y flwyddyn hon
 paye.not.authorised.line2=Am resymau diogelwch, mae’n rhaid i chi aros 24 awr ac yna mewngofnodi i roi cynnig arall arni.
 
-# Service unavailable page
-#============================================================
-ats.service_unavailable.title=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
-ats.service_unavailable.heading=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
-ats.service_unavailable.paragraph=Byddwch yn gallu defnyddio’r gwasanaeth nes ymlaen.
-
-paye.ats.service_unavailable.title=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
-paye.ats.service_unavailable.heading=Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
-paye.ats.service_unavailable.paragraph=Byddwch yn gallu defnyddio’r gwasanaeth nes ymlaen.
-
 # Token error page
 #============================================================
 token_error.html.title=Problem dechnegol

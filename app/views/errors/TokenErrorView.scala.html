@@ -32,8 +32,7 @@
 @saMainView(
      title = Messages("token_error.html.title"),
      utils.AccountUtils.getAccountId(request),
-     contentHeader = Option(headerContent),
-     mainViewParameters = MainViewParameters(true, true)
+     contentHeader = Option(headerContent)
 ) {
 
 <p>@Html(Messages("token_error.lede"))</p>

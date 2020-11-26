@@ -90,16 +90,11 @@ class ApplicationConfig @Inject()(
 
   val payeYear: Int = config.getInt("paye.year")
 
-  // Shutter Boolean and Message Urls
   val saShuttered: Boolean = config.getBoolean("shuttering.sa")
-  lazy val saAtsUnavailableTitleUrl = config.getString("sa.ats.service_unavailable.title")
-  lazy val saAtsUnavailableHeadingUrl = config.getString("sa.ats.service_unavailable.heading")
-  lazy val saAtsUnavailableParagraphUrl = config.getString("sa.ats.service_unavailable.paragraph")
+  lazy val saAtsServiceUnavailableParagraph = config.getString("sa.ats.service_unavailable.paragraph")
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
-  lazy val payeAtsUnavailableTitleUrl = config.getString("paye.ats.service_unavailable.title")
-  lazy val payeAtsUnavailableHeadingUrl = config.getString("paye.ats.service_unavailable.heading")
-  lazy val payeAtsUnavailableParagraphUrl = config.getString("paye.ats.service_unavailable.paragraph")
+  lazy val payeAtsServiceUnavailableParagraph = config.getString("paye.ats.service_unavailable.paragraph")
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))

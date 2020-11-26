@@ -27,8 +27,12 @@
      @backLinkView(Messages("generic.back"))
 }
 
-@payeMainView(title = appConfig.payeAtsUnavailableTitleUrl, contentHeader = Option(headerContent), mainViewParameters = MainViewParameters(false, false)) {
-     <h1 class="heading-xlarge">@appConfig.payeAtsUnavailableHeadingUrl</h1>
-     <p>@appConfig.payeAtsUnavailableParagraphUrl</p>
+@payeMainView(
+    title = Messages("paye.ats.service_unavailable.heading"),
+    contentHeader = Option(headerContent),
+    mainViewParameters = MainViewParameters(false, false)
+) {
+     <h1 class="heading-xlarge">@Messages("paye.ats.service_unavailable.heading")</h1>
+     <p>@appConfig.payeAtsServiceUnavailableParagraph</p>
 }
 

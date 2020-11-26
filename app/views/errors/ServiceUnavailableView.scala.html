@@ -28,7 +28,11 @@
    @backLinkView(Messages("generic.back"))
 }
 
-@saMainView(title = appConfig.saAtsUnavailableParagraphUrl, "", contentHeader = Option(headerContent), mainViewParameters = MainViewParameters(false, false)) {
-   <h1 class="heading-xlarge">@appConfig.payeAtsUnavailableHeadingUrl</h1>
-   <p>@appConfig.saAtsUnavailableParagraphUrl</p>
+@saMainView(
+    title = Messages("ats.service_unavailable.heading"),
+    "", contentHeader = Option(headerContent),
+    mainViewParameters = MainViewParameters(false, false)
+) {
+   <h1 class="heading-xlarge">@Messages("ats.service_unavailable.heading")</h1>
+   <p>@appConfig.saAtsServiceUnavailableParagraph</p>
 }

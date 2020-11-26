@@ -24,7 +24,7 @@
 
 @(spendData: Seq[(String, Double)], taxYear: Int)(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@saMainView(Messages("ats.howYourTaxWasSpent.heading"), "", mainViewParameters = MainViewParameters(true, true)) {
+@saMainView(Messages("ats.howYourTaxWasSpent.heading"), "") {
 
 @backLinkView(Messages("generic.back"))
 

@@ -47,8 +47,7 @@
 @saMainView(
     title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear),
     viewModel.utr, contentHeader = Option(headerContent),
-    actingAttorney = actingAsAttorney,
-    mainViewParameters = MainViewParameters(true, true)
+    actingAttorney = actingAsAttorney
 ) {
 
     @backLinkView(Messages("generic.back"))

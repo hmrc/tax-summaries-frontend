@@ -20,3 +20,7 @@ final case class MainViewParameters(
   includeLanguageSwitch: Boolean,
   includeDeskPro: Boolean
 )
+
+object MainViewParameters {
+  def apply(): MainViewParameters = MainViewParameters(true, true)
+}

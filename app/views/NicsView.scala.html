@@ -45,8 +45,7 @@
     title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
     viewModel.utr,
     contentHeader = Option(headerContent),
-    actingAttorney = actingAsAttorney,
-    mainViewParameters = MainViewParameters(true, true)
+    actingAttorney = actingAsAttorney
 ) {
     @backLinkView(Messages("generic.back"))
     <h1>
