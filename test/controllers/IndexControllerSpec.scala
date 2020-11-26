@@ -326,7 +326,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
       when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
         .thenReturn(new NoATSViewModel)

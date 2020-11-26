@@ -129,7 +129,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(sut.show(request))
@@ -223,7 +223,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")

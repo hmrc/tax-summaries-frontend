@@ -103,7 +103,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
@@ -184,7 +184,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")

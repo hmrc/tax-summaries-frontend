@@ -89,7 +89,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.title should include(Messages("generic.error.html.title"))
     }
 
-    "redirect to the no ATS page when there is no annual tax summary data returned" in {
+    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
@@ -111,7 +111,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
       document
         .getElementById("index-page-header")
-        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your annual tax summary"
+        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your Annual Tax Summary"
       document
         .getElementById("index-page-description")
         .text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
