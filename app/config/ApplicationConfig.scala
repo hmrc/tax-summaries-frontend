@@ -18,10 +18,11 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 
 @Singleton
 class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, configuration: Configuration) {
@@ -95,7 +96,12 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
 
   val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
 
-  val accessibilityStatementToggle: Boolean = config.getBoolean("accessibilityStatement.enabled")
+  val accessibilityStatementToggle: Boolean = config.getBoolean("accessibility-statement.enabled")
+  val accessibilityBaseUrl: String = config.getString(s"accessibility-statement.baseUrl")
+  private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
+  def accessibilityStatementUrl(referrer: String) =
+    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(
+      accessibilityBaseUrl + referrer).encodedUrl}"
 
   val payeMultipleYears: Boolean = config.getBoolean("paye.multipleYearsEnabled")
 
