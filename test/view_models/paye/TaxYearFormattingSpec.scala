@@ -21,17 +21,17 @@ import uk.gov.hmrc.play.test.UnitSpec
 class TaxYearFormattingSpec extends UnitSpec {
 
   val instance = new TaxYearFormatting {
-    val taxYear = 2018
+    val taxYear = 2019
   }
 
   "TaxYearFormatting" should {
 
     "Calculate valid start year" in {
-      instance.taxYearStart shouldBe "2018"
+      instance.taxYearFrom shouldBe "2018"
     }
 
     "Calculate valid end year" in {
-      instance.taxYearEnd shouldBe "2019"
+      instance.taxYearTo shouldBe "2019"
     }
 
   }

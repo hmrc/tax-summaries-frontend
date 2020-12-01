@@ -44,7 +44,7 @@ import scala.io.Source
 class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
-  val taxYear = 2015
+  override val taxYear = 2015
 
   val request = AuthenticatedRequest(
     "userId",

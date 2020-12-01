@@ -17,12 +17,13 @@
 package services
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, GovernmentSpendingOutputWrapper}
 import uk.gov.hmrc.domain.TaxIdentifier
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{GenericViewModel, SwapDataUtils}
+import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GovernmentSpendService @Inject()(
   atsService: AtsService,
   atsYearListService: AtsYearListService,
-  middleConnector: MiddleConnector) {
+  middleConnector: MiddleConnector)(implicit val appConfig: ApplicationConfig) {
 
   def getGovernmentSpendData(
     taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
@@ -42,10 +43,8 @@ class GovernmentSpendService @Inject()(
     taxIdentifier match {
       case Some(value) =>
         middleConnector.connectToGovernmentSpend(taxYear, value).map { response =>
-          val sortedSpendData = response.json.as[Map[String, Double]].toList.sortBy(_._2).reverse
-          if (taxYear == 2018) {
-            SwapDataUtils.swapDataForSa(sortedSpendData, "Culture", "Environment")
-          } else sortedSpendData
+          val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
+          CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
         }
       case _ => Future.failed(new IllegalArgumentException("No tax identifier was found, cannot complete request"))
     }

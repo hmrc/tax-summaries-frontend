@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
 
   val baseModel = Allowances(
     taxYear = 2014,

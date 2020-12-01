@@ -34,7 +34,7 @@ class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase {
   "PayeTaxFreeAmountView" should {
     "display correct heading for given taxYear" in {
       val viewModel = PayeTaxFreeAmount(
-        2018,
+        2019,
         List.empty,
         Amount.empty,
         List.empty,

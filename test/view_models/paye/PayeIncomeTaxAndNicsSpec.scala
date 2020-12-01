@@ -16,16 +16,12 @@
 
 package view_models.paye
 
+import controllers.paye.AppConfigBaseSpec
 import models.{DataHolder, PayeAtsData, TaxBand}
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
 import view_models.{Amount, Rate}
 
-class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
+class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
 
   "PayeYourIncomeAndTaxesData" should {
 
@@ -33,7 +29,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List(
           TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -114,7 +110,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
         ))
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List(
           TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -146,7 +142,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
 
     "transform to view model with only non-zero tax band rates" in {
       val incomeTaxData = PayeAtsData(
-        2018,
+        taxYear,
         Some(
           DataHolder(
             Some(
@@ -206,7 +202,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List(
           TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%"))
@@ -231,7 +227,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
 
     "transform to view model with an empty tax bands list with no payments in any tax band" in {
       val incomeTaxData = PayeAtsData(
-        2018,
+        taxYear,
         Some(
           DataHolder(
             Some(
@@ -291,7 +287,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List.empty,
         List.empty,
         Amount(19433, "GBP"),
@@ -311,7 +307,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
 
     "transform to view model with empty tax bands with no income and tax data" in {
       val incomeTaxData = PayeAtsData(
-        2018,
+        taxYear,
         None,
         None,
         None,
@@ -320,7 +316,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List.empty,
         List.empty,
         Amount.empty,
@@ -339,7 +335,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
 
     "transform to view model with empty tax bands when no amounts are present" in {
       val incomeTaxData = PayeAtsData(
-        2018,
+        taxYear,
         Some(DataHolder(Some(Map()), Some(Map()), None)),
         None,
         None,
@@ -348,7 +344,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List.empty,
         List.empty,
         Amount.empty,
@@ -369,7 +365,7 @@ class PayeIncomeTaxAndNicsSpec extends UnitSpec with GuiceOneAppPerTest {
       val incomeData = PayeAtsTestData.incomeData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        2018,
+        taxYear,
         List.empty,
         List.empty,
         Amount.empty,

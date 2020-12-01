@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstants with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val request = AuthenticatedRequest(
     "userId",
     None,

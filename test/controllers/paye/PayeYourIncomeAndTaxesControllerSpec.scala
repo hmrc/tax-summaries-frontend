@@ -56,7 +56,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       val document = Jsoup.parse(contentAsString(result))
 
       document.title should include(
-        Messages("paye.ats.summary.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+        Messages("paye.ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "return 200 when total_income_before_tax key is missing in PAYE ATS data" in {

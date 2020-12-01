@@ -16,8 +16,10 @@
 
 package view_models
 
+import config.ApplicationConfig
 import models.SpendData
-import utils.{GenericViewModel, SwapDataUtils}
+import utils.{CategoriesUtils, GenericViewModel}
+import view_models.paye.TaxYearFormatting
 
 case class GovernmentSpend(
   taxYear: Int,
@@ -29,19 +31,13 @@ case class GovernmentSpend(
   totalAmount: Amount,
   incomeTaxStatus: String,
   scottishIncomeTax: Amount)
-    extends GenericViewModel {
+    extends GenericViewModel with TaxYearFormatting {
 
   val isScottishTaxPayer: Boolean = (incomeTaxStatus == "0002")
 
   def sortedSpendData: List[(String, SpendData)] =
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
-  def filteredDataWithHigherTransport: List[(String, SpendData)] =
-    if (taxYear == 2019) {
-      SwapDataUtils.swapDataForSa(sortedSpendData, "Transport", "PublicOrderAndSafety")
-    } else sortedSpendData
-
-  def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
-  def taxYearFrom: String = (taxYear - 1).toString
-  def taxYearTo: String = taxYear.toString
+  def filteredDataWithHigherTransport(appConfig: ApplicationConfig): List[(String, SpendData)] =
+    CategoriesUtils.reorderCategories(appConfig, taxYear, sortedSpendData)
 }

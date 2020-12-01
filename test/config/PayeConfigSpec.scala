@@ -16,20 +16,16 @@
 
 package config
 
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import uk.gov.hmrc.play.test.UnitSpec
+import controllers.paye.AppConfigBaseSpec
+import org.scalatestplus.mockito.MockitoSugar
 
-class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
-  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
+class PayeConfigSpec extends AppConfigBaseSpec with MockitoSugar {
+
+  implicit val config: PayeConfig = inject[PayeConfig]
 
   "PayeConfig" should {
 
     "retrieve scottish tax band keys in order for a valid year" in {
-      val config = new PayeConfig {
-        override protected val configPath: String = "paye.conf"
-        override val payeYear: Int = 2018
-      }
 
       val expected = List(
         "scottish_starter_rate",
@@ -42,10 +38,6 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite
     }
 
     "retrieve UK tax band keys in order for a valid year" in {
-      val config = new PayeConfig {
-        override protected val configPath: String = "paye.conf"
-        override val payeYear: Int = 2018
-      }
 
       val expected = List(
         "basic_rate_income_tax",
@@ -58,10 +50,6 @@ class PayeConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite
     }
 
     "retrieve adjustment keys in order for a valid year" in {
-      val config = new PayeConfig {
-        override protected val configPath: String = "paye.conf"
-        override val payeYear: Int = 2018
-      }
 
       val expected = List(
         "less_tax_adjustment_previous_year",

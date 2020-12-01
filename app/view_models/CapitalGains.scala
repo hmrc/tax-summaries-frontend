@@ -17,6 +17,7 @@
 package view_models
 
 import utils.GenericViewModel
+import view_models.paye.TaxYearFormatting
 
 case class CapitalGains(
   taxYear: Int,
@@ -46,10 +47,7 @@ case class CapitalGains(
   title: String,
   forename: String,
   surname: String)
-    extends GenericViewModel {
-
-  def taxYearFrom = (taxYear - 1).toString
-  def taxYearTo = taxYear.toString
+    extends GenericViewModel with TaxYearFormatting {
 
   def entrepreneursReliefRate = entrepreneursReliefRateRate.percent
   def ordinaryRate = ordinaryRateRate.percent

@@ -80,7 +80,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
           val document = contentAsString(result)
 
           status(result) shouldBe OK
-          document shouldBe contentAsString(howTaxIsSpentView(response, current.back(2).startYear))
+          document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.saYear))
         }
       }
 
