@@ -33,7 +33,8 @@
     includeGridWrapper: Boolean = false,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
     gaDimensions: Option[Map[String, Any]] = None,
-    articleClasses: Option[String] = None
+    articleClasses: Option[String] = None,
+    isSA: Boolean = false
 )(
     mainContent: Html
 )(
@@ -127,7 +128,8 @@
         "navTitle" -> navTitle,
         "showPropositionLinks" -> true,
         "langSelector" -> languageSelectorLanguages,
-        "optimizelyProjectId" -> appConfig.optimizelyProjectId
+        "optimizelyProjectId" -> appConfig.optimizelyProjectId,
+        "isSa" -> isSA
     )
 
     val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {

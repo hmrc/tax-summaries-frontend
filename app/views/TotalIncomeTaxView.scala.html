@@ -46,7 +46,8 @@
 @main(
         title = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear),
         actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
+        articleClasses = Some("full-width"),
+        isSA = request.saUtr.isDefined
     ) {
 
     @headerSection(

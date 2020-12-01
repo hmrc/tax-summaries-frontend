@@ -41,7 +41,8 @@
 @main(
         title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
+        articleClasses = Some("full-width"),
+        isSA = request.saUtr.isDefined
     ) {
 
     @headerSection(

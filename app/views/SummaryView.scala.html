@@ -41,7 +41,8 @@
 @main(
         title = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
+        articleClasses = Some("full-width"),
+        isSA = request.saUtr.isDefined
     ) {
 
     <div class="hmrc-logo-print" aria-hidden="true">

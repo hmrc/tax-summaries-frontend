@@ -45,8 +45,8 @@
 @main(
         title = Messages("ats.select_tax_year.title"),
         actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width selectYear")
-
+        articleClasses = Some("full-width selectYear"),
+        isSA = request.saUtr.isDefined
     ) {
 
     @headerSection(

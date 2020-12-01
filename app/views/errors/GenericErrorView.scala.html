@@ -32,7 +32,8 @@
 
 
 @main(
-    title = Messages("generic.error.html.title")
+    title = Messages("generic.error.html.title"),
+    isSA = request.saUtr.isDefined
   ) {
 
   <h1 id="generic-error-page-heading" class="heading-xlarge">@Html(Messages("generic.error.title"))</h1>
