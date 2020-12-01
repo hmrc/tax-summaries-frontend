@@ -43,7 +43,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     FakeRequest("GET", "?taxYear=2015"))
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
-  val taxYear = 2014
+  override val taxYear = 2014
 
   implicit val hc = new HeaderCarrier
 

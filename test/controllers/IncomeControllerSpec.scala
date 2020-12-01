@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val request = AuthenticatedRequest(
     "userId",
     None,

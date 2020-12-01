@@ -51,8 +51,8 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
       document.getElementById("Defence").text() shouldBe "Defence (5.3%)"
       document.select("#Defence + dd").text() shouldBe "£102"
 
-      document.getElementById("NationalDebtInterest").text() shouldBe "National debt interest (5.1%)"
-      document.select("#NationalDebtInterest + dd").text() shouldBe "£98"
+      document.getElementById("NationalDebtInterest").text() shouldBe "National debt interest (5.3%)"
+      document.select("#NationalDebtInterest + dd").text() shouldBe "£102"
 
       document.getElementById("Transport").text() shouldBe "Transport (4.3%)"
       document.select("#Transport + dd").text() shouldBe "£83"

@@ -60,7 +60,7 @@ object SummaryControllerSpec {
 
 class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with ScalaCheckPropertyChecks {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val request = AuthenticatedRequest(
     "userId",
     None,

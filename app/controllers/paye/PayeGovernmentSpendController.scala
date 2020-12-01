@@ -48,7 +48,7 @@ class PayeGovernmentSpendController @Inject()(
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
 
       case Right(successResponse: PayeAtsData) =>
-        Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse), successResponse.isWelshTaxPayer))
+        Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer))
       case Left(response: HttpResponse) =>
         response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())

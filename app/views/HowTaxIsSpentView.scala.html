@@ -49,7 +49,7 @@
 
     <h1 class="heading-xlarge">@messages("ats.howYourTaxWasSpent.heading")</h1>
 
-    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", taxYear.toString, (taxYear+1).toString))</p>
+    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", (taxYear-1).toString, taxYear.toString))</p>
     <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
 
 

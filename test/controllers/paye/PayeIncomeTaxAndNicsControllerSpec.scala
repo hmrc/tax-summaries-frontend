@@ -53,8 +53,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with 
       document.title should include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          taxYear.toString,
-          (taxYear + 1).toString))
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {

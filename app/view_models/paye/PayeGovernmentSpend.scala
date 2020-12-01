@@ -16,8 +16,9 @@
 
 package view_models.paye
 
+import config.ApplicationConfig
 import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
-import utils.SwapDataUtils
+import utils.CategoriesUtils
 import view_models.Amount
 
 case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
@@ -25,25 +26,25 @@ case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], t
 
 object PayeGovernmentSpend {
 
-  def apply(payeAtsData: PayeAtsData): PayeGovernmentSpend = {
+  def apply(payeAtsData: PayeAtsData, appConfig: ApplicationConfig): PayeGovernmentSpend = {
 
     val spendRows: List[SpendRow] = {
-      val govSpendAmountDataList = payeAtsData.gov_spending
+
+      payeAtsData.gov_spending
         .flatMap { govSpending: GovernmentSpendingOutputWrapper =>
           {
             govSpending.govSpendAmountData
               .map { govSpendAmountDataMap =>
-                for { (category, spendData) <- govSpendAmountDataMap } yield SpendRow(category, spendData)
+                val sortedSpendData = govSpendAmountDataMap.toList.sortWith(_._2.percentage > _._2.percentage)
+                val orderedSpendData =
+                  CategoriesUtils.reorderCategories(appConfig, payeAtsData.taxYear, sortedSpendData)
+
+                for ((category, spendData) <- orderedSpendData)
+                  yield SpendRow(category, spendData)
               }
-              .map(spendRow => spendRow.toList.sortWith(_.spendData.percentage > _.spendData.percentage))
           }
         }
         .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
-
-      val list = SwapDataUtils.swapDataForPaye(govSpendAmountDataList, "Transport", "PublicOrderAndSafety")
-      if (payeAtsData.taxYear == 2019) {
-        SwapDataUtils.swapDataForPaye(list, "Culture", "Environment")
-      } else list
     }
 
     val totalSpendingAmount = payeAtsData.gov_spending

@@ -52,8 +52,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers with Con
       document.title should include(
         Messages("paye.ats.tax_free_amount.title") + Messages(
           "generic.to_from",
-          taxYear.toString,
-          (taxYear + 1).toString))
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {

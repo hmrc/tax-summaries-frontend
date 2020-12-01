@@ -51,7 +51,7 @@ class ErrorController @Inject()(
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
-    val taxYear = current.back(2).startYear
+    val taxYear = appConfig.saYear
 
     governmentSpendService.getGovernmentSpendFigures(taxYear, request.saUtr) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))

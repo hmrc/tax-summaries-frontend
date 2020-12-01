@@ -38,8 +38,9 @@
     appConfig: ApplicationConfig
 )
 
+
 @main(
-        title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearStart, viewModel.taxYearEnd),
+        title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         articleClasses = Some("selectYear")
     ) {
 
@@ -57,8 +58,8 @@
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.summary.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
     <p>@Html(Messages("paye.ats.summary.lede")) </p>
 
         <section id="taxable-income">
