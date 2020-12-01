@@ -24,7 +24,6 @@ import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.renderer.TemplateRenderer
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
@@ -53,7 +52,6 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val templateRenderer = inject[TemplateRenderer]
-  implicit lazy val appConfig = inject[ApplicationConfig]
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
