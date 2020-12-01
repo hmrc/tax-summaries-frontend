@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val request = AuthenticatedRequest(
     "userId",
     None,
@@ -75,6 +75,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     ScottishTax.empty,
     totalIncomeTax = Amount(372, "GBP"),
     scottishIncomeTax = Amount(100, "GBP"),
+    welshIncomeTax = Amount(100, "GBP"),
     SavingsTax.empty,
     incomeTaxStatus = "0002",
     startingRateForSavingsRateRate = Rate("10%"),
@@ -160,7 +161,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       document.getElementById("additional-rate-income-tax-rate").text() shouldBe "45%"
 
       document.getElementById("ordinary-rate-amount").text() shouldBe "£50"
-      document.getElementById("total-income-tax-amount").text() shouldBe "£372"
+      document.getElementById("total-income-tax-amount-nics").text() shouldBe "£372"
 
       document.toString should include("Total Income Tax")
       document.getElementById("user-info").text should include("forename surname")
@@ -384,7 +385,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-income-tax-amount").text() should equal("£0")
+      document.getElementById("total-income-tax-amount-nics").text() should equal("£0")
     }
 
   }

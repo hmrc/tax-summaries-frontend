@@ -16,10 +16,14 @@
 
 package view_models
 
+import config.ApplicationConfig
 import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import utils.TestConstants
 
-class GovernmentSpendSpec extends PlaySpec with TestConstants {
+class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPerSuite {
+
+  implicit val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "GovernmentSpend" when {
 
@@ -29,8 +33,8 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants {
         fakeGovernmentSpend.sortedSpendData mustNot contain(govSpendTotalTuple)
       }
 
-      "sort from highest percentage to lowest" in {
-        fakeGovernmentSpend.sortedSpendData.map(_._2.percentage) mustBe expectedPercentageOrder
+      "sort from highest percentage to lowest for tax Year 2019" in {
+        fakeGovernmentSpend.sortedSpendData.map(_._2.percentage) mustBe expectedPercentageOrder2019
       }
     }
 
@@ -39,7 +43,7 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants {
       "sort transport above Public Order" when {
 
         "the tax year is 2019" in {
-          fakeGovernmentSpend.filteredDataWithHigherTransport.map(_._1) mustBe expectedCategoryOrder
+          fakeGovernmentSpend.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe expectedCategoryOrderFor2019
         }
       }
 
@@ -48,8 +52,18 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants {
         "the tax year is not 2019" in {
           val spendFor2018 = fakeGovernmentSpend.copy(taxYear = 2018)
 
-          spendFor2018.filteredDataWithHigherTransport.map(_._1) mustBe
+          spendFor2018.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe
             spendFor2018.sortedSpendData.map(_._1)
+        }
+      }
+
+      "sort public order above transport and culture above environment" when {
+
+        "the tax year is 2020" in {
+          val spendFor2020 = fakeGovernmentSpend.copy(taxYear = 2020)
+
+          spendFor2020.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe
+            expectedCategoryOrderfor2020
         }
       }
     }

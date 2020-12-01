@@ -28,18 +28,13 @@
 
 @(viewModel:PayeIncomeTaxAndNics, isWelshTaxPayer: Boolean)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMainView(
-    title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from",
-    viewModel.taxYearStart, viewModel.taxYearEnd),
-    mainViewParameters = MainViewParameters(true, true)
-) {
-
-@backLinkView(Messages("generic.back"))
+@payeMainView(title = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)) {
+  @backLinkView(Messages("generic.back"))
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.total_income_tax.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearStart),
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearEnd)))</h2>
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 	<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
 
   @if(viewModel.scottishTaxBands.nonEmpty){

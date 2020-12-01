@@ -30,14 +30,12 @@ import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models.{Amount, NoATSViewModel}
-import views.html.{CapitalGainsView, TaxFreeAmountView}
-import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.Future
 
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstants with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val request = AuthenticatedRequest(
     "userId",
     None,

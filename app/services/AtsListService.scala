@@ -21,20 +21,22 @@ import java.util.Date
 import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AgentToken, AtsListData, IncomingAtsError}
+import models._
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import view_models.{ATSUnavailableViewModel, NoATSViewModel}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AtsListService @Inject()(
   auditService: AuditService,
   middleConnector: MiddleConnector,
   dataCache: DataCacheConnector,
-  authUtils: AuthorityUtils) {
-
-  def accountUtils: AccountUtils = AccountUtils
+  authUtils: AuthorityUtils)(implicit ec: ExecutionContext)
+    extends AccountUtils {
 
   def createModel(converter: (AtsListData => GenericViewModel))(
     implicit hc: HeaderCarrier,
@@ -43,46 +45,46 @@ class AtsListService @Inject()(
       checkCreateModel(_, converter)
     }
 
-  private def checkCreateModel(output: AtsListData, converter: (AtsListData => GenericViewModel)): GenericViewModel =
+  private def checkCreateModel(
+    output: Either[Int, AtsListData],
+    converter: AtsListData => GenericViewModel): GenericViewModel =
     output match {
-      case error if error.errors.nonEmpty =>
-        error.errors.get match {
-          case IncomingAtsError(_) => throw new AtsError(error.errors.toString)
-        }
-      case atsList => converter(atsList)
+      case Right(atsList)  => converter(atsList)
+      case Left(NOT_FOUND) => new NoATSViewModel
+      case Left(_)         => new ATSUnavailableViewModel
     }
 
-  def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
     for {
       data <- dataCache.fetchAndGetAtsListForSession
     } yield {
       data match {
         case Some(data) =>
-          if (accountUtils.isAgent(request)) {
+          if (isAgent(request)) {
             fetchAgentInfo(data)
           } else {
             getAtsListAndStore()
           }
         case _ =>
-          if (accountUtils.isAgent(request)) {
+          if (isAgent(request)) {
             dataCache.getAgentToken.flatMap { token =>
               getAtsListAndStore(token)
             }
           } else {
             getAtsListAndStore()
-
           }
       }
     }
   } flatMap { identity }
 
-  private def fetchAgentInfo(
-    data: AtsListData)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsListData] = {
+  private def fetchAgentInfo(data: AtsListData)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
     for {
       token <- dataCache.getAgentToken
     } yield {
       if (authUtils.checkUtr(data.utr, token)) {
-        Future.successful(data)
+        Future.successful(Right(data))
       } else {
         getAtsListAndStore(token)
       }
@@ -91,8 +93,8 @@ class AtsListService @Inject()(
 
   private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[AtsListData] = {
-    val account = utils.AccountUtils.getAccount(request)
+    request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
+    val account = getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val gotData = (account: @unchecked) match {
@@ -100,17 +102,22 @@ class AtsListService @Inject()(
       case individual: SaUtr => middleConnector.connectToAtsList(individual)
     }
 
-    // TODO: Audit Events
-    for (data <- gotData) yield {
-      data.errors match {
-        case None =>
-          sendAuditEvent(account, data)
-          storeAtsListData(data)
-        case Some(IncomingAtsError("NoAtsError")) => storeAtsListData(data)
-        case Some(_)                              => Future(data)
-      }
+    val result = gotData flatMap {
+      case AtsSuccessResponseWithPayload(payload: AtsListData) =>
+        for {
+          data <- storeAtsListData(payload)
+        } yield {
+          Right(data)
+        }
+      case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
+      case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
     }
-  } flatMap { identity }
+
+    result map { res =>
+      sendAuditEvent(account, res)
+      res
+    }
+  }
 
   private def storeAtsListData(atsList: AtsListData)(implicit hc: HeaderCarrier): Future[AtsListData] =
     dataCache.storeAtsListForSession(atsList) map { data =>
@@ -127,27 +134,32 @@ class AtsListService @Inject()(
       data.get
     }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsListData)(
+  private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[Int, AtsListData])(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]) =
-    (account: @unchecked) match {
-      case _: Uar =>
+    request: AuthenticatedRequest[_]): Future[AuditResult] =
+    (dataOpt, account: @unchecked) match {
+      case (Right(data), _: Uar) =>
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
             "agentId"   -> AccountUtils.getAccountId(request),
-            "clientUtr" -> data.utr,
-            "time"      -> new Date().toString
+            "clientUtr" -> data.utr
           ))
-      case _: SaUtr =>
+      case (Right(data), _: SaUtr) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
             "userId"   -> request.userId,
             "userUtr"  -> data.utr,
-            "userType" -> userType,
-            "time"     -> new Date().toString
+            "userType" -> userType
+          ))
+      case (Left(_), identifier) =>
+        auditService.sendEvent(
+          AuditTypes.Tx_FAILED,
+          Map(
+            "userId"         -> request.userId,
+            "userIdentifier" -> identifier.value
           ))
     }
 }

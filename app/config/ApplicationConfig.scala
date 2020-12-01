@@ -18,19 +18,16 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
+import play.api.Configuration
 import play.api.i18n.Lang
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
+import scala.collection.JavaConverters._
 
 @Singleton
-class ApplicationConfig @Inject()(
-  environment: Environment,
-  config: ServicesConfig,
-  runMode: RunMode,
-  configuration: Configuration) {
+class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, configuration: Configuration) {
 
-  def getConf(key: String) = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, runMode, appName).get()
 
@@ -96,6 +93,8 @@ class ApplicationConfig @Inject()(
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
   lazy val payeAtsServiceUnavailableParagraph = config.getString("paye.ats.service_unavailable.paragraph")
 
+  val payeMultipleYears: Boolean = config.getBoolean("paye.multipleYearsEnabled")
+
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 
@@ -108,4 +107,9 @@ class ApplicationConfig @Inject()(
   def payeFallbackURL: String = config.getString("paye.language.fallbackUrl")
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
+
+  val saYear: Int = config.getInt("sa.year")
+
+  def spendCategories(taxYear: Int): List[String] =
+    configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
 }

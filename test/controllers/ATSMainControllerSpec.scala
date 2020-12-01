@@ -29,14 +29,12 @@ import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.NoATSViewModel
-import views.html.TaxsMainView
-import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
   val request = AuthenticatedRequest(
     "userId",

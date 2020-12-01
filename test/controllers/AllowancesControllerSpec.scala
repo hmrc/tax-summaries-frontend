@@ -32,14 +32,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models._
-import views.html.{TaxFreeAmountView, TaxsMainView}
-import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.Future
 
 class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val taxYear = 2014
+  override val taxYear = 2014
 
   val baseModel = Allowances(
     taxYear = 2014,

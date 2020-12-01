@@ -16,29 +16,26 @@
 
 package controllers
 
-import config.ApplicationConfig
+import controllers.paye.AppConfigBaseSpec
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n
 import play.api.i18n.{MessagesApi, MessagesImpl, _}
 import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
-import play.api.test.Injecting
 import services.PayeAtsService
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 
 import scala.concurrent.ExecutionContext
 
-trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with Injecting {
+trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
 
   private val messagesActionBuilder: MessagesActionBuilder =
     new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc: ControllerComponents = stubControllerComponents()
 
-  val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
+  lazy val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
     messagesActionBuilder,
     DefaultActionBuilder(stubBodyParser[AnyContent]()),
     cc.parsers,
@@ -53,7 +50,6 @@ trait ControllerBaseSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
-  implicit lazy val appConfig = inject[ApplicationConfig]
   implicit val ec: ExecutionContext = mcc.executionContext
 
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]

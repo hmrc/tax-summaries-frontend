@@ -17,13 +17,9 @@
 package controllers.paye
 
 import controllers.auth.PayeAuthenticatedRequest
-import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import services.PayeAtsService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.testNino
 
 import scala.io.Source
@@ -31,8 +27,6 @@ import scala.io.Source
 trait PayeControllerSpecHelpers {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  val taxYear: Int = 2019
 
   val expectedResponse: JsValue = readJson("/paye_ats.json")
 

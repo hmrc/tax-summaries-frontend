@@ -23,7 +23,6 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -47,15 +46,15 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
       contentAsString(result) should include(
         Messages("paye.ats.income_before_tax.title") + Messages(
           "generic.to_from",
-          taxYear.toString,
-          (taxYear + 1).toString))
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
@@ -63,9 +62,9 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
@@ -76,13 +75,12 @@ class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeCo
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
     }
   }
-
 }

@@ -24,7 +24,6 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -50,14 +49,14 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(expectedResponse.as[PayeAtsData]))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
 
       val document = Jsoup.parse(contentAsString(result))
 
       document.title should include(
-        Messages("paye.ats.summary.title") + Messages("generic.to_from", taxYear.toString, (taxYear + 1).toString))
+        Messages("paye.ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "return 200 when total_income_before_tax key is missing in PAYE ATS data" in {
@@ -67,7 +66,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe OK
     }
@@ -79,7 +78,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
 
@@ -91,10 +90,9 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = NOT_FOUND, responseJson = Some(Json.toJson(NOT_FOUND)))))
+        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
-      val document = Jsoup.parse(contentAsString(result))
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
@@ -105,9 +103,9 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = BAD_REQUEST)))
+        .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(BAD_REQUEST).url)
@@ -118,9 +116,9 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers wit
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR)))
+        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
 
-      val result = sut.show(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)

@@ -64,6 +64,7 @@ ats.select_tax_year.title=Select the tax year
 ats.select_tax_year.continue=Continue
 ats.select_tax_year.required.summary=Please select the tax year
 ats.select_tax_year.required=Select an option for the tax year
+ats.select_tax_year.label={0} to {1}
 
 
 # View ATS - Landing page
@@ -184,6 +185,7 @@ ats.total_income_tax.table.other.increasing=Other adjustments that increase your
 ats.total_income_tax.table.other.reducing=Other adjustments that reduce your Income Tax
 ats.total_income_tax.table.marriage_allowance_received=Less Your Marriage Allowance Received
 ats.total_income_tax.table.scottish_income_tax=This includes Scottish Income Tax of
+ats.total_income_tax.table.welsh_income_tax=This includes Welsh Income Tax of
 
 paye.ats.total_income_tax.title=Income Tax and National Insurance contributions
 paye.ats.total_income_tax.introParagraph=This shows how your tax was calculated.

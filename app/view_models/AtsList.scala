@@ -16,6 +16,7 @@
 
 package view_models
 
+import play.api.i18n.Messages
 import play.api.libs.json.{Format, Json}
 import utils.GenericViewModel
 
@@ -25,7 +26,8 @@ case class AtsList(utr: String, forename: String, surname: String, yearList: Lis
 }
 
 case class TaxYearEnd(year: Option[String]) extends GenericViewModel {
-  def taxYearPeriod: String = (year.get.toInt - 1) + "/" + year.get
+  def taxYearPeriod(implicit messages: Messages): String =
+    messages("ats.select_tax_year.label", (year.get.toInt - 1).toString, year.get)
 }
 
 object TaxYearEnd {

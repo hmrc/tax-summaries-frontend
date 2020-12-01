@@ -27,7 +27,7 @@
 @(viewModel: view_models.Allowances, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
 @headerContent = {
-  @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.tax_free_amount.subtitle", viewModel.year)
+  @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "ats.tax_free_amount.subtitle", viewModel.taxYear)
 
   @if(actingAsAttorney.isDefined) {
     <div class="nested-banner">
@@ -67,13 +67,13 @@
         <tbody>
           @if(!viewModel.taxFreeAllowance.isZero) {
           <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line1", viewModel.year.toString))</td>
+            <td>@Html(Messages("ats.tax_free_amount.table.line1", viewModel.taxYear.toString))</td>
             <td id="tax-free-allowance-amount">@currencyAmountView(viewModel.taxFreeAllowance)</td>
           </tr>
           }
           @if(!viewModel.marriageAllowanceTransferred.isZero) {
           <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.year.toString))</td>
+            <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.taxYear.toString))</td>
             <td id="marriage_allowance_transferred_amount">@currencyAmountView(viewModel.marriageAllowanceTransferred)</td>
           </tr>
           }
@@ -86,7 +86,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.year.toString))</th>
+            <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.taxYear.toString))</th>
             <td id="tax-free-total" class="no-bold">@currencyAmountView(viewModel.totalTaxFree)</td>
           </tr>
         </tfoot>

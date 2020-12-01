@@ -66,7 +66,7 @@
             </span>
         @Html(Messages("ats.treasury_spending.title"))
     </h1>
-            @if(viewModel.incomeTaxStatus == "0002" && !viewModel.scottishIncomeTax.isZero) {
+            @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
             } else {
@@ -82,7 +82,7 @@
                 </thead>
                 <tbody>
 
-                @viewModel.filteredDataWithHigherTransport.map {
+                @viewModel.filteredDataWithHigherTransport(appConfig).map {
                     case (key, value) => {
                         @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
                         <tr>

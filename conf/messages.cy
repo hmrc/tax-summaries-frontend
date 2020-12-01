@@ -54,6 +54,7 @@ ats.select_tax_year.title=Dewiswch y Flwyddyn Dreth
 ats.select_tax_year.continue=Parhau
 ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
 ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth
+ats.select_tax_year.label={0} i {1}
 
 # View ATS - Landing page
 #============================================================
@@ -145,6 +146,7 @@ ats.total_income_tax.table.other.increasing=Addasiadau eraill sy’n cynyddu eic
 ats.total_income_tax.table.other.reducing=Addasiadau eraill sy’n gostwng eich Treth Incwm
 ats.total_income_tax.table.marriage_allowance_received=Llai’r Lwfans Priodasol yr ydych wedi’i gael
 ats.total_income_tax.table.scottish_income_tax=Mae hyn yn cynnwys Treth Incwm yn yr Alban o
+ats.total_income_tax.table.welsh_income_tax=mae hyn yn cynnwys Treth Incwm yng Nghymru o
 
 # View ATS - scottish income tax
 #============================================================
