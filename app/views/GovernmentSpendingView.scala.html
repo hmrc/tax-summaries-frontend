@@ -41,8 +41,7 @@
 @main(
         Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width"),
-        isSA = request.saUtr.isDefined
+        articleClasses = Some("full-width")
     ) {
 
 

@@ -35,8 +35,7 @@
 )
 
 @main(
-        title = Messages("generic.not_authorised"),
-        isSA = request.saUtr.isDefined
+        title = Messages("generic.not_authorised")
     ) {
 
     @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.noauth", 0)
