@@ -1,6 +1,6 @@
 # Generic
 #============================================================
-generic.ats.browser.title=Crynodeb treth blynyddol - GOV.UK
+generic.ats.browser.title=Crynodeb Treth Blynyddol - GOV.UK
 generic.description=Disgrifiad
 generic.amount_pounds=Swm
 generic.back=Yn ôl
@@ -8,7 +8,7 @@ generic.is=yw
 generic.not_authorised=Heb eich awdurdodi
 generic.exit_tax_summaries=Nôl i Wasanaethau Ar-lein CThEM
 generic.utr=Cyfeirnod Unigryw y Trethdalwr:
-generic.ats=Crynodeb treth blynyddol
+generic.ats=Crynodeb Treth Blynyddol
 generic.utr_abbrev=UTR
 generic.minus=llai
 generic.acting_for=Rydych yn gweithredu ar ran
@@ -34,11 +34,11 @@ view.languageToggle.welsh=Cymraeg
 breadcrumbs.yta.home=Hafan
 
 breadcrumbs.taxs.select_tax_year=Dewiswch y Flwyddyn Dreth
-breadcrumbs.taxs.home=Eich crynodeb treth blynyddol
+breadcrumbs.taxs.home=Eich Crynodeb Treth Blynyddol
 breadcrumbs.taxs.noauth=Heb eich awdurdodi
 breadcrumbs.taxs.no_ats=Dim CTB ar gael
 breadcrumbs.taxs.no_ats_error=Anawsterau Technegol
-breadcrumbs.taxs.index=Eich crynodeb treth blynyddol
+breadcrumbs.taxs.index=Eich Crynodeb Treth Blynyddol
 breadcrumbs.taxs.nics=Treth Incwm ac Yswiriant Gwladol
 breadcrumbs.taxs.summary=Eich incwm a’ch trethi
 breadcrumbs.taxs.treasury_spending=Eich trethi a gwariant cyhoeddus
@@ -46,7 +46,7 @@ breadcrumbs.taxs.income_before_tax=Incwm cyn treth
 breadcrumbs.taxs.tax_free_amount=Swm rhydd o dreth
 breadcrumbs.taxs.total_income_tax=Treth Incwm
 breadcrumbs.taxs.capital_gains_tax=Treth Enillion Cyfalaf
-breadcrumbs.taxs.agent_service_unavailable=Crynodeb treth blynyddol: 2013 i 2014
+breadcrumbs.taxs.agent_service_unavailable=Crynodeb Treth Blynyddol: 2013 i 2014
 
 # View ATS - Select tax year page
 #============================================================
@@ -58,7 +58,7 @@ ats.select_tax_year.label={0} i {1}
 
 # View ATS - Landing page
 #============================================================
-ats.index.html.title=Eich crynodeb treth blynyddol
+ats.index.html.title=Eich Crynodeb Treth Blynyddol
 ats.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn.
 ats.index.html.tax_calc_link=Eich incwm a’ch trethi
 ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich swm yn rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
@@ -235,15 +235,15 @@ generic.error.try.later=Rhowch gynnig arall arni yn nes ymlaen.
 # No ATS - ats unavailable page
 #============================================================
 no.ats.html.title=Dim ATS
-no.ats.title=Eich crynodeb treth blynyddol
+no.ats.title=Eich Crynodeb Treth Blynyddol
 no.ats.line1=Nid oedd gennych unrhyw incwm neu enillion cyfalaf trethadwy eleni felly nid oes gennych grynodeb treth blynyddol.
-no.ats.line2=Os oedd gennych incwm trethadwy, byddai eich crynodeb treth blynyddol yn dangos sut y cyfrifir eich trethi a’ch cyfraniadau Yswiriant Gwladol, a’r gwasanaethau cyhoeddus gwnaeth Trysorlys EM ddyrannu’ch trethi ar eu cyfer.
+no.ats.line2=Os oedd gennych incwm trethadwy, byddai eich Crynodeb Treth Blynyddol yn dangos sut y cyfrifir eich trethi a’ch cyfraniadau Yswiriant Gwladol, a’r gwasanaethau cyhoeddus gwnaeth Trysorlys EM ddyrannu’ch trethi ar eu cyfer.
 
 # Not authorised page
 #============================================================
 not.authorised.line1=Nid ydych wedi eich awdurdodi i gyrchu Crynodebau Treth Blynyddol.
-client_agent.notice.line1=Nid yw’r fersiwn o’r crynodeb treth blynyddol sy’n galluogi asiantau i fwrw golwg ar fanylion eu cleientiaid ar gael eto. Bydd y fersiwn hwn ar gael cyn bo hir.
-client_agent.notice.line2=Bydd y crynodeb treth blynyddol yn dangos dadansoddiad o faint o dreth ac Yswiriant Gwladol mae eich cleient wedi eu talu neu y bydd yn eu talu, a sut mae’r llywodraeth wedi gwario’r rhain, neu sut y bydd yn eu gwario.
+client_agent.notice.line1=Nid yw’r fersiwn o’r Crynodeb Treth Blynyddol sy’n galluogi asiantau i fwrw golwg ar fanylion eu cleientiaid ar gael eto. Bydd y fersiwn hwn ar gael cyn bo hir.
+client_agent.notice.line2=Bydd y Crynodeb Treth Blynyddol yn dangos dadansoddiad o faint o dreth ac Yswiriant Gwladol mae eich cleient wedi eu talu neu y bydd yn eu talu, a sut mae’r llywodraeth wedi gwario’r rhain, neu sut y bydd yn eu gwario.
 
 # PAYE Not authorised page
 #============================================================
@@ -284,7 +284,7 @@ global.page.not.found.error.title=Heb ddod o hyd i’r dudalen
 global.page.not.found.error.heading=Heb ddod o hyd i’r dudalen
 global.page.not.found.error.check.web.address.correct=Os gwnaethoch deipio’r cyfeiriad gwe, gwiriwch ei fod yn gywir.
 global.page.not.found.error.check.web.address.full=Os gwnaethoch ludo’r cyfeiriad gwe, gwiriwch eich bod wedi copïo’r cyfeiriad yn llawn.
-global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, {0} os ydych am siarad â rhywun am eich crynodeb treth blynyddol.
+global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, {0} os ydych am siarad â rhywun am eich Crynodeb Treth Blynyddol.
 global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
 global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
