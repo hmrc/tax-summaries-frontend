@@ -19,9 +19,10 @@ package services
 import java.util.Date
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models._
+import models.{AtsListData, _}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,7 +36,8 @@ class AtsListService @Inject()(
   auditService: AuditService,
   middleConnector: MiddleConnector,
   dataCache: DataCacheConnector,
-  authUtils: AuthorityUtils)(implicit ec: ExecutionContext)
+  authUtils: AuthorityUtils,
+  appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
     extends AccountUtils {
 
   def createModel(converter: (AtsListData => GenericViewModel))(
@@ -103,12 +105,18 @@ class AtsListService @Inject()(
     }
 
     val result = gotData flatMap {
-      case AtsSuccessResponseWithPayload(payload: AtsListData) =>
+      case AtsSuccessResponseWithPayload(payload: AtsListData) => {
+
+        val atsListData = if (appConfig.saYear < 2020 && payload.atsYearList.isDefined) {
+          AtsListData(payload.utr, payload.taxPayer, Some(payload.atsYearList.get.filter(_ != 2020)))
+        } else payload
+
         for {
-          data <- storeAtsListData(payload)
+          data <- storeAtsListData(atsListData)
         } yield {
           Right(data)
         }
+      }
       case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
       case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
     }
