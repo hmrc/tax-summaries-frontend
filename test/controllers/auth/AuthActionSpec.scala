@@ -52,7 +52,7 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
   }
 
   val ggSignInUrl =
-    "http://localhost:9553/bas-gateway/sign-in?continue_url=http://localhost:9217/annual-tax-summary&continue=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
+    "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
   "A user with no active session" should {
