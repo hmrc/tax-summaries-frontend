@@ -64,8 +64,8 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
           Redirect(
             appConfig.payeLoginUrl,
             Map(
-              "continue" -> Seq(appConfig.payeLoginCallbackUrl),
-              "origin"   -> Seq(appConfig.appName)
+              "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
+              "origin"       -> Seq(appConfig.appName)
             )
           )
         }

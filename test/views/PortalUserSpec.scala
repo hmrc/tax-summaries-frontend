@@ -120,7 +120,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
@@ -146,7 +146,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
@@ -189,7 +189,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
@@ -249,7 +249,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include(
         "<strong>Your income and taxes</strong>")
@@ -270,7 +270,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
@@ -334,7 +334,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
@@ -396,7 +396,7 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
 
       document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your annual tax summary"
+      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
       document.select("#global-breadcrumb li:nth-child(3)").toString should include(
         "<strong>Your taxes and public spending</strong>")
