@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
-import controllers.auth.{AuthAction, AuthenticatedRequest, RoutingAction}
+import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{AtsListData, ErrorResponse}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
@@ -37,7 +37,6 @@ class IndexController @Inject()(
   atsYearListService: AtsYearListService,
   atsListService: AtsListService,
   val auditService: AuditService,
-  routingAction: RoutingAction,
   authAction: AuthAction,
   mcc: MessagesControllerComponents,
   taxsIndexView: TaxsIndexView,
@@ -48,9 +47,8 @@ class IndexController @Inject()(
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedIndex: Action[AnyContent] = (routingAction andThen authAction).async {
-    request: AuthenticatedRequest[_] =>
-      agentAwareShow(request)
+  def authorisedIndex: Action[AnyContent] = authAction.async { request: AuthenticatedRequest[_] =>
+    agentAwareShow(request)
   }
 
   def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>
