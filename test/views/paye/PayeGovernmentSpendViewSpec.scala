@@ -51,24 +51,24 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
       document.getElementById("Defence").text() shouldBe "Defence (5.3%)"
       document.select("#Defence + dd").text() shouldBe "£102"
 
-      document.getElementById("NationalDebtInterest").text() shouldBe "National debt interest (5.3%)"
+      document.getElementById("NationalDebtInterest").text() shouldBe "National Debt Interest (5.3%)"
       document.select("#NationalDebtInterest + dd").text() shouldBe "£102"
 
       document.getElementById("Transport").text() shouldBe "Transport (4.3%)"
       document.select("#Transport + dd").text() shouldBe "£83"
 
-      document.getElementById("PublicOrderAndSafety").text() shouldBe "Public order and safety (4.3%)"
+      document.getElementById("PublicOrderAndSafety").text() shouldBe "Public Order and Safety (4.3%)"
       document.select("#PublicOrderAndSafety + dd").text() shouldBe "£83"
 
-      document.getElementById("BusinessAndIndustry").text() shouldBe "Business and industry (3.6%)"
+      document.getElementById("BusinessAndIndustry").text() shouldBe "Business and Industry (3.6%)"
       document.select("#BusinessAndIndustry + dd").text() shouldBe "£69"
 
-      document.getElementById("GovernmentAdministration").text() shouldBe "Government administration (2.1%)"
+      document.getElementById("GovernmentAdministration").text() shouldBe "Government Administration (2.1%)"
       document.select("#GovernmentAdministration + dd").text() shouldBe "£40"
 
       document
         .getElementById("HousingAndUtilities")
-        .text() shouldBe "Housing and utilities, like street lighting (1.6%)"
+        .text() shouldBe "Housing and Utilities, like street lighting (1.6%)"
       document.select("#HousingAndUtilities + dd").text() shouldBe "£31"
 
       document.getElementById("Environment").text() shouldBe "Environment (1.5%)"
@@ -77,10 +77,10 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
       document.getElementById("Culture").text() shouldBe "Culture, like sports, libraries and museums (1.5%)"
       document.select("#Culture + dd").text() shouldBe "£29"
 
-      document.getElementById("OverseasAid").text() shouldBe "Overseas aid (1.2%)"
+      document.getElementById("OverseasAid").text() shouldBe "Overseas Aid (1.2%)"
       document.select("#OverseasAid + dd").text() shouldBe "£23"
 
-      document.getElementById("UkContributionToEuBudget").text() shouldBe "UK contribution to the EU budget (1%)"
+      document.getElementById("UkContributionToEuBudget").text() shouldBe "UK Contribution to the EU budget (1%)"
       document.select("#UkContributionToEuBudget + dd").text() shouldBe "£19"
 
       document.select("#TotalAmount + dd").text() shouldBe "£200"
