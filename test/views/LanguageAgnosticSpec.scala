@@ -107,7 +107,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
       val result =
         taxsMainView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
-      document.getElementById("index-page-header").text() should include("Eich crynodeb treth blynyddol")
+      document.getElementById("index-page-header").text() should include("Eich Crynodeb Treth Blynyddol")
       document
         .getElementById("index-page-description")
         .text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +

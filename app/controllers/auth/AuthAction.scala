@@ -108,8 +108,8 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
         Redirect(
           ggSignIn,
           Map(
-            "continue" -> Seq(callbackUrl),
-            "origin"   -> Seq(appConfig.appName)
+            "continue_url" -> Seq(callbackUrl),
+            "origin"       -> Seq(appConfig.appName)
           )
         )
       }

@@ -16,6 +16,7 @@
 
 package services
 
+import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models.{AgentToken, AtsErrorResponse, AtsListData, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
@@ -55,6 +56,7 @@ class AtsListServiceSpec
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
+  val appConfig = mock[ApplicationConfig]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
@@ -90,6 +92,8 @@ class AtsListServiceSpec
 
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+
+    when(appConfig.saYear).thenReturn(2020)
   }
 
   implicit val request =
@@ -102,8 +106,14 @@ class AtsListServiceSpec
     timestamp = 0
   )
 
+  val dataFor2019 = {
+    val source = Source.fromURL(getClass.getResource("/test_list_utr_year_2019.json")).mkString
+    val json = Json.parse(source)
+    Json.fromJson[AtsListData](json).get
+  }
+
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils)
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
 
   "storeSelectedTaxYear" should {
 
@@ -171,6 +181,27 @@ class AtsListServiceSpec
   }
 
   "getAtsYearList" should {
+
+    "Return a ats list with 2020 year data" in {
+
+      whenReady(sut.getAtsYearList) { result =>
+        result.right.get.atsYearList.get.contains(2020) shouldBe true
+      }
+
+    }
+
+    "Return a ats list without 2020 year data" in {
+
+      when(appConfig.saYear).thenReturn(2019)
+
+      when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(dataFor2019)))
+
+      whenReady(sut.getAtsYearList) { result =>
+        result.right.get.atsYearList.get.contains(2020) shouldBe false
+      }
+
+    }
 
     "Return a failed future when the call to the dataCache fails (fetch)" in {
 
