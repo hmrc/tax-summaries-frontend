@@ -200,9 +200,6 @@ ats.treasury_spending.section.sit.scottish.spending.link.1.text= www.gov.scot/ac
 ats.treasury_spending.section.sit.scottish.spending.2=I gael gwybodaeth am Gyfradd yr Alban o Dreth Incwm, ewch i
 ats.treasury_spending.section.sit.scottish.spending.link.2.text= www.gov.uk/scottish-rate-income-tax/how-it-works.
 
-
-
-
 ats.treasury_spending.return=Yn ôl
 ats.treasury_spending.total=Cyfanswm
 
@@ -210,18 +207,19 @@ ats.treasury_spending.table.Welfare=Lles
 ats.treasury_spending.table.Health=Iechyd
 ats.treasury_spending.table.StatePensions=Pensiynau’r Wladwriaeth
 ats.treasury_spending.table.Education=Addysg
-ats.treasury_spending.table.NationalDebtInterest=Llog ar y ddyled wladol
+ats.treasury_spending.table.NationalDebtInterest=Llog ar y Ddyled Wladol
 ats.treasury_spending.table.Defence=Amddiffyn
 ats.treasury_spending.table.CriminalJustice=Cyfiawnder Troseddol
-ats.treasury_spending.table.Transport=Cludiant
+ats.treasury_spending.table.Transport=Trafnidiaeth
 ats.treasury_spending.table.GovernmentAdministration=Gweinyddiaeth y Llywodraeth
-ats.treasury_spending.table.Culture=Diwylliant, fel chwaraeon, llyfrgelloedd ac amgueddfeydd
+ats.treasury_spending.table.Culture=Diwylliant, megis chwaraeon, llyfrgelloedd, amgueddfeydd
 ats.treasury_spending.table.Environment=Yr amgylchedd
-ats.treasury_spending.table.HousingAndUtilities=Tai a gwasanaethau cyhoeddus, fel goleuadau stryd
+ats.treasury_spending.table.HousingAndUtilities=Tai a Gwasanaethau Cyhoeddus, megis goleuadau stryd
 ats.treasury_spending.table.BusinessAndIndustry=Busnes a Diwydiant
-ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at gyllideb yr UE
-ats.treasury_spending.table.OverseasAid=Cymorth tramor
-ats.treasury_spending.table.PublicOrderAndSafety=Trefn a diogelwch cyhoeddus
+ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at Gyllideb yr UE
+ats.treasury_spending.table.OverseasAid=Cymorth Tramor
+ats.treasury_spending.table.PublicOrderAndSafety=Trefn a Diogelwch Cyhoeddus
+
 ats.treasury_spending.table.link=Bwrw golwg ar yr wybodaeth hon fel tabl
 ats.treasury_spending.chart.link=Bwrw golwg ar yr wybodaeth hon fel siart
 ats.treasury_spending.print.this.page = Argraffu’r dudalen hon
@@ -320,21 +318,23 @@ paye.ats.summary.lede=Mae hyn er eich gwybodaeth yn unig. Nid oes rhaid i chi gy
 #===========================================================
 paye.ats.treasury_spending.title=Sut y gwariwyd eich treth
 paye.ats.treasury_spending.introParagraph=Mae’r wybodaeth ar y dudalen hon yn dangos i chi sut y gwariwyd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol. Nid yw hyn yn cynnwys trethi anuniongyrchol megis TAW a thollau eraill.
+
 paye.ats.treasury_spending.table.Welfare=Lles
 paye.ats.treasury_spending.table.Health=Iechyd
 paye.ats.treasury_spending.table.StatePensions=Pensiynau’r Wladwriaeth
 paye.ats.treasury_spending.table.Education=Addysg
-paye.ats.treasury_spending.table.NationalDebtInterest=Llog ar y ddyled wladol
+paye.ats.treasury_spending.table.NationalDebtInterest=Llog ar y Ddyled Wladol
 paye.ats.treasury_spending.table.Defence=Amddiffyn
-paye.ats.treasury_spending.table.Transport=Cludiant
+paye.ats.treasury_spending.table.Transport=Trafnidiaeth
 paye.ats.treasury_spending.table.GovernmentAdministration=Gweinyddiaeth y Llywodraeth
-paye.ats.treasury_spending.table.Culture=Diwylliant, fel chwaraeon, llyfrgelloedd ac amgueddfeydd
+paye.ats.treasury_spending.table.Culture=Diwylliant, megis chwaraeon, llyfrgelloedd, amgueddfeydd
 paye.ats.treasury_spending.table.Environment=Yr amgylchedd
-paye.ats.treasury_spending.table.HousingAndUtilities=Tai a gwasanaethau cyhoeddus, fel goleuadau stryd
-paye.ats.treasury_spending.table.BusinessAndIndustry=Busnes a diwydiant
-paye.ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at gyllideb yr UE
-paye.ats.treasury_spending.table.OverseasAid=Cymorth tramor
-paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a diogelwch cyhoeddus
+paye.ats.treasury_spending.table.HousingAndUtilities=Tai a Gwasanaethau Cyhoeddus, megis goleuadau stryd
+paye.ats.treasury_spending.table.BusinessAndIndustry=Busnes a Diwydiant
+paye.ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at Gyllideb yr UE
+paye.ats.treasury_spending.table.OverseasAid=Cymorth Tramor
+paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a Diogelwch Cyhoeddus
+
 paye.ats.treasury_spending.para2=Mae’r holl ffigurau wedi’u talgrynnu i’r bunt agosaf.
 paye.ats.treasury_spending.para1=Mae’r ffigurau hyn yn dangos sut mae’r llywodraeth wedi gwario arian ar draws y DU gyfan, gan gynnwys gwariant gan y gweinyddiaethau datganoledig.
 paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">gael am eich treth a’ch gwariant cyhoeddus yn yr Alban</a> ar wefan Llywodraeth yr Alban.
