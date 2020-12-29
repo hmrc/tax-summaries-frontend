@@ -110,7 +110,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
       document
         .getElementById("index-page-description")
         .text() shouldBe "Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, " +
-        "a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn."
+        "a sut mae’r llywodraeth yn eu gwario."
     }
 
     "show the treasury spending page in welsh language" in {

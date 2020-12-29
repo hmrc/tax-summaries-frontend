@@ -58,6 +58,14 @@ class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
       document.getElementById("income-before-tax-foot").text() shouldBe "Your income before tax £1,000.00"
 
+      document
+        .getElementById("income-before-tax-intro")
+        .text() shouldBe "We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies."
+
+      document
+        .getElementById("income-before-tax-description")
+        .text() shouldBe "This information comes from you, your employer(s) or your pension provider(s)."
+
     }
 
     "not render taxable income table when they have no taxable income" in {

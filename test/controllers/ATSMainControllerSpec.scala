@@ -114,7 +114,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your Annual Tax Summary"
       document
         .getElementById("index-page-description")
-        .text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s)."
+        .text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government."
       document.getElementById("tax-calc-link").tagName shouldBe "a"
       document.getElementById("tax-services-link").tagName shouldBe "a"
       document.getElementById("user-info").text should include("forename surname")
