@@ -59,7 +59,7 @@ ats.select_tax_year.label={0} i {1}
 # View ATS - Landing page
 #============================================================
 ats.index.html.title=Eich Crynodeb Treth Blynyddol
-ats.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario. Daw’r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn.
+ats.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario.
 ats.index.html.tax_calc_link=Eich incwm a’ch trethi
 ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich swm yn rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
 ats.index.html.tax_spend_link=Eich trethi a gwariant cyhoeddus
@@ -382,6 +382,7 @@ paye.ats.welsh_income_tax=Mae hyn yn cynnwys Treth Incwm yng Nghymru o
 #===========================================================
 paye.ats.income_before_tax.title=Incwm trethadwy
 paye.ats.income_before_tax.intro=Rydym wedi cyfrifo hwn gan ddefnyddio’r wybodaeth a roddwyd i ni gennych chi, eich cyflogwyr, neu ffynonellau eraill megis darparwyr pensiwn a banciau neu gymdeithasau adeiladu.
+paye.ats.income_before_tax.description=Daw'r wybodaeth hon oddi wrthych chi, eich cyflogwr/cyflogwyr neu eich darparwr/darparwyr pensiwn.
 paye.ats.income_before_tax.table_caption=Eich incwm trethadwy
 paye.ats.income_before_tax.income_from_employment=Cyflogaeth
 paye.ats.income_before_tax.state_pension=Pensiwn y Wladwriaeth

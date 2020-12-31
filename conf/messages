@@ -70,7 +70,7 @@ ats.select_tax_year.label={0} to {1}
 # View ATS - Landing page
 #============================================================
 ats.index.html.title=Your Annual Tax Summary
-ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government. This information comes from you, your employer(s) or your pension provider(s).
+ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government.
 ats.index.html.tax_calc_link=Your income and taxes
 ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you have paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
@@ -152,6 +152,7 @@ paye.ats.income_before_tax.total_income_before_tax=Your income before tax
 # View ATS - your income before tax (IND) - PAYE content
 paye.ats.income_before_tax.title=Taxable income
 paye.ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
+paye.ats.income_before_tax.description=This information comes from you, your employer(s) or your pension provider(s).
 paye.ats.income_before_tax.table_caption=Your taxable income
 paye.ats.income_before_tax.table.line6=Other income (including interest)
 
