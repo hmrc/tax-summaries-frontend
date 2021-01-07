@@ -230,6 +230,15 @@ generic.error.html.title=Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 generic.error.title=Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 generic.error.try.later=Rhowch gynnig arall arni yn nes ymlaen.
 
+# Service unavailable
+#============================================================
+global.error.InternalServerError500.title = Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
+global.error.InternalServerError500.heading = Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
+global.error.InternalServerError500.message.you.can = Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch
+global.error.InternalServerError500.message.contact.hmrc = gysylltu â CThEM
+global.error.InternalServerError500.message.by.phone.post = ar-lein, dros y ffôn neu drwy’r post.
+
+
 # No ATS - ats unavailable page
 #============================================================
 no.ats.html.title=Dim ATS

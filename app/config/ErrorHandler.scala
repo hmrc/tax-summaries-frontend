@@ -25,13 +25,15 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import views.html.errors.ErrorTemplateView
 import views.html.errors.PageNotFoundTemplateView
+import views.html.errors.InternalServerErrorView
 
 class ErrorHandler @Inject()(
   val messagesApi: MessagesApi,
   val configuration: Configuration,
   val environment: Environment,
   errorTemplateView: ErrorTemplateView,
-  pageNotFoundTemplateView: PageNotFoundTemplateView)(
+  pageNotFoundTemplateView: PageNotFoundTemplateView,
+  internalServerErrorView: InternalServerErrorView)(
   implicit val formPartialRetriever: FormPartialRetriever,
   implicit val appConfig: ApplicationConfig)
     extends FrontendErrorHandler {
@@ -48,6 +50,11 @@ class ErrorHandler @Inject()(
   override def notFoundTemplate(implicit request: Request[_]): Html = {
     implicit val _: Lang = lang
     pageNotFoundTemplateView()
+  }
+
+  override def internalServerErrorTemplate(implicit request: Request[_]): Html = {
+    implicit val _: Lang = lang
+    internalServerErrorView()
   }
 
   def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
