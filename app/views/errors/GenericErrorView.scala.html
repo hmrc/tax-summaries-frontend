@@ -23,12 +23,13 @@
 
 @()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@headerContent = {
-<h1 id="generic-error-page-heading">@Html(Messages("generic.error.title"))</h1>
-}
 
-@saMainView(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(request), contentHeader = Option(headerContent)) {
 
-<p>@Html(Messages("generic.error.try.later"))</p>
+@saMainView(title = Messages("generic.error.html.title"), utils.AccountUtils.getAccountId(request)) {
+
+
+  <h1 id="generic-error-page-heading">@Html(Messages("generic.error.title"))</h1>
+
+  <p>@Html(Messages("generic.error.try.later"))</p>
 
 }
