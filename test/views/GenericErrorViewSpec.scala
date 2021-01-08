@@ -55,16 +55,18 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
 
       val resultEn = genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
-      documentEn.toString should include("Sorry, there is a problem with the service")
-      documentEn.toString should include("Try again later.")
+      documentEn.toString should include("Sorry, the service is unavailable")
+      documentEn.toString should include(
+        "You can use this service later or you can <a href=\"https://www.gov.uk/contact-hmrc\">contact HMRC</a> online, by phone or by post.")
     }
 
     "show the correct contents of the generic error page in Welsh" in {
 
       val resultCy = genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
-      documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
-      documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")
+      documentCy.toString should include("Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael")
+      documentCy.toString should include(
+        "Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch <a href=\"https://www.gov.uk/contact-hmrc\">gysylltu â CThEM</a> ar-lein, dros y ffôn neu drwy’r post.")
     }
   }
 }

@@ -48,7 +48,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
     "show the correct contents of the generic error page in English with welsh language switch enabled" in {
       val result = genericErrorView()(request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
+      document.select("#generic-error-page-heading").text should include("Sorry, the service is unavailable")
       document.getElementById("welsh-switch").text should include("Cymraeg")
     }
   }
@@ -57,7 +57,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
     "show the correct contents of the generic error page in English" in {
       val result = genericErrorView()(request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#generic-error-page-heading").text should include("Sorry, there is a problem with the service")
+      document.select("#generic-error-page-heading").text should include("Sorry, the service is unavailable")
     }
   }
 
@@ -67,7 +67,7 @@ class LanguageAgnosticSpec extends ViewSpecBase with HtmlUnitFactory with Mockit
       val result = genericErrorView()(request, messages, formPartialRetriever, appConfig)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#generic-error-page-heading").text should include(
-        "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
+        "Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael")
       document.getElementById("english-switch").text should include("English")
     }
 

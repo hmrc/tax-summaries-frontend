@@ -79,7 +79,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
 
     "show ats error page for capital-gains" in {
@@ -104,7 +104,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
 
     "show ats error page for government-spend" in {
@@ -129,7 +129,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
 
     "show ats error page for income" in {
@@ -154,7 +154,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
 
     "show ats error page for total-income-tax" in {
@@ -179,7 +179,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
 
     "show ats error page for summary page" in {
@@ -203,7 +203,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
 
     "show ats error page for nics on summary page" in {
@@ -229,7 +229,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
 
       status(result) shouldBe 200
 
-      document.toString should include("Sorry, there is a problem with the service")
+      document.toString should include("Sorry, the service is unavailable")
     }
   }
 }

@@ -23,9 +23,11 @@
 
 @()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
 
-@payeMainView(title = Messages("generic.error.title"), mainClasses = Some("selectYear full-width")) {
+@payeMainView(title = Messages("global.error.InternalServerError500.title"), mainClasses = Some("selectYear")) {
 
-	<h1>@Messages("generic.error.html.title")</h1>
-	<p>@Html(Messages("generic.error.try.later"))</p>
+
+    <h1 class="heading-xlarge" id="generic-error-page-heading">@Html(Messages("global.error.InternalServerError500.title"))</h1>
+
+    <p>@messages("global.error.InternalServerError500.message.you.can") <a href="@appConfig.contactHmrcUrl">@messages("global.error.InternalServerError500.message.contact.hmrc")</a> @messages("global.error.InternalServerError500.message.by.phone.post")</p>
 
 }
