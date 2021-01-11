@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,14 @@ class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
       document.getElementById("total_income_before_tax").text() shouldBe "Your income before tax £351.00"
 
       document.getElementById("income-before-tax-foot").text() shouldBe "Your income before tax £1,000.00"
+
+      document
+        .getElementById("income-before-tax-intro")
+        .text() shouldBe "We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies."
+
+      document
+        .getElementById("income-before-tax-description")
+        .text() shouldBe "This information comes from you, your employer(s) or your pension provider(s)."
 
     }
 

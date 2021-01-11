@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
-	<p>@Html(Messages("paye.ats.income_before_tax.intro"))</p>
+	<p id="income-before-tax-intro">@Messages("paye.ats.income_before_tax.intro")</p>
+    <p id="income-before-tax-description">@Messages("paye.ats.income_before_tax.description")</p>
 	
     @if(viewModel.incomeTaxRows.nonEmpty){
         <table class="paye-ats-data-table" id="income-tax-table">
