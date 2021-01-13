@@ -135,7 +135,6 @@
     margin: 0; }
 
 #global-breadcrumb {
-  max-width: 80%;
   background-color: #fff;
   z-index: 50; }
   #global-breadcrumb ol {
@@ -327,11 +326,11 @@ main, section, article, aside {
   border-left: 5px solid #dee0e2; }
   #wrapper #content .info-notice p {
     margin: 0; }
-#wrapper #content .page-header #user-info {
+#wrapper #content #user-info {
   float: right;
   clear: both;
   text-align: right; }
-#wrapper #content .page-header h1 {
+#wrapper #content h1 {
   clear: right; }
 
 .selectYear #errors h2.heading-medium.error-summary-heading {
@@ -981,3 +980,11 @@ a, a:visited {color:#005ea5;}
 #national-insurance-contribution-table {
     margin-top: 2.0em;
 }
+
+@media (min-width: 641px) {
+    .main-content {
+        float: left;
+        width: 61.666667%;
+    }
+}
+

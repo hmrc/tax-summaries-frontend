@@ -16,13 +16,23 @@
 
 @import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import includes.paye.PayeMainView
+@import views.html.main
 
-@this(payeMainView: PayeMainView)
+@this(
+    main: main
+)
 
-@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(
+    implicit request: Request[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.not.authorised.title")) {
+@main(
+      title = Messages("paye.not.authorised.title")
+    ) {
 
     <h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.not.authorised.h1"))</h1>
     <p>@Html(Messages("paye.not.authorised.line1"))</p>

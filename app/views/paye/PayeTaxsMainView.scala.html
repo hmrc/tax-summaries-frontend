@@ -19,16 +19,28 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
-@import includes.paye.PayeMainView
+@import views.html.main
 @import helpers.BackLinkView
 
-@this(payeMainView: PayeMainView, backLinkView: BackLinkView)
+@this(
+    main: main,
+    backLinkView: BackLinkView
+)
 
-@(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(  viewModel: PayeAtsMain
+    )(
+    implicit request: PayeAuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)) {
+@main(
+    title = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+    ) {
 
-    @backLinkView(Messages("generic.back"))
+    @backLinkView(Messages("paye.ats.index.html.title"))
 
     <h1 class="heading-xlarge flush--bottom" id="index-page-header">@Messages("paye.ats.index.html.title")</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",

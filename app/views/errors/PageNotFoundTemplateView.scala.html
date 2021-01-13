@@ -17,26 +17,32 @@
 @import config.ApplicationConfig
 @import play.api.i18n.Messages.Implicits._
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import includes.SaMainView
+@import views.html.main
 
-@this(saMainView: SaMainView)
+@this(
+    main: main
+)
 
-@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(
+    )(
+    implicit request: Request[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
 @anchor(text: String, url: String) = {<a href="@url" target="_blank">@text</a>}
 
-@contentHeader = {
 
-    <h1>@Messages("global.page.not.found.error.heading")</h1>
-}
+@main(
+        title = Messages("global.page.not.found.error.title")
+    ) {
 
-@mainContent = {
+    <h1 class="heading-xlarge">@Messages("global.page.not.found.error.heading")</h1>
+
     <p>@Messages("global.page.not.found.error.check.web.address.correct")</p>
     <p>@Messages("global.page.not.found.error.check.web.address.full")</p>
     <p>@Html(Messages("global.page.not.found.error.contact", anchor(Messages("global.page.not.found.error.contact.link.text"), Messages("global.page.not.found.error.contact.link"))))</p>
+
 }
-
-
-
-
-@saMainView(title = Messages("global.page.not.found.error.title"), "", contentHeader = Some(contentHeader)){@mainContent}

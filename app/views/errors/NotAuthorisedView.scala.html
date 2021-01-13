@@ -17,20 +17,31 @@
 @import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import controllers.auth.AuthenticatedRequest
-@import views.html.includes.SaMainView
+@import views.html.main
 @import views.html.includes.TaxsBreadcrumbView
 
-@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView)
+@this(
+    main: main,
+    taxsBreadcrumbView: TaxsBreadcrumbView
+)
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-@taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.noauth", 0)
+@main(
+        title = Messages("generic.not_authorised")
+    ) {
 
-<h1>@Html(Messages("generic.not_authorised"))</h1>
-}
+    @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.noauth", 0)
 
-@saMainView(title = Messages("generic.not_authorised"), null, contentHeader = Option(headerContent), userLoggedIn = false) {
+    <h1 class="heading-xlarge">@Html(Messages("generic.not_authorised"))</h1>
+
     <p class="lede">@Html(Messages("not.authorised.line1"))</p>
 
     <p>@Html(Messages("client_agent.notice.line1"))</p>

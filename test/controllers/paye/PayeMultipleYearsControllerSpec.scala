@@ -66,6 +66,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Con
   def sut(multiYearEnabled: Boolean = true): PayeMultipleYearsController =
     new PayeMultipleYearsController(mockPayeAtsService, FakePayeAuthAction, mcc, multipleYearsView)(
       formPartialRetriever,
+      templateRenderer,
       new StubAppConfig(multiYearEnabled),
       ec
     )

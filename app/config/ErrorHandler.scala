@@ -25,6 +25,7 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import views.html.errors.ErrorTemplateView
 import views.html.errors.PageNotFoundTemplateView
+import uk.gov.hmrc.renderer.TemplateRenderer
 
 class ErrorHandler @Inject()(
   val messagesApi: MessagesApi,
@@ -33,6 +34,7 @@ class ErrorHandler @Inject()(
   errorTemplateView: ErrorTemplateView,
   pageNotFoundTemplateView: PageNotFoundTemplateView)(
   implicit val formPartialRetriever: FormPartialRetriever,
+  implicit val templateRenderer: TemplateRenderer,
   implicit val appConfig: ApplicationConfig)
     extends FrontendErrorHandler {
 
