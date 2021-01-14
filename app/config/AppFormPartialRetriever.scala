@@ -17,7 +17,6 @@
 package config
 
 import com.google.inject.Inject
-import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -25,6 +24,5 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 class AppFormPartialRetriever @Inject()(val cookieCrypto: SessionCookieCrypto, val httpGet: HttpClient)
     extends FormPartialRetriever {
 
-  override lazy val crypto: String => String =
-    str => cookieCrypto.crypto.encrypt(PlainText(str)).value
+  override val crypto: String => String = cookie => cookie
 }
