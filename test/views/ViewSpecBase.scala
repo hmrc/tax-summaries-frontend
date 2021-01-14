@@ -23,13 +23,14 @@ import play.api.test.Injecting
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.renderer.TemplateRenderer
+import utils.MockTemplateRenderer
 
 trait ViewSpecBase extends UnitSpec with OneAppPerSuite with Injecting {
 
   implicit val messagesApi: MessagesApi = inject[MessagesApi]
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
   implicit val formPartialRetriever: FormPartialRetriever = inject[FormPartialRetriever]
-  implicit val templateRenderer: TemplateRenderer = inject[TemplateRenderer]
+  implicit val templateRenderer: TemplateRenderer = MockTemplateRenderer
   implicit lazy val appConfig = inject[ApplicationConfig]
   implicit val lang: Lang = messages.lang
 

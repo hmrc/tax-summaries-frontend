@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package config
-
-import com.google.inject.Inject
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-
-class AppFormPartialRetriever @Inject()(val cookieCrypto: SessionCookieCrypto, val httpGet: HttpClient)
-    extends FormPartialRetriever {
-
-  override val crypto: String => String = cookie => cookie
-}
+@(key: String, value: Any)
+<div id=@key>@value</div>
