@@ -26,6 +26,7 @@ import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{Amount, Rate}
 import views.html.errors.GenericErrorView
+import uk.gov.hmrc.renderer.TemplateRenderer
 
 class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
 
@@ -53,7 +54,8 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
 
     "show the correct contents of the generic error page in English" in {
 
-      val resultEn = genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, appConfig)
+      val resultEn =
+        genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, templateRenderer, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include("Sorry, the service is unavailable")
       documentEn.toString should include(
@@ -62,7 +64,8 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
 
     "show the correct contents of the generic error page in Welsh" in {
 
-      val resultCy = genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, appConfig)
+      val resultCy =
+        genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, templateRenderer, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include("Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael")
       documentCy.toString should include(

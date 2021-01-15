@@ -1,6 +1,6 @@
 
 Frontend of the Annual Tax Summary application
-======================================================================
+=======================================================================
 
 This service provides the frontend endpoint for the [Annual Tax Summary - Individual](https://github.com/hmrc/tax-summaries) and [Annual Tax Summary - Agent](https://github.com/hmrc/tax-summaries-agent) projects.
 

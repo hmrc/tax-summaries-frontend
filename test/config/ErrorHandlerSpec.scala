@@ -16,14 +16,11 @@
 
 package config
 
-import controllers.paye.AppConfigBaseSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import play.api.test.Helpers.contentAsString
 import views.ViewSpecBase
-import play.api.test.Helpers._
 
 class ErrorHandlerSpec extends MockitoSugar with ViewSpecBase {
 

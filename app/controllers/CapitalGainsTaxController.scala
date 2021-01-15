@@ -23,6 +23,7 @@ import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.GenericViewModel
 import view_models.CapitalGains
 import views.html.CapitalGainsView
@@ -39,6 +40,7 @@ class CapitalGainsTaxController @Inject()(
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
   implicit val formPartialRetriever: FormPartialRetriever,
+  override val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {

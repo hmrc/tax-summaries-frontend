@@ -21,7 +21,8 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "json-encryption"      % "4.8.0-play-26",
     "uk.gov.hmrc"                %% "tax-year"             % "1.2.0",
     "com.mohiva"                 %% "play-html-compressor" % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
-    "com.softwaremill.quicklens" %% "quicklens"            % "1.6.0"
+    "com.softwaremill.quicklens" %% "quicklens"            % "1.6.0",
+    "uk.gov.hmrc"                %% "local-template-renderer" % "2.9.0-play-26",
   )
 
   val test = Seq(

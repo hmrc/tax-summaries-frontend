@@ -16,20 +16,32 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeGovernmentSpend
-@import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
-@import views.html.includes.paye.PayeMainView
+@import views.html.main
 @import views.html.helpers.BackLinkView
 
-@this(payeMainView: PayeMainView, backLinkView: BackLinkView)
+@this(
+	main: main,
+	backLinkView: BackLinkView
+)
 
-@(viewModel:PayeGovernmentSpend, isWelshTaxPayer: Boolean)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(	viewModel:PayeGovernmentSpend,
+	isWelshTaxPayer: Boolean
+	)(
+	implicit messages: Messages,
+	request: Request[_],
+	formPartialRetriever: FormPartialRetriever,
+	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+	appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), mainClasses = Some("selectYear full-width")) {
+@main(
+		title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+		articleClasses = Some("selectYear full-width")
+	) {
 
-@backLinkView(Messages("generic.back"))
+	@backLinkView(Messages("generic.back"))
 
 	<div class="grid-row form-group">
 		<div class="column-two-thirds">

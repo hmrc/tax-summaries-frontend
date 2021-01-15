@@ -17,13 +17,25 @@
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import includes.paye.PayeMainView
+@import views.html.main
 
-@this(payeMainView: PayeMainView)
+@this(
+    main: main
+)
 
-@()(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(
+   implicit request: PayeAuthenticatedRequest[_],
+   messages: Messages,
+   formPartialRetriever: FormPartialRetriever,
+   templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+   appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("global.error.InternalServerError500.title"), mainClasses = Some("selectYear")) {
+
+@main(
+     title = Messages("global.error.InternalServerError500.title"),
+     articleClasses = Some("selectYear full-width")
+   ) {
 
 
     <h1 class="heading-xlarge" id="generic-error-page-heading">@Html(Messages("global.error.InternalServerError500.title"))</h1>
