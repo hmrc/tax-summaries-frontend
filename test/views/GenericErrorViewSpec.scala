@@ -57,7 +57,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include("Sorry, the service is unavailable")
       documentEn.toString should include(
-        "You can use this service later or you can <a href=\"https://www.gov.uk/contact-hmrc\">contact HMRC</a> online, by phone or by post.")
+        "You can use this service later or you can <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees\">contact HMRC</a> online, by phone or by post.")
     }
 
     "show the correct contents of the generic error page in Welsh" in {
@@ -66,7 +66,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include("Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael")
       documentCy.toString should include(
-        "Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch <a href=\"https://www.gov.uk/contact-hmrc\">gysylltu â CThEM</a> ar-lein, dros y ffôn neu drwy’r post.")
+        "Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees\">gysylltu â CThEM</a> ar-lein, dros y ffôn neu drwy’r post.")
     }
   }
 }
