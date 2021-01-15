@@ -23,11 +23,12 @@
 @import views.html.helpers.BackLinkView
 @import views.html.helpers.ErrorSummaryTemplateView
 @import views.html.helpers.InputRadioGroupView
+@import views.html.helpers.BackLinkView
 
 @this(
     main: main,
-    errorSummaryTemplateView:
-    ErrorSummaryTemplateView,
+    errorSummaryTemplateView: ErrorSummaryTemplateView,
+    backLinkView: BackLinkView,
     inputRadioGroupView: InputRadioGroupView
 )
 
@@ -46,6 +47,8 @@
         title = Messages("ats.select_tax_year.title"),
         articleClasses = Some("selectYear")
     ) {
+
+    @backLinkView(Messages("generic.back"))
 
     @errorSummaryTemplateView(atsYearForm)
 
