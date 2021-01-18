@@ -104,8 +104,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(
       accessibilityBaseUrl + referrer).encodedUrl}"
 
-  val payeMultipleYears: Boolean = config.getBoolean("paye.multipleYearsEnabled")
-
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 
