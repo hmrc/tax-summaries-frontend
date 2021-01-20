@@ -50,18 +50,18 @@ breadcrumbs.taxs.agent_service_unavailable=Crynodeb Treth Blynyddol: 2013 i 2014
 
 # View ATS - Select tax year page
 #============================================================
-ats.select_tax_year.title=Dewiswch y Flwyddyn Dreth
-ats.select_tax_year.paye.title=Dewiswch y Flwyddyn Dreth
+ats.select_tax_year.title=Dewis blwyddyn dreth ar gyfer Hunanasesiad
+ats.select_tax_year.paye.title=Dewis blwyddyn dreth ar gyfer TWE
 ats.select_tax_year.continue=Parhau
 ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
 ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth
 ats.select_tax_year.label={0} i {1}
-ats.summary.view.sa.link=View Self Assessment Annual Tax Summary
-ats.summary.view.paye.link=View PAYE Annual Tax Summary
+ats.summary.view.sa.link=Bwrw golwg dros Grynodeb Treth Blynyddol Hunanasesiad
+ats.summary.view.paye.link=Bwrw golwg dros Grynodeb Treth Blynyddol TWE
 
 # View ATS - Landing page
 #============================================================
-ats.index.html.title=Eich Crynodeb Treth Blynyddol
+ats.index.html.title=Crynodeb Treth Blynyddol Hunanasesiad
 ats.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario.
 ats.index.html.tax_calc_link=Eich incwm a’ch trethi
 ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich swm yn rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
@@ -292,14 +292,14 @@ global.page.not.found.error.contact.link=https://www.gov.uk/government/organisat
 
 # Paye ATS - landing page
 #===========================================================
-paye.ats.index.html.title=Eich Crynodeb Treth Blynyddol
+paye.ats.index.html.title=Eich Crynodeb Treth Blynyddol TWE
 paye.generic.tax_year_heading={0} hyd at {1}
 paye.ats.index.html.lede=Mae hwn yn dangos sut y cafodd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol eu cyfrifo, a sut mae’r llywodraeth yn gwario’ch arian.
-paye.ats.index.html.view.sa.link=View Self Assessment Annual Tax Summary
+paye.ats.index.html.view.sa.link=Bwrw golwg dros Grynodeb Treth Blynyddol Hunanasesiad
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
 paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich swm rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario’ch trethi.
-ats.index.html.view.paye.link=View PAYE Annual Tax Summary
+ats.index.html.view.paye.link=Bwrw golwg dros Grynodeb Treth Blynyddol TWE
 paye.ats.index.html.tax_spend_link=Sut y gwariwyd eich treth
 generic.paye.ats=Crynodeb Treth Blynyddol
 
