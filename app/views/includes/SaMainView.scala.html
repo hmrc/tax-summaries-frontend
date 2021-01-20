@@ -20,10 +20,10 @@
 @import uk.gov.hmrc.play.views.html.layouts._
 @import play.twirl.api.HtmlFormat
 @import views.html.includes.TaxsHeaderNavView
-@import views.html.includes.{GoogleTagManagerView, LanguageSelectionView}
+@import views.html.includes.LanguageSelectionView
 
-@this(taxsHeaderNavView: TaxsHeaderNavView, googleTagManagerView: GoogleTagManagerView, languageSelectionView: LanguageSelectionView,
-      uiHead: Head, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
+@this(taxsHeaderNavView: TaxsHeaderNavView, languageSelectionView: LanguageSelectionView,
+      uiHead: HeadWithTrackingConsent, uiMainContentHeader: MainContentHeader, uiMainContent: MainContent, uiArticle: Article, uiFooter: Footer, uiBetaBanner: BetaBanner,
       uiServiceInfo: ServiceInfo, uiFooterLinks: FooterLinks)
 
 @(title: String,
@@ -73,13 +73,7 @@ gaCalls: Option[(String,String) => Html] = None)(mainContent: Html)(implicit req
 }
 
 
-@afterHeader = {
-    <!-- Google Tag Manager -->
-        @if(appConfig.isGtmEnabled == true) {
-            @googleTagManagerView(appConfig.googleTagManagerId)
-        }
-    <!-- End Google Tag Manager -->
-}
+@afterHeader = {}
 
 @getHelpForm = {
     @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
