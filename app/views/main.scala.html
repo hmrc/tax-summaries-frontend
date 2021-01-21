@@ -16,15 +16,10 @@
 
 @import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.layouts._
+@import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
 @import play.twirl.api.HtmlFormat
-@import views.html.includes.{GoogleTagManagerView}
 
-@this(
-    googleTagManagerView: GoogleTagManagerView,
-    uiArticle: Article
-)
-
+@this()
 
 @(
     title: String,
@@ -73,16 +68,13 @@
     messages.lang.code == "cy" && appConfig.isWelshEnabled
 }
 
-
-@inlineScript = {
-    @if(appConfig.isGtmEnabled == true) {
-        @googleTagManagerView(appConfig.googleTagManagerId)
-    }
+@headInlineScript = @{
+    playLayouts.trackingConsentSnippet()
 }
 
 
 @article = @{
-    uiArticle(mainContent, includeGridWrapper, articleClasses)
+    playLayouts.article(mainContent, includeGridWrapper, articleClasses)
 }
 
 
@@ -122,13 +114,12 @@
         "signOutUrl" -> controllers.routes.AccountController.signOut(),
         "googleAnalytics" -> googleAnalytics,
         "ssoUrl" -> None,
-        "inlineScript" -> inlineScript,
         "getHelpForm" -> getHelpForm,
         "navTitle" -> navTitle,
         "showPropositionLinks" -> true,
         "hideAccountMenu" -> true,
         "langSelector" -> languageSelectorLanguages,
-        "optimizelyProjectId" -> appConfig.optimizelyProjectId
+        "headInlineScript" -> headInlineScript
     )
 
     val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {
