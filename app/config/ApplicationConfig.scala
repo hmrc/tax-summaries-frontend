@@ -63,6 +63,9 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
 
+  lazy val switchToPayeUrl = "/annual-tax-summary/paye/main"
+  lazy val switchToSAUrl = "/annual-tax-summary/"
+
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
