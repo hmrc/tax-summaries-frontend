@@ -23,10 +23,8 @@ import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants._
 import view_models.{Amount, Rate}
 import views.html.errors.GenericErrorView
-import uk.gov.hmrc.renderer.TemplateRenderer
 
 class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
 
