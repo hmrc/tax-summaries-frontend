@@ -23,10 +23,11 @@ import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
+import utils.TestConstants
 import view_models.{Amount, Rate}
 import views.html.errors.GenericErrorView
 
-class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
+class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConstants {
 
   lazy val requestWithSession = AuthenticatedRequest(
     "userId",
