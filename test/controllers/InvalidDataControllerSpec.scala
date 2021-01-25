@@ -20,6 +20,7 @@ import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
@@ -28,6 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.{AtsList, TaxYearEnd}
+
 import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
@@ -79,7 +81,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "show ats error page for capital-gains" in {
@@ -104,7 +106,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "show ats error page for government-spend" in {
@@ -129,7 +131,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "show ats error page for income" in {
@@ -154,7 +156,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "show ats error page for total-income-tax" in {
@@ -179,7 +181,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "show ats error page for summary page" in {
@@ -203,7 +205,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "show ats error page for nics on summary page" in {
@@ -229,7 +231,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
 
       status(result) shouldBe 200
 
-      document.toString should include("Sorry, the service is unavailable")
+      document.toString should include(Messages("global.error.InternalServerError500.title"))
     }
   }
 }

@@ -57,9 +57,11 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
       val resultEn =
         genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, templateRenderer, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
-      documentEn.toString should include("Sorry, the service is unavailable")
+      documentEn.toString should include(messagesEn("global.error.InternalServerError500.title"))
       documentEn.toString should include(
-        "You can use this service later or you can <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">contact HMRC</a> online, by phone or by post.")
+        messagesEn("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">" + messagesEn(
+          "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesEn(
+          "global.error.InternalServerError500.message.by.phone.post"))
     }
 
     "show the correct contents of the generic error page in Welsh" in {
@@ -67,9 +69,11 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar {
       val resultCy =
         genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, templateRenderer, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
-      documentCy.toString should include("Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael")
+      documentCy.toString should include(messagesCy("global.error.InternalServerError500.title"))
       documentCy.toString should include(
-        "Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">gysylltu â CThEM</a> ar-lein, dros y ffôn neu drwy’r post.")
+        messagesCy("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">" + messagesCy(
+          "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesCy(
+          "global.error.InternalServerError500.message.by.phone.post"))
     }
   }
 }
