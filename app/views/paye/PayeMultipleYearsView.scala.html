@@ -18,18 +18,38 @@
 @import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.helpers._
-@import views.html.helpers._
 @import view_models.AtsForms
-@import views.html.includes.paye.PayeMainView
+@import views.html.main
 @import views.html.helpers.BackLinkView
 @import views.html.helpers.ErrorSummaryTemplateView
 @import views.html.helpers.InputRadioGroupView
+@import views.html.helpers.BackLinkView
 
-@this(payeMainView: PayeMainView, errorSummaryTemplateView: ErrorSummaryTemplateView, inputRadioGroupView: InputRadioGroupView)
+@this(
+    main: main,
+    errorSummaryTemplateView: ErrorSummaryTemplateView,
+    backLinkView: BackLinkView,
+    inputRadioGroupView: InputRadioGroupView
+)
 
-@(years: List[Int], atsYearForm: Form[view_models.TaxYearEnd], pageDirectlyAccessed: Boolean = false)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(  years: List[Int],
+    atsYearForm: Form[view_models.TaxYearEnd],
+    pageDirectlyAccessed: Boolean = false
+    )(
+    implicit request: PayeAuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("ats.select_tax_year.title"), mainClasses = Some("selectYear")) {
+@main(
+        title = Messages("ats.select_tax_year.title"),
+        articleClasses = Some("selectYear")
+    ) {
+
+    @backLinkView(Messages("generic.back"))
+
     @errorSummaryTemplateView(atsYearForm)
 
     @form(action = controllers.paye.routes.PayeMultipleYearsController.onSubmit){

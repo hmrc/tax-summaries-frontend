@@ -18,10 +18,11 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import scala.collection.JavaConverters._
 
 @Singleton
@@ -52,8 +53,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
   // Analytics config
   lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))
   lazy val analyticsHost: String = config.getString(s"google-analytics.host")
-  lazy val googleTagManagerId = config.getString(s"google-tag-manager.id")
-  lazy val isGtmEnabled = config.getBoolean(s"google-tag-manager.enabled")
 
   lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
 
@@ -66,7 +65,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
-  lazy val assetsPrefix = getConf("assets.url") + getConf("assets.version")
+  lazy val assetsPrefix = config.getString(s"assets.url") + config.getString(s"assets.version") + '/'
 
   // External urls
   lazy val loginCallback = getConf(s"login-callback.url")
@@ -82,6 +81,9 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
 
   lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 
+  lazy val frontendTemplatePath: String =
+    config.getString("microservice.services.frontend-template-provider.path")
+
   //Application name
   lazy val appName = config.getString("appName")
 
@@ -91,7 +93,14 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
 
-  val payeMultipleYears: Boolean = config.getBoolean("paye.multipleYearsEnabled")
+  val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
+
+  val accessibilityStatementToggle: Boolean = config.getBoolean("accessibility-statement.enabled")
+  val accessibilityBaseUrl: String = config.getString(s"accessibility-statement.baseUrl")
+  private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
+  def accessibilityStatementUrl(referrer: String) =
+    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(
+      accessibilityBaseUrl + referrer).encodedUrl}"
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))

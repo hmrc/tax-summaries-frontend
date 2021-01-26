@@ -19,13 +19,27 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
-@import includes.paye.PayeMainView
+@import views.html.main
 
-@this(payeMainView: PayeMainView)
+@this(
+    main: main
+)
 
-@(viewModel: PayeAtsMain)(implicit request: PayeAuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(
+    viewModel: PayeAtsMain
+    )(
+    implicit request: PayeAuthenticatedRequest[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.ats.no_ats.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear)) {
+@main(
+        title = Messages("paye.ats.no_ats.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+    ) {
+
+
     <h1 class="heading-xlarge flush--bottom">@Messages("paye.ats.no_ats.heading")</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
       HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),

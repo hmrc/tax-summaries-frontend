@@ -19,67 +19,85 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import utils.ViewUtils
 @import utils.ViewUtils.positiveOrZero
-@import views.html.includes.SaMainView
-@import views.html.includes.TaxsBreadcrumbView
-@import views.html.helpers.BackLinkView
 @import views.html.includes.CurrencyAmountView
+@import views.html.main
+@import views.html.helpers.HeaderSection
 
-@this(saMainView: SaMainView, taxsBreadcrumbView: TaxsBreadcrumbView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+@this(
+    main: main,
+    headerSection: HeaderSection,
+    currencyAmountView: CurrencyAmountView
+)
 
-@(viewModel: view_models.Summary, actingAsAttorney: Option[ActingAsAttorneyFor] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(  viewModel: view_models.Summary,
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages, formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-  @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year", "breadcrumbs.taxs.index", "breadcrumbs.taxs.summary"), "breadcrumbs.taxs.nics", viewModel.year)
+@main(
+        title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        actingAttorney = actingAsAttorney,
+        articleClasses = Some("full-width")
+    ) {
 
-  @if(actingAsAttorney.isDefined) {
-    <div class="nested-banner">
-      <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
+    @headerSection(
+        pageHeading = Messages("ats.nics.tax_and_nics.title"),
+        name = viewModel.forename + ' ' + viewModel.surname,
+        utr = viewModel.utr,
+        taxYear = viewModel.year,
+        actingAsAttorney = actingAsAttorney,
+        breadcrumbLinks = List(
+            "breadcrumbs.taxs.select_tax_year",
+            "breadcrumbs.taxs.index",
+            "breadcrumbs.taxs.summary"
+        ),
+        currentBreadcrumbLink = "breadcrumbs.taxs.nics"
+    )
+
+    <div class="main-content">
+
+        <h1 class="heading-xlarge">
+            <span class="gray heading-medium block-heading">
+              @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+            </span>
+            @Html(Messages("ats.nics.tax_and_nics.title"))
+        </h1>
+      <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
+        <p>@Html(Messages("ats.nics.tax_and_nics.description",
+          "<span id=\"total-cg-tax-rate\">"+positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>"))</p>
+
+        <table id="total-income-tax">
+          <thead>
+            <tr>
+              <th scope="col">@Html(Messages("generic.description"))</th>
+              <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                  <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax()?taxYear=@viewModel.taxYearTo"
+                     data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("ats.nics.tax_and_nics.income_tax"))">
+                      @Html(Messages("ats.nics.tax_and_nics.income_tax"))
+                  </a>
+              </td>
+              <td id="total-income-tax-amt">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
+            </tr>
+            <tr>
+              <td>@Html(Messages("ats.nics.tax_and_nics_explained"))</td>
+              <td id="employee-nic-amount">@currencyAmountView(viewModel.employeeNicAmount)</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row">@Html(Messages("ats.nics.tax_and_nics.total"))</th>
+              <td id="total-income-tax-and-nics" class="no-bold">@currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics)</td>
+            </tr>
+          </tfoot>
+        </table>
     </div>
-  }
-  @if(!actingAsAttorney.isDefined){
-    <p id="user-info"><strong>@viewModel.forename @viewModel.surname</strong> <br>@Html(Messages("generic.utr")) @viewModel.utr</p>
-  }
-}
-
-@saMainView(title = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo), viewModel.utr, contentHeader = Option(headerContent), actingAttorney = actingAsAttorney) {
-    @backLinkView(Messages("generic.back"))
-    <h1>
-        <span class="gray heading-medium block-heading">
-          @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-        </span>
-        @Html(Messages("ats.nics.tax_and_nics.title"))
-    </h1>
-  <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
-    <p>@Html(Messages("ats.nics.tax_and_nics.description",
-      "<span id=\"total-cg-tax-rate\">"+positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>"))</p>
-
-    <table id="total-income-tax">
-      <thead>
-        <tr>
-          <th scope="col">@Html(Messages("generic.description"))</th>
-          <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-              <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax()?taxYear=@viewModel.taxYearTo"
-                 data-journey-click="link - click:@Html(Messages("ats.nics.tax_and_nics.title")):@Html(Messages("ats.nics.tax_and_nics.income_tax"))">
-                  @Html(Messages("ats.nics.tax_and_nics.income_tax"))
-              </a>
-          </td>
-          <td id="total-income-tax-amt">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
-        </tr>
-        <tr>
-          <td>@Html(Messages("ats.nics.tax_and_nics_explained"))</td>
-          <td id="employee-nic-amount">@currencyAmountView(viewModel.employeeNicAmount)</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <th scope="row">@Html(Messages("ats.nics.tax_and_nics.total"))</th>
-          <td id="total-income-tax-and-nics" class="no-bold">@currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics)</td>
-        </tr>
-      </tfoot>
-    </table>
 }

@@ -1,0 +1,134 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+@import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
+@import play.twirl.api.HtmlFormat
+
+@this()
+
+@(
+    title: String,
+    mainClasses: Option[String] = None,
+    mainDataAttributes: Option[Html] = None,
+    includeGridWrapper: Boolean = false,
+    actingAttorney: Option[ActingAsAttorneyFor] = None,
+    gaDimensions: Option[Map[String, Any]] = None,
+    articleClasses: Option[String] = None
+)(
+    mainContent: Html
+)(
+    implicit request: Request[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
+
+
+@scriptElement = @{
+    Map("url" -> routes.Assets.versioned("javascripts/ats-app.js"))
+}
+
+
+@linkElems = @{
+    Seq(
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs.css")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-ie6.css"), "ieVersionCondition" -> Some("6")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-ie7.css"), "ieVersionCondition" -> Some("7")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-ie8.css"), "ieVersionCondition" -> Some("8")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/magna-charta/magna-charta.css")),
+        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-print.css"), "print" -> Some("print"))
+    )
+}
+
+
+@getHelpForm = {
+    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
+}
+
+@pageTitle = {@title - @Messages("generic.ats") - GOV.UK}
+
+
+@isWelsh = @{
+    messages.lang.code == "cy" && appConfig.isWelshEnabled
+}
+
+@headInlineScript = @{
+    playLayouts.trackingConsentSnippet()
+}
+
+
+@article = @{
+    playLayouts.article(mainContent, includeGridWrapper, articleClasses)
+}
+
+
+@googleAnalytics = @{
+    Map[String, Any](
+        "trackingId" -> appConfig.analyticsToken,
+        "cookieDomain" -> appConfig.analyticsHost
+    ) ++ gaDimensions.getOrElse(Map.empty)
+}
+
+@navTitle = @{
+    Some(messages("generic.ats"))
+}
+
+@accessibilityFooterUrl = {
+    @appConfig.accessibilityStatementUrl(request.uri)
+}
+
+@{
+
+    val languageSelectorLanguages = if (appConfig.isWelshEnabled) {
+        Map("enUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("english"),
+            "cyUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("welsh")
+        )
+        } else {
+            Map.empty
+        }
+
+    val arguments:Map[String,Any] = Map[String, Any](
+        "pageTitle" -> Some(pageTitle),
+        "linkElems" -> linkElems,
+        "scriptElems" -> scriptElement,
+        "assetsPath" -> appConfig.assetsPrefix,
+        "mainClass" -> mainClasses,
+        "mainAttributes" -> mainDataAttributes,
+        "isWelsh" -> isWelsh,
+        "signOutUrl" -> controllers.routes.AccountController.signOut(),
+        "googleAnalytics" -> googleAnalytics,
+        "ssoUrl" -> None,
+        "getHelpForm" -> getHelpForm,
+        "navTitle" -> navTitle,
+        "showPropositionLinks" -> true,
+        "hideAccountMenu" -> true,
+        "langSelector" -> languageSelectorLanguages,
+        "headInlineScript" -> headInlineScript
+    )
+
+    val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {
+        arguments ++ Map[String,Any](
+           "accessibilityFooterUrl" -> accessibilityFooterUrl
+            )
+    } else {
+        arguments
+    }
+
+    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article, extraArguments)
+}

@@ -15,22 +15,35 @@
  *@
 
 @import config.ApplicationConfig
-@import view_models.paye.PayeGovernmentSpend
-@import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import utils.HtmlFormatter
 @import view_models.paye.PayeYourTaxableIncome
-@import views.html.includes.paye.PayeMainView
+@import views.html.main
 @import views.html.helpers.BackLinkView
 @import views.html.includes.CurrencyAmountView
 
-@this(payeMainView: PayeMainView, backLinkView: BackLinkView, currencyAmountView: CurrencyAmountView)
+@this(
+    main: main,
+    backLinkView: BackLinkView,
+    currencyAmountView: CurrencyAmountView
+)
 
-@(viewModel:PayeYourTaxableIncome)(implicit messages: Messages, request: Request[_], formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@(  viewModel:PayeYourTaxableIncome
+    )(
+    implicit messages: Messages,
+    request: Request[_],
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@payeMainView(title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)) {
-	@backLinkView(Messages("generic.back"))
+
+@main(
+        title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+    ) {
+
+	@backLinkView(Messages("paye.ats.income_before_tax.title"))
+
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.income_before_tax.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",

@@ -26,11 +26,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PayeAtsService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.AtsForms.atsYearFormMapping
 import view_models.TaxYearEnd
 import views.html.paye.PayeMultipleYearsView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class PayeMultipleYearsController @Inject()(
   payeAtsService: PayeAtsService,
@@ -38,28 +39,16 @@ class PayeMultipleYearsController @Inject()(
   mcc: MessagesControllerComponents,
   payeMultipleYearsView: PayeMultipleYearsView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with LazyLogging {
 
   private val payeYear: Int = appConfig.payeYear
-  private val isMultipleYearsEnabled: Boolean = appConfig.payeMultipleYears
   private val taxYearFromKey = "taxYearFrom"
   private val taxYearToKey = "taxYearTo"
 
   def onPageLoad: Action[AnyContent] = payeAuthAction.async { implicit request =>
-    if (isMultipleYearsEnabled) {
-      getPayeAtsMultipleYear
-    } else {
-      Future.successful(redirectToMain(payeYear))
-    }
-  }
-
-  def onSubmit: Action[AnyContent] = payeAuthAction { request =>
-    handleOnSubmit(request)
-  }
-
-  private def getPayeAtsMultipleYear(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
     payeAtsService.getPayeATSMultipleYearData(request.nino, payeYear - 1, payeYear) map {
       case Right(value) => routeMultipleYearResponse(value)
       case Left(response) =>
@@ -70,6 +59,11 @@ class PayeMultipleYearsController @Inject()(
             Redirect(routes.PayeErrorController.genericError(response.status))
         }
     }
+  }
+
+  def onSubmit: Action[AnyContent] = payeAuthAction { request =>
+    handleOnSubmit(request)
+  }
 
   private def routeMultipleYearResponse(data: List[PayeAtsData])(
     implicit request: PayeAuthenticatedRequest[_]): Result =

@@ -17,18 +17,28 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import views.html.includes.SaMainView
+@import views.html.main
 @import views.html.helpers.BackLinkView
 
-@this(saMainView: SaMainView, backLinkView: BackLinkView)
+@this(
+   main: main,
+   backLinkView: BackLinkView
+)
 
-@()(implicit request: Request[_], messages: Messages, formPartialRetriever: FormPartialRetriever, appConfig: ApplicationConfig)
+@()(
+    implicit request: Request[_],
+    messages: Messages,
+    formPartialRetriever: FormPartialRetriever,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig
+)
 
-@headerContent = {
-@backLinkView(Messages("generic.back"))
-<h1>@Messages("ats.service_unavailable.heading")</h1>
-}
 
-@saMainView(title = Messages("ats.service_unavailable.title"), "", contentHeader = Option(headerContent)) {
+@main(
+       title = Messages("ats.service_unavailable.title")
+    ) {
+
+  @backLinkView(Messages("generic.back"))
+  <h1 class="heading-xlarge">@Messages("ats.service_unavailable.heading")</h1>
   <p>@Messages("ats.service_unavailable.paragraph")</p>
 }

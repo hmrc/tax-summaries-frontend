@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors._
+import uk.gov.hmrc.renderer.TemplateRenderer
 
 import scala.concurrent.ExecutionContext
 
@@ -42,6 +43,7 @@ class PayeErrorController @Inject()(
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView)(
   implicit formPartialRetriever: FormPartialRetriever,
+  templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
