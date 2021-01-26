@@ -111,7 +111,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
       document
         .getElementById("index-page-header")
-        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your Annual Tax Summary"
+        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Self Assessment Annual Tax Summary"
       document
         .getElementById("index-page-description")
         .text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government."
