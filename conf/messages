@@ -60,27 +60,32 @@ breadcrumbs.taxs.agent_service_unavailable=Annual Tax Summary: 2013 to 2014
 
 # View ATS - Select the tax year page
 #============================================================
-ats.select_tax_year.title=Select the tax year
+ats.select_tax_year.title=Select Self Assessment tax year
+ats.select_tax_year.paye.title=Select PAYE tax year
 ats.select_tax_year.continue=Continue
 ats.select_tax_year.required.summary=Please select the tax year
 ats.select_tax_year.required=Select an option for the tax year
 ats.select_tax_year.label={0} to {1}
+ats.summary.view.sa.link=View Self Assessment Annual Tax Summary
+ats.summary.view.paye.link=View PAYE Annual Tax Summary
 
 
 # View ATS - Landing page
 #============================================================
-ats.index.html.title=Your Annual Tax Summary
+ats.index.html.title=Self Assessment Annual Tax Summary
 ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government.
 ats.index.html.tax_calc_link=Your income and taxes
 ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you have paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
+ats.index.html.view.paye.link=View PAYE Annual Tax Summary
 
-paye.ats.index.html.title=Your Annual Tax Summary
+paye.ats.index.html.title=Your PAYE Annual Tax Summary
 paye.ats.index.html.tax_spend_link=How your tax was spent
 paye.ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
 paye.ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount and how much tax and National Insurance you have paid.
 paye.ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
+paye.ats.index.html.view.sa.link=View Self Assessment Annual Tax Summary
 
 # View ATS - Summary
 #============================================================
