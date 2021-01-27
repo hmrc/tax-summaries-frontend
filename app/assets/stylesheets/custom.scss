@@ -362,80 +362,12 @@ main, section, article, aside {
     margin-top: 15px; } }
 /*= Headings and text styles
 ----------------------------------------------*/
-h1 {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 48px;
-  line-height: 1.0416666667;
-  font-weight: 400;
-  text-transform: none;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 0;
-  padding: 25px 0 15px; }
-  @media (max-width: 640px) {
-    h1 {
-      font-size: 32px;
-      line-height: 1.09375; } }
-  @media (min-width: 641px) {
-    h1 {
-      padding-top: 7px;
-      padding-bottom: 13px; } }
-
-h2, article h2 {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 36px;
-  line-height: 1.1111111111;
-  font-weight: 400;
-  text-transform: none;
-  font-weight: 700;
-  margin-top: 45px;
-  margin-bottom: 20px; }
-  @media (max-width: 640px) {
-    h2, article h2 {
-      font-size: 24px;
-      line-height: 1.0416666667; } }
-
-h3 {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 400;
-  text-transform: none;
-  padding-top: 9px;
-  padding-bottom: 6px; }
-  @media (max-width: 640px) {
-    h3 {
-      font-size: 20px;
-      line-height: 1.2; } }
-  @media (min-width: 641px) {
-    h3 {
-      padding-top: 6px;
-      padding-bottom: 4px; } }
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700; }
 
 section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, section[id] h6 {
   margin-top: 55px;
   padding: 0; }
 
-p {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 19px;
-  line-height: 1.3157894737;
-  font-weight: 400;
-  text-transform: none; }
-  @media (max-width: 640px) {
-    p {
-      font-size: 16px;
-      line-height: 1.25; } }
-
 p.lede {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 400;
-  text-transform: none;
   margin: 0 0 30px 0;
   width: 75%; }
   @media (max-width: 640px) {
@@ -450,30 +382,20 @@ article p.lede {
   font-weight: normal; }
 
 .bold-xlarge {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 48px;
-  line-height: 1.0416666667;
-  font-weight: 400;
-  text-transform: none;
-  font-weight: 700;
-  margin: 0; }
-  @media (max-width: 640px) {
-    .bold-xlarge {
-      font-size: 32px;
-      line-height: 1.09375; } }
+  margin: 0;
+  @media (min-width: 641px) {
+      font-size: 48px;
+      line-height: 1.0416666667;
+  }
+}
 
 .bold-small {
-  font-family: "nta", Arial, sans-serif;
   font-size: 16px;
-  line-height: 1.25;
-  font-weight: 300;
-  text-transform: none;
-  font-weight: 700;
-  margin-top: 0; }
+
   @media (max-width: 640px) {
-    .bold-small {
-      font-size: 14px;
-      line-height: 1.1428571429; } }
+    font-size: 14px;
+  }
+}
 
 a .bold-small {
   text-decoration: underline; }
@@ -503,117 +425,6 @@ a.mc-toggle-link {
 strong, b {
   font-weight: 600; }
 
-/*= Form element/button styles
-----------------------------------------------*/
-*[role="button"],
-button,
-input[type="submit"] {
-  background-color: #00823b;
-  position: relative;
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  padding: 0.3em 0.6em 0.2em 0.6em;
-  border: none;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-appearance: none;
-  -webkit-box-shadow: 0 2px 0 #003518;
-  -moz-box-shadow: 0 2px 0 #003518;
-  box-shadow: 0 2px 0 #003518;
-  font-size: 1em;
-  line-height: 1.25;
-  text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  cursor: pointer;
-  color: #fff;
-  margin-bottom: 15px !important;
-  width: auto; }
-  *[role="button"]:visited,
-  button:visited,
-  input[type="submit"]:visited {
-    background-color: #00823b; }
-  *[role="button"]:hover, *[role="button"]:focus,
-  button:hover,
-  button:focus,
-  input[type="submit"]:hover,
-  input[type="submit"]:focus {
-    background-color: #00692f; }
-  *[role="button"]:active,
-  button:active,
-  input[type="submit"]:active {
-    top: 2px;
-    -webkit-box-shadow: 0 0 0 #00823b;
-    -moz-box-shadow: 0 0 0 #00823b;
-    box-shadow: 0 0 0 #00823b; }
-  *[role="button"].disabled, *[role="button"][disabled="disabled"], *[role="button"][disabled],
-  button.disabled,
-  button[disabled="disabled"],
-  button[disabled],
-  input[type="submit"].disabled,
-  input[type="submit"][disabled="disabled"],
-  input[type="submit"][disabled] {
-    zoom: 1;
-    filter: alpha(opacity=50);
-    opacity: 0.5; }
-    *[role="button"].disabled:hover, *[role="button"][disabled="disabled"]:hover, *[role="button"][disabled]:hover,
-    button.disabled:hover,
-    button[disabled="disabled"]:hover,
-    button[disabled]:hover,
-    input[type="submit"].disabled:hover,
-    input[type="submit"][disabled="disabled"]:hover,
-    input[type="submit"][disabled]:hover {
-      cursor: default;
-      background-color: #00823b; }
-    *[role="button"].disabled:active, *[role="button"][disabled="disabled"]:active, *[role="button"][disabled]:active,
-    button.disabled:active,
-    button[disabled="disabled"]:active,
-    button[disabled]:active,
-    input[type="submit"].disabled:active,
-    input[type="submit"][disabled="disabled"]:active,
-    input[type="submit"][disabled]:active {
-      top: 0;
-      -webkit-box-shadow: 0 2px 0 #003518;
-      -moz-box-shadow: 0 2px 0 #003518;
-      box-shadow: 0 2px 0 #003518; }
-  *[role="button"]:link, *[role="button"]:hover, *[role="button"]:focus, *[role="button"]:visited,
-  button:link,
-  button:hover,
-  button:focus,
-  button:visited,
-  input[type="submit"]:link,
-  input[type="submit"]:hover,
-  input[type="submit"]:focus,
-  input[type="submit"]:visited {
-    color: #fff; }
-  *[role="button"]:before,
-  button:before,
-  input[type="submit"]:before {
-    content: "";
-    height: 110%;
-    width: 100%;
-    display: block;
-    background: transparent;
-    position: absolute;
-    top: 0;
-    left: 0; }
-  *[role="button"]:active:before,
-  button:active:before,
-  input[type="submit"]:active:before {
-    top: -10%;
-    height: 120%; }
-  *[role="button"][rel="external"]:after,
-  button[rel="external"]:after,
-  input[type="submit"][rel="external"]:after {
-    display: none;
-    content: none;
-    margin-left: 0;
-    margin-right: 0; }
-  *[role="button"]:focus,
-  button:focus,
-  input[type="submit"]:focus {
-    outline: 3px solid #ffbf47; }
 
 img + button,
 img + input[type="submit"] {
@@ -916,39 +727,6 @@ a, a:visited {color:#005ea5;}
   font-weight: 400;
   display: block; }
 
-.link-back {
-    display: -moz-inline-stack;
-    display: inline-block;
-    position: relative;
-    font-family: "nta",Arial,sans-serif;
-    font-weight: 400;
-    text-transform: none;
-    font-size: 16px;
-    line-height: 1.14286;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    padding-left: 14px;
-    color: #000;
-    text-decoration: none;
-    border-bottom: 1px solid #0b0c0c;
-}
-.link-back:visited{
-    color:#000;
-}
-
-.link-back::before {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-top: 5px solid transparent;
-    border-right: 6px solid #0b0c0c;
-    border-bottom: 5px solid transparent;
-    position: absolute;
-    left: 0;
-    top: 50%;
-    margin-top: -6px
-}
 
 .width80 {
     width: 80%;
