@@ -1,768 +1,360 @@
-
-
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-.example-highlight-grid .grid-wrapper {
-  background: #bfc1c3; }
-.example-highlight-grid .grid {
-  background: #f8f8f8; }
-.example-highlight-grid .is-inner-block-highlight {
-  background: #dee0e2;
-  width: 100%; }
-
-.example-back-link {
-  display: -moz-inline-stack;
-  display: inline-block;
-  margin-top: 30px; }
-
-.visuallyhidden {
-  position: absolute;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  width: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0; }
-
-.panel-indent {
-  clear: both;
-  border-left: 4px solid #bfc1c3;
-  padding: 10px 0 10px 15px;
-  margin: 30px 15px 45px 0; }
-  .panel-indent:after {
-    content: "";
-    display: block;
-    clear: both; }
-
-.panel-indent legend {
-  margin-top: 0; }
-
-.panel-indent p:only-child,
-.panel-indent p:last-child {
-  margin-bottom: 0; }
-
-.panel-indent .form-group:last-child {
-  margin-bottom: 0; }
-
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-@-ms-viewport {
-  width: device-width; }
-@-o-viewport {
-  width: device-width; }
-.percentage,
-.value {
-  display: block;
-  margin-bottom: 20px;
-  float: left;
-  width: 66.66%; }
+.percentage, .value {
+     display: block;
+     margin-bottom: 20px;
+     float: left;
+     width: 66.66%;
+}
 
 .percentage {
-  clear: both;
-  text-align: right;
-  margin-right: 10px;
-  width: 30%; }
+     clear: both;
+     text-align: right;
+     margin-right: 10px;
+     width: 30%;
+}
 
 .value {
-  position: relative;
-  top: -25px; }
+     position: relative;
+     top: -25px;
+}
 
 .total {
-  top: 0;
+     top: 0;
 }
 
 .bar-chart {
-  position: relative;
-  top: 14px;
-  background-color: #28a197;
-  border: 2px solid #296969;
-  display: inline-block;
-  height: 40px;
-  margin-right: 10px; }
+     position: relative;
+     top: 14px;
+     background-color: #28a197;
+     border: 2px solid #296969;
+     display: inline-block;
+     height: 40px;
+     margin-right: 10px;
+}
 
-/*= Variables
-----------------------------------------------*/
-/*= Mixins
-----------------------------------------------*/
-/*= Header styles
-----------------------------------------------*/
-#global-header #logo {
-  width: 165px; }
-#global-header .header-message {
-  float: right;
-  margin: .65rem 0;
-  color: #fff; }
-  #global-header .header-message p {
-    margin: 0; }
 
-#global-breadcrumb {
-  background-color: #fff;
-  z-index: 50; }
-  #global-breadcrumb ol {
-    margin: 0 30px;
-    margin: 0;
-    padding: 0.75em 0 0;
-    max-width: 960px; }
-    #global-breadcrumb ol li {
-      font-family: "nta", Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.25;
-      font-weight: 300;
-      text-transform: none;
-      list-style: none;
-      margin-bottom: 0.4em;
-      display: inline-block;
-      position: relative;
-      margin-left: 10px;
-      padding-left: 15.655px;
-      float: left;
+ #wrapper #content #user-info {
+     float: right;
+     clear: both;
+     text-align: right;
+}
 
-      &:before {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: -3.31px;
-        width: 7px;
-        height: 7px;
-        margin: auto 0;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-        border: solid;
-        border-width: 1px 1px 0 0;
-        border-color: #505a5f;
-      }
+ .langToggle {
+     clear: both;
+     float: right;
+}
 
-      &:first-child {
-        margin-left: 0;
-        padding-left: 0;
-      }
 
-      &:first-child:before {
-        content: none;
-        display: none;
-      }
+/*= Headings and text styles ----------------------------------------------*/
+ section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, section[id] h6 {
+     margin-top: 55px;
+     padding: 0;
+}
+ p.lede {
+     margin: 0 0 30px 0;
+     width: 75%;
+}
+ @media (max-width: 640px) {
+     p.lede {
+         font-size: 20px;
+         line-height: 1.2;
     }
-
-
-    @media (max-width: 640px) {
-        #global-breadcrumb ol li {
-          font-size: 14px;
-          line-height: 1.1428571429; } }
-      #global-breadcrumb ol li:last-child {
-        margin-right: 0;
-        background-image: none; }
-      #global-breadcrumb ol li a {
-        font-family: "nta", Arial, sans-serif;
-        font-size: 16px;
-        line-height: 1.25;
-        font-weight: 300;
-        text-transform: none;
-        color: #0b0c0c; }
-        @media (max-width: 640px) {
-          #global-breadcrumb ol li a {
-            font-size: 14px;
-            line-height: 1.1428571429; } }
-      #global-breadcrumb ol li strong {
-        font-weight: normal; }
-
-.phase-tag {
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  vertical-align: top;
-  margin: 0 8px 0 0;
-  padding: 2px 5px 0;
-  font-family: "nta", Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.25;
-  font-weight: 300;
-  text-transform: none;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-decoration: none;
-  color: #fff;
-  background-color: #f47738; }
-  @media (min-width: 641px) {
-    .phase-tag {
-      vertical-align: baseline; } }
-  @media (max-width: 640px) {
-    .phase-tag {
-      font-size: 14px;
-      line-height: 1.1428571429; } }
-
-/*= Main styles
-----------------------------------------------*/
-main, section, article, aside {
-  display: block; }
-
-#global-cookie-message p {
-  margin: 0 auto;
-  max-width: 960 px; }
-
-#wrapper #content .phase-banner {
-  padding: 10px 0 8px 0;
-  border-bottom: 1px solid #bfc1c3;
-  padding: 15px; }
-  @media (min-width: 641px) {
-    #wrapper #content .phase-banner {
-      padding-bottom: 10px; } }
-  #wrapper #content .phase-banner p {
-    margin: 0;
-    color: #000;
-    font-family: "nta", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.25;
-    font-weight: 300;
-    text-transform: none; }
-    @media (max-width: 640px) {
-      #wrapper #content .phase-banner p {
-        font-size: 14px;
-        line-height: 1.1428571429; } }
-  #wrapper #content .phase-banner .phase-tag {
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-    vertical-align: top;
-    margin: 0 8px 0 0;
-    padding: 2px 5px 0;
-    font-family: "nta", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.25;
-    font-weight: 300;
-    text-transform: none;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-decoration: none;
-    color: #fff;
-    background-color: #f47738; }
-    @media (min-width: 641px) {
-      #wrapper #content .phase-banner .phase-tag {
-        vertical-align: baseline; } }
-    @media (max-width: 640px) {
-      #wrapper #content .phase-banner .phase-tag {
-        font-size: 14px;
-        line-height: 1.1428571429; } }
-  #wrapper #content .phase-banner span {
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-    width: 75%;
-    vertical-align: top; }
-    @media (min-width: 641px) {
-      #wrapper #content .phase-banner span {
-        width: auto;
-        vertical-align: baseline; } }
-  #wrapper #content .phase-banner p {
-    margin: 0; }
-  #wrapper #content .phase-banner a {
-    color: #0b0c0c; }
-#wrapper #content article p:first-child {
-  margin-top: 5px;
-  margin-bottom: 20px; }
-#wrapper #content section {
-  margin-bottom: 15px; }
-#wrapper #content .back {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 19px;
-  line-height: 1.3157894737;
-  font-weight: 400;
-  text-transform: none;
-  margin-bottom: 15px; }
-  @media (max-width: 640px) {
-    #wrapper #content .back {
-      font-size: 16px;
-      line-height: 1.25; } }
-@media (min-width: 769px) {
-  #wrapper #content section {
-    margin-bottom: 30px; } }
-#wrapper #content .info-notice {
-  margin-bottom: 16px;
-  padding: 10px 0 10px 20px;
-  background: none;
-  border-left: 5px solid #dee0e2; }
-  #wrapper #content .info-notice p {
-    margin: 0; }
-#wrapper #content #user-info {
-  float: right;
-  clear: both;
-  text-align: right; }
-#wrapper #content h1 {
-  clear: right; }
-
-.selectYear #errors h2.heading-medium.error-summary-heading {
-    margin-top: 0;
+}
+ article p.lede {
+     width: 100%;
+}
+ .no-bold {
+     font-weight: normal;
+}
+ .bold-xlarge {
+     margin: 0;
+     @media (min-width: 641px) {
+         font-size: 48px;
+         line-height: 1.0416666667;
+    }
+}
+ .bold-small {
+     font-size: 16px;
+     @media (max-width: 640px) {
+         font-size: 14px;
+    }
+}
+ a .bold-small {
+     text-decoration: underline;
+}
+ .bold-xlarge + .bold-small {
+     margin-top: 0;
+}
+ .bold-xlarge + p margin, .bold-small + p margin {
+     top: 5px;
+     bottom: 20px;
 }
 
-.langToggle {
-  clear: both;
-  float: right;
+ a.mc-toggle-link {
+     font-family: "nta", Arial, sans-serif;
+     font-size: 19px;
+     line-height: 1.3157894737;
+     font-weight: 400;
+     text-transform: none;
 }
-
-/*= Footer styles
-----------------------------------------------*/
-#footer {
-  margin-top: 30px; }
-  #footer a {
-    font-family: "nta", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.25;
-    font-weight: 300;
-    text-transform: none; }
-    @media (max-width: 640px) {
-      #footer a {
-        font-size: 14px;
-        line-height: 1.1428571429; } }
-
-@media (min-width: 769px) {
-  #footer {
-    margin-top: 15px; } }
-/*= Headings and text styles
-----------------------------------------------*/
-
-section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, section[id] h6 {
-  margin-top: 55px;
-  padding: 0; }
-
-p.lede {
-  margin: 0 0 30px 0;
-  width: 75%; }
-  @media (max-width: 640px) {
-    p.lede {
-      font-size: 20px;
-      line-height: 1.2; } }
-
-article p.lede {
-  width: 100%; }
-
-.no-bold {
-  font-weight: normal; }
-
-.bold-xlarge {
-  margin: 0;
-  @media (min-width: 641px) {
-      font-size: 48px;
-      line-height: 1.0416666667;
-  }
+ @media (max-width: 640px) {
+     a.mc-toggle-link {
+         font-size: 16px;
+         line-height: 1.25;
+    }
 }
-
-.bold-small {
-  font-size: 16px;
-
-  @media (max-width: 640px) {
-    font-size: 14px;
-  }
-}
-
-a .bold-small {
-  text-decoration: underline; }
-
-.bold-xlarge + .bold-small {
-  margin-top: 0; }
-
-.bold-xlarge + p margin, .bold-small + p margin {
-  top: 5px;
-  bottom: 20px; }
-
-a.data-link + p {
-  margin-top: 5px;
-  margin-bottom: 20px; }
-
-a.mc-toggle-link {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 19px;
-  line-height: 1.3157894737;
-  font-weight: 400;
-  text-transform: none; }
-  @media (max-width: 640px) {
-    a.mc-toggle-link {
-      font-size: 16px;
-      line-height: 1.25; } }
-
-strong, b {
-  font-weight: 600; }
-
-
-img + button,
-img + input[type="submit"] {
-  margin: 30px 0; }
-
-.label-inline {
-  display: inline-block;
-  *display: inline;
-  zoom: 1; }
-
-.form-label-bold {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 400;
-  text-transform: none;
-  padding-top: 9px;
-  padding-bottom: 6px;
-  font-weight: 700; }
-  @media (max-width: 640px) {
-    .form-label-bold {
-      font-size: 20px;
-      line-height: 1.2; } }
-  @media (min-width: 641px) {
-    .form-label-bold {
-      padding-top: 6px;
-      padding-bottom: 4px; } }
-
-input[type="text"],
-input[type="email"] {
-  display: block;
-  padding: 0.1em 0 0.1em 0.4em;
-  background-color: #f8f8f8;
-  border: 1px inset #bfc1c3;
-  font-size: 19px;
-  line-height: 1.2; }
-
-input[type="submit"] {
-  display: block; }
-
-fieldset {
-  margin-bottom: 15px; }
-
-.form-field {
-  margin-bottom: 15px; }
-
-/*= Tables
-----------------------------------------------*/
-article table {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 19px;
-  line-height: 1.3157894737;
-  font-weight: 400;
-  text-transform: none;
-  width: 100%;
-  margin-bottom: 15px !important;
-  margin-top: 48px;
-  border-collapse: collapse; }
-  @media (max-width: 640px) {
-    article table {
-      font-size: 16px;
-      line-height: 1.25; } }
-  article table td {
-    font-family: "nta", Arial, sans-serif;
-    font-size: 19px;
-    line-height: 1.3157894737;
-    font-weight: 400;
-    text-transform: none; }
-    @media (max-width: 640px) {
-      article table td {
-        font-size: 16px;
-        line-height: 1.25; } }
-  article table thead th[colspan],
-  article table thead th:nth-child(2),
-  article table tfoot th:nth-child(2) {
-    font-family: "nta", Arial, sans-serif;
-    font-size: 19px;
-    line-height: 1.3157894737;
-    font-weight: 400;
-    text-transform: none;
-    font-weight: normal; }
-    @media (max-width: 640px) {
-      article table thead th[colspan],
-      article table thead th:nth-child(2),
-      article table tfoot th:nth-child(2) {
-        font-size: 16px;
-        line-height: 1.25; } }
-  article table thead th {
-    text-align: left; }
-  article table thead th[colspan],
-  article table thead td + th,
-  article table thead th + th {
-    padding-right: 30px;
-    text-align: right; }
-  article table tbody th[colspan="2"],
-  article table tbody th[colspan="3"] {
-    padding-top: 48px; }
-  article table tfoot th {
-    text-align: left; }
-  article table tfoot th, article table tfoot td {
-    font-family: "nta", Arial, sans-serif;
-    font-size: 24px;
-    line-height: 1.25;
-    font-weight: 400;
-    text-transform: none;
-    font-weight: 700;
-    padding-top: 70px;
-    padding-bottom: 15px;
-    border-bottom: 0; }
-    @media (max-width: 640px) {
-      article table tfoot th, article table tfoot td {
-        font-size: 20px;
-        line-height: 1.2; } }
-  article table tfoot th + td {
-    padding-right: 30px;
-    text-align: right; }
-  article table tfoot .no-bold {
-    font-size: 100%; }
-  article table th {
-    font-family: "nta", Arial, sans-serif;
-    font-size: 24px;
-    line-height: 1.25;
-    font-weight: 400;
-    text-transform: none;
-    font-weight: 700; }
-    @media (max-width: 640px) {
-      article table th {
-        font-size: 20px;
-        line-height: 1.2; } }
-  article table th {
-    text-align: left; }
-  article table th, article table td {
-    padding: 15px 15px 15px 0;
-    border-top: 0;
-    border-right: 0;
-    border-bottom: 1px solid #bfc1c3;
-    border-left: 0;
-    background: none;
-    background-color: #fff; }
-  article table td + td {
-    padding-right: 30px;
-    text-align: right; }
-  @media (min-width: 641px) {
-    article table.others {
-      vertical-align: top; }
-      article table.others td + td {
-        line-height: 1;
-        padding-top: 3px; } }
-  .paye-ats-data-table {
-    margin-top: 0;
-  }
-  .paye-ats-data-table th {
-    font-size: 19px;
-    font-weight: 400;
-  }
-  .paye-ats-data-table thead th,
-  .paye-ats-data-table thead th:last-child {
-    font-weight: 700;
-  }
-  .paye-ats-data-table tfoot th,
-  .paye-ats-data-table tfoot td {
-    font-weight: 700;
-    font-size: 19px;
-    padding: 15px 15px 15px 0;
-  }
-  .paye-ats-data-table tfoot td {
-    font-weight: 400;
-    padding-right: 0;
-  }
-
-#tax-summary h2, #tax-spent h2 {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 400;
-  text-transform: none;
-  font-weight: 700;
-  padding: 6px 0 9px 0;
-  margin: 0; }
-  @media (max-width: 640px) {
-    #tax-summary h2, #tax-spent h2 {
-      font-size: 20px;
-      line-height: 1.2; } }
-#tax-summary p, #tax-spent p {
-  margin-top: 0; }
-
-/*= Tax summary index page
-----------------------------------------------*/
-#taxable-income a,
-#tax-calculated-as a,
-#tax-free-amount a,
-#capital-gains a {
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  text-decoration: none;
-  overflow: hidden; }
-
-/*= Tax summary Magna charta
-----------------------------------------------*/
-.mc-chart {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 19px;
-  line-height: 1.31579;
-  line-height: 1.3157894737;
-  font-weight: 400;
-  text-transform: none;
-  border-spacing: 0 5px;
-  width: 90%;
-  margin-bottom:30px;
-  margin-top:30px;}
-  @media (max-width: 640px) {
-    .mc-chart {
-      font-size: 16px;
-      line-height: 1.25;
-      max-width: -moz-min-content; } }
-
-.mc-key-cell {
-  padding-right: 20px !important;
-  /*width: 60% !important;*/ }
-
-.mc-key-2 {display: none !important;}
-
-.mc-bar-cell {
-  border: 2px solid #296969 !important;
-  font-weight: 700; }
-  .mc-bar-cell span {
-    /*width: 150px !important;*/ }
-
-.gray {
-  color: #6f777b !important;
-  font-weight: normal; }
-
-.block-heading {
-  display: block;
-}
-
-a, a:visited {color:#005ea5;}
-#global-breadcrumb {border-bottom:none;}
-
-
-#total-income-tax-amount, #total-capital-gains-tax-amount, #total-uk-income-tax-amount {
-    text-align: right;
-    border-bottom: 0 none;
-}
-
-#total-income-tax-amount-nics {
-    text-align: right;
-}
-
-#total-income-tax tbody th, #total-uk-income-tax tbody th, #total-capital-gains-tax tbody th {
-    border-bottom: 0 none;
-}
-
-.form-group-error h1 {
-    padding-top: 0;
+ strong, b {
+     font-weight: 600;
 }
 
 
-#errors ul li a {
-    font-weight: 700;
+/*= Tables ----------------------------------------------*/
+ article table {
+    margin: 48px 0 15px 0;
 }
 
 
-.scottish-income-tax {padding-top:0; border-width:0;}
-
-.hmrc-logo-print {
-    display: none;
+ article table thead th[colspan], article table thead th:nth-child(2), article table tfoot th:nth-child(2) {
+     font-size: 19px;
+     line-height: 1.3157894737;
+     font-weight: 400;
+     font-weight: normal;
 }
-
-.print-this {
-  border-bottom: 1px solid #000;
-  margin: 0 0 15px 0;
-  position: relative;
-  display: inline;
-
-}
-
-.page-header h1 {
-    margin-top: 0;
-}
-
-.print-this__icon {
-    left: 0;
-    position: absolute;
-    top: 2px;
-}
-.print-this__link {
-    color: #000;
-    font-size: 16px;
-    padding-left: 25px;
-    text-decoration: none;
-}
-
-
-/*= Year heading styles
-----------------------------------------------*/
-.heading-secondary {
-  color: #6f777b;
-  font-weight: 400;
-  display: block; }
-
-
-.width80 {
-    width: 80%;
-}
-.width20 {
-    width: 20%;
-}
-
-.error-message {
-    margin-bottom: 0.5em;
-}
-
-.heading-48 {
-    margin-bottom: 15px;
-}
-
-.form-group-error .heading-48 {
-    margin-top: 0;
-}
-
-#howTaxIsSpentTable td:first-child, #totalUkIncomeTax th {
-    font-weight: 700;
-}
-
-#adjustments-table {
-    margin-top: 2.0em;
-}
-
-#national-insurance-contribution-table {
-    margin-top: 2.0em;
-}
-
-@media (min-width: 641px) {
-    .main-content {
-        float: left;
-        width: 61.666667%;
+ @media (max-width: 640px) {
+     article table thead th[colspan], article table thead th:nth-child(2), article table tfoot th:nth-child(2) {
+         font-size: 16px;
+         line-height: 1.25;
     }
 }
 
+ article table thead th[colspan], article table thead td + th, article table thead th + th {
+     padding-right: 30px;
+     text-align: right;
+}
+ article table tbody th[colspan="2"], article table tbody th[colspan="3"] {
+     padding-top: 48px;
+}
+
+ article table tfoot th, article table tfoot td {
+     padding-top: 70px;
+     padding-bottom: 15px;
+     border-bottom: 0;
+}
+
+ article table tfoot th + td {
+     padding-right: 30px;
+     text-align: right;
+}
+
+ article table th {
+     font-size: 24px;
+     line-height: 1.25;
+     font-weight: 400;
+     text-transform: none;
+     font-weight: 700;
+}
+ @media (max-width: 640px) {
+     article table th {
+         font-size: 20px;
+         line-height: 1.2;
+    }
+}
+
+ article table th, article table td {
+     padding: 15px 15px 15px 0;
+     border-top: 0;
+     border-right: 0;
+     border-bottom: 1px solid #bfc1c3;
+     border-left: 0;
+     background: none;
+     background-color: #fff;
+}
+ article table td + td {
+     padding-right: 30px;
+     text-align: right;
+}
+ @media (min-width: 641px) {
+     article table.others {
+         vertical-align: top;
+    }
+     article table.others td + td {
+         line-height: 1;
+         padding-top: 3px;
+    }
+}
+ .paye-ats-data-table {
+     margin-top: 0;
+}
+ .paye-ats-data-table th {
+     font-size: 19px;
+     font-weight: 400;
+}
+ .paye-ats-data-table thead th, .paye-ats-data-table thead th:last-child {
+     font-weight: 700;
+}
+ .paye-ats-data-table tfoot th, .paye-ats-data-table tfoot td {
+     font-weight: 700;
+     font-size: 19px;
+     padding: 15px 15px 15px 0;
+}
+ .paye-ats-data-table tfoot td {
+     font-weight: 400;
+     padding-right: 0;
+}
+ #tax-summary h2, #tax-spent h2 {
+     font-family: "nta", Arial, sans-serif;
+     font-size: 24px;
+     line-height: 1.25;
+     font-weight: 400;
+     text-transform: none;
+     font-weight: 700;
+     padding: 6px 0 9px 0;
+     margin: 0;
+}
+ @media (max-width: 640px) {
+     #tax-summary h2, #tax-spent h2 {
+         font-size: 20px;
+         line-height: 1.2;
+    }
+}
+ #tax-summary p, #tax-spent p {
+     margin-top: 0;
+}
+/*= Tax summary index page ----------------------------------------------*/
+ #taxable-income a, #tax-calculated-as a, #tax-free-amount a, #capital-gains a {
+     display: inline-block;
+     *display: inline;
+     zoom: 1;
+     text-decoration: none;
+     overflow: hidden;
+}
+/*= Tax summary Magna charta ----------------------------------------------*/
+ .mc-chart {
+     font-family: "nta", Arial, sans-serif;
+     font-size: 19px;
+     line-height: 1.31579;
+     line-height: 1.3157894737;
+     font-weight: 400;
+     text-transform: none;
+     border-spacing: 0 5px;
+     width: 90%;
+     margin-bottom:30px;
+     margin-top:30px;
+}
+ @media (max-width: 640px) {
+     .mc-chart {
+         font-size: 16px;
+         line-height: 1.25;
+         max-width: -moz-min-content;
+    }
+}
+ .mc-key-cell {
+     padding-right: 20px !important;
+    /*width: 60% !important;
+    */
+}
+ .mc-key-2 {
+    display: none !important;
+}
+ .mc-bar-cell {
+     border: 2px solid #296969 !important;
+     font-weight: 700;
+}
+ .mc-bar-cell span {
+    /*width: 150px !important;
+    */
+}
+ .gray {
+     color: #6f777b !important;
+     font-weight: normal;
+}
+ .block-heading {
+     display: block;
+}
+ a, a:visited {
+    color:#005ea5;
+}
+
+ #total-income-tax-amount, #total-capital-gains-tax-amount, #total-uk-income-tax-amount {
+     text-align: right;
+     border-bottom: 0 none;
+}
+ #total-income-tax-amount-nics {
+     text-align: right;
+}
+ #total-income-tax tbody th, #total-uk-income-tax tbody th, #total-capital-gains-tax tbody th {
+     border-bottom: 0 none;
+}
+ .form-group-error h1 {
+     padding-top: 0;
+}
+ #errors ul li a {
+     font-weight: 700;
+}
+ .scottish-income-tax {
+    padding-top:0;
+     border-width:0;
+}
+ .hmrc-logo-print {
+     display: none;
+}
+ .print-this {
+     border-bottom: 1px solid #000;
+     margin: 0 0 15px 0;
+     position: relative;
+     display: inline;
+}
+ .page-header h1 {
+     margin-top: 0;
+}
+ .print-this__icon {
+     left: 0;
+     position: absolute;
+     top: 2px;
+}
+ .print-this__link {
+     color: #000;
+     font-size: 16px;
+     padding-left: 25px;
+     text-decoration: none;
+}
+/*= Year heading styles ----------------------------------------------*/
+ .heading-secondary {
+     color: #6f777b;
+     font-weight: 400;
+     display: block;
+}
+ .width80 {
+     width: 80%;
+}
+ .width20 {
+     width: 20%;
+}
+ .error-message {
+     margin-bottom: 0.5em;
+}
+ .heading-48 {
+     margin-bottom: 15px;
+}
+ .form-group-error .heading-48 {
+     margin-top: 0;
+}
+ #howTaxIsSpentTable td:first-child, #totalUkIncomeTax th {
+     font-weight: 700;
+}
+ #adjustments-table {
+     margin-top: 2.0em;
+}
+ #national-insurance-contribution-table {
+     margin-top: 2.0em;
+}
+ @media (min-width: 641px) {
+     .main-content {
+         float: left;
+         width: 61.666667%;
+    }
+}
+
+
+.breadcrumbs a, .breadcrumbs a:visited {
+    color: #0b0c0c;
+}
