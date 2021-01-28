@@ -100,7 +100,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("generic.error.html.title"))
+      document.title should include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
