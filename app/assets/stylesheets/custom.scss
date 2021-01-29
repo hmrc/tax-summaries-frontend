@@ -229,28 +229,18 @@
 }
 /*= Tax summary Magna charta ----------------------------------------------*/
  .mc-chart {
-     font-family: "nta", Arial, sans-serif;
-     font-size: 19px;
-     line-height: 1.31579;
-     line-height: 1.3157894737;
-     font-weight: 400;
-     text-transform: none;
-     border-spacing: 0 5px;
      width: 90%;
      margin-bottom:30px;
      margin-top:30px;
 }
  @media (max-width: 640px) {
      .mc-chart {
-         font-size: 16px;
-         line-height: 1.25;
          max-width: -moz-min-content;
     }
 }
- .mc-key-cell {
-     padding-right: 20px !important;
-    /*width: 60% !important;
-    */
+
+#mc-chart .mc-tbody .mc-tr .mc-key-cell {
+     padding-right: 20px;
 }
  .mc-key-2 {
     display: none !important;
@@ -259,12 +249,9 @@
      border: 2px solid #296969 !important;
      font-weight: 700;
 }
- .mc-bar-cell span {
-    /*width: 150px !important;
-    */
-}
+
  .gray {
-     color: #6f777b !important;
+     color: #6f777b;
      font-weight: normal;
 }
  .block-heading {
@@ -284,12 +271,7 @@
  #total-income-tax tbody th, #total-uk-income-tax tbody th, #total-capital-gains-tax tbody th {
      border-bottom: 0 none;
 }
- .form-group-error h1 {
-     padding-top: 0;
-}
- #errors ul li a {
-     font-weight: 700;
-}
+
  .scottish-income-tax {
     padding-top:0;
      border-width:0;
@@ -317,12 +299,7 @@
      padding-left: 25px;
      text-decoration: none;
 }
-/*= Year heading styles ----------------------------------------------*/
- .heading-secondary {
-     color: #6f777b;
-     font-weight: 400;
-     display: block;
-}
+
  .width80 {
      width: 80%;
 }
@@ -354,6 +331,9 @@
     }
 }
 
+.margin-top-1 {
+    margin-top: 1em;
+}
 
 .breadcrumbs a, .breadcrumbs a:visited {
     color: #0b0c0c;
