@@ -227,11 +227,14 @@ ats.treasury_spending.table.link=Bwrw golwg ar yr wybodaeth hon fel tabl
 ats.treasury_spending.chart.link=Bwrw golwg ar yr wybodaeth hon fel siart
 ats.treasury_spending.print.this.page = Argraffu’r dudalen hon
 
-# No ATS - error page
+# Service unavailable
 #============================================================
-generic.error.html.title=Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
-generic.error.title=Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
-generic.error.try.later=Rhowch gynnig arall arni yn nes ymlaen.
+global.error.InternalServerError500.title = Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
+global.error.InternalServerError500.heading = Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
+global.error.InternalServerError500.message.you.can = Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch
+global.error.InternalServerError500.message.contact.hmrc = gysylltu â CThEM
+global.error.InternalServerError500.message.by.phone.post = ar-lein, dros y ffôn neu drwy’r post.
+
 
 # No ATS - ats unavailable page
 #============================================================

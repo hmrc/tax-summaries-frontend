@@ -366,11 +366,13 @@ paye.ats.tax_free_amount.tax_free_amount=Less your tax-free amount
 paye.ats.tax_free_amount.total_tax_liable=You pay tax on
 
 
-# No ATS - error page
+# Service unavailable
 #============================================================
-generic.error.html.title=Sorry, there is a problem with the service
-generic.error.title=Sorry, there is a problem with the service
-generic.error.try.later=Try again later.
+global.error.InternalServerError500.title = Sorry, the service is unavailable
+global.error.InternalServerError500.message.you.can = You can use this service later or you can
+global.error.InternalServerError500.message.contact.hmrc = contact HMRC
+global.error.InternalServerError500.message.by.phone.post = online, by phone or by post.
+
 
 # No ATS - error page paye content
 paye.ats.no_ats.title=You had no taxable income this year

@@ -56,8 +56,11 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
       val resultEn =
         genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, templateRenderer, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
-      documentEn.toString should include("Sorry, there is a problem with the service")
-      documentEn.toString should include("Try again later.")
+      documentEn.toString should include(messagesEn("global.error.InternalServerError500.title"))
+      documentEn.toString should include(
+        messagesEn("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">" + messagesEn(
+          "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesEn(
+          "global.error.InternalServerError500.message.by.phone.post"))
     }
 
     "show the correct contents of the generic error page in Welsh" in {
@@ -65,8 +68,11 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
       val resultCy =
         genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, templateRenderer, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
-      documentCy.toString should include("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth")
-      documentCy.toString should include("Rhowch gynnig arall arni yn nes ymlaen.")
+      documentCy.toString should include(messagesCy("global.error.InternalServerError500.title"))
+      documentCy.toString should include(
+        messagesCy("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">" + messagesCy(
+          "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesCy(
+          "global.error.InternalServerError500.message.by.phone.post"))
     }
   }
 }
