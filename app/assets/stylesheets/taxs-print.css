@@ -102,17 +102,17 @@
   #global-header .header-message p {
     margin: 0; }
 
-#global-breadcrumb {
+.breadcrumbs {
   margin: 0 auto;
   max-width: 1020px;
   background-color: #fff;
   z-index: 50; }
-  #global-breadcrumb ol {
+  .breadcrumbs ol {
     margin: 0 30px;
     margin: 0;
     padding: 0.75em 0 0;
     max-width: 960px; }
-    #global-breadcrumb ol li {
+    .breadcrumbs ol li {
       font-family: "nta", Arial, sans-serif;
       font-size: 12pt;
       line-height: 1.25;
@@ -128,13 +128,13 @@
       float: left;
       list-style: none; }
       @media (max-width: 640px) {
-        #global-breadcrumb ol li {
+        .breadcrumbs ol li {
           font-size: 14px;
           line-height: 1.14286; } }
-      #global-breadcrumb ol li:last-child {
+      .breadcrumbs ol li:last-child {
         margin-right: 0;
         background-image: none; }
-      #global-breadcrumb ol li a {
+      .breadcrumbs ol li a {
         font-family: "nta", Arial, sans-serif;
         font-size: 12pt;
         line-height: 1.25;
@@ -142,10 +142,10 @@
         text-transform: none;
         color: #0b0c0c; }
         @media (max-width: 640px) {
-          #global-breadcrumb ol li a {
+          .breadcrumbs ol li a {
             font-size: 14px;
             line-height: 1.14286; } }
-      #global-breadcrumb ol li strong {
+      .breadcrumbs ol li strong {
         font-weight: normal; }
 
 .phase-tag {
@@ -791,7 +791,7 @@ a {
 .phase-tag, .alpha-tag,
 .phase-banner, .alpha-banner,
 .service-info,
-#global-breadcrumb,
+.breadcrumbs,
 .mc-chart, .mc-toggle-link,
 .back,
 .report-error, .langToggle, .link-back {
