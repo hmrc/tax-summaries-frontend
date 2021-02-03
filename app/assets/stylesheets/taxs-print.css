@@ -11,7 +11,7 @@
 #wrapper #content .page-header h1 {
   clear: right; }
 
-h1.heading-xlarge {
+h1.heading-xlarge, .heading-48 {
     padding: 25px 0 15px !important;
 }
 
@@ -19,6 +19,12 @@ section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, 
   margin-top: 55px;
   padding: 0; }
 
+
+ #wrapper #content #user-info {
+     float: right;
+     clear: both;
+     text-align: right;
+}
 
 
 p.lede {

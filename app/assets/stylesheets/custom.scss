@@ -36,11 +36,43 @@
      float: right;
      clear: both;
      text-align: right;
+     @media (max-width: 640px) {
+        float: none;
+        text-align: left;
+     }
 }
+
+
+
 
  .langToggle {
      clear: both;
      float: right;
+}
+
+h2, article h2 {
+  font-size: 36px;
+  line-height: 1.1111111111;
+  font-weight: 700;
+  margin-top: 45px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+
+    #wrapper #content #user-info {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .print-this + h1 {
+        padding-top: 10px;
+    }
+
+    h2, article h2 {
+      font-size: 24px;
+      line-height: 1.0416666667;
+    }
 }
 
 
@@ -337,4 +369,8 @@
 
 .breadcrumbs a, .breadcrumbs a:visited {
     color: #0b0c0c;
+}
+
+h1.heading-xlarge {
+    padding: 25px 0 15px;
 }
