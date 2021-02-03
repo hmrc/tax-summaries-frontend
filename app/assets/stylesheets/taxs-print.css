@@ -111,7 +111,6 @@ a.mc-toggle-link {
 
  article table thead th[colspan], article table thead td + th, article table thead th + th {
      padding-right: 30px;
-     text-align: right;
 }
  article table tbody th[colspan="2"], article table tbody th[colspan="3"] {
      padding-top: 48px;
@@ -125,7 +124,6 @@ a.mc-toggle-link {
 
  article table tfoot th + td {
      padding-right: 30px;
-     text-align: right;
 }
 
  article table th {
@@ -153,7 +151,6 @@ a.mc-toggle-link {
 }
  article table td + td {
      padding-right: 30px;
-     text-align: right;
 }
  @media (min-width: 641px) {
      article table.others {
