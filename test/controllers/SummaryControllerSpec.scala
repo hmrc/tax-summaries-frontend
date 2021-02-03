@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
-import view_models.{Amount, NoATSViewModel, Rate, Summary}
+import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel, Rate, Summary}
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
@@ -111,6 +111,18 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
     "display an error page for an invalid request" in {
       val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("global.error.InternalServerError500.title"))
+    }
+
+    "display an error page when AtsUnavailableViewModel is returned" in {
+
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new ATSUnavailableViewModel))
+
+      val result = Future.successful(sut.show(request))
+      status(result) mustBe INTERNAL_SERVER_ERROR
+
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
     }

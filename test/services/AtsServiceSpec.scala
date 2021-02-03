@@ -18,7 +18,7 @@ package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AgentToken, AtsData}
+import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -26,16 +26,16 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil._
 import utils.TestConstants._
-import utils.{AccountUtils, AuthorityUtils}
+import utils.{AccountUtils, AuthorityUtils, GenericViewModel}
+import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class AtsServiceSpec
     extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
@@ -57,6 +57,7 @@ class AtsServiceSpec
     reset(mockAuditService)
     reset(mockAuthUtils)
     reset(mockAccountUtils)
+
   }
 
   implicit val hc = new HeaderCarrier
@@ -74,130 +75,140 @@ class AtsServiceSpec
     override val accountUtils: AccountUtils = mockAccountUtils
   }
 
-  "AtsService checkUtrAgainstCache" should {
+  case class FakeViewModel(str: String) extends GenericViewModel
 
-    "not write data to the cache" when {
+  def converter(atsData: AtsData): FakeViewModel = FakeViewModel(atsData.toString)
 
-      "the user is an agent and the retrieved cached utr equals the requested utr" in {
+  "AtsService" when {
 
-        when(mockAccountUtils.isAgent(request)).thenReturn(true)
-        when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(None))(any[AuthenticatedRequest[_]])).thenReturn(true)
+    "createModel is called" must {
 
-        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
-        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(data)))
+      "return an instance of the desired view model" when {
 
-        val result = sut.getAts(2014)
+        "connector returns a success response with valid payload" which {
 
-        whenReady(result) { result =>
-          result shouldBe data
+          "a user who is not an agent" that {
+
+            "has AtsData present in the cache" in {
+
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+
+              when(mockAccountUtils.isAgent(any())) thenReturn false
+
+              when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload[
+                AtsData](data)
+
+              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+
+              sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
+
+              verify(mockAuditService).sendEvent(any(), any(), any())(any(), any())
+            }
+
+            "has no data in the cache" in {
+
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn None
+
+              when(mockAccountUtils.isAgent(any())) thenReturn false
+
+              when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload[
+                AtsData](data)
+
+              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+
+              sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
+
+              verify(mockAuditService).sendEvent(any(), any(), any())(any(), any())
+            }
+          }
+
+          "a user who is an agent" that {
+
+            "has AtsData present in the cache" in {
+
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+
+              when(mockAccountUtils.isAgent(any())) thenReturn true
+
+              when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), any())(any())) thenReturn true
+
+              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Some(agentToken)
+
+              sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
+            }
+
+            "has no data in the cache" in {
+
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn None
+
+              when(mockAccountUtils.isAgent(any())) thenReturn true
+
+              when(mockAuthUtils.getRequestedUtr(eqTo(Uar(testUar)), any())) thenReturn SaUtr(testNonMatchingUtr)
+
+              when(mockAccountUtils.getAccount(any())) thenReturn Uar(testUar)
+
+              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Some(agentToken)
+
+              when(
+                mockMiddleConnector.connectToAtsOnBehalfOf(
+                  eqTo(Uar(testUar)),
+                  eqTo(SaUtr(testNonMatchingUtr)),
+                  eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload[AtsData](data)
+
+              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+
+              implicit val request =
+                AuthenticatedRequest(
+                  "userId",
+                  Some(Uar(testUar)),
+                  Some(SaUtr(testUtr)),
+                  None,
+                  None,
+                  None,
+                  None,
+                  FakeRequest())
+
+              sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
+
+              verify(mockAuditService).sendEvent(any(), any(), any())(any(), any())
+            }
+          }
         }
+      }
 
-        verify(mockAuditService, never())
-          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
-          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
+      "return a NoATSViewModel" when {
+
+        "the connector returns a NoATSViewModel" in {
+
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+
+          when(mockAccountUtils.isAgent(any())) thenReturn false
+
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsNotFoundResponse(
+            "Not found")
+
+          sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[NoATSViewModel]
+
+          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+        }
+      }
+
+      "return an AtsUnavailableViewModel" when {
+
+        "the connector returns an AtsErrorResponse" in {
+
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+
+          when(mockAccountUtils.isAgent(any())) thenReturn false
+
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsErrorResponse(
+            "Something went wrong")
+
+          sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[ATSUnavailableViewModel]
+
+          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+        }
       }
     }
-
-    "write data to the cache" when {
-      "user is not an agent and the retrieved cached utr is different to the requested utr " in {
-
-        when(mockAuthUtils.checkUtr(eqTo(Some(testNonMatchingUtr)), eqTo(None))(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
-
-        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(None)
-        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(data)))
-        when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
-          .thenReturn(Future.successful(data))
-
-        val result = sut.getAts(2014)
-
-        whenReady(result) { result =>
-          result shouldBe data
-        }
-
-        verify(mockMiddleConnector, times(1)).connectToAts(any[SaUtr], any[Int])(any[HeaderCarrier])
-        verify(mockAuditService, times(1))
-          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-        verify(mockDataCacheConnector, times(1))
-          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-      }
-
-      "user is an agent and the retrieved cached utr is different to the requested utr" in {
-        val agentRequest = AuthenticatedRequest(
-          "userId",
-          Some(Uar(testUar)),
-          Some(SaUtr(testUtr)),
-          None,
-          None,
-          None,
-          None,
-          FakeRequest())
-
-        when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
-
-        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Some(agentToken))
-        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(Some(data))
-        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(data)))
-        when(mockMiddleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
-          .thenReturn(Future.successful(data))
-
-        val result = sut.getAts(2014)(hc, agentRequest)
-
-        whenReady(result) { result =>
-          result shouldBe data
-        }
-
-        verify(mockMiddleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
-        verify(mockAuditService, times(1))
-          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-        verify(mockDataCacheConnector, times(1))
-          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-      }
-
-      "there is no data in the cache and user is an agent" in {
-        val agentRequest = AuthenticatedRequest(
-          "userId",
-          Some(Uar(testUar)),
-          Some(SaUtr(testUtr)),
-          None,
-          None,
-          None,
-          None,
-          FakeRequest())
-
-        when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(2014))(any[HeaderCarrier])).thenReturn(None)
-        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Some(agentToken))
-
-        when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), eqTo(Some(agentToken)))(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
-
-        when(mockDataCacheConnector.storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(data)))
-        when(mockMiddleConnector.connectToAtsOnBehalfOf(any[Uar], any[SaUtr], eqTo(2014))(any[HeaderCarrier]))
-          .thenReturn(Future.successful(data))
-
-        val result = sut.getAts(2014)(hc, agentRequest)
-
-        whenReady(result) { result =>
-          result shouldBe data
-        }
-
-        verify(mockMiddleConnector, times(1)).connectToAtsOnBehalfOf(any[Uar], any[SaUtr], any[Int])(any[HeaderCarrier])
-        verify(mockAuditService, times(1))
-          .sendEvent(any[String], any[Map[String, String]], any[Option[String]])(any[Request[_]], any[HeaderCarrier])
-        verify(mockDataCacheConnector, times(1))
-          .storeAtsForSession(any[AtsData])(any[HeaderCarrier], any[ExecutionContext])
-      }
-    }
-
   }
 }

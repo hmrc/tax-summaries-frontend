@@ -33,10 +33,11 @@ class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: Ap
 
   def url(path: String) = s"$serviceUrl$path"
 
-  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
-    http.GET[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
+  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+    httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
-  def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsData] =
+  def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(
+    implicit hc: HeaderCarrier): Future[AtsResponse] =
     connectToAts(requestedUTR, taxYear)
 
   def connectToAtsList(UTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =

@@ -145,7 +145,41 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
-      result shouldBe expectedSAResponse
+      result shouldBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
+    }
+
+    "return 4xx response" in {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val body = "No ATS List found"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(NOT_FOUND)
+            .withBody(body))
+      )
+
+      val result = sut.connectToAts(utr, currentYear).futureValue
+
+      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+    }
+
+    "return 5xx response" in {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val body = "Something went wrong"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(INTERNAL_SERVER_ERROR)
+            .withBody(body))
+      )
+
+      val result = sut.connectToAts(utr, currentYear).futureValue
+
+      result shouldBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
@@ -158,7 +192,8 @@ class MiddleConnectorSpec
             .withStatus(BAD_REQUEST)
             .withBody("Bad Request"))
       )
-      a[BadRequestException] should be thrownBy await(sut.connectToAts(utr, currentYear))
+
+      sut.connectToAts(utr, currentYear).futureValue shouldBe a[AtsErrorResponse]
     }
   }
 
@@ -177,20 +212,41 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
 
-      result shouldBe expectedSAResponse
+      result shouldBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
 
-    "return BadRequest response" in {
+    "return 4xx response" in {
 
       val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val body = "No ATS List found"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
           aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Bad Request"))
+            .withStatus(NOT_FOUND)
+            .withBody(body))
       )
-      a[BadRequestException] should be thrownBy await(sut.connectToAtsOnBehalfOf(uar, utr, currentYear))
+
+      val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
+
+      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+    }
+
+    "return 5xx response" in {
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val body = "Something went wrong"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(INTERNAL_SERVER_ERROR)
+            .withBody(body))
+      )
+
+      val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
+
+      result shouldBe a[AtsErrorResponse]
     }
   }
 
@@ -359,7 +415,7 @@ class MiddleConnectorSpec
       )
 
       intercept[NotFoundException] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        await(sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
       }
     }
 
@@ -386,7 +442,7 @@ class MiddleConnectorSpec
       )
 
       intercept[Exception] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        await(sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
       }
     }
   }

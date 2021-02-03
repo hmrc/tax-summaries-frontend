@@ -22,12 +22,14 @@ import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils._
-import view_models.NoATSViewModel
+import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
+import cats.data.EitherT
 
 class AtsService @Inject()(
   middleConnector: MiddleConnector,
@@ -43,48 +45,47 @@ class AtsService @Inject()(
       checkCreateModel(_, converter)
     }
 
-  def checkCreateModel(output: AtsData, converter: AtsData => GenericViewModel): GenericViewModel =
+  def checkCreateModel(output: Either[Int, AtsData], converter: AtsData => GenericViewModel): GenericViewModel =
     output match {
-      case errors if errors.errors.nonEmpty =>
-        errors.errors.get match {
-          case IncomingAtsError("NoAtsError") => new NoATSViewModel
-          case IncomingAtsError(_)            => throw new AtsError(errors.errors.get.toString)
-        }
-      case wrapper => converter(wrapper)
+      case Right(atsList)  => converter(atsList)
+      case Left(NOT_FOUND) => new NoATSViewModel
+      case Left(_)         => new ATSUnavailableViewModel
     }
 
-  def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsData] =
+  def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsData]] =
     dataCacheConnector.fetchAndGetAtsForSession(taxYear) flatMap {
       case Some(data) =>
         if (accountUtils.isAgent(request)) {
-          fetchAgentInfo(data, taxYear)
+          fetchAgentInfo(data, taxYear).value
         } else {
-          getAtsAndStore(taxYear)
+          getAtsAndStore(taxYear).value
         }
       case None =>
         if (accountUtils.isAgent(request)) {
           dataCacheConnector.getAgentToken.flatMap { token =>
-            getAtsAndStore(taxYear, token)
+            getAtsAndStore(taxYear, token).value
           }
         } else {
-          getAtsAndStore(taxYear)
+          getAtsAndStore(taxYear).value
         }
     }
 
   private def fetchAgentInfo(data: AtsData, taxYear: Int)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[AtsData] =
-    dataCacheConnector.getAgentToken.flatMap { token =>
-      if (authUtils.checkUtr(data.utr, token)) {
-        Future.successful(data)
-      } else {
-        getAtsAndStore(taxYear, token)
+    request: AuthenticatedRequest[_]): EitherT[Future, Int, AtsData] =
+    EitherT {
+      dataCacheConnector.getAgentToken.flatMap { token =>
+        if (authUtils.checkUtr(data.utr, token)) {
+          Future.successful(Right(data))
+        } else {
+          getAtsAndStore(taxYear, token).value
+        }
       }
     }
 
   private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[AtsData] = {
+    request: AuthenticatedRequest[_]): EitherT[Future, Int, AtsData] = {
     val account = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
@@ -94,15 +95,13 @@ class AtsService @Inject()(
       case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
     }
 
-    gotData flatMap { data =>
-      data.errors match {
-        case None =>
+    EitherT {
+      gotData flatMap {
+        case AtsSuccessResponseWithPayload(data: AtsData) =>
           sendAuditEvent(account, data)
-          storeAtsData(data)
-        case Some(IncomingAtsError("NoAtsError")) =>
-          storeAtsData(data)
-        case Some(_) =>
-          Future.successful(data)
+          storeAtsData(data) map (Right(_))
+        case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
+        case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
       }
     }
   }
