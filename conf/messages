@@ -264,9 +264,7 @@ ats.treasury_spending.title=Your taxes and public spending
 ats.treasury_spending.section.lede=This shows a breakdown of how your taxes have been, or will be spent by government.
 ats.treasury_spending.section.sit.lede=This shows a breakdown of how your taxes have been, or will be spent by government across the whole of the UK, including spending by the devolved administrations.
 ats.treasury_spending.section.sit.scottish.spending.1=For more information about Scottish Government spending, go to
-ats.treasury_spending.section.sit.scottish.spending.link.1.text= www.gov.scot/accounts.
 ats.treasury_spending.section.sit.scottish.spending.2=For information about Scottish Rate of Income Tax, go to
-ats.treasury_spending.section.sit.scottish.spending.link.2.text= www.gov.uk/scottish-rate-income-tax/how-it-works.
 
 
 ats.treasury_spending.return=Back
@@ -322,11 +320,13 @@ paye.ats.treasury_spending.para1=These figures show how government spent money a
 paye.ats.treasury_spending.para2=All figures are rounded to the nearest pound.
 paye.ats.treasury_spending.para3=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.para4=Spending information is published by HM Treasury.
-paye.ats.treasury_spending.scottish.spending.1=Find out more about <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">your tax and public spending in Scotland</a> on the Scottish Government website.
+paye.ats.treasury_spending.scottish.spending.1=Find out more about
+paye.ats.treasury_spending.scottish.spending.2=your tax and public spending in Scotland
+paye.ats.treasury_spending.scottish.spending.3=on the Scottish Government website.
 paye.ats.treasury_spending.total=Total
 paye.ats.treasury_spending.welsh.tax.payer.para1=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.welsh.tax.payer.para3=Spending information is published by HM Treasury.
-paye.ats.treasury_spending.welsh.tax.payer.para4=The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit <a href="https://www.gov.wales/calculate-welsh-income-tax-spend" target="blank" rel="noopener noreferrer">https://www.gov.wales/calculate-welsh-income-tax-spend</a>
+paye.ats.treasury_spending.welsh.tax.payer.para4=The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit
 
 # View ATS - Summary (PAYE)
 #============================================================
@@ -434,7 +434,6 @@ global.page.not.found.error.check.web.address.correct=If you typed the web addre
 global.page.not.found.error.check.web.address.full=If you pasted the web address, check you copied the entire address.
 global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your Annual Tax Summary.
 global.page.not.found.error.contact.link.text=contact the Self Assessment helpline
-global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
 ats.howYourTaxWasSpent.heading = How tax was spent
 ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insurance contributions for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
