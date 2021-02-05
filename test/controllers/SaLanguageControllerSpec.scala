@@ -17,7 +17,6 @@
 package controllers
 
 import config.ApplicationConfig
-import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.play.language.LanguageUtils

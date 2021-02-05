@@ -19,27 +19,26 @@ package services
 import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AgentToken, AtsErrorResponse, AtsListData, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
+import models._
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
-import org.mockito.Mockito._
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import uk.gov.hmrc.domain
 import utils.TestConstants._
+import utils.{AgentTokenException, AuthorityUtils}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 class AtsListServiceSpec
     extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with BeforeAndAfterEach {

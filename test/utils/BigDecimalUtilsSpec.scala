@@ -16,10 +16,10 @@
 
 package utils
 
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import uk.gov.hmrc.play.test.UnitSpec
 
-class BigDecimalUtilsSpec extends BigDecimalUtils with UnitSpec with PropertyChecks {
+class BigDecimalUtilsSpec extends BigDecimalUtils with UnitSpec with ScalaCheckDrivenPropertyChecks {
 
   "BigDecimalUtils" must {
 

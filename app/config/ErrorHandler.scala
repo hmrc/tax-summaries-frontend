@@ -21,7 +21,7 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.Request
 import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import views.html.errors.ErrorTemplateView
 import views.html.errors.PageNotFoundTemplateView
@@ -53,5 +53,5 @@ class ErrorHandler @Inject()(
   }
 
   def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
-    app.configuration.getConfig(s"microservice.metrics")
+    app.configuration.getOptional[Configuration](s"microservice.metrics")
 }

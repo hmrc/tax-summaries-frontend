@@ -18,7 +18,6 @@ package utils
 
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TaxsValidator._
 
 class HtmlFormatterSpec extends UnitSpec with Matchers {
 

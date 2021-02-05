@@ -18,7 +18,6 @@ package controllers.paye
 
 import config.ApplicationConfig
 import controllers.ControllerBaseSpec
-import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.play.language.LanguageUtils

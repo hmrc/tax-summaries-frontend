@@ -18,7 +18,7 @@ package view_models.paye
 
 import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil

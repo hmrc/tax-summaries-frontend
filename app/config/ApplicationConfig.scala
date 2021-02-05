@@ -45,12 +45,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
-  // Beta feedback config
-  lazy val betaFeedbackUrl = getConf("contact-frontend.url") + getConf(
-    "contact-frontend.beta-feedback-url.authenticated")
-  lazy val betaFeedbackUnauthenticatedUrl = getConf("contact-frontend.url") + getConf(
-    "contact-frontend.beta-feedback-url.unauthenticated")
-
   // Analytics config
   lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))
   lazy val analyticsHost: String = config.getString(s"google-analytics.host")

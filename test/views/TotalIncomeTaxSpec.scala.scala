@@ -19,7 +19,7 @@ package views
 import controllers.auth.AuthenticatedRequest
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
@@ -27,7 +27,7 @@ import view_models._
 import views.html._
 import views.html.total_income_tax_includes._
 
-class SavingsTableSpec extends ViewSpecBase with TestConstants with PropertyChecks {
+class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   implicit val request =
     AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())

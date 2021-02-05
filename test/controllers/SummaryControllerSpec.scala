@@ -22,7 +22,7 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -58,7 +58,7 @@ object SummaryControllerSpec {
   )
 }
 
-class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with ScalaCheckPropertyChecks {
+class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with ScalaCheckDrivenPropertyChecks {
 
   override val taxYear = 2014
   val request = AuthenticatedRequest(

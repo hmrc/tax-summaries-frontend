@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package services
+package config
 
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import uk.gov.hmrc.http.HttpResponse
+import com.google.inject.Inject
+import com.google.inject.name.Named
+import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.cache.client.SessionCache
 
-import scala.concurrent.Future
-
-trait HttpHandling {}
+class TAXSSessionCache @Inject()(val http: HttpClient, @Named("appName") appName: String)(
+  implicit val appConfig: ApplicationConfig)
+    extends SessionCache {
+  override lazy val defaultSource: String = appName
+  override lazy val baseUri: String = appConfig.sessionCacheHost
+  override lazy val domain: String = appConfig.sessionCacheDomain
+}

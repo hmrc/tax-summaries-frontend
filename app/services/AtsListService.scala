@@ -16,8 +16,6 @@
 
 package services
 
-import java.util.Date
-
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}

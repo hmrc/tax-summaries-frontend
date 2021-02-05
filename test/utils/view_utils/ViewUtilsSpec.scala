@@ -16,12 +16,12 @@
 
 package utils.view_utils
 
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.ViewUtils
 import view_models.{Amount, Rate}
 
-class ViewUtilsSpec extends UnitSpec with PropertyChecks {
+class ViewUtilsSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
 
   val zeroAmount = createAmount(0)
   val zeroRate = Rate("0%")

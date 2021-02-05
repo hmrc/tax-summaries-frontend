@@ -21,9 +21,10 @@ import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import scala.concurrent.ExecutionContext.Implicits.global
 
-class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
+import scala.concurrent.ExecutionContext
+
+class AuditService @Inject()(auditConnector: DefaultAuditConnector)(implicit ec: ExecutionContext) {
 
   val taxsAuditSource = "tax-summaries-frontend"
 

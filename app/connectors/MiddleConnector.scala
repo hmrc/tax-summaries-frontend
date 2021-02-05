@@ -21,7 +21,6 @@ import config.ApplicationConfig
 import models.{AtsData, AtsListData, AtsResponse}
 import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,7 +28,7 @@ class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: Ap
 
   val serviceUrl = appConfig.serviceUrl
 
-  def http: DefaultHttpClient = httpHandler.http
+  def http: HttpClient = httpHandler.http
 
   def url(path: String) = s"$serviceUrl$path"
 

@@ -18,17 +18,17 @@ package views.total_income_tax_includes
 import com.softwaremill.quicklens.modify
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.prop.PropertyChecks
-import org.scalatestplus.play.OneAppPerSuite
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import utils.ViewUtils.toCurrency
-import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
+import view_models.{Amount, Rate, SavingsRates, SavingsTax}
 import views.html.total_income_tax_includes.SavingsTableView
 
-class SavingsTableSpec extends UnitSpec with GuiceOneAppPerSuite with TestConstants with PropertyChecks {
+class SavingsTableSpec
+    extends UnitSpec with GuiceOneAppPerSuite with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)

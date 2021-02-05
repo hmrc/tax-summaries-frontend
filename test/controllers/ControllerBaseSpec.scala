@@ -24,7 +24,6 @@ import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.MockTemplateRenderer
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}

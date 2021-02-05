@@ -34,7 +34,6 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.language.postfixOps
 
 class PayeAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 

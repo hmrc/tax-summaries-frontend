@@ -19,13 +19,11 @@ package services
 import com.google.inject.Inject
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, DataHolder}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.{NoATSViewModel, Summary}
+import view_models.Summary
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success, Try}
 
 class SummaryService @Inject()(atsService: AtsService) {
 
