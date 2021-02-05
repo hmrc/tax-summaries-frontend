@@ -191,6 +191,22 @@ class AtsServiceSpec
 
           verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
         }
+
+        "there is a NoAtsError in the AtsData" in {
+
+          val dataWithError = data.copy(errors = Some(IncomingAtsError("NoAtsError")))
+
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(dataWithError)
+
+          when(mockAccountUtils.isAgent(any())) thenReturn false
+
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload(
+            dataWithError)
+
+          sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[NoATSViewModel]
+
+          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+        }
       }
 
       "return an AtsUnavailableViewModel" when {
@@ -203,6 +219,22 @@ class AtsServiceSpec
 
           when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsErrorResponse(
             "Something went wrong")
+
+          sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[ATSUnavailableViewModel]
+
+          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+        }
+
+        "there is any other error in the AtsData" in {
+
+          val dataWithError = data.copy(errors = Some(IncomingAtsError("Random error")))
+
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(dataWithError)
+
+          when(mockAccountUtils.isAgent(any())) thenReturn false
+
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload(
+            dataWithError)
 
           sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[ATSUnavailableViewModel]
 

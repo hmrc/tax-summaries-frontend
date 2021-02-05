@@ -97,6 +97,9 @@ class AtsService @Inject()(
 
     EitherT {
       gotData flatMap {
+        case AtsSuccessResponseWithPayload(data: AtsData) if hasNoAts(data) => Future.successful(Left(NOT_FOUND))
+        case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty =>
+          Future.successful(Left(INTERNAL_SERVER_ERROR))
         case AtsSuccessResponseWithPayload(data: AtsData) =>
           sendAuditEvent(account, data)
           storeAtsData(data) map (Right(_))
@@ -104,6 +107,10 @@ class AtsService @Inject()(
         case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
       }
     }
+  }
+
+  private def hasNoAts(data: AtsData): Boolean = data.errors.fold(false) { errors =>
+    errors.error == "NoAtsError"
   }
 
   private def storeAtsData(dataWithUser: AtsData)(implicit hc: HeaderCarrier) =
@@ -131,7 +138,7 @@ class AtsService @Inject()(
           AuditTypes.Tx_SUCCEEDED,
           Map(
             "userId"   -> request.userId,
-            "userUtr"  -> data.utr.get,
+            "userUtr"  -> request.saUtr.fold("")(_.utr),
             "userType" -> userType,
             "taxYear"  -> data.taxYear.toString,
             "time"     -> new Date().toString

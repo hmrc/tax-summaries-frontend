@@ -25,10 +25,9 @@ import uk.gov.hmrc.play.language.LanguageUtils
 class SaLanguageControllerSpec extends ControllerBaseSpec {
 
   val langUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  val config: Configuration = app.injector.instanceOf[Configuration]
   val applicationConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new SaLanguageController(config, langUtils, mcc, applicationConfig)
+  def sut = new SaLanguageController(langUtils, mcc, applicationConfig)
 
   val fakeRequest = FakeRequest().withHeaders(("Referer", routes.ErrorController.notAuthorised().url))
   val redirectLocationUrl = routes.ErrorController.notAuthorised().url
