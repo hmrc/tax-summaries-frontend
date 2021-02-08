@@ -29,13 +29,14 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil._
 import utils.TestConstants._
 import utils.{AccountUtils, AuthorityUtils, GenericViewModel}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AtsServiceSpec
     extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
@@ -100,6 +101,8 @@ class AtsServiceSpec
 
               when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
 
+              when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
+
               sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any(), any())(any(), any())
@@ -115,6 +118,8 @@ class AtsServiceSpec
                 AtsData](data)
 
               when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+
+              when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
               sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
 
@@ -148,6 +153,8 @@ class AtsServiceSpec
               when(mockAccountUtils.getAccount(any())) thenReturn Uar(testUar)
 
               when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Some(agentToken)
+
+              when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
               when(
                 mockMiddleConnector.connectToAtsOnBehalfOf(

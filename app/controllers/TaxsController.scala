@@ -21,7 +21,7 @@ import java.util.Date
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import models.ErrorResponse
+import models.{ErrorResponse, InvalidTaxYear}
 import play.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
+import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,7 +53,13 @@ abstract class TaxsController @Inject()(
 
   def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
-  def transformation(implicit request: AuthenticatedRequest[_]): Future[Result]
+  def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
+    extractViewModel map {
+      case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts())
+      case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
+      case Right(result: ViewModel)          => obtainResult(result)
+      case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
+    }
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] =
     transformation recover {

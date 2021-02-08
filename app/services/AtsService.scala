@@ -101,8 +101,10 @@ class AtsService @Inject()(
         case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty =>
           Future.successful(Left(INTERNAL_SERVER_ERROR))
         case AtsSuccessResponseWithPayload(data: AtsData) =>
-          sendAuditEvent(account, data)
-          storeAtsData(data) map (Right(_))
+          for {
+            result <- storeAtsData(data) map (Right(_))
+            _      <- sendAuditEvent(account, data)
+          } yield result
         case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
         case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
       }
