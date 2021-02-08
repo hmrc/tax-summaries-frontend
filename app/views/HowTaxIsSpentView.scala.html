@@ -49,9 +49,7 @@
 
     <h1 class="heading-xlarge">@messages("ats.howYourTaxWasSpent.heading")</h1>
 
-    <p>@messages("ats.howYourTaxWasSpent.cannot.load") @messages("ats.howYourTaxWasSpent.view.breakdown.of.taxs")</p>
-
-    <p>@Html(messages("ats.howYourTaxWasSpent.incometax.ni.contributions", (taxYear-1).toString, taxYear.toString))</p>
+    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", (taxYear-1).toString, taxYear.toString))</p>
     <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
 
 
