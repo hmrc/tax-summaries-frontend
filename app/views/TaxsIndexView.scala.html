@@ -69,13 +69,14 @@
                 atsYearForm(AtsForms.yearChoice),
                 atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
                 '_fieldSetAttributes -> "id=year_field",
-                '_legend -> Messages("ats.select_tax_year.title")
+                '_legend -> Messages("ats.select_tax_year.title"),
+                '_headingClass -> "heading-48"
                 )
         <div class="form-field">
             <button id="continue" class="button" type="submit" data-journey-click="button - click:@Messages("ats.select_tax_year.title"):@Messages("ats.select_tax_year.continue")">@Messages("ats.select_tax_year.continue")</button>
         </div>
         }
 
-        <p><a href="@appConfig.switchToPayeUrl">@messages("ats.summary.view.paye.link")</a></p>
+        <p class="margin-top-1"><a href="@appConfig.switchToPayeUrl">@messages("ats.summary.view.paye.link")</a></p>
     </div>
 }
