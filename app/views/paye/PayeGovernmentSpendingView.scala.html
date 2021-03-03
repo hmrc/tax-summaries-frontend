@@ -70,7 +70,7 @@
 		<p id="welsh-tax-payer-paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
 		<p id="welsh-tax-payer-paragraph-1">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para1")</p>
 		<p id="welsh-tax-payer-paragraph-3">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para3")</p>
-		<p id="welsh-tax-payer-paragraph-4">@Html(Messages("paye.ats.treasury_spending.welsh.tax.payer.para4"))</p>
+		<p id="welsh-tax-payer-paragraph-4">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para4") <a href="@appConfig.calculateWelshIncomeTaxSpend" target="blank" rel="noopener noreferrer">@appConfig.calculateWelshIncomeTaxSpend</a></p>
 	  </div>
    </div>
 
@@ -81,7 +81,7 @@
 		 <p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
 		 <p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
 		 @if(viewModel.isScottish) {
-		 <p id="scottish-spending-link">@Html(Messages("paye.ats.treasury_spending.scottish.spending.1"))</p>
+		   <p id="scottish-spending-link">@Messages("paye.ats.treasury_spending.scottish.spending.1") <a href="@appConfig.scottishIncomeTaxLink" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a> @Messages("paye.ats.treasury_spending.scottish.spending.3")</p>
 		 }
 		 <p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
 		 <p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>

@@ -199,9 +199,7 @@ ats.treasury_spending.title=Eich trethi a gwariant cyhoeddus
 ats.treasury_spending.section.lede=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn eu gwario.
 ats.treasury_spending.section.sit.lede=Mae hwn yn dangos dadansoddiad o sut mae’r Llywodraeth wedi gwario’ch trethi ledled y DU gyfan, neu sut y byddant yn gwneud hynny. Mae’n cynnwys gwariant gan y gweinyddiaethau datganoledig.
 ats.treasury_spending.section.sit.scottish.spending.1=I gael rhagor o wybodaeth am wariant Llywodraeth yr Alban, ewch i
-ats.treasury_spending.section.sit.scottish.spending.link.1.text= www.gov.scot/accounts.
 ats.treasury_spending.section.sit.scottish.spending.2=I gael gwybodaeth am Gyfradd yr Alban o Dreth Incwm, ewch i
-ats.treasury_spending.section.sit.scottish.spending.link.2.text= www.gov.uk/scottish-rate-income-tax/how-it-works.
 
 ats.treasury_spending.return=Yn ôl
 ats.treasury_spending.total=Cyfanswm
@@ -290,7 +288,6 @@ global.page.not.found.error.check.web.address.correct=Os gwnaethoch deipio’r c
 global.page.not.found.error.check.web.address.full=Os gwnaethoch ludo’r cyfeiriad gwe, gwiriwch eich bod wedi copïo’r cyfeiriad yn llawn.
 global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, {0} os ydych am siarad â rhywun am eich Crynodeb Treth Blynyddol.
 global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
-global.page.not.found.error.contact.link=https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment
 
 
 # Paye ATS - landing page
@@ -345,13 +342,15 @@ paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a Diogelwch Cyhoeddu
 
 paye.ats.treasury_spending.para2=Mae’r holl ffigurau wedi’u talgrynnu i’r bunt agosaf.
 paye.ats.treasury_spending.para1=Mae’r ffigurau hyn yn dangos sut mae’r llywodraeth wedi gwario arian ar draws y DU gyfan, gan gynnwys gwariant gan y gweinyddiaethau datganoledig.
-paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar <a href="https://www.gov.scot/publications/scottish-income-tax-2019-2020/" target="blank" rel="noopener noreferrer">gael am eich treth a’ch gwariant cyhoeddus yn yr Alban</a> ar wefan Llywodraeth yr Alban.
+paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar
+paye.ats.treasury_spending.scottish.spending.2=gael am eich treth a’ch gwariant cyhoeddus yn yr Alban
+paye.ats.treasury_spending.scottish.spending.3=ar wefan Llywodraeth yr Alban.
 paye.ats.treasury_spending.para3=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
 paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
 paye.ats.treasury_spending.total=Cyfanswm
 paye.ats.treasury_spending.welsh.tax.payer.para1=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
 paye.ats.treasury_spending.welsh.tax.payer.para3=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
-paye.ats.treasury_spending.welsh.tax.payer.para4=Cyfrifoldeb Llywodraeth Cymru yw’r polisi a’r cyllid ar gyfer y rhan fwyaf o’r gwasanaethau cyhoeddus allweddol a ddarperir yng Nghymru. I gael rhagor o wybodaeth am wariant Llywodraeth Cymru, ewch i <a href="https://www.gov.wales/calculate-welsh-income-tax-spend" target="blank" rel="noopener noreferrer">https://www.gov.wales/calculate-welsh-income-tax-spend</a>
+paye.ats.treasury_spending.welsh.tax.payer.para4=Cyfrifoldeb Llywodraeth Cymru yw’r polisi a’r cyllid ar gyfer y rhan fwyaf o’r gwasanaethau cyhoeddus allweddol a ddarperir yng Nghymru. I gael rhagor o wybodaeth am wariant Llywodraeth Cymru, ewch i
 
 
 # Paye ATS - no ats page

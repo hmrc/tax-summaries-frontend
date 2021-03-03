@@ -71,7 +71,7 @@
         </div>
 
 
-        <h1>
+        <h1 class="heading-48">
                 <span class="gray heading-medium block-heading">
                     @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
                 </span>
@@ -79,7 +79,7 @@
         </h1>
  @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
-                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="http://www.gov.scot/accounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.1.text"))</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="http://www.gov.uk/scottish-rate-income-tax/how-it-works" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.link.2.text"))</a></p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="@appConfig.govScotAccounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@appConfig.govScotAccounts">@appConfig.govScotAccounts</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="@appConfig.govScotHowItWorks" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@appConfig.govScotHowItWorks">@appConfig.govScotHowItWorks</a></p>
             } else {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
             }

@@ -79,6 +79,12 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val contactHmrcSAUrl = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
   lazy val contactHmrcPayeUrl =
     "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
+  lazy val govScotAccounts = "https://www.gov.scot/accounts"
+  lazy val govScotHowItWorks = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
+
+  lazy val scottishIncomeTaxLink = "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+
+  lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
   lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
 

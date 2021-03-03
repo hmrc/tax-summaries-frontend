@@ -83,19 +83,18 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         capitalGainsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
+      document.select(".breadcrumbs li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
-        "<strong>Capital Gains Tax</strong>")
+      document.select(".breadcrumbs li:nth-child(4)").toString should include("Capital Gains Tax")
     }
 
     "show the 'exit tax summaries' link on the income before tax page" in {
@@ -110,19 +109,18 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
+      document.select(".breadcrumbs li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
-        "<strong>Your total income</strong>")
+      document.select(".breadcrumbs li:nth-child(4)").toString should include("Your total income")
     }
 
     "show the 'exit tax summaries' link on the nics page" in {
@@ -150,19 +148,18 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         nicsView(fakeViewModel)(requestWithSession, messages, formPartialRetriever, templateRenderer, appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
+      document.select(".breadcrumbs li:nth-child(3) a").text should include("Your income and taxes")
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
-        "<strong>Your Income Tax and National Insurance</strong>")
+      document.select(".breadcrumbs li:nth-child(4)").toString should include("Your Income Tax and National Insurance")
     }
 
     "show the 'exit tax summaries' link on the summaries page" in {
@@ -195,15 +192,14 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3)").toString should include(
-        "<strong>Your income and taxes</strong>")
+      document.select(".breadcrumbs li:nth-child(3)").toString should include("Your income and taxes")
     }
 
     "show the 'exit tax summaries' link on the tax free amount page" in {
@@ -217,19 +213,18 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your income and taxes"
+      document.select(".breadcrumbs li:nth-child(3) a").text shouldBe "Your income and taxes"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
-        "<strong>Your tax-free amount</strong>")
+      document.select(".breadcrumbs li:nth-child(4)").toString should include("Your tax-free amount")
     }
 
     "show the 'exit tax summaries' link on the total income tax page" in {
@@ -282,23 +277,22 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/summary?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text should include("Your income and taxes")
+      document.select(".breadcrumbs li:nth-child(3) a").text should include("Your income and taxes")
 
-      document.select("#global-breadcrumb li:nth-child(4) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(4) a").attr("href") should include(
         "/annual-tax-summary/nics?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(4) a").text should include(
-        "Your Income Tax and National Insurance")
+      document.select(".breadcrumbs li:nth-child(4) a").text should include("Your Income Tax and National Insurance")
 
-      document.select("#global-breadcrumb li:nth-child(5)").toString should include("<strong>Income Tax</strong>")
+      document.select(".breadcrumbs li:nth-child(5)").toString should include("Income Tax")
     }
 
     "show the 'exit tax summaries' link on the treasury spending page" in {
@@ -340,15 +334,14 @@ class PortalUserSpec extends HtmlUnitFactory with MockitoSugar with ControllerBa
         templateRenderer,
         appConfig)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(1) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(1) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(3)").toString should include(
-        "<strong>Your taxes and public spending</strong>")
+      document.select(".breadcrumbs li:nth-child(3)").toString should include("Your taxes and public spending")
     }
   }
 }

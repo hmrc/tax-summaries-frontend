@@ -273,18 +273,17 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
       val result = Future.successful(sut.show(request))
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#global-breadcrumb li:nth-child(1) a").attr("href") should include("/account")
-      document.select("#global-breadcrumb li:nth-child(1) a").text should include("Home")
+      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/account")
+      document.select(".breadcrumbs li:nth-child(1) a").text should include("Home")
 
-      document.select("#global-breadcrumb li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select("#global-breadcrumb li:nth-child(2) a").text shouldBe "Select the tax year"
+      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
+      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Select the tax year"
 
-      document.select("#global-breadcrumb li:nth-child(3) a").attr("href") should include(
+      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
         "/annual-tax-summary/main?taxYear=2014")
-      document.select("#global-breadcrumb li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
+      document.select(".breadcrumbs li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
 
-      document.select("#global-breadcrumb li:nth-child(4)").toString should include(
-        "<strong>Your taxes and public spending</strong>")
+      document.select(".breadcrumbs li:nth-child(4)").toString should include("Your taxes and public spending")
     }
 
     "return zero percentage for Housing, Cultural and Environment when they are not same" in {
