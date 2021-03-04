@@ -18,7 +18,6 @@ package controllers.paye
 
 import config.ApplicationConfig
 import controllers.ControllerBaseSpec
-import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -26,10 +25,9 @@ import uk.gov.hmrc.play.language.LanguageUtils
 class PayeLanguageControllerSpec extends ControllerBaseSpec {
 
   val langUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  val config: Configuration = app.injector.instanceOf[Configuration]
   val applicationConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
 
-  def sut = new PayeLanguageController(config, langUtils, mcc, applicationConfig)
+  def sut = new PayeLanguageController(langUtils, mcc, applicationConfig)
 
   val fakeRequest = FakeRequest().withHeaders(("Referer", controllers.routes.ErrorController.notAuthorised().url))
   val redirectLocationUrl = controllers.routes.ErrorController.notAuthorised().url

@@ -18,19 +18,20 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
+import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, RunMode, ServicesConfig}
-import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, ServicesConfig}
+
 import scala.collection.JavaConverters._
 
 @Singleton
-class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, configuration: Configuration) {
+class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configuration) {
 
   def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
-  val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, runMode, appName).get()
+  val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, appName).get()
 
   // Services url config
   val serviceUrl = config.baseUrl("tax-summaries")
@@ -43,12 +44,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, runMode: RunMode, conf
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
-
-  // Beta feedback config
-  lazy val betaFeedbackUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf(
-    "contact-frontend.beta-feedback-url.authenticated")
-  lazy val betaFeedbackUnauthenticatedUrl = (if (runMode.env == "Prod") "" else contactHost) + getConf(
-    "contact-frontend.beta-feedback-url.unauthenticated")
 
   // Analytics config
   lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))

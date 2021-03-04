@@ -22,14 +22,14 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
-import view_models.{Amount, NoATSViewModel}
+import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 
 import scala.concurrent.Future
 
@@ -89,6 +89,18 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
     "display an error page for an invalid request " in {
       val result = Future.successful(sut.show(badRequest))
       status(result) shouldBe 400
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("global.error.InternalServerError500.title"))
+    }
+
+    "display an error page when AtsUnavailableViewModel is returned" in {
+
+      when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        .thenReturn(Future.successful(new ATSUnavailableViewModel))
+
+      val result = Future.successful(sut.show(request))
+      status(result) mustBe INTERNAL_SERVER_ERROR
+
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
     }

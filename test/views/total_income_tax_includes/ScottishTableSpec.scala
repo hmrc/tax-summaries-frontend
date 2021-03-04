@@ -19,14 +19,14 @@ package views.total_income_tax_includes
 import com.softwaremill.quicklens._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.TestConstants
 import utils.ViewUtils._
 import view_models.{Amount, Rate, ScottishRates, ScottishTax}
 import views.ViewSpecBase
 import views.html.total_income_tax_includes.ScottishTableView
 
-class ScottishTableSpec extends ViewSpecBase with TestConstants with PropertyChecks {
+class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   val scottishTaxData = ScottishTax.empty
   val scottishRateData = ScottishRates.empty

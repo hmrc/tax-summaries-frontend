@@ -18,15 +18,14 @@ package utils
 
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneServerPerSuite
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants.testUtr
 
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterEach with OneServerPerSuite {
+trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite {
 
   implicit lazy val hc = HeaderCarrier()
 

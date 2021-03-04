@@ -16,14 +16,9 @@
 
 package views
 
-import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants
 import view_models.{Amount, CapitalGains}
 import views.html.CapitalGainsView

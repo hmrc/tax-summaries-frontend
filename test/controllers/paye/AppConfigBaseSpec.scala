@@ -17,20 +17,9 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n
-import play.api.i18n.{MessagesApi, MessagesImpl, _}
-import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
-import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import play.api.test.Injecting
-import services.PayeAtsService
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.play.test.UnitSpec
-import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
-import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
-
-import scala.concurrent.ExecutionContext
 
 trait AppConfigBaseSpec extends UnitSpec with GuiceOneAppPerSuite with Injecting {
 

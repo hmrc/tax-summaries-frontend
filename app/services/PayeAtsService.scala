@@ -39,11 +39,11 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
     middleConnector.connectToPayeATS(nino, taxYear) map { response =>
       handleConnectorResponse[PayeAtsData](response, nino, taxYear)
     } recover {
-      case _: BadRequestException => Left(HttpResponse(BAD_REQUEST))
-      case _: NotFoundException   => Left(HttpResponse(NOT_FOUND))
+      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
+      case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
       case e: Exception =>
         Logger.error(s"Exception in PayeAtsService: $e", e)
-        Left(HttpResponse(INTERNAL_SERVER_ERROR))
+        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
     }
 
   def getPayeATSMultipleYearData(nino: Nino, yearFrom: Int, yearTo: Int)(
@@ -52,11 +52,11 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
     middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo) map { response =>
       handleConnectorResponse[List[PayeAtsData]](response, nino, yearFrom)
     } recover {
-      case _: BadRequestException => Left(HttpResponse(BAD_REQUEST))
-      case _: NotFoundException   => Left(HttpResponse(NOT_FOUND))
+      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
+      case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
       case e: Exception =>
         Logger.error(s"Exception in PayeAtsService: $e", e)
-        Left(HttpResponse(INTERNAL_SERVER_ERROR))
+        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
     }
 
   private def handleConnectorResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(

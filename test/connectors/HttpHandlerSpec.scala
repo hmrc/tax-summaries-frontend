@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo, urlPathEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get}
 import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsSuccessResponseWithPayload}

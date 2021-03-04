@@ -16,10 +16,8 @@
 
 package utils
 
-import config.ApplicationConfig
 import models.SpendData
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
-import utils.TestConstants.testUtr
 import view_models._
 
 import scala.util.Random
