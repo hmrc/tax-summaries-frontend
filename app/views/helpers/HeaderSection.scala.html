@@ -14,20 +14,17 @@
  * limitations under the License.
  *@
 
-@import views.html.includes.TaxsBreadcrumbView
 @import controllers.auth.AuthenticatedRequest
 @import config.ApplicationConfig
 @import utils.GenericViewModel
 
-@this(taxsBreadcrumbView: TaxsBreadcrumbView)
+@this()
 
 @(  pageHeading: String=null,
     name: String,
     utr: String,
     taxYear: Int,
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None,
-    breadcrumbLinks: List[String],
-    currentBreadcrumbLink: String
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit messages: Messages,
     request: AuthenticatedRequest[_],
@@ -35,11 +32,6 @@
 )
 
 
-@taxsBreadcrumbView(
-    breadcrumbLinks,
-    currentBreadcrumbLink,
-    taxYear
-)
 
 @if(actingAsAttorney.isDefined) {
     <div class="nested-banner">
@@ -47,11 +39,13 @@
     </div>
 }
 
-@if(!actingAsAttorney.isDefined){
-        <p id="user-info"><strong>@name</strong> <br>@Html(Messages("generic.utr")) @utr</p>
+<div class="info-header-section">
+    @if(!actingAsAttorney.isDefined){
+            <p id="user-info"><strong>@name</strong> <br>@Html(Messages("generic.utr")) @utr</p>
 
-}
+    }
 
-<div class="js-visible">
-    <p><a id="back-link" class="link-back" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a></p>
+    <div class="js-visible">
+        <p><a id="back-link" class="link-back" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a></p>
+    </div>
 </div>

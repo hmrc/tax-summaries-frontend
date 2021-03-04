@@ -209,32 +209,6 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       document.toString should not include "additional-rate-income-tax-row"
     }
 
-    "show 'Total Income Tax page with a correct breadcrumb" in {
-
-      val result = Future.successful(sut.show(request))
-
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/account")
-      document.select(".breadcrumbs li:nth-child(1) a").text should include("Home")
-
-      document.select(".breadcrumbs li:nth-child(2) a").attr("href") should include("/annual-tax-summary")
-      document.select(".breadcrumbs li:nth-child(2) a").text shouldBe "Select the tax year"
-
-      document.select(".breadcrumbs li:nth-child(3) a").attr("href") should include(
-        "annual-tax-summary/main?taxYear=2014")
-      document.select(".breadcrumbs li:nth-child(3) a").text shouldBe "Your Annual Tax Summary"
-
-      document.select(".breadcrumbs li:nth-child(4) a").attr("href") should include(
-        "/annual-tax-summary/summary?taxYear=2014")
-      document.select(".breadcrumbs li:nth-child(4) a").text shouldBe "Your income and taxes"
-
-      document.select(".breadcrumbs li:nth-child(5) a").attr("href") should include(
-        "/annual-tax-summary/nics?taxYear=2014")
-      document.select(".breadcrumbs li:nth-child(5) a").text should include("Your Income Tax and National Insurance")
-
-      document.select(".breadcrumbs li:nth-child(6)").toString should include("Income Tax")
-    }
   }
 
   "Dividends section" should {
