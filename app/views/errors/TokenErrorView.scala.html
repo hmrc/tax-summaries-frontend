@@ -18,11 +18,9 @@
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import views.html.main
-@import views.html.includes.TaxsBreadcrumbView
 
 @this(
-    main: main,
-    taxsBreadcrumbView: TaxsBreadcrumbView
+    main: main
 )
 
 @()(
@@ -37,8 +35,6 @@
 @main(
        title = Messages("token_error.html.title")
     ) {
-
-    @taxsBreadcrumbView(List("breadcrumbs.taxs.index"), "token_error.html.title", 0)
 
     <h1 id="error-page-heading" class="heading-xlarge">@Html(Messages("token_error.title"))</h1>
 

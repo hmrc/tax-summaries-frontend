@@ -18,11 +18,9 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import controllers.auth.AuthenticatedRequest
 @import views.html.main
-@import views.html.includes.TaxsBreadcrumbView
 
 @this(
-    main: main,
-    taxsBreadcrumbView: TaxsBreadcrumbView
+    main: main
 )
 
 @(
@@ -37,8 +35,6 @@
 @main(
         title = Messages("generic.not_authorised")
     ) {
-
-    @taxsBreadcrumbView(List("breadcrumbs.taxs.select_tax_year"), "breadcrumbs.taxs.noauth", 0)
 
     <h1 class="heading-xlarge">@Html(Messages("generic.not_authorised"))</h1>
 

@@ -37,27 +37,6 @@ view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
 
 
-
-# View ATS - Breadcrumbs
-#============================================================
-breadcrumbs.yta.home=Home
-
-breadcrumbs.taxs.select_tax_year=Select the tax year
-breadcrumbs.taxs.home=Your Annual Tax Summary
-breadcrumbs.taxs.noauth=Not authorised
-breadcrumbs.taxs.no_ats=No ATS available
-breadcrumbs.taxs.no_ats_error=Technical Difficulties
-breadcrumbs.taxs.index=Your Annual Tax Summary
-breadcrumbs.taxs.nics=Your Income Tax and National Insurance
-breadcrumbs.taxs.summary=Your income and taxes
-breadcrumbs.taxs.treasury_spending=Your taxes and public spending
-breadcrumbs.taxs.income_before_tax=Income before tax
-breadcrumbs.taxs.tax_free_amount=Tax-free amount
-breadcrumbs.taxs.total_income_tax=Income Tax
-breadcrumbs.taxs.capital_gains_tax=Capital Gains Tax
-breadcrumbs.taxs.agent_service_unavailable=Annual Tax Summary: 2013 to 2014
-
-
 # View ATS - Select the tax year page
 #============================================================
 ats.select_tax_year.title=Select Self Assessment tax year
