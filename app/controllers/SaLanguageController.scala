@@ -18,18 +18,16 @@ package controllers
 
 import com.google.inject.{Inject, Singleton}
 import config.ApplicationConfig
-import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc._
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 @Singleton
 class SaLanguageController @Inject()(
-  configuration: Configuration,
   languageUtils: LanguageUtils,
   mcc: MessagesControllerComponents,
   appConfig: ApplicationConfig)
-    extends LanguageController(configuration, languageUtils, mcc) {
+    extends LanguageController(languageUtils, mcc) {
 
   override def languageMap: Map[String, Lang] = appConfig.languageMap
 

@@ -25,7 +25,7 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.GovernmentSpendService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView

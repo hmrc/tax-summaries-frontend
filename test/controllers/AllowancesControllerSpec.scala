@@ -156,6 +156,18 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       document.title should include(Messages("global.error.InternalServerError500.title"))
     }
 
+    "display an error page when AtsUnavailableViewModel is returned" in {
+
+      when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
+        .thenReturn(Future.successful(new ATSUnavailableViewModel))
+
+      val result = Future.successful(sut.show(request))
+      status(result) mustBe INTERNAL_SERVER_ERROR
+
+      val document = Jsoup.parse(contentAsString(result))
+      document.title should include(Messages("global.error.InternalServerError500.title"))
+    }
+
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
         .thenReturn(Future.successful(new NoATSViewModel))

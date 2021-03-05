@@ -16,13 +16,11 @@
 
 package view_models
 
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.util.matching.UnanchoredRegex
-
-class AmountSpec extends UnitSpec with PropertyChecks {
+class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
 
   val testCurrency: String = "GBP"
 

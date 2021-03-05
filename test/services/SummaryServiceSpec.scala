@@ -20,10 +20,9 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalamock.scalatest.MockFactory
 import org.scalatest.MustMatchers._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -49,7 +48,6 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
   )
 
   val mockAtsService = mock[AtsService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
 
   implicit val hc = new HeaderCarrier
   val taxYear = 2015
@@ -63,7 +61,7 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
     None,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  def sut = new SummaryService(mockAtsService, mockAtsYearListService)
+  def sut = new SummaryService(mockAtsService)
 
   "SummaryService getSummaryData" should {
 

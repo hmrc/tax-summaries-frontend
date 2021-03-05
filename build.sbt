@@ -14,7 +14,6 @@ lazy val plugins: Seq[Plugins] = Seq(
   play.sbt.PlayScala,
   SbtAutoBuildPlugin,
   SbtGitVersioning,
-  SbtArtifactory,
   SbtDistributablesPlugin
 )
 
