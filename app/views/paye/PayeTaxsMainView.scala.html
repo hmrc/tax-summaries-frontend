@@ -47,9 +47,9 @@
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
     <p id="index-page-description">@Html(Messages("paye.ats.index.html.lede"))</p>
-    <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear)" data-journey-click="link - click:@Messages("ats.index.html.title"):@Messages("ats.index.html.tax_calc_link")">@Messages("ats.index.html.tax_calc_link")</a></h2>
+    <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear)">@Messages("ats.index.html.tax_calc_link")</a></h2>
     <p>@Messages("paye.ats.index.html.tax_calc_description")</p>
-    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.paye.routes.PayeGovernmentSpendController.show(viewModel.taxYear)" data-journey-click="link - click:@Messages("paye.ats.index.html.title"):@Messages("paye.ats.index.html.tax_spend_link")">@Messages("paye.ats.index.html.tax_spend_link")</a></h2>
+    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.paye.routes.PayeGovernmentSpendController.show(viewModel.taxYear)">@Messages("paye.ats.index.html.tax_spend_link")</a></h2>
     <p>@Messages("paye.ats.index.html.tax_spend_description")</p>
 
     <p><a href="@appConfig.switchToSAUrl">@messages("paye.ats.index.html.view.sa.link")</a></p>

@@ -27,7 +27,4 @@ object Globals {
   val TAXS_ATS_LIST_CACHE_KEY = "TAXS_ATS_LIST"
   val TAXS_SELECTED_TAX_YEAR_CACHE_KEY = "TAXS_SELECTED_TAX_YEAR"
   val TAXS_AFFINITY_GROUP = "affinityGroup"
-  val TAXS_ANALYTICS_AGENT_ATTRIBUTE = "annual-tax-summary:agent:start"
-  val TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE = "annual-tax-summary:portal-user:start"
-  val TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE = "annual-tax-summary:transitioned-user:start"
 }

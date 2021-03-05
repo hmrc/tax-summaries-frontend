@@ -43,7 +43,6 @@
     @elements.errors.map{ error =>
         <span class="error-message"
               role="tooltip"
-              data-journey="search-page:error:@field.name"
               id="@(field.name)-error-0">
                 <span class="visually-hidden">@Messages("generic.error") </span>@Messages(error)
             </span>
@@ -56,7 +55,6 @@
              <input
                      type="radio"
                      id="@inputId"
-                     data-journey-click="radio - select:@Messages("ats.select_tax_year.title"):@value"
                      name="@elements.field.name"
                      value="@value"
                      @elements.args.get('_inputClass).map{inputClass => class="@inputClass"}
