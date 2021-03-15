@@ -45,10 +45,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
-  // Analytics config
-  lazy val analyticsToken: Option[String] = Some(config.getString(s"google-analytics.token"))
-  lazy val analyticsHost: String = config.getString(s"google-analytics.host")
-
   lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
 
   lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")

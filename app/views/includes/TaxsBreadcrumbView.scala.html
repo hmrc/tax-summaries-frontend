@@ -25,15 +25,15 @@
 <div class="breadcrumbs">
       <ol class="breadcrumbs__list">
           @if(!utils.AccountUtils.isPortalUser(request)) {
-          <li class="breadcrumbs__list-item"><a class="breadcrumbs__link" href="@appConfig.ytaUrl" data-journey-click="link - click:breadcrumb:@Messages("breadcrumbs.yta.home")">@Html(Messages("breadcrumbs.yta.home"))</a></li>
+          <li class="breadcrumbs__list-item"><a class="breadcrumbs__link" href="@appConfig.ytaUrl">@Html(Messages("breadcrumbs.yta.home"))</a></li>
           }
           @for(link <- links) {
               @if(link == "breadcrumbs.taxs.select_tax_year") {
                 @if(request.session.get("TaxYearListLength").getOrElse("0") != "1") {
-                    <li class="breadcrumbs__list-item"><a class="breadcrumbs__link" href="@TaxsBreadcrumbLinks.getLink(link)" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>
+                    <li class="breadcrumbs__list-item"><a class="breadcrumbs__link" href="@TaxsBreadcrumbLinks.getLink(link)">@Html(Messages(link))</a></li>
                 }
               } else {
-                <li class="breadcrumbs__list-item"><a class="breadcrumbs__link" href="@TaxsBreadcrumbLinks.getLink(link)?taxYear=@taxYear" data-journey-click="link - click:breadcrumb:@Messages(link)">@Html(Messages(link))</a></li>
+                <li class="breadcrumbs__list-item"><a class="breadcrumbs__link" href="@TaxsBreadcrumbLinks.getLink(link)?taxYear=@taxYear">@Html(Messages(link))</a></li>
               }
           }
           @if(!(utils.AccountUtils.isPortalUser(request) && isLandingPage)) {
