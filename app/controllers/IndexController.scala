@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
 import view_models.AtsForms._
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{ATSUnavailableViewModel, AtsList, NoATSViewModel, TaxYearEnd}
 import views.html.TaxsIndexView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -101,8 +101,9 @@ class IndexController @Inject()(
 
   override def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel flatMap {
-      case Right(noATS: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
-      case Right(result: ViewModel)     => getViewModel(result)
+      case Right(result: ViewModel)          => getViewModel(result)
+      case Right(_: NoATSViewModel)          => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
+      case Right(_: ATSUnavailableViewModel) => Future.successful(InternalServerError(genericErrorView()))
     }
 
   def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
