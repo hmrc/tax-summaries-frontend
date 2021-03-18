@@ -101,9 +101,9 @@ class IndexController @Inject()(
 
   override def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel flatMap {
-      case Right(result: ViewModel)          => getViewModel(result)
-      case Right(_: NoATSViewModel)          => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
-      case Right(_: ATSUnavailableViewModel) => Future.successful(InternalServerError(genericErrorView()))
+      case Right(result: ViewModel) => getViewModel(result)
+      case Right(_: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
+      case _                        => Future.successful(InternalServerError(genericErrorView()))
     }
 
   def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
