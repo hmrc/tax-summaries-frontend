@@ -75,13 +75,6 @@
 }
 
 
-@googleAnalytics = @{
-    Map[String, Any](
-        "trackingId" -> appConfig.analyticsToken,
-        "cookieDomain" -> appConfig.analyticsHost
-    ) ++ gaDimensions.getOrElse(Map.empty)
-}
-
 @navTitle = @{
     Some(messages("generic.ats"))
 }
@@ -109,7 +102,6 @@
         "mainAttributes" -> mainDataAttributes,
         "isWelsh" -> isWelsh,
         "signOutUrl" -> controllers.routes.AccountController.signOut(),
-        "googleAnalytics" -> googleAnalytics,
         "ssoUrl" -> None,
         "getHelpForm" -> getHelpForm,
         "navTitle" -> navTitle,

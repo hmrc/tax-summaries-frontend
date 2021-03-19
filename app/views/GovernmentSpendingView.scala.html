@@ -62,7 +62,7 @@
 
         <div class="print-this">
             <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="Print Icon">
-            <a class="print-this__link" href="javascript:window.print()" data-journey-click="@Messages("ats.treasury_spending.print.click"):@Messages("paye.ats.summary.title"):@Messages("ats.treasury_spending.print.this.page")">@Messages("ats.treasury_spending.print.this.page")</a>
+            <a class="print-this__link" href="javascript:window.print()">@Messages("ats.treasury_spending.print.this.page")</a>
         </div>
 
 
@@ -74,7 +74,7 @@
         </h1>
  @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.lede"))</p>
-                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="@appConfig.govScotAccounts" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@appConfig.govScotAccounts">@appConfig.govScotAccounts</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="@appConfig.govScotHowItWorks" target="_blank" data-journey-click="link - click:@Html(Messages("ats.treasury_spending.html.title")):@appConfig.govScotHowItWorks">@appConfig.govScotHowItWorks</a></p>
+                <p class="lede">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="@appConfig.govScotAccounts" target="_blank">@appConfig.govScotAccounts</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="@appConfig.govScotHowItWorks" target="_blank">@appConfig.govScotHowItWorks</a></p>
             } else {
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
             }

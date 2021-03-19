@@ -42,16 +42,5 @@ trait AttorneyUtils {
     else None
 }
 
-trait Analytics {
-  def getAnalyticsAttribute(request: AuthenticatedRequest[_], actingAttorney: Option[ActingAsAttorneyFor]): String =
-    actingAttorney.isDefined match {
-      case true => Globals.TAXS_ANALYTICS_AGENT_ATTRIBUTE
-      case false =>
-        if (AccountUtils.isPortalUser(request)) Globals.TAXS_ANALYTICS_PORTAL_USER_ATTRIBUTE
-        else Globals.TAXS_ANALYTICS_TRANSITIONED_USER_ATTRIBUTE
-    }
-}
-
 object AccountUtils extends AccountUtils
 object AttorneyUtils extends AttorneyUtils
-object Analytics extends Analytics
