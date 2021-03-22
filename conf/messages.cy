@@ -29,24 +29,6 @@ generic.error = Gwall:
 view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
 
-# View ATS - Breadcrumbs
-#============================================================
-breadcrumbs.yta.home=Hafan
-
-breadcrumbs.taxs.select_tax_year=Dewiswch y Flwyddyn Dreth
-breadcrumbs.taxs.home=Eich Crynodeb Treth Blynyddol
-breadcrumbs.taxs.noauth=Heb eich awdurdodi
-breadcrumbs.taxs.no_ats=Dim CTB ar gael
-breadcrumbs.taxs.no_ats_error=Anawsterau Technegol
-breadcrumbs.taxs.index=Eich Crynodeb Treth Blynyddol
-breadcrumbs.taxs.nics=Treth Incwm ac Yswiriant Gwladol
-breadcrumbs.taxs.summary=Eich incwm a’ch trethi
-breadcrumbs.taxs.treasury_spending=Eich trethi a gwariant cyhoeddus
-breadcrumbs.taxs.income_before_tax=Incwm cyn treth
-breadcrumbs.taxs.tax_free_amount=Swm rhydd o dreth
-breadcrumbs.taxs.total_income_tax=Treth Incwm
-breadcrumbs.taxs.capital_gains_tax=Treth Enillion Cyfalaf
-breadcrumbs.taxs.agent_service_unavailable=Crynodeb Treth Blynyddol: 2013 i 2014
 
 # View ATS - Select tax year page
 #============================================================

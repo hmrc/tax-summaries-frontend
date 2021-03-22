@@ -149,15 +149,5 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       document.getElementById("index-page-header").text should include("2015")
     }
 
-    "show 'Landing page' page with a correct breadcrumb" in {
-
-      val result = Future.successful(sut.show(request))
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.select(".breadcrumbs li:nth-child(1) a").attr("href") should include("/account")
-      document.select(".breadcrumbs li:nth-child(1) a").text should include("Home")
-
-      document.select(".breadcrumbs li:nth-child(2)").toString should include("Select the tax year")
-    }
   }
 }
