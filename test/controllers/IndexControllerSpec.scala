@@ -36,7 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.AtsForms._
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{ATSUnavailableViewModel, AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -334,6 +334,20 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+    }
+
+    "redirect to the generic error page when service returns 500" in {
+
+      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+        .thenReturn(Future.successful(new ATSUnavailableViewModel))
+
+      val result = Future.successful(sut.agentAwareShow(agentRequest))
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      document.getElementById("generic-error-page-heading").text() shouldBe "Sorry, the service is unavailable"
     }
 
     "return 404 if service returns 404" in {
