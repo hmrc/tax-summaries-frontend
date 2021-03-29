@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.FakeAuthAction
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -25,39 +25,17 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, _}
-import uk.gov.hmrc.domain.SaUtr
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models._
+
 import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   override val taxYear = 2014
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    true,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
-
-  val badRequest = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    true,
-    FakeRequest("GET", "?taxYear=20145"))
 
   val mockGovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService = mock[AuditService]

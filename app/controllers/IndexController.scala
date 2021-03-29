@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
 import view_models.AtsForms._
-import view_models.{ATSUnavailableViewModel, AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
 import views.html.TaxsIndexView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 

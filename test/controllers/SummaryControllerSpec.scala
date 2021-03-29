@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -24,12 +24,10 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
-import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel, Rate, Summary}
+import view_models._
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
@@ -61,27 +59,6 @@ object SummaryControllerSpec {
 class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with ScalaCheckDrivenPropertyChecks {
 
   override val taxYear = 2014
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    true,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
-
-  val badRequest = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    true,
-    FakeRequest("GET", "?taxYear=20145"))
 
   val baseModel = SummaryControllerSpec.baseModel
 

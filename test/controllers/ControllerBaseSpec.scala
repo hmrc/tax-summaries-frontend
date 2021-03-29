@@ -16,15 +16,19 @@
 
 package controllers
 
+import controllers.auth.AuthenticatedRequest
 import controllers.paye.AppConfigBaseSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n
 import play.api.i18n.{MessagesApi, MessagesImpl, _}
 import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.MockTemplateRenderer
+import utils.TestConstants.testUtr
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 
@@ -69,5 +73,27 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
   lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
   lazy val summaryView = inject[SummaryView]
   lazy val nicsView = inject[NicsView]
+
+  lazy val request = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    true,
+    FakeRequest("GET", s"?taxYear=$taxYear"))
+
+  lazy val badRequest = AuthenticatedRequest(
+    "userId",
+    None,
+    Some(SaUtr(testUtr)),
+    None,
+    None,
+    None,
+    None,
+    true,
+    FakeRequest("GET", "?taxYear=20145"))
 
 }

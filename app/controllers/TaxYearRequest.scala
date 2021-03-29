@@ -19,12 +19,11 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import models.{ErrorResponse, InvalidTaxYear}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import models.ErrorResponse
+import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{GenericViewModel, TaxYearUtil}
-import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,34 +16,20 @@
 
 package controllers
 
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import play.api.i18n.Messages
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services._
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import utils.TestConstants._
 import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
-
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    true,
-    FakeRequest("GET", "?taxYear=2015"))
 
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"

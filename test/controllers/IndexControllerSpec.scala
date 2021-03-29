@@ -46,17 +46,6 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   override val taxYear = 2015
 
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    true,
-    FakeRequest("Get", s"?taxYear=$taxYear"))
-
   val agentRequest = AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
