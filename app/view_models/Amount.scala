@@ -38,7 +38,7 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
 
   def toHalfRoundedUpAmount = format(0, BigDecimal.RoundingMode.HALF_UP)
 
-  def isZero = amount === BigDecimal(0)
+  def isZero = amount.compareTo(BigDecimal(0)) == 0
 
   def isZeroOrLess = isZero || amount < BigDecimal(0)
 

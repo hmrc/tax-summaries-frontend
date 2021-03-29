@@ -31,7 +31,7 @@ trait PayeControllerSpecHelpers {
   val expectedResponse: JsValue = readJson("/paye_ats.json")
 
   def buildPayeRequest(endpoint: String) =
-    PayeAuthenticatedRequest(testNino, FakeRequest("GET", endpoint))
+    PayeAuthenticatedRequest(testNino, false, FakeRequest("GET", endpoint))
 
   def readJson(path: String): JsValue = {
     val resource = getClass.getResourceAsStream(path)

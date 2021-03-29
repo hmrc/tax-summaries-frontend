@@ -16,8 +16,6 @@
 
 package controllers.auth
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.domain._
-
-case class PayeAuthenticatedRequest[A](nino: Nino, isSa: Boolean, request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+trait CommonRequest {
+  def isSa: Boolean
+}

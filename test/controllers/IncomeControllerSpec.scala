@@ -44,7 +44,9 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -53,7 +55,9 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20145"))
+
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,

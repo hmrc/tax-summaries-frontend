@@ -69,7 +69,9 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -78,7 +80,9 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20145"))
+
   val baseModel = SummaryControllerSpec.baseModel
 
   val mockSummaryService = mock[SummaryService]

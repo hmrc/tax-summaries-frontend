@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -41,7 +42,7 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
   class Harness(minAuthAction: MinAuthActionImpl) extends InjectedController {
-    def onPageLoad(): Action[AnyContent] = minAuthAction { request =>
+    def onPageLoad(): Action[AnyContent] = minAuthAction { _ =>
       Ok
     }
   }
@@ -78,12 +79,12 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
   "A user with a confidence level 50" should {
     "create a minimum authenticated request" in {
-      val retrievalResult: Future[Option[String]] =
-        Future.successful(Some(""))
+      val retrievalResult: Future[~[Enrolments, Option[String]]] =
+        Future.successful(new ~(Enrolments(Set.empty), Some("")))
 
       when(
         mockAuthConnector
-          .authorise[Option[String]](any(), any())(any(), any()))
+          .authorise[~[Enrolments, Option[String]]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)

@@ -42,7 +42,9 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=2015"))
+
   val dataPath = "/json_containing_errors_test.json"
   val dataPathNoAts = "/no_ats_json_test.json"
   override val taxYear = 2014

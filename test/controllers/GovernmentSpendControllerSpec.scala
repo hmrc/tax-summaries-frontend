@@ -45,7 +45,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -54,6 +56,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20145"))
 
   val mockGovernmentSpendService = mock[GovernmentSpendService]

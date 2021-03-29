@@ -32,7 +32,7 @@ import views.html.paye.PayeYourTaxableIncomeView
 class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest =
-    PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+    PayeAuthenticatedRequest(testNino, false, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   val sut =
     new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])

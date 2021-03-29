@@ -96,7 +96,7 @@ class AtsListServiceSpec
   }
 
   implicit val request =
-    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, FakeRequest())
   implicit val hc = new HeaderCarrier
 
   val agentToken = AgentToken(
@@ -261,6 +261,7 @@ class AtsListServiceSpec
             None,
             None,
             None,
+            true,
             FakeRequest())
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
@@ -316,7 +317,16 @@ class AtsListServiceSpec
     "Agent" should {
 
       val agentRequest =
-        AuthenticatedRequest("userId", Some(Uar(testUar)), Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+        AuthenticatedRequest(
+          "userId",
+          Some(Uar(testUar)),
+          Some(SaUtr(testUtr)),
+          None,
+          None,
+          None,
+          None,
+          true,
+          FakeRequest())
 
       "Return the ats year list data for a user from the cache" in {
 

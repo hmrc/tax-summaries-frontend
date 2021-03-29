@@ -22,9 +22,12 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
@@ -40,9 +43,11 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50).retrieve(Retrievals.externalId) {
-      case Some(externalId) =>
-        block(AuthenticatedRequest(externalId, None, None, None, None, None, None, request))
+    authorised(ConfidenceLevel.L50).retrieve(Retrievals.allEnrolments and Retrievals.externalId) {
+      case enrolments ~ Some(externalId) =>
+        val isSa = enrolments.getEnrolment("IR-SA").isDefined
+
+        block(AuthenticatedRequest(externalId, None, None, None, None, None, None, isSa, request))
 
       case _ => throw new RuntimeException("Can't find credentials for user")
     }

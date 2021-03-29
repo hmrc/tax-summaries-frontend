@@ -103,6 +103,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Con
         val request =
           PayeAuthenticatedRequest(
             testNino,
+            false,
             FakeRequest("POST", "/annual-tax-summary/paye/treasury-spending")
               .withSession("taxYearFrom" -> taxYearMinus1.toString, "taxYearTo" -> taxYear.toString)
               .withFormUrlEncodedBody("year" -> taxYear.toString)
@@ -154,9 +155,11 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Con
         val request =
           PayeAuthenticatedRequest(
             testNino,
+            false,
             FakeRequest("POST", "/")
               .withSession("taxYearFrom" -> taxYearMinus1.toString, "taxYearTo" -> taxYear.toString)
-              .withFormUrlEncodedBody("year" -> ""))
+              .withFormUrlEncodedBody("year" -> "")
+          )
         val result = sut().onSubmit(request)
 
         status(result) shouldBe BAD_REQUEST

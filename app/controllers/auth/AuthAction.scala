@@ -54,6 +54,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                 .find(id => id.key == "IRAgentReference")
                 .map(key => Uar(key.value))
             }
+
             val saUtr: Option[SaUtr] = enrolments.find(_.key == "IR-SA").flatMap { enrolment =>
               enrolment.identifiers
                 .find(id => id.key == "UTR")
@@ -95,6 +96,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                 payeEmpRef,
                 ctUtr,
                 vrn,
+                saUtr.isDefined,
                 request
               )
             }

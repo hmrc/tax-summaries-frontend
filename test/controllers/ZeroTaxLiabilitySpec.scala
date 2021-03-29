@@ -39,6 +39,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel

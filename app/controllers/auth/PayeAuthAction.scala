@@ -22,11 +22,13 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
@@ -49,11 +51,14 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-        .retrieve(Retrievals.nino) {
-          case Some(nino) => {
+        .retrieve(Retrievals.allEnrolments and Retrievals.nino) {
+          case enrolments ~ Some(nino) => {
+            val isSa = enrolments.getEnrolment("IR-SA").isDefined
+
             block {
               PayeAuthenticatedRequest(
                 Nino(nino),
+                isSa,
                 request
               )
             }

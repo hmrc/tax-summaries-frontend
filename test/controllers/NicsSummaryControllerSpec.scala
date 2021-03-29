@@ -43,7 +43,9 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -52,7 +54,9 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20145"))
+
   val dataPath = "/summary_json_test.json"
 
   val model = Summary(

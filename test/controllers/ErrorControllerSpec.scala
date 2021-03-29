@@ -43,7 +43,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
   class CustomAuthAction(utr: Option[SaUtr]) extends AuthAction with ControllerBaseSpec {
     override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, request))
+      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, request))
     override protected def executionContext: ExecutionContext = ec
   }
 
@@ -75,7 +75,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
             .successful(response)
 
           implicit lazy val request =
-            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, FakeRequest())
           val result = sut().authorisedNoAts()(request)
           val document = contentAsString(result)
 
@@ -92,7 +92,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
             .failed(new IllegalArgumentException("Oops"))
 
           implicit lazy val request =
-            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, FakeRequest())
 
           val result = sut(None).authorisedNoAts()(request)
           val document = contentAsString(result)
@@ -110,7 +110,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
             .failed(new Exception("Oops"))
 
           implicit lazy val request =
-            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+            AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, FakeRequest())
 
           val result = sut(None).authorisedNoAts()(request)
           val document = contentAsString(result)
@@ -125,7 +125,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
 
       "show the not authorised view" in {
 
-        implicit lazy val request = AuthenticatedRequest("userId", None, None, None, None, None, None, FakeRequest())
+        implicit lazy val request =
+          AuthenticatedRequest("userId", None, None, None, None, None, None, true, FakeRequest())
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 

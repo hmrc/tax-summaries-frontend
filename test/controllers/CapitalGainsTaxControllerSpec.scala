@@ -44,7 +44,9 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -53,7 +55,9 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstant
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20145"))
+
   val baseModel = capitalGains
 
   val mockCapitalGainsService = mock[CapitalGainsService]

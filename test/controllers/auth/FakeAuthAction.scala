@@ -28,5 +28,5 @@ object FakeAuthAction extends AuthAction with ControllerBaseSpec {
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, request))
+    block(AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, request))
 }

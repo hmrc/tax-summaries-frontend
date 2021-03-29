@@ -42,7 +42,9 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -51,6 +53,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20145"))
   val baseModel = TotalIncomeTax(
     year = 2014,

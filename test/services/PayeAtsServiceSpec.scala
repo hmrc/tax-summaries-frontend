@@ -53,7 +53,7 @@ class PayeAtsServiceSpec
   }
 
   val mockMiddleConnector = mock[MiddleConnector]
-  implicit val request = PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/"))
+  implicit val request = PayeAuthenticatedRequest(testNino, false, FakeRequest("GET", "/annual-tax-summary/paye/"))
   val mockAuditService: AuditService = mock[AuditService]
 
   def sut = new PayeAtsService(mockMiddleConnector, mockAuditService)

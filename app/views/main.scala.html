@@ -17,7 +17,7 @@
 @import config.ApplicationConfig
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
-@import play.twirl.api.HtmlFormat
+@import controllers.auth.CommonRequest
 
 @this()
 
@@ -39,7 +39,14 @@
     appConfig: ApplicationConfig
 )
 
-
+@isSa = @{
+    try {
+        val commonRequest = request.asInstanceOf[CommonRequest]
+        commonRequest.isSa
+    } catch {
+        case _ : ClassCastException => false
+    }
+}
 @scriptElement = @{
     Map("url" -> routes.Assets.versioned("javascripts/ats-app.js"))
 }
@@ -106,9 +113,10 @@
         "getHelpForm" -> getHelpForm,
         "navTitle" -> navTitle,
         "showPropositionLinks" -> true,
-        "hideAccountMenu" -> true,
+        "hideAccountMenu" -> false,
         "langSelector" -> languageSelectorLanguages,
-        "headInlineScript" -> headInlineScript
+        "headInlineScript" -> headInlineScript,
+        "isSa" -> isSa
     )
 
     val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {

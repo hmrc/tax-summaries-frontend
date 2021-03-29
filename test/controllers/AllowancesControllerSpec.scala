@@ -68,7 +68,9 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val badRequest = AuthenticatedRequest(
     "userId",
     None,
@@ -77,7 +79,9 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     None,
     None,
     None,
+    true,
     FakeRequest("GET", "?taxYear=20155"))
+
   implicit val hc = new HeaderCarrier
 
   val noATSViewModel: NoATSViewModel = new NoATSViewModel()

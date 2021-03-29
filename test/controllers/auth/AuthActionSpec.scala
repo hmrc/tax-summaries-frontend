@@ -46,8 +46,9 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
   class Harness(authAction: AuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
       Ok(
-        s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail").toString}," +
-          s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail").toString}")
+        s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
+          s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
+          s"isSa: ${request.isSa}")
     }
   }
 
@@ -98,6 +99,7 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
       contentAsString(result) should include(utr)
+      contentAsString(result) should include("true")
     }
   }
 
@@ -121,6 +123,7 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
       contentAsString(result) should include(uar)
+      contentAsString(result) should include("false")
     }
   }
 

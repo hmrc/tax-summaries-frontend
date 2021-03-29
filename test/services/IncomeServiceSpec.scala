@@ -60,6 +60,7 @@ class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
   def sut = new IncomeService(mockAtsService, mockAtsYearListService) with MockitoSugar

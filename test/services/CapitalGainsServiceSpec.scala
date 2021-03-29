@@ -60,6 +60,7 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
     None,
     None,
     None,
+    true,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
   val sut = new CapitalGainsService(mockAtsService, mockAtsYearListService) with MockitoSugar
