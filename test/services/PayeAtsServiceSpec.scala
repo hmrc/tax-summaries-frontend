@@ -30,6 +30,7 @@ import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.http.Status.OK
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.testNino
@@ -46,6 +47,7 @@ class PayeAtsServiceSpec
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
   private val currentYearMinus1 = 2018
   private val currentYear = 2019
+  val fakeCredentials = new Credentials("provider ID", "provider type")
 
   private def readJson(path: String) = {
     val resource = getClass.getResourceAsStream(path)
@@ -53,7 +55,8 @@ class PayeAtsServiceSpec
   }
 
   val mockMiddleConnector = mock[MiddleConnector]
-  implicit val request = PayeAuthenticatedRequest(testNino, false, FakeRequest("GET", "/annual-tax-summary/paye/"))
+  implicit val request =
+    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
   val mockAuditService: AuditService = mock[AuditService]
 
   def sut = new PayeAtsService(mockMiddleConnector, mockAuditService)

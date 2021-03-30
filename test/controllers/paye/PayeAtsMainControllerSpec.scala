@@ -16,7 +16,6 @@
 
 package controllers.paye
 
-import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -30,7 +29,7 @@ import utils.TestConstants.testNino
 import view_models.paye.PayeAtsMain
 import views.html.paye.PayeTaxsMainView
 
-class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with JsonUtil {
+class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil {
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 

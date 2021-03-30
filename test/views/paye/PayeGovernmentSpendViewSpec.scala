@@ -27,7 +27,11 @@ import views.html.paye.PayeGovernmentSpendingView
 class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
 
   implicit val request =
-    PayeAuthenticatedRequest(testNino, false, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+    PayeAuthenticatedRequest(
+      testNino,
+      false,
+      fakeCredentials,
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
   lazy val payeGovernmentSpendingView: PayeGovernmentSpendingView = inject[PayeGovernmentSpendingView]
 
   "view" should {

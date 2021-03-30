@@ -96,7 +96,17 @@ class AtsListServiceSpec
   }
 
   implicit val request =
-    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, FakeRequest())
+    AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(testUtr)),
+      None,
+      None,
+      None,
+      None,
+      true,
+      fakeCredentials,
+      FakeRequest())
   implicit val hc = new HeaderCarrier
 
   val agentToken = AgentToken(
@@ -262,6 +272,7 @@ class AtsListServiceSpec
             None,
             None,
             true,
+            fakeCredentials,
             FakeRequest())
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
@@ -326,6 +337,7 @@ class AtsListServiceSpec
           None,
           None,
           true,
+          fakeCredentials,
           FakeRequest())
 
       "Return the ats year list data for a user from the cache" in {
@@ -423,7 +435,7 @@ class AtsListServiceSpec
         when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
           .thenReturn(false)
         when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]]))
-          .thenThrow(new AgentTokenException("Token is empty"))
+          .thenThrow(AgentTokenException("Token is empty"))
 
         whenReady(sut.getAtsYearList.failed) { exception =>
           exception shouldBe a[AgentTokenException]

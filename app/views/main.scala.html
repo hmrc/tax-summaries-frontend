@@ -47,6 +47,16 @@
         case _ : ClassCastException => false
     }
 }
+
+@isGovernmentGateway = @{
+    try {
+        val commonRequest = request.asInstanceOf[CommonRequest]
+        commonRequest.credentials.providerType == "GovernmentGateway"
+    } catch {
+        case _ : ClassCastException => false
+    }
+}
+
 @scriptElement = @{
     Map("url" -> routes.Assets.versioned("javascripts/ats-app.js"))
 }
@@ -116,7 +126,8 @@
         "hideAccountMenu" -> false,
         "langSelector" -> languageSelectorLanguages,
         "headInlineScript" -> headInlineScript,
-        "isSa" -> isSa
+        "isSa" -> isSa,
+        "isGovernmentGateway" -> isGovernmentGateway
     )
 
     val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {

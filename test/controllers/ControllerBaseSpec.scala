@@ -25,6 +25,7 @@ import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.MockTemplateRenderer
@@ -74,6 +75,8 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
   lazy val summaryView = inject[SummaryView]
   lazy val nicsView = inject[NicsView]
 
+  val fakeCredentials = new Credentials("provider ID", "provider type")
+
   lazy val request = AuthenticatedRequest(
     "userId",
     None,
@@ -83,6 +86,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     None,
     None,
     true,
+    fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
   lazy val badRequest = AuthenticatedRequest(
@@ -94,6 +98,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     None,
     None,
     true,
+    fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"))
 
 }

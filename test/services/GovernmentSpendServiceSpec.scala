@@ -72,6 +72,7 @@ class GovernmentSpendServiceSpec
     None,
     None,
     true,
+    fakeCredentials,
     FakeRequest("GET", "?taxYear=2015"))
 
   def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService, mockMiddleConnector) with MockitoSugar

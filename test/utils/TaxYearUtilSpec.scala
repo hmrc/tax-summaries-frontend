@@ -41,6 +41,7 @@ class TaxYearUtilSpec extends UnitSpec {
           None,
           None,
           true,
+          fakeCredentials,
           FakeRequest("GET", s"?taxYear=$taxYear"))
 
         val result = TaxYearUtil.extractTaxYear
@@ -62,6 +63,7 @@ class TaxYearUtilSpec extends UnitSpec {
             None,
             None,
             true,
+            fakeCredentials,
             FakeRequest("GET", "?taxYear=20192"))
 
           val result = TaxYearUtil.extractTaxYear
@@ -80,6 +82,7 @@ class TaxYearUtilSpec extends UnitSpec {
             None,
             None,
             true,
+            fakeCredentials,
             FakeRequest("GET", "?taxYear=201"))
 
           val result = TaxYearUtil.extractTaxYear
@@ -99,6 +102,7 @@ class TaxYearUtilSpec extends UnitSpec {
               None,
               None,
               true,
+              fakeCredentials,
               FakeRequest("GET", "?"))
 
           val result = TaxYearUtil.extractTaxYear
@@ -118,6 +122,7 @@ class TaxYearUtilSpec extends UnitSpec {
             None,
             None,
             true,
+            fakeCredentials,
             FakeRequest("GET", "?taxYear=ABCD"))
 
           val result = TaxYearUtil.extractTaxYear

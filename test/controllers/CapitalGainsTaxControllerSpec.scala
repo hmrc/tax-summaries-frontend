@@ -26,12 +26,12 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, CapitalGainsService}
-import utils.TestConstants
+import utils.TestConstants.{capitalGains, testUtr}
 import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with TestConstants with BeforeAndAfterEach {
+class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   override val taxYear = 2014
 

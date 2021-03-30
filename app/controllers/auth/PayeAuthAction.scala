@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
   implicit ec: ExecutionContext,
@@ -51,14 +52,15 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-        .retrieve(Retrievals.allEnrolments and Retrievals.nino) {
-          case enrolments ~ Some(nino) => {
+        .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+          case enrolments ~ Some(nino) ~ Some(credentials) => {
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
 
             block {
               PayeAuthenticatedRequest(
                 Nino(nino),
                 isSa,
+                credentials,
                 request
               )
             }
@@ -78,7 +80,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
         case _: InsufficientConfidenceLevel => {
           upliftConfidenceLevel(request)
         }
-        case e: Exception => {
+        case NonFatal(e) => {
           Logger.error(s"Exception in PayeAuthAction: $e", e)
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised())
         }

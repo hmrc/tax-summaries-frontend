@@ -16,7 +16,6 @@
 
 package controllers.paye
 
-import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -29,10 +28,14 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 import views.html.paye.PayeYourTaxableIncomeView
 
-class PayeYourTaxableIncomeControllerSpec extends ControllerBaseSpec with PayeControllerSpecHelpers {
+class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest =
-    PayeAuthenticatedRequest(testNino, false, FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+    PayeAuthenticatedRequest(
+      testNino,
+      false,
+      fakeCredentials,
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
   val sut =
     new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])

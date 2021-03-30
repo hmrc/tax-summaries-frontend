@@ -18,7 +18,6 @@ package controllers.paye
 
 import java.time.LocalDate
 
-import controllers.ControllerBaseSpec
 import controllers.auth.FakePayeAuthAction
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -31,8 +30,7 @@ import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServi
 
 import scala.concurrent.Future
 
-class PayeErrorControllerSpec
-    extends PayeControllerSpecHelpers with ControllerBaseSpec with Injecting with CurrentTaxYear {
+class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting with CurrentTaxYear {
 
   override def now: () => LocalDate = () => LocalDate.now()
 

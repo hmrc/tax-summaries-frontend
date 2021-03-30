@@ -60,6 +60,7 @@ class SummaryServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFut
     None,
     None,
     true,
+    fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
   def sut = new SummaryService(mockAtsService)

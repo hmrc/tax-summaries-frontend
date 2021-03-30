@@ -27,10 +27,12 @@ import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.RetrievalOps._
+import utils.TestConstants.fakeCredentials
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -44,19 +46,19 @@ class PayeAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
 
   class Harness(authAction: PayeAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
-      Ok(s"isSa: ${request.isSa} and Nino: ${request.nino.nino}")
+      Ok(s"isSa: ${request.isSa} and Nino: ${request.nino.nino} and Credentials: ${request.credentials.providerType}")
     }
   }
 
   "A user with a confidence level 200 and a Nino" should {
     "create an authenticated request with no IR-SA" in {
       val nino = new Generator().nextNino.nino
-      val retrievalResult: Future[~[Enrolments, Option[String]]] =
-        Future.successful(new ~(Enrolments(Set.empty), Some(nino)))
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+        Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
       when(
         mockAuthConnector
-          .authorise[~[Enrolments, Option[String]]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -66,19 +68,19 @@ class PayeAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
       status(result) shouldBe OK
       contentAsString(result) should include(nino)
       contentAsString(result) should include("false")
+      contentAsString(result) should include("provider type")
     }
 
     "create an authenticated request with IR-SA" in {
       val nino = new Generator().nextNino.nino
       val utr = new SaUtrGenerator().nextSaUtr.utr
-
-      val retrievalResult: Future[~[Enrolments, Option[String]]] =
-        Future.successful(
-          new ~(Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))), Some(nino)))
+      val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")))
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+        Future.successful(saEnrolment ~ Some(nino) ~ Some(fakeCredentials))
 
       when(
         mockAuthConnector
-          .authorise[~[Enrolments, Option[String]]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -88,6 +90,43 @@ class PayeAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoS
       status(result) shouldBe OK
       contentAsString(result) should include(nino)
       contentAsString(result) should include("true")
+      contentAsString(result) should include("provider type")
+    }
+
+    "A user will be redirected to the not authorised page" when {
+      "they have no NINO" in {
+        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+          Future.successful(Enrolments(Set.empty) ~ None ~ Some(fakeCredentials))
+
+        when(
+          mockAuthConnector
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .thenReturn(retrievalResult)
+
+        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+        val controller = new Harness(authAction)
+
+        val result = controller.onPageLoad()(FakeRequest())
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.notAuthorised().url)
+      }
+
+      "they have no credentials" in {
+        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+          Future.successful(Enrolments(Set.empty) ~ Some("") ~ None)
+
+        when(
+          mockAuthConnector
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .thenReturn(retrievalResult)
+
+        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+        val controller = new Harness(authAction)
+
+        val result = controller.onPageLoad()(FakeRequest())
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.notAuthorised().url)
+      }
     }
   }
 

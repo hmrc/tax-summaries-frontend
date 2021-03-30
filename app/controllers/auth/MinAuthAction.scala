@@ -23,7 +23,6 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -43,14 +42,15 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50).retrieve(Retrievals.allEnrolments and Retrievals.externalId) {
-      case enrolments ~ Some(externalId) =>
-        val isSa = enrolments.getEnrolment("IR-SA").isDefined
+    authorised(ConfidenceLevel.L50)
+      .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials) {
+        case enrolments ~ Some(externalId) ~ Some(credentials) =>
+          val isSa = enrolments.getEnrolment("IR-SA").isDefined
 
-        block(AuthenticatedRequest(externalId, None, None, None, None, None, None, isSa, request))
+          block(AuthenticatedRequest(externalId, None, None, None, None, None, None, isSa, credentials, request))
 
-      case _ => throw new RuntimeException("Can't find credentials for user")
-    }
+        case _ => throw new RuntimeException("Can't find credentials for user")
+      }
   } recover {
     case _: NoActiveSession => {
       lazy val ggSignIn = appConfig.loginUrl

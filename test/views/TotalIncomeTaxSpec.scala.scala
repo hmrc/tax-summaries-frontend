@@ -30,7 +30,17 @@ import views.html.total_income_tax_includes._
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   implicit val request =
-    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, true, FakeRequest())
+    AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(testUtr)),
+      None,
+      None,
+      None,
+      None,
+      true,
+      fakeCredentials,
+      FakeRequest())
   lazy val scottishTableView = inject[ScottishTableView]
   lazy val savingsTableView = inject[SavingsTableView]
   lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]

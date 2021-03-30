@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtrGenerator
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
@@ -39,7 +39,6 @@ import scala.language.postfixOps
 
 class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
-  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
@@ -48,9 +47,12 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       Ok(
         s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
           s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
-          s"isSa: ${request.isSa}")
+          s"isSa: ${request.isSa}" +
+          s"credentials: ${request.credentials.providerType}")
     }
   }
+  val fakeCredentials = Credentials("foo", "bar")
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ggSignInUrl =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
@@ -83,14 +85,15 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
   "A user with a confidence level 50 and an SA enrolment" should {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
-      val retrievalResult: Future[Enrolments ~ Option[String]] =
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(
-          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("")
+          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
+            fakeCredentials)
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -106,15 +109,16 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
   "A user with a confidence level 50 and an IR-SA-AGENT enrolment" should {
     "create an authenticated request" in {
       val uar = testUar
-      val retrievalResult: Future[Enrolments ~ Option[String]] =
+
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("")
+            Some("") ~ Some(fakeCredentials)
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -124,7 +128,33 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       status(result) shouldBe OK
       contentAsString(result) should include(uar)
       contentAsString(result) should include("false")
+      contentAsString(result) should include("bar")
     }
+  }
+
+  "A user with no credentials will fail to auth" in {
+    val uar = testUar
+
+    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+      Future.successful(
+        Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
+          Some("") ~ None
+      )
+
+    when(
+      mockAuthConnector
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+      .thenReturn(retrievalResult)
+
+    val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+    val controller = new Harness(authAction)
+
+    val ex = intercept[RuntimeException] {
+      await(controller.onPageLoad()(FakeRequest("", "")))
+    }
+
+    ex.getMessage should include("Can't find credentials for user")
+
   }
 
   "A user visiting the service when it is shuttered" should {
