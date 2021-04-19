@@ -59,6 +59,8 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
     None,
     None,
     None,
+    true,
+    fakeCredentials,
     FakeRequest("GET", s"?taxYear=${sut.taxYear}"))
 
   val mockAtsService: AtsService = mock[AtsService]

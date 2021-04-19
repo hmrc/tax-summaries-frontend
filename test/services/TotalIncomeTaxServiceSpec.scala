@@ -72,6 +72,8 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         None,
         None,
         None,
+        true,
+        fakeCredentials,
         FakeRequest("GET", "?taxYear=2015"))
       val result = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel

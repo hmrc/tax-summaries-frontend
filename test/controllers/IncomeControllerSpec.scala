@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -24,10 +24,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
 import services.{AuditService, IncomeService}
-import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
 
@@ -36,24 +34,7 @@ import scala.concurrent.Future
 class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   override val taxYear = 2014
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    FakeRequest("GET", "?taxYear=20145"))
+
   val baseModel = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,

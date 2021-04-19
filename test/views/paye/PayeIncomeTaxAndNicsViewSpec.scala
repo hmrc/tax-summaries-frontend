@@ -27,7 +27,11 @@ import views.html.paye.PayeIncomeTaxAndNicsView
 class PayeIncomeTaxAndNicsViewSpec extends TestConstants with ViewSpecBase {
 
   implicit val request =
-    PayeAuthenticatedRequest(testNino, FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"))
+    PayeAuthenticatedRequest(
+      testNino,
+      false,
+      fakeCredentials,
+      FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"))
   lazy val payeIncomeTaxAndNicsView = inject[PayeIncomeTaxAndNicsView]
 
   "PayeIncomeTaxAndNicsView" should {

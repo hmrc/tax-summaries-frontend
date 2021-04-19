@@ -133,68 +133,66 @@ class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
 
     "nonZero is called" should {
 
-      "return true" when {
-        "the amount is not zero" in {
-          forAll { bd: BigDecimal =>
-            whenever(bd != 0) {
-              val amount = Amount(bd, testCurrency)
-              amount.nonZero shouldBe true
-            }
-          }
-        }
-      }
-
-      "return false" when {
-        "the amount is zero" in {
-          val amount = Amount(0, testCurrency)
-          amount.nonZero shouldBe false
-        }
-      }
-    }
-
-    "toCreditString is called" should {
-      "can round up if it's a credit" in {
-        val testValue: BigDecimal = 1000.01
-        val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toCreditString shouldEqual "1,001"
-      }
-    }
-
-    "toTwoDecimalString is called" should {
-      "have a comma and two decimal places for government spend values" in {
-        val testValue: BigDecimal = 1000.01
-        val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toTwoDecimalString shouldEqual "1,000.01"
-      }
-
-      "not round up government spend values" in {
-        val testValue: BigDecimal = 1000.99
-        val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toTwoDecimalString shouldEqual "1,000.99"
-      }
-
-      "round down government spend values after the second decimal place" in {
-        val testValue: BigDecimal = 1000.018796799
-        val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toTwoDecimalString shouldEqual "1,000.01"
-      }
-    }
-
-    "toHundredthsString is called" should {
-      "give the amount as a string with the amount multiplied by 100" in {
-        val amt = Amount(BigDecimal(123.45678), testCurrency)
-        amt.toHundredthsString shouldBe "12,345.67"
-      }
-    }
-
-    "unary '-' is called" should {
-      "turn the amount negative" in {
-
+      "the amount is not zero" in {
         forAll { bd: BigDecimal =>
-          whenever(bd > 1) {
-            val result = -Amount(bd, testCurrency)
-            result.amount shouldBe -bd
+          whenever(bd.compareTo(0) != 0) {
+            val amount = Amount(bd, testCurrency)
+            amount.nonZero shouldBe true
           }
+        }
+      }
+    }
+
+    "return false" when {
+      "the amount is zero" in {
+        val amount = Amount(0, testCurrency)
+        amount.nonZero shouldBe false
+      }
+    }
+  }
+
+  "toCreditString is called" should {
+    "can round up if it's a credit" in {
+      val testValue: BigDecimal = 1000.01
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.toCreditString shouldEqual "1,001"
+    }
+  }
+
+  "toTwoDecimalString is called" should {
+    "have a comma and two decimal places for government spend values" in {
+      val testValue: BigDecimal = 1000.01
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.toTwoDecimalString shouldEqual "1,000.01"
+    }
+
+    "not round up government spend values" in {
+      val testValue: BigDecimal = 1000.99
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.toTwoDecimalString shouldEqual "1,000.99"
+    }
+
+    "round down government spend values after the second decimal place" in {
+      val testValue: BigDecimal = 1000.018796799
+      val testAmount: Amount = new Amount(testValue, testCurrency)
+      testAmount.toTwoDecimalString shouldEqual "1,000.01"
+    }
+  }
+
+  "toHundredthsString is called" should {
+    "give the amount as a string with the amount multiplied by 100" in {
+      val amt = Amount(BigDecimal(123.45678), testCurrency)
+      amt.toHundredthsString shouldBe "12,345.67"
+    }
+  }
+
+  "unary '-' is called" should {
+    "turn the amount negative" in {
+
+      forAll { bd: BigDecimal =>
+        whenever(bd > 1) {
+          val result = -Amount(bd, testCurrency)
+          result.amount shouldBe -bd
         }
       }
     }

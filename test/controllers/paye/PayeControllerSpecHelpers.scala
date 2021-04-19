@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import controllers.ControllerBaseSpec
 import controllers.auth.PayeAuthenticatedRequest
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
@@ -24,14 +25,14 @@ import utils.TestConstants.testNino
 
 import scala.io.Source
 
-trait PayeControllerSpecHelpers {
+trait PayeControllerSpecHelpers extends ControllerBaseSpec {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val expectedResponse: JsValue = readJson("/paye_ats.json")
 
   def buildPayeRequest(endpoint: String) =
-    PayeAuthenticatedRequest(testNino, FakeRequest("GET", endpoint))
+    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", endpoint))
 
   def readJson(path: String): JsValue = {
     val resource = getClass.getResourceAsStream(path)

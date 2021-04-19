@@ -16,7 +16,6 @@
 
 package controllers.paye
 
-import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -29,7 +28,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 import views.html.paye.PayeIncomeTaxAndNicsView
 
-class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec {
+class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
   val sut =

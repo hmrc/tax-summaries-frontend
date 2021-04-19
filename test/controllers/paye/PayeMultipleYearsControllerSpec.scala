@@ -16,7 +16,6 @@
 
 package controllers.paye
 
-import controllers.ControllerBaseSpec
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -33,7 +32,7 @@ import views.html.paye.{PayeMultipleYearsView, PayeTaxsMainView}
 
 import scala.concurrent.Future
 
-class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with ControllerBaseSpec with JsonUtil {
+class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with JsonUtil {
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
@@ -103,6 +102,8 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Con
         val request =
           PayeAuthenticatedRequest(
             testNino,
+            false,
+            fakeCredentials,
             FakeRequest("POST", "/annual-tax-summary/paye/treasury-spending")
               .withSession("taxYearFrom" -> taxYearMinus1.toString, "taxYearTo" -> taxYear.toString)
               .withFormUrlEncodedBody("year" -> taxYear.toString)
@@ -154,9 +155,12 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Con
         val request =
           PayeAuthenticatedRequest(
             testNino,
+            false,
+            fakeCredentials,
             FakeRequest("POST", "/")
               .withSession("taxYearFrom" -> taxYearMinus1.toString, "taxYearTo" -> taxYear.toString)
-              .withFormUrlEncodedBody("year" -> ""))
+              .withFormUrlEncodedBody("year" -> "")
+          )
         val result = sut().onSubmit(request)
 
         status(result) shouldBe BAD_REQUEST

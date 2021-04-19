@@ -17,6 +17,8 @@
 package controllers.auth
 
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain._
 
-case class PayeAuthenticatedRequest[A](nino: Nino, request: Request[A]) extends WrappedRequest[A](request)
+case class PayeAuthenticatedRequest[A](nino: Nino, isSa: Boolean, credentials: Credentials, request: Request[A])
+    extends WrappedRequest[A](request) with CommonRequest

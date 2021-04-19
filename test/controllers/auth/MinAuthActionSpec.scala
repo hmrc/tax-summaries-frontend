@@ -27,8 +27,11 @@ import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.TestConstants.fakeCredentials
+import utils.RetrievalOps._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
@@ -41,7 +44,7 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
   class Harness(minAuthAction: MinAuthActionImpl) extends InjectedController {
-    def onPageLoad(): Action[AnyContent] = minAuthAction { request =>
+    def onPageLoad(): Action[AnyContent] = minAuthAction { _ =>
       Ok
     }
   }
@@ -78,12 +81,12 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
 
   "A user with a confidence level 50" should {
     "create a minimum authenticated request" in {
-      val retrievalResult: Future[Option[String]] =
-        Future.successful(Some(""))
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+        Future.successful(Enrolments(Set.empty) ~ Some("") ~ Some(fakeCredentials))
 
       when(
         mockAuthConnector
-          .authorise[Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
@@ -92,5 +95,25 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
     }
+  }
+
+  "A user with no credentials will fail to auth" in {
+
+    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+      Future.successful(Enrolments(Set.empty) ~ Some("") ~ None)
+
+    when(
+      mockAuthConnector
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+      .thenReturn(retrievalResult)
+
+    val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
+    val controller = new Harness(minAuthAction)
+
+    val ex = intercept[RuntimeException] {
+      await(controller.onPageLoad()(FakeRequest("", "")))
+    }
+
+    ex.getMessage should include("Can't find credentials for user")
   }
 }

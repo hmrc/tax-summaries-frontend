@@ -46,10 +46,21 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
     Json.fromJson[AtsListData](json).get
   }
   val mockAtsListService = mock[AtsListService]
+
   class TestService extends AtsYearListService(mockAtsListService) {
 
     implicit val request =
-      AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+      AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        None,
+        None,
+        None,
+        true,
+        fakeCredentials,
+        FakeRequest())
     implicit val hc = new HeaderCarrier
 
     val agentToken = AgentToken(

@@ -29,5 +29,5 @@ object FakePayeAuthAction extends PayeAuthAction with ControllerBaseSpec {
   override def invokeBlock[A](
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(PayeAuthenticatedRequest(testNino, request))
+    block(PayeAuthenticatedRequest(testNino, false, fakeCredentials, request))
 }

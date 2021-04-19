@@ -16,30 +16,20 @@
 
 package controllers
 
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.FakeAuthAction
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, _}
 import services._
-import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants._
 import view_models.NoATSViewModel
+
 import scala.concurrent.Future
 
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   override val taxYear = 2015
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
+
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
 

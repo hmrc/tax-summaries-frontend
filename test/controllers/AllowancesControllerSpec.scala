@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -24,10 +24,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers._
 import play.api.i18n.Messages
 import play.api.mvc.Result
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import utils.TestConstants._
@@ -60,24 +58,6 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     )
   )
 
-  val request = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
-  val badRequest = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
-    FakeRequest("GET", "?taxYear=20155"))
   implicit val hc = new HeaderCarrier
 
   val noATSViewModel: NoATSViewModel = new NoATSViewModel()

@@ -17,6 +17,7 @@
 package utils
 
 import models.SpendData
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import view_models._
 
@@ -32,6 +33,7 @@ trait TestConstants {
   lazy val testOid = genRandNumString(12)
   lazy val testNonMatchingUtr = new SaUtrGenerator().nextSaUtr.utr
   lazy val testNino = new Generator().nextNino
+  val fakeCredentials = new Credentials("provider ID", "provider type")
   def genRandNumString(length: Int) = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax = TotalIncomeTax(

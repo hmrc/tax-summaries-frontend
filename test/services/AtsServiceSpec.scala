@@ -64,7 +64,17 @@ class AtsServiceSpec
   implicit val hc = new HeaderCarrier
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
   implicit val request =
-    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, None, None, None, FakeRequest())
+    AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(testUtr)),
+      None,
+      None,
+      None,
+      None,
+      true,
+      fakeCredentials,
+      FakeRequest())
 
   val agentToken = AgentToken(
     agentUar = testUar,
@@ -173,6 +183,8 @@ class AtsServiceSpec
                   None,
                   None,
                   None,
+                  true,
+                  fakeCredentials,
                   FakeRequest())
 
               sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
