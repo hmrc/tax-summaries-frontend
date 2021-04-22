@@ -33,7 +33,7 @@ view.languageToggle.welsh=Cymraeg
 # View ATS - Select tax year page
 #============================================================
 ats.select_tax_year.title=Dewis blwyddyn dreth ar gyfer Hunanasesiad
-ats.select_tax_year.paye.title=Dewis blwyddyn dreth ar gyfer TWE
+ats.select_tax_year.paye.title=Dewiswch flwyddyn dreth ar gyfer TWE
 ats.select_tax_year.continue=Parhau
 ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
 ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth

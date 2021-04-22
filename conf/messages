@@ -39,8 +39,8 @@ view.languageToggle.welsh=Cymraeg
 
 # View ATS - Select the tax year page
 #============================================================
-ats.select_tax_year.title=Select Self Assessment tax year
-ats.select_tax_year.paye.title=Select PAYE tax year
+ats.select_tax_year.title=Select a Self Assessment tax year
+ats.select_tax_year.paye.title=Select a PAYE tax year
 ats.select_tax_year.continue=Continue
 ats.select_tax_year.required.summary=Please select the tax year
 ats.select_tax_year.required=Select an option for the tax year
