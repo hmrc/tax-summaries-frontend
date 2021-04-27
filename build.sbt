@@ -45,7 +45,6 @@ lazy val microservice = Project(appName, file("."))
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo,
       "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"),
     Concat.groups := Seq(
