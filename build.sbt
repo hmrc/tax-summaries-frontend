@@ -44,9 +44,7 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true,
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    resolvers ++= Seq(
-      Resolver.jcenterRepo,
-      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"),
+    resolvers ++= Seq(Resolver.jcenterRepo),
     Concat.groups := Seq(
       "javascripts/ats-app.js" -> group(
         Seq(
