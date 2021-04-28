@@ -21,7 +21,7 @@
 @import views.html.helpers.HeaderSection
 
 @this(
-    main: main,
+    layout: govukLayout,
     headerSection: HeaderSection
 )
 
@@ -36,40 +36,38 @@
 )
 
 
-@main(
-        title = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
+@layout(
+        pageTitle = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
     ) {
 
-    @headerSection(
-        pageHeading = Messages("ats.index.html.title"),
-        name = viewModel.forename + ' ' + viewModel.surname,
-        utr = viewModel.utr,
-        taxYear = viewModel.year,
-        actingAsAttorney = actingAsAttorney
-    )
 
-    <div class="main-content">
 
-        <h1 id="index-page-header" class="heading-xlarge">
-                <span class="gray heading-medium block-heading">
+      @headerSection(
+      pageHeading = Messages("ats.index.html.title"),
+      name = viewModel.forename + ' ' + viewModel.surname,
+      utr = viewModel.utr,
+      taxYear = viewModel.year,
+      actingAsAttorney = actingAsAttorney
+      )
+
+        <h1 class="govuk-heading-xl">
+               <span class="gray heading-medium block-heading">
                     @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
                 </span>
             @Html(Messages("ats.index.html.title"))
         </h1>
-        <p class="lede" id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
+        <p class="govuk-!-font-size-24" id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
 
         <div id="tax-summary">
-          <h2><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
-           <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>
+          <h2><a id="tax-calc-link" class="govuk-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
+           <p class="govuk-body govuk-!-font-weight-regular">@Html(Messages("ats.index.html.tax_calc_description"))</p>
         </div>
         <div id="tax-spent">
-          <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
-          <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
+          <h2><a id="tax-services-link" class="govuk-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
+          <p class="govuk-body govuk-!-font-weight-regular">@Html(Messages("ats.index.html.tax_spend_description"))</p>
         </div>
 
-        <p><a href="@appConfig.switchToPayeUrl">@messages("ats.index.html.view.paye.link")</a></p>
+        <p class="govuk-body govuk-!-font-weight-regular"><a class="govuk-link" href="@appConfig.switchToPayeUrl">@messages("ats.index.html.view.paye.link")</a></p>
 
-    </div>
+
 }
