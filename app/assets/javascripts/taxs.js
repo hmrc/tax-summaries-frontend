@@ -64,39 +64,6 @@ $(function() {
     });
 
 
-
-    // This fixes the issue with the header menu for mobile
-    var els = $('a.js-header-toggle.menu');
-    var menu_items = document.getElementById('proposition-links');
-
-    function toggleHeaderMenu() {
-
-      if ( $(menu_items).hasClass("js-hidden") || (!$(menu_items).hasClass("js-visible") && !$(menu_items).hasClass("js-hidden")) ) {
-
-        $(menu_items).removeClass("js-hidden")
-                     .addClass("js-visible");
-
-        els.addClass('toggled');
-
-      } else if ( $(menu_items).hasClass("js-visible") ) {
-
-        $(menu_items).removeClass("js-visible")
-                     .addClass("js-hidden");
-
-        els.removeClass('toggled');
-
-      }
-    }
-
-    els.bind('click', function(e) {
-
-      e.preventDefault();
-
-      if (typeof menu_items !== 'undefined')
-        toggleHeaderMenu();
-
-    });
-
     $('.error-summary').focus();
 
 });
