@@ -41,6 +41,7 @@ lazy val microservice = Project(appName, file("."))
     defaultSettings(),
     majorVersion := 1,
     libraryDependencies ++= AppDependencies.all,
+    logLevel := Level.Warn,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components._",
       "uk.gov.hmrc.govukfrontend.views.html.helpers._",

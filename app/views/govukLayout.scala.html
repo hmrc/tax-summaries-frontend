@@ -14,24 +14,48 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcStandardHeader, HmrcHead, HmrcScripts}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcStandardHeader, HmrcHead, HmrcScripts, HmrcReportTechnicalIssueHelper}
 
 @this(
+    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     govukLayout: GovukLayout,
     hmrcHead: HmrcHead,
+    hmrcHeader: HmrcHeader,
     hmrcStandardHeader: HmrcStandardHeader,
+    hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
     hmrcStandardFooter: HmrcStandardFooter,
     hmrcScripts: HmrcScripts
 )
 
 @(pageTitle: String)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
+
+@head ={
+    <link rel="stylesheet" media="all" href='@routes.Assets.versioned("stylesheets/application.css")' type="text/css"/>
+}
+
+@content = {
+<main id="wrapper" role="main">
+    <div id="content">
+        <div class="content__body">
+            @contentBlock
+
+            @hmrcReportTechnicalIssueHelper()
+        </div>
+    </div>
+</main>
+}
+
 @govukLayout(
     pageTitle = Some(pageTitle),
-    headBlock = Some(hmrcHead()),
+    headBlock = Some(hmrcHead(Some(head))),
     headerBlock = Some(hmrcStandardHeader(
-      serviceUrl = Some(controllers.routes.IndexController.authorisedIndex().url)
+      serviceUrl = Some(controllers.routes.IndexController.authorisedIndex().url),
+      signOutUrl = Some(controllers.routes.IndexController.authorisedIndex().url),
+      userResearchBanner = Some(UserResearchBanner(url = "lll")),
+        displayHmrcBanner = true
     )),
+    beforeContentBlock = Some(hmrcLanguageSelectHelper()),
     scriptsBlock = Some(hmrcScripts()),
     footerBlock = Some(hmrcStandardFooter())
-)(contentBlock)
+)(content)
