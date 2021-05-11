@@ -22,8 +22,9 @@
 @import views.html.helpers.HeaderSection
 
 @this(
-    main: main,
+    layout: govukLayout,
     headerSection: HeaderSection,
+    govukTable : GovukTable,
     currencyAmountView: CurrencyAmountView
 )
 
@@ -37,10 +38,8 @@
     appConfig: ApplicationConfig
 )
 
-@main(
-        title = Messages("ats.income_before_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
+@layout(
+        pageTitle = Messages("ats.income_before_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
     ) {
 
     @headerSection(
@@ -51,74 +50,100 @@
         actingAsAttorney = actingAsAttorney
     )
 
-    <div class="main-content">
 
-        <h1 class="heading-xlarge">
-            <span class="gray heading-medium block-heading">
-              @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-            </span>
-          @Html(Messages("ats.income_before_tax.title"))
-        </h1>
-        <p class="lede">@Html(Messages("ats.income_before_tax.intro"))</p>
+<h1 class="govuk-heading-xl">
+               <span class="gray heading-medium block-heading">
+                    @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
+                </span>
+    @Html(Messages("ats.income_before_tax.title"))
+</h1>
+<p class="govuk-!-font-size-24" id="index-page-description">@Html(Messages("ats.income_before_tax.intro"))</p>
 
-        <table>
-          <thead>
-            <tr>
-              <th>@Html(Messages("ats.income_before_tax.table_header"))</th>
-              <th>@Html(Messages("generic.amount_pounds"))</th>
-            </tr>
-          </thead>
 
-          <tbody id="income-before-tax-table">
-            @if(!viewModel.getSelfEmployTotal.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line1"))</td>
-              <td id="self-employment-income">@currencyAmountView(viewModel.getSelfEmployTotal)</td>
-            </tr>
-            }
+@govukTable(Table(
+    rows = Seq(
+      Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table_header"))
+        ),
+        TableRow(
+          content = Text(Messages("generic.amount_pounds"))
+        )
+      ),
+     Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line1"))
+        ),
+        TableRow(
+          content = Text(viewModel.getSelfEmployTotal.currency.toString + viewModel.getSelfEmployTotal.amount.toString)
+        )
+      ),
+      Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line2"))
+        ),
+        TableRow(
+          content = Text(currencyAmountView(viewModel.getIncomeFromEmployment))
+        )
+      ),
+      Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line3"))
+        ),
+        TableRow(
+          content = Text(currencyAmountView(viewModel.getStatePension))
+        )
+      ),
+        Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line4"))
+        ),
+        TableRow(
+          content = Text(currencyAmountView(viewModel.getOtherPensionTotal))
+        )
+      ),
+        Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line5"))
+        ),
+        TableRow(
+          content = Text(currencyAmountView(viewModel.getTaxableStateBenefit))
+        )
+      ),
+        Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line6"))
+        ),
+        TableRow(
+          content = Text(currencyAmountView(viewModel.getOtherIncome))
+        )
+      ),
+        Seq(
+        TableRow(
+          content = Text(Messages("ats.income_before_tax.table.line7"))
+        ),
+        TableRow(
+          content = Text(currencyAmountView(viewModel.getBenefitsFromEmployment))
+        )
+      )
+    ),
+    head = Some(Seq(
+      HeadCell(
+        content = Text("Date")
+      ),
+      HeadCell(
+        content = Text("Amount")
+      )
+    )),
+    caption = Some("Dates and amounts"),
+    captionClasses = "govuk-table__caption--m",
+    firstCellIsHeader = true
+  ))
 
-            @if(!viewModel.getIncomeFromEmployment.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line2"))</td>
-              <td id="income-from-employment">@currencyAmountView(viewModel.getIncomeFromEmployment)</td>
-            </tr>
-            }
 
-            @if(!viewModel.getStatePension.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line3"))</td>
-              <td id="state-pension-amount">@currencyAmountView(viewModel.getStatePension)</td>
-            </tr>
-            }
 
-            @if(!viewModel.getOtherPensionTotal.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line4"))</td>
-              <td id="other-pension-total">@currencyAmountView(viewModel.getOtherPensionTotal)</td>
-            </tr>
-            }
 
-            @if(!viewModel.getTaxableStateBenefit.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line5"))</td>
-              <td id="taxable-state-benefits">@currencyAmountView(viewModel.getTaxableStateBenefit)</td>
-            </tr>
-            }
 
-            @if(!viewModel.getOtherIncome.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line6"))</td>
-              <td id="other-income-amount">@currencyAmountView(viewModel.getOtherIncome)</td>
-            </tr>
-            }
-
-            @if(!viewModel.getBenefitsFromEmployment.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line7"))</td>
-              <td id="benefits-from-employment">@currencyAmountView(viewModel.getBenefitsFromEmployment)</td>
-            </tr>
-            }
-          </tbody>
 
           @if(!viewModel.getIncomeBeforeTaxTotal.isZero) {
           <tfoot id="income-before-tax-foot">
