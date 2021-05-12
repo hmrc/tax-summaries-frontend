@@ -74,7 +74,7 @@ class IndexController @Inject()(
             Future.successful(None)
           }
         } map { _ =>
-          Redirect(routes.IndexController.authorisedIndex()).withSession(session)
+          Redirect(routes.AtsMergePageController.onPageLoad()).withSession(session)
         }
       }
       case _ => show(request)
@@ -84,7 +84,7 @@ class IndexController @Inject()(
 
   override def extractViewModel()(
     implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
-    atsYearListService.getAtsListData.map(Right(_))
+    atsYearListService.getAtsListDatas.map(Right(_))
 
   def getViewModel(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Future[Result] =
     result.yearList match {

@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.MiddleConnector
-import controllers.auth.PayeAuthenticatedRequest
+import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logger
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
@@ -58,6 +58,44 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
         Logger.error(s"Exception in PayeAtsService: $e", e)
         Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
     }
+
+  def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] =
+    middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo) map { response =>
+      handlePayeTaxYearDataResponse[List[PayeAtsData]](response, nino, yearFrom)
+    } recover {
+      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
+      case e: NotFoundException   => Right(List.empty)
+      case e: Exception =>
+        Logger.error(s"Exception in PayeAtsService: $e", e)
+        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
+    }
+
+  private def handlePayeTaxYearDataResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(
+    implicit reads: Reads[List[PayeAtsData]],
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Either[HttpResponse, List[Int]] =
+    response.status match {
+      case OK =>
+        sendAuditEventForPayeTaxYearData(nino, taxYear)
+        val res = response.json.as[List[PayeAtsData]]
+        Right(res.map(_.taxYear).reverse)
+      case NOT_FOUND => Right(List.empty)
+      case _ =>
+        Left(response)
+    }
+
+  private def sendAuditEventForPayeTaxYearData(nino: Nino, taxYear: Int)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[AuditResult] =
+    auditService.sendEvent(
+      auditType = AuditTypes.Tx_SUCCEEDED,
+      details = Map(
+        "userNino" -> nino.nino,
+        "taxYear"  -> taxYear.toString
+      )
+    )
 
   private def handleConnectorResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(
     implicit reads: Reads[A],

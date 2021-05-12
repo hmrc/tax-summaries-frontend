@@ -21,18 +21,20 @@ import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.{Nino => AuthNino}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
-  implicit ec: ExecutionContext,
-  appConfig: ApplicationConfig)
-    extends AuthAction with AuthorisedFunctions {
+class MergePageAuthActionImpl @Inject()(
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+    extends MergePageAuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -46,27 +48,43 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-      authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
-        .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr) {
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) => {
-            val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
-              enrolment.identifiers
-                .find(id => id.key == "IRAgentReference")
-                .map(key => Uar(key.value))
-            }
+      def authoriseUser(
+        enrolments: Set[Enrolment],
+        externalId: String,
+        credentials: Credentials,
+        saUtr: String,
+        nino: String) = {
+        val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
+          enrolment.identifiers
+            .find(id => id.key == "IRAgentReference")
+            .map(key => Uar(key.value))
+        }
 
-            block {
-              AuthenticatedRequest(
-                externalId,
-                agentRef,
-                Some(SaUtr(saUtr)),
-                None,
-                !saUtr.isEmpty,
-                credentials,
-                request
-              )
-            }
-          }
+        block {
+          AuthenticatedRequest(
+            externalId,
+            agentRef,
+            Some(SaUtr(saUtr)),
+            if (nino.isEmpty) None else Some(Nino(nino)),
+            !saUtr.isEmpty,
+            credentials,
+            request
+          )
+        }
+      }
+
+      authorised(ConfidenceLevel.L50 or (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
+        .retrieve(
+          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino) {
+          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ Some(nino) =>
+            authoriseUser(enrolments, externalId, credentials, saUtr, nino)
+
+          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ None =>
+            authoriseUser(enrolments, externalId, credentials, saUtr, "")
+
+          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ None ~ Some(nino) =>
+            authoriseUser(enrolments, externalId, credentials, "", nino)
+
           case _ => throw new RuntimeException("Can't find credentials for user")
         }
     } recover {
@@ -86,6 +104,6 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
     }
 }
 
-@ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction
+@ImplementedBy(classOf[MergePageAuthActionImpl])
+trait MergePageAuthAction
     extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]

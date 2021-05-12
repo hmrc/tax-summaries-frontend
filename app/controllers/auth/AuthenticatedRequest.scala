@@ -25,9 +25,6 @@ case class AuthenticatedRequest[A](
   agentRef: Option[Uar],
   saUtr: Option[SaUtr],
   nino: Option[Nino],
-  payeEmpRef: Option[EmpRef],
-  ctUtr: Option[CtUtr],
-  vrn: Option[Vrn],
   isSa: Boolean,
   credentials: Credentials,
   request: Request[A])

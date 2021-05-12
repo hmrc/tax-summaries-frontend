@@ -26,7 +26,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
-import view_models.{ATSUnavailableViewModel, NoATSViewModel}
+import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,20 +38,20 @@ class AtsListService @Inject()(
   appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
     extends AccountUtils {
 
-  def createModel(converter: (AtsListData => GenericViewModel))(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[GenericViewModel] =
-    getAtsYearList map {
-      checkCreateModel(_, converter)
-    }
-
-  private def checkCreateModel(
-    output: Either[Int, AtsListData],
-    converter: AtsListData => GenericViewModel): GenericViewModel =
-    output match {
-      case Right(atsList)  => converter(atsList)
-      case Left(NOT_FOUND) => new NoATSViewModel
-      case Left(_)         => new ATSUnavailableViewModel
+  def createModel()(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] =
+    getAtsYearList map { response =>
+      response match {
+        case Right(atsList) =>
+          Right(
+            AtsList(
+              atsList.utr,
+              atsList.taxPayer.get.taxpayer_name.get("forename"),
+              atsList.taxPayer.get.taxpayer_name.get("surname"),
+              atsList.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+            ))
+        case Left(NOT_FOUND) => Right(AtsList("", "", "", List.empty))
+        case Left(status)    => Left(status)
+      }
     }
 
   def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
