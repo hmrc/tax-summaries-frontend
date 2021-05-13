@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{AccountUtils, AttorneyUtils, Globals}
 import view_models.AtsForms.atsYearFormMapping
-import view_models.{AtsList, TaxYearEnd}
+import view_models.{AtsList}
 import views.html.AtsMergePageView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -66,14 +66,22 @@ class AtsMergePageController @Inject()(
       payeData <- getPayeAtsYearList
     } yield {
       (saData, payeData) match {
-        case (Right(saTaxYearData), Right(payeTaxYearList)) =>
+        case (Right(saTaxYearData), Right(payeTaxYearList)) => {
+          val noAtsYearList =
+            (appConfig.saYear - 4 to appConfig.saYear).toList.diff(saTaxYearData.yearList ++ payeTaxYearList)
+          val showText = noAtsYearList.filter(_ < 2019).nonEmpty
+
           Ok(
             atsMergePageView(
               saTaxYearData,
               payeTaxYearList,
+              noAtsYearList.filter(_ >= 2019),
+              showText,
               atsYearFormMapping,
-              getActingAsAttorneyFor(request, saTaxYearData.forename, saTaxYearData.surname, saTaxYearData.utr)))
+              getActingAsAttorneyFor(request, saTaxYearData.forename, saTaxYearData.surname, saTaxYearData.utr)
+            ))
             .withSession(request.session + ("atsList" -> saTaxYearData.toString))
+        }
         case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
       }
     }
@@ -127,7 +135,7 @@ class AtsMergePageController @Inject()(
 
       case "sa"   => Future.successful(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYear))
       case "paye" => Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYear)))
-      case _      => Future.successful(Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts()))
+      case _      => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
     }
 
 }

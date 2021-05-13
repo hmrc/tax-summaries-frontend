@@ -405,3 +405,5 @@ ats.howYourTaxWasSpent.table.department.Total = Cyfanswm
 #Sa and Paye Merge Page
 #=============================================================
 merge.page.no.ats.title=Years where you received a general Annual Tax Summary
+merge.page.no.ats.summary.available.text=The general Annual Tax Summary is only available to view online from the 2018 to 2019 tax year onward.
+merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not everyone will have a personal one for each tax year. This may be because no income tax was paid for that year, or HMRC is waiting for information such as a change of address.

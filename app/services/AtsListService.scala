@@ -47,7 +47,7 @@ class AtsListService @Inject()(
               atsList.utr,
               atsList.taxPayer.get.taxpayer_name.get("forename"),
               atsList.taxPayer.get.taxpayer_name.get("surname"),
-              atsList.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+              atsList.atsYearList.get
             ))
         case Left(NOT_FOUND) => Right(AtsList("", "", "", List.empty))
         case Left(status)    => Left(status)

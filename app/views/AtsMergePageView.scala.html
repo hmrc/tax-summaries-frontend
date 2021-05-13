@@ -33,6 +33,8 @@
 
 @(  saAtsList: view_models.AtsList,
     payeYears: List[Int],
+    noAtsYears: List[Int],
+showText: Boolean,
     atsYearForm: Form[view_models.TaxYearEnd],
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
@@ -67,7 +69,7 @@
         @if(saAtsList.showSaData){
                 @inputRadioGroupView(
                 atsYearForm(AtsForms.yearChoice),
-                saAtsList.getDescendingYearList.map(year => year.year.get + "sa" -> year.taxYearPeriod),
+                saAtsList.getDescendingYearList.map(year => year.toString + "sa" -> messages("ats.select_tax_year.label", (year - 1).toString, year.toString)),
                 '_fieldSetAttributes -> "id=year_field",
                 '_legend -> Messages("ats.select_tax_year.title"),
                 '_headingClass -> "heading-48"
@@ -83,6 +85,21 @@
         '_headingClass -> "heading-48"
         )
         }
+
+        @if(noAtsYears.nonEmpty){
+        @inputRadioGroupView(
+        atsYearForm(AtsForms.yearChoice),
+        noAtsYears.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
+        '_fieldSetAttributes -> "id=year_field",
+        '_legend -> messages("merge.page.no.ats.title"),
+        '_headingClass -> "heading-48"
+        )
+        @if(showText){
+        <p>@messages("merge.page.no.ats.summary.unavailable.text")</p>
+        }
+        <p>@messages("merge.page.no.ats.summary.text")</p>
+        }
+
 
         <div class="form-field">
             <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>

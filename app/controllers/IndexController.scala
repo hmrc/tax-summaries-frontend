@@ -88,7 +88,7 @@ class IndexController @Inject()(
 
   def getViewModel(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Future[Result] =
     result.yearList match {
-      case TaxYearEnd(year) :: Nil => redirectWithYear(year.get.toInt)
+      case (year) :: Nil => redirectWithYear(year)
       case _ =>
         Future.successful(
           Ok(
@@ -118,7 +118,7 @@ class IndexController @Inject()(
                 data.utr,
                 data.taxPayer.get.taxpayer_name.get("forename"),
                 data.taxPayer.get.taxpayer_name.get("surname"),
-                data.atsYearList.get.map(year => TaxYearEnd(Some(year.toString)))
+                List.empty
               )
               Ok(taxsIndexView(atsList, formWithErrors)).withSession(session)
             }
