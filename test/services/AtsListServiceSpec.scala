@@ -92,7 +92,7 @@ class AtsListServiceSpec
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(appConfig.saYear).thenReturn(2020)
+    when(appConfig.taxYear).thenReturn(2020)
   }
 
   implicit val request =
@@ -201,7 +201,7 @@ class AtsListServiceSpec
 
     "Return a ats list without 2020 year data" in {
 
-      when(appConfig.saYear).thenReturn(2019)
+      when(appConfig.taxYear).thenReturn(2019)
 
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(dataFor2019)))

@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.paye
+package view_models
 
-import config.ApplicationConfig
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Injecting
-import uk.gov.hmrc.play.test.UnitSpec
+case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], noAtsTaxYearList: List[Int]) {
 
-trait AppConfigBaseSpec extends UnitSpec with GuiceOneAppPerSuite with Injecting {
-
-  implicit lazy val appConfig = inject[ApplicationConfig]
-
-  val taxYear: Int = appConfig.taxYear
-
+  val showSaYearList: Boolean = saData.yearList.nonEmpty
+  val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
+  val showNoAtsText = noAtsTaxYearList.filter(_ < 2019).nonEmpty
+  val noAtsYearListAvailable = noAtsTaxYearList.filter(_ >= 2019)
+  val showNoAtsYearList = noAtsYearListAvailable.nonEmpty
 }

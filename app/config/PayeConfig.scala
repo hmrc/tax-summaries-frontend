@@ -21,7 +21,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import scala.collection.JavaConversions._
 
 class PayeConfig @Inject()()(implicit val appConfig: ApplicationConfig) {
-  val payeYear: Int = appConfig.payeYear
+  val payeYear: Int = appConfig.taxYear
   protected val configPath = "paye.conf"
 
   lazy val scottishTaxBandKeys: List[String] = {

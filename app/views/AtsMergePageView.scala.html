@@ -23,6 +23,7 @@
 @import views.html.helpers.InputRadioGroupView
 @import views.html.main
 @import views.html.helpers.HeaderSection
+@import view_models.AtsMergePageViewModel
 
 @this(
     main: main,
@@ -31,10 +32,7 @@
     inputRadioGroupView: InputRadioGroupView
 )
 
-@(  saAtsList: view_models.AtsList,
-    payeYears: List[Int],
-    noAtsYears: List[Int],
-showText: Boolean,
+@(  atsMergePageViewModel: AtsMergePageViewModel,
     atsYearForm: Form[view_models.TaxYearEnd],
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
@@ -54,8 +52,8 @@ showText: Boolean,
 
     @headerSection(
         pageHeading = Messages("ats.summary.title"),
-        name = saAtsList.forename + ' ' + saAtsList.surname,
-        utr = saAtsList.utr,
+        name = atsMergePageViewModel.saData.forename + ' ' + atsMergePageViewModel.saData.surname,
+        utr = atsMergePageViewModel.saData.utr,
         taxYear = 0,
         actingAsAttorney = actingAsAttorney
     )
@@ -66,35 +64,35 @@ showText: Boolean,
 
         @form(action = controllers.routes.AtsMergePageController.authorisedOnSubmit){
 
-        @if(saAtsList.showSaData){
+        @if(atsMergePageViewModel.showSaYearList){
                 @inputRadioGroupView(
                 atsYearForm(AtsForms.yearChoice),
-                saAtsList.getDescendingYearList.map(year => year.toString + "sa" -> messages("ats.select_tax_year.label", (year - 1).toString, year.toString)),
+                atsMergePageViewModel.saData.getDescendingYearList.map(year => year.toString + "sa" -> messages("ats.select_tax_year.label", (year - 1).toString, year.toString)),
                 '_fieldSetAttributes -> "id=year_field",
                 '_legend -> Messages("ats.select_tax_year.title"),
                 '_headingClass -> "heading-48"
                 )
         }
 
-        @if(payeYears.nonEmpty){
+        @if(atsMergePageViewModel.showPayeYearList){
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
-        payeYears.map(year => year.toString + "paye" -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
+        atsMergePageViewModel.payeTaxYearList.map(year => year.toString + "paye" -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
         '_legend -> messages("ats.select_tax_year.paye.title"),
         '_headingClass -> "heading-48"
         )
         }
 
-        @if(noAtsYears.nonEmpty){
+        @if(atsMergePageViewModel.showNoAtsYearList){
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
-        noAtsYears.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
+        atsMergePageViewModel.noAtsYearListAvailable.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
         '_legend -> messages("merge.page.no.ats.title"),
         '_headingClass -> "heading-48"
         )
-        @if(showText){
+        @if(atsMergePageViewModel.showNoAtsText){
         <p>@messages("merge.page.no.ats.summary.unavailable.text")</p>
         }
         <p>@messages("merge.page.no.ats.summary.text")</p>

@@ -105,7 +105,7 @@ class AtsListService @Inject()(
     val result = gotData flatMap {
       case AtsSuccessResponseWithPayload(payload: AtsListData) => {
 
-        val atsListData = if (appConfig.saYear < 2020 && payload.atsYearList.isDefined) {
+        val atsListData = if (appConfig.taxYear < 2020 && payload.atsYearList.isDefined) {
           AtsListData(payload.utr, payload.taxPayer, Some(payload.atsYearList.get.filter(_ < 2020)))
         } else payload
 

@@ -48,7 +48,7 @@ class PayeErrorController @Inject()(
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
-  val payeYear = appConfig.payeYear
+  val payeYear = appConfig.taxYear
   override def now: () => LocalDate = () => LocalDate.now()
 
   def genericError(status: Int): Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>

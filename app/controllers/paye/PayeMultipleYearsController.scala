@@ -44,7 +44,7 @@ class PayeMultipleYearsController @Inject()(
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with LazyLogging {
 
-  private val payeYear: Int = appConfig.payeYear
+  private val payeYear: Int = appConfig.taxYear
   private val taxYearFromKey = "taxYearFrom"
   private val taxYearToKey = "taxYearTo"
 

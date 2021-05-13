@@ -22,7 +22,7 @@ import utils.GenericViewModel
 
 case class AtsList(utr: String, forename: String, surname: String, yearList: List[Int]) extends GenericViewModel {
   def getDescendingYearList = yearList.reverse
-  def showSaData = !yearList.isEmpty
+  def showSaYearList = !yearList.isEmpty
 }
 
 case class TaxYearEnd(year: Option[String]) extends GenericViewModel {

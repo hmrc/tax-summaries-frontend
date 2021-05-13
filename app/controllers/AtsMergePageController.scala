@@ -24,30 +24,24 @@ import controllers.paye.routes.PayeAtsMainController
 import models.AtsListData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AtsListService, AtsYearListService, AuditService, PayeAtsService}
+import services._
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{AccountUtils, AttorneyUtils, Globals}
 import view_models.AtsForms.atsYearFormMapping
-import view_models.{AtsList}
+import view_models.AtsList
 import views.html.AtsMergePageView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageController @Inject()(
-  atsYearListService: AtsYearListService,
-  val auditService: AuditService,
-  payeAtsService: PayeAtsService,
-  atsListService: AtsListService,
-  dataCacheConnector: DataCacheConnector,
+  atsMergePageService: AtsMergePageService,
   authAction: MergePageAuthAction,
   mcc: MessagesControllerComponents,
-  atsMergePageView: AtsMergePageView,
-  genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
+  atsMergePageView: AtsMergePageView)(
   implicit formPartialRetriever: FormPartialRetriever,
   templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
@@ -61,57 +55,22 @@ class AtsMergePageController @Inject()(
   }
 
   private def getSaAndPayeYearList(implicit request: AuthenticatedRequest[_]) =
-    for {
-      saData   <- getSaYearList
-      payeData <- getPayeAtsYearList
-    } yield {
-      (saData, payeData) match {
-        case (Right(saTaxYearData), Right(payeTaxYearList)) => {
-          val noAtsYearList =
-            (appConfig.saYear - 4 to appConfig.saYear).toList.diff(saTaxYearData.yearList ++ payeTaxYearList)
-          val showText = noAtsYearList.filter(_ < 2019).nonEmpty
+    atsMergePageService.getSaAndPayeYearList.map {
+      case Right(atsMergePageViewModel) =>
+        Ok(
+          atsMergePageView(
+            atsMergePageViewModel,
+            atsYearFormMapping,
+            getActingAsAttorneyFor(
+              request,
+              atsMergePageViewModel.saData.forename,
+              atsMergePageViewModel.saData.surname,
+              atsMergePageViewModel.saData.utr)
+          ))
+          .withSession(request.session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-          Ok(
-            atsMergePageView(
-              saTaxYearData,
-              payeTaxYearList,
-              noAtsYearList.filter(_ >= 2019),
-              showText,
-              atsYearFormMapping,
-              getActingAsAttorneyFor(request, saTaxYearData.forename, saTaxYearData.surname, saTaxYearData.utr)
-            ))
-            .withSession(request.session + ("atsList" -> saTaxYearData.toString))
-        }
-        case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
-      }
+      case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
     }
-
-  private def getSaYearList()(implicit request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] = {
-    if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
-
-      val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
-      val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
-
-      agentToken.fold[Future[_]] {
-        Future.successful(None)
-      } { token =>
-        if (AccountUtils.isAgent(request)) {
-          dataCacheConnector.storeAgentToken(token) recover { case e: Throwable => throw e }
-        } else {
-          Future.successful(None)
-        }
-      }
-    }
-    atsYearListService.getAtsListData
-  }
-
-  private def getPayeAtsYearList()(
-    implicit request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] = {
-
-    val payeYear: Int = appConfig.payeYear
-    request.nino.map(payeAtsService.getPayeTaxYearData(_, payeYear - 1, payeYear)).getOrElse(Future(Right(List.empty)))
-
-  }
 
   def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>
     onSubmit(request)
