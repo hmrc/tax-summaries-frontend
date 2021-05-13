@@ -2,7 +2,7 @@
 GET     /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
 
 GET     /                                                      controllers.AtsMergePageController.onPageLoad
-POST    /                                                      controllers.IndexController.authorisedOnSubmit
+POST    /                                                      controllers.AtsMergePageController.authorisedOnSubmit
 GET     /main                                                  controllers.AtsMainController.authorisedAtsMain
 GET     /summary                                               controllers.SummaryController.authorisedSummaries
 GET     /nics                                                  controllers.NicsController.authorisedNics

@@ -31,8 +31,8 @@
     inputRadioGroupView: InputRadioGroupView
 )
 
-@(  atsList: view_models.AtsList,
-    years: List[Int],
+@(  saAtsList: view_models.AtsList,
+    payeYears: List[Int],
     atsYearForm: Form[view_models.TaxYearEnd],
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
@@ -52,8 +52,8 @@
 
     @headerSection(
         pageHeading = Messages("ats.summary.title"),
-        name = atsList.forename + ' ' + atsList.surname,
-        utr = atsList.utr,
+        name = saAtsList.forename + ' ' + saAtsList.surname,
+        utr = saAtsList.utr,
         taxYear = 0,
         actingAsAttorney = actingAsAttorney
     )
@@ -62,31 +62,30 @@
 
         @errorSummaryTemplateView(atsYearForm)
 
-        @form(action = controllers.routes.IndexController.authorisedOnSubmit){
+        @form(action = controllers.routes.AtsMergePageController.authorisedOnSubmit){
 
+        @if(saAtsList.showSaData){
                 @inputRadioGroupView(
                 atsYearForm(AtsForms.yearChoice),
-                atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
+                saAtsList.getDescendingYearList.map(year => year.year.get + "sa" -> year.taxYearPeriod),
                 '_fieldSetAttributes -> "id=year_field",
                 '_legend -> Messages("ats.select_tax_year.title"),
                 '_headingClass -> "heading-48"
                 )
-        <div class="form-field">
-            <button id="saContinue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
-        </div>
         }
 
-        @form(action = controllers.paye.routes.PayeMultipleYearsController.onSubmit){
-
+        @if(payeYears.nonEmpty){
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
-        years.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
+        payeYears.map(year => year.toString + "paye" -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
         '_legend -> messages("ats.select_tax_year.paye.title"),
         '_headingClass -> "heading-48"
         )
+        }
+
         <div class="form-field">
-            <button id="payeContinue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
+            <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
         </div>
         }
 

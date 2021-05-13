@@ -20,16 +20,18 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, MergePageAuthAction}
+import controllers.paye.routes.PayeAtsMainController
+import models.AtsListData
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AtsYearListService, AuditService, PayeAtsService}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{AtsListService, AtsYearListService, AuditService, PayeAtsService}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{AccountUtils, AttorneyUtils, Globals}
 import view_models.AtsForms.atsYearFormMapping
-import view_models.AtsList
+import view_models.{AtsList, TaxYearEnd}
 import views.html.AtsMergePageView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -39,6 +41,7 @@ class AtsMergePageController @Inject()(
   atsYearListService: AtsYearListService,
   val auditService: AuditService,
   payeAtsService: PayeAtsService,
+  atsListService: AtsListService,
   dataCacheConnector: DataCacheConnector,
   authAction: MergePageAuthAction,
   mcc: MessagesControllerComponents,
@@ -53,27 +56,29 @@ class AtsMergePageController @Inject()(
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
     {
-
-      for {
-        saData   <- getSaYearList
-        payeData <- getPayeAtsYearList
-      } yield {
-        (saData, payeData) match {
-          case (Right(saTaxYearData), Right(payeTaxYearList)) =>
-            Ok(
-              atsMergePageView(
-                saTaxYearData,
-                payeTaxYearList,
-                atsYearFormMapping,
-                getActingAsAttorneyFor(request, saTaxYearData.forename, saTaxYearData.surname, saTaxYearData.utr)))
-              .withSession(request.session + ("atsList" -> saTaxYearData.toString))
-          case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
-        }
-      }
+      getSaAndPayeYearList(request)
     }
   }
 
-  def getSaYearList()(implicit request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] = {
+  private def getSaAndPayeYearList(implicit request: AuthenticatedRequest[_]) =
+    for {
+      saData   <- getSaYearList
+      payeData <- getPayeAtsYearList
+    } yield {
+      (saData, payeData) match {
+        case (Right(saTaxYearData), Right(payeTaxYearList)) =>
+          Ok(
+            atsMergePageView(
+              saTaxYearData,
+              payeTaxYearList,
+              atsYearFormMapping,
+              getActingAsAttorneyFor(request, saTaxYearData.forename, saTaxYearData.surname, saTaxYearData.utr)))
+            .withSession(request.session + ("atsList" -> saTaxYearData.toString))
+        case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
+      }
+    }
+
+  private def getSaYearList()(implicit request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] = {
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
 
       val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
@@ -92,12 +97,37 @@ class AtsMergePageController @Inject()(
     atsYearListService.getAtsListData
   }
 
-  def getPayeAtsYearList()(implicit request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] = {
+  private def getPayeAtsYearList()(
+    implicit request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] = {
 
     val payeYear: Int = appConfig.payeYear
-
     request.nino.map(payeAtsService.getPayeTaxYearData(_, payeYear - 1, payeYear)).getOrElse(Future(Right(List.empty)))
 
   }
+
+  def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>
+    onSubmit(request)
+  }
+
+  private def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
+    atsYearFormMapping.bindFromRequest.fold(
+      formWithErrors => {
+        val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
+        getSaAndPayeYearList(request)
+      },
+      value => {
+        val (year, atsType) = value.year.get.splitAt(4)
+        redirectWithYear(year.toInt, atsType)
+      }
+    )
+
+  private def redirectWithYear(taxYear: Int, atsType: String)(
+    implicit request: AuthenticatedRequest[_]): Future[Result] =
+    atsType match {
+
+      case "sa"   => Future.successful(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYear))
+      case "paye" => Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYear)))
+      case _      => Future.successful(Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts()))
+    }
 
 }

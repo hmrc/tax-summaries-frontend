@@ -419,3 +419,7 @@ ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insur
 ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties.
 ats.howYourTaxWasSpent.table.department.title = Department spend
 ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
+
+#Sa and Paye Merge Page
+#=============================================================
+merge.page.no.ats.title=Years where you received a general Annual Tax Summary

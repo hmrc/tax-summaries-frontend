@@ -401,3 +401,7 @@ ats.howYourTaxWasSpent.caveat = Nid yw’n cynnwys TAW, ecséis na thollau erail
 ats.howYourTaxWasSpent.table.department.title = Gwariant y llywodraeth
 ats.howYourTaxWasSpent.table.percentage.title  = Canran o’r dreth
 ats.howYourTaxWasSpent.table.department.Total = Cyfanswm
+
+#Sa and Paye Merge Page
+#=============================================================
+merge.page.no.ats.title=Years where you received a general Annual Tax Summary
