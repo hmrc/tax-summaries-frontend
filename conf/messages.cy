@@ -38,8 +38,6 @@ ats.select_tax_year.continue=Parhau
 ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
 ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth
 ats.select_tax_year.label={0} i {1}
-ats.summary.view.sa.link=Bwrw golwg dros Grynodeb Treth Blynyddol Hunanasesiad
-ats.summary.view.paye.link=Bwrw golwg dros Grynodeb Treth Blynyddol TWE
 
 # View ATS - Landing page
 #============================================================
@@ -404,6 +402,8 @@ ats.howYourTaxWasSpent.table.department.Total = Cyfanswm
 
 #Sa and Paye Merge Page
 #=============================================================
-merge.page.no.ats.title=Years where you received a general Annual Tax Summary
-merge.page.no.ats.summary.available.text=The general Annual Tax Summary is only available to view online from the 2018 to 2019 tax year onward.
-merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not everyone will have a personal one for each tax year. This may be because no income tax was paid for that year, or HMRC is waiting for information such as a change of address.
+merge.page.no.ats.title=Blynyddoedd pan gawsoch Grynodeb Treth Blynyddol gyffredinol
+merge.page.no.ats.summary.available.text=Mae’r Grynodeb Treth Blynyddol gyffredinol ond ar gael i’w gweld ar-lein o’r flwyddyn dreth 2018 i 2019 ymlaen.
+merge.page.no.ats.summary.text=Mae’n bosibl y byddwch yn gweld Crynodeb Treth Blynyddol gyffredinol gan na fydd pawb yn cael un personol ar gyfer pob blwyddyn dreth. Gall hyn fod oherwydd na thalwyd Treth Incwm ar gyfer y flwyddyn honno, neu oherwydd bod CThEM yn aros am wybodaeth megis newid cyfeiriad.
+merge.page.sa.unavailable=Sorry, SA is unavailable
+merge.page.paye.unavailable=Sorry, Paye is unavailable

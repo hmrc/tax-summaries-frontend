@@ -28,6 +28,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import utils.TaxYearUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
@@ -93,7 +94,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
       Map(
         "origin"          -> Seq(appConfig.appName),
         "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL"   -> Seq(appConfig.payeLoginCallbackUrl),
+        "completionURL"   -> Seq(appConfig.payeBaseUrl + request.uri),
         "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
       )
     )

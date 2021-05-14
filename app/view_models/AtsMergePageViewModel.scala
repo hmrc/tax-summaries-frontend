@@ -16,11 +16,17 @@
 
 package view_models
 
-case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], noAtsTaxYearList: List[Int]) {
+import config.ApplicationConfig
+
+case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], appConfig: ApplicationConfig) {
 
   val showSaYearList: Boolean = saData.yearList.nonEmpty
   val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
+  val noAtsTaxYearList =
+    (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed to appConfig.taxYear).toList
+      .diff(saData.yearList ++ payeTaxYearList)
   val showNoAtsText = noAtsTaxYearList.filter(_ < 2019).nonEmpty
   val noAtsYearListAvailable = noAtsTaxYearList.filter(_ >= 2019)
   val showNoAtsYearList = noAtsYearListAvailable.nonEmpty
+
 }

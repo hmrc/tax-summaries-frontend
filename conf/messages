@@ -45,8 +45,6 @@ ats.select_tax_year.continue=Continue
 ats.select_tax_year.required.summary=Please select the tax year
 ats.select_tax_year.required=Select an option for the tax year
 ats.select_tax_year.label={0} to {1}
-ats.summary.view.sa.link=View Self Assessment Annual Tax Summary
-ats.summary.view.paye.link=View PAYE Annual Tax Summary
 
 
 # View ATS - Landing page
@@ -425,3 +423,5 @@ ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
 merge.page.no.ats.title=Years where you received a general Annual Tax Summary
 merge.page.no.ats.summary.unavailable.text=The general Annual Tax Summary is only available to view online from the 2018 to 2019 tax year onward.
 merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not everyone will have a personal one for each tax year. This may be because no income tax was paid for that year, or HMRC is waiting for information such as a change of address.
+merge.page.sa.unavailable=Sorry, SA is unavailable
+merge.page.paye.unavailable=Sorry, Paye is unavailable

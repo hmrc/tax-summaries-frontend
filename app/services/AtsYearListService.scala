@@ -32,5 +32,5 @@ class AtsYearListService @Inject()(atsListService: AtsListService) {
     atsListService.storeSelectedTaxYear(taxYear)
 
   def getAtsListDatas(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[AtsList] =
-    Future.successful(AtsList("", "", "", List.empty))
+    Future.successful(AtsList.empty)
 }

@@ -39,69 +39,64 @@ class MergePageAuthActionImpl @Inject()(
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
-  val saShuttered: Boolean = appConfig.saShuttered
+  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    if (saShuttered) {
-      Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable()))
-    } else {
-      implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-
-      def authoriseUser(
-        enrolments: Set[Enrolment],
-        externalId: String,
-        credentials: Credentials,
-        saUtr: String,
-        nino: String) = {
-        val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
-          enrolment.identifiers
-            .find(id => id.key == "IRAgentReference")
-            .map(key => Uar(key.value))
-        }
-
-        block {
-          AuthenticatedRequest(
-            externalId,
-            agentRef,
-            Some(SaUtr(saUtr)),
-            if (nino.isEmpty) None else Some(Nino(nino)),
-            !saUtr.isEmpty,
-            credentials,
-            request
-          )
-        }
+    def authoriseUser(
+      enrolments: Set[Enrolment],
+      externalId: String,
+      credentials: Credentials,
+      saUtr: String,
+      nino: String) = {
+      val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
+        enrolment.identifiers
+          .find(id => id.key == "IRAgentReference")
+          .map(key => Uar(key.value))
       }
 
-      authorised(ConfidenceLevel.L50 or (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
-        .retrieve(
-          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino) {
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ Some(nino) =>
-            authoriseUser(enrolments, externalId, credentials, saUtr, nino)
-
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ None =>
-            authoriseUser(enrolments, externalId, credentials, saUtr, "")
-
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ None ~ Some(nino) =>
-            authoriseUser(enrolments, externalId, credentials, "", nino)
-
-          case _ => throw new RuntimeException("Can't find credentials for user")
-        }
-    } recover {
-      case _: NoActiveSession => {
-        lazy val ggSignIn = appConfig.loginUrl
-        lazy val callbackUrl = appConfig.loginCallback
-        Redirect(
-          ggSignIn,
-          Map(
-            "continue_url" -> Seq(callbackUrl),
-            "origin"       -> Seq(appConfig.appName)
-          )
+      block {
+        AuthenticatedRequest(
+          externalId,
+          agentRef,
+          Some(SaUtr(saUtr)),
+          if (nino.isEmpty) None else Some(Nino(nino)),
+          !saUtr.isEmpty,
+          credentials,
+          request
         )
       }
-
-      case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
     }
+
+    authorised(ConfidenceLevel.L50 or (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
+      .retrieve(
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino) {
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ Some(nino) =>
+          authoriseUser(enrolments, externalId, credentials, saUtr, nino)
+
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ None =>
+          authoriseUser(enrolments, externalId, credentials, saUtr, "")
+
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ None ~ Some(nino) =>
+          authoriseUser(enrolments, externalId, credentials, "", nino)
+
+        case _ => throw new RuntimeException("Can't find credentials for user")
+      }
+  } recover {
+    case _: NoActiveSession => {
+      lazy val ggSignIn = appConfig.loginUrl
+      lazy val callbackUrl = appConfig.loginCallback
+      Redirect(
+        ggSignIn,
+        Map(
+          "continue_url" -> Seq(callbackUrl),
+          "origin"       -> Seq(appConfig.appName)
+        )
+      )
+    }
+
+    case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
+  }
 }
 
 @ImplementedBy(classOf[MergePageAuthActionImpl])

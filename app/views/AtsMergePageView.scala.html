@@ -80,6 +80,8 @@
                 )
         }
 
+    @if(appConfig.payeShuttered){@messages("merge.page.paye.unavailable")}
+
         @if(atsMergePageViewModel.showPayeYearList){
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
@@ -90,7 +92,10 @@
         )
         }
 
-        @if(atsMergePageViewModel.showNoAtsYearList){
+    @if(appConfig.saShuttered){@messages("merge.page.sa.unavailable")}
+
+
+    @if(atsMergePageViewModel.showNoAtsYearList){
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
         atsMergePageViewModel.noAtsYearListAvailable.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
@@ -99,6 +104,7 @@
         '_headingClass -> "heading-48",
         '_additionalHtml -> pastAtsParagraph
         )
+
 }
         <div class="form-field">
             <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>

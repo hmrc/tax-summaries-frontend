@@ -49,7 +49,7 @@ class AtsListService @Inject()(
               atsList.taxPayer.get.taxpayer_name.get("surname"),
               atsList.atsYearList.get
             ))
-        case Left(NOT_FOUND) => Right(AtsList("", "", "", List.empty))
+        case Left(NOT_FOUND) => Right(AtsList.empty)
         case Left(status)    => Left(status)
       }
     }
