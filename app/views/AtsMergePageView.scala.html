@@ -43,6 +43,12 @@
     appConfig: ApplicationConfig
 )
 
+@pastAtsParagraph =  @{
+    if(atsMergePageViewModel.showNoAtsText){
+    s"<p>${Messages("merge.page.no.ats.summary.unavailable.text")}<p><p>${messages("merge.page.no.ats.summary.text")}<p>"
+    }else{s"<p>${messages("merge.page.no.ats.summary.text")}<p>"}
+}
+
 @main(
         title = Messages("ats.select_tax_year.title"),
         actingAttorney = actingAsAttorney,
@@ -90,15 +96,10 @@
         atsMergePageViewModel.noAtsYearListAvailable.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
         '_legend -> messages("merge.page.no.ats.title"),
-        '_headingClass -> "heading-48"
+        '_headingClass -> "heading-48",
+        '_additionalHtml -> pastAtsParagraph
         )
-        @if(atsMergePageViewModel.showNoAtsText){
-        <p>@messages("merge.page.no.ats.summary.unavailable.text")</p>
-        }
-        <p>@messages("merge.page.no.ats.summary.text")</p>
-        }
-
-
+}
         <div class="form-field">
             <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
         </div>
