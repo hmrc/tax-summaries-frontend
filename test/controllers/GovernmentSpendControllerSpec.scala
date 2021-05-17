@@ -54,9 +54,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   val model = new GovernmentSpend(

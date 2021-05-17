@@ -64,17 +64,7 @@ class AtsServiceSpec
   implicit val hc = new HeaderCarrier
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
   implicit val request =
-    AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      None,
-      None,
-      None,
-      None,
-      true,
-      fakeCredentials,
-      FakeRequest())
+    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, true, fakeCredentials, FakeRequest())
 
   val agentToken = AgentToken(
     agentUar = testUar,
@@ -179,9 +169,6 @@ class AtsServiceSpec
                   "userId",
                   Some(Uar(testUar)),
                   Some(SaUtr(testUtr)),
-                  None,
-                  None,
-                  None,
                   None,
                   true,
                   fakeCredentials,

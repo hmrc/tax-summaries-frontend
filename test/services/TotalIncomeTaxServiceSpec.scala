@@ -42,9 +42,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   implicit val hc = HeaderCarrier()
@@ -68,9 +66,6 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         "userId",
         None,
         Some(SaUtr(testUtr)),
-        None,
-        None,
-        None,
         None,
         true,
         fakeCredentials,

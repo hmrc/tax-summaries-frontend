@@ -42,9 +42,7 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
@@ -55,9 +53,6 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
     "userId",
     None,
     Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
     None,
     true,
     fakeCredentials,

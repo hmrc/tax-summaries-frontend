@@ -96,17 +96,7 @@ class AtsListServiceSpec
   }
 
   implicit val request =
-    AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      None,
-      None,
-      None,
-      None,
-      true,
-      fakeCredentials,
-      FakeRequest())
+    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, true, fakeCredentials, FakeRequest())
   implicit val hc = new HeaderCarrier
 
   val agentToken = AgentToken(
@@ -268,9 +258,6 @@ class AtsListServiceSpec
             Some(Uar(testUtr)),
             Some(SaUtr(testUtr)),
             None,
-            None,
-            None,
-            None,
             true,
             fakeCredentials,
             FakeRequest())
@@ -332,9 +319,6 @@ class AtsListServiceSpec
           "userId",
           Some(Uar(testUar)),
           Some(SaUtr(testUtr)),
-          None,
-          None,
-          None,
           None,
           true,
           fakeCredentials,

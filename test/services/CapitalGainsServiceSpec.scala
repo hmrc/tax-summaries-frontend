@@ -42,9 +42,7 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   implicit val hc = new HeaderCarrier
@@ -56,9 +54,6 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
     "userId",
     None,
     Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
     None,
     true,
     fakeCredentials,

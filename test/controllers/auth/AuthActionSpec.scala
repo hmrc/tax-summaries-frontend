@@ -85,15 +85,15 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
   "A user with a confidence level 50 and an SA enrolment" should {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
-            fakeCredentials)
+            fakeCredentials) ~ Some(utr)
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -110,15 +110,15 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
     "create an authenticated request" in {
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("") ~ Some(fakeCredentials)
+            Some("") ~ Some(fakeCredentials) ~ Some("")
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -135,15 +135,15 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
   "A user with no credentials will fail to auth" in {
     val uar = testUar
 
-    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
       Future.successful(
         Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-          Some("") ~ None
+          Some("") ~ None ~ Some(uar)
       )
 
     when(
       mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
       .thenReturn(retrievalResult)
 
     val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)

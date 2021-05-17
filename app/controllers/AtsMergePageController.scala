@@ -22,6 +22,7 @@ import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, MergePageAuthAction}
 import controllers.paye.routes.PayeAtsMainController
 import models.AtsListData
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services._
@@ -31,7 +32,7 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{AccountUtils, AttorneyUtils, Globals}
 import view_models.AtsForms.atsYearFormMapping
-import view_models.AtsList
+import view_models.{AtsList, TaxYearEnd}
 import views.html.AtsMergePageView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -49,28 +50,35 @@ class AtsMergePageController @Inject()(
     extends FrontendController(mcc) with AttorneyUtils with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
-    {
-      getSaAndPayeYearList(request)
-    }
+    getSaAndPayeYearList()(request)
   }
 
-  private def getSaAndPayeYearList(implicit request: AuthenticatedRequest[_]) =
+  private def getSaAndPayeYearList(formWithErrors: Option[Form[TaxYearEnd]] = None)(
+    implicit request: AuthenticatedRequest[_]) = {
+    val session = request
+      .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+      .fold(
+        request.session
+      )(parameter => request.session + (Globals.TAXS_USER_TYPE_KEY -> parameter))
+
     atsMergePageService.getSaAndPayeYearList.map {
       case Right(atsMergePageViewModel) =>
         Ok(
           atsMergePageView(
             atsMergePageViewModel,
-            atsYearFormMapping,
+            formWithErrors.getOrElse(atsYearFormMapping),
             getActingAsAttorneyFor(
               request,
               atsMergePageViewModel.saData.forename,
               atsMergePageViewModel.saData.surname,
               atsMergePageViewModel.saData.utr)
           ))
-          .withSession(request.session + ("atsList" -> atsMergePageViewModel.saData.toString))
+          .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
       case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
     }
+
+  }
 
   def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>
     onSubmit(request)
@@ -79,8 +87,7 @@ class AtsMergePageController @Inject()(
   private def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
-        val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
-        getSaAndPayeYearList(request)
+        getSaAndPayeYearList(Some(formWithErrors))(request)
       },
       value => {
         val (year, atsType) = value.year.get.splitAt(4)

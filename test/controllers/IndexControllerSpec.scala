@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.DataCacheConnector
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction, FakeMergePageAuthAction}
 import models.AtsListData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -36,7 +36,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import utils.TestConstants._
 import view_models.AtsForms._
-import view_models.{ATSUnavailableViewModel, AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{ATSUnavailableViewModel, AtsList, AtsMergePageViewModel, NoATSViewModel, TaxYearEnd}
+import views.html.AtsMergePageView
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -51,9 +52,6 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))
@@ -64,59 +62,52 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     Json.fromJson[AtsListData](json).get
   }
 
+  val mockAtsMergePageService = mock[AtsMergePageService]
+  val mockAtsMergePageView = inject[AtsMergePageView]
   val mockDataCacheConnector = mock[DataCacheConnector]
   val mockAtsYearListService = mock[AtsYearListService]
   val mockAtsListService = mock[AtsListService]
+  val successViewModel = AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), appConfig)
 
-  def sut = new IndexController(
-    mockDataCacheConnector,
-    mockAtsYearListService,
-    mockAtsListService,
-    mock[AuditService],
-    FakeAuthAction,
+  def sut = new AtsMergePageController(
+    mockAtsMergePageService,
+    FakeMergePageAuthAction,
     mcc,
-    taxsIndexView,
-    genericErrorView,
-    tokenErrorView
+    mockAtsMergePageView
   )
 
-  val model: GenericViewModel = AtsList(
+  val model = AtsList(
     utr = testUtr,
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2014")),
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2014, 2015)
   )
 
   override def beforeEach(): Unit = {
-    when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model)
+    when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+      .thenReturn(Right(model))
     when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(None))
   }
 
   "Calling with request param" should {
 
-    "return a 303 response when called with '?ref=PORTAL'" in {
+    "return a 200 response when called with '?ref=PORTAL'" in {
 
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "?ref=PORTAL")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.onPageLoad(requestWithQuery))
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
     }
 
@@ -131,18 +122,14 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "?ref=PORTAL")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.onPageLoad(requestWithQuery))
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
@@ -154,20 +141,16 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
         FakeRequest(
           "GET",
-          controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+          controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.onPageLoad(requestWithQuery))
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
@@ -179,40 +162,18 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = Future.successful(sut.onPageLoad(requestWithQuery))
 
       status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe None
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
-    "go straight to summary if user has only one tax year" in {
-
-      val model2: GenericViewModel = AtsList(
-        utr = testUtr,
-        forename = "forename",
-        surname = "surname",
-        yearList = List(
-          TaxYearEnd(Some("2014"))
-        )
-      )
-
-      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
-
-      val result = sut.agentAwareShow(request)
-
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/main?taxYear=2014")
-    }
   }
 
   //FIXME - should throw an error, if Agent does not provide ref/id
@@ -225,18 +186,14 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         Some(Uar(testUar)),
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL")
       )
 
-      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
+      val result = Future.successful(sut.onPageLoad(agentRequestWithQuery))
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
@@ -248,20 +205,16 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         Some(Uar(testUar)),
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
         FakeRequest(
           "GET",
-          controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+          controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
+      val result = Future.successful(sut.onPageLoad(agentRequestWithQuery))
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
+      status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
       verify(mockDataCacheConnector, times(1))
         .storeAgentToken(Matchers.eq("bxk2Z3Q84R0W2XSklMb7Kg"))(any[HeaderCarrier], any[ExecutionContext])
@@ -276,15 +229,12 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         Some(Uar(testUar)),
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
+      val result = Future.successful(sut.onPageLoad(agentRequestWithQuery))
 
       session(result).get("TAXS_USER_TYPE") shouldBe None
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
@@ -295,13 +245,13 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     "return a 200 response" in {
 
-      val result = Future.successful(sut.agentAwareShow(request))
+      val result = Future.successful(sut.onPageLoad(request))
       status(result) shouldBe 200
     }
 
     "return a Tax Year list" in {
 
-      val result = Future.successful(sut.agentAwareShow(request))
+      val result = Future.successful(sut.onPageLoad(request))
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -321,45 +271,17 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
-      val result = Future.successful(sut.onSubmit(requestWithQuery))
+      val result = Future.successful(sut.authorisedOnSubmit(requestWithQuery))
       status(result) shouldBe OK
 
     }
 
-    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-
-      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
-        .thenReturn(new NoATSViewModel)
-
-      val result = Future.successful(sut.show(request))
-      status(result) mustBe SEE_OTHER
-
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
-    }
-
-    "redirect to the generic error page when service returns 500" in {
-
-      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
-        .thenReturn(Future.successful(new ATSUnavailableViewModel))
-
-      val result = Future.successful(sut.agentAwareShow(agentRequest))
-
-      val document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-
-      document.getElementById("generic-error-page-heading").text() shouldBe "Sorry, the service is unavailable"
-    }
-
-    "return 404 if service returns 404" in {
+    "return 200 if service returns 404" in {
 
       val atsYear = Map("atsYear" -> "")
       val form = atsYearFormMapping.bind(atsYear)
@@ -368,9 +290,6 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
@@ -378,9 +297,22 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
       when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(NOT_FOUND))
 
-      val result = sut.onSubmit(requestWithQuery)
+      val result = sut.authorisedOnSubmit(requestWithQuery)
 
-      status(result) shouldBe NOT_FOUND
+      status(result) shouldBe 200
+    }
+
+    "redirect to the generic error page when service returns 500" in {
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())) thenReturn (Left(INTERNAL_SERVER_ERROR))
+
+      val result = Future.successful(sut.onPageLoad(agentRequest))
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+
+      document.getElementById("generic-error-page-heading").text() shouldBe "Sorry, the service is unavailable"
     }
 
     "return 500 if service returns 500" in {
@@ -392,60 +324,18 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())) thenReturn (Left(INTERNAL_SERVER_ERROR))
 
-      when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(INTERNAL_SERVER_ERROR))
+      // when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(INTERNAL_SERVER_ERROR))
 
-      val result = sut.onSubmit(requestWithQuery)
+      val result = sut.authorisedOnSubmit(requestWithQuery)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
   }
 
-  "redirectWithYear" should {
-
-    "redirect to main page with tax year" when {
-
-      "connector returns list data" in {
-
-        when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Right(data))
-
-        val result = sut.redirectWithYear(taxYear)(request)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(s"${routes.AtsMainController.authorisedAtsMain().url}?taxYear=$taxYear")
-      }
-    }
-
-    "return 404" when {
-
-      "the connector returns 404" in {
-
-        when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(NOT_FOUND))
-
-        val result = sut.redirectWithYear(taxYear)(request)
-
-        status(result) shouldBe NOT_FOUND
-      }
-    }
-
-    "return 500" when {
-
-      "the connector returns 500" in {
-
-        when(mockAtsListService.getAtsYearList(any(), any())) thenReturn Future.successful(Left(INTERNAL_SERVER_ERROR))
-
-        val result = sut.redirectWithYear(taxYear)(request)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-  }
 }

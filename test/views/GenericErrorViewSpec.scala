@@ -34,9 +34,6 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     None,
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     fakeCredentials,
     FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))

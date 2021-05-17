@@ -41,9 +41,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   "Calling a service with a JSON containing errors" should {

@@ -23,7 +23,7 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsResultException, JsValue, Json}
@@ -39,7 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
 class PayeAtsServiceSpec
-    extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
+    extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach
+    with IntegrationPatience {
 
   implicit val hc = HeaderCarrier()
   implicit val ec = app.injector.instanceOf[ExecutionContext]
