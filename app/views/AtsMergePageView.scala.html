@@ -48,7 +48,7 @@
 
 
 @main(
-        title = Messages("ats.select_tax_year.title"),
+        title = Messages("merge.page.ats.select_tax_year.title"),
         actingAttorney = actingAsAttorney,
         articleClasses = Some("full-width selectYear")
 
@@ -67,6 +67,8 @@
         @errorSummaryTemplateView(atsYearForm)
 
         @form(action = controllers.routes.AtsMergePageController.authorisedOnSubmit){
+
+        <h1>@messages("merge.page.ats.select_tax_year.title")</h1>
 
         @saMergePageView(atsMergePageViewModel,
         atsYearForm)

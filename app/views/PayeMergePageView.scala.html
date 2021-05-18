@@ -52,7 +52,7 @@
         atsYearForm(AtsForms.yearChoice),
         atsMergePageViewModel.payeTaxYearList.map(year => year.toString + "paye" -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
-        '_legend -> messages("ats.select_tax_year.paye.title"),
+        '_legend -> messages("merge.page.paye.text"),
         '_headingClass -> "heading-48"
         )
     }
