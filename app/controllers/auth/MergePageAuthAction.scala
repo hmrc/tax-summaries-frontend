@@ -20,10 +20,9 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.{Nino => AuthNino}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{Nino => AuthNino, _}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -43,42 +42,30 @@ class MergePageAuthActionImpl @Inject()(
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    def authoriseUser(
-      enrolments: Set[Enrolment],
-      externalId: String,
-      credentials: Credentials,
-      saUtr: String,
-      nino: String) = {
-      val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
-        enrolment.identifiers
-          .find(id => id.key == "IRAgentReference")
-          .map(key => Uar(key.value))
-      }
-
-      block {
-        AuthenticatedRequest(
-          externalId,
-          agentRef,
-          Some(SaUtr(saUtr)),
-          if (nino.isEmpty) None else Some(Nino(nino)),
-          !saUtr.isEmpty,
-          credentials,
-          request
-        )
-      }
-    }
-
     authorised(ConfidenceLevel.L50 or (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
       .retrieve(
-        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino) {
-        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ Some(nino) =>
-          authoriseUser(enrolments, externalId, credentials, saUtr, nino)
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel) {
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel => {
 
-        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ Some(saUtr) ~ None =>
-          authoriseUser(enrolments, externalId, credentials, saUtr, "")
+          val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
+            enrolment.identifiers
+              .find(id => id.key == "IRAgentReference")
+              .map(key => Uar(key.value))
+          }
 
-        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ None ~ Some(nino) =>
-          authoriseUser(enrolments, externalId, credentials, "", nino)
+          block {
+            AuthenticatedRequest(
+              externalId,
+              agentRef,
+              saUtr.map(SaUtr(_)),
+              nino.map(Nino(_)),
+              saUtr.nonEmpty,
+              confidenceLevel,
+              credentials,
+              request
+            )
+          }
+        }
 
         case _ => throw new RuntimeException("Can't find credentials for user")
       }

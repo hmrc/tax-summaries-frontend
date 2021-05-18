@@ -18,6 +18,7 @@ package controllers.auth
 
 import controllers.ControllerBaseSpec
 import play.api.mvc.{AnyContent, Request, _}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,5 +28,5 @@ object FakeMinAuthAction extends MinAuthAction with ControllerBaseSpec {
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest("userId", None, None, None, true, fakeCredentials, request))
+    block(AuthenticatedRequest("userId", None, None, None, true, ConfidenceLevel.L50, fakeCredentials, request))
 }

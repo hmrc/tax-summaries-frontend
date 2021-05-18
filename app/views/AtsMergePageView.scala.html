@@ -70,6 +70,11 @@
 
         @form(action = controllers.routes.AtsMergePageController.authorisedOnSubmit){
 
+    @if(appConfig.saShuttered){
+    <h1>@messages("merge.page.sa.text")</h1>
+    @messages("merge.page.sa.unavailable")
+    }
+
         @if(atsMergePageViewModel.showSaYearList){
                 @inputRadioGroupView(
                 atsYearForm(AtsForms.yearChoice),
@@ -80,9 +85,18 @@
                 )
         }
 
-    @if(appConfig.payeShuttered){@messages("merge.page.paye.unavailable")}
+    @if(appConfig.payeShuttered){
+    <h1>@messages("merge.page.paye.text")</h1>
+    @messages("merge.page.paye.unavailable")
+    }
 
-        @if(atsMergePageViewModel.showPayeYearList){
+    @if(atsMergePageViewModel.showIvUpliftLink){
+        <h1>@messages("merge.page.paye.text")</h1>
+    <p>
+    @messages("merge.page.paye.ivuplift.text")
+<a id="ivUplift-link" href="@controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel">@Messages("merge.page.paye.ivuplift.link.text")</a>
+</p>
+    }else if(atsMergePageViewModel.showPayeYearList){
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
         atsMergePageViewModel.payeTaxYearList.map(year => year.toString + "paye" -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
@@ -92,7 +106,6 @@
         )
         }
 
-    @if(appConfig.saShuttered){@messages("merge.page.sa.unavailable")}
 
 
     @if(atsMergePageViewModel.showNoAtsYearList){
@@ -106,10 +119,12 @@
         )
 
 }
+@if(atsMergePageViewModel.showContinueButton){
         <div class="form-field">
             <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
         </div>
         }
+}
 
     </div>
 }

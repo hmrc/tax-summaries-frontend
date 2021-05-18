@@ -17,16 +17,28 @@
 package view_models
 
 import config.ApplicationConfig
+import controllers.auth.AuthenticatedRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], appConfig: ApplicationConfig) {
+case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], appConfig: ApplicationConfig)(
+  implicit request: AuthenticatedRequest[_]) {
 
   val showSaYearList: Boolean = saData.yearList.nonEmpty
+
   val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
+
   val noAtsTaxYearList =
     (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed to appConfig.taxYear).toList
       .diff(saData.yearList ++ payeTaxYearList)
+
   val showNoAtsText = noAtsTaxYearList.filter(_ < 2019).nonEmpty
+
   val noAtsYearListAvailable = noAtsTaxYearList.filter(_ >= 2019)
+
   val showNoAtsYearList = noAtsYearListAvailable.nonEmpty
+
+  val showIvUpliftLink = showPayeYearList && (request.confidenceLevel.compare(ConfidenceLevel.L200) < 0)
+
+  val showContinueButton = !(appConfig.saShuttered && showIvUpliftLink && !showNoAtsYearList)
 
 }

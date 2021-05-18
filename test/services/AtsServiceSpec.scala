@@ -27,6 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
@@ -64,7 +65,15 @@ class AtsServiceSpec
   implicit val hc = new HeaderCarrier
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
   implicit val request =
-    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, true, fakeCredentials, FakeRequest())
+    AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(testUtr)),
+      None,
+      true,
+      ConfidenceLevel.L50,
+      fakeCredentials,
+      FakeRequest())
 
   val agentToken = AgentToken(
     agentUar = testUar,
@@ -171,6 +180,7 @@ class AtsServiceSpec
                   Some(SaUtr(testUtr)),
                   None,
                   true,
+                  ConfidenceLevel.L50,
                   fakeCredentials,
                   FakeRequest())
 

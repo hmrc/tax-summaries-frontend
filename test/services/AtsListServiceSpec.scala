@@ -30,6 +30,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
@@ -61,8 +62,8 @@ class AtsListServiceSpec
     reset(mockMiddleConnector)
     reset(mockDataCacheConnector)
     reset(mockAuditService)
-    reset(mockAuthUtils)
 
+    reset(mockAuthUtils)
     when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(2014)))
     when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any[HeaderCarrier], any[ExecutionContext]))
@@ -96,7 +97,15 @@ class AtsListServiceSpec
   }
 
   implicit val request =
-    AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, true, fakeCredentials, FakeRequest())
+    AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(testUtr)),
+      None,
+      true,
+      ConfidenceLevel.L50,
+      fakeCredentials,
+      FakeRequest())
   implicit val hc = new HeaderCarrier
 
   val agentToken = AgentToken(
@@ -259,6 +268,7 @@ class AtsListServiceSpec
             Some(SaUtr(testUtr)),
             None,
             true,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest())
 
@@ -321,6 +331,7 @@ class AtsListServiceSpec
           Some(SaUtr(testUtr)),
           None,
           true,
+          ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest())
 

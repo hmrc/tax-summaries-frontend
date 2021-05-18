@@ -27,6 +27,7 @@ GET     /paye/main                                             controllers.paye.
 POST    /paye/main                                             controllers.paye.PayeMultipleYearsController.onSubmit
 
 GET     /paye/main/:taxYear                                    controllers.paye.PayeAtsMainController.show(taxYear: Int)
+GET     /upliftConfidenceLevel                                 controllers.IvUpliftRedirectController.upliftConfidenceLevel
 
 GET     /paye/summary/:taxYear                                 controllers.paye.PayeYourIncomeAndTaxesController.show(taxYear: Int)
 

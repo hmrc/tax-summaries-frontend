@@ -25,6 +25,7 @@ import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
@@ -83,6 +84,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     Some(SaUtr(testUtr)),
     None,
     true,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -92,6 +94,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     Some(SaUtr(testUtr)),
     None,
     true,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"))
 

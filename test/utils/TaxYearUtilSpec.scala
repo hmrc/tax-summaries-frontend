@@ -19,6 +19,7 @@ package utils
 import controllers.auth.AuthenticatedRequest
 import models.InvalidTaxYear
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
@@ -38,6 +39,7 @@ class TaxYearUtilSpec extends UnitSpec {
           Some(SaUtr(testUtr)),
           None,
           true,
+          ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -57,6 +59,7 @@ class TaxYearUtilSpec extends UnitSpec {
             Some(SaUtr(testUtr)),
             None,
             true,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=20192"))
 
@@ -73,6 +76,7 @@ class TaxYearUtilSpec extends UnitSpec {
             Some(SaUtr(testUtr)),
             None,
             true,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=201"))
 
@@ -90,6 +94,7 @@ class TaxYearUtilSpec extends UnitSpec {
               Some(SaUtr(testUtr)),
               None,
               true,
+              ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest("GET", "?"))
 
@@ -107,6 +112,7 @@ class TaxYearUtilSpec extends UnitSpec {
             Some(SaUtr(testUtr)),
             None,
             true,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=ABCD"))
 

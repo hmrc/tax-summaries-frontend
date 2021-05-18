@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.paye
+package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
@@ -22,7 +22,6 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PayeAtsService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -35,34 +34,10 @@ import views.html.paye.PayeTaxsMainView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeAtsMainController @Inject()(
-  payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction,
-  mcc: MessagesControllerComponents,
-  payeTaxsMainView: PayeTaxsMainView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
+class IvUpliftRedirectController @Inject()(mcc: MessagesControllerComponents)(
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
-
-  def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request =>
-    getPayeAts(taxYear)
-  }
-
-  private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
-    payeAtsService.getPayeATSData(request.nino, taxYear).map {
-
-      case Right(_: PayeAtsData) =>
-        Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
-      case Left(response: HttpResponse) =>
-        response.status match {
-          case NOT_FOUND => Redirect(routes.PayeErrorController.authorisedNoAts())
-          case _ =>
-            Logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(routes.PayeErrorController.genericError(response.status))
-        }
-    }
+    extends FrontendController(mcc) {
 
   def upliftConfidenceLevel: Action[AnyContent] = Action.async {
     Future.successful(

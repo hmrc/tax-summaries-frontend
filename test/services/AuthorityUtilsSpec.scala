@@ -20,6 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AgentToken
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
@@ -33,9 +34,25 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
     val uar = testUar
     val nonMatchingUtr = testNonMatchingUtr
 
-    val request = AuthenticatedRequest("userId", None, Some(SaUtr(utr)), None, true, fakeCredentials, FakeRequest())
+    val request = AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(utr)),
+      None,
+      true,
+      ConfidenceLevel.L50,
+      fakeCredentials,
+      FakeRequest())
     val agentRequest =
-      AuthenticatedRequest("userId", Some(Uar(uar)), Some(SaUtr(utr)), None, true, fakeCredentials, FakeRequest())
+      AuthenticatedRequest(
+        "userId",
+        Some(Uar(uar)),
+        Some(SaUtr(utr)),
+        None,
+        true,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest())
 
     val account = AccountUtils.getAccount(request)
     val agentAccount = AccountUtils.getAccount(agentRequest)

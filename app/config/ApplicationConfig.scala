@@ -70,7 +70,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val feedbackUrl: String = getConf("feedback.url")
   lazy val payeLoginUrl = getConf("paye.login.url")
   lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
-  lazy val payeBaseUrl = getConf("paye.base.url")
   lazy val identityVerificationUpliftUrl = getConf("paye.iv-uplift-redirect.url")
   lazy val iVUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
   lazy val contactHmrcSAUrl = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"

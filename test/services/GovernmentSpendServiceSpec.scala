@@ -30,6 +30,7 @@ import play.api.libs.json.Json
 import play.api.http.Status.OK
 import play.api.test.{FakeRequest, Injecting}
 import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -67,6 +68,7 @@ class GovernmentSpendServiceSpec
     Some(SaUtr(testUtr)),
     None,
     true,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=2015"))
 

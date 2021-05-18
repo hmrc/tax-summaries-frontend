@@ -43,11 +43,12 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(ConfidenceLevel.L50)
-      .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials) {
-        case enrolments ~ Some(externalId) ~ Some(credentials) =>
+      .retrieve(
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.confidenceLevel) {
+        case enrolments ~ Some(externalId) ~ Some(credentials) ~ confidenceLevel =>
           val isSa = enrolments.getEnrolment("IR-SA").isDefined
 
-          block(AuthenticatedRequest(externalId, None, None, None, isSa, credentials, request))
+          block(AuthenticatedRequest(externalId, None, None, None, isSa, confidenceLevel, credentials, request))
 
         case _ => throw new RuntimeException("Can't find credentials for user")
       }

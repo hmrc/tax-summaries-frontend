@@ -26,6 +26,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
@@ -68,6 +69,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
         Some(SaUtr(testUtr)),
         None,
         true,
+        ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest("GET", "?taxYear=2015"))
       val result = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)

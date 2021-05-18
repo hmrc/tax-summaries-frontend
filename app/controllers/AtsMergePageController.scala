@@ -42,7 +42,8 @@ class AtsMergePageController @Inject()(
   atsMergePageService: AtsMergePageService,
   authAction: MergePageAuthAction,
   mcc: MessagesControllerComponents,
-  atsMergePageView: AtsMergePageView)(
+  atsMergePageView: AtsMergePageView,
+  genericErrorView: GenericErrorView)(
   implicit formPartialRetriever: FormPartialRetriever,
   templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
@@ -50,9 +51,11 @@ class AtsMergePageController @Inject()(
     extends FrontendController(mcc) with AttorneyUtils with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
-    getSaAndPayeYearList()(request)
-  }
+    if (appConfig.saShuttered && appConfig.payeShuttered)
+      Future.successful(Redirect(routes.ErrorController.serviceUnavailable().url))
+    else getSaAndPayeYearList()(request)
 
+  }
   private def getSaAndPayeYearList(formWithErrors: Option[Form[TaxYearEnd]] = None)(
     implicit request: AuthenticatedRequest[_]) = {
     val session = request
@@ -75,7 +78,7 @@ class AtsMergePageController @Inject()(
           ))
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-      case _ => InternalServerError(routes.ErrorController.serviceUnavailable().url)
+      case _ => InternalServerError(genericErrorView())
     }
 
   }

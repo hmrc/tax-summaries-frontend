@@ -53,34 +53,30 @@ class AtsMergePageService @Inject()(
 
   private def getSaYearList(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] =
-    if (appConfig.saShuttered) Future.successful(Right(AtsList.empty))
-    else {
-      if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
+    request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] = {
+    if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
 
-        val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
+      val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
-        agentToken.fold[Future[_]] {
+      agentToken.fold[Future[_]] {
+        Future.successful(None)
+      } { token =>
+        if (AccountUtils.isAgent(request)) {
+          dataCacheConnector.storeAgentToken(token) recover { case e: Throwable => throw e }
+        } else {
           Future.successful(None)
-        } { token =>
-          if (AccountUtils.isAgent(request)) {
-            dataCacheConnector.storeAgentToken(token) recover { case e: Throwable => throw e }
-          } else {
-            Future.successful(None)
-          }
         }
       }
-      atsYearListService.getAtsListData
     }
+    atsYearListService.getAtsListData
+  }
 
   private def getPayeAtsYearList(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] =
-    if (appConfig.payeShuttered) Future.successful(Right(List.empty))
-    else {
-      val payeYear: Int = appConfig.taxYear
-      request.nino
-        .map(payeAtsService.getPayeTaxYearData(_, payeYear - 1, payeYear))
-        .getOrElse(Future(Right(List.empty)))
-    }
+    request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] = {
+    val payeYear: Int = appConfig.taxYear
+    request.nino
+      .map(payeAtsService.getPayeTaxYearData(_, payeYear - 1, payeYear))
+      .getOrElse(Future(Right(List.empty)))
+  }
 }

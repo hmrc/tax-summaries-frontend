@@ -423,5 +423,10 @@ ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
 merge.page.no.ats.title=Years where you received a general Annual Tax Summary
 merge.page.no.ats.summary.unavailable.text=The general Annual Tax Summary is only available to view online from the 2018 to 2019 tax year onward.
 merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not everyone will have a personal one for each tax year. This may be because no income tax was paid for that year, or HMRC is waiting for information such as a change of address.
-merge.page.sa.unavailable=Sorry, SA is unavailable
-merge.page.paye.unavailable=Sorry, Paye is unavailable
+merge.page.sa.unavailable=Self Assessment tax years are unavailable at the moment. Try again later.
+merge.page.paye.unavailable=PAYE tax years are unavailable at the moment. Try again later.
+merge.page.paye.ivuplift.text=To see your PAYE Annual Tax Summary you need to
+merge.page.paye.ivuplift.link.text=set up additional security.
+merge.page.sa.text=Self Assessment
+merge.page.paye.text=PAYE
+

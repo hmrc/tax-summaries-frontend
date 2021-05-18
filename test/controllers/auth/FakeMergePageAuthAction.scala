@@ -18,6 +18,7 @@ package controllers.auth
 
 import controllers.ControllerBaseSpec
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 
@@ -29,5 +30,14 @@ object FakeMergePageAuthAction extends MergePageAuthAction with ControllerBaseSp
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest("userId", None, Some(SaUtr(testUtr)), None, true, fakeCredentials, request))
+    block(
+      AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        true,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        request))
 }

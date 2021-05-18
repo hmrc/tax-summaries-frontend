@@ -94,7 +94,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
       Map(
         "origin"          -> Seq(appConfig.appName),
         "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL"   -> Seq(appConfig.payeBaseUrl + request.uri),
+        "completionURL"   -> Seq(appConfig.loginCallback),
         "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
       )
     )
