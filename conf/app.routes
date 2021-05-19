@@ -23,8 +23,8 @@ GET     /sign-out                                              controllers.Accou
 
 GET     /paye/treasury-spending/:taxYear                       controllers.paye.PayeGovernmentSpendController.show(taxYear: Int)
 
-GET     /paye/main                                             controllers.paye.PayeMultipleYearsController.onPageLoad
-POST    /paye/main                                             controllers.paye.PayeMultipleYearsController.onSubmit
+GET     /paye/main                                             controllers.AtsMergePageController.onPageLoad
+POST    /paye/main                                             controllers.AtsMergePageController.authorisedOnSubmit
 
 GET     /paye/main/:taxYear                                    controllers.paye.PayeAtsMainController.show(taxYear: Int)
 GET     /upliftConfidenceLevel                                 controllers.IvUpliftRedirectController.upliftConfidenceLevel

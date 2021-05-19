@@ -71,7 +71,6 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
   lazy val serviceUnavailableView = inject[ServiceUnavailableView]
   lazy val governmentSpendingView = inject[GovernmentSpendingView]
   lazy val incomeBeforeTaxView = inject[IncomeBeforeTaxView]
-  lazy val taxsIndexView = inject[TaxsIndexView]
   lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
   lazy val summaryView = inject[SummaryView]
   lazy val nicsView = inject[NicsView]
