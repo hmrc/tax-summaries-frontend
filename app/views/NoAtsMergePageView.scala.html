@@ -34,10 +34,15 @@
     appConfig: ApplicationConfig
 )
 
+@additionalContent = @{
+s"<h2 class='heading-medium'>${messages("merge.page.no.ats.title")}</h2>"
+}
+
 @pastAtsParagraph =  @{
     if(atsMergePageViewModel.showNoAtsText){
-    s"<p>${Messages("merge.page.no.ats.summary.unavailable.text")}<p><p>${messages("merge.page.no.ats.summary.text")}<p>"
-    }else{s"<p>${messages("merge.page.no.ats.summary.text")}<p>"}
+      s"<h2 class='heading-medium'>${messages("merge.page.no.ats.title")}</h2>" +
+      s"<p>${Messages("merge.page.no.ats.summary.unavailable.text")}<p><p>${messages("merge.page.no.ats.summary.text")}<p>"
+    }else{s"<h2 class='heading-medium'>${messages("merge.page.no.ats.title")}</h2>" +s"<p>${messages("merge.page.no.ats.summary.text")}<p>"}
 }
 
     @if(atsMergePageViewModel.showNoAtsYearList){
@@ -45,7 +50,6 @@
         atsYearForm(AtsForms.yearChoice),
         atsMergePageViewModel.noAtsYearListAvailable.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
-        '_legend -> messages("merge.page.no.ats.title"),
         '_headingClass -> "heading-48",
         '_additionalHtml -> pastAtsParagraph
         )

@@ -34,6 +34,9 @@
     appConfig: ApplicationConfig
 )
 
+@additionalContent = @{
+s"<h2 class='heading-medium'>${messages("merge.page.paye.text")}</h2>"
+}
 
     @if(appConfig.payeShuttered){
 
@@ -52,7 +55,7 @@
         atsYearForm(AtsForms.yearChoice),
         atsMergePageViewModel.payeTaxYearList.map(year => year.toString + "paye" -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
         '_fieldSetAttributes -> "id=year_field",
-        '_legend -> messages("merge.page.paye.text"),
+        '_additionalHtml -> additionalContent,
         '_headingClass -> "heading-48"
         )
     }
