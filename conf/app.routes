@@ -2,7 +2,7 @@
 GET     /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
 
 GET     /                                                      controllers.AtsMergePageController.onPageLoad
-POST    /                                                      controllers.AtsMergePageController.authorisedOnSubmit
+POST    /                                                      controllers.AtsMergePageController.onSubmit
 GET     /main                                                  controllers.AtsMainController.authorisedAtsMain
 GET     /summary                                               controllers.SummaryController.authorisedSummaries
 GET     /nics                                                  controllers.NicsController.authorisedNics
@@ -23,8 +23,8 @@ GET     /sign-out                                              controllers.Accou
 
 GET     /paye/treasury-spending/:taxYear                       controllers.paye.PayeGovernmentSpendController.show(taxYear: Int)
 
-GET     /paye/main                                             controllers.paye.PayeMultipleYearsController.onPageLoad
-POST    /paye/main                                             controllers.paye.PayeMultipleYearsController.onSubmit
+GET     /paye/main                                             controllers.AtsMergePageController.onPageLoad
+POST    /paye/main                                             controllers.AtsMergePageController.onSubmit
 
 GET     /paye/main/:taxYear                                    controllers.paye.PayeAtsMainController.show(taxYear: Int)
 GET     /upliftConfidenceLevel                                 controllers.IvUpliftRedirectController.upliftConfidenceLevel

@@ -30,6 +30,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,6 +38,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 import utils.{AgentTokenException, AuthorityUtils}
+import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -185,6 +187,46 @@ class AtsListServiceSpec
       whenReady(sut.fetchSelectedTaxYear.failed) { exception =>
         exception shouldBe an[Exception]
       }
+    }
+  }
+
+  "createModel" should {
+
+    "Return a ats list when received a success response from connector" in {
+
+      when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(AtsTestData.atsListData)))
+
+      whenReady(sut.createModel) { result =>
+        result shouldBe Right(AtsList("1111111111", "John", "Smith", List(2018)))
+      }
+
+    }
+
+    "Return an empty ats list when received a not found response from connector" in {
+
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
+
+      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+        .successful(AtsNotFoundResponse("Not found"))
+
+      whenReady(sut.createModel) { result =>
+        result shouldBe Right(AtsList.empty)
+      }
+
+    }
+
+    "Return the error status ats list when received an error response from connector" in {
+
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
+
+      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+        .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
+
+      whenReady(sut.createModel) { result =>
+        result shouldBe Left(INTERNAL_SERVER_ERROR)
+      }
+
     }
   }
 

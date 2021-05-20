@@ -83,11 +83,7 @@ class AtsMergePageController @Inject()(
 
   }
 
-  def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>
-    onSubmit(request)
-  }
-
-  private def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
+  def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
     atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         getSaAndPayeYearList(Some(formWithErrors))(request)
@@ -97,12 +93,15 @@ class AtsMergePageController @Inject()(
         redirectWithYear(year.toInt, atsType)
       }
     )
+  }
 
   private def redirectWithYear(taxYear: Int, atsType: String)(
     implicit request: AuthenticatedRequest[_]): Future[Result] =
     atsType match {
 
-      case "sa"   => Future.successful(Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYear))
+      case "sa" =>
+        Future.successful(
+          Redirect(controllers.routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYear))
       case "paye" => Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYear)))
       case _      => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
     }

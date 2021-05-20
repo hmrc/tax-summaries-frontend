@@ -17,6 +17,7 @@
 package services
 
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -31,26 +32,14 @@ import utils.AuditTypes
 import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: AuditService)(
-  implicit ec: ExecutionContext) {
+  implicit ec: ExecutionContext)
+    extends LazyLogging {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(
     implicit hc: HeaderCarrier,
     request: PayeAuthenticatedRequest[_]): Future[Either[HttpResponse, PayeAtsData]] =
     middleConnector.connectToPayeATS(nino, taxYear) map { response =>
       handleConnectorResponse[PayeAtsData](response, nino, taxYear)
-    } recover {
-      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
-      case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
-      case e: Exception =>
-        Logger.error(s"Exception in PayeAtsService: $e", e)
-        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
-    }
-
-  def getPayeATSMultipleYearData(nino: Nino, yearFrom: Int, yearTo: Int)(
-    implicit hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Future[Either[HttpResponse, List[PayeAtsData]]] =
-    middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo) map { response =>
-      handleConnectorResponse[List[PayeAtsData]](response, nino, yearFrom)
     } recover {
       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
       case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
@@ -82,8 +71,10 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
         val res = response.json.as[List[PayeAtsData]]
         Right(res.map(_.taxYear).reverse)
       case NOT_FOUND => Right(List.empty)
-      case _ =>
+      case _ => {
+        logger.error(s"Error received, Http status: ${response.status}")
         Left(response)
+      }
     }
 
   private def sendAuditEventForPayeTaxYearData(nino: Nino, taxYear: Int)(
@@ -105,8 +96,10 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       case OK =>
         sendAuditEvent(nino, taxYear)
         Right(response.json.as[A])
-      case _ =>
+      case _ => {
+        logger.error(s"Error received, Http status: ${response.status}")
         Left(response)
+      }
     }
 
   private def sendAuditEvent(nino: Nino, taxYear: Int)(
