@@ -29,8 +29,8 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.partials.FormPartialRetriever
-import utils.MockTemplateRenderer
-import utils.TestConstants.testUtr
+import utils.{MockPartialRetriever, MockTemplateRenderer}
+import utils.TestConstants.{testNino, testUtr}
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 
@@ -56,13 +56,14 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
   implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
-  implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
+  implicit lazy val formPartialRetriever = MockPartialRetriever
   implicit lazy val templateRenderer = MockTemplateRenderer
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]
   lazy val genericErrorView = inject[GenericErrorView]
+  lazy val atsMergePageView = inject[AtsMergePageView]
   lazy val tokenErrorView = inject[TokenErrorView]
   lazy val taxsMainView = inject[TaxsMainView]
   lazy val capitalGainsView = inject[CapitalGainsView]
@@ -81,7 +82,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     "userId",
     None,
     Some(SaUtr(testUtr)),
-    None,
+    Some(testNino),
     true,
     ConfidenceLevel.L50,
     fakeCredentials,
