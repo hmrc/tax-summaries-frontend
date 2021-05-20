@@ -46,9 +46,12 @@
     appConfig: ApplicationConfig
 )
 
-
+@titleText = @{
+if(atsMergePageViewModel.showContinueButton) messages("merge.page.ats.select_tax_year.title")
+else ""
+}
 @main(
-        title = Messages("merge.page.ats.select_tax_year.title"),
+        title = messages("merge.page.ats.select_tax_year.title"),
         actingAttorney = actingAsAttorney,
         articleClasses = Some("full-width selectYear")
 
@@ -68,7 +71,7 @@
 
         @form(action = controllers.routes.AtsMergePageController.onSubmit){
 
-        <h1 class="heading-xlarge">@messages("merge.page.ats.select_tax_year.title")</h1>
+        <h1 class="heading-xlarge">@titleText</h1>
 
         @saMergePageView(atsMergePageViewModel,
         atsYearForm)
