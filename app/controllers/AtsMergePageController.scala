@@ -21,7 +21,7 @@ import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, MergePageAuthAction}
 import controllers.paye.routes.PayeAtsMainController
-import models.AtsListData
+import models.{AtsListData, AtsType, AtsYearChoice}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -56,7 +56,7 @@ class AtsMergePageController @Inject()(
     else getSaAndPayeYearList()(request)
 
   }
-  private def getSaAndPayeYearList(formWithErrors: Option[Form[TaxYearEnd]] = None)(
+  private def getSaAndPayeYearList(formWithErrors: Option[Form[AtsYearChoice]] = None)(
     implicit request: AuthenticatedRequest[_]) = {
     val session = request
       .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
@@ -89,21 +89,21 @@ class AtsMergePageController @Inject()(
         getSaAndPayeYearList(Some(formWithErrors))(request)
       },
       value => {
-        val (year, atsType) = value.year.get.splitAt(4)
-        redirectWithYear(year.toInt, atsType)
+        redirectWithYear(value)
       }
     )
   }
 
-  private def redirectWithYear(taxYear: Int, atsType: String)(
+  private def redirectWithYear(taxYearChoice: AtsYearChoice)(
     implicit request: AuthenticatedRequest[_]): Future[Result] =
-    atsType match {
+    taxYearChoice.atsType match {
 
-      case "sa" =>
+      case AtsType.SA =>
         Future.successful(
-          Redirect(controllers.routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYear))
-      case "paye" => Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYear)))
-      case _      => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
+          Redirect(controllers.routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYearChoice.year))
+      case AtsType.PAYE =>
+        Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year)))
+      case _ => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
     }
 
 }

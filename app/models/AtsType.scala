@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package view_models
+package models
 
-import models.AtsYearChoice
-import play.api.data.Form
-import play.api.data.Forms._
+sealed abstract class AtsType(val name: String)
+object AtsType {
 
-object AtsForms {
+  def getByName(name: String): AtsType = name match {
+    case "SA"    => SA
+    case "PAYE"  => PAYE
+    case "NoATS" => NoATS
+  }
 
-  val yearChoice = "year"
-
-  val atsYearFormMapping: Form[AtsYearChoice] = Form(
-    mapping(yearChoice -> (text).verifying("ats.select_tax_year.required", { !_.isEmpty }))(AtsYearChoice.fromString)(
-      AtsYearChoice.toOptionString)
-  )
+  case object SA extends AtsType("SA")
+  case object PAYE extends AtsType("PAYE")
+  case object NoATS extends AtsType("NoATS")
 }

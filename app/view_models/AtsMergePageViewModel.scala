@@ -18,6 +18,7 @@ package view_models
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
+import models.{AtsType, AtsYearChoice}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], appConfig: ApplicationConfig)(
@@ -42,5 +43,11 @@ case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], ap
   val showIvUpliftLink = showPayeYearList && (request.confidenceLevel.compare(ConfidenceLevel.L200) < 0)
 
   val showContinueButton = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
+
+  val saDataYearChoiceList = saData.getDescendingYearList.map(year => AtsYearChoice(AtsType.SA, year))
+
+  val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(AtsType.PAYE, year))
+
+  val noAtsYearChoiceList = noAtsYearListAvailable.map(year => AtsYearChoice(AtsType.NoATS, year))
 
 }

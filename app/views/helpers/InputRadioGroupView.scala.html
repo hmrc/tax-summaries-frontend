@@ -17,9 +17,10 @@
 @import play.api.i18n._
 @import views.html.helper._
 @import play.twirl.api.Html
+@import models.AtsYearChoice
 
 @this()
-@(field: Field, radioOptions: Seq[(String, String)], args: (Symbol, Any)*)(implicit messages: Messages)
+@(field: Field, radioOptions: Seq[(AtsYearChoice, String)], args: (Symbol, Any)*)(implicit messages: Messages)
 
 @elements = @{new FieldElements(field.id, field, null, args.toMap, messages) }
 @fieldsetClass = {@elements.args.get('_groupClass)@if(elements.hasErrors){ form-field--error}}
@@ -53,14 +54,14 @@
     }
 
     @radioOptions.map { case (value, label) =>
-        @defining(s"${elements.field.name}-${value.toLowerCase.replace(" ","_")}")  { inputId =>
+        @defining(s"${elements.field.name}-${value.year}-${value.atsType}")  { inputId =>
             <div class="multiple-choice">
 
              <input
                      type="radio"
                      id="@inputId"
                      name="@elements.field.name"
-                     value="@value"
+                     value="@{AtsYearChoice.toString(value)}"
                      @elements.args.get('_inputClass).map{inputClass => class="@inputClass"}
              @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
              @field.value.filter( _ == value).map{_ => checked="checked"}/>

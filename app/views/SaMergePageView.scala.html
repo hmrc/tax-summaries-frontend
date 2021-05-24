@@ -25,7 +25,7 @@
 @this(inputRadioGroupView: InputRadioGroupView)
 
 @(  atsMergePageViewModel: AtsMergePageViewModel,
-    atsYearForm: Form[view_models.TaxYearEnd]
+    atsYearForm: Form[models.AtsYearChoice]
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
@@ -46,7 +46,7 @@ s"<h2 class='heading-medium'>${messages("merge.page.sa.text")}</h2>"
      @if(atsMergePageViewModel.showSaYearList){
         @inputRadioGroupView(
          atsYearForm(AtsForms.yearChoice),
-         atsMergePageViewModel.saData.getDescendingYearList.map(year => year.toString + "sa" -> messages("ats.select_tax_year.label", (year - 1).toString, year.toString)),
+         atsMergePageViewModel.saDataYearChoiceList.map(yearChoice => yearChoice -> messages("ats.select_tax_year.label", (yearChoice.year-1).toString, s"${yearChoice.year}")),
          '_fieldSetAttributes -> "id=year_field",
          '_additionalHtml -> additionalContent,
          '_headingClass -> "heading-48"
