@@ -22,7 +22,7 @@ import utils.GenericViewModel
 
 case class AtsList(utr: String, forename: String, surname: String, yearList: List[Int]) extends GenericViewModel {
   def getDescendingYearList = yearList.reverse
-  val showSaYearList = !yearList.isEmpty
+  val showSaYearList = yearList.nonEmpty
 }
 
 object AtsList {

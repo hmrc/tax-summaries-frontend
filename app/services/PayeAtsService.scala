@@ -67,7 +67,6 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
     request: AuthenticatedRequest[_]): Either[HttpResponse, List[Int]] =
     response.status match {
       case OK =>
-        sendAuditEventForPayeTaxYearData(nino, taxYear)
         val res = response.json.as[List[PayeAtsData]]
         Right(res.map(_.taxYear).reverse)
       case NOT_FOUND => Right(List.empty)
@@ -76,17 +75,6 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
         Left(response)
       }
     }
-
-  private def sendAuditEventForPayeTaxYearData(nino: Nino, taxYear: Int)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[AuditResult] =
-    auditService.sendEvent(
-      auditType = AuditTypes.Tx_SUCCEEDED,
-      details = Map(
-        "userNino" -> nino.nino,
-        "taxYear"  -> taxYear.toString
-      )
-    )
 
   private def handleConnectorResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(
     implicit reads: Reads[A],

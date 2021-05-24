@@ -36,7 +36,7 @@ class MergePageAuthActionImpl @Inject()(
     extends MergePageAuthAction with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
-  override protected val executionContext: ExecutionContext = cc.executionContext
+  override protected val executionContext: ExecutionContext = ec
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier =

@@ -174,21 +174,6 @@ class PayeAtsServiceSpec
 
       result shouldBe Right(List.empty)
     }
-
-    "produce a 'success' audit event when returning a successful response" in {
-      when(
-        mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]())))
-
-      sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
-
-      verify(mockAuditService, times(1)).sendEvent(
-        eqTo("TxSuccessful"),
-        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYearMinus1.toString)),
-        any[Option[String]]
-      )(any[Request[_]], any[HeaderCarrier])
-    }
   }
 
 }
