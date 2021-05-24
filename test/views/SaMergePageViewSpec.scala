@@ -18,6 +18,7 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
+import models.AtsYearChoice
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.data.Form
@@ -48,7 +49,7 @@ class SaMergePageViewSpec extends ViewSpecBase with TestConstants {
 
   lazy val saMergePageView = inject[SaMergePageView]
 
-  def view(model: AtsMergePageViewModel, form: Form[view_models.TaxYearEnd]): String =
+  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
     saMergePageView(model, form).body
 
   when(appConfig.saShuttered).thenReturn(false)

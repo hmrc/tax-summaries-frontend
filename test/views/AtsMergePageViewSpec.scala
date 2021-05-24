@@ -17,6 +17,7 @@
 package views
 
 import controllers.auth.AuthenticatedRequest
+import models.AtsYearChoice
 import play.api.data.Form
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -24,7 +25,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import utils.TestConstants
 import view_models.AtsForms.atsYearFormMapping
 import view_models.{AtsList, AtsMergePageViewModel}
-import views.html.{AtsMergePageView, NoAtsMergePageView}
+import views.html.{AtsMergePageView}
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants {
 
@@ -42,7 +43,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants {
 
   lazy val atsMergePageView = inject[AtsMergePageView]
 
-  def view(model: AtsMergePageViewModel, form: Form[view_models.TaxYearEnd]): String =
+  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
     atsMergePageView(model, form).body
 
   "view" should {

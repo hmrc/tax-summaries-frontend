@@ -18,6 +18,7 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
+import models.AtsYearChoice
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar._
 import play.api.data.Form
@@ -27,7 +28,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import utils.TestConstants
 import view_models.AtsForms.atsYearFormMapping
 import view_models.{AtsList, AtsMergePageViewModel}
-import views.html.{PayeMergePageView}
+import views.html.PayeMergePageView
 
 class PayeMergePageViewSpec extends ViewSpecBase with TestConstants {
 
@@ -56,8 +57,7 @@ class PayeMergePageViewSpec extends ViewSpecBase with TestConstants {
 
   lazy val payeMergePageView = inject[PayeMergePageView]
 
-  def view(model: AtsMergePageViewModel, form: Form[view_models.TaxYearEnd])(
-    implicit request: AuthenticatedRequest[_]): String =
+  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
     payeMergePageView(model, form).body
 
   when(appConfig.payeShuttered).thenReturn(false)

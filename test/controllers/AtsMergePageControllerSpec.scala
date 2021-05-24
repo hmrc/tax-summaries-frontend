@@ -18,6 +18,7 @@ package controllers
 
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
+import models.{AtsType, AtsYearChoice}
 import org.jsoup.Jsoup
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, when}
@@ -136,7 +137,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
 
-      val form = atsYearFormMapping.bind(Map("year" -> "2019sa"))
+      val form = atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"SA\",\"year\":2019}"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -160,7 +161,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
 
-      val form = atsYearFormMapping.bind(Map("year" -> "2019paye"))
+      val form = atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"PAYE\",\"year\":2019}"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -182,7 +183,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
 
-      val form = atsYearFormMapping.bind(Map("year" -> "2019"))
+      val form = atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2019}"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
