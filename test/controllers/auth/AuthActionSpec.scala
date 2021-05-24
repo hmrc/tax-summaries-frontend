@@ -117,7 +117,7 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
         : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("") ~ Some(fakeCredentials) ~ Some("") ~ ConfidenceLevel.L50
+            Some("") ~ Some(fakeCredentials) ~ None ~ ConfidenceLevel.L50
         )
 
       when(
