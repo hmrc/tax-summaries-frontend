@@ -89,21 +89,18 @@ class AtsMergePageController @Inject()(
         getSaAndPayeYearList(Some(formWithErrors))(request)
       },
       value => {
-        redirectWithYear(value)
+        Future.successful(redirectWithYear(value))
       }
     )
   }
 
-  private def redirectWithYear(taxYearChoice: AtsYearChoice)(
-    implicit request: AuthenticatedRequest[_]): Future[Result] =
+  private def redirectWithYear(taxYearChoice: AtsYearChoice)(implicit request: AuthenticatedRequest[_]): Result =
     taxYearChoice.atsType match {
-
       case SA =>
-        Future.successful(
-          Redirect(controllers.routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYearChoice.year))
+        Redirect(controllers.routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYearChoice.year)
       case PAYE =>
-        Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year)))
-      case _ => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
+        Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year))
+      case _ => Redirect(controllers.routes.ErrorController.authorisedNoAts())
     }
 
 }

@@ -132,7 +132,7 @@ class AtsMergePageServiceSpec
             .thenReturn(Right(payeDataResponse))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result shouldBe Left(INTERNAL_SERVER_ERROR)
+          result.left.get.status shouldBe INTERNAL_SERVER_ERROR
         }
 
         "saData returns success and paye returns error response" in {
@@ -142,7 +142,7 @@ class AtsMergePageServiceSpec
             .thenReturn(Left(HttpResponse(BAD_GATEWAY, "bad gateway")))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result shouldBe Left(INTERNAL_SERVER_ERROR)
+          result.left.get.status shouldBe INTERNAL_SERVER_ERROR
         }
 
         "saData and paye both return error response" in {
@@ -152,7 +152,7 @@ class AtsMergePageServiceSpec
             .thenReturn(Left(HttpResponse(BAD_GATEWAY, "bad gateway")))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result shouldBe Left(INTERNAL_SERVER_ERROR)
+          result.left.get.status shouldBe INTERNAL_SERVER_ERROR
         }
       }
 

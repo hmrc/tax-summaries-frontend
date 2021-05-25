@@ -55,7 +55,7 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       handlePayeTaxYearDataResponse[List[PayeAtsData]](response)
     } recover {
       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
-      case e: NotFoundException   => Right(List.empty)
+      case _: NotFoundException   => Right(List.empty)
       case e: Exception =>
         Logger.error(s"Exception in PayeAtsService: $e", e)
         Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))

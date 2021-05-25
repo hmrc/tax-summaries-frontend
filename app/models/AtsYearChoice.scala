@@ -36,7 +36,11 @@ object AtsYearChoice {
 
   def fromString(value: String): AtsYearChoice = {
     val json = Json.parse(value)
-    Json.fromJson[AtsYearChoice](json).get
+    Json
+      .fromJson[AtsYearChoice](json)
+      .getOrElse(
+        throw new Exception(s"Could not parse json $value to AtsYearChoice")
+      )
   }
 
   def toOptionString(choice: AtsYearChoice): Option[String] = Some(Json.stringify(Json.toJson(choice)))

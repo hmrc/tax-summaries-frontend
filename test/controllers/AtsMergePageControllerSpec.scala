@@ -29,6 +29,7 @@ import play.api.test.Helpers.{contentAsString, _}
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HttpResponse
 import utils.TestConstants.{testNino, testUtr}
 import view_models.AtsForms.atsYearFormMapping
 import view_models.{AtsList, AtsMergePageViewModel}
@@ -120,7 +121,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
     "redirect to genericErrorView page if service returns an error" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Left(BAD_GATEWAY))
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Left(HttpResponse(BAD_GATEWAY)))
 
       val result = Future.successful(sut.onPageLoad(authRequest))
 
