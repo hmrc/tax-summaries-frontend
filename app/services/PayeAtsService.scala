@@ -52,7 +52,7 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] =
     middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo) map { response =>
-      handlePayeTaxYearDataResponse[List[PayeAtsData]](response, nino, yearFrom)
+      handlePayeTaxYearDataResponse[List[PayeAtsData]](response)
     } recover {
       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
       case e: NotFoundException   => Right(List.empty)
@@ -61,7 +61,7 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
         Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
     }
 
-  private def handlePayeTaxYearDataResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(
+  private def handlePayeTaxYearDataResponse[A](response: HttpResponse)(
     implicit reads: Reads[List[PayeAtsData]],
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Either[HttpResponse, List[Int]] =
@@ -69,7 +69,6 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       case OK =>
         val res = response.json.as[List[PayeAtsData]]
         Right(res.map(_.taxYear).reverse)
-      case NOT_FOUND => Right(List.empty)
       case _ => {
         logger.error(s"Error received, Http status: ${response.status}")
         Left(response)

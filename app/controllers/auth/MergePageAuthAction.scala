@@ -42,7 +42,7 @@ class MergePageAuthActionImpl @Inject()(
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised(ConfidenceLevel.L50 or (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")) or AuthNino(hasNino = true))
+    authorised(ConfidenceLevel.L50)
       .retrieve(
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel => {

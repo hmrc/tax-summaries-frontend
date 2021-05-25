@@ -30,10 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AtsMergePageService @Inject()(
   dataCacheConnector: DataCacheConnector,
   payeAtsService: PayeAtsService,
-  atsListService: AtsListService,
   atsYearListService: AtsYearListService,
-  appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
-    extends AccountUtils {
+  appConfig: ApplicationConfig)(implicit ec: ExecutionContext) {
 
   def getSaAndPayeYearList(
     implicit hc: HeaderCarrier,

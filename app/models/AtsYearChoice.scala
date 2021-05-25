@@ -26,11 +26,11 @@ object AtsYearChoice {
 
   implicit val writes = new Writes[AtsYearChoice] {
     override def writes(o: AtsYearChoice): JsValue =
-      Json.obj("atsType" -> JsString(o.atsType.name), "year" -> o.year)
+      Json.obj("atsType" -> o.atsType, "year" -> o.year)
   }
 
   implicit val reads: Reads[AtsYearChoice] = (
-    (JsPath \ "atsType").read[String].map(AtsType.getByName) and
+    (JsPath \ "atsType").read[AtsType] and
       (JsPath \ "year").read[Int]
   )(AtsYearChoice.apply _)
 

@@ -21,7 +21,7 @@ import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.{AuthenticatedRequest, MergePageAuthAction}
 import controllers.paye.routes.PayeAtsMainController
-import models.{AtsListData, AtsType, AtsYearChoice}
+import models.{AtsListData, AtsType, AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -53,9 +53,9 @@ class AtsMergePageController @Inject()(
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
     if (appConfig.saShuttered && appConfig.payeShuttered)
       Future.successful(Redirect(routes.ErrorController.serviceUnavailable().url))
-    else getSaAndPayeYearList()(request)
-
+    else getSaAndPayeYearList()
   }
+
   private def getSaAndPayeYearList(formWithErrors: Option[Form[AtsYearChoice]] = None)(
     implicit request: AuthenticatedRequest[_]) = {
     val session = request
@@ -98,10 +98,10 @@ class AtsMergePageController @Inject()(
     implicit request: AuthenticatedRequest[_]): Future[Result] =
     taxYearChoice.atsType match {
 
-      case AtsType.SA =>
+      case SA =>
         Future.successful(
           Redirect(controllers.routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + taxYearChoice.year))
-      case AtsType.PAYE =>
+      case PAYE =>
         Future.successful(Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year)))
       case _ => Future.successful(Redirect(controllers.routes.ErrorController.authorisedNoAts()))
     }

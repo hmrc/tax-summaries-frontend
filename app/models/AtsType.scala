@@ -16,16 +16,30 @@
 
 package models
 
-sealed abstract class AtsType(val name: String)
+import play.api.libs.json.{JsResult, JsString, JsSuccess, JsValue, Reads, Writes}
+
+sealed abstract class AtsType
 object AtsType {
 
-  def getByName(name: String): AtsType = name match {
-    case "SA"    => SA
-    case "PAYE"  => PAYE
-    case "NoATS" => NoATS
+  implicit val writes = new Writes[AtsType] {
+    override def writes(o: AtsType): JsValue =
+      o match {
+        case SA   => JsString("SA")
+        case PAYE => JsString("PAYE")
+        case _    => JsString("NoATS")
+      }
   }
 
-  case object SA extends AtsType("SA")
-  case object PAYE extends AtsType("PAYE")
-  case object NoATS extends AtsType("NoATS")
+  implicit val reads = new Reads[AtsType] {
+    override def reads(json: JsValue): JsResult[AtsType] =
+      json match {
+        case JsString("SA")   => JsSuccess(SA)
+        case JsString("PAYE") => JsSuccess(PAYE)
+        case _                => JsSuccess(NoATS)
+      }
+  }
 }
+
+case object SA extends AtsType
+case object PAYE extends AtsType
+case object NoATS extends AtsType

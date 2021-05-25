@@ -78,12 +78,7 @@ class AtsMergePageServiceSpec
   )
 
   def sut =
-    new AtsMergePageService(
-      mockDataCacheConnector,
-      mockPayeAtsService,
-      mockAtsListService,
-      mockAtsYearListService,
-      appConfig)
+    new AtsMergePageService(mockDataCacheConnector, mockPayeAtsService, mockAtsYearListService, appConfig)
 
   val saDataResponse: AtsList = AtsList(
     utr = testUtr,
