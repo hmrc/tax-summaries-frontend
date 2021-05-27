@@ -50,4 +50,7 @@ case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], ap
 
   val noAtsYearChoiceList = noAtsYearListAvailable.map(year => AtsYearChoice(NoATS, year))
 
+  val completeYearList =
+    (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
+
 }

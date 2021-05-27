@@ -29,10 +29,7 @@
     main: main,
     headerSection: HeaderSection,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
-    inputRadioGroupView: InputRadioGroupView,
-    saMergePageView: SaMergePageView,
-    payeMergePageView: PayeMergePageView,
-    noAtsMergePageView: NoAtsMergePageView
+    inputRadioGroupView: InputRadioGroupView
 )
 
 @(  atsMergePageViewModel: AtsMergePageViewModel,
@@ -50,6 +47,18 @@
 if(atsMergePageViewModel.showContinueButton) messages("merge.page.ats.select_tax_year.title")
 else ""
 }
+
+@subTitleText = @{
+if(atsMergePageViewModel.showContinueButton) messages("generic.ats")
+else ""
+}
+
+@pastAtsParagraph =  @{
+if(atsMergePageViewModel.showNoAtsText){
+s"<p class='gray' id='no-ats-before-2019'>${Messages("merge.page.no.ats.summary.unavailable.text")}<p><p class='gray' id='generic-no-ats'>${messages("merge.page.no.ats.summary.text")}<p>"
+    }else{s"<p class='gray' id='generic-no-ats'>${messages("merge.page.no.ats.summary.text")}<p>"}
+    }
+
 @main(
         title = messages("merge.page.ats.select_tax_year.title"),
         actingAttorney = actingAsAttorney,
@@ -70,17 +79,45 @@ else ""
         @errorSummaryTemplateView(atsYearForm)
 
         @form(action = controllers.routes.AtsMergePageController.onSubmit){
+        <h1 id="index-page-header" class="heading-xlarge">
+                <span class="gray heading-medium block-heading">
+                    @subTitleText
+                </span>
+            @titleText
+        </h1>
 
-        <h1 class="heading-xlarge">@titleText</h1>
+        @if(atsMergePageViewModel.showNoAtsYearList){@Html(pastAtsParagraph)}
 
-        @saMergePageView(atsMergePageViewModel,
-        atsYearForm)
 
-        @payeMergePageView(atsMergePageViewModel,
-         atsYearForm)
+        @inputRadioGroupView(
+        atsYearForm(AtsForms.yearChoice),
+        atsMergePageViewModel.completeYearList.map(
+        yearChoice =>
+        yearChoice.atsType match{
+        case SA => yearChoice -> messages("ats.select_tax_year.sa.label", (yearChoice.year-1).toString, s"${yearChoice.year}")
+        case PAYE => yearChoice -> messages("ats.select_tax_year.paye.label", (yearChoice.year-1).toString, s"${yearChoice.year}")
+        case _ => yearChoice -> messages("ats.select_tax_year.no_ats.label", (yearChoice.year-1).toString, s"${yearChoice.year}")
+        }
+        ),
+        '_fieldSetAttributes -> "id=year_field",
+        '_headingClass -> "heading-48"
+        )
 
-        @noAtsMergePageView(atsMergePageViewModel, atsYearForm)
+        @if(appConfig.saShuttered){
+<p id="sa-unavailable">@messages("merge.page.sa.unavailable")</p>
 
+}
+@if(appConfig.payeShuttered){
+
+<p id="paye-unavailable">@messages("merge.page.paye.unavailable")</p>
+
+
+}else if(atsMergePageViewModel.showIvUpliftLink){
+<p id="paye-uplift">@messages("merge.page.paye.ivuplift.text")
+    <a id="ivUplift-link" href="@controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel">
+        @messages("merge.page.paye.ivuplift.link.text")</a></p>
+
+}
 
         @if(atsMergePageViewModel.showContinueButton){
         <div class="form-field">
