@@ -24,33 +24,30 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], appConfig: ApplicationConfig)(
   implicit request: AuthenticatedRequest[_]) {
 
+  private val saAndPayeTaxYearList = saData.yearList ::: payeTaxYearList
+
+  private val totalTaxYearList = ((appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) to appConfig.taxYear).toList
+
+  private val saDataYearChoiceList = saData.getDescendingYearList.map(year => AtsYearChoice(SA, year))
+
+  private val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(PAYE, year))
+
+  private val noAtsYearChoiceList =
+    totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).map(year => AtsYearChoice(NoATS, year))
+
   val showSaYearList: Boolean = saData.yearList.nonEmpty
 
   val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
 
-  val saAndPayeTaxYearList = saData.yearList ::: payeTaxYearList
+  val showNoAtsText: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ < 2019).nonEmpty
 
-  val totalTaxYearList = ((appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) to appConfig.taxYear).toList
+  val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).nonEmpty
 
-  val noAtsTaxYearList = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet)
+  val showIvUpliftLink: Boolean = showPayeYearList && (request.confidenceLevel.compare(ConfidenceLevel.L200) < 0)
 
-  val showNoAtsText = noAtsTaxYearList.filter(_ < 2019).nonEmpty
+  val showContinueButton: Boolean = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
 
-  val noAtsYearListAvailable = noAtsTaxYearList.filter(_ >= 2019)
-
-  val showNoAtsYearList = noAtsYearListAvailable.nonEmpty
-
-  val showIvUpliftLink = showPayeYearList && (request.confidenceLevel.compare(ConfidenceLevel.L200) < 0)
-
-  val showContinueButton = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
-
-  val saDataYearChoiceList = saData.getDescendingYearList.map(year => AtsYearChoice(SA, year))
-
-  val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(PAYE, year))
-
-  val noAtsYearChoiceList = noAtsYearListAvailable.map(year => AtsYearChoice(NoATS, year))
-
-  val completeYearList =
+  val completeYearList: List[AtsYearChoice] =
     (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
 
 }

@@ -95,7 +95,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
 
-      val result = Future.successful(sut.onPageLoad(agentRequest))
+      val result = sut.onPageLoad(agentRequest)
 
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
@@ -113,7 +113,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
 
-      val result = Future.successful(sut.onPageLoad(authRequest))
+      val result = sut.onPageLoad(authRequest)
 
       status(result) shouldBe 303
       redirectLocation(result).get shouldBe (controllers.routes.ErrorController.serviceUnavailable().url)
@@ -123,7 +123,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Left(HttpResponse(BAD_GATEWAY)))
 
-      val result = Future.successful(sut.onPageLoad(authRequest))
+      val result = sut.onPageLoad(authRequest)
 
       status(result) shouldBe 500
       val document = contentAsString(result)
@@ -149,7 +149,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
 
-      val result = Future.successful(sut.onSubmit(requestWithQuery))
+      val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result).get shouldBe (routes.AtsMainController
@@ -173,7 +173,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
 
-      val result = Future.successful(sut.onSubmit(requestWithQuery))
+      val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result).get shouldBe (paye.routes.PayeAtsMainController.show(2019)).toString
@@ -195,7 +195,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
 
-      val result = Future.successful(sut.onSubmit(requestWithQuery))
+      val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts()).toString
@@ -217,7 +217,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
 
-      val result = Future.successful(sut.onSubmit(requestWithQuery))
+      val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))

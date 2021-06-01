@@ -24,15 +24,7 @@ case class AtsYearChoice(atsType: AtsType, year: Int)
 
 object AtsYearChoice {
 
-  implicit val writes = new Writes[AtsYearChoice] {
-    override def writes(o: AtsYearChoice): JsValue =
-      Json.obj("atsType" -> o.atsType, "year" -> o.year)
-  }
-
-  implicit val reads: Reads[AtsYearChoice] = (
-    (JsPath \ "atsType").read[AtsType] and
-      (JsPath \ "year").read[Int]
-  )(AtsYearChoice.apply _)
+  implicit val formats = Json.format[AtsYearChoice]
 
   def fromString(value: String): AtsYearChoice = {
     val json = Json.parse(value)

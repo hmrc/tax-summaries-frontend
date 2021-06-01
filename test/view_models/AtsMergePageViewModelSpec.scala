@@ -62,25 +62,6 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
       model.showPayeYearList shouldBe false
     }
 
-    "fill noAtsTaxYearList with the last 5 years if there is no paye or ats data " in {
-      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)
-      model.noAtsTaxYearList shouldBe List(2015, 2016, 2017, 2018, 2019, 2020)
-    }
-
-    "noAtsTaxYearList should not contain data present in saData" in {
-      val saYear = 2015
-      val model = AtsMergePageViewModel(AtsList("", "", "", List(saYear)), List.empty, appConfig)
-      model.noAtsTaxYearList shouldBe List(2016, 2017, 2018, 2019, 2020)
-      model.noAtsTaxYearList shouldNot contain(saYear)
-    }
-
-    "noAtsTaxYearList should not contain data present in payeList" in {
-      val payeYear = 2015
-      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(payeYear), appConfig)
-      model.noAtsTaxYearList shouldBe List(2016, 2017, 2018, 2019, 2020)
-      model.noAtsTaxYearList shouldNot contain(payeYear)
-    }
-
     "set showNoAts to true if not all years from 2018 are present in sa or paye data" in {
       val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)
       model.showNoAtsText shouldBe true
@@ -89,11 +70,6 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
     "set showNoAts to false if all years from 2018 are present in sa or paye data" in {
       val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2018, 2019, 2020), appConfig)
       model.showNoAtsText shouldBe true
-    }
-
-    "noAtsYearListAvailable should only return years past 2018 if no sa or paye data present" in {
-      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)
-      model.noAtsYearListAvailable shouldBe List(2019, 2020)
     }
 
     "set showIvUpliftLink to true if paye data is present and confidence level is below 200" in {

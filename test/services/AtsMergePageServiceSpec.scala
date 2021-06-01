@@ -52,7 +52,6 @@ class AtsMergePageServiceSpec
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAtsListService: AtsListService = mock[AtsListService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   override def beforeEach() =
@@ -78,7 +77,7 @@ class AtsMergePageServiceSpec
   )
 
   def sut =
-    new AtsMergePageService(mockDataCacheConnector, mockPayeAtsService, mockAtsYearListService, appConfig)
+    new AtsMergePageService(mockDataCacheConnector, mockPayeAtsService, mockAtsListService, appConfig)
 
   val saDataResponse: AtsList = AtsList(
     utr = testUtr,
@@ -111,7 +110,7 @@ class AtsMergePageServiceSpec
 
         "saData and payeData is successfully received" in {
 
-          when(mockAtsYearListService.getAtsListData).thenReturn(Right(saDataResponse))
+          when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Right(payeDataResponse))
 
@@ -127,7 +126,7 @@ class AtsMergePageServiceSpec
 
         "saData returns error and paye returns success response" in {
 
-          when(mockAtsYearListService.getAtsListData).thenReturn(Left(BAD_GATEWAY))
+          when(mockAtsListService.createModel).thenReturn(Left(BAD_GATEWAY))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Right(payeDataResponse))
 
@@ -137,7 +136,7 @@ class AtsMergePageServiceSpec
 
         "saData returns success and paye returns error response" in {
 
-          when(mockAtsYearListService.getAtsListData).thenReturn(Right(saDataResponse))
+          when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Left(HttpResponse(BAD_GATEWAY, "bad gateway")))
 
@@ -147,7 +146,7 @@ class AtsMergePageServiceSpec
 
         "saData and paye both return error response" in {
 
-          when(mockAtsYearListService.getAtsListData).thenReturn(Left(BAD_GATEWAY))
+          when(mockAtsListService.createModel).thenReturn(Left(BAD_GATEWAY))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Left(HttpResponse(BAD_GATEWAY, "bad gateway")))
 

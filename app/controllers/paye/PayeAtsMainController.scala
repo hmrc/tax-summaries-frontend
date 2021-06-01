@@ -64,16 +64,4 @@ class PayeAtsMainController @Inject()(
         }
     }
 
-  def upliftConfidenceLevel: Action[AnyContent] = Action.async {
-    Future.successful(
-      Redirect(
-        appConfig.identityVerificationUpliftUrl,
-        Map(
-          "origin"          -> Seq(appConfig.appName),
-          "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-          "completionURL"   -> Seq(appConfig.loginCallback),
-          "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
-        )
-      ))
-  }
 }

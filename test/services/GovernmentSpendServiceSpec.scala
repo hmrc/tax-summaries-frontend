@@ -54,7 +54,6 @@ class GovernmentSpendServiceSpec
   val taxYear = 2015
 
   val mockAtsService = mock[AtsService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
@@ -72,7 +71,7 @@ class GovernmentSpendServiceSpec
     fakeCredentials,
     FakeRequest("GET", "?taxYear=2015"))
 
-  def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService, mockMiddleConnector) with MockitoSugar
+  def sut = new GovernmentSpendService(mockAtsService, mockMiddleConnector) with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" should {
 

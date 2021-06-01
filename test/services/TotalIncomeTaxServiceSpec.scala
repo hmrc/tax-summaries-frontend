@@ -49,9 +49,8 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
   implicit val hc = HeaderCarrier()
 
   val mockAtsService = mock[AtsService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
 
-  def sut = new TotalIncomeTaxService(mockAtsService, mockAtsYearListService) with MockitoSugar {
+  def sut = new TotalIncomeTaxService(mockAtsService) with MockitoSugar {
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
   }

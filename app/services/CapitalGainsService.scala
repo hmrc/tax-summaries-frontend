@@ -25,7 +25,7 @@ import view_models.CapitalGains
 
 import scala.concurrent.Future
 
-class CapitalGainsService @Inject()(atsService: AtsService, atsYearListService: AtsYearListService) {
+class CapitalGainsService @Inject()(atsService: AtsService) {
 
   def getCapitalGains(
     taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =

@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AtsMergePageService @Inject()(
   dataCacheConnector: DataCacheConnector,
   payeAtsService: PayeAtsService,
-  atsYearListService: AtsYearListService,
+  atsListService: AtsListService,
   appConfig: ApplicationConfig)(implicit ec: ExecutionContext) {
 
   def getSaAndPayeYearList(
@@ -70,7 +70,7 @@ class AtsMergePageService @Inject()(
         }
       }
     }
-    atsYearListService.getAtsListData
+    atsListService.createModel
   }
 
   private def getPayeAtsYearList(
