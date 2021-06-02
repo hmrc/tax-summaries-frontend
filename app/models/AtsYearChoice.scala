@@ -16,11 +16,16 @@
 
 package models
 
-import play.api.libs.json.{JsPath, JsString, JsValue, Json, Reads, Writes}
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
+import play.api.i18n.{Messages}
+import play.api.libs.json.Json
 
-case class AtsYearChoice(atsType: AtsType, year: Int)
+case class AtsYearChoice(atsType: AtsType, year: Int) {
+  def getLabel(implicit messages: Messages) = atsType match {
+    case SA   => messages("ats.select_tax_year.sa.label", (year - 1).toString, s"$year")
+    case PAYE => messages("ats.select_tax_year.paye.label", (year - 1).toString, s"$year")
+    case _    => messages("ats.select_tax_year.no_ats.label", (year - 1).toString, s"$year")
+  }
+}
 
 object AtsYearChoice {
 

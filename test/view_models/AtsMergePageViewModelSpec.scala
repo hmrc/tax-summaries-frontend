@@ -82,6 +82,11 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
       model.showIvUpliftLink shouldBe true
     }
 
+    "set showIvUpliftLink to false if paye data is not present and confidence level is below 200" in {
+      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)
+      model.showIvUpliftLink shouldBe false
+    }
+
     "set showIvUpliftLink to false if paye data is present and confidence level is 200" in {
       val req = AuthenticatedRequest(
         "userId",

@@ -96,32 +96,34 @@ class AtsMergePageServiceSpec
 
     "getSaAndPayeYearList is called" must {
 
-//      "call data cache connector" when {
-//
-//        "user is an agent" in {
-//          implicit val request =
-//            AuthenticatedRequest(
-//              "userId",
-//              Some(Uar("ref")),
-//              Some(SaUtr(testUtr)),
-//              Some(testNino),
-//              true,
-//              ConfidenceLevel.L50,
-//              fakeCredentials,
-//              FakeRequest())
-//          when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-//            .thenReturn(Future.successful("token"))
-//          when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
-//          when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
-//            .thenReturn(Right(payeDataResponse))
-//
-//          val result = sut.getSaAndPayeYearList.futureValue
-//          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig))
-//
-//          verify(mockDataCacheConnector, times(1))
-//            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
-//        }
-//      }
+      "call data cache connector" when {
+
+        "user is an agent" in {
+          implicit val request =
+            AuthenticatedRequest(
+              "userId",
+              Some(Uar("ref")),
+              Some(SaUtr(testUtr)),
+              Some(testNino),
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
+            )
+
+          when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful("token"))
+          when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
+          when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
+            .thenReturn(Right(payeDataResponse))
+
+          val result = sut.getSaAndPayeYearList.futureValue
+          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig))
+
+          verify(mockDataCacheConnector, times(1))
+            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+        }
+      }
 
       "return a AtsMergePageViewModel" when {
 

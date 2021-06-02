@@ -43,21 +43,21 @@
     appConfig: ApplicationConfig
 )
 
-@titleText = @{
-if(atsMergePageViewModel.showContinueButton) messages("merge.page.ats.select_tax_year.title")
-else ""
+@pastAtsParagraph = {
+@if(atsMergePageViewModel.showNoAtsText) {
+<p class='gray' id='no-ats-before-2019'>
+    @messages("merge.page.no.ats.summary.unavailable.text")
+</p>
+<p class='gray' id='generic-no-ats'>
+    @messages("merge.page.no.ats.summary.text")
+</p>
 }
-
-@subTitleText = @{
-if(atsMergePageViewModel.showContinueButton) messages("generic.ats")
-else ""
+else {
+<p class='gray' id='generic-no-ats'>
+    @messages("merge.page.no.ats.summary.text")
+</p>
 }
-
-@pastAtsParagraph =  @{
-if(atsMergePageViewModel.showNoAtsText){
-s"<p class='gray' id='no-ats-before-2019'>${Messages("merge.page.no.ats.summary.unavailable.text")}<p><p class='gray' id='generic-no-ats'>${messages("merge.page.no.ats.summary.text")}<p>"
-    }else{s"<p class='gray' id='generic-no-ats'>${messages("merge.page.no.ats.summary.text")}<p>"}
-    }
+}
 
 @main(
         title = messages("merge.page.ats.select_tax_year.title"),
@@ -81,23 +81,18 @@ s"<p class='gray' id='no-ats-before-2019'>${Messages("merge.page.no.ats.summary.
         @form(action = controllers.routes.AtsMergePageController.onSubmit){
         <h1 id="index-page-header" class="heading-xlarge">
                 <span class="gray heading-medium block-heading">
-                    @subTitleText
+                    @messages("generic.ats")
                 </span>
-            @titleText
+            @messages("merge.page.ats.select_tax_year.title")
         </h1>
 
-        @if(atsMergePageViewModel.showNoAtsYearList){@Html(pastAtsParagraph)}
+        @if(atsMergePageViewModel.showNoAtsYearList){@pastAtsParagraph}
 
 
         @inputRadioGroupView(
         atsYearForm(AtsForms.yearChoice),
         atsMergePageViewModel.completeYearList.map(
-        yearChoice =>
-        yearChoice.atsType match{
-        case SA => yearChoice -> messages("ats.select_tax_year.sa.label", (yearChoice.year-1).toString, s"${yearChoice.year}")
-        case PAYE => yearChoice -> messages("ats.select_tax_year.paye.label", (yearChoice.year-1).toString, s"${yearChoice.year}")
-        case _ => yearChoice -> messages("ats.select_tax_year.no_ats.label", (yearChoice.year-1).toString, s"${yearChoice.year}")
-        }
+        yearChoice => yearChoice -> yearChoice.getLabel
         ),
         '_fieldSetAttributes -> "id=year_field",
         '_headingClass -> "heading-48"

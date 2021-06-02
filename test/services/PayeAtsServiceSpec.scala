@@ -26,6 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status
 import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.http.Status.OK
 import play.api.mvc.Request
@@ -147,6 +148,19 @@ class PayeAtsServiceSpec
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
       result shouldBe Right(List(2020, 2019))
+    }
+
+    "return a left of response after receiving left from connector" in {
+
+      when(
+        mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
+          any[HeaderCarrier]))
+        .thenReturn(Future.successful(HttpResponse(Status.NOT_FOUND, "body")))
+
+      val result =
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
+
+      result.left.get.status shouldBe Status.NOT_FOUND
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
