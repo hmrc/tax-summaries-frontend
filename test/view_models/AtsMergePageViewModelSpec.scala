@@ -105,5 +105,39 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
         AtsYearChoice(NoATS, 2019),
         AtsYearChoice(SA, 2018))
     }
+
+    "set showContinueButton to true when showSaYearList is true" in {
+      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List.empty, appConfig)
+      model.showContinueButton shouldBe true
+    }
+
+    "set showContinueButton to true when showNoAtsYearList is true" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)
+      model.showContinueButton shouldBe true
+    }
+
+    "set showContinueButton to true when paye data is present and show IV uplift is false" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2019), appConfig)
+      model.showContinueButton shouldBe true
+    }
+
+    "set showContinueButton to false when there is no paye, sa or no ats data" in {
+      when(appConfig.taxYear).thenReturn(2018)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)
+      model.showContinueButton shouldBe false
+    }
+
+    "set showContinueButton to false when there is no sa or no ats data, there is paye data but the user needs iv uplift" in {
+      when(appConfig.taxYear).thenReturn(2018)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2020), appConfig)(request = agentRequest)
+      model.showContinueButton shouldBe false
+    }
+
   }
 }
