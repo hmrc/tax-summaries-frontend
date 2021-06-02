@@ -57,7 +57,6 @@ class AtsMergePageService @Inject()(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] = {
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
-
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
       agentToken.fold[Future[_]] {

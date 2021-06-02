@@ -18,6 +18,9 @@ package view_models
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
+import models.{AtsYearChoice, NoATS, PAYE, SA}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -27,7 +30,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.{testUar, testUtr}
 
 class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
-  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
+  implicit val appConfig = mock[ApplicationConfig]
   val fakeCredentials = new Credentials("provider ID", "provider type")
   val taxYear = 2015
 
@@ -68,8 +71,10 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
     }
 
     "set showNoAts to false if all years from 2018 are present in sa or paye data" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(2)
       val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2018, 2019, 2020), appConfig)
-      model.showNoAtsText shouldBe true
+      model.showNoAtsText shouldBe false
     }
 
     "set showIvUpliftLink to true if paye data is present and confidence level is below 200" in {
@@ -89,6 +94,16 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
         FakeRequest("Get", s"?taxYear=$taxYear"))
       val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2020), appConfig)(request = req)
       model.showIvUpliftLink shouldBe false
+    }
+
+    "set completeYearList to contain all the years sorted and with correct SA types" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), appConfig)
+      model.completeYearList shouldBe List(
+        AtsYearChoice(PAYE, 2020),
+        AtsYearChoice(NoATS, 2019),
+        AtsYearChoice(SA, 2018))
     }
   }
 }

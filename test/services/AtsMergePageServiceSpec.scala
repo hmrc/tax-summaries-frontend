@@ -59,16 +59,6 @@ class AtsMergePageServiceSpec
 
   implicit val hc = new HeaderCarrier
   implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
-  implicit val request =
-    AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      Some(testNino),
-      true,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest())
 
   val agentToken = AgentToken(
     agentUar = testUar,
@@ -106,9 +96,46 @@ class AtsMergePageServiceSpec
 
     "getSaAndPayeYearList is called" must {
 
+//      "call data cache connector" when {
+//
+//        "user is an agent" in {
+//          implicit val request =
+//            AuthenticatedRequest(
+//              "userId",
+//              Some(Uar("ref")),
+//              Some(SaUtr(testUtr)),
+//              Some(testNino),
+//              true,
+//              ConfidenceLevel.L50,
+//              fakeCredentials,
+//              FakeRequest())
+//          when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+//            .thenReturn(Future.successful("token"))
+//          when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
+//          when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
+//            .thenReturn(Right(payeDataResponse))
+//
+//          val result = sut.getSaAndPayeYearList.futureValue
+//          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig))
+//
+//          verify(mockDataCacheConnector, times(1))
+//            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+//        }
+//      }
+
       "return a AtsMergePageViewModel" when {
 
         "saData and payeData is successfully received" in {
+          implicit val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              Some(testNino),
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
 
           when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
@@ -120,12 +147,41 @@ class AtsMergePageServiceSpec
           verify(mockDataCacheConnector, never())
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
+
+        "saData is successfully received and nino is not present" in {
+          implicit val requestNoNino =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              None,
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
+          when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
+
+          val result = sut.getSaAndPayeYearList.futureValue
+          result shouldBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig))
+
+          verify(mockDataCacheConnector, never())
+            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+        }
       }
 
       "return INTERNAL_SERVER_ERROR" when {
 
         "saData returns error and paye returns success response" in {
-
+          implicit val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              Some(testNino),
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
           when(mockAtsListService.createModel).thenReturn(Left(BAD_GATEWAY))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Right(payeDataResponse))
@@ -135,7 +191,16 @@ class AtsMergePageServiceSpec
         }
 
         "saData returns success and paye returns error response" in {
-
+          implicit val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              Some(testNino),
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
           when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Left(HttpResponse(BAD_GATEWAY, "bad gateway")))
@@ -145,7 +210,16 @@ class AtsMergePageServiceSpec
         }
 
         "saData and paye both return error response" in {
-
+          implicit val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              Some(testNino),
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
           when(mockAtsListService.createModel).thenReturn(Left(BAD_GATEWAY))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
             .thenReturn(Left(HttpResponse(BAD_GATEWAY, "bad gateway")))
