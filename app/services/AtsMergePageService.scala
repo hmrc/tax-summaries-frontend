@@ -43,7 +43,7 @@ class AtsMergePageService @Inject()(
     } yield {
       (saData, payeData) match {
         case (Right(saTaxYearData), Right(payeTaxYearList)) => {
-          Right(AtsMergePageViewModel(saTaxYearData, payeTaxYearList, appConfig))
+          Right(AtsMergePageViewModel(saTaxYearData, payeTaxYearList, appConfig, request.confidenceLevel))
         }
         case _ => {
           Logger.error(s"Error received when retrieving Paye and SA data, Http status: $INTERNAL_SERVER_ERROR")

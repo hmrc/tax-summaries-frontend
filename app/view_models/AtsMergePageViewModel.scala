@@ -21,8 +21,11 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsType, AtsYearChoice, NoATS, PAYE, SA}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], appConfig: ApplicationConfig)(
-  implicit request: AuthenticatedRequest[_]) {
+case class AtsMergePageViewModel(
+  saData: AtsList,
+  payeTaxYearList: List[Int],
+  appConfig: ApplicationConfig,
+  confidenceLevel: ConfidenceLevel) {
 
   private val saAndPayeTaxYearList = saData.yearList ::: payeTaxYearList
 
@@ -43,11 +46,12 @@ case class AtsMergePageViewModel(saData: AtsList, payeTaxYearList: List[Int], ap
 
   val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).nonEmpty
 
-  val showIvUpliftLink: Boolean = showPayeYearList && (request.confidenceLevel.compare(ConfidenceLevel.L200) < 0)
+  val showIvUpliftLink: Boolean = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
 
   val showContinueButton: Boolean = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
 
   val completeYearList: List[AtsYearChoice] =
     (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
 
+  val name = s"${saData.forename} ${saData.surname}"
 }

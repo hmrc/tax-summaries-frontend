@@ -57,7 +57,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  val successViewModel = AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), appConfig)(request)
+  val successViewModel =
+    AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), appConfig, ConfidenceLevel.L50)
 
   override def beforeEach() =
     reset(appConfig)

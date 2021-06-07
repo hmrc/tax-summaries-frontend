@@ -82,14 +82,18 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
   "view" should {
 
     "display the page heading" in {
-      val result = view(AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, appConfig), atsYearFormMapping)
+      val result = view(
+        AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, appConfig, ConfidenceLevel.L200),
+        atsYearFormMapping)
 
       result should include(messages("ats.summary.title"))
     }
 
     "display h1" in {
       val result =
-        view(AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig), atsYearFormMapping)
+        view(
+          AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L200),
+          atsYearFormMapping)
 
       result should include(messages("merge.page.ats.select_tax_year.title"))
     }
@@ -97,7 +101,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "show generic no ats message and radiobuttons if there are years missing from paye and sa data from 2018" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List(2015, 2016, 2017, 2018)), List.empty, appConfig),
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(2015, 2016, 2017, 2018)),
+            List.empty,
+            appConfig,
+            ConfidenceLevel.L200),
           atsYearFormMapping)
 
       result should include(messages("merge.page.no.ats.summary.text"))
@@ -108,7 +116,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from 2018" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2015, 2016, 2017, 2018, 2019, 2020), appConfig),
+          AtsMergePageViewModel(
+            AtsList("", "", "", List.empty),
+            List(2015, 2016, 2017, 2018, 2019, 2020),
+            appConfig,
+            ConfidenceLevel.L200),
           atsYearFormMapping)
 
       result should not include messages("merge.page.no.ats.summary.text")
@@ -118,7 +130,9 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     "show no ats before 2018 message if there are years missing from paye and sa data before 2018" in {
       val result =
-        view(AtsMergePageViewModel(AtsList("", "", "", List(2018, 2019)), List.empty, appConfig), atsYearFormMapping)
+        view(
+          AtsMergePageViewModel(AtsList("", "", "", List(2018, 2019)), List.empty, appConfig, ConfidenceLevel.L200),
+          atsYearFormMapping)
 
       result should include(messages("merge.page.no.ats.summary.unavailable.text"))
     }
@@ -126,7 +140,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "not show no ats before 2018 message if there are no years missing from paye and sa data before 2018" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List(2015, 2016, 2017, 2018, 2019)), List.empty, appConfig),
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(2015, 2016, 2017, 2018, 2019)),
+            List.empty,
+            appConfig,
+            ConfidenceLevel.L200),
           atsYearFormMapping)
 
       result should not include messages("merge.page.no.ats.summary.unavailable.text")
@@ -134,9 +152,13 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     "show radiobuttons if there is paye data" in {
       val result = view(
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2015, 2016, 2017, 2018, 2019, 2020), appConfig)(
-          requestWithCL200),
-        atsYearFormMapping)(request = requestWithCL200)
+        AtsMergePageViewModel(
+          AtsList("", "", "", List.empty),
+          List(2015, 2016, 2017, 2018, 2019, 2020),
+          appConfig,
+          ConfidenceLevel.L200),
+        atsYearFormMapping
+      )(request = requestWithCL200)
 
       result should include("2019 to 2020 for PAYE")
       result should include("2018 to 2019 for PAYE")
@@ -148,7 +170,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "not show radiobuttons if paye data is not present" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)(requestWithCL200),
+          AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L200),
           atsYearFormMapping)(request = requestWithCL200)
 
       result should not include "for PAYE"
@@ -157,7 +179,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "show showIvUpliftLink if paye data is present and CL is lower than 200" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2015), appConfig)(requestWithCL50),
+          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2015), appConfig, ConfidenceLevel.L50),
           atsYearFormMapping)(request = requestWithCL50)
 
       result should include(messages("merge.page.paye.ivuplift.text"))
@@ -166,7 +188,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "not show showIvUpliftLink if paye data is not present and CL is lower than 200" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig)(requestWithCL50),
+          AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L50),
           atsYearFormMapping)(request = requestWithCL50)
 
       result should not include (messages("merge.page.paye.ivuplift.text"))
@@ -175,7 +197,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "not show showIvUpliftLink if paye data is present and CL is 200" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2015), appConfig)(requestWithCL200),
+          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(2015), appConfig, ConfidenceLevel.L200),
           atsYearFormMapping)(request = requestWithCL200)
 
       result should not include (messages("merge.page.paye.ivuplift.text"))
@@ -183,7 +205,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     "not show paye shuttered message if service is shuttered" in {
       val result = view(
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig)(requestWithCL200),
+        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig, ConfidenceLevel.L200),
         atsYearFormMapping)(request = requestWithCL200)
       result shouldNot include(messages("merge.page.paye.unavailable"))
     }
@@ -191,14 +213,18 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "show paye shuttered message if service is shuttered" in {
       when(appConfig.payeShuttered).thenReturn(true)
       val result = view(
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig)(requestWithCL200),
+        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig, ConfidenceLevel.L200),
         atsYearFormMapping)(request = requestWithCL200)
       result should include(messages("merge.page.paye.unavailable"))
     }
 
     "show radiobuttons if there is sa data" in {
       val result = view(
-        AtsMergePageViewModel(AtsList("", "", "", List(2015, 2016, 2017, 2018, 2019, 2020)), List.empty, appConfig),
+        AtsMergePageViewModel(
+          AtsList("", "", "", List(2015, 2016, 2017, 2018, 2019, 2020)),
+          List.empty,
+          appConfig,
+          ConfidenceLevel.L200),
         atsYearFormMapping)
 
       result should include("2019 to 2020 for Self Assessment")
@@ -210,19 +236,25 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     "not show radiobuttons if sa data is not present" in {
       val result =
-        view(AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig), atsYearFormMapping)
+        view(
+          AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L200),
+          atsYearFormMapping)
 
       result should not include "for Self Assessment"
     }
 
     "not show sa shuttered message if service is shuttered" in {
-      val result = view(AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig), atsYearFormMapping)
+      val result = view(
+        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig, ConfidenceLevel.L200),
+        atsYearFormMapping)
       result shouldNot include(messages("merge.page.sa.unavailable"))
     }
 
     "show sa shuttered message if service is shuttered" in {
       when(appConfig.saShuttered).thenReturn(true)
-      val result = view(AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig), atsYearFormMapping)
+      val result = view(
+        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), appConfig, ConfidenceLevel.L200),
+        atsYearFormMapping)
       result should include(messages("merge.page.sa.unavailable"))
 
     }

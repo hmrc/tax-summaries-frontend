@@ -118,7 +118,7 @@ class AtsMergePageServiceSpec
             .thenReturn(Right(payeDataResponse))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig))
+          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
 
           verify(mockDataCacheConnector, times(1))
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
@@ -144,7 +144,7 @@ class AtsMergePageServiceSpec
             .thenReturn(Right(payeDataResponse))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig))
+          result shouldBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
 
           verify(mockDataCacheConnector, never())
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
@@ -164,7 +164,7 @@ class AtsMergePageServiceSpec
           when(mockAtsListService.createModel).thenReturn(Right(saDataResponse))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result shouldBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig))
+          result shouldBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
 
           verify(mockDataCacheConnector, never())
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
