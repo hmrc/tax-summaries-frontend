@@ -50,8 +50,11 @@ case class AtsMergePageViewModel(
 
   val showContinueButton: Boolean = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
 
-  val completeYearList: List[AtsYearChoice] =
+  val completeYearList: List[AtsYearChoice] = if (showIvUpliftLink) {
+    (saDataYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
+  } else {
     (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
+  }
 
   val name = s"${saData.forename} ${saData.surname}"
 }
