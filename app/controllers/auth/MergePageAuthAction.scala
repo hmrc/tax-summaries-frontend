@@ -22,7 +22,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{Nino => AuthNino, _}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -82,7 +82,9 @@ class MergePageAuthActionImpl @Inject()(
       )
     }
 
-    case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
+    case _: InsufficientEnrolments => {
+      Redirect(controllers.routes.ErrorController.notAuthorised())
+    }
   }
 }
 

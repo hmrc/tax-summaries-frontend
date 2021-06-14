@@ -181,7 +181,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
     }
 
-    "return a success response and redirect to no ats page when selected no ats tax year" in {
+    "return a success response and redirect to no ats page when selected no ats tax year for a user with nino and utr" in {
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
 
@@ -191,6 +191,50 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         Some(testNino),
+        true,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
+
+      val result = sut.onSubmit(requestWithQuery)
+
+      status(result) shouldBe 303
+      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts()).toString
+
+    }
+
+    "return a success response and redirect to no ats page when selected no ats tax year for a user with nino and no utr" in {
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
+
+      val form = atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2019}"))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        None,
+        Some(testNino),
+        true,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
+
+      val result = sut.onSubmit(requestWithQuery)
+
+      status(result) shouldBe 303
+      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts()).toString
+
+    }
+
+    "return a success response and redirect to no ats page when selected no ats tax year for a user with utr and no nino" in {
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Right(successViewModel))
+
+      val form = atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2019}"))
+      val requestWithQuery = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
         true,
         ConfidenceLevel.L50,
         fakeCredentials,

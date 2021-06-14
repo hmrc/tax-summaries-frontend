@@ -112,10 +112,9 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               FakeRequest())
 
           val result = sut(None).authorisedNoAts()(request)
-          val document = contentAsString(result)
 
-          status(result) shouldBe BAD_REQUEST
-          document shouldBe contentAsString(serviceUnavailableView())
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
         }
       }
 

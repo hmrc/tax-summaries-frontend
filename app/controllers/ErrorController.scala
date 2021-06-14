@@ -50,15 +50,15 @@ class ErrorController @Inject()(
 
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
+  def authorisedNoAts: Action[AnyContent] = minAuthAction.async { implicit request =>
     val taxYear = appConfig.taxYear
-
     governmentSpendService.getGovernmentSpendFigures(taxYear, request.saUtr) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))
     } recover {
       case e: IllegalArgumentException =>
-        logger.error(e.getMessage)
-        BadRequest(serviceUnavailableView())
+//        logger.error(e.getMessage)
+//        BadRequest(serviceUnavailableView())
+        Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
       case e =>
         logger.error(e.getMessage)
         InternalServerError(serviceUnavailableView())
