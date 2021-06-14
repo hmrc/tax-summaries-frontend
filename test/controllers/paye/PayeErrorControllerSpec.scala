@@ -82,51 +82,5 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
       }
     }
 
-    "Show generic How Tax is Spent page and return OK" when {
-
-      "the service returns Government Spend data" in {
-
-        val spendCategory: String = "Environment"
-        val spendPercentage: Double = 5.5
-        val response: Seq[(String, Double)] = Seq((spendCategory, spendPercentage))
-
-        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
-          .successful(response)
-
-        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
-        val document = contentAsString(result)
-
-        status(result) shouldBe OK
-        document shouldBe contentAsString(howTaxIsSpentView(response, govSpendingData.taxYear))
-      }
-    }
-
-    "show the generic error view" when {
-
-      "the service throws an IllegalArgumentException" in {
-
-        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
-          .failed(new IllegalArgumentException("Oops"))
-
-        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
-        val document = contentAsString(result)
-
-        status(result) shouldBe BAD_REQUEST
-        document shouldBe contentAsString(payeGenericErrorView())
-      }
-
-      "the service throws any other kind of exception" in {
-
-        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
-          .failed(new Exception("Oops"))
-
-        val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
-        val document = contentAsString(result)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        document shouldBe contentAsString(payeGenericErrorView())
-      }
-    }
-
   }
 }

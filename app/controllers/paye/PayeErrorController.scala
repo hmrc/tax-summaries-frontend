@@ -60,21 +60,6 @@ class PayeErrorController @Inject()(
     }
   }
 
-  def authorisedNoAts: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    {
-      governmentSpendService.getGovernmentSpendFigures(payeYear, Some(request.nino)) map { data =>
-        Ok(howTaxIsSpentView(data, payeYear))
-      } recover {
-        case e: IllegalArgumentException =>
-          logger.error(e.getMessage)
-          BadRequest(payeGenericErrorView())
-        case e =>
-          logger.error(e.getMessage)
-          InternalServerError(payeGenericErrorView())
-      }
-    }
-  }
-
   def notAuthorised: Action[AnyContent] = Action { implicit request: Request[_] =>
     {
       Ok(payeNotAuthorisedView())

@@ -64,7 +64,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
+      redirectLocation(result).get shouldBe controllers.routes.ErrorController.authorisedNoAts().url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {

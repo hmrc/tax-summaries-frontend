@@ -59,7 +59,7 @@ class PayeYourIncomeAndTaxesController @Inject()(
         }
         case Left(response: HttpResponse) =>
           response.status match {
-            case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+            case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts())
             case _ => {
               Logger.error(s"Error received, Http status: ${response.status}")
               Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))

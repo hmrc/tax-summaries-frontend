@@ -52,11 +52,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
     new ErrorController(
       mockGovernmentSpendService,
       new CustomAuthAction(utr),
+      FakeMergePageAuthAction,
       FakeMinAuthAction,
       mcc,
       notAuthorisedView,
       howTaxIsSpentView,
-      serviceUnavailableView)
+      serviceUnavailableView
+    )
   implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" when {
@@ -112,9 +114,10 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               FakeRequest())
 
           val result = sut(None).authorisedNoAts()(request)
+          val document = contentAsString(result)
 
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get shouldBe controllers.paye.routes.PayeErrorController.authorisedNoAts().url
+          status(result) shouldBe BAD_REQUEST
+          document shouldBe contentAsString(serviceUnavailableView())
         }
       }
 
