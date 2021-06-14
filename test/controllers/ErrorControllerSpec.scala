@@ -19,6 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import controllers.auth._
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -28,7 +29,7 @@ import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.GovernmentSpendService
-import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Nino}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
 import utils.TestConstants.{testUtr, _}
@@ -67,14 +68,15 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
 
       "show the how tax was spent page" when {
 
-        "the service returns the government spend data" in {
+        "the service returns the government spend data with utr" in {
 
           val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
             case (key, value) =>
               key -> value.percentage.toDouble
           }
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          val saUtrIdentifier = Some(SaUtr(testUtr))
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), Matchers.eq(saUtrIdentifier))(any(), any())) thenReturn Future
             .successful(response)
 
           implicit lazy val request =
@@ -84,6 +86,34 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               Some(SaUtr(testUtr)),
               None,
               true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
+          val result = sut().authorisedNoAts()(request)
+          val document = contentAsString(result)
+
+          status(result) shouldBe OK
+          document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
+        }
+
+        "the service returns the government spend data with nino" in {
+
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
+            case (key, value) =>
+              key -> value.percentage.toDouble
+          }
+
+          val ninoIdentifier = Some(testNino)
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), Matchers.eq(ninoIdentifier))(any(), any())) thenReturn Future
+            .successful(response)
+
+          implicit lazy val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              None,
+              ninoIdentifier,
+              false,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
