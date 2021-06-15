@@ -60,7 +60,6 @@ class ErrorController @Inject()(
       case e: IllegalArgumentException =>
         logger.error(e.getMessage)
         BadRequest(serviceUnavailableView())
-      //   Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
       case e =>
         logger.error(e.getMessage)
         InternalServerError(serviceUnavailableView())

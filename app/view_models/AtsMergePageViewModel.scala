@@ -17,8 +17,7 @@
 package view_models
 
 import config.ApplicationConfig
-import controllers.auth.AuthenticatedRequest
-import models.{AtsType, AtsYearChoice, NoATS, PAYE, SA}
+import models.{AtsYearChoice, NoATS, PAYE, SA}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 case class AtsMergePageViewModel(

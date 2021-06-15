@@ -93,7 +93,7 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
       model.showIvUpliftLink shouldBe false
     }
 
-    "set completeYearList to contain all the years sorted and with correct SA types" in {
+    "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is false" in {
       when(appConfig.taxYear).thenReturn(2020)
       when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
       val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), appConfig, ConfidenceLevel.L200)
@@ -101,6 +101,13 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
         AtsYearChoice(PAYE, 2020),
         AtsYearChoice(NoATS, 2019),
         AtsYearChoice(SA, 2018))
+    }
+
+    "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), appConfig, ConfidenceLevel.L50)
+      model.completeYearList shouldBe List(AtsYearChoice(NoATS, 2019), AtsYearChoice(SA, 2018))
     }
 
     "set showContinueButton to true when showSaYearList is true" in {
