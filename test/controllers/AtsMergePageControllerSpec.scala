@@ -42,7 +42,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
   override implicit lazy val appConfig = mock[ApplicationConfig]
   val sut = new AtsMergePageController(
     mockAtsMergePageService,
-    FakeMergePageAuthAction,
+    new FakeMergePageAuthAction(true),
     mcc,
     atsMergePageView,
     genericErrorView)

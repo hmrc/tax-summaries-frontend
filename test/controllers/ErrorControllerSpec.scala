@@ -42,18 +42,11 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
 
-  class CustomAuthAction(utr: Option[SaUtr]) extends AuthAction with ControllerBaseSpec {
-    override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-      block(AuthenticatedRequest("userId", None, utr, None, true, ConfidenceLevel.L50, fakeCredentials, request))
-    override protected def executionContext: ExecutionContext = ec
-  }
-
   def sut(utr: Option[SaUtr] = Some(SaUtr(testUtr))) =
     new ErrorController(
       mockGovernmentSpendService,
-      new CustomAuthAction(utr),
-      FakeMergePageAuthAction,
+      FakeAuthAction,
+      new FakeMergePageAuthAction(true),
       FakeMinAuthAction,
       mcc,
       notAuthorisedView,
@@ -97,16 +90,24 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
         }
 
         "the service returns the government spend data with nino" in {
-
+          val controller =
+            new ErrorController(
+              mockGovernmentSpendService,
+              FakeAuthAction,
+              new FakeMergePageAuthAction(false),
+              FakeMinAuthAction,
+              mcc,
+              notAuthorisedView,
+              howTaxIsSpentView,
+              serviceUnavailableView
+            )
           val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
             case (key, value) =>
               key -> value.percentage.toDouble
           }
-
           val ninoIdentifier = Some(testNino)
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), Matchers.eq(ninoIdentifier))(any(), any())) thenReturn Future
             .successful(response)
-
           implicit lazy val request =
             AuthenticatedRequest(
               "userId",
@@ -117,12 +118,12 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
-          val result = sut().authorisedNoAts()(request)
+          val result = controller.authorisedNoAts()(request)
           val document = contentAsString(result)
-
           status(result) shouldBe OK
           document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
         }
+
       }
 
       "return bad request" when {

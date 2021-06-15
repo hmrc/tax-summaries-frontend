@@ -24,7 +24,7 @@ import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeMergePageAuthAction extends MergePageAuthAction with ControllerBaseSpec {
+class FakeMergePageAuthAction(val isSa: Boolean) extends MergePageAuthAction with ControllerBaseSpec {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
@@ -34,9 +34,9 @@ object FakeMergePageAuthAction extends MergePageAuthAction with ControllerBaseSp
       AuthenticatedRequest(
         "userId",
         None,
-        Some(SaUtr(testUtr)),
-        None,
-        true,
+        if (isSa) Some(SaUtr(testUtr)) else None,
+        if (isSa) None else Some(testNino),
+        isSa,
         ConfidenceLevel.L50,
         fakeCredentials,
         request))
