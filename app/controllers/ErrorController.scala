@@ -51,19 +51,20 @@ class ErrorController @Inject()(
 
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def authorisedNoAts: Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    val taxYear = appConfig.taxYear
-    val taxIdentifier = if (request.isSa) request.saUtr else request.nino
-    governmentSpendService.getGovernmentSpendFigures(taxYear, taxIdentifier) map { spendData =>
-      Ok(howTaxIsSpentView(spendData, taxYear))
-    } recover {
-      case e: IllegalArgumentException =>
-        logger.error(e.getMessage)
-        BadRequest(serviceUnavailableView())
-      case e =>
-        logger.error(e.getMessage)
-        InternalServerError(serviceUnavailableView())
-    }
+  def authorisedNoAts(selectedTaxYear: Option[Int] = None): Action[AnyContent] = mergePageAuthAction.async {
+    implicit request =>
+      val taxYear = selectedTaxYear.getOrElse(appConfig.taxYear)
+      val taxIdentifier = if (request.isSa) request.saUtr else request.nino
+      governmentSpendService.getGovernmentSpendFigures(taxYear, taxIdentifier) map { spendData =>
+        Ok(howTaxIsSpentView(spendData, taxYear))
+      } recover {
+        case e: IllegalArgumentException =>
+          logger.error(e.getMessage)
+          BadRequest(serviceUnavailableView())
+        case e =>
+          logger.error(e.getMessage)
+          InternalServerError(serviceUnavailableView())
+      }
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>

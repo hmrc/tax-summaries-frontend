@@ -199,7 +199,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 303
-      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts()).toString
+      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts(Some(2019))).toString
 
     }
 
@@ -221,7 +221,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 303
-      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts()).toString
+      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts(Some(2019))).toString
 
     }
 
@@ -243,7 +243,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) shouldBe 303
-      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts()).toString
+      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.authorisedNoAts(Some(2019))).toString
 
     }
 

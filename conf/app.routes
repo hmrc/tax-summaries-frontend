@@ -13,7 +13,7 @@ GET     /total-income-tax                                      controllers.Total
 GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised
-GET     /no-ats                                                controllers.ErrorController.authorisedNoAts
+GET     /no-ats                                                controllers.ErrorController.authorisedNoAts(selectedTaxYear:Option[Int] ?= None)
 GET     /service-unavailable                                   controllers.ErrorController.serviceUnavailable
 
 GET     /language/:lang                                        controllers.paye.PayeLanguageController.switchToLanguage(lang: String)
