@@ -128,7 +128,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
     "have the right user data in the view" in {

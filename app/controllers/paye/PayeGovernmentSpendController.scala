@@ -51,7 +51,7 @@ class PayeGovernmentSpendController @Inject()(
         Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer))
       case Left(response: HttpResponse) =>
         response.status match {
-          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts())
+          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear))
           case _ => {
             Logger.error(s"Error received, Http status: ${response.status}")
             Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))

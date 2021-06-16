@@ -82,7 +82,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
-          val result = sut().authorisedNoAts()(request)
+          val result = sut().authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) shouldBe OK
@@ -118,7 +118,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
-          val result = controller.authorisedNoAts()(request)
+          val result = controller.authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
           status(result) shouldBe OK
           document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
@@ -144,7 +144,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               fakeCredentials,
               FakeRequest())
 
-          val result = sut(None).authorisedNoAts()(request)
+          val result = sut(None).authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) shouldBe BAD_REQUEST
@@ -170,7 +170,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               fakeCredentials,
               FakeRequest())
 
-          val result = sut(None).authorisedNoAts()(request)
+          val result = sut(None).authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) shouldBe INTERNAL_SERVER_ERROR

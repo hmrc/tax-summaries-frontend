@@ -128,7 +128,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
     "have correct data for 2014" in {

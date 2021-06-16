@@ -111,7 +111,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
 
     }
 

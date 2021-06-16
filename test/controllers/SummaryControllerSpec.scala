@@ -113,7 +113,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = Future.successful(sut.show(request))
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
     "have the right user data in the view" in {
@@ -458,7 +458,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       val result = Future.successful(sut.show(request))
 
       status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+      redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
     }
   }
 }
