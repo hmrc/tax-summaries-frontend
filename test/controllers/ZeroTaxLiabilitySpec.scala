@@ -72,7 +72,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result = Future.successful(sut.show(request))
 
       status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+      redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
     }
   }
 
@@ -81,7 +81,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(incomeController.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 
   "show no ats page for income-before-tax" in {
@@ -89,7 +89,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(incomeController.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 
   "show no ats page for tax-free-amount" in {
@@ -112,7 +112,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(sut.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 
   "show no ats page for capital-gains-tax" in {
@@ -135,7 +135,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(sut.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 
   "show no ats page for government spend" in {
@@ -158,7 +158,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(sut.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 
   "show no ats page for summary page" in {
@@ -179,7 +179,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(sut.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 
   "show no ats page for nics summary page" in {
@@ -200,6 +200,6 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val result = Future.successful(sut.show(request))
 
     status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats?taxYear=2020")
   }
 }
