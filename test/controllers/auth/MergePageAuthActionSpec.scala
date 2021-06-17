@@ -118,7 +118,7 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
         Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ Some(testUtr) ~ None ~ ConfidenceLevel.L50)
 
       when(
         mockAuthConnector
@@ -134,8 +134,35 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
       contentAsString(result) should include(uar)
-      contentAsString(result) should include("false")
+      contentAsString(result) should include(testUtr)
       contentAsString(result) should include("bar")
+    }
+  }
+
+  "A user with a confidence level 50, no nino and no utr" should {
+    "see the access denied page" in {
+      val uar = testUar
+
+      val retrievalResult: Future[
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Future.successful(
+          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+
+      when(
+        mockAuthConnector
+          .authorise[
+            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some("/annual-tax-summary/not-authorised")
     }
   }
 

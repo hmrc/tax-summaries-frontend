@@ -45,6 +45,9 @@ class MergePageAuthActionImpl @Inject()(
     authorised(ConfidenceLevel.L50)
       .retrieve(
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel) {
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ None ~ None ~ confidenceLevel =>
+          Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
+
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel => {
 
           val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
