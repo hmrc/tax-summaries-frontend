@@ -139,14 +139,42 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
     }
   }
 
-  "A user with a confidence level 50, no nino and no utr" should {
-    "see the access denied page" in {
+  "A user with a confidence level 50 and an IR-SA-AGENT enrolment, no nino and no utr" should {
+    "create an authenticated request" in {
       val uar = testUar
 
       val retrievalResult: Future[
         Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+
+      when(
+        mockAuthConnector
+          .authorise[
+            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe OK
+      contentAsString(result) should include(uar)
+      contentAsString(result) should include("false")
+      contentAsString(result) should include("bar")
+    }
+  }
+
+  "A user with a confidence level 50, no nino and no utr" should {
+    "see access denied" in {
+
+      val retrievalResult: Future[
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Future.successful(
+          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated"))) ~
             Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
 
       when(
