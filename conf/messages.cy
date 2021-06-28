@@ -415,3 +415,7 @@ merge.page.ats.select_tax_year.title=Pa flwyddyn dreth ydych am fwrw golwg drost
 ats.select_tax_year.sa.label={0} i {1} ar gyfer Hunanasesiad
 ats.select_tax_year.paye.label={0} i {1} ar gyfer TWE
 ats.select_tax_year.no_ats.label={0} i {1} ar gyfer Crynodeb Treth Blynyddol
+merge.page.paye.ivuplift.header = You need to answer some extra security questions
+merge.page.sa.utr.inactive.header = You need to request access to your Self Assessment
+merge.page.sa.utr.inactive.text = To see your Self Assessment Annual Tax Summary you need to
+merge.page.sa.utr.inactive.link = request access to your Self Assessment.

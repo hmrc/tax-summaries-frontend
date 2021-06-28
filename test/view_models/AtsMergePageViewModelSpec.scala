@@ -149,5 +149,69 @@ class AtsMergePageViewModelSpec extends UnitSpec with GuiceOneAppPerSuite {
       model.name shouldBe "name surname"
     }
 
+    "set onlyPaye to true if the user only has Paye years to display" in {
+      val model =
+        AtsMergePageViewModel(
+          AtsList("", "name", "surname", List.empty),
+          List(2017, 2018, 2019, 2020),
+          appConfig,
+          ConfidenceLevel.L200)
+      model.onlyPaye shouldBe true
+    }
+
+    "set onlyPaye to false if the user has SA years to display" in {
+      val model =
+        AtsMergePageViewModel(
+          AtsList("", "name", "surname", List(2018)),
+          List(2019, 2020),
+          appConfig,
+          ConfidenceLevel.L200)
+      model.onlyPaye shouldBe false
+    }
+
+    "set onlyPaye to false if the user has no ats years to display" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model =
+        AtsMergePageViewModel(
+          AtsList("", "name", "surname", List.empty),
+          List(2017, 2018),
+          appConfig,
+          ConfidenceLevel.L200)
+      model.onlyPaye shouldBe false
+    }
+
+    "set onlySa to true if the user only has Sa years to display" in {
+      val model =
+        AtsMergePageViewModel(
+          AtsList("", "name", "surname", List(2017, 2018, 2019, 2020)),
+          List.empty,
+          appConfig,
+          ConfidenceLevel.L200)
+      model.onlySa shouldBe true
+    }
+
+    "set onlySa to false if the user has Paye years to display" in {
+      val model =
+        AtsMergePageViewModel(
+          AtsList("", "name", "surname", List(2018)),
+          List(2019, 2020),
+          appConfig,
+          ConfidenceLevel.L200)
+      model.onlySa shouldBe false
+    }
+
+    "set onlySa to false if the user has no ats years to display" in {
+      when(appConfig.taxYear).thenReturn(2020)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model =
+        AtsMergePageViewModel(
+          AtsList("", "name", "surname", List(2017, 2018)),
+          List.empty,
+          appConfig,
+          ConfidenceLevel.L200)
+      model.onlySa shouldBe false
+    }
+
   }
 }

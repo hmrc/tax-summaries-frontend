@@ -47,6 +47,10 @@ case class AtsMergePageViewModel(
 
   val showIvUpliftLink: Boolean = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
 
+  val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
+
+  val onlySa: Boolean = showSaYearList && !showPayeYearList && !showNoAtsYearList
+
   val showContinueButton: Boolean = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
 
   val completeYearList: List[AtsYearChoice] = if (showIvUpliftLink) {

@@ -258,5 +258,18 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result should include(messages("merge.page.sa.unavailable"))
 
     }
+
+    "show paye uplisft header message if user only has paye data and needs uplift" in {
+      when(appConfig.saShuttered).thenReturn(true)
+      val result = view(
+        AtsMergePageViewModel(
+          AtsList("", "", "", List.empty),
+          List(2015, 2016, 2017, 2018, 2019, 2020),
+          appConfig,
+          ConfidenceLevel.L50),
+        atsYearFormMapping)
+      result should include(messages("merge.page.paye.ivuplift.header"))
+
+    }
   }
 }

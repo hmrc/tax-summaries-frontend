@@ -19,9 +19,9 @@ package connectors
 import com.typesafe.scalalogging.LazyLogging
 import javax.inject.Inject
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsResponse, AtsSuccessResponseWithPayload}
-import play.api.http.Status.OK
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,13 +34,26 @@ class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionC
         case OK => extractJson[A](response.json)
         case e @ _ =>
           val message = s"Connector returned $e: $url"
+          println("..................")
+          println("..................")
+          println("..................")
+          println("..................")
           logger.error(message)
           AtsErrorResponse(message)
+
       }
     } recover {
       case e: NotFoundException =>
         logger.warn(e.message)
         AtsNotFoundResponse(e.responseCode.toString)
+      case e: Upstream4xxResponse if (e.upstreamResponseCode == UNAUTHORIZED) =>
+        println(":::::::::")
+        println(":::::::::")
+        println(":::::::::")
+        println(":::::::::")
+        println(":::::::::")
+        logger.error(e.getMessage)
+        AtsErrorResponse(e.getMessage)
       case e @ (_: Upstream5xxResponse | _: Exception) =>
         logger.error(e.getMessage)
         AtsErrorResponse(e.getMessage)

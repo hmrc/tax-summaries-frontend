@@ -426,12 +426,15 @@ merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not e
 merge.page.sa.unavailable=Self Assessment tax years are unavailable at the moment. Try again later.
 merge.page.paye.unavailable=PAYE tax years are unavailable at the moment. Try again later.
 merge.page.paye.ivuplift.text=To see your PAYE Annual Tax Summary you need to
-merge.page.paye.ivuplift.link.text=set up additional security.
+merge.page.paye.ivuplift.link.text=answer some extra security questions.
 merge.page.sa.text=Self Assessment
 merge.page.paye.text=PAYE
 merge.page.ats.select_tax_year.title=Which tax year do you want to view?
 ats.select_tax_year.sa.label={0} to {1} for Self Assessment
 ats.select_tax_year.paye.label={0} to {1} for PAYE
 ats.select_tax_year.no_ats.label={0} to {1} for a general Annual Tax Summary
-
+merge.page.paye.ivuplift.header = You need to answer some extra security questions
+merge.page.sa.utr.inactive.header = You need to request access to your Self Assessment
+merge.page.sa.utr.inactive.text = To see your Self Assessment Annual Tax Summary you need to
+merge.page.sa.utr.inactive.link = request access to your Self Assessment.
 
