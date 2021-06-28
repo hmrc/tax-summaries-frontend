@@ -98,7 +98,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                 )
               }
             } else {
-              Future.successful(Unauthorized)
+              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
             }
 
           }

@@ -17,6 +17,7 @@
 package controllers.auth
 
 import config.ApplicationConfig
+import controllers.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -161,6 +162,30 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       contentAsString(result) should include(uar)
       contentAsString(result) should include("false")
       contentAsString(result) should include("bar")
+    }
+  }
+
+  "A user with a confidence level 50 and neither SA enrolment" should {
+    "see unauthorized" in {
+      val unauthorisedRoute = routes.ErrorController.notAuthorised.url
+
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+        Future.successful(
+          Enrolments(Set.empty) ~
+            Some("") ~ Some(fakeCredentials) ~ None
+        )
+
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get should endWith(unauthorisedRoute)
     }
   }
 
