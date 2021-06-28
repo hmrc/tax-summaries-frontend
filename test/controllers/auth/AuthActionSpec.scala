@@ -185,7 +185,7 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(unauthorisedRoute)
+      redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.notAuthorised())
     }
   }
 
