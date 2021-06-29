@@ -50,11 +50,14 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
       authorised(ConfidenceLevel.L50)
         .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr) {
           case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr => {
+
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
                 .find(id => id.key == "IRAgentReference")
                 .map(key => Uar(key.value))
             }
+
+            val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
             val payeEmpRef: Option[EmpRef] = enrolments
               .find(_.key == "IR-PAYE")
@@ -82,7 +85,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                   .map(key => Vrn(key.value))
               }
 
-            if (saUtr.isDefined || agentRef.isDefined) {
+            if (saUtr.isDefined || isAgentActive) {
               block {
                 AuthenticatedRequest(
                   externalId,

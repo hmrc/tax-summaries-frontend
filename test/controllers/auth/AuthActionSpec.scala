@@ -139,8 +139,34 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
     }
   }
 
-  "A user with a confidence level 50 and an IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" should {
     "create an authenticated request" in {
+      val uar = testUar
+
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+        Future.successful(
+          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
+            Some("") ~ Some(fakeCredentials) ~ None
+        )
+
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe OK
+      contentAsString(result) should include(uar)
+      contentAsString(result) should include("false")
+      contentAsString(result) should include("bar")
+    }
+  }
+
+  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" should {
+    "see unauthorized" in {
       val uar = testUar
 
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
@@ -158,10 +184,8 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("bar")
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.notAuthorised.url)
     }
   }
 
@@ -185,7 +209,7 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.notAuthorised())
+      redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.notAuthorised.url)
     }
   }
 
