@@ -9,7 +9,7 @@
 
     <logger name="ErrorController" level="DEBUG"/>
     <logger name="PayeErrorController" level="DEBUG"/>
-
+    <logger name="uk.gov.hmrc.audit.handler.DatastreamHandler" level="WARN"/>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
