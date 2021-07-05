@@ -50,7 +50,7 @@
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
         HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 	<p id="income-before-tax-intro">@Messages("paye.ats.income_before_tax.intro")</p>
-    <p id="income-before-tax-description">@Messages("paye.ats.income_before_tax.description")</p>
+    <p id="income-before-tax-description">@Messages("paye.ats.income_before_tax.sources")</p>
 	
     @if(viewModel.incomeTaxRows.nonEmpty){
         <table class="paye-ats-data-table" id="income-tax-table">

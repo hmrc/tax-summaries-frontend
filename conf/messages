@@ -135,8 +135,8 @@ paye.ats.income_before_tax.total_income_before_tax=Your income before tax
 
 # View ATS - your income before tax (IND) - PAYE content
 paye.ats.income_before_tax.title=Taxable income
-paye.ats.income_before_tax.intro=We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies.
-paye.ats.income_before_tax.description=This information comes from you, your employer(s) or your pension provider(s).
+paye.ats.income_before_tax.intro=We have calculated this using information given to us by you and other sources.
+paye.ats.income_before_tax.sources=This includes your employer, pension providers, and banks or building societies.
 paye.ats.income_before_tax.table_caption=Your taxable income
 paye.ats.income_before_tax.table.line6=Other income (including interest)
 
