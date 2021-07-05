@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.mvc.Results.Unauthorized
 
 class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
   implicit ec: ExecutionContext,
@@ -46,20 +47,17 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-      authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
-        .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials) {
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) => {
+      authorised(ConfidenceLevel.L50)
+        .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr) {
+          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr => {
+
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
                 .find(id => id.key == "IRAgentReference")
                 .map(key => Uar(key.value))
             }
 
-            val saUtr: Option[SaUtr] = enrolments.find(_.key == "IR-SA").flatMap { enrolment =>
-              enrolment.identifiers
-                .find(id => id.key == "UTR")
-                .map(key => SaUtr(key.value))
-            }
+            val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
             val payeEmpRef: Option[EmpRef] = enrolments
               .find(_.key == "IR-PAYE")
@@ -87,20 +85,25 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                   .map(key => Vrn(key.value))
               }
 
-            block {
-              AuthenticatedRequest(
-                externalId,
-                agentRef,
-                saUtr,
-                None,
-                payeEmpRef,
-                ctUtr,
-                vrn,
-                saUtr.isDefined,
-                credentials,
-                request
-              )
+            if (saUtr.isDefined || isAgentActive) {
+              block {
+                AuthenticatedRequest(
+                  externalId,
+                  agentRef,
+                  saUtr.map(SaUtr(_)),
+                  None,
+                  payeEmpRef,
+                  ctUtr,
+                  vrn,
+                  saUtr.isDefined,
+                  credentials,
+                  request
+                )
+              }
+            } else {
+              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
             }
+
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
         }
