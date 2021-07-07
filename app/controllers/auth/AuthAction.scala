@@ -46,27 +46,33 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-      authorised(ConfidenceLevel.L50 and (Enrolment("IR-SA") or Enrolment("IR-SA-AGENT")))
-        .retrieve(
-          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel) {
+      authorised(ConfidenceLevel.L50)
+        .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel) {
           case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel => {
+
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
                 .find(id => id.key == "IRAgentReference")
                 .map(key => Uar(key.value))
             }
 
-            block {
-              AuthenticatedRequest(
-                externalId,
-                agentRef,
-                saUtr.map(s => SaUtr(s)),
-                None,
-                saUtr.isDefined,
-                confidenceLevel,
-                credentials,
-                request
-              )
+            val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
+
+            if (saUtr.isDefined || isAgentActive) {
+              block {
+                AuthenticatedRequest(
+                  externalId,
+                  agentRef,
+                  saUtr.map(s => SaUtr(s)),
+                  None,
+                  saUtr.isDefined,
+                  confidenceLevel,
+                  credentials,
+                  request
+                )
+              }
+            } else {
+              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
             }
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
