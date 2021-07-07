@@ -370,8 +370,7 @@ paye.ats.welsh_income_tax=Mae hyn yn cynnwys Treth Incwm yng Nghymru o
 # Paye ATS - your taxable page
 #===========================================================
 paye.ats.income_before_tax.title=Incwm trethadwy
-paye.ats.income_before_tax.intro=Rydym wedi cyfrifo hyn gan ddefnyddio’r wybodaeth a roddwyd i ni gennych chi a ffynonellau eraill.
-paye.ats.income_before_tax.sources=Mae hyn yn cynnwys eich cyflogwr, darparwyr pensiwn, a banciau neu gymdeithasau adeiladau.
+paye.ats.income_before_tax.intro=Rydym wedi cyfrifo hyn gan ddefnyddio’r wybodaeth a roddwyd i ni gennych chi a ffynonellau eraill. Mae hyn yn cynnwys eich cyflogwr, darparwyr pensiwn, a banciau neu gymdeithasau adeiladau.
 paye.ats.income_before_tax.table_caption=Eich incwm trethadwy
 paye.ats.income_before_tax.income_from_employment=Cyflogaeth
 paye.ats.income_before_tax.state_pension=Pensiwn y Wladwriaeth
