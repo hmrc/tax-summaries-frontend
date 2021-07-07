@@ -16,12 +16,12 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.ok
+import com.github.tomakehurst.wiremock.client.WireMock._
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.http.{BadRequestException, NotFoundException, Upstream4xxResponse, Upstream5xxResponse}
 
 class CitizenDetailsConnectorSpec extends ConnectorSpec {
 
@@ -38,12 +38,44 @@ class CitizenDetailsConnectorSpec extends ConnectorSpec {
 
   "connectToCid" should {
     "return an OK response when the CID API returns OK" in {
-      server.stubFor(WireMock.get(url).willReturn(ok("my cid response")))
+      server.stubFor(get(url).willReturn(ok("my cid response")))
 
       val result = connector.connectToCid(nino).futureValue
 
       result.status shouldBe OK
       result.body shouldBe "my cid response"
+    }
+
+    "throws a BadRequestException when the CID API returns BAD_REQUEST" in {
+      server.stubFor(get(url).willReturn(badRequest()))
+
+      val result = connector.connectToCid(nino).failed.futureValue
+
+      result shouldBe a[BadRequestException]
+    }
+
+    "throws a NotFoundException when the CID API returns NOT_FOUND" in {
+      server.stubFor(get(url).willReturn(notFound()))
+
+      val result = connector.connectToCid(nino).failed.futureValue
+
+      result shouldBe a[NotFoundException]
+    }
+
+    "throws a Upstream4xxResponse when the CID API returns LOCKED" in {
+      server.stubFor(get(url).willReturn(aResponse().withStatus(LOCKED)))
+
+      val result = connector.connectToCid(nino).failed.futureValue
+
+      result shouldBe a[Upstream4xxResponse]
+    }
+
+    "throws a Upstream5xxResponse when the CID API returns INTERNAL_SERVER_ERROR" in {
+      server.stubFor(get(url).willReturn(serverError()))
+
+      val result = connector.connectToCid(nino).failed.futureValue
+
+      result shouldBe a[Upstream5xxResponse]
     }
   }
 }
