@@ -34,9 +34,7 @@ import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext
 
-class HttpHandlerSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
-    with Injecting {
+class HttpHandlerSpec extends ConnectorSpec {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -46,9 +44,7 @@ class HttpHandlerSpec
       )
       .build()
 
-  implicit val hc = HeaderCarrier()
   implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit lazy val ec = inject[ExecutionContext]
 
   def sut: HttpHandler = new HttpHandler(inject[DefaultHttpClient])
 

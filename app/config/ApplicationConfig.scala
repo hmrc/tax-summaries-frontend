@@ -39,6 +39,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   private val contactHost = config.baseUrl("contact-frontend")
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
+  lazy val cidHost = config.baseUrl("citizen-details")
+
   lazy val authHost = config.baseUrl("auth")
   private val contactFormServiceIdentifier = "TAX-SUMMARIES"
 
