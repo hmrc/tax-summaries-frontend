@@ -47,7 +47,8 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
       authorised(ConfidenceLevel.L50)
-        .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel) {
+        .retrieve(
+          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel) {
           case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel => {
 
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
