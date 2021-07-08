@@ -17,6 +17,7 @@
 package services
 
 import connectors.CitizenDetailsConnector
+import models.AtsUtr
 import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
