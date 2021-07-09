@@ -19,14 +19,13 @@ package services
 import connectors.CitizenDetailsConnector
 import models.AtsUtr
 import play.api.http.Status._
-import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CitizenDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector)(implicit ec: ExecutionContext) {
-  def getUtr(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[AtsUtr]] =
+  def getUtr(nino: String)(implicit hc: HeaderCarrier): Future[Option[AtsUtr]] =
     citizenDetailsConnector.connectToCid(nino).flatMap {
       case response if response.status == OK => Future(Some(response.json.as[AtsUtr]))
       case _                                 => Future(None)

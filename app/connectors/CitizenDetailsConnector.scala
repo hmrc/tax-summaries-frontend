@@ -17,7 +17,6 @@
 package connectors
 
 import config.ApplicationConfig
-import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
@@ -28,6 +27,6 @@ class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfi
 
   private val baseUrl = applicationConfig.cidHost
 
-  def connectToCid(nino: Nino)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/${nino.withoutSuffix}/designatory-details")
+  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/$nino/designatory-details")
 }

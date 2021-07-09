@@ -85,25 +85,20 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                   .map(key => Vrn(key.value))
               }
 
-            if (saUtr.isDefined || isAgentActive) {
-              block {
-                AuthenticatedRequest(
-                  externalId,
-                  agentRef,
-                  saUtr.map(SaUtr(_)),
-                  None,
-                  payeEmpRef,
-                  ctUtr,
-                  vrn,
-                  saUtr.isDefined,
-                  credentials,
-                  request
-                )
-              }
-            } else {
-              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
+            block {
+              AuthenticatedRequest(
+                externalId,
+                agentRef,
+                saUtr.map(SaUtr(_)),
+                None,
+                payeEmpRef,
+                ctUtr,
+                vrn,
+                saUtr.isDefined,
+                credentials,
+                request
+              )
             }
-
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
         }

@@ -57,5 +57,16 @@ class CitizenDetailsServiceSpec
       val result = service.getUtr(nino).futureValue
       result shouldBe Some(AtsUtr(utr))
     }
+
+    List(BAD_REQUEST, NOT_FOUND, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
+      s"when cid sends a $httpStatus, return a None" in {
+        val response = HttpResponse.apply(httpStatus, "body")
+
+        when(citizenDetailsConnector.connectToCid(meq(nino))(any())).thenReturn(Future.successful(response))
+
+        val result = service.getUtr(nino).futureValue
+        result shouldBe None
+      }
+    }
   }
 }
