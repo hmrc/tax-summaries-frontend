@@ -17,17 +17,22 @@
 package services
 
 import connectors.CitizenDetailsConnector
-import models.AtsUtr
+import models.MatchingDetails
 import play.api.http.Status._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+sealed trait MatchingDetailsResponse
+case class SucccessMatchingDetailsResponse(matchingDetails: MatchingDetails) extends MatchingDetailsResponse
+object FailedMatchingDetailsResponse extends MatchingDetailsResponse
+
 class CitizenDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector)(implicit ec: ExecutionContext) {
-  def getUtr(nino: String)(implicit hc: HeaderCarrier): Future[Option[AtsUtr]] =
+  def getUtr(nino: String)(implicit hc: HeaderCarrier): Future[MatchingDetailsResponse] =
     citizenDetailsConnector.connectToCid(nino).flatMap {
-      case response if response.status == OK => Future(Some(response.json.as[AtsUtr]))
-      case _                                 => Future(None)
+      case response if response.status == OK =>
+        Future(SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(response.json)))
+      case _ => Future(FailedMatchingDetailsResponse)
     }
 }

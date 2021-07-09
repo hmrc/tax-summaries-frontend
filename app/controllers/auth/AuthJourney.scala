@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package connectors
+package controllers.auth
 
-import config.ApplicationConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import com.google.inject.ImplementedBy
+import play.api.mvc.{ActionBuilder, AnyContent}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
-class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfig: ApplicationConfig)(
-  implicit ec: ExecutionContext) {
+@ImplementedBy(classOf[AuthJourneyImpl])
+trait AuthJourney {
+  val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
+}
 
-  private val baseUrl = applicationConfig.cidHost
-
-  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/nino/$nino/")
+class AuthJourneyImpl @Inject()(authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction)
+    extends AuthJourney {
+  override val authWithSelfAssessment
+    : ActionBuilder[AuthenticatedRequest, AnyContent] = authAction andThen selfAssessmentAction
 }

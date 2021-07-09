@@ -19,9 +19,10 @@ package controllers.auth
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import services.CitizenDetailsService
+import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -39,31 +40,8 @@ class SelfAssessmentAction @Inject()(
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     if (request.saUtr.isEmpty) {
-      for {
-        atsNinoResponse <- ninoAuthAction.getNino()
-      } yield {
-        atsNinoResponse match {
-          case SuccessAtsNino(nino) =>
-            val utr = citizenDetailsService.getUtr(nino)
-            // val newRequest = request.copy(saUtr = Some(SaUtr("123123123")))
-            Right(request)
-          case NoAtsNinoFound =>
-            Left(
-              Redirect(controllers.routes.ErrorController.notAuthorised())
-            )
-          case UpliftRequiredAtsNino =>
-            Left(
-              Redirect(
-                appConfig.identityVerificationUpliftUrl,
-                Map(
-                  "origin"          -> Seq(appConfig.appName),
-                  "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-                  "completionURL"   -> Seq(appConfig.payeLoginCallbackUrl),
-                  "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
-                )
-              )
-            )
-        }
+      ninoAuthAction.getNino().flatMap { atsNinoResponse =>
+        handleResponse(request, atsNinoResponse)
       }
     } else {
       Future(Right(request))
@@ -71,4 +49,58 @@ class SelfAssessmentAction @Inject()(
   }
 
   override protected def executionContext: ExecutionContext = ec
+
+  private def handleResponse[T](request: AuthenticatedRequest[T], atsNinoResponse: AtsNino)(
+    implicit hc: HeaderCarrier) =
+    atsNinoResponse match {
+      case SuccessAtsNino(nino) =>
+        for {
+          utr <- citizenDetailsService.getUtr(nino)
+        } yield {
+          utr match {
+            case SucccessMatchingDetailsResponse(value) =>
+              Right(createAuthenticatedRequest(request, value.saUtr))
+            case _ =>
+              Left(
+                Redirect(controllers.routes.ErrorController.notAuthorised())
+              )
+          }
+        }
+      case NoAtsNinoFound =>
+        Future(
+          Left(
+            Redirect(controllers.routes.ErrorController.notAuthorised())
+          )
+        )
+      case UpliftRequiredAtsNino =>
+        Future(
+          Left(
+            Redirect(
+              appConfig.identityVerificationUpliftUrl,
+              Map(
+                "origin"          -> Seq(appConfig.appName),
+                "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
+                "completionURL"   -> Seq(appConfig.loginCallback),
+                "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
+              )
+            )
+          )
+        )
+    }
+
+  private def createAuthenticatedRequest[T](
+    request: AuthenticatedRequest[T],
+    newSaUtr: Option[SaUtr]): AuthenticatedRequest[T] =
+    AuthenticatedRequest(
+      userId = request.userId,
+      agentRef = request.agentRef,
+      saUtr = newSaUtr,
+      nino = request.nino,
+      None,
+      None,
+      None,
+      true,
+      request.credentials,
+      request
+    )
 }

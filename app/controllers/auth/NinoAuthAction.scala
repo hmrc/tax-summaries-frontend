@@ -17,7 +17,7 @@
 package controllers.auth
 
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientConfidenceLevel, InsufficientEnrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
@@ -37,6 +37,6 @@ class NinoAuthAction @Inject()(override val authConnector: DefaultAuthConnector)
       case Some(nino) => Future(SuccessAtsNino(nino))
       case _          => Future(NoAtsNinoFound)
     } recover {
-      case _: InsufficientEnrolments => UpliftRequiredAtsNino
+      case _: InsufficientConfidenceLevel => UpliftRequiredAtsNino
     }
 }

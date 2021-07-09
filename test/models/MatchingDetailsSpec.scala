@@ -19,13 +19,13 @@ package models
 import play.api.libs.json.{JsResultException, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class AtsUtrSpec extends UnitSpec {
-  "AtsUtr" should {
+class MatchingDetailsSpec extends UnitSpec {
+  "MatchingDetails" should {
     "do a round trip through" in {
-      val atsUtr = AtsUtr("some utr")
-      val json = Json.toJson(atsUtr)
+      val matchingDetails = MatchingDetails("some utr")
+      val json = Json.toJson(matchingDetails)
 
-      json.as[AtsUtr] shouldBe atsUtr
+      json.as[MatchingDetails] shouldBe matchingDetails
     }
 
     "invalid json throws a JsResultException" in {
@@ -36,7 +36,7 @@ class AtsUtrSpec extends UnitSpec {
                               |""".stripMargin)
 
       assertThrows[JsResultException] {
-        json.as[AtsUtr]
+        json.as[MatchingDetails]
       }
     }
   }

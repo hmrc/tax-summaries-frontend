@@ -22,7 +22,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.auth.core.InsufficientConfidenceLevel
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -64,9 +64,9 @@ class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerS
       ninoAuthAction.getNino().futureValue shouldBe NoAtsNinoFound
     }
 
-    "return a InsufficientEnrolments Response when the user needs to uplift" in {
+    "return an InsufficientConfidenceLevel Response when the user needs to uplift" in {
       val retrievalResult: Future[Option[String]] =
-        Future.failed(new InsufficientEnrolments)
+        Future.failed(new InsufficientConfidenceLevel)
 
       when(
         mockAuthConnector

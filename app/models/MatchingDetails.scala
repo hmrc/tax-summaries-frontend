@@ -16,10 +16,12 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.JsValue
+import uk.gov.hmrc.domain.SaUtr
 
-case class AtsUtr(utr: String)
+case class MatchingDetails(saUtr: Option[SaUtr])
 
-object AtsUtr {
-  implicit val formats = Json.format[AtsUtr]
+object MatchingDetails {
+  def fromJsonMatchingDetails(matchingDetails: JsValue): MatchingDetails =
+    MatchingDetails((matchingDetails \ "ids" \ "sautr").asOpt[String].map(SaUtr.apply))
 }
