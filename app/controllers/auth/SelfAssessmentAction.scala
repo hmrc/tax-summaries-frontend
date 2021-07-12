@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -24,15 +25,15 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelfAssessmentAction @Inject()(
+class SelfAssessmentActionImpl @Inject()(
   citizenDetailsService: CitizenDetailsService,
   ninoAuthAction: NinoAuthAction,
   appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
-    extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest] {
+    extends SelfAssessmentAction {
 
   override protected def refine[A](
     request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
@@ -104,3 +105,6 @@ class SelfAssessmentAction @Inject()(
       request
     )
 }
+
+@ImplementedBy(classOf[SelfAssessmentActionImpl])
+trait SelfAssessmentAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]

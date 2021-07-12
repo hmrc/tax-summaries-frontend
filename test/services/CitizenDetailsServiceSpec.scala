@@ -17,7 +17,7 @@
 package services
 
 import connectors.CitizenDetailsConnector
-import models.AtsUtr
+import models.MatchingDetails
 import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -41,31 +41,34 @@ class CitizenDetailsServiceSpec
   val service = new CitizenDetailsService(citizenDetailsConnector)
 
   val nino = new Generator().nextNino
-  val utr = new SaUtrGenerator().nextSaUtr.toString
+  val utr = new SaUtrGenerator().nextSaUtr
 
   "getUtr" should {
     "return the utr from CID" in {
       val json = Json.parse(s"""
                                |{
-                               | "utr": "$utr"
+                               |"ids":
+                               |{
+                               | "sautr": "$utr"
+                               |}
                                |}
                                |""".stripMargin).toString
 
       val response = HttpResponse.apply(OK, json)
-      when(citizenDetailsConnector.connectToCid(meq(nino))(any())).thenReturn(Future.successful(response))
+      when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any())).thenReturn(Future.successful(response))
 
-      val result = service.getUtr(nino).futureValue
-      result shouldBe Some(AtsUtr(utr))
+      val result = service.getUtr(nino.toString()).futureValue
+      result shouldBe SucccessMatchingDetailsResponse(MatchingDetails(Some(utr)))
     }
 
     List(BAD_REQUEST, NOT_FOUND, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
-      s"when cid sends a $httpStatus, return a None" in {
+      s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
         val response = HttpResponse.apply(httpStatus, "body")
 
-        when(citizenDetailsConnector.connectToCid(meq(nino))(any())).thenReturn(Future.successful(response))
+        when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any())).thenReturn(Future.successful(response))
 
-        val result = service.getUtr(nino).futureValue
-        result shouldBe None
+        val result = service.getUtr(nino.toString()).futureValue
+        result shouldBe FailedMatchingDetailsResponse
       }
     }
   }

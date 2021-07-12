@@ -34,13 +34,13 @@ class CitizenDetailsConnectorSpec extends ConnectorSpec {
 
   lazy val connector = inject[CitizenDetailsConnector]
   val nino = new Generator().nextNino
-  val url = s"/citizen-details/${nino.withoutSuffix}/designatory-details"
+  val url = s"/citizen-details/nino/$nino"
 
   "connectToCid" should {
     "return an OK response when the CID API returns OK" in {
       server.stubFor(get(url).willReturn(ok("my cid response")))
 
-      val result = connector.connectToCid(nino).futureValue
+      val result = connector.connectToCid(nino.toString()).futureValue
 
       result.status shouldBe OK
       result.body shouldBe "my cid response"
@@ -49,7 +49,7 @@ class CitizenDetailsConnectorSpec extends ConnectorSpec {
     "throws a BadRequestException when the CID API returns BAD_REQUEST" in {
       server.stubFor(get(url).willReturn(badRequest()))
 
-      val result = connector.connectToCid(nino).failed.futureValue
+      val result = connector.connectToCid(nino.toString()).failed.futureValue
 
       result shouldBe a[BadRequestException]
     }
@@ -57,7 +57,7 @@ class CitizenDetailsConnectorSpec extends ConnectorSpec {
     "throws a NotFoundException when the CID API returns NOT_FOUND" in {
       server.stubFor(get(url).willReturn(notFound()))
 
-      val result = connector.connectToCid(nino).failed.futureValue
+      val result = connector.connectToCid(nino.toString()).failed.futureValue
 
       result shouldBe a[NotFoundException]
     }
@@ -65,7 +65,7 @@ class CitizenDetailsConnectorSpec extends ConnectorSpec {
     "throws a Upstream4xxResponse when the CID API returns LOCKED" in {
       server.stubFor(get(url).willReturn(aResponse().withStatus(LOCKED)))
 
-      val result = connector.connectToCid(nino).failed.futureValue
+      val result = connector.connectToCid(nino.toString()).failed.futureValue
 
       result shouldBe a[Upstream4xxResponse]
     }
@@ -73,7 +73,7 @@ class CitizenDetailsConnectorSpec extends ConnectorSpec {
     "throws a Upstream5xxResponse when the CID API returns INTERNAL_SERVER_ERROR" in {
       server.stubFor(get(url).willReturn(serverError()))
 
-      val result = connector.connectToCid(nino).failed.futureValue
+      val result = connector.connectToCid(nino.toString()).failed.futureValue
 
       result shouldBe a[Upstream5xxResponse]
     }

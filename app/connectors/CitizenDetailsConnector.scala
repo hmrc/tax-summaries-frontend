@@ -28,5 +28,5 @@ class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfi
   private val baseUrl = applicationConfig.cidHost
 
   def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/nino/$nino/")
+    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/nino/$nino")
 }
