@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.DataCacheConnector
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction, FakeSelfAssessmentAuthAction, SelfAssessmentAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction, FakeAuthJourney, FakeSelfAssessmentAuthAction, SelfAssessmentAction}
 import models.AtsListData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -75,6 +75,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     mock[AuditService],
     FakeAuthAction,
     FakeSelfAssessmentAuthAction,
+    FakeAuthJourney,
     mcc,
     taxsIndexView,
     genericErrorView,
