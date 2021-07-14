@@ -17,11 +17,11 @@
 package controllers.auth
 
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, InsufficientConfidenceLevel, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, InsufficientEnrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait AtsNino
@@ -33,7 +33,7 @@ class NinoAuthAction @Inject()(override val authConnector: DefaultAuthConnector)
     extends AuthorisedFunctions {
 
   def getNino()(implicit hc: HeaderCarrier): Future[AtsNino] =
-    authorised(ConfidenceLevel.L200).retrieve(Retrievals.nino) {
+    authorised(ConfidenceLevel.L200 and CredentialStrength(CredentialStrength.strong)).retrieve(Retrievals.nino) {
       case Some(nino) => Future(SuccessAtsNino(nino))
       case _          => Future(NoAtsNinoFound)
     } recover {
