@@ -36,7 +36,7 @@ object AppDependencies {
     "com.typesafe.play"       %% "play-test"                    % PlayVersion.current,
     "org.scalacheck"          %% "scalacheck"                   % "1.14.3",
     "com.github.tomakehurst"   % "wiremock-jre8"                % "2.26.1"
-  ).map(_ % "test")
+  ).map(_ % "test,it")
 
   val all: Seq[ModuleID] = compile ++ test
 }

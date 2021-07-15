@@ -60,6 +60,8 @@ lazy val microservice = Project(appName, file("."))
     scalafmtOnCompile := true,
     includeFilter in uglify := GlobFilter("ats-*.js")
   )
+  .configs(IntegrationTest)
+  .settings(integrationTestSettings())
   // this should be removed once we are able to use Scala 2.12.14 (or 2.13)
   .settings(
     libraryDependencies ++= Seq(
