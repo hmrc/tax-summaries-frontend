@@ -19,26 +19,20 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
-import models.{AtsData, AtsErrorResponse, AtsListData, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import models._
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants.{testNino, testUar, testUtr}
-import utils.{JsonUtil, WireMockHelper}
+import utils.{BaseSpec, JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 import scala.io.Source
 
-class MiddleConnectorSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
-    with JsonUtil with Injecting {
+class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -49,8 +43,6 @@ class MiddleConnectorSpec
       .build()
 
   implicit val hc = HeaderCarrier()
-  implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit lazy val ec = inject[ExecutionContext]
   private val currentYear = 2018
   private val currentYearMinus1 = currentYear - 1
 
@@ -97,7 +89,7 @@ class MiddleConnectorSpec
             .withBody("Bad Request"))
       )
 
-      a[BadRequestException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
+      a[BadRequestException] should be thrownBy sut.connectToPayeATS(testNino, currentYear).futureValue
 
     }
 
@@ -111,7 +103,7 @@ class MiddleConnectorSpec
             .withStatus(404)
             .withBody("Not Found"))
       )
-      a[NotFoundException] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
+      a[NotFoundException] should be thrownBy sut.connectToPayeATS(testNino, currentYear).futureValue
 
     }
 
@@ -125,7 +117,7 @@ class MiddleConnectorSpec
             .withStatus(500)
             .withBody("Internal Server Error"))
       )
-      a[Upstream5xxResponse] should be thrownBy await(sut.connectToPayeATS(testNino, currentYear))
+      a[Upstream5xxResponse] should be thrownBy sut.connectToPayeATS(testNino, currentYear).futureValue
 
     }
   }
@@ -399,8 +391,8 @@ class MiddleConnectorSpec
             .withBody("Bad Request"))
       )
 
-      a[BadRequestException] should be thrownBy await(
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
+      a[BadRequestException] should be thrownBy
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
 
     }
 
@@ -415,7 +407,7 @@ class MiddleConnectorSpec
       )
 
       intercept[NotFoundException] {
-        await(sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
       }
     }
 
@@ -427,8 +419,8 @@ class MiddleConnectorSpec
             .withStatus(INTERNAL_SERVER_ERROR)
             .withBody("An error occurred"))
       )
-      a[Upstream5xxResponse] should be thrownBy await(
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
+      a[Upstream5xxResponse] should be thrownBy
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
 
     }
 
@@ -442,7 +434,7 @@ class MiddleConnectorSpec
       )
 
       intercept[Exception] {
-        await(sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear))
+        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
       }
     }
   }
@@ -477,7 +469,7 @@ class MiddleConnectorSpec
       )
 
       intercept[BadRequestException] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        sut.connectToGovernmentSpend(currentYear, testNino).futureValue
       }
     }
 
@@ -492,7 +484,7 @@ class MiddleConnectorSpec
       )
 
       intercept[Upstream5xxResponse] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        sut.connectToGovernmentSpend(currentYear, testNino).futureValue
       }
     }
 
@@ -506,7 +498,7 @@ class MiddleConnectorSpec
       )
 
       intercept[Exception] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        sut.connectToGovernmentSpend(currentYear, testNino).futureValue
       }
     }
   }

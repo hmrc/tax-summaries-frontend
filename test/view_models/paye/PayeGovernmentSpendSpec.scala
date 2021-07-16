@@ -19,18 +19,17 @@ package view_models.paye
 import config.ApplicationConfig
 import models.DataHolder
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.JsonUtil
+import utils.{JsonUtil, TestConstants}
 import view_models.Amount
-import utils.TestConstants
 
 class PayeGovernmentSpendSpec
-    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures with IntegrationPatience
-    with Injecting {
+    extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    with IntegrationPatience with Injecting {
 
   implicit lazy val appConfig = inject[ApplicationConfig]
 

@@ -16,7 +16,7 @@
 
 package services.atsData
 
-import models.{AtsData, AtsListData, DataHolder, GovernmentSpendingOutputWrapper, SpendData, TaxpayerFrontTierData, UserData}
+import models._
 import view_models.{Amount, Rate}
 
 object AtsTestData {

@@ -23,11 +23,13 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 import views.html.paye.PayeYourIncomeAndTaxesView
+
+import scala.concurrent.Future
 
 class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
@@ -46,7 +48,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -63,7 +65,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData))
+        .thenReturn(Future(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -75,7 +77,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
+        .thenReturn(Future(Right(PayeAtsTestData.missingYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -89,7 +91,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
+        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -102,7 +104,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
+        .thenReturn(Future(Left(HttpResponse(BAD_REQUEST, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -115,7 +117,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
+        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

@@ -16,12 +16,9 @@
 
 package controllers
 
-import java.time.LocalDate
-
-import controllers.auth._
+import controllers.auth.{AuthAction, _}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, BodyParser, Request, Result}
@@ -30,17 +27,19 @@ import play.api.test.Helpers._
 import services.GovernmentSpendService
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
+import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with CurrentTaxYear {
+class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   override def now: () => LocalDate = () => LocalDate.now()
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
 
-  class CustomAuthAction(utr: Option[SaUtr]) extends AuthAction with ControllerBaseSpec {
+  class CustomAuthAction(utr: Option[SaUtr]) extends ControllerBaseSpec with AuthAction {
     override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
       block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, fakeCredentials, request))

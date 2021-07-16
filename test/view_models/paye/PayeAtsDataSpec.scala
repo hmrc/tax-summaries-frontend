@@ -17,11 +17,11 @@
 package view_models.paye
 
 import models.DataHolder
+import org.scalatest.{Matchers, WordSpec}
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.play.test.UnitSpec
 import view_models.Amount
 
-class PayeAtsDataSpec extends UnitSpec {
+class PayeAtsDataSpec extends WordSpec with Matchers {
 
   "PayeAtsData" should {
 

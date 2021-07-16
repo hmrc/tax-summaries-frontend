@@ -16,7 +16,6 @@
 
 package controllers.auth
 
-import config.ApplicationConfig
 import controllers.paye.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -30,17 +29,15 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants.fakeCredentials
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PayeAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class PayeAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   val unauthorisedRoute = routes.PayeErrorController.notAuthorised().url
 

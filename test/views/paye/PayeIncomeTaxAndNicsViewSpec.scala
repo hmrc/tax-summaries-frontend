@@ -24,7 +24,7 @@ import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeIncomeTaxAndNicsView
 
-class PayeIncomeTaxAndNicsViewSpec extends TestConstants with ViewSpecBase {
+class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request =
     PayeAuthenticatedRequest(

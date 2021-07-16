@@ -23,10 +23,12 @@ import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 import views.html.paye.PayeYourTaxableIncomeView
+
+import scala.concurrent.Future
 
 class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
@@ -47,7 +49,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -65,7 +67,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
+        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -78,7 +80,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
+        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

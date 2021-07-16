@@ -21,19 +21,17 @@ import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, _}
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
 
-class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -94,7 +92,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
   "Calling government spend" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -105,7 +103,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(badRequest)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -117,7 +115,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
         mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -128,14 +126,14 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(
         mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "have correct data for 2014" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#welfare + td").text() shouldBe "£5,863.22"
       document.select("#welfare").text() should include("24.52%")
@@ -210,7 +208,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
         mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#welfare + td").text() shouldBe "£2,530.00"

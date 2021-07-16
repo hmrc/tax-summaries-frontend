@@ -16,17 +16,11 @@
 
 package controllers
 
-import config.ApplicationConfig
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
-class AccountControllerTest extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
-
-  implicit val appConfig: ApplicationConfig = fakeApplication.injector.instanceOf[ApplicationConfig]
+class AccountControllerTest extends BaseSpec {
 
   val feedbackUrl = "http://localhost:9514/feedback/ATS/personal"
   val controller: AccountController = new AccountController

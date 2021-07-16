@@ -16,32 +16,27 @@
 
 package services
 
-import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.Json
 import play.api.http.Status.OK
-import play.api.test.{FakeRequest, Injecting}
+import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{BaseSpec, GenericViewModel}
 import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
-class GovernmentSpendServiceSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with Injecting {
+class GovernmentSpendServiceSpec extends BaseSpec {
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -52,16 +47,13 @@ class GovernmentSpendServiceSpec
     )
   )
 
-  val taxYear = 2015
+  override val taxYear = 2015
 
   val mockAtsService = mock[AtsService]
   val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
-  implicit lazy val ec = inject[ExecutionContext]
-
-  implicit val appConfig = inject[ApplicationConfig]
 
   val request = AuthenticatedRequest(
     "userId",
@@ -81,7 +73,7 @@ class GovernmentSpendServiceSpec
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
       when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
-        .thenReturn(genericViewModel)
+        .thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }

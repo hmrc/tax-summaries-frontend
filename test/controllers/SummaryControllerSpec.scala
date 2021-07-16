@@ -20,12 +20,11 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
 
@@ -56,7 +55,7 @@ object SummaryControllerSpec {
   )
 }
 
-class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach with ScalaCheckDrivenPropertyChecks {
+class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenPropertyChecks {
 
   override val taxYear = 2014
 
@@ -82,7 +81,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
   "Calling Summary" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -90,7 +89,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(badRequest)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -101,7 +100,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -111,14 +110,14 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -130,7 +129,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "have the correct tax free amount" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -146,7 +145,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -155,7 +154,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "show total income tax and NICs value on the summary page" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -164,7 +163,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "show capital gains (and description) on the summary if capital gains is not 0" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -180,7 +179,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -190,7 +189,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "show Total Capital Gains Tax value" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-capital-gains-tax").text() should equal("£5,500")
@@ -198,7 +197,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "show capital gains description on the summary if total capital gains tax is not 0" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -214,7 +213,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -236,7 +235,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
             when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
               .thenReturn(Future.successful(model5))
 
-            val result = Future.successful(sut.show(request))
+            val result = sut.show(request)
             status(result) shouldBe 200
             val document = Jsoup.parse(contentAsString(result))
 
@@ -248,7 +247,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "show Tax and Nics description having (income tax and employee nics)" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Income Tax and National Insurance")
@@ -264,7 +263,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your tax was calculated as")
@@ -280,7 +279,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your tax was calculated as")
@@ -296,7 +295,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model8))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your NICs were calculated as")
@@ -311,7 +310,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model9))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Income Tax and National Insurance")
@@ -326,7 +325,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model10))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() should equal("Your NICs were calculated as")
@@ -334,7 +333,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
 
     "show Your Total Tax as sum of Income Tax, capital gains and employee nics)" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-amount").text() shouldBe "£1,800"
@@ -345,7 +344,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(baseModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal(
@@ -362,7 +361,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model11))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your total Income Tax.")
@@ -378,7 +377,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model12))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your Capital Gains Tax.")
@@ -394,7 +393,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model13))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal("Your National Insurance.")
@@ -409,7 +408,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model14))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal(
@@ -425,7 +424,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model15))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal(
@@ -441,7 +440,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model16))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() should equal(
@@ -455,7 +454,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach w
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model17))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")

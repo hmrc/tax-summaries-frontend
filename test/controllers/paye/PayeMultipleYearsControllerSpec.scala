@@ -23,7 +23,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.libs.json.{Json, Reads}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.JsonUtil
 import utils.TestConstants.testNino
@@ -124,7 +124,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
             .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
               any[HeaderCarrier],
               any[PayeAuthenticatedRequest[_]]))
-          .thenReturn(Right(List[PayeAtsData]()))
+          .thenReturn(Future(Right(List[PayeAtsData]())))
 
         val result = sut().onPageLoad(fakeAuthenticatedRequest)
 
@@ -139,7 +139,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
             .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
               any[HeaderCarrier],
               any[PayeAuthenticatedRequest[_]]))
-          .thenReturn(Left(HttpResponse(NOT_FOUND, "Not found")))
+          .thenReturn(Future(Left(HttpResponse(NOT_FOUND, "Not found"))))
 
         val result = sut().onPageLoad(fakeAuthenticatedRequest)
 
@@ -176,7 +176,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
             .getPayeATSMultipleYearData(eqTo(testNino), eqTo(taxYearMinus1), eqTo(taxYear))(
               any[HeaderCarrier],
               any[PayeAuthenticatedRequest[_]]))
-          .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred")))
+          .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred"))))
 
         val result = sut().onPageLoad(fakeAuthenticatedRequest)
 

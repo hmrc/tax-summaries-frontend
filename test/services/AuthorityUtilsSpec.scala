@@ -18,14 +18,12 @@ package services
 
 import controllers.auth.AuthenticatedRequest
 import models.AgentToken
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import utils.TestConstants._
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 
-class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
+class AuthorityUtilsSpec extends BaseSpec {
 
   class TestService extends AuthorityUtils {
 

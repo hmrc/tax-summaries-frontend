@@ -22,12 +22,14 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.libs.json.{Json, Reads}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.JsonUtil
 import utils.TestConstants.testNino
 import view_models.paye.PayeAtsMain
 import views.html.paye.PayeTaxsMainView
+
+import scala.concurrent.Future
 
 class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil {
 
@@ -52,7 +54,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(mock[PayeAtsData]))
+        .thenReturn(Future(Right(mock[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -65,7 +67,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(NOT_FOUND, "Not found")))
+        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, "Not found"))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -78,7 +80,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred")))
+        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error occurred"))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

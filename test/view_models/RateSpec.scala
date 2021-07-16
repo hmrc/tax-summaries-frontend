@@ -16,10 +16,9 @@
 
 package view_models
 
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
-class RateSpec extends UnitSpec with GuiceOneAppPerSuite {
+class RateSpec extends BaseSpec {
   "Rate" should {
     "not change constructor parameter values" in {
       Rate("10%").percent shouldBe "10%"

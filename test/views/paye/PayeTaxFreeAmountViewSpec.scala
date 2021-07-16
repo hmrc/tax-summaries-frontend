@@ -25,7 +25,7 @@ import view_models.paye.{AmountRow, PayeTaxFreeAmount}
 import views.ViewSpecBase
 import views.html.paye.PayeTaxFreeAmountView
 
-class PayeTaxFreeAmountViewSpec extends TestConstants with ViewSpecBase {
+class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request =
     PayeAuthenticatedRequest(

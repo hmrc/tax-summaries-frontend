@@ -16,12 +16,12 @@
 
 package view_models.paye
 
-import controllers.paye.AppConfigBaseSpec
 import models.{DataHolder, PayeAtsData, TaxBand}
 import services.atsData.PayeAtsTestData
+import utils.BaseSpec
 import view_models.{Amount, Rate}
 
-class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
+class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
   "PayeYourIncomeAndTaxesData" should {
 

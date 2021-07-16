@@ -16,12 +16,12 @@
 
 package utils.view_utils
 
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.ViewUtils
 import view_models.{Amount, Rate}
 
-class ViewUtilsSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
+class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 
   val zeroAmount = createAmount(0)
   val zeroRate = Rate("0%")

@@ -23,9 +23,6 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Matchers._
 import org.mockito.Mockito.{when, _}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,15 +30,15 @@ import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models.AtsForms._
 import view_models.{ATSUnavailableViewModel, AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
+class IndexControllerSpec extends ControllerBaseSpec {
 
   implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
   override val taxYear = 2015
@@ -91,7 +88,8 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
   )
 
   override def beforeEach(): Unit = {
-    when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model)
+    when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+      .thenReturn(Future(model))
     when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(None))
   }
@@ -113,7 +111,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = sut.agentAwareShow(requestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -139,7 +137,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = sut.agentAwareShow(requestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -164,7 +162,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
           controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = sut.agentAwareShow(requestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -187,7 +185,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(requestWithQuery))
+      val result = sut.agentAwareShow(requestWithQuery)
 
       status(result) shouldBe 200
       session(result).get("TAXS_USER_TYPE") shouldBe None
@@ -205,8 +203,10 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         )
       )
 
-      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(model2)
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
+      when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+        .thenReturn(Future(model2))
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(data)))
 
       val result = sut.agentAwareShow(request)
 
@@ -233,7 +233,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
       )
 
-      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
+      val result = sut.agentAwareShow(agentRequestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -258,7 +258,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
           controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
+      val result = sut.agentAwareShow(agentRequestWithQuery)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary")
@@ -284,7 +284,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
 
-      val result = Future.successful(sut.agentAwareShow(agentRequestWithQuery))
+      val result = sut.agentAwareShow(agentRequestWithQuery)
 
       session(result).get("TAXS_USER_TYPE") shouldBe None
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
@@ -295,13 +295,13 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     "return a 200 response" in {
 
-      val result = Future.successful(sut.agentAwareShow(request))
+      val result = sut.agentAwareShow(request)
       status(result) shouldBe 200
     }
 
     "return a Tax Year list" in {
 
-      val result = Future.successful(sut.agentAwareShow(request))
+      val result = sut.agentAwareShow(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -313,7 +313,8 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
 
     "give a Ok status and stay on the same page if form errors and display the error" in {
 
-      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]])).thenReturn(Right(data))
+      when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(data)))
       val atsYear = Map("atsYear" -> "")
       val form = atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(
@@ -329,7 +330,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
-      val result = Future.successful(sut.onSubmit(requestWithQuery))
+      val result = sut.onSubmit(requestWithQuery)
       status(result) shouldBe OK
 
     }
@@ -337,9 +338,9 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
       when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
-        .thenReturn(new NoATSViewModel)
+        .thenReturn(Future(new NoATSViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -350,7 +351,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
       when(mockAtsYearListService.getAtsListData(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.agentAwareShow(agentRequest))
+      val result = sut.agentAwareShow(agentRequest)
 
       val document = Jsoup.parse(contentAsString(result))
 

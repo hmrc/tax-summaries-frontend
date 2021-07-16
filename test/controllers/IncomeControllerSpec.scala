@@ -20,18 +20,17 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, IncomeService}
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class IncomeControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -71,7 +70,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   "Calling incomes" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -79,7 +78,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(badRequest)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -90,7 +89,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -102,7 +101,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -110,7 +109,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
       status(result) shouldBe 200
 
@@ -145,9 +144,9 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       )
 
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
-        .thenReturn(model)
+        .thenReturn(Future.successful(model))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
       status(result) shouldBe 200
 

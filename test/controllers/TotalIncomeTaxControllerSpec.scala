@@ -20,17 +20,16 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 
-class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -94,7 +93,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "Calling Total Income Tax" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -105,7 +104,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(request)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -116,7 +115,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -126,14 +125,14 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -172,7 +171,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -193,7 +192,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -208,7 +207,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "Dividends section" should {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -237,7 +236,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -258,7 +257,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model5))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -275,7 +274,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "have the right user data for adjustments increasing and reducing income tax" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -292,7 +291,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -310,7 +309,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -328,7 +327,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model8))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -349,7 +348,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model9))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-income-tax-amount-nics").text() should equal("£0")

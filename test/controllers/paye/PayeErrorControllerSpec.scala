@@ -16,8 +16,6 @@
 
 package controllers.paye
 
-import java.time.LocalDate
-
 import controllers.auth.FakePayeAuthAction
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -28,6 +26,7 @@ import services.atsData.PayeAtsTestData.govSpendingData
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting with CurrentTaxYear {

@@ -16,11 +16,10 @@
 
 package test.utils
 
-import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, WordSpec}
 import utils.TaxsValidator._
 
-class FormatValidationsSpec extends UnitSpec with Matchers {
+class FormatValidationsSpec extends WordSpec with Matchers {
 
   private def testRegex(regExPattern: String, validData: Seq[String], invalidData: Seq[String]): Unit = {
     withClue("the regex should allow these valid cases\n") {

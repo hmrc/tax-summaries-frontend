@@ -17,14 +17,10 @@
 package utils
 
 import com.typesafe.config.ConfigException
-import config.ApplicationConfig
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
 
-class CategoriesUtilsSpec extends UnitSpec with MockitoSugar {
-
-  val appConfig = mock[ApplicationConfig]
+class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 
   "SwapDataUtils" should {
 

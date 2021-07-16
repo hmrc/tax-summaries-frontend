@@ -19,7 +19,6 @@ package controllers.auth
 import config.ApplicationConfig
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
@@ -29,15 +28,15 @@ import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants.fakeCredentials
+import utils.BaseSpec
 import utils.RetrievalOps._
+import utils.TestConstants.fakeCredentials
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class MinAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]

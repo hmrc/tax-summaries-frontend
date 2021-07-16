@@ -16,10 +16,9 @@
 
 package utils
 
-import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, WordSpec}
 
-class HtmlFormatterSpec extends UnitSpec with Matchers {
+class HtmlFormatterSpec extends WordSpec with Matchers {
 
   "toHtmlNonBroken" should {
     "replace spaces with non breaking spaces" in {

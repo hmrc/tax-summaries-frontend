@@ -17,13 +17,11 @@
 package view_models
 
 import org.scalacheck.Gen
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import uk.gov.hmrc.domain.SaUtrGenerator
-import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
+class SummarySpec extends WordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 
   def amountGen: Gen[Amount] =
     Gen.choose(-100, 100).map { amount =>

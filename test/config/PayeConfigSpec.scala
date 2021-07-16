@@ -16,10 +16,10 @@
 
 package config
 
-import controllers.paye.AppConfigBaseSpec
 import org.scalatestplus.mockito.MockitoSugar
+import utils.BaseSpec
 
-class PayeConfigSpec extends AppConfigBaseSpec with MockitoSugar {
+class PayeConfigSpec extends BaseSpec with MockitoSugar {
 
   implicit val config: PayeConfig = inject[PayeConfig]
 

@@ -17,15 +17,15 @@
 package view_models.paye
 
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
 
 class PayeYourIncomeAndTaxesSpec
-    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience {
 
   val taxYear: Int = 2019

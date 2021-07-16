@@ -24,7 +24,7 @@ import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeGovernmentSpendingView
 
-class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
+class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request =
     PayeAuthenticatedRequest(

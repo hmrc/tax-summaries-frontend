@@ -21,10 +21,10 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.GenericViewModel
+import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.Future

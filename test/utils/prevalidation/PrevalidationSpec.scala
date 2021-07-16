@@ -19,8 +19,8 @@ package utils.prevalidation
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.TaxsUnitTestTraits
-import utils.prevalidation.TrimOption.TrimOption
 import utils.prevalidation.CaseOption.CaseOption
+import utils.prevalidation.TrimOption.TrimOption
 import utils.prevalidation.prevalidation._
 
 class PrevalidationSpec extends TaxsUnitTestTraits {

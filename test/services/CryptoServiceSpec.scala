@@ -16,22 +16,17 @@
 
 package services
 
-import java.util.Date
-
-import config.ApplicationConfig
 import models.AgentToken
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.AgentTokenException
 import utils.TestConstants._
+import utils.{AgentTokenException, BaseSpec}
 
-class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures {
+import java.util.Date
+
+class CryptoServiceSpec extends BaseSpec {
 
   val maxAge = 180
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new CryptoService {
 

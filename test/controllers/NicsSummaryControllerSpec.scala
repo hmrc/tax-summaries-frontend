@@ -20,17 +20,16 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 
-class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -77,7 +76,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   "Calling NICs" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -85,7 +84,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(request)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -96,7 +95,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -108,7 +107,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -117,7 +116,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 

@@ -19,14 +19,14 @@ package controllers
 import controllers.auth.FakeAuthAction
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import play.api.test.Helpers.{defaultAwaitTimeout, _}
+import play.api.test.Helpers._
 import services._
+import utils.ControllerBaseSpec
 import view_models.NoATSViewModel
 
 import scala.concurrent.Future
 
-class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
   override val taxYear = 2015
 
@@ -69,7 +69,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
       status(result) shouldBe 303
       redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -78,7 +78,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "show have the correct title for the no ATS page" in {
 
-    val result = Future.successful(incomeController.show(request))
+    val result = incomeController.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -86,7 +86,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "show no ats page for income-before-tax" in {
 
-    val result = Future.successful(incomeController.show(request))
+    val result = incomeController.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -109,7 +109,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
       .thenReturn(Future.successful(model))
 
-    val result = Future.successful(sut.show(request))
+    val result = sut.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -132,7 +132,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
-    val result = Future.successful(sut.show(request))
+    val result = sut.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -155,7 +155,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
-    val result = Future.successful(sut.show(request))
+    val result = sut.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -176,7 +176,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
-    val result = Future.successful(sut.show(request))
+    val result = sut.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
@@ -197,7 +197,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec with BeforeAndAfterEach {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
-    val result = Future.successful(sut.show(request))
+    val result = sut.show(request)
 
     status(result) shouldBe 303
     redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")

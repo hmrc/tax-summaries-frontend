@@ -17,17 +17,21 @@
 package utils
 
 import org.jsoup.nodes.Document
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import uk.gov.hmrc.play.test.UnitSpec
-
-import scala.concurrent.Future
+import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite {
+import scala.concurrent.{ExecutionContext, Future}
+
+trait TaxsUnitTestTraits
+    extends WordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite
+    with Injecting {
 
   implicit lazy val hc = HeaderCarrier()
+
+  implicit lazy val ec = inject[ExecutionContext]
 
   implicit def convertToOption[T](value: T): Option[T] = Some(value)
 
@@ -56,9 +60,10 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
 
   implicit def convertToMockConfiguration2[T](value: T): MockConfiguration[Option[T]] = Configure(value)
 
-  implicit def convertToMockConfiguration3[T](value: T): MockConfiguration[Future[T]] = Configure(value)
+  implicit def convertToMockConfiguration3[T](value: T): MockConfiguration[Future[T]] = Configure(Future(value))
 
-  implicit def convertToMockConfiguration4[T](value: T): MockConfiguration[Future[Option[T]]] = Configure(Some(value))
+  implicit def convertToMockConfiguration4[T](value: T): MockConfiguration[Future[Option[T]]] =
+    Configure(Future(Some(value)))
 
   implicit def convertToMockConfiguration5[T](err: Throwable): MockConfiguration[Future[Option[T]]] = Configure(err)
 

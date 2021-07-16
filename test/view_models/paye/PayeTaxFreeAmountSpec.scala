@@ -18,14 +18,14 @@ package view_models.paye
 
 import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil
 import view_models.Amount
 
 class PayeTaxFreeAmountSpec
-    extends UnitSpec with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience {
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =

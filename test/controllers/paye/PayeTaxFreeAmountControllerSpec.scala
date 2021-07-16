@@ -27,6 +27,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 import views.html.paye.PayeTaxFreeAmountView
 
+import scala.concurrent.Future
+
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show(taxYear).url)
@@ -40,7 +42,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -60,7 +62,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
+        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -73,7 +75,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
+        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

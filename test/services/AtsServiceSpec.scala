@@ -21,25 +21,19 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.JsonUtil._
 import utils.TestConstants._
-import utils.{AccountUtils, AuthorityUtils, GenericViewModel}
+import utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsServiceSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
+class AtsServiceSpec extends BaseSpec {
 
   val data = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
@@ -62,7 +56,7 @@ class AtsServiceSpec
   }
 
   implicit val hc = new HeaderCarrier
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+
   implicit val request =
     AuthenticatedRequest(
       "userId",
@@ -102,14 +96,16 @@ class AtsServiceSpec
 
             "has AtsData present in the cache" in {
 
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future
+                .successful(Some(data))
 
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
-              when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload[
-                AtsData](data)
+              when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn
+                Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
-              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Future.successful(
+                Some(data))
 
               when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
@@ -120,14 +116,16 @@ class AtsServiceSpec
 
             "has no data in the cache" in {
 
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn None
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future
+                .successful(None)
 
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
-              when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload[
-                AtsData](data)
+              when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn
+                Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
-              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Future.successful(
+                Some(data))
 
               when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
@@ -141,20 +139,22 @@ class AtsServiceSpec
 
             "has AtsData present in the cache" in {
 
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future
+                .successful(Some(data))
 
               when(mockAccountUtils.isAgent(any())) thenReturn true
 
               when(mockAuthUtils.checkUtr(eqTo(Some(testUtr)), any())(any())) thenReturn true
 
-              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Some(agentToken)
+              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
 
               sut.createModel(fakeTaxYear, converter).futureValue shouldBe FakeViewModel(data.toString)
             }
 
             "has no data in the cache" in {
 
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn None
+              when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future
+                .successful(None)
 
               when(mockAccountUtils.isAgent(any())) thenReturn true
 
@@ -162,7 +162,7 @@ class AtsServiceSpec
 
               when(mockAccountUtils.getAccount(any())) thenReturn Uar(testUar)
 
-              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Some(agentToken)
+              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
 
               when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
@@ -170,9 +170,10 @@ class AtsServiceSpec
                 mockMiddleConnector.connectToAtsOnBehalfOf(
                   eqTo(Uar(testUar)),
                   eqTo(SaUtr(testNonMatchingUtr)),
-                  eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload[AtsData](data)
+                  eqTo(fakeTaxYear))(any())) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
-              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Some(data)
+              when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Future.successful(
+                Some(data))
 
               implicit val request =
                 AuthenticatedRequest(
@@ -199,12 +200,13 @@ class AtsServiceSpec
 
         "the connector returns a NoATSViewModel" in {
 
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
+            Some(data))
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsNotFoundResponse(
-            "Not found")
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn Future
+            .successful(AtsNotFoundResponse("Not found"))
 
           sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[NoATSViewModel]
 
@@ -215,12 +217,13 @@ class AtsServiceSpec
 
           val dataWithError = data.copy(errors = Some(IncomingAtsError("NoAtsError")))
 
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(dataWithError)
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
+            Some(dataWithError))
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload(
-            dataWithError)
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn Future(
+            AtsSuccessResponseWithPayload(dataWithError))
 
           sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[NoATSViewModel]
 
@@ -232,12 +235,12 @@ class AtsServiceSpec
 
         "the connector returns an AtsErrorResponse" in {
 
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(data)
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future(Some(data))
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsErrorResponse(
-            "Something went wrong")
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn Future(
+            AtsErrorResponse("Something went wrong"))
 
           sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[ATSUnavailableViewModel]
 
@@ -248,12 +251,13 @@ class AtsServiceSpec
 
           val dataWithError = data.copy(errors = Some(IncomingAtsError("Random error")))
 
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Some(dataWithError)
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
+            Some(dataWithError))
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn AtsSuccessResponseWithPayload(
-            dataWithError)
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn Future
+            .successful(AtsSuccessResponseWithPayload(dataWithError))
 
           sut.createModel(fakeTaxYear, converter).futureValue shouldBe a[ATSUnavailableViewModel]
 

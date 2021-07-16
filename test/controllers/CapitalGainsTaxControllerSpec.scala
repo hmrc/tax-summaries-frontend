@@ -20,18 +20,17 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, CapitalGainsService}
+import utils.ControllerBaseSpec
 import utils.TestConstants.{capitalGains, testUtr}
 import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -57,7 +56,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
   "Calling Capital Gains" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -68,7 +67,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
     }
 
     "display an error page for an invalid request " in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(badRequest)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -79,7 +78,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -89,14 +88,14 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
     }
 
     "show Your Capital Gains section with the right user data" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -112,7 +111,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -130,7 +129,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -140,7 +139,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
     "show Capital Gains Tax section with correct user data" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -166,7 +165,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -183,7 +182,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -200,7 +199,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model5))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -210,7 +209,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
     "show Adjustments section with correct user data" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -219,7 +218,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
     "show Total Capital Gains Tax with correct user data" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -235,7 +234,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -245,7 +244,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
     "show capital gains description if total capital gains tax is not 0" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-cg-description") should not be null
@@ -261,7 +260,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.toString should not include ("Technical Difficulties")

@@ -20,6 +20,7 @@ import config.ApplicationConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.ControllerBaseSpec
 
 class SaLanguageControllerSpec extends ControllerBaseSpec {
 

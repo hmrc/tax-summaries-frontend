@@ -16,9 +16,9 @@
 
 package view_models.paye
 
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, WordSpec}
 
-class TaxYearFormattingSpec extends UnitSpec {
+class TaxYearFormattingSpec extends WordSpec with Matchers {
 
   val instance = new TaxYearFormatting {
     val taxYear = 2019

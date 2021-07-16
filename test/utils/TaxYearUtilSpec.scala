@@ -18,12 +18,12 @@ package utils
 
 import controllers.auth.AuthenticatedRequest
 import models.InvalidTaxYear
+import org.scalatest.{Matchers, WordSpec}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
-class TaxYearUtilSpec extends UnitSpec {
+class TaxYearUtilSpec extends WordSpec with Matchers {
 
   val authenticatedRequest =
 

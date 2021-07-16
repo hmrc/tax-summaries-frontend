@@ -22,10 +22,6 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.mvc.Request
@@ -33,15 +29,13 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{AgentTokenException, AuthorityUtils}
+import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class AtsListServiceSpec
-    extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
+class AtsListServiceSpec extends BaseSpec {
 
   implicit lazy val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
@@ -309,7 +303,8 @@ class AtsListServiceSpec
     // Should this be the case? (EDGE CASE)
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
 
-      when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
+      when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(agentToken)))
       when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       whenReady(sut.getAtsYearList) { result =>

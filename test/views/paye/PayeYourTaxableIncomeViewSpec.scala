@@ -25,7 +25,7 @@ import view_models.paye.PayeYourTaxableIncome
 import views.ViewSpecBase
 import views.html.paye.PayeYourTaxableIncomeView
 
-class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
+class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request =
     PayeAuthenticatedRequest(

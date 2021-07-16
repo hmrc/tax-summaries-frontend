@@ -16,11 +16,11 @@
 
 package view_models
 
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 
-class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
+class AmountSpec extends WordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 
   val testCurrency: String = "GBP"
 

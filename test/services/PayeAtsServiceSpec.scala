@@ -22,24 +22,19 @@ import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.http.Status.OK
+import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 import utils.TestConstants.testNino
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class PayeAtsServiceSpec
-    extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
+class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc = HeaderCarrier()
   implicit val ec = app.injector.instanceOf[ExecutionContext]

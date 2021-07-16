@@ -20,17 +20,16 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class ATSMainControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
@@ -55,7 +54,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   "Calling Index Page" should {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) shouldBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(
@@ -63,7 +62,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
+      val result = sut.show(badRequest)
       status(result) shouldBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -74,7 +73,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
@@ -86,7 +85,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
@@ -95,7 +94,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
@@ -122,7 +121,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe 200
