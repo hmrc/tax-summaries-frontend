@@ -72,6 +72,7 @@ class GovernmentSpendServiceSpec
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=2015"))
 

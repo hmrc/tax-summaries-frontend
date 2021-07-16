@@ -59,6 +59,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest())
     implicit val hc = new HeaderCarrier

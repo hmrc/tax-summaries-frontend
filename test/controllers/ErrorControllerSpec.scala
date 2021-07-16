@@ -43,7 +43,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
   class CustomAuthAction(utr: Option[SaUtr]) extends AuthAction with ControllerBaseSpec {
     override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, fakeCredentials, request))
+      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, false, fakeCredentials, request))
     override protected def executionContext: ExecutionContext = ec
   }
 
@@ -84,6 +84,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest())
           val result = sut().authorisedNoAts()(request)
@@ -111,6 +112,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest())
 
@@ -139,6 +141,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest())
 
@@ -156,7 +159,18 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
       "show the not authorised view" in {
 
         implicit lazy val request =
-          AuthenticatedRequest("userId", None, None, None, None, None, None, true, fakeCredentials, FakeRequest())
+          AuthenticatedRequest(
+            "userId",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            true,
+            false,
+            fakeCredentials,
+            FakeRequest())
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 

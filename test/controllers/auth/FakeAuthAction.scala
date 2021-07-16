@@ -39,6 +39,7 @@ object FakeAuthAction extends AuthAction with ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         request))
 }

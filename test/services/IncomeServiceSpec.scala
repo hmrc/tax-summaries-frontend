@@ -61,6 +61,7 @@ class IncomeServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 

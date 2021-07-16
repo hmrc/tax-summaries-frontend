@@ -17,7 +17,7 @@
 package controllers.auth
 
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, IncorrectCredentialStrength, InsufficientConfidenceLevel, InsufficientEnrolments}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import javax.inject.Inject
@@ -28,6 +28,7 @@ sealed trait AtsNino
 case class SuccessAtsNino(nino: String) extends AtsNino
 object NoAtsNinoFound extends AtsNino
 object UpliftRequiredAtsNino extends AtsNino
+object InsufficientCredsNino extends AtsNino
 
 class NinoAuthAction @Inject()(override val authConnector: DefaultAuthConnector)(implicit ec: ExecutionContext)
     extends AuthorisedFunctions {
@@ -38,5 +39,6 @@ class NinoAuthAction @Inject()(override val authConnector: DefaultAuthConnector)
       case _          => Future(NoAtsNinoFound)
     } recover {
       case _: InsufficientConfidenceLevel => UpliftRequiredAtsNino
+      case _: IncorrectCredentialStrength => InsufficientCredsNino
     }
 }

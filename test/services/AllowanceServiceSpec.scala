@@ -60,6 +60,7 @@ class AllowanceServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaF
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=${sut.taxYear}"))
 

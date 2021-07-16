@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -58,7 +58,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     new IncomeController(
       mockIncomeService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       incomeBeforeTaxView,
       genericErrorView,

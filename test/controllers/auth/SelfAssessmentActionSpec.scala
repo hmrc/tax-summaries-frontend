@@ -17,20 +17,21 @@
 package controllers.auth
 
 import config.ApplicationConfig
+import controllers.ControllerBaseSpec
 import models.MatchingDetails
 import org.scalatest.concurrent.ScalaFutures
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.{Action, AnyContent, InjectedController, Results}
+import play.api.mvc.{Action, AnyContent, BodyParser, InjectedController, Request, Result, Results}
 import play.api.http.Status._
 import play.api.test.Helpers.{contentAsString, redirectLocation}
 import play.api.test.{FakeRequest, Injecting}
 import services.{CitizenDetailsService, FailedMatchingDetailsResponse, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.domain.{Generator, SaUtr, SaUtrGenerator}
+import uk.gov.hmrc.domain.{Generator, SaUtr, SaUtrGenerator, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.test.UnitSpec
@@ -56,32 +57,40 @@ class SelfAssessmentActionSpec
 
   val action = new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig)
 
-  class Harness(minAuthAction: AuthAction, selfAssessmentAction: SelfAssessmentAction) extends InjectedController {
+  class MyFakeAuthAction(utr: Option[SaUtr], uar: Option[Uar]) extends AuthAction with ControllerBaseSpec {
+
+    override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+    override protected val executionContext: ExecutionContext = mcc.executionContext
+
+    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
+      block(
+        AuthenticatedRequest(
+          "userId",
+          uar,
+          utr,
+          None,
+          None,
+          None,
+          None,
+          utr.isDefined,
+          uar.isDefined,
+          fakeCredentials,
+          request))
+  }
+
+  class Harness(minAuthAction: MyFakeAuthAction, selfAssessmentAction: SelfAssessmentAction)
+      extends InjectedController {
     def onPageLoad(): Action[AnyContent] = (minAuthAction andThen selfAssessmentAction) { request =>
       Ok(s"utr is ${request.saUtr}")
     }
   }
 
-  "refine with empty utr" should {
+  "refine with non empty utr and non empty agent ref" should {
     "do nothing" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
-        Future.successful(
-          Enrolments(
-            Set(
-              Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""),
-              Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), ""))) ~ Some("") ~ Some(fakeCredentials) ~ Some(
-            utr)
-        )
-
-      when(
-        mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
-        .thenReturn(retrievalResult)
-
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val authAction = new MyFakeAuthAction(Some(SaUtr(utr)), Some(Uar(uar)))
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -91,25 +100,43 @@ class SelfAssessmentActionSpec
     }
   }
 
-  "refine with non empty utr" should {
+  "refine with empty utr and non empty agent ref" should {
+    "do nothing" in {
+      val uar = testUar
+
+      val authAction = new MyFakeAuthAction(None, Some(Uar(uar)))
+      val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe OK
+      contentAsString(result)(timeout) should include("None")
+      verifyZeroInteractions(citizenDetailsService)
+    }
+  }
+
+  "refine with non empty utr and not an agent" should {
+    "do nothing" in {
+      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val uar = testUar
+
+      val authAction = new MyFakeAuthAction(Some(SaUtr(utr)), None)
+      val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe OK
+      contentAsString(result)(timeout) should include(utr)
+      verifyZeroInteractions(citizenDetailsService)
+    }
+  }
+
+  "refine with empty utr and not an agent" should {
     "redirect to unauthorized if nino is not present" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
-        Future.successful(
-          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~ Some("") ~ Some(
-            fakeCredentials) ~ None
-        )
-
-      when(
-        mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
-        .thenReturn(retrievalResult)
-
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(NoAtsNinoFound))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val authAction = new MyFakeAuthAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -121,20 +148,9 @@ class SelfAssessmentActionSpec
     "redirect to uplift if nino is present but confidence level is too low" in {
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
-        Future.successful(
-          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~ Some("") ~ Some(
-            fakeCredentials) ~ None
-        )
-
-      when(
-        mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
-        .thenReturn(retrievalResult)
-
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(UpliftRequiredAtsNino))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val authAction = new MyFakeAuthAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -147,21 +163,24 @@ class SelfAssessmentActionSpec
       val uar = testUar
       val nino = new Generator().nextNino
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
-        Future.successful(
-          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~ Some("") ~ Some(
-            fakeCredentials) ~ None
-        )
-
-      when(
-        mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
-        .thenReturn(retrievalResult)
-
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
       when(citizenDetailsService.getUtr(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val authAction = new MyFakeAuthAction(None, None)
+      val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
+      verify(citizenDetailsService, times(1)).getUtr(any())(any())
+    }
+
+    "redirect to unauthorized if user doesn't have strong credentials" in {
+
+      when(ninoAuthAction.getNino()(any())).thenReturn(Future(InsufficientCredsNino))
+      when(citizenDetailsService.getUtr(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
+
+      val authAction = new MyFakeAuthAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -176,22 +195,11 @@ class SelfAssessmentActionSpec
       val uar = testUar
       val nino = new Generator().nextNino
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
-        Future.successful(
-          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~ Some("") ~ Some(
-            fakeCredentials) ~ None
-        )
-
-      when(
-        mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
-        .thenReturn(retrievalResult)
-
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
       when(citizenDetailsService.getUtr(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
+      val authAction = new MyFakeAuthAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))

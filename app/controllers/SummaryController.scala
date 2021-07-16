@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, AuthenticatedRequest}
+import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SummaryController @Inject()(
   summaryService: SummaryService,
   val auditService: AuditService,
-  authAction: AuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   summaryView: SummaryView,
   genericErrorView: GenericErrorView,
@@ -46,7 +46,7 @@ class SummaryController @Inject()(
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedSummaries: Action[AnyContent] = authAction.async { request =>
+  def authorisedSummaries: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
     show(request)
   }
 

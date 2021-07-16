@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -64,7 +64,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     new NicsController(
       mockSummaryService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       nicsView,
       genericErrorView,

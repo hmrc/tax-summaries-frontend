@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -81,7 +81,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     new TotalIncomeTaxController(
       mockTotalIncomeTaxService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       totalIncomeTaxView,
       genericErrorView,

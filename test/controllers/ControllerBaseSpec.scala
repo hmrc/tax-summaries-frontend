@@ -86,6 +86,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -98,6 +99,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"))
 

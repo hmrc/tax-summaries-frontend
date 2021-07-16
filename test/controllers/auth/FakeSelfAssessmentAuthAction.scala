@@ -39,6 +39,7 @@ object FakeSelfAssessmentAuthAction extends SelfAssessmentAction with Controller
           None,
           None,
           true,
+          false,
           fakeCredentials,
           request)))
 

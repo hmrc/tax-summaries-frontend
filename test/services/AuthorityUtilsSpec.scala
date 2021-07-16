@@ -42,6 +42,7 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
       None,
       None,
       true,
+      false,
       fakeCredentials,
       FakeRequest())
     val agentRequest =
@@ -54,6 +55,7 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest())
 

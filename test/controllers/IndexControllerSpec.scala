@@ -55,6 +55,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     None,
     None,
     true,
+    true,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))
 
@@ -73,8 +74,6 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
     mockAtsYearListService,
     mockAtsListService,
     mock[AuditService],
-    FakeAuthAction,
-    FakeSelfAssessmentAuthAction,
     FakeAuthJourney,
     mcc,
     taxsIndexView,
@@ -111,6 +110,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
@@ -137,6 +137,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
@@ -160,6 +161,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest(
           "GET",
@@ -185,6 +187,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
@@ -231,6 +234,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        true,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
       )
@@ -253,6 +257,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         None,
+        true,
         true,
         fakeCredentials,
         FakeRequest(
@@ -281,6 +286,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         None,
+        true,
         true,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
@@ -327,6 +333,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
@@ -374,6 +381,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
@@ -398,6 +406,7 @@ class IndexControllerSpec extends ControllerBaseSpec with ScalaFutures with Befo
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )

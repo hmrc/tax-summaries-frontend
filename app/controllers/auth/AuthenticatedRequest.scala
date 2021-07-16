@@ -29,6 +29,7 @@ case class AuthenticatedRequest[A](
   ctUtr: Option[CtUtr],
   vrn: Option[Vrn],
   isSa: Boolean,
+  isAgentActive: Boolean,
   credentials: Credentials,
   request: Request[A])
     extends WrappedRequest[A](request) with CommonRequest

@@ -22,7 +22,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
-import uk.gov.hmrc.auth.core.InsufficientConfidenceLevel
+import uk.gov.hmrc.auth.core.{IncorrectCredentialStrength, InsufficientConfidenceLevel}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -74,6 +74,18 @@ class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerS
         .thenReturn(retrievalResult)
 
       ninoAuthAction.getNino().futureValue shouldBe UpliftRequiredAtsNino
+    }
+
+    "return an InsufficientCredsNino Response when the user doesn't have strong credentials" in {
+      val retrievalResult: Future[Option[String]] =
+        Future.failed(new IncorrectCredentialStrength)
+
+      when(
+        mockAuthConnector
+          .authorise[Option[String]](any(), any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      ninoAuthAction.getNino().futureValue shouldBe InsufficientCredsNino
     }
   }
 }

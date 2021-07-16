@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, AuthenticatedRequest}
+import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, GovernmentSpendService}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GovernmentSpendController @Inject()(
   governmentSpendService: GovernmentSpendService,
   val auditService: AuditService,
-  authAction: AuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   governmentSpendingView: GovernmentSpendingView,
   genericErrorView: GenericErrorView,
@@ -45,7 +45,7 @@ class GovernmentSpendController @Inject()(
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedGovernmentSpendData: Action[AnyContent] = authAction.async { request =>
+  def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
     show(request)
   }
 

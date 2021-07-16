@@ -46,8 +46,21 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
       .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials) {
         case enrolments ~ Some(externalId) ~ Some(credentials) =>
           val isSa = enrolments.getEnrolment("IR-SA").isDefined
+          val isAgentActive: Boolean = enrolments.getEnrolment("IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
-          block(AuthenticatedRequest(externalId, None, None, None, None, None, None, isSa, credentials, request))
+          block(
+            AuthenticatedRequest(
+              externalId,
+              None,
+              None,
+              None,
+              None,
+              None,
+              None,
+              isSa,
+              isAgentActive,
+              credentials,
+              request))
 
         case _ => throw new RuntimeException("Can't find credentials for user")
       }

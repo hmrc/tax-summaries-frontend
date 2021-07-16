@@ -95,6 +95,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                 ctUtr,
                 vrn,
                 saUtr.isDefined,
+                isAgentActive,
                 credentials,
                 request
               )

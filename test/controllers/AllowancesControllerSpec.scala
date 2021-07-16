@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -71,7 +71,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new AllowancesController(
       mockAllowanceService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       taxFreeAmountView,
       genericErrorView,

@@ -41,6 +41,7 @@ class TaxYearUtilSpec extends UnitSpec {
           None,
           None,
           true,
+          false,
           fakeCredentials,
           FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -63,6 +64,7 @@ class TaxYearUtilSpec extends UnitSpec {
             None,
             None,
             true,
+            false,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=20192"))
 
@@ -82,6 +84,7 @@ class TaxYearUtilSpec extends UnitSpec {
             None,
             None,
             true,
+            false,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=201"))
 
@@ -102,6 +105,7 @@ class TaxYearUtilSpec extends UnitSpec {
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest("GET", "?"))
 
@@ -122,6 +126,7 @@ class TaxYearUtilSpec extends UnitSpec {
             None,
             None,
             true,
+            false,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=ABCD"))
 

@@ -19,13 +19,14 @@ package controllers.auth
 import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, Request, Result}
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.{CtUtr, EmpRef, SaUtr, Vrn}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import javax.inject.Inject
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,7 +41,7 @@ class SelfAssessmentActionImpl @Inject()(
 
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    if (request.saUtr.isEmpty) {
+    if (request.saUtr.isEmpty && !request.isAgentActive) {
       ninoAuthAction.getNino().flatMap { atsNinoResponse =>
         handleResponse(request, atsNinoResponse)
       }
@@ -73,6 +74,12 @@ class SelfAssessmentActionImpl @Inject()(
             Redirect(controllers.routes.ErrorController.notAuthorised())
           )
         )
+      case InsufficientCredsNino =>
+        Future(
+          Left(
+            Redirect(controllers.routes.ErrorController.notAuthorised())
+          )
+        )
       case UpliftRequiredAtsNino =>
         Future(
           Left(
@@ -97,12 +104,13 @@ class SelfAssessmentActionImpl @Inject()(
       agentRef = request.agentRef,
       saUtr = newSaUtr,
       nino = request.nino,
-      None,
-      None,
-      None,
-      true,
-      request.credentials,
-      request
+      payeEmpRef = request.payeEmpRef,
+      ctUtr = request.ctUtr,
+      vrn = request.vrn,
+      isSa = request.isSa,
+      isAgentActive = request.isAgentActive,
+      credentials = request.credentials,
+      request = request
     )
 }
 

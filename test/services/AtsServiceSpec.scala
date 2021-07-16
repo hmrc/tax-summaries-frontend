@@ -73,6 +73,7 @@ class AtsServiceSpec
       None,
       None,
       true,
+      false,
       fakeCredentials,
       FakeRequest())
 
@@ -184,6 +185,7 @@ class AtsServiceSpec
                   None,
                   None,
                   true,
+                  false,
                   fakeCredentials,
                   FakeRequest())
 

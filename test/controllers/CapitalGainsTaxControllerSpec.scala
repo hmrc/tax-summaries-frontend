@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -44,7 +44,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec with BeforeAndAft
     new CapitalGainsTaxController(
       mockCapitalGainsService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       capitalGainsView,
       genericErrorView,

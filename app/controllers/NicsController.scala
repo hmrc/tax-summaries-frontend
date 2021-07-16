@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, AuthenticatedRequest}
+import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, SummaryService}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NicsController @Inject()(
   summaryService: SummaryService,
   val auditService: AuditService,
-  authAction: AuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   nicsView: NicsView,
   genericErrorView: GenericErrorView,
@@ -45,7 +45,7 @@ class NicsController @Inject()(
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedNics: Action[AnyContent] = authAction.async { request =>
+  def authorisedNics: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
     show(request)
   }
 

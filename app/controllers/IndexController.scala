@@ -38,8 +38,6 @@ class IndexController @Inject()(
   atsYearListService: AtsYearListService,
   atsListService: AtsListService,
   val auditService: AuditService,
-  authAction: AuthAction,
-  selfAssessmentAction: SelfAssessmentAction,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   taxsIndexView: TaxsIndexView,
@@ -51,12 +49,12 @@ class IndexController @Inject()(
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedIndex: Action[AnyContent] = (authJourney.authWithSelfAssessment).async {
+  def authorisedIndex: Action[AnyContent] = authJourney.authWithSelfAssessment.async {
     request: AuthenticatedRequest[_] =>
       agentAwareShow(request)
   }
 
-  def authorisedOnSubmit: Action[AnyContent] = authAction.async { request =>
+  def authorisedOnSubmit: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
     onSubmit(request)
   }
 

@@ -105,6 +105,7 @@ class AtsListServiceSpec
       None,
       None,
       true,
+      false,
       fakeCredentials,
       FakeRequest())
   implicit val hc = new HeaderCarrier
@@ -272,6 +273,7 @@ class AtsListServiceSpec
             None,
             None,
             true,
+            false,
             fakeCredentials,
             FakeRequest())
 
@@ -337,6 +339,7 @@ class AtsListServiceSpec
           None,
           None,
           true,
+          false,
           fakeCredentials,
           FakeRequest())
 
