@@ -37,7 +37,6 @@ import scala.io.Source
 class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc = HeaderCarrier()
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
   val expectedResponse: JsValue = readJson("/paye_ats.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
   private val currentYearMinus1 = 2018

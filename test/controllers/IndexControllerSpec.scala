@@ -341,9 +341,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future(new NoATSViewModel))
 
       val result = sut.show(request)
-      status(result) mustBe SEE_OTHER
+      status(result) shouldBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get shouldBe routes.ErrorController.authorisedNoAts().url
     }
 
     "redirect to the generic error page when service returns 500" in {

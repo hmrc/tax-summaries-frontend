@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import views.html.main
 @import views.html.helpers.BackLinkView
+@import scala.concurrent.ExecutionContext
 
 @this(
    main: main,
@@ -30,7 +31,8 @@
     messages: Messages,
     formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 

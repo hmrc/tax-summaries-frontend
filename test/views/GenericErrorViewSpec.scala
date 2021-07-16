@@ -57,7 +57,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     "show the correct contents of the generic error page in English" in {
 
       val resultEn =
-        genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, templateRenderer, appConfig)
+        genericErrorView()(requestWithSession, messagesEn, formPartialRetriever, templateRenderer, appConfig, ec)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString should include(messagesEn("global.error.InternalServerError500.title"))
       documentEn.toString should include(
@@ -69,7 +69,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     "show the correct contents of the generic error page in Welsh" in {
 
       val resultCy =
-        genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, templateRenderer, appConfig)
+        genericErrorView()(requestWithSession, messagesCy, formPartialRetriever, templateRenderer, appConfig, ec)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString should include(messagesCy("global.error.InternalServerError500.title"))
       documentCy.toString should include(

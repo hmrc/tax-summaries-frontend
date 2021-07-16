@@ -20,19 +20,25 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqual
 import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
 import models._
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
 import utils.TestConstants.{testNino, testUar, testUtr}
-import utils.{BaseSpec, JsonUtil, WireMockHelper}
+import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 import scala.io.Source
 
-class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
+class MiddleConnectorSpec
+    extends WordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
+    with IntegrationPatience with JsonUtil with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -43,6 +49,8 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
       .build()
 
   implicit val hc = HeaderCarrier()
+  implicit lazy val appConfig = inject[ApplicationConfig]
+  implicit lazy val ec = inject[ExecutionContext]
   private val currentYear = 2018
   private val currentYearMinus1 = currentYear - 1
 
@@ -89,8 +97,9 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
             .withBody("Bad Request"))
       )
 
-      a[BadRequestException] should be thrownBy sut.connectToPayeATS(testNino, currentYear).futureValue
+      val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
 
+      result shouldBe a[BadRequestException]
     }
 
     "return NotFound response" in {
@@ -103,8 +112,10 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
             .withStatus(404)
             .withBody("Not Found"))
       )
-      a[NotFoundException] should be thrownBy sut.connectToPayeATS(testNino, currentYear).futureValue
 
+      val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
+
+      result shouldBe a[NotFoundException]
     }
 
     "return InternalServerError response" in {
@@ -117,8 +128,10 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
             .withStatus(500)
             .withBody("Internal Server Error"))
       )
-      a[Upstream5xxResponse] should be thrownBy sut.connectToPayeATS(testNino, currentYear).futureValue
 
+      val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
+
+      result shouldBe a[Upstream5xxResponse]
     }
   }
 
@@ -391,9 +404,9 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
             .withBody("Bad Request"))
       )
 
-      a[BadRequestException] should be thrownBy
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
 
+      result shouldBe a[BadRequestException]
     }
 
     "return NotFound response" in {
@@ -406,9 +419,9 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
         )
       )
 
-      intercept[NotFoundException] {
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
-      }
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
+
+      result shouldBe a[NotFoundException]
     }
 
     "return a InternalServerError response" in {
@@ -419,9 +432,10 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
             .withStatus(INTERNAL_SERVER_ERROR)
             .withBody("An error occurred"))
       )
-      a[Upstream5xxResponse] should be thrownBy
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
 
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
+
+      result shouldBe a[Upstream5xxResponse]
     }
 
     "return an exception when a fault with the request occurs" in {
@@ -468,9 +482,9 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
         )
       )
 
-      intercept[BadRequestException] {
-        sut.connectToGovernmentSpend(currentYear, testNino).futureValue
-      }
+      val result = sut.connectToGovernmentSpend(currentYear, testNino).failed.futureValue
+
+      result shouldBe a[BadRequestException]
     }
 
     "return a InternalServerError response" in {
@@ -483,9 +497,9 @@ class MiddleConnectorSpec extends BaseSpec with WireMockHelper with JsonUtil {
         )
       )
 
-      intercept[Upstream5xxResponse] {
-        sut.connectToGovernmentSpend(currentYear, testNino).futureValue
-      }
+      val result = sut.connectToGovernmentSpend(currentYear, testNino).failed.futureValue
+
+      result shouldBe a[Upstream5xxResponse]
     }
 
     "return an exception when a fault with the request occurs" in {

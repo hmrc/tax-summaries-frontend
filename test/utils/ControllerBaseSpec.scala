@@ -55,8 +55,6 @@ trait ControllerBaseSpec extends BaseSpec {
   implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val templateRenderer = MockTemplateRenderer
 
-  implicit val ec: ExecutionContext = mcc.executionContext
-
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]
   lazy val genericErrorView = inject[GenericErrorView]
   lazy val tokenErrorView = inject[TokenErrorView]

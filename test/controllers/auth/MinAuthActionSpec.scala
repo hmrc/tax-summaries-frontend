@@ -16,7 +16,6 @@
 
 package controllers.auth
 
-import config.ApplicationConfig
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,15 +31,13 @@ import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants.fakeCredentials
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class MinAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
   class Harness(minAuthAction: MinAuthActionImpl) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = minAuthAction { _ =>

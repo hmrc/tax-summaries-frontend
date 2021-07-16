@@ -20,6 +20,7 @@
 @import utils.HtmlFormatter
 @import views.html.main
 @import views.html.helpers.BackLinkView
+@import scala.concurrent.ExecutionContext
 
 @this(
 	main: main,
@@ -33,7 +34,8 @@
 	request: Request[_],
 	formPartialRetriever: FormPartialRetriever,
 	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-	appConfig: ApplicationConfig
+	appConfig: ApplicationConfig,
+		ec: ExecutionContext
 )
 
 @main(

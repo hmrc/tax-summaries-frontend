@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
 @import controllers.auth.CommonRequest
+@import scala.concurrent.ExecutionContext
 
 @this()
 
@@ -36,7 +37,8 @@
     messages: Messages,
     formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 @isSa = @{

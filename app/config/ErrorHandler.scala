@@ -27,6 +27,8 @@ import views.html.errors.ErrorTemplateView
 import views.html.errors.PageNotFoundTemplateView
 import uk.gov.hmrc.renderer.TemplateRenderer
 
+import scala.concurrent.ExecutionContext
+
 class ErrorHandler @Inject()(
   val messagesApi: MessagesApi,
   val configuration: Configuration,
@@ -35,7 +37,8 @@ class ErrorHandler @Inject()(
   pageNotFoundTemplateView: PageNotFoundTemplateView)(
   implicit val formPartialRetriever: FormPartialRetriever,
   implicit val templateRenderer: TemplateRenderer,
-  implicit val appConfig: ApplicationConfig)
+  implicit val appConfig: ApplicationConfig,
+  ec: ExecutionContext)
     extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =

@@ -37,8 +37,6 @@ import scala.io.Source
 
 class AtsListServiceSpec extends BaseSpec {
 
-  implicit lazy val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
     val json = Json.parse(source)
@@ -49,7 +47,7 @@ class AtsListServiceSpec extends BaseSpec {
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
-  val appConfig = mock[ApplicationConfig]
+  val mockAppConfig = mock[ApplicationConfig]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
@@ -86,7 +84,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(appConfig.saYear).thenReturn(2020)
+    when(mockAppConfig.saYear).thenReturn(2020)
   }
 
   implicit val request =
@@ -116,7 +114,7 @@ class AtsListServiceSpec extends BaseSpec {
   }
 
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, mockAppConfig)
 
   "storeSelectedTaxYear" should {
 
@@ -195,7 +193,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a ats list without 2020 year data" in {
 
-      when(appConfig.saYear).thenReturn(2019)
+      when(mockAppConfig.saYear).thenReturn(2019)
 
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(dataFor2019)))

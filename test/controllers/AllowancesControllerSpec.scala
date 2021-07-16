@@ -140,7 +140,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
-      status(result) mustBe INTERNAL_SERVER_ERROR
+      status(result) shouldBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
       document.title should include(Messages("global.error.InternalServerError500.title"))
@@ -150,8 +150,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).get shouldBe routes.ErrorController.authorisedNoAts().url
     }
 
   }

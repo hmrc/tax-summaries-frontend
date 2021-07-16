@@ -33,6 +33,6 @@ trait BaseSpec
 
   val taxYear: Int = appConfig.payeYear
 
-  implicit val ec = inject[ExecutionContext]
+  implicit lazy val ec = inject[ExecutionContext]
 
 }

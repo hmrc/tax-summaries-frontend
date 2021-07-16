@@ -48,8 +48,6 @@ class AllowanceServiceSpec extends BaseSpec {
 
   implicit val hc = HeaderCarrier()
 
-  implicit val ec = inject[ExecutionContext]
-
   val request = AuthenticatedRequest(
     "userId",
     None,

@@ -37,8 +37,6 @@ import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {
 
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
-
   class Harness(authAction: AuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
       Ok(
