@@ -57,7 +57,7 @@ class SelfAssessmentActionSpec
 
   val action = new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig)
 
-  class MyFakeAuthAction(utr: Option[SaUtr], uar: Option[Uar]) extends AuthAction with ControllerBaseSpec {
+  class FakeSelfAssessmentAction(utr: Option[SaUtr], uar: Option[Uar]) extends AuthAction with ControllerBaseSpec {
 
     override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
     override protected val executionContext: ExecutionContext = mcc.executionContext
@@ -78,7 +78,7 @@ class SelfAssessmentActionSpec
           request))
   }
 
-  class Harness(minAuthAction: MyFakeAuthAction, selfAssessmentAction: SelfAssessmentAction)
+  class Harness(minAuthAction: FakeSelfAssessmentAction, selfAssessmentAction: SelfAssessmentAction)
       extends InjectedController {
     def onPageLoad(): Action[AnyContent] = (minAuthAction andThen selfAssessmentAction) { request =>
       Ok(s"utr is ${request.saUtr}")
@@ -90,7 +90,7 @@ class SelfAssessmentActionSpec
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
 
-      val authAction = new MyFakeAuthAction(Some(SaUtr(utr)), Some(Uar(uar)))
+      val authAction = new FakeSelfAssessmentAction(Some(SaUtr(utr)), Some(Uar(uar)))
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -104,7 +104,7 @@ class SelfAssessmentActionSpec
     "do nothing" in {
       val uar = testUar
 
-      val authAction = new MyFakeAuthAction(None, Some(Uar(uar)))
+      val authAction = new FakeSelfAssessmentAction(None, Some(Uar(uar)))
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -119,7 +119,7 @@ class SelfAssessmentActionSpec
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
 
-      val authAction = new MyFakeAuthAction(Some(SaUtr(utr)), None)
+      val authAction = new FakeSelfAssessmentAction(Some(SaUtr(utr)), None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -136,7 +136,7 @@ class SelfAssessmentActionSpec
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(NoAtsNinoFound))
 
-      val authAction = new MyFakeAuthAction(None, None)
+      val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -150,7 +150,7 @@ class SelfAssessmentActionSpec
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(UpliftRequiredAtsNino))
 
-      val authAction = new MyFakeAuthAction(None, None)
+      val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -166,7 +166,7 @@ class SelfAssessmentActionSpec
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
       when(citizenDetailsService.getUtr(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
 
-      val authAction = new MyFakeAuthAction(None, None)
+      val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -180,7 +180,7 @@ class SelfAssessmentActionSpec
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(InsufficientCredsNino))
       when(citizenDetailsService.getUtr(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
 
-      val authAction = new MyFakeAuthAction(None, None)
+      val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -199,7 +199,7 @@ class SelfAssessmentActionSpec
       when(citizenDetailsService.getUtr(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
 
-      val authAction = new MyFakeAuthAction(None, None)
+      val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
