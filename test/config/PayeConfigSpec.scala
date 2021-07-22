@@ -23,7 +23,7 @@ class PayeConfigSpec extends BaseSpec with MockitoSugar {
 
   implicit val config: PayeConfig = inject[PayeConfig]
 
-  "PayeConfig" should {
+  "PayeConfig" must {
 
     "retrieve scottish tax band keys in order for a valid year" in {
 
@@ -34,7 +34,7 @@ class PayeConfigSpec extends BaseSpec with MockitoSugar {
         "scottish_higher_rate"
       )
 
-      config.scottishTaxBandKeys shouldBe expected
+      config.scottishTaxBandKeys mustBe expected
     }
 
     "retrieve UK tax band keys in order for a valid year" in {
@@ -46,7 +46,7 @@ class PayeConfigSpec extends BaseSpec with MockitoSugar {
         "upper_rate"
       )
 
-      config.ukTaxBandKeys shouldBe expected
+      config.ukTaxBandKeys mustBe expected
     }
 
     "retrieve adjustment keys in order for a valid year" in {
@@ -58,7 +58,7 @@ class PayeConfigSpec extends BaseSpec with MockitoSugar {
         "tax_underpaid_previous_year"
       )
 
-      config.adjustmentsKeys shouldBe expected
+      config.adjustmentsKeys mustBe expected
     }
   }
 

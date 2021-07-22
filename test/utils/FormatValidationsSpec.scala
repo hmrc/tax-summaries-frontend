@@ -16,22 +16,23 @@
 
 package test.utils
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import utils.TaxsValidator._
 
-class FormatValidationsSpec extends WordSpec with Matchers {
+class FormatValidationsSpec extends AnyWordSpec with Matchers {
 
   private def testRegex(regExPattern: String, validData: Seq[String], invalidData: Seq[String]): Unit = {
-    withClue("the regex should allow these valid cases\n") {
+    withClue("the regex must allow these valid cases\n") {
       for (data <- validData)
         withClue(f"$data did not pass\n") {
-          data.matches(regExPattern) shouldBe true
+          data.matches(regExPattern) mustBe true
         }
     }
-    withClue("the regex should reject these invalid cases\n") {
+    withClue("the regex must reject these invalid cases\n") {
       for (data <- invalidData)
         withClue(f"$data did not pass\n") {
-          data.matches(regExPattern) shouldBe false
+          data.matches(regExPattern) mustBe false
         }
     }
   }
@@ -40,21 +41,21 @@ class FormatValidationsSpec extends WordSpec with Matchers {
     function: (String) => Boolean,
     validData: Seq[String],
     invalidData: Seq[String]): Unit = {
-    withClue("the regex should allow these valid cases\n") {
+    withClue("the regex must allow these valid cases\n") {
       for (data <- validData)
         withClue(f"$data did not pass\n") {
-          validText(data) shouldBe true
+          validText(data) mustBe true
         }
     }
-    withClue("the regex should reject these invalid cases\n") {
+    withClue("the regex must reject these invalid cases\n") {
       for (data <- invalidData)
         withClue(f"$data did not pass\n") {
-          validText(data) shouldBe false
+          validText(data) mustBe false
         }
     }
   }
 
-  "alpha numeric reg ex" should {
+  "alpha numeric reg ex" must {
     "satisfy the following valid and invalid cases" in {
       val validData = Seq("0", "9", "a", "A", "z", "Z")
       val invalidData = Seq("α", "&", "*", "@", "£")
@@ -62,7 +63,7 @@ class FormatValidationsSpec extends WordSpec with Matchers {
     }
   }
 
-  "validation functions" should {
+  "validation functions" must {
     "satisfy the following valid and invalid cases" in {
       val validData = Seq("0", "9", "a", "A", "z", "Z")
       val invalidData = Seq("α")

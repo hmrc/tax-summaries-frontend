@@ -90,13 +90,13 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))) thenReturn Future
       .successful(baseModel)
 
-  "Calling Total Income Tax" should {
+  "Calling Total Income Tax" must {
 
     "return a successful response for a valid request" in {
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(
+      document.title must include(
         Messages("ats.total_income_tax.income_tax") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
@@ -105,9 +105,9 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "display an error page for an invalid request" in {
       val result = sut.show(badRequest)
-      status(result) shouldBe 400
+      status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
@@ -116,49 +116,49 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.ErrorController.authorisedNoAts().url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
     }
 
     "have the right user data in the view" in {
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.getElementById("starting-rate-for-savings-amount").text() shouldBe "£140"
-      document.getElementById("start-rate-for-savings-before").text() shouldBe "£110"
-      document.getElementById("start-rate-for-savings-rate").text() shouldBe "10%"
+      document.toString must not include "Technical Difficulties"
+      document.getElementById("starting-rate-for-savings-amount").text() mustBe "£140"
+      document.getElementById("start-rate-for-savings-before").text() mustBe "£110"
+      document.getElementById("start-rate-for-savings-rate").text() mustBe "10%"
 
-      document.getElementById("basic-rate-income-tax-amount").text() shouldBe "£372"
-      document.getElementById("basic-rate-income-tax-before").text() shouldBe "£1,860"
-      document.getElementById("basic-rate-income-tax-rate").text() shouldBe "20%"
+      document.getElementById("basic-rate-income-tax-amount").text() mustBe "£372"
+      document.getElementById("basic-rate-income-tax-before").text() mustBe "£1,860"
+      document.getElementById("basic-rate-income-tax-rate").text() mustBe "20%"
 
-      document.getElementById("higher-rate-income-tax-amount").text() shouldBe "£70"
-      document.getElementById("higher-rate-income-tax-before").text() shouldBe "£130"
-      document.getElementById("higher-rate-income-tax-rate").text() shouldBe "40%"
+      document.getElementById("higher-rate-income-tax-amount").text() mustBe "£70"
+      document.getElementById("higher-rate-income-tax-before").text() mustBe "£130"
+      document.getElementById("higher-rate-income-tax-rate").text() mustBe "40%"
 
-      document.getElementById("additional-rate-income-tax-amount").text() shouldBe "£60"
-      document.getElementById("additional-rate-income-tax-before").text() shouldBe "£80"
-      document.getElementById("additional-rate-income-tax-rate").text() shouldBe "45%"
+      document.getElementById("additional-rate-income-tax-amount").text() mustBe "£60"
+      document.getElementById("additional-rate-income-tax-before").text() mustBe "£80"
+      document.getElementById("additional-rate-income-tax-rate").text() mustBe "45%"
 
-      document.getElementById("ordinary-rate-amount").text() shouldBe "£50"
-      document.getElementById("total-income-tax-amount-nics").text() shouldBe "£372"
+      document.getElementById("ordinary-rate-amount").text() mustBe "£50"
+      document.getElementById("total-income-tax-amount-nics").text() mustBe "£372"
 
-      document.toString should include("Total Income Tax")
-      document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
+      document.toString must include("Total Income Tax")
+      document.getElementById("user-info").text must include("forename surname")
+      document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "hide rows if there is a zero value in the left cell amount field of the view" in {
@@ -172,14 +172,14 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model2))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should not include "starting-rate-for-savings-row"
-      document.toString should not include "basic-rate-income-tax-row"
-      document.toString should not include "higher-rate-income-tax-row"
-      document.toString should not include "additional-rate-income-tax-row"
+      document.toString must not include "Technical Difficulties"
+      document.toString must not include "starting-rate-for-savings-row"
+      document.toString must not include "basic-rate-income-tax-row"
+      document.toString must not include "higher-rate-income-tax-row"
+      document.toString must not include "additional-rate-income-tax-row"
     }
 
     "hide Higher and Additional Rate fields if the amounts are 0.00" in {
@@ -193,36 +193,36 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model3))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should include("basic-rate-income-tax-row")
-      document.toString should not include "higher-rate-income-tax-row"
-      document.toString should not include "additional-rate-income-tax-row"
+      document.toString must not include "Technical Difficulties"
+      document.toString must include("basic-rate-income-tax-row")
+      document.toString must not include "higher-rate-income-tax-row"
+      document.toString must not include "additional-rate-income-tax-row"
     }
 
   }
 
-  "Dividends section" should {
+  "Dividends section" must {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in {
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.getElementById("ordinary-rate-amount").text() should equal("£50")
-      document.getElementById("ordinary-rate-before").text() should equal("£100")
-      document.getElementById("ordinary-rate-rate").text() should equal("10%")
+      document.toString must not include "Technical Difficulties"
+      document.getElementById("ordinary-rate-amount").text() must equal("£50")
+      document.getElementById("ordinary-rate-before").text() must equal("£100")
+      document.getElementById("ordinary-rate-rate").text() must equal("10%")
 
-      document.getElementById("upper-rate-amount").text() should equal("£120")
-      document.getElementById("upper-rate-before").text() should equal("£30")
-      document.getElementById("upper-rate-rate").text() should equal("32.5%")
+      document.getElementById("upper-rate-amount").text() must equal("£120")
+      document.getElementById("upper-rate-before").text() must equal("£30")
+      document.getElementById("upper-rate-rate").text() must equal("32.5%")
 
-      document.getElementById("additional-rate-amount").text() should equal("£40")
-      document.getElementById("additional-rate-before").text() should equal("£10")
-      document.getElementById("additional-rate-rate").text() should equal("37.5%")
+      document.getElementById("additional-rate-amount").text() must equal("£40")
+      document.getElementById("additional-rate-before").text() must equal("£10")
+      document.getElementById("additional-rate-rate").text() must equal("37.5%")
     }
 
     "hide Dividends section if the amount before in each row is 0.00" in {
@@ -237,14 +237,14 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model4))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should not include "dividends-section-row"
-      document.toString should not include "ordinary-rate-row"
-      document.toString should not include "upper-rate-row"
-      document.toString should not include "additional-rate-row"
+      document.toString must not include "Technical Difficulties"
+      document.toString must not include "dividends-section-row"
+      document.toString must not include "ordinary-rate-row"
+      document.toString must not include "upper-rate-row"
+      document.toString must not include "additional-rate-row"
     }
 
     "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in {
@@ -258,28 +258,28 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model5))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should include("dividends-section-row")
-      document.toString should include("ordinary-rate-row")
-      document.toString should not include "upper-rate-row"
-      document.toString should not include "additional-rate-row"
+      document.toString must not include "Technical Difficulties"
+      document.toString must include("dividends-section-row")
+      document.toString must include("ordinary-rate-row")
+      document.toString must not include "upper-rate-row"
+      document.toString must not include "additional-rate-row"
 
     }
   }
 
-  "Adjustments section" should {
+  "Adjustments section" must {
 
     "have the right user data for adjustments increasing and reducing income tax" in {
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("other-adjustments-increasing-amount").text() should equal("£90")
-      document.getElementById("other-adjustments-reducing-amount").text() should equal("minus £20 -£20")
+      document.getElementById("other-adjustments-increasing-amount").text() must equal("£90")
+      document.getElementById("other-adjustments-reducing-amount").text() must equal("minus £20 -£20")
     }
 
     "hide other adjustments increasing your tax section if the amount is 0.00" in {
@@ -292,11 +292,11 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model6))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should not include "other-adjustments-increasing-amount"
+      document.toString must not include "Technical Difficulties"
+      document.toString must not include "other-adjustments-increasing-amount"
 
     }
 
@@ -310,11 +310,11 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model7))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should not include "other-adjustments-reducing-amount"
+      document.toString must not include "Technical Difficulties"
+      document.toString must not include "other-adjustments-reducing-amount"
     }
 
     "hide Adjustments section if all the amounts in this section are 0.00" in {
@@ -328,15 +328,15 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(model8))
 
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "Technical Difficulties"
-      document.toString should not include "adjustments-section"
+      document.toString must not include "Technical Difficulties"
+      document.toString must not include "adjustments-section"
     }
   }
 
-  "Total Income Tax" should {
+  "Total Income Tax" must {
 
     "show zero value" in {
 
@@ -351,7 +351,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-income-tax-amount-nics").text() should equal("£0")
+      document.getElementById("total-income-tax-amount-nics").text() must equal("£0")
     }
 
   }

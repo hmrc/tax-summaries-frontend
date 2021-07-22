@@ -63,7 +63,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
 
   val sut = new CapitalGainsService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
-  "CapitalGainsService getCapitalGains" should {
+  "CapitalGainsService getCapitalGains" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
@@ -75,13 +75,13 @@ class CapitalGainsServiceSpec extends BaseSpec {
     }
   }
 
-  "CapitalGainsService capitalGains" should {
+  "CapitalGainsService capitalGains" must {
 
     "return a complete CapitalGains when given complete AtsData" in {
       val atsData = AtsTestData.capitalGainsData
       val result = sut.capitalGains(atsData)
 
-      result shouldBe CapitalGains(
+      result mustBe CapitalGains(
         2019,
         "1111111111",
         Amount.gbp(100),

@@ -59,7 +59,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   "ErrorController" when {
 
-    "authorisedNoAts is called" should {
+    "authorisedNoAts is called" must {
 
       "show the how tax was spent page" when {
 
@@ -88,8 +88,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result = sut().authorisedNoAts()(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe OK
-          document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.saYear))
+          status(result) mustBe OK
+          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.saYear))
         }
       }
 
@@ -116,8 +116,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result = sut(None).authorisedNoAts()(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe BAD_REQUEST
-          document shouldBe contentAsString(serviceUnavailableView())
+          status(result) mustBe BAD_REQUEST
+          document mustBe contentAsString(serviceUnavailableView())
         }
       }
 
@@ -144,13 +144,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result = sut(None).authorisedNoAts()(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          document shouldBe contentAsString(serviceUnavailableView())
+          status(result) mustBe INTERNAL_SERVER_ERROR
+          document mustBe contentAsString(serviceUnavailableView())
         }
       }
     }
 
-    "notAuthorised is called" should {
+    "notAuthorised is called" must {
 
       "show the not authorised view" in {
 
@@ -159,13 +159,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 
-        status(result) shouldBe OK
+        status(result) mustBe OK
 
-        document shouldBe contentAsString(notAuthorisedView())
+        document mustBe contentAsString(notAuthorisedView())
       }
     }
 
-    "serviceUnavailable is called" should {
+    "serviceUnavailable is called" must {
 
       "show the service unavailable view" in {
 
@@ -173,8 +173,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
         val result = sut().serviceUnavailable()(request)
         val document = contentAsString(result)
 
-        status(result) shouldBe OK
-        document shouldBe contentAsString(serviceUnavailableView())
+        status(result) mustBe OK
+        document mustBe contentAsString(serviceUnavailableView())
       }
     }
   }

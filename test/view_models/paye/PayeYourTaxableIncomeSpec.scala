@@ -18,14 +18,15 @@ package view_models.paye
 
 import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import utils.JsonUtil
 import view_models.Amount
 
 class PayeYourTaxableIncomeSpec
-    extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends AnyWordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience {
   val incomeTaxDataStatePensionAndOther = Some(
     DataHolder(
@@ -77,7 +78,7 @@ class PayeYourTaxableIncomeSpec
   def incomeTaxPayeAtsData(incomeTax: Option[DataHolder]): PayeAtsData =
     PayeAtsData(2018, None, None, incomeTax, None, None)
 
-  "PayeYourTaxableIncome" should {
+  "PayeYourTaxableIncome" must {
     "Transform income tax data just other pension to view model" in {
       val expectedIncomeeTaxRows = List(
         IncomeTaxRow("self_employment_income", Amount(100, "GBP")),
@@ -93,8 +94,8 @@ class PayeYourTaxableIncomeSpec
       val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionAndOther)
       val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-      viewModel.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
-      viewModel.totalIncomeBeforeTax shouldBe expectedIncomeBeforeTaxTotal
+      viewModel.incomeTaxRows mustBe (expectedIncomeeTaxRows)
+      viewModel.totalIncomeBeforeTax mustBe expectedIncomeBeforeTaxTotal
     }
 
     "Transform income tax data, No income from employment, to view model" in {
@@ -110,7 +111,7 @@ class PayeYourTaxableIncomeSpec
       val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionNoIncomeFromEmployment)
       val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-      viewModel.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
+      viewModel.incomeTaxRows mustBe (expectedIncomeeTaxRows)
     }
 
     "Transform income tax data, state and other pension, to view model" in {
@@ -126,7 +127,7 @@ class PayeYourTaxableIncomeSpec
       val payeAtsData = incomeTaxPayeAtsData(IncomeTaxJustOtherPension)
       val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-      viewModel.incomeTaxRows shouldBe (expectedIncomeeTaxRows)
+      viewModel.incomeTaxRows mustBe (expectedIncomeeTaxRows)
     }
   }
 }

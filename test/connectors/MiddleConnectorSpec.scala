@@ -20,8 +20,9 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqual
 import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
 import models._
-import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status._
@@ -37,7 +38,7 @@ import scala.concurrent.ExecutionContext
 import scala.io.Source
 
 class MiddleConnectorSpec
-    extends WordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
     with IntegrationPatience with JsonUtil with Injecting {
 
   override def fakeApplication(): Application =
@@ -67,7 +68,7 @@ class MiddleConnectorSpec
   val loadAtsListData = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
   val atsListData = Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
 
-  "connectToPayeTaxSummary" should {
+  "connectToPayeTaxSummary" must {
 
     "return successful response" in {
 
@@ -83,7 +84,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATS(testNino, currentYear).futureValue
 
-      result.json shouldBe Json.parse(expectedResponse)
+      result.json mustBe Json.parse(expectedResponse)
     }
 
     "return BadRequest response" in {
@@ -99,7 +100,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
 
-      result shouldBe a[BadRequestException]
+      result mustBe a[BadRequestException]
     }
 
     "return NotFound response" in {
@@ -115,7 +116,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
 
-      result shouldBe a[NotFoundException]
+      result mustBe a[NotFoundException]
     }
 
     "return InternalServerError response" in {
@@ -131,11 +132,11 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
 
-      result shouldBe a[Upstream5xxResponse]
+      result mustBe a[Upstream5xxResponse]
     }
   }
 
-  "connectToAts" should {
+  "connectToAts" must {
 
     "return successful response" in {
 
@@ -150,7 +151,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
-      result shouldBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
+      result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
 
     "return 4xx response" in {
@@ -167,7 +168,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
-      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
     }
 
     "return 5xx response" in {
@@ -184,7 +185,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
-      result shouldBe a[AtsErrorResponse]
+      result mustBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
@@ -198,11 +199,11 @@ class MiddleConnectorSpec
             .withBody("Bad Request"))
       )
 
-      sut.connectToAts(utr, currentYear).futureValue shouldBe a[AtsErrorResponse]
+      sut.connectToAts(utr, currentYear).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
-  "connectToAtsOnBehalfOf" should {
+  "connectToAtsOnBehalfOf" must {
 
     "return successful response" in {
 
@@ -217,7 +218,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
 
-      result shouldBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
+      result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
 
     "return 4xx response" in {
@@ -234,7 +235,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
 
-      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
     }
 
     "return 5xx response" in {
@@ -251,11 +252,11 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
 
-      result shouldBe a[AtsErrorResponse]
+      result mustBe a[AtsErrorResponse]
     }
   }
 
-  "connectToAtsList" should {
+  "connectToAtsList" must {
 
     "return successful response" in {
 
@@ -270,7 +271,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsList(utr).futureValue
 
-      result shouldBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
+      result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
     "return 4xx response" in {
@@ -287,7 +288,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsList(utr).futureValue
 
-      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
     }
 
     "return 5xx response" in {
@@ -304,7 +305,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsList(utr).futureValue
 
-      result shouldBe a[AtsErrorResponse]
+      result mustBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
@@ -318,11 +319,11 @@ class MiddleConnectorSpec
             .withBody("Bad Request"))
       )
 
-      sut.connectToAtsList(utr).futureValue shouldBe a[AtsErrorResponse]
+      sut.connectToAtsList(utr).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
-  "connectToAtsListOnBehalfOf" should {
+  "connectToAtsListOnBehalfOf" must {
 
     "return successful response" in {
 
@@ -337,7 +338,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
-      result shouldBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
+      result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
     "return 4xx response" in {
@@ -354,7 +355,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
-      result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
     }
 
     "return 5xx response" in {
@@ -371,11 +372,11 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
-      result shouldBe a[AtsErrorResponse]
+      result mustBe a[AtsErrorResponse]
     }
   }
 
-  "connectToPayeATSMultipleYears" should {
+  "connectToPayeATSMultipleYears" must {
 
     val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
 
@@ -392,7 +393,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
 
-      result.json shouldBe Json.parse(expectedResponse)
+      result.json mustBe Json.parse(expectedResponse)
     }
 
     "return BadRequest response" in {
@@ -406,7 +407,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
 
-      result shouldBe a[BadRequestException]
+      result mustBe a[BadRequestException]
     }
 
     "return NotFound response" in {
@@ -421,7 +422,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
 
-      result shouldBe a[NotFoundException]
+      result mustBe a[NotFoundException]
     }
 
     "return a InternalServerError response" in {
@@ -435,7 +436,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
 
-      result shouldBe a[Upstream5xxResponse]
+      result mustBe a[Upstream5xxResponse]
     }
 
     "return an exception when a fault with the request occurs" in {
@@ -453,7 +454,7 @@ class MiddleConnectorSpec
     }
   }
 
-  "connectToGovernmentSpend" should {
+  "connectToGovernmentSpend" must {
 
     val url = s"/taxs/government-spend/$currentYear/$testNino"
 
@@ -468,8 +469,8 @@ class MiddleConnectorSpec
       )
 
       val result = sut.connectToGovernmentSpend(currentYear, testNino).futureValue
-      result.status shouldBe OK
-      result.json.as[Map[String, Double]] shouldBe Map("Environment" -> 5.5)
+      result.status mustBe OK
+      result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
     }
 
     "return a BadRequest response" in {
@@ -484,7 +485,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToGovernmentSpend(currentYear, testNino).failed.futureValue
 
-      result shouldBe a[BadRequestException]
+      result mustBe a[BadRequestException]
     }
 
     "return a InternalServerError response" in {
@@ -499,7 +500,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToGovernmentSpend(currentYear, testNino).failed.futureValue
 
-      result shouldBe a[Upstream5xxResponse]
+      result mustBe a[Upstream5xxResponse]
     }
 
     "return an exception when a fault with the request occurs" in {

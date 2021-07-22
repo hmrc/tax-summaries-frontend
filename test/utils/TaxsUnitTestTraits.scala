@@ -17,7 +17,9 @@
 package utils
 
 import org.jsoup.nodes.Document
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.test.Injecting
@@ -26,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TaxsUnitTestTraits
-    extends WordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite
+    extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite
     with Injecting {
 
   implicit lazy val hc = HeaderCarrier()
@@ -39,7 +41,7 @@ trait TaxsUnitTestTraits
 
   implicit def convertToFuture[T](err: Throwable): Future[Option[T]] = Future.failed(err)
 
-  // used to help mock setup functions to clarify if certain results should be mocked.
+  // used to help mock setup functions to clarify if certain results must be mocked.
   sealed trait MockConfiguration[+A] {
     final def get = this match {
       case Configure(config) => config
@@ -86,12 +88,12 @@ trait TaxsUnitTestTraits
 
   case class Ids(utr: Boolean, nino: Boolean, crn: Boolean, vrn: Boolean)
 
-  def testId(shouldExist: Boolean)(targetFieldId: String)(implicit doc: Document) = shouldExist match {
-    case false => doc.getElementById(targetFieldId) shouldBe null
-    case true  => doc.getElementById(targetFieldId) should not be null
+  def testId(mustExist: Boolean)(targetFieldId: String)(implicit doc: Document) = mustExist match {
+    case false => doc.getElementById(targetFieldId) mustBe null
+    case true  => doc.getElementById(targetFieldId) must not be null
   }
 
   def testText(expectedText: String)(targetFieldId: String)(implicit doc: Document) =
-    doc.getElementById(targetFieldId).text shouldBe expectedText
+    doc.getElementById(targetFieldId).text mustBe expectedText
 
 }

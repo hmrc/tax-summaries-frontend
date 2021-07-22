@@ -69,7 +69,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
   def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService, mockMiddleConnector) with MockitoSugar
 
-  "GovernmentSpendService getGovernmentSpendData" should {
+  "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
       when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
@@ -79,13 +79,13 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     }
   }
 
-  "GovernmentSpendService govSpend" should {
+  "GovernmentSpendService govSpend" must {
 
     "return a complete GovernmentSpend when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
       val result = sut.govSpend(atsData)
 
-      result shouldBe GovernmentSpend(
+      result mustBe GovernmentSpend(
         2019,
         "1111111111",
         List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
@@ -102,18 +102,18 @@ class GovernmentSpendServiceSpec extends BaseSpec {
       val atsData = AtsTestData.govSpendingData
       val result = sut.govSpend(atsData)
 
-      result.isScottishTaxPayer shouldBe true
+      result.isScottishTaxPayer mustBe true
     }
 
     "return a isScottishTaxPayer as false when incomeTaxStatus is not 0002" in {
       val atsData = AtsTestData.govSpendingDataForWelshUser
       val result = sut.govSpend(atsData)
 
-      result.isScottishTaxPayer shouldBe false
+      result.isScottishTaxPayer mustBe false
     }
   }
 
-  "GovernmentSpendService getGovernmentSpendDataV2" should {
+  "GovernmentSpendService getGovernmentSpendDataV2" must {
 
     "return a government spend map" in {
 
@@ -124,7 +124,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
-      result shouldBe expectedBody
+      result mustBe expectedBody
     }
 
     "sort data by percentage" in {
@@ -137,7 +137,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
-      result shouldBe expectedBody
+      result mustBe expectedBody
     }
 
     "sort the categories in correct order for taxYear 18/19" in {
@@ -152,7 +152,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
-      result shouldBe expectedBody
+      result mustBe expectedBody
     }
   }
 }

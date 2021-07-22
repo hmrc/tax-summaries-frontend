@@ -56,12 +56,12 @@ class CryptoServiceSpec extends BaseSpec {
     UriEncoding.encodePathSegment(encrypted, "UTF-8")
   }
 
-  "getAgentToken" should {
+  "getAgentToken" must {
 
     "return an AgentToken when the input is valid" in {
 
       val result = sut.getAgentToken(encryptToken(timestamp = timestamp))
-      result shouldBe agentToken
+      result mustBe agentToken
     }
 
     "throw an AgentTokenException when an expired token is passed" in {
@@ -72,7 +72,7 @@ class CryptoServiceSpec extends BaseSpec {
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Expired token")
+      exception.message must include("Expired token")
     }
 
     "throw an exception when the token date is in the future" in {
@@ -83,7 +83,7 @@ class CryptoServiceSpec extends BaseSpec {
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Expired token")
+      exception.message must include("Expired token")
     }
 
     "throw an AgentTokenException when the agentToken is malformed" in {
@@ -94,7 +94,7 @@ class CryptoServiceSpec extends BaseSpec {
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Malformed token content")
+      exception.message must include("Malformed token content")
     }
 
     "throw an AgentTokenException when the agentToken cannot be decryped" in {
@@ -105,7 +105,7 @@ class CryptoServiceSpec extends BaseSpec {
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Cannot decrypt token")
+      exception.message must include("Cannot decrypt token")
     }
   }
 }

@@ -19,9 +19,9 @@ package view_models
 import utils.BaseSpec
 
 class RateSpec extends BaseSpec {
-  "Rate" should {
+  "Rate" must {
     "not change constructor parameter values" in {
-      Rate("10%").percent shouldBe "10%"
+      Rate("10%").percent mustBe "10%"
     }
   }
 }

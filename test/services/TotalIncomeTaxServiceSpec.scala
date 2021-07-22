@@ -54,7 +54,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
     val taxYear = 2015
   }
 
-  "TotalIncomeTaxService getIncomeData" should {
+  "TotalIncomeTaxService getIncomeData" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
@@ -77,7 +77,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
     }
   }
 
-  "TotalIncomeTaxService.totalIncomeConverter" should {
+  "TotalIncomeTaxService.totalIncomeConverter" must {
 
     val savingsTax = SavingsTax(
       Amount.gbp(2900),

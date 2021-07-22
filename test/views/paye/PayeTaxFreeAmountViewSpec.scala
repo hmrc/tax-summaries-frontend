@@ -35,7 +35,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
       FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount"))
   lazy val payeTaxFreeAmountView = inject[PayeTaxFreeAmountView]
 
-  "PayeTaxFreeAmountView" should {
+  "PayeTaxFreeAmountView" must {
     "display correct heading for given taxYear" in {
       val viewModel = PayeTaxFreeAmount(
         2019,
@@ -50,10 +50,10 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .select("h1")
-        .text shouldBe "Tax-free amount"
+        .text mustBe "Tax-free amount"
       document
         .select("h2.heading-xlarge")
-        .text shouldBe "6 April 2018 to 5 April 2019"
+        .text mustBe "6 April 2018 to 5 April 2019"
     }
 
     "display the table of adjustments when there is more than one row" in {
@@ -72,10 +72,10 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
       val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#adjustmentRows") should not be empty
-      document.select("#personal_allowance") should not be empty
-      document.select("#marriage_allowance_transferred_amount") should not be empty
-      document.select("#other_allowances_amount") should not be empty
+      document.select("#adjustmentRows") must not be empty
+      document.select("#personal_allowance") must not be empty
+      document.select("#marriage_allowance_transferred_amount") must not be empty
+      document.select("#other_allowances_amount") must not be empty
     }
 
     "display the table of adjustments without a total when there is just personal allowance" in {
@@ -92,8 +92,8 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
       val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#adjustmentRows") should not be empty
-      document.select("#totalTaxFreeAmount") shouldBe empty
+      document.select("#adjustmentRows") must not be empty
+      document.select("#totalTaxFreeAmount") mustBe empty
     }
 
     "not display the table of adjustments when there are no rows" in {
@@ -108,7 +108,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
       val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#adjustmentRows") shouldBe empty
+      document.select("#adjustmentRows") mustBe empty
     }
 
     "display the summary table" in {
@@ -126,9 +126,9 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
       val view = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#summaryRows") should not be empty
-      document.select("#income_before_tax") should not be empty
-      document.select("#tax_free_amount") should not be empty
+      document.select("#summaryRows") must not be empty
+      document.select("#income_before_tax") must not be empty
+      document.select("#tax_free_amount") must not be empty
     }
   }
 }

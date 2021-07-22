@@ -69,7 +69,7 @@ class AllowanceServiceSpec extends BaseSpec {
 
   }
 
-  "AllowanceService.getAllowances" should {
+  "AllowanceService.getAllowances" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
@@ -81,13 +81,13 @@ class AllowanceServiceSpec extends BaseSpec {
     }
   }
 
-  "AllowanceService.allowanceDataConverter" should {
+  "AllowanceService.allowanceDataConverter" must {
     "return a complete AllowancesData when given complete AtsData" in {
 
       val atsData = AtsTestData.atsAllowancesData
       val result = sut.allowanceDataConverter(atsData)
 
-      result shouldBe Allowances(
+      result mustBe Allowances(
         2019,
         "1111111111",
         Amount(100, "GBP"),

@@ -16,12 +16,13 @@
 
 package utils.view_utils
 
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.ViewUtils
 import view_models.{Amount, Rate}
 
-class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
+class ViewUtilsSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
 
   val zeroAmount = createAmount(0)
   val zeroRate = Rate("0%")
@@ -29,7 +30,7 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
 
   def createAmount(bd: BigDecimal) = Amount(bd, "gbp")
 
-  "toCurrency" should {
+  "toCurrency" must {
 
     def result(res: String) = s"&pound;$res"
 
@@ -37,38 +38,38 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
 
       forAll { bd: BigDecimal =>
         val testAmount = createAmount(bd)
-        viewUtils.toCurrency(testAmount) shouldBe result(testAmount.toString)
+        viewUtils.toCurrency(testAmount) mustBe result(testAmount.toString)
       }
     }
 
     "return the amount in Pounds to two decimal places" in {
       forAll { bd: BigDecimal =>
         val testAmount = createAmount(bd)
-        viewUtils.toCurrency(testAmount, twoDecimalPlaces = true) shouldBe result(testAmount.toTwoDecimalString)
+        viewUtils.toCurrency(testAmount, twoDecimalPlaces = true) mustBe result(testAmount.toTwoDecimalString)
       }
     }
   }
 
-  "positiveOrZero" should {
+  "positiveOrZero" must {
     "return the given amount object if the amount is positive" in {
 
       forAll { dec: BigDecimal =>
         whenever(dec > 0) {
           val amount = createAmount(dec)
-          viewUtils.positiveOrZero(amount) shouldBe amount
+          viewUtils.positiveOrZero(amount) mustBe amount
         }
       }
     }
 
     "return the given amount object if the amount is zero" in {
-      viewUtils.positiveOrZero(zeroAmount) shouldBe zeroAmount
+      viewUtils.positiveOrZero(zeroAmount) mustBe zeroAmount
     }
 
     "return an amount object with zero as the amount if the given amount is negative" in {
       forAll { dec: BigDecimal =>
         whenever(dec < 0) {
           val amount = createAmount(dec)
-          viewUtils.positiveOrZero(amount) shouldBe zeroAmount
+          viewUtils.positiveOrZero(amount) mustBe zeroAmount
         }
       }
     }
@@ -78,13 +79,13 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
         whenever(dec > 0) {
           val percentage = dec.toString + '%'
           val positiveRate = Rate(percentage)
-          viewUtils.positiveOrZero(positiveRate) shouldBe positiveRate
+          viewUtils.positiveOrZero(positiveRate) mustBe positiveRate
         }
       }
     }
 
     "return the zero rate if the percentage is zero" in {
-      viewUtils.positiveOrZero(zeroRate) shouldBe Rate.empty
+      viewUtils.positiveOrZero(zeroRate) mustBe Rate.empty
     }
 
     "return the zero rate if the percentage is negative" in {
@@ -92,7 +93,7 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
         whenever(dec < 0) {
           val percentage = dec.toString + '%'
           val negativeRate = Rate(percentage)
-          viewUtils.positiveOrZero(negativeRate) shouldBe Rate.empty
+          viewUtils.positiveOrZero(negativeRate) mustBe Rate.empty
         }
       }
     }

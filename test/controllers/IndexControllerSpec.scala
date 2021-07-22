@@ -95,7 +95,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
       .thenReturn(Future.successful(None))
   }
 
-  "Calling with request param" should {
+  "Calling with request param" must {
 
     "return a 303 response when called with '?ref=PORTAL'" in {
 
@@ -114,14 +114,14 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(requestWithQuery)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
-      session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary")
+      session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
     }
 
   }
 
-  "Calling with request param and trailing slash (non-AGENT)" should {
+  "Calling with request param and trailing slash (non-AGENT)" must {
 
     "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in {
 
@@ -140,9 +140,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(requestWithQuery)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
-      session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary")
+      session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -165,9 +165,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(requestWithQuery)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
-      session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary")
+      session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -188,8 +188,8 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(requestWithQuery)
 
-      status(result) shouldBe 200
-      session(result).get("TAXS_USER_TYPE") shouldBe None
+      status(result) mustBe 200
+      session(result).get("TAXS_USER_TYPE") mustBe None
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -211,13 +211,13 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(request)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/main?taxYear=2014")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary/main?taxYear=2014")
     }
   }
 
-  //FIXME - should throw an error, if Agent does not provide ref/id
-  "Calling with request param and trailing slash (AGENT)" should {
+  //FIXME - must throw an error, if Agent does not provide ref/id
+  "Calling with request param and trailing slash (AGENT)" must {
 
     "put TAXS_USER_TYPE 'PORTAL' into session when called with '/?ref=PORTAL'" in {
 
@@ -236,9 +236,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(agentRequestWithQuery)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
-      session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary")
+      session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
 
@@ -261,9 +261,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(agentRequestWithQuery)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary")
-      session(result).get("TAXS_USER_TYPE") shouldBe Some("PORTAL")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary")
+      session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
       verify(mockDataCacheConnector, times(1))
         .storeAgentToken(Matchers.eq("bxk2Z3Q84R0W2XSklMb7Kg"))(any[HeaderCarrier], any[ExecutionContext])
     }
@@ -287,17 +287,17 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.agentAwareShow(agentRequestWithQuery)
 
-      session(result).get("TAXS_USER_TYPE") shouldBe None
+      session(result).get("TAXS_USER_TYPE") mustBe None
       verify(mockDataCacheConnector, never()).storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
-  "Calling connector for ATS Tax Year list" should {
+  "Calling connector for ATS Tax Year list" must {
 
     "return a 200 response" in {
 
       val result = sut.agentAwareShow(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
     }
 
     "return a Tax Year list" in {
@@ -305,12 +305,12 @@ class IndexControllerSpec extends ControllerBaseSpec {
       val result = sut.agentAwareShow(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) shouldBe 200
+      status(result) mustBe 200
       document.text() contains "2014"
     }
   }
 
-  "Submitting the Index page" should {
+  "Submitting the Index page" must {
 
     "give a Ok status and stay on the same page if form errors and display the error" in {
 
@@ -332,7 +332,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
       )
 
       val result = sut.onSubmit(requestWithQuery)
-      status(result) shouldBe OK
+      status(result) mustBe OK
 
     }
 
@@ -342,9 +342,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future(new NoATSViewModel))
 
       val result = sut.show(request)
-      status(result) shouldBe SEE_OTHER
+      status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get shouldBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
     }
 
     "redirect to the generic error page when service returns 500" in {
@@ -356,9 +356,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) mustBe INTERNAL_SERVER_ERROR
 
-      document.getElementById("generic-error-page-heading").text() shouldBe "Sorry, the service is unavailable"
+      document.getElementById("generic-error-page-heading").text() mustBe "Sorry, the service is unavailable"
     }
 
     "return 404 if service returns 404" in {
@@ -382,7 +382,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.onSubmit(requestWithQuery)
 
-      status(result) shouldBe NOT_FOUND
+      status(result) mustBe NOT_FOUND
     }
 
     "return 500 if service returns 500" in {
@@ -406,11 +406,11 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
       val result = sut.onSubmit(requestWithQuery)
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
   }
 
-  "redirectWithYear" should {
+  "redirectWithYear" must {
 
     "redirect to main page with tax year" when {
 
@@ -420,9 +420,9 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
         val result = sut.redirectWithYear(taxYear)(request)
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe
-          Some(s"${routes.AtsMainController.authorisedAtsMain().url}?taxYear=$taxYear")
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe
+          Some(s"${routes.AtsMainController.authorisedAtsMain.url}?taxYear=$taxYear")
       }
     }
 
@@ -434,7 +434,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
         val result = sut.redirectWithYear(taxYear)(request)
 
-        status(result) shouldBe NOT_FOUND
+        status(result) mustBe NOT_FOUND
       }
     }
 
@@ -446,7 +446,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
 
         val result = sut.redirectWithYear(taxYear)(request)
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
   }

@@ -42,7 +42,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       inject[PayeIncomeTaxAndNicsView],
       inject[PayeConfig])
 
-  "Paye your income tax and nics controller" should {
+  "Paye your income tax and nics controller" must {
 
     "return OK response" in {
 
@@ -53,11 +53,11 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe OK
+      status(result) mustBe OK
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(
+      document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
@@ -73,8 +73,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.authorisedNoAts.url
     }
 
     "redirect user to generic error page when receiving INTERNAL_SERVER_ERROR from service" in {
@@ -86,8 +86,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(500).url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(500).url
     }
 
     "redirect user to generic error page when receiving BAD_REQUEST from service" in {
@@ -99,8 +99,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(400).url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(400).url
     }
   }
 }

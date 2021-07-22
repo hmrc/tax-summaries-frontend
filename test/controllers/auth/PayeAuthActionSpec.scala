@@ -39,7 +39,7 @@ class PayeAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
-  val unauthorisedRoute = routes.PayeErrorController.notAuthorised().url
+  val unauthorisedRoute = routes.PayeErrorController.notAuthorised.url
 
   class Harness(authAction: PayeAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -47,7 +47,7 @@ class PayeAuthActionSpec extends BaseSpec {
     }
   }
 
-  "A user with a confidence level 200 and a Nino" should {
+  "A user with a confidence level 200 and a Nino" must {
     "create an authenticated request with no IR-SA" in {
       val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
@@ -62,10 +62,10 @@ class PayeAuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe OK
-      contentAsString(result) should include(nino)
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("provider type")
+      status(result) mustBe OK
+      contentAsString(result) must include(nino)
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("provider type")
     }
 
     "create an authenticated request with IR-SA" in {
@@ -84,10 +84,10 @@ class PayeAuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe OK
-      contentAsString(result) should include(nino)
-      contentAsString(result) should include("true")
-      contentAsString(result) should include("provider type")
+      status(result) mustBe OK
+      contentAsString(result) must include(nino)
+      contentAsString(result) must include("true")
+      contentAsString(result) must include("provider type")
     }
 
     "A user will be redirected to the not authorised page" when {
@@ -104,8 +104,8 @@ class PayeAuthActionSpec extends BaseSpec {
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.notAuthorised().url)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.paye.routes.PayeErrorController.notAuthorised.url)
       }
 
       "they have no credentials" in {
@@ -121,64 +121,64 @@ class PayeAuthActionSpec extends BaseSpec {
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.paye.routes.PayeErrorController.notAuthorised().url)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.paye.routes.PayeErrorController.notAuthorised.url)
       }
     }
   }
 
-  "A user with a confidence level 200 and no Nino" should {
+  "A user with a confidence level 200 and no Nino" must {
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new InternalError))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(unauthorisedRoute)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(unauthorisedRoute)
     }
   }
 
-  "A user with NoActiveSession type exception" should {
+  "A user with NoActiveSession type exception" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
+      status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get should startWith(appConfig.payeLoginUrl)
+      redirectLocation(result).get must startWith(appConfig.payeLoginUrl)
     }
   }
 
-  "A user with Insufficient confidence level type exception" should {
+  "A user with Insufficient confidence level type exception" must {
     "return 303 and be redirected to Identity verification service" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientConfidenceLevel()))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
+      status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get should startWith(appConfig.identityVerificationUpliftUrl)
+      redirectLocation(result).get must startWith(appConfig.identityVerificationUpliftUrl)
     }
   }
 
-  "A user without credential strength strong" should {
+  "A user without credential strength strong" must {
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(IncorrectCredentialStrength()))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
+      status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get should endWith(unauthorisedRoute)
+      redirectLocation(result).get must endWith(unauthorisedRoute)
     }
   }
 
-  "A user visiting the service when it is shuttered" should {
+  "A user visiting the service when it is shuttered" must {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
@@ -188,8 +188,8 @@ class PayeAuthActionSpec extends BaseSpec {
 
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.serviceUnavailable().url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.serviceUnavailable.url
       verifyZeroInteractions(mockAuthConnector)
     }
   }

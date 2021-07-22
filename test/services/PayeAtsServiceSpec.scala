@@ -58,7 +58,7 @@ class PayeAtsServiceSpec extends BaseSpec {
   override protected def afterEach(): Unit =
     Mockito.reset(mockAuditService)
 
-  "getPayeATSData" should {
+  "getPayeATSData" must {
 
     "return a successful response after transforming tax-summaries data to PAYE model" in {
 
@@ -67,7 +67,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1).futureValue
 
-      result shouldBe Right(expectedResponse.as[PayeAtsData])
+      result mustBe Right(expectedResponse.as[PayeAtsData])
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
@@ -77,7 +77,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1).futureValue
 
-      result.left.get.status shouldBe 500
+      result.left.get.status mustBe 500
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
@@ -87,7 +87,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1).futureValue
 
-      result.left.get.status shouldBe 400
+      result.left.get.status mustBe 400
     }
 
     "return a NOT_FOUND response after receiving NotFoundException from connector" in {
@@ -97,7 +97,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1).futureValue
 
-      result.left.get.status shouldBe 404
+      result.left.get.status mustBe 404
     }
 
     "produce a 'success' audit event when returning a successful response" in {
@@ -114,7 +114,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     }
   }
 
-  "getPayeATSMultipleYearData" should {
+  "getPayeATSMultipleYearData" must {
 
     "return a successful response after transforming tax-summaries data to PAYE model" in {
 
@@ -125,7 +125,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSMultipleYearData(testNino, currentYearMinus1, currentYear).futureValue
 
-      result shouldBe Right(expectedResponseMultipleYear.as[List[PayeAtsData]])
+      result mustBe Right(expectedResponseMultipleYear.as[List[PayeAtsData]])
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
@@ -137,7 +137,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSMultipleYearData(testNino, currentYearMinus1, currentYear).futureValue
 
-      result.left.get.status shouldBe 500
+      result.left.get.status mustBe 500
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
@@ -149,7 +149,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSMultipleYearData(testNino, currentYearMinus1, currentYear).futureValue
 
-      result.left.get.status shouldBe 400
+      result.left.get.status mustBe 400
     }
 
     "return a NOT_FOUND response after receiving NotFoundException from connector" in {
@@ -161,7 +161,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       val result = sut.getPayeATSMultipleYearData(testNino, currentYearMinus1, currentYear).futureValue
 
-      result.left.get.status shouldBe 404
+      result.left.get.status mustBe 404
     }
 
     "produce a 'success' audit event when returning a successful response" in {

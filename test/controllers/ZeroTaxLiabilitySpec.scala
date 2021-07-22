@@ -51,7 +51,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
-  "Opening link if user has no income tax or cg tax liability" should {
+  "Opening link if user has no income tax or cg tax liability" must {
 
     "show no ats page for total-income-tax" in {
 
@@ -71,8 +71,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
       val result = sut.show(request)
 
-      status(result) shouldBe 303
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
     }
   }
 
@@ -80,16 +80,16 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val result = incomeController.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 
   "show no ats page for income-before-tax" in {
 
     val result = incomeController.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 
   "show no ats page for tax-free-amount" in {
@@ -111,8 +111,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val result = sut.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 
   "show no ats page for capital-gains-tax" in {
@@ -134,8 +134,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val result = sut.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 
   "show no ats page for government spend" in {
@@ -157,8 +157,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val result = sut.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 
   "show no ats page for summary page" in {
@@ -178,8 +178,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val result = sut.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 
   "show no ats page for nics summary page" in {
@@ -199,7 +199,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val result = sut.show(request)
 
-    status(result) shouldBe 303
-    redirectLocation(result) shouldBe Some("/annual-tax-summary/no-ats")
+    status(result) mustBe 303
+    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
   }
 }

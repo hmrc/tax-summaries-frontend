@@ -42,7 +42,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
   val sut =
     new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])
 
-  "Government spend controller" should {
+  "Government spend controller" must {
 
     "return OK response" in {
 
@@ -53,9 +53,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe OK
+      status(result) mustBe OK
 
-      contentAsString(result) should include(
+      contentAsString(result) must include(
         Messages("paye.ats.income_before_tax.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
@@ -71,8 +71,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.authorisedNoAts.url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
@@ -84,8 +84,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
     }
   }
 }

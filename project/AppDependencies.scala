@@ -32,12 +32,14 @@ object AppDependencies {
     "org.jsoup"                % "jsoup"                        % "1.13.1",
     "org.mockito"              % "mockito-all"                  % "1.10.19",
     "org.scalatestplus.play"  %% "scalatestplus-play"           % "5.1.0",
+    "org.scalatestplus"       %% "scalatestplus-scalacheck"     % "3.1.0.0-RC2",
     "org.scalatestplus"       %% "scalatestplus-mockito"        % "1.0.0-M2",
     "org.scalamock"           %% "scalamock-scalatest-support"  % "3.6.0",
     "com.typesafe.play"       %% "play-test"                    % PlayVersion.current,
     "org.scalacheck"          %% "scalacheck"                   % "1.14.3",
     "com.github.tomakehurst"   % "wiremock-jre8"                % "2.26.1",
-    "org.pegdown"             %  "pegdown"                      % "1.6.0"
+    "org.pegdown"             %  "pegdown"                      % "1.6.0",
+    "com.vladsch.flexmark"    % "flexmark-all"                  % "0.35.10"
   ).map(_ % "test,it")
 
   val all: Seq[ModuleID] = compile ++ test

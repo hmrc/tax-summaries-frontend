@@ -67,7 +67,7 @@ class AtsYearListServiceSpec extends BaseSpec {
     val atsService = mock[AtsService]
   }
 
-  "storeSelectedAtsTaxYear" should {
+  "storeSelectedAtsTaxYear" must {
 
     "Return a successful future upon success" in new TestService {
 
@@ -76,7 +76,7 @@ class AtsYearListServiceSpec extends BaseSpec {
       val result = storeSelectedAtsTaxYear(2014)
 
       whenReady(result) { result =>
-        result shouldBe 2014
+        result mustBe 2014
       }
     }
 
@@ -88,13 +88,13 @@ class AtsYearListServiceSpec extends BaseSpec {
       val result = storeSelectedAtsTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a[Exception]
+        exception mustBe a[Exception]
       }
     }
 
   }
 
-  "getAtsListData" should {
+  "getAtsListData" must {
 
     "Return a successful future upon success" in new TestService {
 
@@ -135,12 +135,12 @@ class AtsYearListServiceSpec extends BaseSpec {
 
   }
 
-  "AtsYearListService.atsListDataConverter" should {
+  "AtsYearListService.atsListDataConverter" must {
     "return an AtsList when given complete AtsListData" in new TestService {
       val atsListData = AtsTestData.atsListData
       val result = atsListDataConverter(atsListData)
 
-      result shouldBe AtsList(
+      result mustBe AtsList(
         "1111111111",
         "John",
         "Smith",

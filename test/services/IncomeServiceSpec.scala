@@ -63,7 +63,7 @@ class IncomeServiceSpec extends BaseSpec {
 
   def sut = new IncomeService(mockAtsService, mockAtsYearListService) with MockitoSugar
 
-  "IncomeService getIncomeData" should {
+  "IncomeService getIncomeData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
       when(
@@ -76,7 +76,7 @@ class IncomeServiceSpec extends BaseSpec {
 
   }
 
-  "IncomeService.createIncomeConverter" should {
+  "IncomeService.createIncomeConverter" must {
 
     "return complete IncomeBeforeTaxData when given complete AtsData" in {
 

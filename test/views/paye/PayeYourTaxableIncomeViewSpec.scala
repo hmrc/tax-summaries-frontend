@@ -43,30 +43,30 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants {
   def view(viewModel: PayeYourTaxableIncome): String =
     payeYourTaxableIncomeView(payeYourTaxableIncomeViewModel).body
 
-  "PayeYourTaxableIncomeView" should {
+  "PayeYourTaxableIncomeView" must {
     "return correct content for Taxable income section" in {
 
       val document = Jsoup.parse(view(payeYourTaxableIncomeViewModel))
 
-      document.getElementById("self_employment_income").text() shouldBe "Self-employment £450.00"
+      document.getElementById("self_employment_income").text() mustBe "Self-employment £450.00"
 
-      document.getElementById("income_from_employment").text() shouldBe "Employment £550.00"
+      document.getElementById("income_from_employment").text() mustBe "Employment £550.00"
 
-      document.getElementById("state_pension").text() shouldBe "State pension £652.00"
+      document.getElementById("state_pension").text() mustBe "State pension £652.00"
 
-      document.getElementById("taxable_state_benefits").text() shouldBe "Taxable state benefits £751.00"
+      document.getElementById("taxable_state_benefits").text() mustBe "Taxable state benefits £751.00"
 
-      document.getElementById("other_income").text() shouldBe "Other income (including interest) £851.00"
+      document.getElementById("other_income").text() mustBe "Other income (including interest) £851.00"
 
-      document.getElementById("benefits_from_employment").text() shouldBe "Benefits from employment £251.00"
+      document.getElementById("benefits_from_employment").text() mustBe "Benefits from employment £251.00"
 
-      document.getElementById("total_income_before_tax").text() shouldBe "Your income before tax £351.00"
+      document.getElementById("total_income_before_tax").text() mustBe "Your income before tax £351.00"
 
-      document.getElementById("income-before-tax-foot").text() shouldBe "Your income before tax £1,000.00"
+      document.getElementById("income-before-tax-foot").text() mustBe "Your income before tax £1,000.00"
 
       document
         .getElementById("income-before-tax-intro")
-        .text() shouldBe "We have calculated this using information given to us by you and other sources. This includes your employer, pension providers, and banks or building societies."
+        .text() mustBe "We have calculated this using information given to us by you and other sources. This includes your employer, pension providers, and banks or building societies."
 
     }
 
@@ -76,7 +76,7 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants {
         payeYourTaxableIncomeView(payeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
       val document = Jsoup.parse(view)
 
-      document.select("#income-tax-table") shouldBe empty
+      document.select("#income-tax-table") mustBe empty
 
     }
   }

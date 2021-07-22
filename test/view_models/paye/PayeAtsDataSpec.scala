@@ -17,38 +17,39 @@
 package view_models.paye
 
 import models.DataHolder
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import services.atsData.PayeAtsTestData
 import view_models.Amount
 
-class PayeAtsDataSpec extends WordSpec with Matchers {
+class PayeAtsDataSpec extends AnyWordSpec with Matchers {
 
   lazy val payeAtsTestData = new PayeAtsTestData
 
-  "PayeAtsData" should {
+  "PayeAtsData" must {
 
     "Transform PayeAtsData to view model" when {
 
       "the user is welsh tax payer since scottish_income_tax exists with non zero value in the payload" in {
         val data = payeAtsTestData.incomeData
-        data.isWelshTaxPayer shouldBe true
+        data.isWelshTaxPayer mustBe true
       }
 
       "the user is not welsh tax payer since scottish_income_tax exists with zero value in the payload" in {
         val data = payeAtsTestData.incomeData.copy(
           income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(0))), None, None)))
-        data.isWelshTaxPayer shouldBe false
+        data.isWelshTaxPayer mustBe false
       }
 
       "the user is not welsh tax payer since scottish_income_tax exists with negative value in the payload" in {
         val data = payeAtsTestData.incomeData.copy(
           income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(-2550))), None, None)))
-        data.isWelshTaxPayer shouldBe false
+        data.isWelshTaxPayer mustBe false
       }
 
       "the user is not welsh tax payer since scottish_income_tax does not exist in the payload" in {
         val data = payeAtsTestData.incomeDataWithoutScottishIncomeTax
-        data.isWelshTaxPayer shouldBe false
+        data.isWelshTaxPayer mustBe false
       }
 
     }

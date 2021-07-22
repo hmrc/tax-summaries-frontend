@@ -43,14 +43,14 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
   def view(viewModel: PayeYourIncomeAndTaxes): String =
     payeYourIncomeAndTaxesView(payeYourIncomeAndTaxesViewModel).body
 
-  "PayeYourIncomeAndTaxesView" should {
+  "PayeYourIncomeAndTaxesView" must {
     "return correct content for Taxable income section" in {
 
       val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
 
       document
         .getElementById("taxable-income")
-        .text() shouldBe "Taxable income £1,000.00 Your taxable income This is your total taxable income for the year."
+        .text() mustBe "Taxable income £1,000.00 Your taxable income This is your total taxable income for the year."
 
     }
 
@@ -60,7 +60,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .getElementById("tax-free-amount")
-        .text() shouldBe "Tax-free amount £800.00 Your tax-free amount This is the amount you received without paying tax."
+        .text() mustBe "Tax-free amount £800.00 Your tax-free amount This is the amount you received without paying tax."
 
     }
 
@@ -70,7 +70,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .getElementById("tax-calculated-as")
-        .text() shouldBe "Income Tax and National Insurance contributions £200.00 Your Income Tax and National Insurance contributions This is 20% of your taxable income. For every £1 of income, you paid 20p in Income Tax and National Insurance contributions."
+        .text() mustBe "Income Tax and National Insurance contributions £200.00 Your Income Tax and National Insurance contributions This is 20% of your taxable income. For every £1 of income, you paid 20p in Income Tax and National Insurance contributions."
 
     }
 
@@ -80,7 +80,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .getElementById("income_after_tax_and_nics")
-        .text() shouldBe "Income after Tax and National Insurance contributions £100.00"
+        .text() mustBe "Income after Tax and National Insurance contributions £100.00"
 
     }
   }

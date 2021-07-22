@@ -49,19 +49,19 @@ class MinAuthActionSpec extends BaseSpec {
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
-  "A user with no active session" should {
+  "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
       val controller = new Harness(minAuthAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(ggSignInUrl)
     }
   }
 
-  "A user with insufficient enrolments" should {
+  "A user with insufficient enrolments" must {
     "be redirected to the Sorry there is a problem page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
@@ -70,12 +70,12 @@ class MinAuthActionSpec extends BaseSpec {
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
       whenReady(result.failed) { ex =>
-        ex shouldBe an[InsufficientEnrolments]
+        ex mustBe an[InsufficientEnrolments]
       }
     }
   }
 
-  "A user with a confidence level 50" should {
+  "A user with a confidence level 50" must {
     "create a minimum authenticated request" in {
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some("") ~ Some(fakeCredentials))
@@ -89,7 +89,7 @@ class MinAuthActionSpec extends BaseSpec {
       val controller = new Harness(minAuthAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
+      status(result) mustBe OK
     }
   }
 
@@ -110,6 +110,6 @@ class MinAuthActionSpec extends BaseSpec {
       await(controller.onPageLoad()(FakeRequest("", "")))
     }
 
-    ex.getMessage should include("Can't find credentials for user")
+    ex.getMessage must include("Can't find credentials for user")
   }
 }

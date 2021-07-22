@@ -20,7 +20,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get}
 import com.github.tomakehurst.wiremock.http.Fault
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED}
@@ -34,7 +35,7 @@ import utils.WireMockHelper
 import scala.concurrent.ExecutionContext
 
 class HttpHandlerSpec
-    extends WordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
     with IntegrationPatience with Injecting {
 
   override def fakeApplication(): Application =
@@ -62,7 +63,7 @@ class HttpHandlerSpec
 
   "HttpHandler" when {
 
-    "get is called" should {
+    "get is called" must {
 
       "return a AtsSuccessResponseWithPayload" when {
 
@@ -79,7 +80,7 @@ class HttpHandlerSpec
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe AtsSuccessResponseWithPayload(TestClass(expectedBody))
+          result mustBe AtsSuccessResponseWithPayload(TestClass(expectedBody))
         }
       }
 
@@ -98,7 +99,7 @@ class HttpHandlerSpec
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+          result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
         }
       }
 
@@ -115,7 +116,7 @@ class HttpHandlerSpec
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe an[AtsErrorResponse]
+          result mustBe an[AtsErrorResponse]
         }
 
         "the connector returns a 5xx response" in {
@@ -129,7 +130,7 @@ class HttpHandlerSpec
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe an[AtsErrorResponse]
+          result mustBe an[AtsErrorResponse]
         }
 
         "the connector throws an exception" in {
@@ -142,7 +143,7 @@ class HttpHandlerSpec
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe an[AtsErrorResponse]
+          result mustBe an[AtsErrorResponse]
         }
       }
     }

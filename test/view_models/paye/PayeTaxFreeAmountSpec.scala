@@ -18,14 +18,15 @@ package view_models.paye
 
 import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import utils.JsonUtil
 import view_models.Amount
 
 class PayeTaxFreeAmountSpec
-    extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends AnyWordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience {
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
@@ -38,7 +39,7 @@ class PayeTaxFreeAmountSpec
       None
     )
 
-  "PayeTaxFreeAmount" should {
+  "PayeTaxFreeAmount" must {
 
     "use total_tax_free_amount as tax_free_amount if it is non-zero " in {
 
@@ -71,7 +72,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "use personal_tax_free_amount as tax_free_amount if total_tax_free_amount is zero" in {
@@ -105,7 +106,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "use personal_tax_free_amount as tax_free_amount if total_tax_free_amount is missing" in {
@@ -138,7 +139,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "include populated rows for personal tax free amount, marriage allowance and other allowances when present" in {
@@ -174,7 +175,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "have no rows for personal tax free amount, marriage allowance and other allowances when zero" in {
@@ -207,7 +208,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "have no rows for personal tax free amount, marriage allowance and other allowances when missing" in {
@@ -237,7 +238,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "return zeroed summary rows if values are zero" in {
@@ -269,7 +270,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "return zeroed summary rows if values are missing" in {
@@ -295,7 +296,7 @@ class PayeTaxFreeAmountSpec
 
       val result = PayeTaxFreeAmount(data)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
   }
 }

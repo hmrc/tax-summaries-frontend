@@ -80,7 +80,7 @@
 //
 //      "provide a correctly formatted string" in {
 //        forAll(summaryGen) { summary =>
-//          summary.taxYearInterval shouldBe s"${summary.year - 1}-${summary.year.toString.takeRight(2)}"
+//          summary.taxYearInterval mustBe s"${summary.year - 1}-${summary.year.toString.takeRight(2)}"
 //        }
 //      }
 //    }
@@ -88,7 +88,7 @@
 //    "taxYearIntervalTo is called" must {
 //      "provide a correctly formatted string" in {
 //        forAll(summaryGen) { summary =>
-//          summary.taxYearIntervalTo shouldBe s"${summary.year - 1} to ${summary.year}"
+//          summary.taxYearIntervalTo mustBe s"${summary.year - 1} to ${summary.year}"
 //        }
 //      }
 //    }
@@ -99,7 +99,7 @@
 //        "Total income tax amount is above zero" in {
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.totalIncomeTaxAmount.amount > zero) {
-//              summary.hasTotalIncomeTaxAmount shouldBe true
+//              summary.hasTotalIncomeTaxAmount mustBe true
 //            }
 //          }
 //        }
@@ -109,7 +109,7 @@
 //        "Total income tax amount is below zero" in {
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.totalIncomeTaxAmount.amount < zero) {
-//              summary.hasTotalIncomeTaxAmount shouldBe false
+//              summary.hasTotalIncomeTaxAmount mustBe false
 //            }
 //          }
 //        }
@@ -118,7 +118,7 @@
 //          forAll(summaryGen) { summary =>
 //            val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
 //
-//            summaryWithZero.hasTotalIncomeTaxAmount shouldBe false
+//            summaryWithZero.hasTotalIncomeTaxAmount mustBe false
 //          }
 //        }
 //      }
@@ -130,7 +130,7 @@
 //        "Total capital gains tax is above zero" in {
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.totalCapitalGainsTax.amount > zero) {
-//              summary.hasTotalCapitalGains shouldBe true
+//              summary.hasTotalCapitalGains mustBe true
 //            }
 //          }
 //        }
@@ -140,7 +140,7 @@
 //        "Total capital gains tax is exactly zero" in {
 //          forAll(summaryGen) { summary =>
 //            val summaryWithZero = summary.copy(totalCapitalGainsTax = Amount(0, "gbp"))
-//            summaryWithZero.hasTotalCapitalGains shouldBe false
+//            summaryWithZero.hasTotalCapitalGains mustBe false
 //          }
 //        }
 //      }
@@ -152,7 +152,7 @@
 //        "employee NICs amount is above zero" in {
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.employeeNicAmount.amount > zero) {
-//              summary.hasEmployeeNicAmount shouldBe true
+//              summary.hasEmployeeNicAmount mustBe true
 //            }
 //          }
 //        }
@@ -163,7 +163,7 @@
 //          forAll(summaryGen) { summary =>
 //            val summaryWithZero = summary.copy(employeeNicAmount = Amount(0, "gbp"))
 //
-//            summaryWithZero.hasEmployeeNicAmount shouldBe false
+//            summaryWithZero.hasEmployeeNicAmount mustBe false
 //          }
 //        }
 //      }
@@ -179,7 +179,7 @@
 //            whenever(
 //              summary.totalIncomeTaxAmount.amount > zero && summary.employeeNicAmount.amount > zero
 //            ) {
-//              summary.nonNegativeTotalIncomeTaxAndNics shouldBe
+//              summary.nonNegativeTotalIncomeTaxAndNics mustBe
 //                Amount(
 //                  summary.totalIncomeTaxAmount.amount + summary.employeeNicAmount.amount,
 //                  summary.totalIncomeTaxAndNics.currency
@@ -196,7 +196,7 @@
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.employeeNicAmount.amount > zero) {
 //              val summaryWithLessThanZero = summary.copy(totalIncomeTaxAmount = Amount(-0.01, "gbp"))
-//              summaryWithLessThanZero.nonNegativeTotalIncomeTaxAndNics shouldBe summary.employeeNicAmount
+//              summaryWithLessThanZero.nonNegativeTotalIncomeTaxAndNics mustBe summary.employeeNicAmount
 //            }
 //          }
 //        }
@@ -206,7 +206,7 @@
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.employeeNicAmount.amount > zero) {
 //              val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
-//              summaryWithZero.nonNegativeTotalIncomeTaxAndNics shouldBe summary.employeeNicAmount
+//              summaryWithZero.nonNegativeTotalIncomeTaxAndNics mustBe summary.employeeNicAmount
 //            }
 //          }
 //        }
@@ -222,7 +222,7 @@
 //            whenever(
 //              summary.totalIncomeTaxAmount.amount > zero && summary.employeeNicAmount.amount > zero
 //            ) {
-//              summary.yourTotalTaxTextKey shouldBe "ats.summary.tax_and_nics.title"
+//              summary.yourTotalTaxTextKey mustBe "ats.summary.tax_and_nics.title"
 //            }
 //          }
 //        }
@@ -231,7 +231,7 @@
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.totalIncomeTaxAmount.amount > zero) {
 //              val summaryWithZero = summary.copy(employeeNicAmount = Amount(0, "gbp"))
-//              summaryWithZero.yourTotalTaxTextKey shouldBe "ats.summary.tax.title"
+//              summaryWithZero.yourTotalTaxTextKey mustBe "ats.summary.tax.title"
 //            }
 //          }
 //        }
@@ -240,7 +240,7 @@
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.employeeNicAmount.amount > zero) {
 //              val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
-//              summaryWithZero.yourTotalTaxTextKey shouldBe "ats.summary.nics.title"
+//              summaryWithZero.yourTotalTaxTextKey mustBe "ats.summary.nics.title"
 //            }
 //          }
 //        }
@@ -264,8 +264,8 @@
 //                employeeNicAmount = Amount(0, "gbp"),
 //                totalCapitalGainsTax = Amount(0, "gbp")
 //              )
-//              summaryIncomeOnly.yourTotalTaxTextKeys._1 shouldBe expectedTitle("unary")
-//              summaryIncomeOnly.yourTotalTaxTextKeys._2 shouldBe List(incomeTaxDescription)
+//              summaryIncomeOnly.yourTotalTaxTextKeys._1 mustBe expectedTitle("unary")
+//              summaryIncomeOnly.yourTotalTaxTextKeys._2 mustBe List(incomeTaxDescription)
 //            }
 //          }
 //        }
@@ -277,8 +277,8 @@
 //                totalIncomeTaxAmount = Amount(0, "gbp"),
 //                employeeNicAmount = Amount(0, "gbp")
 //              )
-//              summaryCgtOnly.yourTotalTaxTextKeys._1 shouldBe expectedTitle("unary")
-//              summaryCgtOnly.yourTotalTaxTextKeys._2 shouldBe List(cgtDescription)
+//              summaryCgtOnly.yourTotalTaxTextKeys._1 mustBe expectedTitle("unary")
+//              summaryCgtOnly.yourTotalTaxTextKeys._2 mustBe List(cgtDescription)
 //            }
 //          }
 //        }
@@ -290,8 +290,8 @@
 //                totalIncomeTaxAmount = Amount(0, "gbp"),
 //                totalCapitalGainsTax = Amount(0, "gbp")
 //              )
-//              summaryNicsOnly.yourTotalTaxTextKeys._1 shouldBe expectedTitle("unary")
-//              summaryNicsOnly.yourTotalTaxTextKeys._2 shouldBe List(nicsDescription)
+//              summaryNicsOnly.yourTotalTaxTextKeys._1 mustBe expectedTitle("unary")
+//              summaryNicsOnly.yourTotalTaxTextKeys._2 mustBe List(nicsDescription)
 //            }
 //          }
 //        }
@@ -305,8 +305,8 @@
 //                summary.employeeNicAmount.amount > zero
 //            ) {
 //              val summaryWithNoCgt = summary.copy(totalCapitalGainsTax = Amount(0, "gbp"))
-//              summaryWithNoCgt.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
-//              summaryWithNoCgt.yourTotalTaxTextKeys._2 shouldBe
+//              summaryWithNoCgt.yourTotalTaxTextKeys._1 mustBe expectedTitle("binary")
+//              summaryWithNoCgt.yourTotalTaxTextKeys._2 mustBe
 //                List(incomeTaxDescription, nicsDescription)
 //            }
 //          }
@@ -319,8 +319,8 @@
 //                summary.totalCapitalGainsTax.amount > zero
 //            ) {
 //              val summaryWithNoNics = summary.copy(employeeNicAmount = Amount(0, "gbp"))
-//              summaryWithNoNics.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
-//              summaryWithNoNics.yourTotalTaxTextKeys._2 shouldBe
+//              summaryWithNoNics.yourTotalTaxTextKeys._1 mustBe expectedTitle("binary")
+//              summaryWithNoNics.yourTotalTaxTextKeys._2 mustBe
 //                List(incomeTaxDescription, cgtDescription)
 //            }
 //          }
@@ -333,8 +333,8 @@
 //                summary.totalCapitalGainsTax.amount > zero
 //            ) {
 //              val summaryWithNoNics = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
-//              summaryWithNoNics.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
-//              summaryWithNoNics.yourTotalTaxTextKeys._2 shouldBe
+//              summaryWithNoNics.yourTotalTaxTextKeys._1 mustBe expectedTitle("binary")
+//              summaryWithNoNics.yourTotalTaxTextKeys._2 mustBe
 //                List(nicsDescription, cgtDescription)
 //            }
 //          }
@@ -349,8 +349,8 @@
 //                summary.employeeNicAmount.amount > zero &&
 //                summary.totalCapitalGainsTax.amount > zero
 //            ) {
-//              summary.yourTotalTaxTextKeys._1 shouldBe expectedTitle("ternary")
-//              summary.yourTotalTaxTextKeys._2 shouldBe
+//              summary.yourTotalTaxTextKeys._1 mustBe expectedTitle("ternary")
+//              summary.yourTotalTaxTextKeys._2 mustBe
 //                List(incomeTaxDescription, nicsDescription, cgtDescription)
 //            }
 //          }
@@ -366,7 +366,7 @@
 //
 //          forAll(summaryGen) { summary =>
 //            whenever(summary.taxableGains.amount > zero) {
-//              summary.hasTaxableGains shouldBe true
+//              summary.hasTaxableGains mustBe true
 //            }
 //          }
 //        }
@@ -376,7 +376,7 @@
 //        "Taxable gains is exactly zero" in {
 //          forAll(summaryGen) { summary =>
 //            val summaryWithZero = summary.copy(taxableGains = Amount(0, "gbp"))
-//            summaryWithZero.hasTaxableGains shouldBe false
+//            summaryWithZero.hasTaxableGains mustBe false
 //          }
 //        }
 //      }
@@ -385,7 +385,7 @@
 //    "taxYearTo is called" must {
 //      "return the year as a string" in {
 //        forAll(summaryGen) { summary =>
-//          summary.taxYearTo shouldBe summary.year.toString
+//          summary.taxYearTo mustBe summary.year.toString
 //        }
 //      }
 //    }
@@ -393,7 +393,7 @@
 //    "taxYearFrom is called" must {
 //      "return the previous year as a string" in {
 //        forAll(summaryGen) { summary =>
-//          summary.taxYearFrom shouldBe (summary.year - 1).toString
+//          summary.taxYearFrom mustBe (summary.year - 1).toString
 //        }
 //      }
 //    }

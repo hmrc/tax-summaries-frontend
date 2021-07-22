@@ -51,21 +51,21 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))) thenReturn Future
       .successful(baseModel)
 
-  "Calling Index Page" should {
+  "Calling Index Page" must {
 
     "return a successful response for a valid request" in {
       val result = sut.show(request)
-      status(result) shouldBe 200
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(
+      document.title must include(
         Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in {
       val result = sut.show(badRequest)
-      status(result) shouldBe 400
+      status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
@@ -74,10 +74,10 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
@@ -86,9 +86,9 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = sut.show(request)
-      status(result) shouldBe SEE_OTHER
+      status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get shouldBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
 
     }
 
@@ -97,19 +97,19 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) shouldBe 200
-      document.getElementById("tax-calc-link").text shouldBe "Your income and taxes"
-      document.getElementById("tax-services-link").text shouldBe "Your taxes and public spending"
+      status(result) mustBe 200
+      document.getElementById("tax-calc-link").text mustBe "Your income and taxes"
+      document.getElementById("tax-services-link").text mustBe "Your taxes and public spending"
       document
         .getElementById("index-page-header")
-        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Self Assessment Annual Tax Summary"
+        .text mustBe "Tax year: April 6 2013 to April 5 2014 Self Assessment Annual Tax Summary"
       document
         .getElementById("index-page-description")
-        .text shouldBe "This summarises your personal tax and National Insurance, and how they are spent by government."
-      document.getElementById("tax-calc-link").tagName shouldBe "a"
-      document.getElementById("tax-services-link").tagName shouldBe "a"
-      document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
+        .text mustBe "This summarises your personal tax and National Insurance, and how they are spent by government."
+      document.getElementById("tax-calc-link").tagName mustBe "a"
+      document.getElementById("tax-services-link").tagName mustBe "a"
+      document.getElementById("user-info").text must include("forename surname")
+      document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }
 
     "display the right years" in {
@@ -124,8 +124,8 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) shouldBe 200
-      document.getElementById("index-page-header").text should include("2015")
+      status(result) mustBe 200
+      document.getElementById("index-page-header").text must include("2015")
     }
 
   }

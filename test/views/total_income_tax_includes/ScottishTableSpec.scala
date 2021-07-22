@@ -42,20 +42,20 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
 
-  "view" should {
+  "view" must {
 
     "display header" in {
       val taxData = scottishTaxData.copy(scottishStarterIncomeTax = Amount.gbp(1))
 
-      view(taxData) should include(messages("ats.total_income_tax.scottish_income_tax"))
-      view(taxData) should include(messages("generic.amount_pounds"))
+      view(taxData) must include(messages("ats.total_income_tax.scottish_income_tax"))
+      view(taxData) must include(messages("generic.amount_pounds"))
     }
 
     "hide header" when {
 
       "there are no scottish taxes" in {
 
-        view should not include messages("ats.total_income_tax.scottish_income_tax")
+        view must not include messages("ats.total_income_tax.scottish_income_tax")
       }
     }
 
@@ -98,15 +98,15 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
 
           tax match {
             case Amount.empty =>
-              result should not include viewUtils.toCurrency(tax)
+              result must not include viewUtils.toCurrency(tax)
 
             case _ =>
-              result should include(
+              result must include(
                 messages(
                   s"ats.total_income_tax.scottish_income_tax.table.$id",
                   viewUtils.toCurrency(total),
                   rate.percent))
-              result should include(viewUtils.toCurrency(tax))
+              result must include(viewUtils.toCurrency(tax))
           }
         }
       }
@@ -120,11 +120,11 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
 
         total match {
           case Amount.empty =>
-            result should not include messages("ats.total_income_tax.scottish_income_tax.table.total")
+            result must not include messages("ats.total_income_tax.scottish_income_tax.table.total")
 
           case _ =>
-            result should include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
-            result should include(viewUtils.toCurrency(total))
+            result must include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
+            result must include(viewUtils.toCurrency(total))
         }
       }
     }

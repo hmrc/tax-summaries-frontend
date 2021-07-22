@@ -16,10 +16,11 @@
 
 package utils
 
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class BigDecimalUtilsSpec extends WordSpec with BigDecimalUtils with Matchers with ScalaCheckDrivenPropertyChecks {
+class BigDecimalUtilsSpec extends AnyWordSpec with BigDecimalUtils with Matchers with ScalaCheckPropertyChecks {
 
   "BigDecimalUtils" must {
 

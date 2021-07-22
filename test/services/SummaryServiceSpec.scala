@@ -61,7 +61,7 @@ class SummaryServiceSpec extends BaseSpec {
 
   def sut = new SummaryService(mockAtsService)
 
-  "SummaryService getSummaryData" should {
+  "SummaryService getSummaryData" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
@@ -73,13 +73,13 @@ class SummaryServiceSpec extends BaseSpec {
     }
   }
 
-  "SummaryService summaryConverter" should {
+  "SummaryService summaryConverter" must {
 
     "return a complete Summary when given complete AtsData" in {
       val atsData = AtsTestData.summaryData
       val result = sut.summaryConverter(atsData)
 
-      result shouldBe Summary(
+      result mustBe Summary(
         2019,
         "1111111111",
         Amount(100, "GBP"),

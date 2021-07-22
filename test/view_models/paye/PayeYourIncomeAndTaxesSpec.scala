@@ -17,7 +17,8 @@
 package view_models.paye
 
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Injecting
@@ -26,14 +27,14 @@ import utils.JsonUtil
 import view_models.Amount
 
 class PayeYourIncomeAndTaxesSpec
-    extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends AnyWordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience with Injecting {
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
 
   val taxYear: Int = 2019
 
-  "PayeYourIncomeAndTaxesData" should {
+  "PayeYourIncomeAndTaxesData" must {
 
     "successfully Transform PayeAtsData to view model" in {
 
@@ -50,7 +51,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "return incomeBeforeTaxAmount as zero if total_income_before_tax key is not present in PayeAtsData" in {
@@ -68,7 +69,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "return correct data for total_tax_free_amount if total_tax_free_amount is not present in PayeAtsData" in {
@@ -86,7 +87,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "return correct data for totalIncomeTax if employee_nic_amount is not present in PayeAtsData" in {
@@ -104,7 +105,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
   }
 }

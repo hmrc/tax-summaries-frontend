@@ -53,19 +53,19 @@ class AuthActionSpec extends BaseSpec {
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
-  "A user with no active session" should {
+  "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(ggSignInUrl)
     }
   }
 
-  "A user with insufficient enrolments" should {
+  "A user with insufficient enrolments" must {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
@@ -73,11 +73,11 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/not-authorised")
+      redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
   }
 
-  "A user with a confidence level 50 and an SA enrolment and an IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an SA enrolment and an IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
@@ -100,15 +100,15 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(utr)
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("true")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("true")
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50 and an SA enrolment" should {
+  "A user with a confidence level 50 and an SA enrolment" must {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
 
@@ -127,13 +127,13 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(utr)
-      contentAsString(result) should include("true")
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include("true")
     }
   }
 
-  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
       val uar = testUar
 
@@ -152,14 +152,14 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" must {
     "see unauthorized" in {
       val uar = testUar
 
@@ -178,12 +178,12 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.notAuthorised.url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
     }
   }
 
-  "A user with a confidence level 50 and neither SA enrolment" should {
+  "A user with a confidence level 50 and neither SA enrolment" must {
     "see unauthorized" in {
       val unauthorisedRoute = routes.ErrorController.notAuthorised.url
 
@@ -202,8 +202,8 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ErrorController.notAuthorised.url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
     }
   }
 
@@ -228,11 +228,11 @@ class AuthActionSpec extends BaseSpec {
       await(controller.onPageLoad()(FakeRequest("", "")))
     }
 
-    ex.getMessage should include("Can't find credentials for user")
+    ex.getMessage must include("Can't find credentials for user")
 
   }
 
-  "A user visiting the service when it is shuttered" should {
+  "A user visiting the service when it is shuttered" must {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
@@ -241,8 +241,8 @@ class AuthActionSpec extends BaseSpec {
       }
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.serviceUnavailable().url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe (controllers.routes.ErrorController.serviceUnavailable.url)
       verifyZeroInteractions(mockAuthConnector)
     }
   }

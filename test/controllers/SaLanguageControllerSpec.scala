@@ -29,33 +29,33 @@ class SaLanguageControllerSpec extends ControllerBaseSpec {
 
   def sut = new SaLanguageController(langUtils, mcc, applicationConfig)
 
-  val fakeRequest = FakeRequest().withHeaders(("Referer", routes.ErrorController.notAuthorised().url))
-  val redirectLocationUrl = routes.ErrorController.notAuthorised().url
+  val fakeRequest = FakeRequest().withHeaders(("Referer", routes.ErrorController.notAuthorised.url))
+  val redirectLocationUrl = routes.ErrorController.notAuthorised.url
 
-  "SaLanguageController" should {
+  "SaLanguageController" must {
 
     "redirect to English translated page" in {
       val result =
         sut.switchToLanguage("english")(fakeRequest)
-      cookies(result).get("PLAY_LANG").get.value shouldBe "en"
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe redirectLocationUrl
+      cookies(result).get("PLAY_LANG").get.value mustBe "en"
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe redirectLocationUrl
     }
 
     "redirect to Welsh translated page" in {
       val result =
         sut.switchToLanguage("welsh")(fakeRequest)
-      cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe redirectLocationUrl
+      cookies(result).get("PLAY_LANG").get.value mustBe "cy"
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe redirectLocationUrl
     }
 
     "redirect back to a fallback url when the Referer is empty " in {
 
       val result = sut.switchToLanguage("welsh")(FakeRequest())
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe "/annual-tax-summary"
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe "/annual-tax-summary"
 
     }
   }

@@ -27,7 +27,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
   lazy val payeAtsTestData = inject[PayeAtsTestData]
   lazy val payeConfig = inject[PayeConfig]
 
-  "PayeYourIncomeAndTaxesData" should {
+  "PayeYourIncomeAndTaxesData" must {
 
     "transform to view model with all tax band rates and all adjustments" in {
       val incomeTaxData = payeAtsTestData.totalIncomeTaxAndSummaryData
@@ -68,7 +68,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with all tax band rates and only 2 non zero adjustments" in {
@@ -151,7 +151,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with only non-zero tax band rates" in {
@@ -241,7 +241,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with an empty tax bands list with no payments in any tax band" in {
@@ -326,7 +326,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with empty tax bands with no income and tax data" in {
@@ -359,7 +359,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with empty tax bands when no amounts are present" in {
@@ -392,7 +392,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with the correct value for welsh income tax" in {
@@ -418,7 +418,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         adjustments = payeConfig.adjustmentsKeys.toSet
       )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
   }
 }

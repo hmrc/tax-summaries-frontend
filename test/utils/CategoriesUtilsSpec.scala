@@ -25,7 +25,7 @@ class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 
   val mockAppConfig = mock[ApplicationConfig]
 
-  "SwapDataUtils" should {
+  "SwapDataUtils" must {
 
     "swap the data when categories are returned from config" in {
 
@@ -42,7 +42,7 @@ class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 
       val result = CategoriesUtils.reorderCategories(mockAppConfig, taxYear, spendData)
 
-      result shouldBe expectedResponse
+      result mustBe expectedResponse
     }
 
     "not swap the data when categories are not returned from config" in {
@@ -58,7 +58,7 @@ class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 
       val result = CategoriesUtils.reorderCategories(mockAppConfig, taxYear, spendData)
 
-      result shouldBe spendData
+      result mustBe spendData
     }
   }
 }
