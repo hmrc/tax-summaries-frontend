@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.Logger
+import play.api.{Logger, Logging}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
@@ -42,7 +42,7 @@ class PayeGovernmentSpendController @Inject()(
   templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
@@ -51,9 +51,9 @@ class PayeGovernmentSpendController @Inject()(
         Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer))
       case Left(response: HttpResponse) =>
         response.status match {
-          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
+          case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts)
           case _ => {
-            Logger.error(s"Error received, Http status: ${response.status}")
+            logger.error(s"Error received, Http status: ${response.status}")
             Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
           }
         }

@@ -4,7 +4,7 @@ import play.sbt.PlayImport._
 
 object AppDependencies {
 
-  val playVersion = "play-27"
+  val playVersion = "play-28"
 
   val compile = Seq(
     filters,
@@ -13,14 +13,14 @@ object AppDependencies {
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.2",
     "uk.gov.hmrc"                %% "url-builder"                % s"3.5.0-$playVersion",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"9.5.0-$playVersion",
-    "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % "5.6.0",
+    "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % "5.7.0",
     "uk.gov.hmrc"                %% "play-language"              % s"5.1.0-$playVersion",
     "uk.gov.hmrc"                %% "govuk-template"             % s"5.69.0-$playVersion",
     "uk.gov.hmrc"                %% "play-ui"                    % s"9.6.0-$playVersion",
     "uk.gov.hmrc"                %% "play-partials"              % s"8.1.0-$playVersion",
-    "uk.gov.hmrc"                %% "domain"                     % s"5.10.0-$playVersion",
-    "uk.gov.hmrc"                %% "json-encryption"            % s"4.8.0-$playVersion",
-    "uk.gov.hmrc"                %% "tax-year"                   % "1.2.0",
+    "uk.gov.hmrc"                %% "domain"                     % s"6.1.0-$playVersion",
+    "uk.gov.hmrc"                %% "json-encryption"            % s"4.10.0-$playVersion",
+    "uk.gov.hmrc"                %% "tax-year"                   % "1.4.0",
     "com.mohiva"                 %% "play-html-compressor"       % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
     "com.softwaremill.quicklens" %% "quicklens"                  % "1.6.0",
     "uk.gov.hmrc"                %% "local-template-renderer"    % s"2.15.0-$playVersion",
@@ -28,10 +28,11 @@ object AppDependencies {
   )
 
   val test = Seq(
-    "uk.gov.hmrc"             %% "play-language"                % s"4.3.0-$playVersion",
+    "uk.gov.hmrc"             %% "play-language"                % s"5.1.0-$playVersion",
     "org.jsoup"                % "jsoup"                        % "1.13.1",
     "org.mockito"              % "mockito-all"                  % "1.10.19",
-    "org.scalatestplus.play"  %% "scalatestplus-play"           % "3.1.3",
+    "org.scalatestplus.play"  %% "scalatestplus-play"           % "5.1.0",
+    "org.scalatestplus"       %% "scalatestplus-mockito"        % "1.0.0-M2",
     "org.scalamock"           %% "scalamock-scalatest-support"  % "3.6.0",
     "com.typesafe.play"       %% "play-test"                    % PlayVersion.current,
     "org.scalacheck"          %% "scalacheck"                   % "1.14.3",

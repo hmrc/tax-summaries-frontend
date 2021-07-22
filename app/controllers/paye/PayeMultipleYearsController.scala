@@ -101,5 +101,5 @@ class PayeMultipleYearsController @Inject()(
     Redirect(routes.PayeAtsMainController.show(taxYear))
 
   private def redirectToNoAts: Result =
-    Redirect(routes.PayeErrorController.authorisedNoAts())
+    Redirect(routes.PayeErrorController.authorisedNoAts)
 }

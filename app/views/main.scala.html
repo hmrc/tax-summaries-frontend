@@ -19,11 +19,11 @@
 @import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
 @import controllers.auth.CommonRequest
 @import scala.concurrent.ExecutionContext
-@import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
-
+@import uk.gov.hmrc.play.views.html.layouts._
 
 @this(
         trackingConsentSnippet: TrackingConsentSnippet,
+        article: Article
 )
 
 @(
@@ -92,12 +92,6 @@
     trackingConsentSnippet()
 }
 
-
-@article = @{
-    playLayouts.article(mainContent, includeGridWrapper, articleClasses)
-}
-
-
 @navTitle = @{
     Some(messages("generic.ats"))
 }
@@ -124,7 +118,7 @@
         "mainClass" -> mainClasses,
         "mainAttributes" -> mainDataAttributes,
         "isWelsh" -> isWelsh,
-        "signOutUrl" -> controllers.routes.AccountController.signOut(),
+        "signOutUrl" -> controllers.routes.AccountController.signOut,
         "ssoUrl" -> None,
         "getHelpForm" -> getHelpForm,
         "navTitle" -> navTitle,
@@ -143,5 +137,5 @@
         arguments
     }
 
-    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article, extraArguments)
+    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article(mainContent, includeGridWrapper, articleClasses), extraArguments)
 }

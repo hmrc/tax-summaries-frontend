@@ -63,11 +63,11 @@
         <p class="lede" id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
 
         <div id="tax-summary">
-          <h2><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
+          <h2><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
            <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>
         </div>
         <div id="tax-spent">
-          <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData()?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
+          <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
           <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
         </div>
 

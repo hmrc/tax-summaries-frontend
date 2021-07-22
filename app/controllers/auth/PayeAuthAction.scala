@@ -18,7 +18,7 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import play.api.Logger
+import play.api.{Logger, Logging}
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -35,7 +35,7 @@ import scala.util.control.NonFatal
 class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
   implicit ec: ExecutionContext,
   appConfig: ApplicationConfig)
-    extends PayeAuthAction with AuthorisedFunctions {
+    extends PayeAuthAction with AuthorisedFunctions with Logging {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -46,7 +46,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] =
     if (payeShuttered) {
-      Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable()))
+      Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
@@ -81,8 +81,8 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
           upliftConfidenceLevel(request)
         }
         case NonFatal(e) => {
-          Logger.error(s"Exception in PayeAuthAction: $e", e)
-          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised())
+          logger.error(s"Exception in PayeAuthAction: $e", e)
+          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
         }
       }
     }

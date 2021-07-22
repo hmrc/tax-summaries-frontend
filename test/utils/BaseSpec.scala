@@ -17,18 +17,18 @@
 package utils
 
 import config.ApplicationConfig
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
 
 import scala.concurrent.ExecutionContext
 
 trait BaseSpec
-    extends WordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
     with ScalaFutures with IntegrationPatience {
 
   implicit lazy val appConfig = inject[ApplicationConfig]
@@ -36,5 +36,4 @@ trait BaseSpec
   val taxYear: Int = appConfig.payeYear
 
   implicit lazy val ec = inject[ExecutionContext]
-
 }

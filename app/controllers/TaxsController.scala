@@ -17,12 +17,12 @@
 package controllers
 
 import java.util.Date
-
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 import play.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
@@ -43,7 +43,7 @@ abstract class TaxsController @Inject()(
   implicit val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends FrontendController(mcc) with AccountUtils with AttorneyUtils with I18nSupport {
+    extends FrontendController(mcc) with AccountUtils with AttorneyUtils with I18nSupport with Logging {
 
   def auditService: AuditService
 
@@ -55,7 +55,7 @@ abstract class TaxsController @Inject()(
 
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel map {
-      case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts())
+      case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts)
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
       case Right(result: ViewModel)          => obtainResult(result)
       case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
@@ -64,7 +64,7 @@ abstract class TaxsController @Inject()(
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] =
     transformation recover {
       case error =>
-        Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
+        logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
         error match {
           case token_error: AgentTokenException => {
             auditService.sendEvent(

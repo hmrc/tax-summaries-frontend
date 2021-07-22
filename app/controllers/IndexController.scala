@@ -74,7 +74,7 @@ class IndexController @Inject()(
             Future.successful(None)
           }
         } map { _ =>
-          Redirect(routes.IndexController.authorisedIndex()).withSession(session)
+          Redirect(routes.IndexController.authorisedIndex).withSession(session)
         }
       }
       case _ => show(request)
@@ -102,7 +102,7 @@ class IndexController @Inject()(
   override def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel flatMap {
       case Right(result: ViewModel) => getViewModel(result)
-      case Right(_: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
+      case Right(_: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts))
       case _                        => Future.successful(InternalServerError(genericErrorView()))
     }
 
@@ -134,7 +134,7 @@ class IndexController @Inject()(
         atsListData,
         data => {
           val taxYearListLength = data.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))).length
-          Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + year)
+          Redirect(routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + year)
             .withSession(request.session + ("TaxYearListLength" -> taxYearListLength.toString))
         }
       )
@@ -151,8 +151,8 @@ class IndexController @Inject()(
   private def handleServiceResult(optData: Either[Int, AtsListData], block: AtsListData => Result): Result =
     optData match {
       case Right(value)                      => block(value)
-      case Left(value) if value == NOT_FOUND => NotFound(routes.ErrorController.authorisedNoAts().url)
-      case _                                 => InternalServerError(routes.ErrorController.serviceUnavailable().url)
+      case Left(value) if value == NOT_FOUND => NotFound(routes.ErrorController.authorisedNoAts.url)
+      case _                                 => InternalServerError(routes.ErrorController.serviceUnavailable.url)
     }
 
 }
