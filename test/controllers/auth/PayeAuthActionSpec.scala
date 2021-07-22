@@ -35,7 +35,7 @@ import utils.TestConstants.fakeCredentials
 
 import scala.concurrent.Future
 
-class PayeAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
+class PayeAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 

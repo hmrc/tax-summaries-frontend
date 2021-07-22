@@ -30,7 +30,8 @@
     main: main,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
     backLinkView: BackLinkView,
-    inputRadioGroupView: InputRadioGroupView
+    inputRadioGroupView: InputRadioGroupView,
+        atsForms: AtsForms
 )
 
 @(  years: List[Int],
@@ -57,7 +58,7 @@
     @form(action = controllers.paye.routes.PayeMultipleYearsController.onSubmit){
 
             @inputRadioGroupView(
-            atsYearForm(AtsForms.yearChoice),
+            atsYearForm(atsForms.yearChoice),
             years.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
             '_fieldSetAttributes -> "id=year_field",
             '_legend -> messages("ats.select_tax_year.paye.title"),

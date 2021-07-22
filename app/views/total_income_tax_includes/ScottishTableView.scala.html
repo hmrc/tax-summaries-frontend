@@ -14,18 +14,18 @@
  * limitations under the License.
  *@
 
-@import utils.ViewUtils._
+@import utils.ViewUtils
 @import view_models.Amount
 @import view_models.Rate
 
-@this()
+@this(viewUtils: ViewUtils)
 @(taxModel: view_models.ScottishTax, ratesModel: view_models.ScottishRates)(implicit messages: Messages)
 
 @taxRow(id: String, tax: Amount, total: Amount, rate: Rate) = {
 @if(tax.nonZero) {
     <tr>
-        <td>@Html(messages(s"ats.total_income_tax.scottish_income_tax.table.$id", toCurrency(total), rate.percent))</td>
-        <td id="scottish-income-rate-@id">@Html(toCurrency(tax))</td>
+        <td>@Html(messages(s"ats.total_income_tax.scottish_income_tax.table.$id", viewUtils.toCurrency(total), rate.percent))</td>
+        <td id="scottish-income-rate-@id">@Html(viewUtils.toCurrency(tax))</td>
     </tr>
 }
 }
@@ -51,7 +51,7 @@
         <thead>
             <tr>
                 <th scope="col">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
-                <th>@Html(toCurrency(taxModel.scottishTotalTax))</th>
+                <th>@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</th>
             </tr>
         </thead>
     </table>

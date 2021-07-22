@@ -25,6 +25,7 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
 
   val zeroAmount = createAmount(0)
   val zeroRate = Rate("0%")
+  lazy val viewUtils = new ViewUtils
 
   def createAmount(bd: BigDecimal) = Amount(bd, "gbp")
 
@@ -36,14 +37,14 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
 
       forAll { bd: BigDecimal =>
         val testAmount = createAmount(bd)
-        ViewUtils.toCurrency(testAmount) shouldBe result(testAmount.toString)
+        viewUtils.toCurrency(testAmount) shouldBe result(testAmount.toString)
       }
     }
 
     "return the amount in Pounds to two decimal places" in {
       forAll { bd: BigDecimal =>
         val testAmount = createAmount(bd)
-        ViewUtils.toCurrency(testAmount, twoDecimalPlaces = true) shouldBe result(testAmount.toTwoDecimalString)
+        viewUtils.toCurrency(testAmount, twoDecimalPlaces = true) shouldBe result(testAmount.toTwoDecimalString)
       }
     }
   }
@@ -54,20 +55,20 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
       forAll { dec: BigDecimal =>
         whenever(dec > 0) {
           val amount = createAmount(dec)
-          ViewUtils.positiveOrZero(amount) shouldBe amount
+          viewUtils.positiveOrZero(amount) shouldBe amount
         }
       }
     }
 
     "return the given amount object if the amount is zero" in {
-      ViewUtils.positiveOrZero(zeroAmount) shouldBe zeroAmount
+      viewUtils.positiveOrZero(zeroAmount) shouldBe zeroAmount
     }
 
     "return an amount object with zero as the amount if the given amount is negative" in {
       forAll { dec: BigDecimal =>
         whenever(dec < 0) {
           val amount = createAmount(dec)
-          ViewUtils.positiveOrZero(amount) shouldBe zeroAmount
+          viewUtils.positiveOrZero(amount) shouldBe zeroAmount
         }
       }
     }
@@ -77,13 +78,13 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
         whenever(dec > 0) {
           val percentage = dec.toString + '%'
           val positiveRate = Rate(percentage)
-          ViewUtils.positiveOrZero(positiveRate) shouldBe positiveRate
+          viewUtils.positiveOrZero(positiveRate) shouldBe positiveRate
         }
       }
     }
 
     "return the zero rate if the percentage is zero" in {
-      ViewUtils.positiveOrZero(zeroRate) shouldBe Rate.empty
+      viewUtils.positiveOrZero(zeroRate) shouldBe Rate.empty
     }
 
     "return the zero rate if the percentage is negative" in {
@@ -91,7 +92,7 @@ class ViewUtilsSpec extends WordSpec with Matchers with ScalaCheckDrivenProperty
         whenever(dec < 0) {
           val percentage = dec.toString + '%'
           val negativeRate = Rate(percentage)
-          ViewUtils.positiveOrZero(negativeRate) shouldBe Rate.empty
+          viewUtils.positiveOrZero(negativeRate) shouldBe Rate.empty
         }
       }
     }

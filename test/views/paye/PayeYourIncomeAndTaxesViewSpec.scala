@@ -34,7 +34,10 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes = PayeAtsTestData.payeYourIncomeAndTaxesViewModel
+  val payeAtsTestData = inject[PayeAtsTestData]
+
+  val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes = payeAtsTestData.payeYourIncomeAndTaxesViewModel
+
   lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
 
   def view(viewModel: PayeYourIncomeAndTaxes): String =

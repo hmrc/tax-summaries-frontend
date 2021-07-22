@@ -66,7 +66,7 @@ abstract class TaxsController @Inject()(
       case error =>
         Logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
         error match {
-          case token_error: AgentTokenException =>
+          case token_error: AgentTokenException => {
             auditService.sendEvent(
               AuditTypes.Tx_FAILED,
               Map(
@@ -77,7 +77,10 @@ abstract class TaxsController @Inject()(
               )
             )
             Ok(tokenErrorView())
-          case _ => Ok(genericErrorView())
+          }
+          case _ => {
+            Ok(genericErrorView())
+          }
         }
     }
 

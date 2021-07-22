@@ -19,8 +19,12 @@
 @import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
 @import controllers.auth.CommonRequest
 @import scala.concurrent.ExecutionContext
+@import uk.gov.hmrc.play.views.html.layouts.TrackingConsentSnippet
 
-@this()
+
+@this(
+        trackingConsentSnippet: TrackingConsentSnippet,
+)
 
 @(
     title: String,
@@ -85,7 +89,7 @@
 }
 
 @headInlineScript = @{
-    playLayouts.trackingConsentSnippet()
+    trackingConsentSnippet()
 }
 
 

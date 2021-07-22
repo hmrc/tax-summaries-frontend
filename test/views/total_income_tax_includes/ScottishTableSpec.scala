@@ -21,7 +21,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import utils.TestConstants
-import utils.ViewUtils._
+import utils.ViewUtils
 import view_models.{Amount, Rate, ScottishRates, ScottishTax}
 import views.ViewSpecBase
 import views.html.total_income_tax_includes.ScottishTableView
@@ -31,6 +31,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
   val scottishTaxData = ScottishTax.empty
   val scottishRateData = ScottishRates.empty
   lazy val scottishTableView = inject[ScottishTableView]
+  lazy val viewUtils = inject[ViewUtils]
 
   def view(tax: ScottishTax, rates: ScottishRates): String =
     scottishTableView(tax, rates).body
@@ -97,12 +98,15 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
 
           tax match {
             case Amount.empty =>
-              result should not include toCurrency(tax)
+              result should not include viewUtils.toCurrency(tax)
 
             case _ =>
               result should include(
-                messages(s"ats.total_income_tax.scottish_income_tax.table.$id", toCurrency(total), rate.percent))
-              result should include(toCurrency(tax))
+                messages(
+                  s"ats.total_income_tax.scottish_income_tax.table.$id",
+                  viewUtils.toCurrency(total),
+                  rate.percent))
+              result should include(viewUtils.toCurrency(tax))
           }
         }
       }
@@ -120,7 +124,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
 
           case _ =>
             result should include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
-            result should include(toCurrency(total))
+            result should include(viewUtils.toCurrency(total))
         }
       }
     }

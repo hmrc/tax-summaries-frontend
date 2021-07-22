@@ -16,9 +16,9 @@
 
 package utils
 
-import org.scalatest.{Matchers, WordSpec}
+class HtmlFormatterSpec extends BaseSpec {
 
-class HtmlFormatterSpec extends WordSpec with Matchers {
+  lazy val htmlFormatter = inject[HtmlFormatter]
 
   "toHtmlNonBroken" should {
     "replace spaces with non breaking spaces" in {
@@ -26,7 +26,7 @@ class HtmlFormatterSpec extends WordSpec with Matchers {
 
       val expectedString = "6&nbsp;April&nbsp;2018&nbsp;to&nbsp;5&nbsp;April&nbsp;2019"
 
-      HtmlFormatter.toHtmlNonBroken(stringBeforeReplace) shouldBe expectedString
+      htmlFormatter.toHtmlNonBroken(stringBeforeReplace) shouldBe expectedString
     }
   }
 }

@@ -41,6 +41,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
 
   lazy val multipleYearsView = inject[PayeMultipleYearsView]
   lazy val mainView = inject[PayeTaxsMainView]
+  lazy val atsForms = inject[AtsForms]
 
   def getSingleYearData: PayeAtsData =
     parseData[PayeAtsData](
@@ -55,7 +56,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
   private def parseData[A](str: String)(implicit reads: Reads[A]): A = Json.parse(str).as[A]
 
   def sut(multiYearEnabled: Boolean = true): PayeMultipleYearsController =
-    new PayeMultipleYearsController(mockPayeAtsService, FakePayeAuthAction, mcc, multipleYearsView)(
+    new PayeMultipleYearsController(mockPayeAtsService, FakePayeAuthAction, mcc, multipleYearsView, atsForms)(
       formPartialRetriever,
       templateRenderer,
       appConfig,
@@ -78,7 +79,7 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
         val result = sut().onPageLoad(fakeAuthenticatedRequest)
 
         status(result) shouldBe OK
-        contentAsString(result) shouldBe multipleYearsView(taxYearList.reverse, AtsForms.atsYearFormMapping).toString
+        contentAsString(result) shouldBe multipleYearsView(taxYearList.reverse, atsForms.atsYearFormMapping).toString
       }
     }
 

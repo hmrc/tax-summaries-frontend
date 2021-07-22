@@ -35,6 +35,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
+
   val sut = new PayeYourIncomeAndTaxesController(
     mockPayeAtsService,
     FakePayeAuthAction,
@@ -65,7 +67,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData)))
+        .thenReturn(Future(Right(payeAtsTestData.malformedYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -77,7 +79,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(PayeAtsTestData.missingYourIncomeAndTaxesData)))
+        .thenReturn(Future(Right(payeAtsTestData.missingYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

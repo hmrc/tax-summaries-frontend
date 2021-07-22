@@ -31,6 +31,8 @@ class PayeGovernmentSpendSpec
     extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
     with IntegrationPatience with Injecting {
 
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
+
   implicit lazy val appConfig = inject[ApplicationConfig]
 
   "PayeGovernmentSpend" should {
@@ -38,33 +40,33 @@ class PayeGovernmentSpendSpec
     "Transform PayeAtsData to view model" when {
 
       "Scottish income is not present" in {
-        val payeGovSpendingData = PayeAtsTestData.govSpendingData
+        val payeGovSpendingData = payeAtsTestData.govSpendingData
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
         result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
-        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel2020
+        result shouldBe payeAtsTestData.payeGovernmentSpendViewModel2020
       }
 
       "Scottish income is present and greater than 0" in {
-        val payeGovSpendingData = PayeAtsTestData.govSpendingData.copy(
+        val payeGovSpendingData = payeAtsTestData.govSpendingData.copy(
           income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(500.00))), None, None))
         )
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
         result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
-        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel2020.copy(
+        result shouldBe payeAtsTestData.payeGovernmentSpendViewModel2020.copy(
           isScottish = true
         )
       }
 
       "Scottish income is present and equal to 0" in {
-        val payeGovSpendingData = PayeAtsTestData.govSpendingData.copy(
+        val payeGovSpendingData = payeAtsTestData.govSpendingData.copy(
           income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(0.00))), None, None))
         )
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
         result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
-        result shouldBe PayeAtsTestData.payeGovernmentSpendViewModel2020.copy(
+        result shouldBe payeAtsTestData.payeGovernmentSpendViewModel2020.copy(
           isScottish = false
         )
       }
@@ -73,7 +75,7 @@ class PayeGovernmentSpendSpec
 
     "reorder categories for tax year 2020" in {
 
-      val payeGovSpendingData = PayeAtsTestData.govSpendingData
+      val payeGovSpendingData = payeAtsTestData.govSpendingData
       val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
       result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2020
@@ -82,7 +84,7 @@ class PayeGovernmentSpendSpec
 
     "reorder categories for tax year 2019" in {
 
-      val payeGovSpendingData = PayeAtsTestData.govSpendingDataFor2019
+      val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2019
       val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
       result.orderedSpendRows.map(_.spendData.percentage) shouldBe TestConstants.expectedPercentageOrder2019

@@ -23,10 +23,12 @@ import view_models.{Amount, Rate}
 
 class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
+
   "PayeYourIncomeAndTaxesData" should {
 
     "transform to view model with all tax band rates and all adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData
+      val incomeTaxData = payeAtsTestData.totalIncomeTaxAndSummaryData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
         taxYear,
@@ -63,7 +65,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
     }
 
     "transform to view model with all tax band rates and only 2 non zero adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData.copy(
+      val incomeTaxData = payeAtsTestData.totalIncomeTaxAndSummaryData.copy(
         income_tax = Some(
           DataHolder(
             Some(
@@ -362,7 +364,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
     }
 
     "transform to view model with the correct value for welsh income tax" in {
-      val incomeData = PayeAtsTestData.incomeData
+      val incomeData = payeAtsTestData.incomeData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
         taxYear,

@@ -13,8 +13,8 @@ val silencerVersion = "1.7.0"
 lazy val plugins: Seq[Plugins] = Seq(
   play.sbt.PlayScala,
   SbtAutoBuildPlugin,
-  SbtGitVersioning,
-  SbtDistributablesPlugin
+  SbtDistributablesPlugin,
+  PlayNettyServer
 )
 
 lazy val scoverageSettings = {
@@ -34,6 +34,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
   .settings(
     PlayKeys.playDefaultPort := 9217,
+    PlayKeys.devSettings += "play.server.provider" -> "play.core.server.NettyServerProvider",
     scoverageSettings,
     scalaSettings,
     scalaVersion := "2.12.12",

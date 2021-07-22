@@ -21,7 +21,7 @@ import utils.BaseSpec
 import view_models.paye._
 import view_models.{Amount, Rate}
 
-object PayeAtsTestData extends BaseSpec {
+class PayeAtsTestData extends BaseSpec {
 
   val govSpendingData = PayeAtsData(
     taxYear,

@@ -22,7 +22,7 @@ import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import services.GovernmentSpendService
-import services.atsData.PayeAtsTestData.govSpendingData
+import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
@@ -36,6 +36,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
+
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
 
   val mockGovSpendService = mock[GovernmentSpendService]
 
@@ -96,7 +98,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val document = contentAsString(result)
 
         status(result) shouldBe OK
-        document shouldBe contentAsString(howTaxIsSpentView(response, govSpendingData.taxYear))
+        document shouldBe contentAsString(howTaxIsSpentView(response, payeAtsTestData.govSpendingData.taxYear))
       }
     }
 

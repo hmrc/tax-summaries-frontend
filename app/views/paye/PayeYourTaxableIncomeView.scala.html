@@ -26,7 +26,8 @@
 @this(
     main: main,
     backLinkView: BackLinkView,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+        htmlFormatter: HtmlFormatter
 )
 
 @(  viewModel:PayeYourTaxableIncome
@@ -49,8 +50,8 @@
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.income_before_tax.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 	<p id="income-before-tax-intro">@Messages("paye.ats.income_before_tax.intro")</p>
 	
     @if(viewModel.incomeTaxRows.nonEmpty){

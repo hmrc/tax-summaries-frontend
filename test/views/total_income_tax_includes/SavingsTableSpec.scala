@@ -19,15 +19,15 @@ import com.softwaremill.quicklens.modify
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import utils.TestConstants
-import utils.ViewUtils.toCurrency
+import utils.{TestConstants, ViewUtils}
 import view_models.{Amount, Rate, SavingsRates, SavingsTax}
 import views.ViewSpecBase
 import views.html.total_income_tax_includes.SavingsTableView
 
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  lazy val savingsTableView = app.injector.instanceOf[SavingsTableView]
+  lazy val savingsTableView = inject[SavingsTableView]
+  lazy val viewUtils = inject[ViewUtils]
 
   val savingsTaxData = SavingsTax.empty
   val savingsRateData = SavingsRates.empty
@@ -87,12 +87,15 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
 
           tax match {
             case Amount.empty =>
-              result should not include toCurrency(tax)
+              result should not include viewUtils.toCurrency(tax)
 
             case _ =>
               result should include(
-                messages(s"ats.total_income_tax.savings_income_tax.table.$id", toCurrency(total), rate.percent))
-              result should include(toCurrency(tax))
+                messages(
+                  s"ats.total_income_tax.savings_income_tax.table.$id",
+                  viewUtils.toCurrency(total),
+                  rate.percent))
+              result should include(viewUtils.toCurrency(tax))
           }
         }
       }

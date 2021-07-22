@@ -20,13 +20,16 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
 import utils.JsonUtil
 import view_models.Amount
 
 class PayeYourIncomeAndTaxesSpec
     extends WordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience with Injecting {
+
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
 
   val taxYear: Int = 2019
 
@@ -34,7 +37,7 @@ class PayeYourIncomeAndTaxesSpec
 
     "successfully Transform PayeAtsData to view model" in {
 
-      val yourIncomeAndTaxesData = PayeAtsTestData.yourIncomeAndTaxesData
+      val yourIncomeAndTaxesData = payeAtsTestData.yourIncomeAndTaxesData
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
@@ -52,7 +55,7 @@ class PayeYourIncomeAndTaxesSpec
 
     "return incomeBeforeTaxAmount as zero if total_income_before_tax key is not present in PayeAtsData" in {
 
-      val yourIncomeAndTaxesData = PayeAtsTestData.malformedYourIncomeAndTaxesData
+      val yourIncomeAndTaxesData = payeAtsTestData.malformedYourIncomeAndTaxesData
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
@@ -70,7 +73,7 @@ class PayeYourIncomeAndTaxesSpec
 
     "return correct data for total_tax_free_amount if total_tax_free_amount is not present in PayeAtsData" in {
 
-      val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount
+      val yourIncomeAndTaxesData = payeAtsTestData.YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
@@ -88,7 +91,7 @@ class PayeYourIncomeAndTaxesSpec
 
     "return correct data for totalIncomeTax if employee_nic_amount is not present in PayeAtsData" in {
 
-      val yourIncomeAndTaxesData = PayeAtsTestData.YourIncomeAndTaxesDataWithMissingEmployeeNicAmount
+      val yourIncomeAndTaxesData = payeAtsTestData.YourIncomeAndTaxesDataWithMissingEmployeeNicAmount
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(

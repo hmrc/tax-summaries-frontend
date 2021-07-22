@@ -32,8 +32,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
-import view_models.AtsForms._
-import view_models.{ATSUnavailableViewModel, AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{ATSUnavailableViewModel, AtsForms, AtsList, NoATSViewModel, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -64,6 +63,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
   val mockDataCacheConnector = mock[DataCacheConnector]
   val mockAtsYearListService = mock[AtsYearListService]
   val mockAtsListService = mock[AtsListService]
+  lazy val atsForms = inject[AtsForms]
 
   def sut = new IndexController(
     mockDataCacheConnector,
@@ -74,7 +74,8 @@ class IndexControllerSpec extends ControllerBaseSpec {
     mcc,
     taxsIndexView,
     genericErrorView,
-    tokenErrorView
+    tokenErrorView,
+    atsForms
   )
 
   val model: GenericViewModel = AtsList(
@@ -316,7 +317,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
       when(mockAtsListService.getAtsYearList(any[HeaderCarrier], any[AuthenticatedRequest[_]]))
         .thenReturn(Future(Right(data)))
       val atsYear = Map("atsYear" -> "")
-      val form = atsYearFormMapping.bind(atsYear)
+      val form = atsForms.atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -363,7 +364,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
     "return 404 if service returns 404" in {
 
       val atsYear = Map("atsYear" -> "")
-      val form = atsYearFormMapping.bind(atsYear)
+      val form = atsForms.atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -387,7 +388,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
     "return 500 if service returns 500" in {
 
       val atsYear = Map("atsYear" -> "")
-      val form = atsYearFormMapping.bind(atsYear)
+      val form = atsForms.atsYearFormMapping.bind(atsYear)
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,

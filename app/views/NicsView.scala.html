@@ -18,7 +18,6 @@
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import utils.ViewUtils
-@import utils.ViewUtils.positiveOrZero
 @import views.html.includes.CurrencyAmountView
 @import views.html.main
 @import views.html.helpers.HeaderSection
@@ -27,7 +26,8 @@
 @this(
     main: main,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+    viewUtils: ViewUtils
 )
 
 @(  viewModel: view_models.Summary,
@@ -64,7 +64,7 @@
         </h1>
       <p class="lede">@Html(Messages("ats.nics.tax_and_nics.lede"))</p>
         <p>@Html(Messages("ats.nics.tax_and_nics.description",
-          "<span id=\"total-cg-tax-rate\">"+positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>"))</p>
+          "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>"))</p>
 
         <table id="total-income-tax">
           <thead>
@@ -80,7 +80,7 @@
                       @Html(Messages("ats.nics.tax_and_nics.income_tax"))
                   </a>
               </td>
-              <td id="total-income-tax-amt">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
+              <td id="total-income-tax-amt">@currencyAmountView(viewUtils.positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
             </tr>
             <tr>
               <td>@Html(Messages("ats.nics.tax_and_nics_explained"))</td>

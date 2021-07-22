@@ -17,7 +17,7 @@
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import config.ApplicationConfig
-@import utils.ViewUtils._
+@import utils.ViewUtils
 @import views.html.includes.CurrencyAmountView
 @import views.html.main
 @import views.html.helpers.HeaderSection
@@ -26,7 +26,8 @@
 @this(
     main: main,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+    viewUtils: ViewUtils
 )
 
 @(  viewModel: view_models.CapitalGains,
@@ -110,14 +111,14 @@
 
               @if(viewModel.rpciLowerTax.nonZero) {
               <tr>
-                <td class="width80">@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
+                <td class="width80">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
                 <td id="rpci-lower-rate-amount" class="width20">@currencyAmountView(viewModel.rpciLowerTax)</td>
               </tr>
               }
 
               @if(viewModel.rpciHigherTax.nonZero) {
                 <tr>
-                    <td class="width80">@Html(Messages("ats.capital_gains_tax.table.rcpi", toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
+                    <td class="width80">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
                     <td id="rpci-higher-rate-amount" class="width20">@currencyAmountView(viewModel.rpciHigherTax)</td>
                 </tr>
               }

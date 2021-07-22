@@ -26,7 +26,9 @@
 @this(
     main: main,
 	backLinkView: BackLinkView,
-	currencyAmountView: CurrencyAmountView
+	currencyAmountView: CurrencyAmountView,
+		htmlFormatter: HtmlFormatter
+
 )
 
 @(	viewModel:PayeTaxFreeAmount
@@ -47,8 +49,8 @@
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.tax_free_amount.title"))</h1>
 	<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-		HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-		HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 
 	@if(viewModel.adjustmentRows.nonEmpty) {
 	<table class="paye-ats-data-table" id="adjustmentRows">

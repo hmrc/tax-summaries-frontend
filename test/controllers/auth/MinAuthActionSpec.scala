@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class MinAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
+class MinAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 

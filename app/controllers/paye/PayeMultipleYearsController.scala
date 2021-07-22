@@ -27,7 +27,7 @@ import services.PayeAtsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
-import view_models.AtsForms.atsYearFormMapping
+import view_models.AtsForms
 import view_models.TaxYearEnd
 import views.html.paye.PayeMultipleYearsView
 
@@ -37,7 +37,8 @@ class PayeMultipleYearsController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeMultipleYearsView: PayeMultipleYearsView)(
+  payeMultipleYearsView: PayeMultipleYearsView,
+  atsForms: AtsForms)(
   implicit formPartialRetriever: FormPartialRetriever,
   templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
@@ -72,7 +73,7 @@ class PayeMultipleYearsController @Inject()(
       case 1 => redirectToMain(data.head.taxYear)
       case _ =>
         val taxYears = data.map(_.taxYear).reverse
-        Ok(payeMultipleYearsView(taxYears, atsYearFormMapping)).addingToSession(
+        Ok(payeMultipleYearsView(taxYears, atsForms.atsYearFormMapping)).addingToSession(
           taxYearFromKey -> taxYears.last.toString,
           taxYearToKey   -> taxYears.head.toString
         )
@@ -81,7 +82,7 @@ class PayeMultipleYearsController @Inject()(
   private def handleOnSubmit(implicit request: PayeAuthenticatedRequest[_]): Result = {
     def yearsFrom: Int = request.session(taxYearFromKey).toInt
     def yearsTo: Int = request.session(taxYearToKey).toInt
-    atsYearFormMapping.bindFromRequest.fold(
+    atsForms.atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList.reverse, formWithErrors))
       },
@@ -89,7 +90,7 @@ class PayeMultipleYearsController @Inject()(
         value.year.map(_.toInt) match {
           case Some(taxYear) => redirectToMain(taxYear)
           case _ =>
-            val emptyForm = atsYearFormMapping.fill(TaxYearEnd(None))
+            val emptyForm = atsForms.atsYearFormMapping.fill(TaxYearEnd(None))
             BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList.reverse, emptyForm))
         }
       }

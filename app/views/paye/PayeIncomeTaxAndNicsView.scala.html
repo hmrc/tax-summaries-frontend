@@ -26,7 +26,9 @@
 @this(
     main: main,
     backLinkView: BackLinkView,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+        htmlFormatter: HtmlFormatter
+
 )
 
 @(  viewModel:PayeIncomeTaxAndNics,
@@ -48,8 +50,8 @@
 
 	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.total_income_tax.title"))</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 	<p id="intro-paragraph">@Messages("paye.ats.total_income_tax.introParagraph")</p>
 
   @if(viewModel.scottishTaxBands.nonEmpty){

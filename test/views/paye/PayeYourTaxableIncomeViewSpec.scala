@@ -34,7 +34,9 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants {
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
-  val payeYourTaxableIncomeViewModel: PayeYourTaxableIncome = PayeAtsTestData.payeYourTaxableIncomeViewModel
+  val payeAtsTestData = inject[PayeAtsTestData]
+
+  val payeYourTaxableIncomeViewModel: PayeYourTaxableIncome = payeAtsTestData.payeYourTaxableIncomeViewModel
 
   lazy val payeYourTaxableIncomeView = inject[PayeYourTaxableIncomeView]
 
@@ -71,7 +73,7 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants {
     "not render taxable income table when they have no taxable income" in {
 
       val view =
-        payeYourTaxableIncomeView(PayeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
+        payeYourTaxableIncomeView(payeAtsTestData.payeYourTaxableIncomeViewModel.copy(incomeTaxRows = List.empty)).body
       val document = Jsoup.parse(view)
 
       document.select("#income-tax-table") shouldBe empty

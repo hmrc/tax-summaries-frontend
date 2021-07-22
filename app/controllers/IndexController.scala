@@ -26,8 +26,7 @@ import services.{AtsListService, AtsYearListService, AuditService}
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
-import view_models.AtsForms._
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{AtsForms, AtsList, NoATSViewModel, TaxYearEnd}
 import views.html.TaxsIndexView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -42,7 +41,8 @@ class IndexController @Inject()(
   mcc: MessagesControllerComponents,
   taxsIndexView: TaxsIndexView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
+  tokenErrorView: TokenErrorView,
+  atsForms: AtsForms)(
   implicit formPartialRetriever: FormPartialRetriever,
   override val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
@@ -94,7 +94,7 @@ class IndexController @Inject()(
           Ok(
             taxsIndexView(
               result,
-              atsYearFormMapping,
+              atsForms.atsYearFormMapping,
               getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
             .withSession(request.session + ("atsList" -> result.toString)))
     }
@@ -107,7 +107,7 @@ class IndexController @Inject()(
     }
 
   def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    atsYearFormMapping.bindFromRequest.fold(
+    atsForms.atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
         atsListService.getAtsYearList map { atsListData =>
@@ -145,7 +145,7 @@ class IndexController @Inject()(
     Ok(
       taxsIndexView(
         result,
-        atsYearFormMapping,
+        atsForms.atsYearFormMapping,
         getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
 
   private def handleServiceResult(optData: Either[Int, AtsListData], block: AtsListData => Result): Result =
