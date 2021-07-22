@@ -16,6 +16,7 @@
 
 package view_models.paye
 
+import config.PayeConfig
 import models.{DataHolder, PayeAtsData, TaxBand}
 import services.atsData.PayeAtsTestData
 import utils.BaseSpec
@@ -24,6 +25,7 @@ import view_models.{Amount, Rate}
 class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeConfig = inject[PayeConfig]
 
   "PayeYourIncomeAndTaxesData" should {
 
@@ -59,7 +61,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }
@@ -137,7 +144,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }
@@ -222,7 +234,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }
@@ -302,7 +319,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }
@@ -330,7 +352,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount.empty,
         Amount.empty)
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }
@@ -358,7 +385,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount.empty,
         Amount.empty)
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }
@@ -379,7 +411,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount.empty,
         Amount(2500, "GBP"))
 
-      val result = PayeIncomeTaxAndNics(incomeData)
+      val result = PayeIncomeTaxAndNics(
+        incomeData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
       result shouldBe expectedViewModel
     }

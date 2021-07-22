@@ -16,6 +16,7 @@
 
 package controllers.paye
 
+import config.PayeConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
@@ -34,7 +35,12 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
   val sut =
-    new PayeIncomeTaxAndNicsController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeIncomeTaxAndNicsView])
+    new PayeIncomeTaxAndNicsController(
+      mockPayeAtsService,
+      FakePayeAuthAction,
+      mcc,
+      inject[PayeIncomeTaxAndNicsView],
+      inject[PayeConfig])
 
   "Paye your income tax and nics controller" should {
 

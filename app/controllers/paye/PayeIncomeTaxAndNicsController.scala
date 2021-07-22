@@ -17,7 +17,7 @@
 package controllers.paye
 
 import com.google.inject.Inject
-import config.ApplicationConfig
+import config.{ApplicationConfig, PayeConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logger
@@ -37,7 +37,8 @@ class PayeIncomeTaxAndNicsController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView)(
+  payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView,
+  payeConfig: PayeConfig)(
   implicit formPartialRetriever: FormPartialRetriever,
   templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
@@ -47,7 +48,16 @@ class PayeIncomeTaxAndNicsController @Inject()(
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(successResponse: PayeAtsData) =>
-        Ok(payeIncomeTaxAndNicsView(PayeIncomeTaxAndNics(successResponse), successResponse.isWelshTaxPayer))
+        Ok(
+          payeIncomeTaxAndNicsView(
+            PayeIncomeTaxAndNics(
+              payeAtsData = successResponse,
+              scottishRates = payeConfig.scottishTaxBandKeys,
+              uKRates = payeConfig.ukTaxBandKeys,
+              adjustments = payeConfig.adjustmentsKeys.toSet
+            ),
+            successResponse.isWelshTaxPayer
+          ))
       case Left(response: HttpResponse) =>
         response.status match {
           case NOT_FOUND => Redirect(controllers.paye.routes.PayeErrorController.authorisedNoAts())
