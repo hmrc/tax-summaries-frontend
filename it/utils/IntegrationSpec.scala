@@ -16,9 +16,10 @@
 
 package utils
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, ok, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, urlEqualTo}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
 import play.api.test.Injecting
@@ -26,7 +27,7 @@ import uk.gov.hmrc.domain.Generator
 
 import scala.concurrent.ExecutionContext
 
-class IntegrationSpec extends WordSpec with GuiceOneAppPerSuite with MustMatchers with WireMockHelper with ScalaFutures with IntegrationPatience with Injecting {
+class IntegrationSpec extends AnyWordSpec with GuiceOneAppPerSuite with Matchers with WireMockHelper with ScalaFutures with IntegrationPatience with Injecting {
 
   val generatedNino = new Generator().nextNino
 
