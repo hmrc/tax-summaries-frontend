@@ -17,22 +17,21 @@
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
 @import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.helpers._
 @import view_models.AtsForms
 @import views.html.main
 @import views.html.helpers.BackLinkView
 @import views.html.helpers.ErrorSummaryTemplateView
 @import views.html.helpers.InputRadioGroupView
-@import views.html.helpers.BackLinkView
 @import scala.concurrent.ExecutionContext
-@import views.html.helper.form
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
 @this(
     main: main,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
     backLinkView: BackLinkView,
     inputRadioGroupView: InputRadioGroupView,
-        atsForms: AtsForms
+        atsForms: AtsForms,
+        form: FormWithCSRF
 )
 
 @(  years: List[Int],
