@@ -449,7 +449,7 @@ class MiddleConnectorSpec
 
   "connectToGovernmentSpend" should {
 
-    val url = s"/taxs/government-spend/$currentYear/$testNino"
+    val url = s"/taxs/government-spend/$currentYear"
 
     "return a successful response" in {
 
@@ -461,7 +461,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentYear, testNino).futureValue
+      val result = sut.connectToGovernmentSpend(currentYear).futureValue
       result.status shouldBe OK
       result.json.as[Map[String, Double]] shouldBe Map("Environment" -> 5.5)
     }
@@ -477,7 +477,7 @@ class MiddleConnectorSpec
       )
 
       intercept[BadRequestException] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        await(sut.connectToGovernmentSpend(currentYear))
       }
     }
 
@@ -492,7 +492,7 @@ class MiddleConnectorSpec
       )
 
       intercept[Upstream5xxResponse] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        await(sut.connectToGovernmentSpend(currentYear))
       }
     }
 
@@ -506,7 +506,7 @@ class MiddleConnectorSpec
       )
 
       intercept[Exception] {
-        await(sut.connectToGovernmentSpend(currentYear, testNino))
+        await(sut.connectToGovernmentSpend(currentYear))
       }
     }
   }

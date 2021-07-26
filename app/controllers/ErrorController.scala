@@ -53,7 +53,7 @@ class ErrorController @Inject()(
   def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
     val taxYear = appConfig.saYear
 
-    governmentSpendService.getGovernmentSpendFigures(taxYear, request.saUtr) map { spendData =>
+    governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))
     } recover {
       case e: IllegalArgumentException =>

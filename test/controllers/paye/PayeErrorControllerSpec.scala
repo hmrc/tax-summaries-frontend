@@ -90,7 +90,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val spendPercentage: Double = 5.5
         val response: Seq[(String, Double)] = Seq((spendCategory, spendPercentage))
 
-        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+        when(mockGovSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
           .successful(response)
 
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
@@ -105,7 +105,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
 
       "the service throws an IllegalArgumentException" in {
 
-        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+        when(mockGovSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
           .failed(new IllegalArgumentException("Oops"))
 
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
@@ -117,7 +117,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
 
       "the service throws any other kind of exception" in {
 
-        when(mockGovSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+        when(mockGovSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
           .failed(new Exception("Oops"))
 
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)

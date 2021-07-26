@@ -71,7 +71,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
               key -> value.percentage.toDouble
           }
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .successful(response)
 
           implicit lazy val request =
@@ -99,7 +99,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
 
         "the service throws an illegal argument exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new IllegalArgumentException("Oops"))
 
           implicit lazy val request =
@@ -128,7 +128,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
 
         "the service throws another exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new Exception("Oops"))
 
           implicit lazy val request =
