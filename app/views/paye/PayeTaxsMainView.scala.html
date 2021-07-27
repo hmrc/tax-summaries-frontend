@@ -16,7 +16,7 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
 @import views.html.main
@@ -33,7 +33,7 @@
     )(
     implicit request: PayeAuthenticatedRequest[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
+
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
         executionContext: ExecutionContext

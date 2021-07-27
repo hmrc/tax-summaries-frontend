@@ -16,7 +16,7 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeGovernmentSpend
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import utils.HtmlFormatter
 @import views.html.main
 @import views.html.helpers.BackLinkView
@@ -33,7 +33,6 @@
 	)(
 	implicit messages: Messages,
 	request: Request[_],
-	formPartialRetriever: FormPartialRetriever,
 	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
 	appConfig: ApplicationConfig,
 		ec: ExecutionContext

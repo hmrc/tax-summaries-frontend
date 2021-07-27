@@ -15,15 +15,18 @@
  *@
 
 @import config.ApplicationConfig
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
 @import controllers.auth.CommonRequest
 @import scala.concurrent.ExecutionContext
 @import uk.gov.hmrc.play.views.html.layouts._
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 
 @this(
         trackingConsentSnippet: TrackingConsentSnippet,
-        article: Article
+        article: Article,
+        formPartialRetriever: FormPartialRetriever
 )
 
 @(
@@ -39,7 +42,6 @@
 )(
     implicit request: Request[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
         ec: ExecutionContext

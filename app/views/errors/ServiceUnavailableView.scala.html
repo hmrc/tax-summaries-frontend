@@ -16,7 +16,7 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import views.html.main
 @import views.html.helpers.BackLinkView
 @import scala.concurrent.ExecutionContext
@@ -29,7 +29,7 @@
 @()(
     implicit request: Request[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
+
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
         ec: ExecutionContext

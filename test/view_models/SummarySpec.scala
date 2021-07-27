@@ -47,9 +47,9 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
 
   def summaryGen: Gen[Summary] =
     for {
-      amount <- amountGen
+      amount    <- amountGen
       rateValue <- Gen.chooseNum(0, 20)
-      year <- Gen.chooseNum(2010, 2099)
+      year      <- Gen.chooseNum(2010, 2099)
     } yield {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val rate = Rate(rateValue.toString)
