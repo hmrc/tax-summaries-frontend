@@ -64,11 +64,7 @@ class PayeYourTaxableIncomeViewSpec extends TestConstants with ViewSpecBase {
 
       document
         .getElementById("income-before-tax-intro")
-        .text() shouldBe "We have calculated this using information held at the time supplied to us by you, your employers, or other sources such as pension providers and banks or building societies."
-
-      document
-        .getElementById("income-before-tax-description")
-        .text() shouldBe "This information comes from you, your employer(s) or your pension provider(s)."
+        .text() shouldBe "We have calculated this using information given to us by you and other sources. This includes your employer, pension providers, and banks or building societies."
 
     }
 
