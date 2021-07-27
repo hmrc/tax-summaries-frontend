@@ -25,7 +25,6 @@ import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMess
 import services.PayeAtsService
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants.testUtr
 import views.html._
 import views.html.errors.{GenericErrorView, NotAuthorisedView, ServiceUnavailableView, TokenErrorView}
@@ -52,7 +51,6 @@ trait ControllerBaseSpec extends BaseSpec {
   implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
-  implicit lazy val formPartialRetriever = inject[FormPartialRetriever]
   implicit lazy val templateRenderer = MockTemplateRenderer
 
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]

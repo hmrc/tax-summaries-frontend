@@ -17,7 +17,6 @@
 package views
 
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{BaseSpec, MockTemplateRenderer}
 
@@ -25,7 +24,6 @@ trait ViewSpecBase extends BaseSpec {
 
   implicit val messagesApi: MessagesApi = inject[MessagesApi]
   implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
-  implicit val formPartialRetriever: FormPartialRetriever = inject[FormPartialRetriever]
   implicit val templateRenderer: TemplateRenderer = MockTemplateRenderer
   implicit val lang: Lang = messages.lang
 

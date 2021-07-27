@@ -20,7 +20,6 @@ import com.google.inject.AbstractModule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.config.LocalTemplateRenderer
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 
 class Module extends AbstractModule {

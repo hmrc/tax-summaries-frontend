@@ -57,7 +57,6 @@ class PayeMultipleYearsControllerSpec extends PayeControllerSpecHelpers with Jso
 
   def sut(multiYearEnabled: Boolean = true): PayeMultipleYearsController =
     new PayeMultipleYearsController(mockPayeAtsService, FakePayeAuthAction, mcc, multipleYearsView, atsForms)(
-      formPartialRetriever,
       templateRenderer,
       appConfig,
       ec

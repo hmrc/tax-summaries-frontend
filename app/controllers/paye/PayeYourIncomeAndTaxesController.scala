@@ -18,20 +18,18 @@ package controllers.paye
 
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-
-import javax.inject.Inject
 import models.PayeAtsData
-import play.api.{Logger, Logging}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
 import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeYourIncomeAndTaxes
 import views.html.paye.PayeYourIncomeAndTaxesView
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PayeYourIncomeAndTaxesController @Inject()(
@@ -39,8 +37,7 @@ class PayeYourIncomeAndTaxesController @Inject()(
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
+  implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with Logging {

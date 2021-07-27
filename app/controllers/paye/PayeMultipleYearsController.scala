@@ -19,18 +19,16 @@ package controllers.paye
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import javax.inject.Inject
 import models.PayeAtsData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PayeAtsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
-import view_models.AtsForms
-import view_models.TaxYearEnd
+import view_models.{AtsForms, TaxYearEnd}
 import views.html.paye.PayeMultipleYearsView
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PayeMultipleYearsController @Inject()(
@@ -38,11 +36,7 @@ class PayeMultipleYearsController @Inject()(
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeMultipleYearsView: PayeMultipleYearsView,
-  atsForms: AtsForms)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  atsForms: AtsForms)(implicit templateRenderer: TemplateRenderer, appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with LazyLogging {
 
   private val payeYear: Int = appConfig.payeYear

@@ -30,7 +30,6 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.mvc.Results.Unauthorized
 
 class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
   implicit ec: ExecutionContext,

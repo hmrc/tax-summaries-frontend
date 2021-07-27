@@ -16,30 +16,27 @@
 
 package controllers
 
-import java.util.Date
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
-import play.Logger
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
+import java.util.Date
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class TaxsController @Inject()(
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
-  implicit ormPartialRetriever: FormPartialRetriever,
   implicit val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)

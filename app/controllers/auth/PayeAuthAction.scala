@@ -18,7 +18,7 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import play.api.{Logger, Logging}
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
