@@ -19,9 +19,9 @@ package services
 import connectors.CitizenDetailsConnector
 import models.MatchingDetails
 import play.api.http.Status._
-import uk.gov.hmrc.http.HeaderCarrier
-
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait MatchingDetailsResponse
@@ -34,5 +34,7 @@ class CitizenDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsCon
       case response if response.status == OK =>
         Future(SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(response.json)))
       case _ => Future(FailedMatchingDetailsResponse)
+    } recover {
+      case _: NotFoundException => FailedMatchingDetailsResponse
     }
 }
