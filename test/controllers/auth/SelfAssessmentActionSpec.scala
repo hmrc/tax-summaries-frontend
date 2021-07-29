@@ -159,12 +159,13 @@ class SelfAssessmentActionSpec
       verifyZeroInteractions(citizenDetailsService)
     }
 
-    "redirect to unauthorized if utr cant be found for nino" in {
+    "redirect to unauthorized if matching details cant be found for nino" in {
+      reset(citizenDetailsService)
       val uar = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
-      when(citizenDetailsService.getUtr(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
+      when(citizenDetailsService.getMatchingDetails(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
@@ -172,13 +173,30 @@ class SelfAssessmentActionSpec
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
-      verify(citizenDetailsService, times(1)).getUtr(any())(any())
+      verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
+    }
+
+    "redirect to unauthorized if utr cant be found for nino" in {
+      reset(citizenDetailsService)
+      val uar = testUar
+      val nino = new Generator().nextNino
+
+      when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
+      when(citizenDetailsService.getMatchingDetails(any())(any()))
+        .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+
+      val authAction = new FakeSelfAssessmentAction(None, None)
+      val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
+      verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
     }
 
     "redirect to unauthorized if user doesn't have strong credentials" in {
-
+      reset(citizenDetailsService)
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(InsufficientCredsNino))
-      when(citizenDetailsService.getUtr(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
@@ -186,7 +204,7 @@ class SelfAssessmentActionSpec
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
-      verify(citizenDetailsService, times(1)).getUtr(any())(any())
+      verifyZeroInteractions(citizenDetailsService)
     }
 
     "return OK if utr can be found for nino" in {
@@ -196,7 +214,7 @@ class SelfAssessmentActionSpec
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
-      when(citizenDetailsService.getUtr(any())(any()))
+      when(citizenDetailsService.getMatchingDetails(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
@@ -205,7 +223,7 @@ class SelfAssessmentActionSpec
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) shouldBe OK
       contentAsString(result)(timeout) should include(utr)
-      verify(citizenDetailsService, times(1)).getUtr(any())(any())
+      verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
     }
   }
 

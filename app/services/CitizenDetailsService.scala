@@ -29,7 +29,7 @@ case class SucccessMatchingDetailsResponse(matchingDetails: MatchingDetails) ext
 object FailedMatchingDetailsResponse extends MatchingDetailsResponse
 
 class CitizenDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector)(implicit ec: ExecutionContext) {
-  def getUtr(nino: String)(implicit hc: HeaderCarrier): Future[MatchingDetailsResponse] =
+  def getMatchingDetails(nino: String)(implicit hc: HeaderCarrier): Future[MatchingDetailsResponse] =
     citizenDetailsConnector.connectToCid(nino).flatMap {
       case response if response.status == OK =>
         Future(SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(response.json)))

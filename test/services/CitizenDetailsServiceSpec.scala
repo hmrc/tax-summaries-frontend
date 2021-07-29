@@ -57,7 +57,7 @@ class CitizenDetailsServiceSpec
       val response = HttpResponse.apply(OK, json)
       when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any())).thenReturn(Future.successful(response))
 
-      val result = service.getUtr(nino.toString()).futureValue
+      val result = service.getMatchingDetails(nino.toString()).futureValue
       result shouldBe SucccessMatchingDetailsResponse(MatchingDetails(Some(utr)))
     }
 
@@ -67,7 +67,7 @@ class CitizenDetailsServiceSpec
 
         when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any())).thenReturn(Future.successful(response))
 
-        val result = service.getUtr(nino.toString()).futureValue
+        val result = service.getMatchingDetails(nino.toString()).futureValue
         result shouldBe FailedMatchingDetailsResponse
       }
     }
