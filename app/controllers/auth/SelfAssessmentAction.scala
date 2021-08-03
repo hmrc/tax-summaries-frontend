@@ -41,7 +41,9 @@ class SelfAssessmentActionImpl @Inject()(
 
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    if (request.saUtr.isEmpty && !request.isAgentActive) {
+    if (request.agentRef.isDefined && !request.isAgentActive) {
+      Future(Left(Redirect(controllers.routes.ErrorController.notAuthorised())))
+    } else if (request.saUtr.isEmpty && request.agentRef.isEmpty) {
       ninoAuthAction.getNino().flatMap { atsNinoResponse =>
         handleResponse(request, atsNinoResponse)
       }
