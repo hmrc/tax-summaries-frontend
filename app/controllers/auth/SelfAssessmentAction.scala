@@ -59,9 +59,9 @@ class SelfAssessmentActionImpl @Inject()(
     atsNinoResponse match {
       case SuccessAtsNino(nino) =>
         for {
-          utr <- citizenDetailsService.getMatchingDetails(nino)
+          detailsResponse <- citizenDetailsService.getMatchingDetails(nino)
         } yield {
-          utr match {
+          detailsResponse match {
             case SucccessMatchingDetailsResponse(value) =>
               if (value.saUtr.isDefined) { Right(createAuthenticatedRequest(request, value.saUtr)) } else {
                 Left(Redirect(controllers.routes.ErrorController.notAuthorised()))

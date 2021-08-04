@@ -22,6 +22,7 @@ import models.MatchingDetails
 import org.scalatest.concurrent.ScalaFutures
 import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{Action, AnyContent, BodyParser, InjectedController, Request, Result, Results}
@@ -42,7 +43,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class SelfAssessmentActionSpec
-    extends UnitSpec with MockitoSugar with ScalaFutures with GuiceOneAppPerSuite with Injecting {
+    extends UnitSpec with MockitoSugar with ScalaFutures with GuiceOneAppPerSuite with Injecting
+    with BeforeAndAfterEach {
 
   lazy implicit val ec = inject[ExecutionContext]
   implicit val timeout: FiniteDuration = 5 seconds
@@ -77,6 +79,9 @@ class SelfAssessmentActionSpec
           fakeCredentials,
           request))
   }
+
+  override def beforeEach(): Unit =
+    reset(citizenDetailsService)
 
   class Harness(minAuthAction: FakeSelfAssessmentAction, selfAssessmentAction: SelfAssessmentAction)
       extends InjectedController {
@@ -160,7 +165,7 @@ class SelfAssessmentActionSpec
     }
 
     "redirect to unauthorized if matching details cant be found for nino" in {
-      reset(citizenDetailsService)
+
       val uar = testUar
       val nino = new Generator().nextNino
 
@@ -177,7 +182,7 @@ class SelfAssessmentActionSpec
     }
 
     "redirect to unauthorized if utr cant be found for nino" in {
-      reset(citizenDetailsService)
+
       val uar = testUar
       val nino = new Generator().nextNino
 
@@ -195,7 +200,7 @@ class SelfAssessmentActionSpec
     }
 
     "redirect to unauthorized if user doesn't have strong credentials" in {
-      reset(citizenDetailsService)
+
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(InsufficientCredsNino))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
@@ -208,7 +213,7 @@ class SelfAssessmentActionSpec
     }
 
     "return OK if utr can be found for nino" in {
-      reset(citizenDetailsService)
+
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
       val nino = new Generator().nextNino
