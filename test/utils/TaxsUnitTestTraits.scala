@@ -18,16 +18,22 @@ package utils
 
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import uk.gov.hmrc.play.test.UnitSpec
-
-import scala.concurrent.Future
+import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite {
+import scala.concurrent.{ExecutionContext, Future}
+
+trait TaxsUnitTestTraits
+    extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite
+    with Injecting {
 
   implicit lazy val hc = HeaderCarrier()
+
+  implicit lazy val ec = inject[ExecutionContext]
 
   implicit def convertToOption[T](value: T): Option[T] = Some(value)
 
@@ -35,7 +41,7 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
 
   implicit def convertToFuture[T](err: Throwable): Future[Option[T]] = Future.failed(err)
 
-  // used to help mock setup functions to clarify if certain results should be mocked.
+  // used to help mock setup functions to clarify if certain results must be mocked.
   sealed trait MockConfiguration[+A] {
     final def get = this match {
       case Configure(config) => config
@@ -56,9 +62,10 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
 
   implicit def convertToMockConfiguration2[T](value: T): MockConfiguration[Option[T]] = Configure(value)
 
-  implicit def convertToMockConfiguration3[T](value: T): MockConfiguration[Future[T]] = Configure(value)
+  implicit def convertToMockConfiguration3[T](value: T): MockConfiguration[Future[T]] = Configure(Future(value))
 
-  implicit def convertToMockConfiguration4[T](value: T): MockConfiguration[Future[Option[T]]] = Configure(Some(value))
+  implicit def convertToMockConfiguration4[T](value: T): MockConfiguration[Future[Option[T]]] =
+    Configure(Future(Some(value)))
 
   implicit def convertToMockConfiguration5[T](err: Throwable): MockConfiguration[Future[Option[T]]] = Configure(err)
 
@@ -81,12 +88,12 @@ trait TaxsUnitTestTraits extends UnitSpec with MockitoSugar with BeforeAndAfterE
 
   case class Ids(utr: Boolean, nino: Boolean, crn: Boolean, vrn: Boolean)
 
-  def testId(shouldExist: Boolean)(targetFieldId: String)(implicit doc: Document) = shouldExist match {
-    case false => doc.getElementById(targetFieldId) shouldBe null
-    case true  => doc.getElementById(targetFieldId) should not be null
+  def testId(mustExist: Boolean)(targetFieldId: String)(implicit doc: Document) = mustExist match {
+    case false => doc.getElementById(targetFieldId) mustBe null
+    case true  => doc.getElementById(targetFieldId) must not be null
   }
 
   def testText(expectedText: String)(targetFieldId: String)(implicit doc: Document) =
-    doc.getElementById(targetFieldId).text shouldBe expectedText
+    doc.getElementById(targetFieldId).text mustBe expectedText
 
 }

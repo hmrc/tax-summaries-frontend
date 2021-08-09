@@ -16,9 +16,10 @@
 
 package utils
 
+import com.google.inject.Inject
 import view_models.{Amount, Rate}
 
-object ViewUtils {
+class ViewUtils @Inject()() {
 
   def toCurrency(amount: Amount, twoDecimalPlaces: Boolean = false): String =
     s"&pound;${if (twoDecimalPlaces) amount.toTwoDecimalString else amount}"

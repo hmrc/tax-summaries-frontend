@@ -20,20 +20,18 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
 
-class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class AllowancesControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -81,23 +79,23 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any())) thenReturn Future
       .successful(baseModel)
 
-  "Calling allowances" should {
+  "Calling allowances" must {
 
     "have the right user data in the view when a valid request is sent" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
-      status(result) shouldBe 200
+      status(result) mustBe 200
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("tax-free-total").text() shouldBe "£9,740"
-      document.getElementById("tax-free-allowance-amount").text() shouldBe "£9,440"
-      document.getElementById("other-allowances").text() shouldBe "£300"
-      document.toString should include("tax-free-allowance")
-      document.getElementById("user-info").text() should include("forename surname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+      document.getElementById("tax-free-total").text() mustBe "£9,740"
+      document.getElementById("tax-free-allowance-amount").text() mustBe "£9,440"
+      document.getElementById("other-allowances").text() mustBe "£300"
+      document.toString must include("tax-free-allowance")
+      document.getElementById("user-info").text() must include("forename surname")
+      document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
+      document.select("h1").text mustBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
     }
 
     "have zero-value fields hidden in the view" in {
@@ -110,19 +108,19 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
         .thenReturn(Future.successful(model))
 
-      val result: Future[Result] = Future.successful(sut.show(request))
-      status(result) shouldBe 200
+      val result: Future[Result] = sut.show(request)
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "tax-free-allowance-amount"
-      document.toString should not include "other-allowances"
+      document.toString must not include "tax-free-allowance-amount"
+      document.toString must not include "other-allowances"
     }
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
-      status(result) shouldBe 200
+      val result = sut.show(request)
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(
+      document.title must include(
         Messages("ats.tax_free_amount.html.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
@@ -130,10 +128,10 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
-      status(result) shouldBe 400
+      val result = sut.show(badRequest)
+      status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
@@ -141,19 +139,19 @@ class AllowancesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
         .thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
     }
 
   }

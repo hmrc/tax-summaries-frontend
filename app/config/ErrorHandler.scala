@@ -22,10 +22,10 @@ import play.api.mvc.Request
 import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import views.html.errors.ErrorTemplateView
-import views.html.errors.PageNotFoundTemplateView
 import uk.gov.hmrc.renderer.TemplateRenderer
+import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
+
+import scala.concurrent.ExecutionContext
 
 class ErrorHandler @Inject()(
   val messagesApi: MessagesApi,
@@ -33,9 +33,9 @@ class ErrorHandler @Inject()(
   val environment: Environment,
   errorTemplateView: ErrorTemplateView,
   pageNotFoundTemplateView: PageNotFoundTemplateView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
   implicit val templateRenderer: TemplateRenderer,
-  implicit val appConfig: ApplicationConfig)
+  implicit val appConfig: ApplicationConfig,
+  ec: ExecutionContext)
     extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =

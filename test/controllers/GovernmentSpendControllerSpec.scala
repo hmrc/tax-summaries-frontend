@@ -21,19 +21,18 @@ import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, _}
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
 
-class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite {
 
   override val taxYear = 2014
 
@@ -91,13 +90,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
-  "Calling government spend" should {
+  "Calling government spend" must {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
-      status(result) shouldBe 200
+      val result = sut.show(request)
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(
+      document.title must include(
         Messages("ats.treasury_spending.html.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
@@ -105,10 +104,10 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
-      status(result) shouldBe 400
+      val result = sut.show(badRequest)
+      status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
@@ -117,63 +116,63 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
         mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
         mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts().url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
     }
 
     "have correct data for 2014" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
-      document.select("#welfare + td").text() shouldBe "£5,863.22"
-      document.select("#welfare").text() should include("24.52%")
-      document.select("#health + td").text() shouldBe "£4,512.19"
-      document.select("#health").text() should include("18.87%")
-      document.select("#education + td").text() shouldBe "£3,144.43"
-      document.select("#education").text() should include("13.15%")
-      document.select("#pension + td").text() shouldBe "£2,898.13"
-      document.select("#pension").text() should include("12.12%")
-      document.select("#national_debt_interest + td").text() shouldBe "£1,673.84"
-      document.select("#national_debt_interest").text() should include("7.0%")
-      document.select("#defence + td").text() shouldBe "£1,269.73"
-      document.select("#defence").text() should include("5.31%")
-      document.select("#criminal_justice + td").text() shouldBe "£1,052.13"
-      document.select("#criminal_justice").text() should include("4.4%")
-      document.select("#transport + td").text() shouldBe "£705.40"
-      document.select("#transport").text() should include("2.95%")
-      document.select("#business_and_industry + td").text() shouldBe "£655.19"
-      document.select("#business_and_industry").text() should include("2.74%")
-      document.select("#government_administration + td").text() shouldBe "£490.20"
-      document.select("#government_administration").text() should include("2.05%")
-      document.select("#Culture + td").text() shouldBe "£404.11"
-      document.select("#Culture").text() should include("1.69%")
-      document.select("#Environment + td").text() shouldBe "£396.94"
-      document.select("#Environment").text() should include("1.66%")
-      document.select("#HousingAndUtilities + td").text() shouldBe "£392.16"
-      document.select("#HousingAndUtilities").text() should include("1.64%")
-      document.select("#overseas_aid + td").text() shouldBe "£274.99"
-      document.select("#overseas_aid").text() should include("1.15%")
-      document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£179.34"
-      document.select("#uk_contribution_to_eu_budget").text() should include("0.75%")
+      document.select("#welfare + td").text() mustBe "£5,863.22"
+      document.select("#welfare").text() must include("24.52%")
+      document.select("#health + td").text() mustBe "£4,512.19"
+      document.select("#health").text() must include("18.87%")
+      document.select("#education + td").text() mustBe "£3,144.43"
+      document.select("#education").text() must include("13.15%")
+      document.select("#pension + td").text() mustBe "£2,898.13"
+      document.select("#pension").text() must include("12.12%")
+      document.select("#national_debt_interest + td").text() mustBe "£1,673.84"
+      document.select("#national_debt_interest").text() must include("7.0%")
+      document.select("#defence + td").text() mustBe "£1,269.73"
+      document.select("#defence").text() must include("5.31%")
+      document.select("#criminal_justice + td").text() mustBe "£1,052.13"
+      document.select("#criminal_justice").text() must include("4.4%")
+      document.select("#transport + td").text() mustBe "£705.40"
+      document.select("#transport").text() must include("2.95%")
+      document.select("#business_and_industry + td").text() mustBe "£655.19"
+      document.select("#business_and_industry").text() must include("2.74%")
+      document.select("#government_administration + td").text() mustBe "£490.20"
+      document.select("#government_administration").text() must include("2.05%")
+      document.select("#Culture + td").text() mustBe "£404.11"
+      document.select("#Culture").text() must include("1.69%")
+      document.select("#Environment + td").text() mustBe "£396.94"
+      document.select("#Environment").text() must include("1.66%")
+      document.select("#HousingAndUtilities + td").text() mustBe "£392.16"
+      document.select("#HousingAndUtilities").text() must include("1.64%")
+      document.select("#overseas_aid + td").text() mustBe "£274.99"
+      document.select("#overseas_aid").text() must include("1.15%")
+      document.select("#uk_contribution_to_eu_budget + td").text() mustBe "£179.34"
+      document.select("#uk_contribution_to_eu_budget").text() must include("0.75%")
 
-      document.getElementById("user-info").text() should include("userForename userSurname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("#gov-spend-total + td").text() shouldBe "£23,912.00"
+      document.getElementById("user-info").text() must include("userForename userSurname")
+      document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
+      document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("h1")
-        .text shouldBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
+        .text mustBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 
     "have correct data for 2015" in {
@@ -210,43 +209,43 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
         mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.select("#welfare + td").text() shouldBe "£2,530.00"
-      document.select("#welfare").text() should include("25.3%")
-      document.select("#health + td").text() shouldBe "£1,990.00"
-      document.select("#health").text() should include("19.9%")
-      document.select("#pension + td").text() shouldBe "£1,280.00"
-      document.select("#pension").text() should include("12.8%")
-      document.select("#education + td").text() shouldBe "£1,250.00"
-      document.select("#education").text() should include("12.5%")
-      document.select("#defence + td").text() shouldBe "£540.00"
-      document.select("#defence").text() should include("5.4%")
-      document.select("#national_debt_interest + td").text() shouldBe "£500.00"
-      document.select("#national_debt_interest").text() should include("5.0%")
-      document.select("#public_order_and_safety + td").text() shouldBe "£440.00"
-      document.select("#public_order_and_safety").text() should include("4.4%")
-      document.select("#transport + td").text() shouldBe "£300.00"
-      document.select("#transport").text() should include("3.0%")
-      document.select("#business_and_industry + td").text() shouldBe "£270.00"
-      document.select("#business_and_industry").text() should include("2.7%")
-      document.select("#government_administration + td").text() shouldBe "£200.00"
-      document.select("#government_administration").text() should include("2.0%")
-      document.select("#Culture + td").text() shouldBe "£180.00"
-      document.select("#Culture").text() should include("1.8%")
-      document.select("#Environment + td").text() shouldBe "£170.00"
-      document.select("#Environment").text() should include("1.7%")
-      document.select("#HousingAndUtilities + td").text() shouldBe "£160.00"
-      document.select("#HousingAndUtilities").text() should include("1.6%")
-      document.select("#overseas_aid + td").text() shouldBe "£130.00"
-      document.select("#overseas_aid").text() should include("1.3%")
-      document.select("#uk_contribution_to_eu_budget + td").text() shouldBe "£600.00"
-      document.select("#uk_contribution_to_eu_budget").text() should include("0.6%")
+      document.select("#welfare + td").text() mustBe "£2,530.00"
+      document.select("#welfare").text() must include("25.3%")
+      document.select("#health + td").text() mustBe "£1,990.00"
+      document.select("#health").text() must include("19.9%")
+      document.select("#pension + td").text() mustBe "£1,280.00"
+      document.select("#pension").text() must include("12.8%")
+      document.select("#education + td").text() mustBe "£1,250.00"
+      document.select("#education").text() must include("12.5%")
+      document.select("#defence + td").text() mustBe "£540.00"
+      document.select("#defence").text() must include("5.4%")
+      document.select("#national_debt_interest + td").text() mustBe "£500.00"
+      document.select("#national_debt_interest").text() must include("5.0%")
+      document.select("#public_order_and_safety + td").text() mustBe "£440.00"
+      document.select("#public_order_and_safety").text() must include("4.4%")
+      document.select("#transport + td").text() mustBe "£300.00"
+      document.select("#transport").text() must include("3.0%")
+      document.select("#business_and_industry + td").text() mustBe "£270.00"
+      document.select("#business_and_industry").text() must include("2.7%")
+      document.select("#government_administration + td").text() mustBe "£200.00"
+      document.select("#government_administration").text() must include("2.0%")
+      document.select("#Culture + td").text() mustBe "£180.00"
+      document.select("#Culture").text() must include("1.8%")
+      document.select("#Environment + td").text() mustBe "£170.00"
+      document.select("#Environment").text() must include("1.7%")
+      document.select("#HousingAndUtilities + td").text() mustBe "£160.00"
+      document.select("#HousingAndUtilities").text() must include("1.6%")
+      document.select("#overseas_aid + td").text() mustBe "£130.00"
+      document.select("#overseas_aid").text() must include("1.3%")
+      document.select("#uk_contribution_to_eu_budget + td").text() mustBe "£600.00"
+      document.select("#uk_contribution_to_eu_budget").text() must include("0.6%")
 
-      document.getElementById("user-info").text() should include("userForename userSurname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("#gov-spend-total + td").text() shouldBe "£10,000.00"
+      document.getElementById("user-info").text() must include("userForename userSurname")
+      document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
+      document.select("#gov-spend-total + td").text() mustBe "£10,000.00"
     }
 
     "return zero percentage for Housing, Cultural and Environment when they are not same" in {
@@ -271,9 +270,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = sut.assignPercentage(govSpendAmountData)
 
-      result._1 shouldBe 1.7
-      result._2 shouldBe 1.8
-      result._3 shouldBe 1.6
+      result._1 mustBe 1.7
+      result._2 mustBe 1.8
+      result._3 mustBe 1.6
 
     }
 
@@ -301,9 +300,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = sut.assignPercentage(govSpendAmountData)
 
-      result._1 shouldBe expected
-      result._2 shouldBe expected
-      result._3 shouldBe expected
+      result._1 mustBe expected
+      result._2 mustBe expected
+      result._3 mustBe expected
 
     }
 

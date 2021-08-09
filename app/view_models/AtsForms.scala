@@ -16,10 +16,11 @@
 
 package view_models
 
+import com.google.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
 
-object AtsForms {
+class AtsForms @Inject()() {
 
   val yearChoice = "year"
 

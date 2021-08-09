@@ -16,18 +16,17 @@
 
 package utils
 
-import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+class HtmlFormatterSpec extends BaseSpec {
 
-class HtmlFormatterSpec extends UnitSpec with Matchers {
+  lazy val htmlFormatter = inject[HtmlFormatter]
 
-  "toHtmlNonBroken" should {
+  "toHtmlNonBroken" must {
     "replace spaces with non breaking spaces" in {
       val stringBeforeReplace = "6 April 2018 to 5 April 2019"
 
       val expectedString = "6&nbsp;April&nbsp;2018&nbsp;to&nbsp;5&nbsp;April&nbsp;2019"
 
-      HtmlFormatter.toHtmlNonBroken(stringBeforeReplace) shouldBe expectedString
+      htmlFormatter.toHtmlNonBroken(stringBeforeReplace) mustBe expectedString
     }
   }
 }

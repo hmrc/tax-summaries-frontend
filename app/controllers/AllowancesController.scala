@@ -22,12 +22,11 @@ import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{AllowanceService, AuditService}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.GenericViewModel
 import view_models.Allowances
 import views.html.TaxFreeAmountView
 import views.html.errors.{GenericErrorView, TokenErrorView}
-import uk.gov.hmrc.renderer.TemplateRenderer
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,8 +38,7 @@ class AllowancesController @Inject()(
   taxFreeAmountView: TaxFreeAmountView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
+  implicit override val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {

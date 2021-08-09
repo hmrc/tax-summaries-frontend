@@ -18,21 +18,16 @@ package views.total_income_tax_includes
 import com.softwaremill.quicklens.modify
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants
-import utils.ViewUtils.toCurrency
+import utils.{TestConstants, ViewUtils}
 import view_models.{Amount, Rate, SavingsRates, SavingsTax}
+import views.ViewSpecBase
 import views.html.total_income_tax_includes.SavingsTableView
 
-class SavingsTableSpec
-    extends UnitSpec with GuiceOneAppPerSuite with TestConstants with ScalaCheckDrivenPropertyChecks {
+class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
-  lazy val savingsTableView = app.injector.instanceOf[SavingsTableView]
+  lazy val savingsTableView = inject[SavingsTableView]
+  lazy val viewUtils = inject[ViewUtils]
 
   val savingsTaxData = SavingsTax.empty
   val savingsRateData = SavingsRates.empty
@@ -46,20 +41,20 @@ class SavingsTableSpec
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
 
-  "view" should {
+  "view" must {
 
     "display header" in {
       val taxData = savingsTaxData.copy(savingsLowerRateTax = Amount.gbp(1))
 
-      view(taxData) should include(messages("ats.total_income_tax.savings_income_tax"))
-      view(taxData) should include(messages("generic.amount_pounds"))
+      view(taxData) must include(messages("ats.total_income_tax.savings_income_tax"))
+      view(taxData) must include(messages("generic.amount_pounds"))
     }
 
     "hide header" when {
 
       "there are no savings taxes" in {
 
-        view should not include messages("ats.total_income_tax.savings_income_tax")
+        view must not include messages("ats.total_income_tax.savings_income_tax")
       }
     }
 
@@ -92,12 +87,15 @@ class SavingsTableSpec
 
           tax match {
             case Amount.empty =>
-              result should not include toCurrency(tax)
+              result must not include viewUtils.toCurrency(tax)
 
             case _ =>
-              result should include(
-                messages(s"ats.total_income_tax.savings_income_tax.table.$id", toCurrency(total), rate.percent))
-              result should include(toCurrency(tax))
+              result must include(
+                messages(
+                  s"ats.total_income_tax.savings_income_tax.table.$id",
+                  viewUtils.toCurrency(total),
+                  rate.percent))
+              result must include(viewUtils.toCurrency(tax))
           }
         }
       }

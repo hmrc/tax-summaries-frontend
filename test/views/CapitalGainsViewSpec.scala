@@ -42,31 +42,31 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
   def view(cg: CapitalGains): String =
     capitalGainsView(cg).body
 
-  "view" should {
+  "view" must {
     "show lower rate rcpi row" in {
       val result = view(capitalGains)
 
-      result should include("Individuals for residential property and carried interest (&pound;4,000 at 15%)")
-      result should include("&pound;1,000")
+      result must include("Individuals for residential property and carried interest (&pound;4,000 at 15%)")
+      result must include("&pound;1,000")
     }
 
     "hide lower rate rcpi row" in {
       val result = view(capitalGains.copy(rpciLowerTax = Amount.gbp(0)))
 
-      result should not include "Individuals for residential property and carried interest (&pound;4,000 at 15%)"
+      result must not include "Individuals for residential property and carried interest (&pound;4,000 at 15%)"
     }
 
     "show higher rate rcpi row" in {
       val result = view(capitalGains)
 
-      result should include("Individuals for residential property and carried interest (&pound;4,500 at 25%)")
-      result should include("&pound;1,500")
+      result must include("Individuals for residential property and carried interest (&pound;4,500 at 25%)")
+      result must include("&pound;1,500")
     }
 
     "hide higher rate rcpi row" in {
       val result = view(capitalGains.copy(rpciHigherTax = Amount.gbp(0)))
 
-      result should not include "Individuals for residential property and carried interest (&pound;4,500 at 25%)"
+      result must not include "Individuals for residential property and carried interest (&pound;4,500 at 25%)"
     }
   }
 }

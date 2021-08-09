@@ -22,10 +22,6 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.mvc.Request
@@ -33,17 +29,13 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
-import utils.{AgentTokenException, AuthorityUtils}
+import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class AtsListServiceSpec
-    extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
-
-  implicit lazy val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+class AtsListServiceSpec extends BaseSpec {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -55,7 +47,7 @@ class AtsListServiceSpec
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
-  val appConfig = mock[ApplicationConfig]
+  val mockAppConfig = mock[ApplicationConfig]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
@@ -92,7 +84,7 @@ class AtsListServiceSpec
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(appConfig.saYear).thenReturn(2020)
+    when(mockAppConfig.saYear).thenReturn(2020)
   }
 
   implicit val request =
@@ -122,16 +114,16 @@ class AtsListServiceSpec
   }
 
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, mockAppConfig)
 
-  "storeSelectedTaxYear" should {
+  "storeSelectedTaxYear" must {
 
     "Return a successful future upon success" in {
 
       val result = sut.storeSelectedTaxYear(2014)
 
       whenReady(result) { result =>
-        result shouldBe 2014
+        result mustBe 2014
       }
     }
 
@@ -142,7 +134,7 @@ class AtsListServiceSpec
 
       val result = sut.storeSelectedTaxYear(2014)
       whenReady(result.failed) { exception =>
-        exception shouldBe a[NoSuchElementException]
+        exception mustBe a[NoSuchElementException]
       }
     }
 
@@ -154,17 +146,17 @@ class AtsListServiceSpec
       val result = sut.storeSelectedTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe an[Exception]
+        exception mustBe an[Exception]
       }
     }
   }
 
-  "fetchSelectedTaxYear" should {
+  "fetchSelectedTaxYear" must {
 
     "Return a successful future upon success" in {
 
       whenReady(sut.fetchSelectedTaxYear) { result =>
-        result shouldBe 2014
+        result mustBe 2014
       }
     }
 
@@ -174,7 +166,7 @@ class AtsListServiceSpec
         .thenReturn(Future.successful(None))
 
       whenReady(sut.fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe a[NoSuchElementException]
+        exception mustBe a[NoSuchElementException]
       }
     }
 
@@ -184,30 +176,30 @@ class AtsListServiceSpec
         .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(sut.fetchSelectedTaxYear.failed) { exception =>
-        exception shouldBe an[Exception]
+        exception mustBe an[Exception]
       }
     }
   }
 
-  "getAtsYearList" should {
+  "getAtsYearList" must {
 
     "Return a ats list with 2020 year data" in {
 
       whenReady(sut.getAtsYearList) { result =>
-        result.right.get.atsYearList.get.contains(2020) shouldBe true
+        result.right.get.atsYearList.get.contains(2020) mustBe true
       }
 
     }
 
     "Return a ats list without 2020 year data" in {
 
-      when(appConfig.saYear).thenReturn(2019)
+      when(mockAppConfig.saYear).thenReturn(2019)
 
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(dataFor2019)))
 
       whenReady(sut.getAtsYearList) { result =>
-        result.right.get.atsYearList.get.contains(2020) shouldBe false
+        result.right.get.atsYearList.get.contains(2020) mustBe false
       }
 
     }
@@ -218,7 +210,7 @@ class AtsListServiceSpec
         .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(sut.getAtsYearList.failed) { exception =>
-        exception shouldBe an[Exception]
+        exception mustBe an[Exception]
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(mockDataCacheConnector, never())
@@ -233,7 +225,7 @@ class AtsListServiceSpec
         .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(sut.getAtsYearList.failed) { exception =>
-        exception shouldBe an[Exception]
+        exception mustBe an[Exception]
       }
 
       verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -249,7 +241,7 @@ class AtsListServiceSpec
         .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(sut.getAtsYearList.failed) { exception =>
-        exception shouldBe an[Exception]
+        exception mustBe an[Exception]
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(mockDataCacheConnector, never())
@@ -258,7 +250,7 @@ class AtsListServiceSpec
       }
     }
 
-    "User" should {
+    "User" must {
 
       "Return the ats year list data for a user from the cache" in {
 
@@ -276,7 +268,7 @@ class AtsListServiceSpec
             FakeRequest())
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe Right(data)
+          result mustBe Right(data)
         }
 
         verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
@@ -294,7 +286,7 @@ class AtsListServiceSpec
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
       whenReady(sut.getAtsYearList) { result =>
-        result shouldBe Right(data)
+        result mustBe Right(data)
 
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
           any[Request[AnyRef]],
@@ -306,14 +298,15 @@ class AtsListServiceSpec
       }
     }
 
-    // Should this be the case? (EDGE CASE)
+    // must this be the case? (EDGE CASE)
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
 
-      when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext])).thenReturn(Some(agentToken))
+      when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(agentToken)))
       when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
 
       whenReady(sut.getAtsYearList) { result =>
-        result shouldBe Right(data)
+        result mustBe Right(data)
 
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
           any[Request[AnyRef]],
@@ -325,7 +318,7 @@ class AtsListServiceSpec
       }
     }
 
-    "Agent" should {
+    "Agent" must {
 
       val agentRequest =
         AuthenticatedRequest(
@@ -343,7 +336,7 @@ class AtsListServiceSpec
       "Return the ats year list data for a user from the cache" in {
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe Right(data)
+          result mustBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never())
@@ -358,7 +351,7 @@ class AtsListServiceSpec
           .thenReturn(Future.successful(None))
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe Right(data)
+          result mustBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
@@ -373,7 +366,7 @@ class AtsListServiceSpec
           .thenReturn(false)
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
-          result shouldBe Right(data)
+          result mustBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
@@ -393,7 +386,7 @@ class AtsListServiceSpec
             .successful(AtsNotFoundResponse("Not found"))
 
           whenReady(sut.getAtsYearList) { result =>
-            result shouldBe Left(NOT_FOUND)
+            result mustBe Left(NOT_FOUND)
 
             verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
               any[Request[AnyRef]],
@@ -417,7 +410,7 @@ class AtsListServiceSpec
             .successful(AtsErrorResponse("Something went wrong"))
 
           whenReady(sut.getAtsYearList) { result =>
-            result shouldBe Left(INTERNAL_SERVER_ERROR)
+            result mustBe Left(INTERNAL_SERVER_ERROR)
 
             verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
               any[Request[AnyRef]],
@@ -438,8 +431,8 @@ class AtsListServiceSpec
           .thenThrow(AgentTokenException("Token is empty"))
 
         whenReady(sut.getAtsYearList.failed) { exception =>
-          exception shouldBe a[AgentTokenException]
-          exception.getMessage shouldBe "Token is empty"
+          exception mustBe a[AgentTokenException]
+          exception.getMessage mustBe "Token is empty"
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never())

@@ -23,11 +23,9 @@ import controllers.auth.{AuthAction, AuthenticatedRequest}
 import models.{AtsListData, ErrorResponse}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AtsListService, AtsYearListService, AuditService}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
-import view_models.AtsForms._
-import view_models.{AtsList, NoATSViewModel, TaxYearEnd}
+import view_models.{AtsForms, AtsList, NoATSViewModel, TaxYearEnd}
 import views.html.TaxsIndexView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -42,9 +40,9 @@ class IndexController @Inject()(
   mcc: MessagesControllerComponents,
   taxsIndexView: TaxsIndexView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  override val templateRenderer: TemplateRenderer,
+  tokenErrorView: TokenErrorView,
+  atsForms: AtsForms)(
+  implicit override val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
@@ -74,7 +72,7 @@ class IndexController @Inject()(
             Future.successful(None)
           }
         } map { _ =>
-          Redirect(routes.IndexController.authorisedIndex()).withSession(session)
+          Redirect(routes.IndexController.authorisedIndex).withSession(session)
         }
       }
       case _ => show(request)
@@ -94,7 +92,7 @@ class IndexController @Inject()(
           Ok(
             taxsIndexView(
               result,
-              atsYearFormMapping,
+              atsForms.atsYearFormMapping,
               getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
             .withSession(request.session + ("atsList" -> result.toString)))
     }
@@ -102,12 +100,12 @@ class IndexController @Inject()(
   override def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel flatMap {
       case Right(result: ViewModel) => getViewModel(result)
-      case Right(_: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts()))
+      case Right(_: NoATSViewModel) => Future.successful(Redirect(routes.ErrorController.authorisedNoAts))
       case _                        => Future.successful(InternalServerError(genericErrorView()))
     }
 
   def onSubmit(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    atsYearFormMapping.bindFromRequest.fold(
+    atsForms.atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         val session = request.session + (Globals.TAXS_USER_TYPE_KEY -> Globals.TAXS_PORTAL_REFERENCE)
         atsListService.getAtsYearList map { atsListData =>
@@ -134,7 +132,7 @@ class IndexController @Inject()(
         atsListData,
         data => {
           val taxYearListLength = data.atsYearList.get.map(year => TaxYearEnd(Some(year.toString))).length
-          Redirect(routes.AtsMainController.authorisedAtsMain().url + "?taxYear=" + year)
+          Redirect(routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + year)
             .withSession(request.session + ("TaxYearListLength" -> taxYearListLength.toString))
         }
       )
@@ -145,14 +143,14 @@ class IndexController @Inject()(
     Ok(
       taxsIndexView(
         result,
-        atsYearFormMapping,
+        atsForms.atsYearFormMapping,
         getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
 
   private def handleServiceResult(optData: Either[Int, AtsListData], block: AtsListData => Result): Result =
     optData match {
       case Right(value)                      => block(value)
-      case Left(value) if value == NOT_FOUND => NotFound(routes.ErrorController.authorisedNoAts().url)
-      case _                                 => InternalServerError(routes.ErrorController.serviceUnavailable().url)
+      case Left(value) if value == NOT_FOUND => NotFound(routes.ErrorController.authorisedNoAts.url)
+      case _                                 => InternalServerError(routes.ErrorController.serviceUnavailable.url)
     }
 
 }

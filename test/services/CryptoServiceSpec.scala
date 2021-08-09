@@ -16,22 +16,17 @@
 
 package services
 
-import java.util.Date
-
-import config.ApplicationConfig
 import models.AgentToken
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.AgentTokenException
 import utils.TestConstants._
+import utils.{AgentTokenException, BaseSpec}
 
-class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures {
+import java.util.Date
+
+class CryptoServiceSpec extends BaseSpec {
 
   val maxAge = 180
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   def sut = new CryptoService {
 
@@ -61,12 +56,12 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
     UriEncoding.encodePathSegment(encrypted, "UTF-8")
   }
 
-  "getAgentToken" should {
+  "getAgentToken" must {
 
     "return an AgentToken when the input is valid" in {
 
       val result = sut.getAgentToken(encryptToken(timestamp = timestamp))
-      result shouldBe agentToken
+      result mustBe agentToken
     }
 
     "throw an AgentTokenException when an expired token is passed" in {
@@ -77,7 +72,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Expired token")
+      exception.message must include("Expired token")
     }
 
     "throw an exception when the token date is in the future" in {
@@ -88,7 +83,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Expired token")
+      exception.message must include("Expired token")
     }
 
     "throw an AgentTokenException when the agentToken is malformed" in {
@@ -99,7 +94,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Malformed token content")
+      exception.message must include("Malformed token content")
     }
 
     "throw an AgentTokenException when the agentToken cannot be decryped" in {
@@ -110,7 +105,7 @@ class CryptoServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutu
         sut.getAgentToken(token)
       }
 
-      exception.message should include("Cannot decrypt token")
+      exception.message must include("Cannot decrypt token")
     }
   }
 }

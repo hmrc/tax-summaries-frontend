@@ -16,13 +16,13 @@
 
 package controllers.auth
 
-import controllers.ControllerBaseSpec
 import play.api.mvc._
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakePayeAuthAction extends PayeAuthAction with ControllerBaseSpec {
+object FakePayeAuthAction extends ControllerBaseSpec with PayeAuthAction {
   override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 

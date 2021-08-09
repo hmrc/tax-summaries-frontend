@@ -16,17 +16,21 @@
 
 package view_models.paye
 
-import controllers.paye.AppConfigBaseSpec
+import config.PayeConfig
 import models.{DataHolder, PayeAtsData, TaxBand}
 import services.atsData.PayeAtsTestData
+import utils.BaseSpec
 import view_models.{Amount, Rate}
 
-class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
+class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
-  "PayeYourIncomeAndTaxesData" should {
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeConfig = inject[PayeConfig]
+
+  "PayeYourIncomeAndTaxesData" must {
 
     "transform to view model with all tax band rates and all adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData
+      val incomeTaxData = payeAtsTestData.totalIncomeTaxAndSummaryData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
         taxYear,
@@ -57,13 +61,18 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with all tax band rates and only 2 non zero adjustments" in {
-      val incomeTaxData = PayeAtsTestData.totalIncomeTaxAndSummaryData.copy(
+      val incomeTaxData = payeAtsTestData.totalIncomeTaxAndSummaryData.copy(
         income_tax = Some(
           DataHolder(
             Some(
@@ -135,9 +144,14 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with only non-zero tax band rates" in {
@@ -220,9 +234,14 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with an empty tax bands list with no payments in any tax band" in {
@@ -300,9 +319,14 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount(0, "GBP")
       )
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with empty tax bands with no income and tax data" in {
@@ -328,9 +352,14 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount.empty,
         Amount.empty)
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with empty tax bands when no amounts are present" in {
@@ -356,13 +385,18 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount.empty,
         Amount.empty)
 
-      val result = PayeIncomeTaxAndNics(incomeTaxData)
+      val result = PayeIncomeTaxAndNics(
+        incomeTaxData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
 
     "transform to view model with the correct value for welsh income tax" in {
-      val incomeData = PayeAtsTestData.incomeData
+      val incomeData = payeAtsTestData.incomeData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
         taxYear,
@@ -377,9 +411,14 @@ class PayeIncomeTaxAndNicsSpec extends AppConfigBaseSpec {
         Amount.empty,
         Amount(2500, "GBP"))
 
-      val result = PayeIncomeTaxAndNics(incomeData)
+      val result = PayeIncomeTaxAndNics(
+        incomeData,
+        scottishRates = payeConfig.scottishTaxBandKeys,
+        uKRates = payeConfig.ukTaxBandKeys,
+        adjustments = payeConfig.adjustmentsKeys.toSet
+      )
 
-      result shouldBe expectedViewModel
+      result mustBe expectedViewModel
     }
   }
 }

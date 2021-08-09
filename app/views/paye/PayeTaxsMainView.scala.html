@@ -16,24 +16,27 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
 @import views.html.main
 @import helpers.BackLinkView
+@import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
-    backLinkView: BackLinkView
+    backLinkView: BackLinkView,
+        htmlFormatter: HtmlFormatter
 )
 
 @(  viewModel: PayeAtsMain
     )(
     implicit request: PayeAuthenticatedRequest[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
+
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        executionContext: ExecutionContext
 )
 
 @main(
@@ -44,8 +47,8 @@
 
     <h1 class="heading-xlarge flush--bottom" id="index-page-header">@Messages("paye.ats.index.html.title")</h1>
     <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
     <p id="index-page-description">@Html(Messages("paye.ats.index.html.lede"))</p>
     <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear)">@Messages("ats.index.html.tax_calc_link")</a></h2>
     <p>@Messages("paye.ats.index.html.tax_calc_description")</p>

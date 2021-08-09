@@ -16,18 +16,17 @@
 
 package controllers.paye
 
-import java.time.LocalDate
-
 import controllers.auth.FakePayeAuthAction
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import services.GovernmentSpendService
-import services.atsData.PayeAtsTestData.govSpendingData
+import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors.{PayeGenericErrorView, PayeNotAuthorisedView, PayeServiceUnavailableView}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting with CurrentTaxYear {
@@ -37,6 +36,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
+
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
 
   val mockGovSpendService = mock[GovernmentSpendService]
 
@@ -50,7 +51,7 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
       mock[PayeNotAuthorisedView],
       mock[PayeServiceUnavailableView])
 
-  "PayeErrorController" should {
+  "PayeErrorController" must {
 
     "show generic_error page" when {
 
@@ -59,8 +60,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val result = sut.genericError(INTERNAL_SERVER_ERROR)(fakeAuthenticatedRequest)
         val document = contentAsString(result)
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        document shouldBe contentAsString(payeGenericErrorView())
+        status(result) mustBe INTERNAL_SERVER_ERROR
+        document mustBe contentAsString(payeGenericErrorView())
       }
 
       "GATEWAY_TIMEOUT is received" in {
@@ -68,8 +69,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val result = sut.genericError(GATEWAY_TIMEOUT)(fakeAuthenticatedRequest)
         val document = contentAsString(result)
 
-        status(result) shouldBe BAD_GATEWAY
-        document shouldBe contentAsString(payeGenericErrorView())
+        status(result) mustBe BAD_GATEWAY
+        document mustBe contentAsString(payeGenericErrorView())
       }
 
       "BAD_GATEWAY is received" in {
@@ -77,8 +78,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val result = sut.genericError(BAD_GATEWAY)(fakeAuthenticatedRequest)
         val document = contentAsString(result)
 
-        status(result) shouldBe BAD_GATEWAY
-        document shouldBe contentAsString(payeGenericErrorView())
+        status(result) mustBe BAD_GATEWAY
+        document mustBe contentAsString(payeGenericErrorView())
       }
     }
 
@@ -96,8 +97,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
         val document = contentAsString(result)
 
-        status(result) shouldBe OK
-        document shouldBe contentAsString(howTaxIsSpentView(response, govSpendingData.taxYear))
+        status(result) mustBe OK
+        document mustBe contentAsString(howTaxIsSpentView(response, payeAtsTestData.govSpendingData.taxYear))
       }
     }
 
@@ -111,8 +112,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
         val document = contentAsString(result)
 
-        status(result) shouldBe BAD_REQUEST
-        document shouldBe contentAsString(payeGenericErrorView())
+        status(result) mustBe BAD_REQUEST
+        document mustBe contentAsString(payeGenericErrorView())
       }
 
       "the service throws any other kind of exception" in {
@@ -123,8 +124,8 @@ class PayeErrorControllerSpec extends PayeControllerSpecHelpers with Injecting w
         val result = sut.authorisedNoAts(fakeAuthenticatedRequest)
         val document = contentAsString(result)
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        document shouldBe contentAsString(payeGenericErrorView())
+        status(result) mustBe INTERNAL_SERVER_ERROR
+        document mustBe contentAsString(payeGenericErrorView())
       }
     }
 
