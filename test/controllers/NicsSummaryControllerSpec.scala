@@ -20,17 +20,16 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 
-class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -74,21 +73,21 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))) thenReturn Future
       .successful(model)
 
-  "Calling NICs" should {
+  "Calling NICs" must {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
-      status(result) shouldBe 200
+      val result = sut.show(request)
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(
+      document.title must include(
         Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
-      status(result) shouldBe 400
+      val result = sut.show(badRequest)
+      status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
@@ -96,11 +95,11 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
@@ -108,7 +107,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
@@ -117,16 +116,16 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
-      status(result) shouldBe 200
+      val result = sut.show(request)
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-income-tax-amt").text() shouldBe "£372"
-      document.getElementById("total-cg-tax-rate").text() shouldBe "56.78%"
-      document.getElementById("employee-nic-amount").text() shouldBe "£1,200"
-      document.getElementById("total-income-tax-and-nics").text() shouldBe "£1,572"
-      document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
+      document.getElementById("total-income-tax-amt").text() mustBe "£372"
+      document.getElementById("total-cg-tax-rate").text() mustBe "56.78%"
+      document.getElementById("employee-nic-amount").text() mustBe "£1,200"
+      document.getElementById("total-income-tax-and-nics").text() mustBe "£1,572"
+      document.getElementById("user-info").text must include("forename surname")
+      document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }
 
   }

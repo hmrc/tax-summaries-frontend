@@ -19,7 +19,7 @@ package controllers.auth
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain.{CtUtr, EmpRef, Nino, SaUtr, Uar, Vrn}
+import uk.gov.hmrc.domain._
 
 case class AuthenticatedRequest[A](
   userId: String,

@@ -16,33 +16,28 @@
 
 package services
 
-import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.Matchers.{any, eq => meq}
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.Json
 import play.api.http.Status.OK
-import play.api.test.{FakeRequest, Injecting}
+import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{BaseSpec, GenericViewModel}
 import view_models.{Amount, AtsList, GovernmentSpend, TaxYearEnd}
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
-class GovernmentSpendServiceSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with Injecting {
+class GovernmentSpendServiceSpec extends BaseSpec {
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -51,15 +46,12 @@ class GovernmentSpendServiceSpec
     yearList = List(2015)
   )
 
-  val taxYear = 2015
+  override val taxYear = 2015
 
   val mockAtsService = mock[AtsService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
-  implicit lazy val ec = inject[ExecutionContext]
-
-  implicit val appConfig = inject[ApplicationConfig]
 
   val request = AuthenticatedRequest(
     "userId",
@@ -73,23 +65,23 @@ class GovernmentSpendServiceSpec
 
   def sut = new GovernmentSpendService(mockAtsService, mockMiddleConnector) with MockitoSugar
 
-  "GovernmentSpendService getGovernmentSpendData" should {
+  "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
       when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
-        .thenReturn(genericViewModel)
+        .thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
-  "GovernmentSpendService govSpend" should {
+  "GovernmentSpendService govSpend" must {
 
     "return a complete GovernmentSpend when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
       val result = sut.govSpend(atsData)
 
-      result shouldBe GovernmentSpend(
+      result mustBe GovernmentSpend(
         2019,
         "1111111111",
         List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
@@ -106,18 +98,18 @@ class GovernmentSpendServiceSpec
       val atsData = AtsTestData.govSpendingData
       val result = sut.govSpend(atsData)
 
-      result.isScottishTaxPayer shouldBe true
+      result.isScottishTaxPayer mustBe true
     }
 
     "return a isScottishTaxPayer as false when incomeTaxStatus is not 0002" in {
       val atsData = AtsTestData.govSpendingDataForWelshUser
       val result = sut.govSpend(atsData)
 
-      result.isScottishTaxPayer shouldBe false
+      result.isScottishTaxPayer mustBe false
     }
   }
 
-  "GovernmentSpendService getGovernmentSpendDataV2" should {
+  "GovernmentSpendService getGovernmentSpendDataV2" must {
 
     "return a government spend map" in {
 
@@ -128,7 +120,7 @@ class GovernmentSpendServiceSpec
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
-      result shouldBe expectedBody
+      result mustBe expectedBody
     }
 
     "sort data by percentage" in {
@@ -141,7 +133,7 @@ class GovernmentSpendServiceSpec
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
-      result shouldBe expectedBody
+      result mustBe expectedBody
     }
 
     "sort the categories in correct order for taxYear 18/19" in {
@@ -156,7 +148,7 @@ class GovernmentSpendServiceSpec
 
       val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
 
-      result shouldBe expectedBody
+      result mustBe expectedBody
     }
   }
 }

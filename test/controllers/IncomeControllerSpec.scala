@@ -20,18 +20,17 @@ import controllers.auth.FakeAuthAction
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.MustMatchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, IncomeService}
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
 
 import scala.concurrent.Future
 
-class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class IncomeControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -68,21 +67,21 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(baseModel))
 
-  "Calling incomes" should {
+  "Calling incomes" must {
 
     "return a successful response for a valid request" in {
-      val result = Future.successful(sut.show(request))
-      status(result) shouldBe 200
+      val result = sut.show(request)
+      status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(
+      document.title must include(
         Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
     "display an error page for an invalid request" in {
-      val result = Future.successful(sut.show(badRequest))
-      status(result) shouldBe 400
+      val result = sut.show(badRequest)
+      status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
@@ -90,11 +89,11 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
-      document.title should include(Messages("global.error.InternalServerError500.title"))
+      document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
@@ -102,7 +101,7 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
@@ -110,25 +109,25 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "have the right user data in the view" in {
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
-      status(result) shouldBe 200
+      status(result) mustBe 200
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("self-employment-income").text() shouldBe "£1,100"
-      document.getElementById("income-from-employment").text() shouldBe "£10,500"
-      document.getElementById("income-before-tax").text() shouldBe "£11,600"
+      document.getElementById("self-employment-income").text() mustBe "£1,100"
+      document.getElementById("income-from-employment").text() mustBe "£10,500"
+      document.getElementById("income-before-tax").text() mustBe "£11,600"
 
-      document.getElementById("state-pension-amount").text() shouldBe "£1,000"
-      document.getElementById("other-pension-total").text() shouldBe "£2,000"
-      document.getElementById("taxable-state-benefits").text() shouldBe "£3,000"
-      document.getElementById("other-income-amount").text() shouldBe "£1,500"
+      document.getElementById("state-pension-amount").text() mustBe "£1,000"
+      document.getElementById("other-pension-total").text() mustBe "£2,000"
+      document.getElementById("taxable-state-benefits").text() mustBe "£3,000"
+      document.getElementById("other-income-amount").text() mustBe "£1,500"
 
-      document.toString should include("Your total income")
-      document.getElementById("user-info").text() should include("forename surname")
-      document.getElementById("user-info").text() should include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text shouldBe "Tax year: April 6 2013 to April 5 2014 Your total income"
+      document.toString must include("Your total income")
+      document.getElementById("user-info").text() must include("forename surname")
+      document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
+      document.select("h1").text mustBe "Tax year: April 6 2013 to April 5 2014 Your total income"
     }
 
     "have zero-value fields hidden in the view" in {
@@ -145,24 +144,24 @@ class IncomeControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       )
 
       when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
-        .thenReturn(model)
+        .thenReturn(Future.successful(model))
 
-      val result = Future.successful(sut.show(request))
+      val result = sut.show(request)
 
-      status(result) shouldBe 200
+      status(result) mustBe 200
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString should not include "self-employment-income"
-      document.toString should not include "benefits-from-employment"
-      document.toString should not include "other_pension_income"
-      document.toString should not include "state_pension"
-      document.toString should not include "taxable_state_benefits"
-      document.toString should not include "income_from_employment"
-      document.toString should not include "other_income"
-      document.toString should not include "total_income_before_tax"
-      document.getElementById("user-info").text should include("forename surname")
-      document.getElementById("user-info").text should include("Unique Taxpayer Reference: " + testUtr)
+      document.toString must not include "self-employment-income"
+      document.toString must not include "benefits-from-employment"
+      document.toString must not include "other_pension_income"
+      document.toString must not include "state_pension"
+      document.toString must not include "taxable_state_benefits"
+      document.toString must not include "income_from_employment"
+      document.toString must not include "other_income"
+      document.toString must not include "total_income_before_tax"
+      document.getElementById("user-info").text must include("forename surname")
+      document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }
 
   }

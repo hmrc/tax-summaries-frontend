@@ -16,13 +16,13 @@
 
 package controllers.auth
 
-import controllers.ControllerBaseSpec
 import play.api.mvc.{AnyContent, Request, _}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+import utils.ControllerBaseSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeMinAuthAction extends MinAuthAction with ControllerBaseSpec {
+object FakeMinAuthAction extends ControllerBaseSpec with MinAuthAction {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext

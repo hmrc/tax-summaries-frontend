@@ -14,16 +14,31 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package view_models
 
 import org.scalacheck.Gen
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.domain.SaUtrGenerator
-import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
+class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
 
   def amountGen: Gen[Amount] =
     Gen.choose(-100, 100).map { amount =>
@@ -32,11 +47,12 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
 
   def summaryGen: Gen[Summary] =
     for {
-      amount <- amountGen
-      utr = new SaUtrGenerator().nextSaUtr.utr
-      rate <- Rate(Gen.chooseNum(0, 20).toString)
-      year <- Gen.chooseNum(2010, 2099)
+      amount    <- amountGen
+      rateValue <- Gen.chooseNum(0, 20)
+      year      <- Gen.chooseNum(2010, 2099)
     } yield {
+      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val rate = Rate(rateValue.toString)
       Summary(
         year,
         utr,
@@ -66,7 +82,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
 
       "provide a correctly formatted string" in {
         forAll(summaryGen) { summary =>
-          summary.taxYearInterval shouldBe s"${summary.year - 1}-${summary.year.toString.takeRight(2)}"
+          summary.taxYearInterval mustBe s"${summary.year - 1}-${summary.year.toString.takeRight(2)}"
         }
       }
     }
@@ -74,7 +90,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
     "taxYearIntervalTo is called" must {
       "provide a correctly formatted string" in {
         forAll(summaryGen) { summary =>
-          summary.taxYearIntervalTo shouldBe s"${summary.year - 1} to ${summary.year}"
+          summary.taxYearIntervalTo mustBe s"${summary.year - 1} to ${summary.year}"
         }
       }
     }
@@ -85,7 +101,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         "Total income tax amount is above zero" in {
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount > zero) {
-              summary.hasTotalIncomeTaxAmount shouldBe true
+              summary.hasTotalIncomeTaxAmount mustBe true
             }
           }
         }
@@ -95,7 +111,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         "Total income tax amount is below zero" in {
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount < zero) {
-              summary.hasTotalIncomeTaxAmount shouldBe false
+              summary.hasTotalIncomeTaxAmount mustBe false
             }
           }
         }
@@ -104,7 +120,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
 
-            summaryWithZero.hasTotalIncomeTaxAmount shouldBe false
+            summaryWithZero.hasTotalIncomeTaxAmount mustBe false
           }
         }
       }
@@ -116,7 +132,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         "Total capital gains tax is above zero" in {
           forAll(summaryGen) { summary =>
             whenever(summary.totalCapitalGainsTax.amount > zero) {
-              summary.hasTotalCapitalGains shouldBe true
+              summary.hasTotalCapitalGains mustBe true
             }
           }
         }
@@ -126,7 +142,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         "Total capital gains tax is exactly zero" in {
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(totalCapitalGainsTax = Amount(0, "gbp"))
-            summaryWithZero.hasTotalCapitalGains shouldBe false
+            summaryWithZero.hasTotalCapitalGains mustBe false
           }
         }
       }
@@ -138,7 +154,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         "employee NICs amount is above zero" in {
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
-              summary.hasEmployeeNicAmount shouldBe true
+              summary.hasEmployeeNicAmount mustBe true
             }
           }
         }
@@ -149,7 +165,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(employeeNicAmount = Amount(0, "gbp"))
 
-            summaryWithZero.hasEmployeeNicAmount shouldBe false
+            summaryWithZero.hasEmployeeNicAmount mustBe false
           }
         }
       }
@@ -165,7 +181,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
             whenever(
               summary.totalIncomeTaxAmount.amount > zero && summary.employeeNicAmount.amount > zero
             ) {
-              summary.nonNegativeTotalIncomeTaxAndNics shouldBe
+              summary.nonNegativeTotalIncomeTaxAndNics mustBe
                 Amount(
                   summary.totalIncomeTaxAmount.amount + summary.employeeNicAmount.amount,
                   summary.totalIncomeTaxAndNics.currency
@@ -182,7 +198,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryWithLessThanZero = summary.copy(totalIncomeTaxAmount = Amount(-0.01, "gbp"))
-              summaryWithLessThanZero.nonNegativeTotalIncomeTaxAndNics shouldBe summary.employeeNicAmount
+              summaryWithLessThanZero.nonNegativeTotalIncomeTaxAndNics mustBe summary.employeeNicAmount
             }
           }
         }
@@ -192,7 +208,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
-              summaryWithZero.nonNegativeTotalIncomeTaxAndNics shouldBe summary.employeeNicAmount
+              summaryWithZero.nonNegativeTotalIncomeTaxAndNics mustBe summary.employeeNicAmount
             }
           }
         }
@@ -208,7 +224,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
             whenever(
               summary.totalIncomeTaxAmount.amount > zero && summary.employeeNicAmount.amount > zero
             ) {
-              summary.yourTotalTaxTextKey shouldBe "ats.summary.tax_and_nics.title"
+              summary.yourTotalTaxTextKey mustBe "ats.summary.tax_and_nics.title"
             }
           }
         }
@@ -217,7 +233,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount > zero) {
               val summaryWithZero = summary.copy(employeeNicAmount = Amount(0, "gbp"))
-              summaryWithZero.yourTotalTaxTextKey shouldBe "ats.summary.tax.title"
+              summaryWithZero.yourTotalTaxTextKey mustBe "ats.summary.tax.title"
             }
           }
         }
@@ -226,7 +242,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
-              summaryWithZero.yourTotalTaxTextKey shouldBe "ats.summary.nics.title"
+              summaryWithZero.yourTotalTaxTextKey mustBe "ats.summary.nics.title"
             }
           }
         }
@@ -250,8 +266,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 employeeNicAmount = Amount(0, "gbp"),
                 totalCapitalGainsTax = Amount(0, "gbp")
               )
-              summaryIncomeOnly.yourTotalTaxTextKeys._1 shouldBe expectedTitle("unary")
-              summaryIncomeOnly.yourTotalTaxTextKeys._2 shouldBe List(incomeTaxDescription)
+              summaryIncomeOnly.yourTotalTaxTextKeys._1 mustBe expectedTitle("unary")
+              summaryIncomeOnly.yourTotalTaxTextKeys._2 mustBe List(incomeTaxDescription)
             }
           }
         }
@@ -263,8 +279,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 totalIncomeTaxAmount = Amount(0, "gbp"),
                 employeeNicAmount = Amount(0, "gbp")
               )
-              summaryCgtOnly.yourTotalTaxTextKeys._1 shouldBe expectedTitle("unary")
-              summaryCgtOnly.yourTotalTaxTextKeys._2 shouldBe List(cgtDescription)
+              summaryCgtOnly.yourTotalTaxTextKeys._1 mustBe expectedTitle("unary")
+              summaryCgtOnly.yourTotalTaxTextKeys._2 mustBe List(cgtDescription)
             }
           }
         }
@@ -276,8 +292,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 totalIncomeTaxAmount = Amount(0, "gbp"),
                 totalCapitalGainsTax = Amount(0, "gbp")
               )
-              summaryNicsOnly.yourTotalTaxTextKeys._1 shouldBe expectedTitle("unary")
-              summaryNicsOnly.yourTotalTaxTextKeys._2 shouldBe List(nicsDescription)
+              summaryNicsOnly.yourTotalTaxTextKeys._1 mustBe expectedTitle("unary")
+              summaryNicsOnly.yourTotalTaxTextKeys._2 mustBe List(nicsDescription)
             }
           }
         }
@@ -291,8 +307,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 summary.employeeNicAmount.amount > zero
             ) {
               val summaryWithNoCgt = summary.copy(totalCapitalGainsTax = Amount(0, "gbp"))
-              summaryWithNoCgt.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
-              summaryWithNoCgt.yourTotalTaxTextKeys._2 shouldBe
+              summaryWithNoCgt.yourTotalTaxTextKeys._1 mustBe expectedTitle("binary")
+              summaryWithNoCgt.yourTotalTaxTextKeys._2 mustBe
                 List(incomeTaxDescription, nicsDescription)
             }
           }
@@ -305,8 +321,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 summary.totalCapitalGainsTax.amount > zero
             ) {
               val summaryWithNoNics = summary.copy(employeeNicAmount = Amount(0, "gbp"))
-              summaryWithNoNics.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
-              summaryWithNoNics.yourTotalTaxTextKeys._2 shouldBe
+              summaryWithNoNics.yourTotalTaxTextKeys._1 mustBe expectedTitle("binary")
+              summaryWithNoNics.yourTotalTaxTextKeys._2 mustBe
                 List(incomeTaxDescription, cgtDescription)
             }
           }
@@ -319,8 +335,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 summary.totalCapitalGainsTax.amount > zero
             ) {
               val summaryWithNoNics = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
-              summaryWithNoNics.yourTotalTaxTextKeys._1 shouldBe expectedTitle("binary")
-              summaryWithNoNics.yourTotalTaxTextKeys._2 shouldBe
+              summaryWithNoNics.yourTotalTaxTextKeys._1 mustBe expectedTitle("binary")
+              summaryWithNoNics.yourTotalTaxTextKeys._2 mustBe
                 List(nicsDescription, cgtDescription)
             }
           }
@@ -335,8 +351,8 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
                 summary.employeeNicAmount.amount > zero &&
                 summary.totalCapitalGainsTax.amount > zero
             ) {
-              summary.yourTotalTaxTextKeys._1 shouldBe expectedTitle("ternary")
-              summary.yourTotalTaxTextKeys._2 shouldBe
+              summary.yourTotalTaxTextKeys._1 mustBe expectedTitle("ternary")
+              summary.yourTotalTaxTextKeys._2 mustBe
                 List(incomeTaxDescription, nicsDescription, cgtDescription)
             }
           }
@@ -352,7 +368,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
 
           forAll(summaryGen) { summary =>
             whenever(summary.taxableGains.amount > zero) {
-              summary.hasTaxableGains shouldBe true
+              summary.hasTaxableGains mustBe true
             }
           }
         }
@@ -362,7 +378,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         "Taxable gains is exactly zero" in {
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(taxableGains = Amount(0, "gbp"))
-            summaryWithZero.hasTaxableGains shouldBe false
+            summaryWithZero.hasTaxableGains mustBe false
           }
         }
       }
@@ -371,7 +387,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
     "taxYearTo is called" must {
       "return the year as a string" in {
         forAll(summaryGen) { summary =>
-          summary.taxYearTo shouldBe summary.year.toString
+          summary.taxYearTo mustBe summary.year.toString
         }
       }
     }
@@ -379,7 +395,7 @@ class SummarySpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
     "taxYearFrom is called" must {
       "return the previous year as a string" in {
         forAll(summaryGen) { summary =>
-          summary.taxYearFrom shouldBe (summary.year - 1).toString
+          summary.taxYearFrom mustBe (summary.year - 1).toString
         }
       }
     }

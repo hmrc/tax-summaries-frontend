@@ -22,31 +22,24 @@ import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
-import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.http.Status.OK
+import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
+import utils.TestConstants.testNino
 import utils.TestConstants.{fakeCredentials, testNino, testUtr}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
-class PayeAtsServiceSpec
-    extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach
-    with IntegrationPatience {
+class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc = HeaderCarrier()
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
   val expectedResponse: JsValue = readJson("/paye_ats.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
   private val currentYearMinus1 = 2018
@@ -79,7 +72,7 @@ class PayeAtsServiceSpec
   override protected def afterEach(): Unit =
     Mockito.reset(mockAuditService)
 
-  "getPayeATSData" should {
+  "getPayeATSData" must {
 
     "return a successful response after transforming tax-summaries data to PAYE model" in {
 
@@ -88,7 +81,7 @@ class PayeAtsServiceSpec
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
-      result shouldBe Right(expectedResponse.as[PayeAtsData])
+      result mustBe Right(expectedResponse.as[PayeAtsData])
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
@@ -98,7 +91,7 @@ class PayeAtsServiceSpec
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
-      result.left.get.status shouldBe 500
+      result.left.get.status mustBe 500
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
@@ -108,7 +101,7 @@ class PayeAtsServiceSpec
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
-      result.left.get.status shouldBe 400
+      result.left.get.status mustBe 400
     }
 
     "return a NOT_FOUND response after receiving NotFoundException from connector" in {
@@ -118,7 +111,7 @@ class PayeAtsServiceSpec
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
-      result.left.get.status shouldBe 404
+      result.left.get.status mustBe 404
     }
 
     "produce a 'success' audit event when returning a successful response" in {
@@ -135,7 +128,7 @@ class PayeAtsServiceSpec
     }
   }
 
-  "getPayeATSMultipleYearData" should {
+  "getPayeATSMultipleYearData" must {
 
     "return a successful response as list of tax years" in {
 
@@ -147,7 +140,7 @@ class PayeAtsServiceSpec
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result shouldBe Right(List(2020, 2019))
+      result mustBe Right(List(2020, 2019))
     }
 
     "return a left of response after receiving left from connector" in {
@@ -160,7 +153,7 @@ class PayeAtsServiceSpec
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result.left.get.status shouldBe Status.NOT_FOUND
+      result.left.get.status mustBe Status.NOT_FOUND
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
@@ -173,7 +166,7 @@ class PayeAtsServiceSpec
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result.left.get.status shouldBe 400
+      result.left.get.status mustBe 400
     }
 
     "return an empty list after receiving NotFoundException from connector" in {
@@ -186,7 +179,7 @@ class PayeAtsServiceSpec
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result shouldBe Right(List.empty)
+      result mustBe Right(List.empty)
     }
   }
 

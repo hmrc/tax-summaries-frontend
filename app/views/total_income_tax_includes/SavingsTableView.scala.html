@@ -14,18 +14,18 @@
  * limitations under the License.
  *@
 
-@import utils.ViewUtils._
+@import utils.ViewUtils
 @import view_models.Amount
 @import view_models.Rate
 
-@this()
+@this(viewUtils: ViewUtils)
 @(taxModel: view_models.SavingsTax, ratesModel: view_models.SavingsRates)(implicit messages: Messages)
 
 @taxRow(id: String, tax: Amount, total: Amount, rate: Rate) = {
 @if(tax.nonZero) {
     <tr>
-        <td>@Html(messages(s"ats.total_income_tax.savings_income_tax.table.$id", toCurrency(total), rate.percent))</td>
-        <td id="savings-rate-@id">@Html(toCurrency(tax))</td>
+        <td>@Html(messages(s"ats.total_income_tax.savings_income_tax.table.$id", viewUtils.toCurrency(total), rate.percent))</td>
+        <td id="savings-rate-@id">@Html(viewUtils.toCurrency(tax))</td>
     </tr>
 }
 }

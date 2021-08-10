@@ -16,8 +16,9 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import views.html.main
+@import scala.concurrent.ExecutionContext
 
 @this(
     main: main
@@ -26,9 +27,10 @@
 @()(
    implicit request: PayeAuthenticatedRequest[_],
    messages: Messages,
-   formPartialRetriever: FormPartialRetriever,
+
    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-   appConfig: ApplicationConfig
+   appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 

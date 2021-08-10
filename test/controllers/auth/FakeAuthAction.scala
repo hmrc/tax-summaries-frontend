@@ -16,15 +16,15 @@
 
 package controllers.auth
 
-import controllers.ControllerBaseSpec
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeAuthAction extends AuthAction with ControllerBaseSpec {
+object FakeAuthAction extends ControllerBaseSpec with AuthAction {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext

@@ -16,7 +16,7 @@
 
 package view_models
 
-import utils.ViewUtils.positiveOrZero
+import utils.ViewUtils
 import utils.{GenericViewModel, TextGenerator}
 
 case class Summary(
@@ -48,7 +48,8 @@ case class Summary(
   def hasEmployeeNicAmount: Boolean = !employeeNicAmount.isZero
 
   def nonNegativeTotalIncomeTaxAndNics: Amount = {
-    val nonNegativeIT = positiveOrZero(totalIncomeTaxAmount)
+    val viewUtils = new ViewUtils
+    val nonNegativeIT = viewUtils.positiveOrZero(totalIncomeTaxAmount)
     val total = nonNegativeIT.amount + employeeNicAmount.amount
     Amount(total, totalIncomeTaxAndNics.currency)
   }

@@ -21,23 +21,20 @@ import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{BaseSpec, GenericViewModel}
 import view_models._
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
-class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
+class CapitalGainsServiceSpec extends BaseSpec {
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -62,25 +59,25 @@ class CapitalGainsServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Sca
 
   val sut = new CapitalGainsService(mockAtsService) with MockitoSugar
 
-  "CapitalGainsService getCapitalGains" should {
+  "CapitalGainsService getCapitalGains" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
         mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(genericViewModel)
+          Matchers.any())).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getCapitalGains(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
 
-  "CapitalGainsService capitalGains" should {
+  "CapitalGainsService capitalGains" must {
 
     "return a complete CapitalGains when given complete AtsData" in {
       val atsData = AtsTestData.capitalGainsData
       val result = sut.capitalGains(atsData)
 
-      result shouldBe CapitalGains(
+      result mustBe CapitalGains(
         2019,
         "1111111111",
         Amount.gbp(100),

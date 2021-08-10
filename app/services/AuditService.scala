@@ -37,6 +37,6 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector)(implicit ec:
     DataEvent(
       auditSource = taxsAuditSource,
       auditType = auditType,
-      tags = Map(HeaderNames.xSessionId -> sessionId.getOrElse("")) ++ hc.headers.toMap,
+      tags = hc.headers(HeaderNames.explicitlyIncludedHeaders).toMap,
       detail = details)
 }

@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -28,7 +28,6 @@ import services.PayeAtsService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeAtsMain
 import views.html.paye.PayeTaxsMainView
@@ -40,11 +39,10 @@ class PayeAtsMainController @Inject()(
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeTaxsMainView: PayeTaxsMainView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
+  implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request =>
     getPayeAts(taxYear)
@@ -59,7 +57,7 @@ class PayeAtsMainController @Inject()(
         response.status match {
           case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear))
           case _ =>
-            Logger.error(s"Error received, Http status: ${response.status}")
+            logger.error(s"Error received, Http status: ${response.status}")
             Redirect(routes.PayeErrorController.genericError(response.status))
         }
     }

@@ -19,12 +19,12 @@ package config
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.{Configuration, Environment}
 import play.api.test.FakeRequest
+import play.api.{Configuration, Environment}
 import views.ViewSpecBase
 import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
-class ErrorHandlerSpec extends MockitoSugar with ViewSpecBase {
+class ErrorHandlerSpec extends ViewSpecBase with MockitoSugar {
 
   lazy val errorHandler: ErrorHandler = new ErrorHandler(
     messagesApi,
@@ -39,15 +39,15 @@ class ErrorHandlerSpec extends MockitoSugar with ViewSpecBase {
   "notFoundTemplate" in {
     def notFoundView: Document = Jsoup.parse(errorHandler.notFoundTemplate(request).toString())
 
-    notFoundView.getElementsByTag("h1").toString should include(messages("global.page.not.found.error.heading"))
+    notFoundView.getElementsByTag("h1").toString must include(messages("global.page.not.found.error.heading"))
 
-    notFoundView.getElementsByTag("p").get(0).toString should include(
+    notFoundView.getElementsByTag("p").get(0).toString must include(
       messages("global.page.not.found.error.check.web.address.correct"))
 
-    notFoundView.getElementsByTag("p").get(1).toString should include(
+    notFoundView.getElementsByTag("p").get(1).toString must include(
       messages("global.page.not.found.error.check.web.address.full"))
 
-    notFoundView.getElementsByTag("p").get(2).toString should include(
+    notFoundView.getElementsByTag("p").get(2).toString must include(
       messages(
         "global.page.not.found.error.contact",
         "<a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" target=\"_blank\">" + messages(
@@ -67,10 +67,10 @@ class ErrorHandlerSpec extends MockitoSugar with ViewSpecBase {
           )
           .toString())
 
-    standardErrorTemplateView.getElementsByTag("h1").toString should include(
+    standardErrorTemplateView.getElementsByTag("h1").toString must include(
       messages("global.error.InternalServerError500.title"))
 
-    standardErrorTemplateView.getElementsByTag("p").get(0).toString should include(
+    standardErrorTemplateView.getElementsByTag("p").get(0).toString must include(
       messages("global.error.InternalServerError500.message.you.can") + " " + messages(
         "global.error.InternalServerError500.message.contact.hmrc") + " " + messages(
         "global.error.InternalServerError500.message.by.phone.post"))

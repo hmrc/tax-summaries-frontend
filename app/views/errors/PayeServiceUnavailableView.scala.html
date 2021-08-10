@@ -15,8 +15,9 @@
  *@
 
 @import config.ApplicationConfig
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import views.html.main
+@import scala.concurrent.ExecutionContext
 
 @this(
     main: main
@@ -25,9 +26,10 @@
 @()(
     implicit request: Request[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
+
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 @main(

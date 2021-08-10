@@ -21,7 +21,7 @@ import com.typesafe.scalalogging.LazyLogging
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.Logger
+import play.api.{Logger, Logging}
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: AuditService)(
   implicit ec: ExecutionContext)
-    extends LazyLogging {
+    extends Logging {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(
     implicit hc: HeaderCarrier,
@@ -44,7 +44,7 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
       case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
       case e: Exception =>
-        Logger.error(s"Exception in PayeAtsService: $e", e)
+        logger.error(s"Exception in PayeAtsService: $e", e)
         Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
     }
 
@@ -57,7 +57,7 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
       case _: NotFoundException   => Right(List.empty)
       case e: Exception =>
-        Logger.error(s"Exception in PayeAtsService: $e", e)
+        logger.error(s"Exception in PayeAtsService: $e", e)
         Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
     }
 

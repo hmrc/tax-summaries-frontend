@@ -16,12 +16,12 @@
 
 package services.atsData
 
-import controllers.paye.AppConfigBaseSpec
 import models._
+import utils.BaseSpec
 import view_models.paye._
 import view_models.{Amount, Rate}
 
-object PayeAtsTestData extends AppConfigBaseSpec {
+class PayeAtsTestData extends BaseSpec {
 
   val govSpendingData = PayeAtsData(
     taxYear,

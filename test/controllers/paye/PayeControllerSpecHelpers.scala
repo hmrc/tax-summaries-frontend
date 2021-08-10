@@ -16,11 +16,11 @@
 
 package controllers.paye
 
-import controllers.ControllerBaseSpec
 import controllers.auth.PayeAuthenticatedRequest
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.ControllerBaseSpec
 import utils.TestConstants.testNino
 
 import scala.io.Source

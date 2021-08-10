@@ -18,6 +18,7 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -27,12 +28,13 @@ import uk.gov.hmrc.domain._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
   implicit ec: ExecutionContext,
   appConfig: ApplicationConfig)
-    extends AuthAction with AuthorisedFunctions {
+    extends AuthAction with AuthorisedFunctions with Logging {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -41,7 +43,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     if (saShuttered) {
-      Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable()))
+      Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable))
     } else {
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
@@ -73,7 +75,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                 )
               }
             } else {
-              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
+              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
             }
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
@@ -91,7 +93,7 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
         )
       }
 
-      case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised())
+      case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised)
     }
 }
 

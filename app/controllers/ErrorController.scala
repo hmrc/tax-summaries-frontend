@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
@@ -26,12 +24,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class ErrorController @Inject()(
@@ -43,7 +41,6 @@ class ErrorController @Inject()(
   notAuthorisedView: NotAuthorisedView,
   howTaxIsSpentView: HowTaxIsSpentView,
   serviceUnavailableView: ServiceUnavailableView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
   implicit val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)

@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package utils
 
 import controllers.auth.AuthenticatedRequest
-import controllers.paye.AppConfigBaseSpec
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n
-import play.api.i18n.{MessagesApi, MessagesImpl, _}
-import play.api.mvc.{DefaultMessagesActionBuilderImpl, MessagesActionBuilder, _}
+import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.{MockPartialRetriever, MockTemplateRenderer}
 import utils.TestConstants.{testNino, testUtr}
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
@@ -36,7 +33,7 @@ import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 
 import scala.concurrent.ExecutionContext
 
-trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
+trait ControllerBaseSpec extends BaseSpec {
 
   private val messagesActionBuilder: MessagesActionBuilder =
     new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
@@ -56,10 +53,7 @@ trait ControllerBaseSpec extends AppConfigBaseSpec with MockitoSugar {
   implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
-  implicit lazy val formPartialRetriever = MockPartialRetriever
   implicit lazy val templateRenderer = MockTemplateRenderer
-
-  implicit val ec: ExecutionContext = mcc.executionContext
 
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]
   lazy val genericErrorView = inject[GenericErrorView]

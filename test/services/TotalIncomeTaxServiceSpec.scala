@@ -21,23 +21,20 @@ import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{BaseSpec, GenericViewModel}
 import view_models._
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
-class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar {
+class TotalIncomeTaxServiceSpec extends BaseSpec {
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -55,13 +52,13 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
     val taxYear = 2015
   }
 
-  "TotalIncomeTaxService getIncomeData" should {
+  "TotalIncomeTaxService getIncomeData" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
         mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(genericViewModel)
+          Matchers.any())).thenReturn(Future(genericViewModel))
       lazy val request = AuthenticatedRequest(
         "userId",
         None,
@@ -76,7 +73,7 @@ class TotalIncomeTaxServiceSpec extends UnitSpec with GuiceOneAppPerSuite with S
     }
   }
 
-  "TotalIncomeTaxService.totalIncomeConverter" should {
+  "TotalIncomeTaxService.totalIncomeConverter" must {
 
     val savingsTax = SavingsTax(
       Amount.gbp(2900),
