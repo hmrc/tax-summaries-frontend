@@ -46,7 +46,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
   implicit val hc = new HeaderCarrier
 
   val mockAtsService = mock[AtsService]
-  val taxYear = 2015
+  override val taxYear = 2015
   val request = AuthenticatedRequest(
     "userId",
     None,

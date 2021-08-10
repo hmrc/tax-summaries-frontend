@@ -22,6 +22,7 @@ import models.PayeAtsData
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
+import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.mvc.Request

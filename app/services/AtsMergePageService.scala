@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.AuthenticatedRequest
-import play.api.Logger
+import play.api.{Logger, Logging}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils._
@@ -32,7 +32,8 @@ class AtsMergePageService @Inject()(
   dataCacheConnector: DataCacheConnector,
   payeAtsService: PayeAtsService,
   atsListService: AtsListService,
-  appConfig: ApplicationConfig)(implicit ec: ExecutionContext) {
+  appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def getSaAndPayeYearList(
     implicit hc: HeaderCarrier,
@@ -46,7 +47,7 @@ class AtsMergePageService @Inject()(
           Right(AtsMergePageViewModel(saTaxYearData, payeTaxYearList, appConfig, request.confidenceLevel))
         }
         case _ => {
-          Logger.error(s"Error received when retrieving Paye and SA data, Http status: $INTERNAL_SERVER_ERROR")
+          logger.error(s"Error received when retrieving Paye and SA data, Http status: $INTERNAL_SERVER_ERROR")
           Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error when retrieving Paye and SA data"))
         }
       }

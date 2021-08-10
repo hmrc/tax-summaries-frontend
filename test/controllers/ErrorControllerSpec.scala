@@ -30,8 +30,10 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
-
 import java.time.LocalDate
+
+import org.mockito.Matchers
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
@@ -83,8 +85,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result = sut().authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe OK
-          document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
+          status(result) mustBe OK
+          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
         }
 
         "the service returns the government spend data with nino" in {

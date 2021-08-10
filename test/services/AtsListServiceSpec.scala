@@ -50,7 +50,7 @@ class AtsListServiceSpec extends BaseSpec {
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
-  val appConfig = mock[ApplicationConfig]
+  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
@@ -87,7 +87,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(appConfig.taxYear).thenReturn(2020)
+    when(mockAppConfig.taxYear).thenReturn(2020)
   }
 
   implicit val request =
@@ -115,7 +115,7 @@ class AtsListServiceSpec extends BaseSpec {
   }
 
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, mockAppConfig)
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
 
   "storeSelectedTaxYear" must {
 
@@ -234,7 +234,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a ats list without 2020 year data" in {
 
-      when(appConfig.taxYear).thenReturn(2019)
+      when(mockAppConfig.taxYear).thenReturn(2019)
 
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(dataFor2019)))

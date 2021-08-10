@@ -16,7 +16,6 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.helpers._
 @import view_models.AtsForms
 @import views.html.helpers.ErrorSummaryTemplateView
@@ -24,12 +23,16 @@
 @import views.html.main
 @import views.html.helpers.HeaderSection
 @import view_models.AtsMergePageViewModel
+@import scala.concurrent.ExecutionContext
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
 @this(
     main: main,
     headerSection: HeaderSection,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
-    inputRadioGroupView: InputRadioGroupView
+    inputRadioGroupView: InputRadioGroupView,
+    atsForms: AtsForms,
+    formWithCSRF: FormWithCSRF
 )
 
 @(  atsMergePageViewModel: AtsMergePageViewModel,
@@ -38,9 +41,9 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+    ec : ExecutionContext
 )
 
 @pastAtsParagraph = {
@@ -79,7 +82,7 @@ messages("merge.page.paye.ivuplift.header")
 
         @errorSummaryTemplateView(atsYearForm)
 
-        @form(action = controllers.routes.AtsMergePageController.onSubmit){
+        @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
         <h1 id="index-page-header" class="heading-xlarge">
                 <span class="gray heading-medium block-heading">
                     @messages("generic.ats")
@@ -93,7 +96,7 @@ messages("merge.page.paye.ivuplift.header")
 
 
         @inputRadioGroupView(
-        atsYearForm(AtsForms.yearChoice),
+        atsYearForm(atsForms.yearChoice),
         atsMergePageViewModel.completeYearList.map(
         yearChoice => yearChoice -> yearChoice.getLabel
         ),

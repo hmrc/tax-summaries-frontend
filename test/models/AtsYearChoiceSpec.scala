@@ -17,19 +17,19 @@
 package models
 
 import play.api.libs.json.{JsString, JsSuccess}
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
-class AtsYearChoiceSpec extends UnitSpec {
+class AtsYearChoiceSpec extends BaseSpec {
 
   val choice = AtsYearChoice(SA, 2015)
   val correctString = "{\"atsType\":\"SA\",\"year\":2015}"
 
   "AtsYearChoice" when {
-    "fromString" should {
+    "fromString" must {
 
       "return the correct object from correct string" in {
         val actual = AtsYearChoice.fromString(correctString)
-        actual shouldBe choice
+        actual mustBe choice
       }
 
       "throw exception with an incorrect string" in {
@@ -37,23 +37,23 @@ class AtsYearChoiceSpec extends UnitSpec {
           AtsYearChoice.fromString("{\"incorrect\":12}")
         }
 
-        exception.getMessage should include("Could not parse json")
+        exception.getMessage must include("Could not parse json")
       }
     }
 
-    "toOptionString" should {
+    "toOptionString" must {
 
       "return json" in {
         val actual = AtsYearChoice.toOptionString(choice)
-        actual shouldBe Some(correctString)
+        actual mustBe Some(correctString)
       }
     }
 
-    "toString" should {
+    "toString" must {
 
       "return json" in {
         val actual = AtsYearChoice.toString(choice)
-        actual shouldBe correctString
+        actual mustBe correctString
       }
     }
 

@@ -26,7 +26,6 @@ import services.PayeAtsService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
-import utils.{MockPartialRetriever, MockTemplateRenderer}
 import utils.TestConstants.{testNino, testUtr}
 import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
 import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}

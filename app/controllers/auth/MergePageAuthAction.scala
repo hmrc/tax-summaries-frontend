@@ -54,7 +54,7 @@ class MergePageAuthActionImpl @Inject()(
           }
 
           if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
-            Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised()))
+            Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
           } else {
             block {
               AuthenticatedRequest(
@@ -87,7 +87,7 @@ class MergePageAuthActionImpl @Inject()(
     }
 
     case _: InsufficientEnrolments => {
-      Redirect(controllers.routes.ErrorController.notAuthorised())
+      Redirect(controllers.routes.ErrorController.notAuthorised)
     }
   }
 }

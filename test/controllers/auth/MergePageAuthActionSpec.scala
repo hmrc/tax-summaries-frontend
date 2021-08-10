@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtrGenerator
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants._
 
@@ -37,10 +37,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
-
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   class Harness(authAction: MergePageAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -58,19 +55,19 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
-  "A user with no active session" should {
+  "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(ggSignInUrl)
     }
   }
 
-  "A user with insufficient enrolments" should {
+  "A user with insufficient enrolments" must {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
@@ -78,11 +75,11 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/not-authorised")
+      redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
   }
 
-  "A user with a confidence level 50 and an SA enrolment" should {
+  "A user with a confidence level 50 and an SA enrolment" must {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult: Future[
@@ -104,13 +101,13 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(utr)
-      contentAsString(result) should include("true")
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include("true")
     }
   }
 
-  "A user with a confidence level 50 and an IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
       val uar = testUar
 
@@ -132,14 +129,14 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include(testUtr)
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include(testUtr)
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50 and an IR-SA-AGENT enrolment, no nino and no utr" should {
+  "A user with a confidence level 50 and an IR-SA-AGENT enrolment, no nino and no utr" must {
     "create an authenticated request" in {
       val uar = testUar
 
@@ -161,14 +158,14 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50, no nino and no utr" should {
+  "A user with a confidence level 50, no nino and no utr" must {
     "see access denied" in {
 
       val retrievalResult: Future[
@@ -189,8 +186,8 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/not-authorised")
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
   }
 
@@ -217,7 +214,7 @@ class MergePageAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with Moc
       await(controller.onPageLoad()(FakeRequest("", "")))
     }
 
-    ex.getMessage should include("Can't find credentials for user")
+    ex.getMessage must include("Can't find credentials for user")
 
   }
 

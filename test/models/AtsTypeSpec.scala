@@ -17,52 +17,52 @@
 package models
 
 import play.api.libs.json.{JsString, JsSuccess}
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
-class AtsTypeSpec extends UnitSpec {
+class AtsTypeSpec extends BaseSpec {
   "AtsType" when {
 
-    "writes" should {
+    "writes" must {
 
       "return the correct JS string for SA" in {
         val expectedJsStringSA = JsString("SA")
         val actual = AtsType.writes.writes(SA)
-        actual shouldBe expectedJsStringSA
+        actual mustBe expectedJsStringSA
       }
 
       "return the correct JS string for PAYE" in {
         val expectedJsStringSA = JsString("PAYE")
         val actual = AtsType.writes.writes(PAYE)
-        actual shouldBe expectedJsStringSA
+        actual mustBe expectedJsStringSA
       }
 
       "return the correct JS string for NoATS" in {
         val expectedJsStringSA = JsString("NoATS")
         val actual = AtsType.writes.writes(NoATS)
-        actual shouldBe expectedJsStringSA
+        actual mustBe expectedJsStringSA
       }
     }
 
     "AtsType" when {
 
-      "reads" should {
+      "reads" must {
 
         "return the correct JS success for SA" in {
           val expected = JsSuccess(SA)
           val actual = AtsType.reads.reads(JsString("SA"))
-          actual shouldBe expected
+          actual mustBe expected
         }
 
         "return the correct JS success for PAYE" in {
           val expected = JsSuccess(PAYE)
           val actual = AtsType.reads.reads(JsString("PAYE"))
-          actual shouldBe expected
+          actual mustBe expected
         }
 
         "return the correct JS success for NoATS" in {
           val expected = JsSuccess(NoATS)
           val actual = AtsType.reads.reads(JsString("NoATS"))
-          actual shouldBe expected
+          actual mustBe expected
         }
       }
 
