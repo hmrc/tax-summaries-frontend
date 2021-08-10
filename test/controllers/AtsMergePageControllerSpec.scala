@@ -43,7 +43,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
   val mockAtsMergePageService = mock[AtsMergePageService]
   val atsForms = inject[AtsForms]
 
-  override implicit lazy val appConfig = mock[ApplicationConfig]
+  implicit lazy val mockAppConfig = mock[ApplicationConfig]
   val sut = new AtsMergePageController(
     mockAtsMergePageService,
     new FakeMergePageAuthAction(true),
@@ -63,13 +63,14 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
   val successViewModel =
-    AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), appConfig, ConfidenceLevel.L50)
+    AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), mockAppConfig, ConfidenceLevel.L50)
 
-  override def beforeEach() =
-    reset(appConfig)
-
-  when(appConfig.saShuttered).thenReturn(false)
-  when(appConfig.payeShuttered).thenReturn(false)
+  override def beforeEach() = {
+    reset(mockAppConfig)
+    when(mockAppConfig.saShuttered).thenReturn(false)
+    when(mockAppConfig.payeShuttered).thenReturn(false)
+    when(mockAppConfig.reportAProblemPartialUrl).thenReturn(appConfig.reportAProblemPartialUrl)
+  }
 
   "AtsMergePageController for onPageLoad" must {
 
@@ -114,8 +115,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
     "redirect to serviceUnavailable page if sa and paye are shuttered" in {
 
-      when(appConfig.saShuttered).thenReturn(true)
-      when(appConfig.payeShuttered).thenReturn(true)
+      when(mockAppConfig.saShuttered).thenReturn(true)
+      when(mockAppConfig.payeShuttered).thenReturn(true)
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 

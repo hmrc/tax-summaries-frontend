@@ -34,10 +34,6 @@ class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionC
         case OK => extractJson[A](response.json)
         case e @ _ =>
           val message = s"Connector returned $e: $url"
-          println("..................")
-          println("..................")
-          println("..................")
-          println("..................")
           logger.error(message)
           AtsErrorResponse(message)
 
@@ -47,11 +43,6 @@ class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionC
         logger.warn(e.message)
         AtsNotFoundResponse(e.responseCode.toString)
       case e: Upstream4xxResponse if (e.upstreamResponseCode == UNAUTHORIZED) =>
-        println(":::::::::")
-        println(":::::::::")
-        println(":::::::::")
-        println(":::::::::")
-        println(":::::::::")
         logger.error(e.getMessage)
         AtsErrorResponse(e.getMessage)
       case e @ (_: Upstream5xxResponse | _: Exception) =>
