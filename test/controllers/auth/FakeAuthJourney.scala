@@ -16,10 +16,10 @@
 
 package controllers.auth
 
-import controllers.ControllerBaseSpec
 import play.api.mvc._
+import utils.ControllerBaseSpec
 
-object FakeAuthJourney extends AuthJourney with ControllerBaseSpec {
+object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
   override val authWithSelfAssessment
     : ActionBuilder[AuthenticatedRequest, AnyContent] = FakeAuthAction andThen FakeSelfAssessmentAuthAction
 }

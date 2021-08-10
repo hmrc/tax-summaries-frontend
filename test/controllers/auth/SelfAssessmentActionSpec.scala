@@ -16,8 +16,6 @@
 
 package controllers.auth
 
-import config.ApplicationConfig
-import controllers.ControllerBaseSpec
 import models.MatchingDetails
 import org.scalatest.concurrent.ScalaFutures
 import org.mockito.Matchers._
@@ -26,32 +24,26 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{Action, AnyContent, BodyParser, InjectedController, Request, Result, Results}
-import play.api.http.Status._
-import play.api.test.Helpers.{contentAsString, redirectLocation}
+import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import services.{CitizenDetailsService, FailedMatchingDetailsResponse, SucccessMatchingDetailsResponse}
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.domain.{Generator, SaUtr, SaUtrGenerator, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.{BaseSpec, ControllerBaseSpec}
 import utils.TestConstants.{fakeCredentials, testUar}
-import utils.RetrievalOps._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class SelfAssessmentActionSpec
-    extends UnitSpec with MockitoSugar with ScalaFutures with GuiceOneAppPerSuite with Injecting
+    extends BaseSpec with MockitoSugar with ScalaFutures with GuiceOneAppPerSuite with Injecting
     with BeforeAndAfterEach {
 
-  lazy implicit val ec = inject[ExecutionContext]
   implicit val timeout: FiniteDuration = 5 seconds
-  lazy implicit val appConfig = inject[ApplicationConfig]
   implicit val hc = HeaderCarrier()
 
-  val unauthorizedRoute = controllers.routes.ErrorController.notAuthorised().url
+  val unauthorizedRoute = controllers.routes.ErrorController.notAuthorised.url
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   val citizenDetailsService = mock[CitizenDetailsService]
@@ -59,7 +51,7 @@ class SelfAssessmentActionSpec
 
   val action = new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig)
 
-  class FakeSelfAssessmentAction(utr: Option[SaUtr], uar: Option[Uar]) extends AuthAction with ControllerBaseSpec {
+  class FakeSelfAssessmentAction(utr: Option[SaUtr], uar: Option[Uar]) extends ControllerBaseSpec with AuthAction {
 
     override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
     override protected val executionContext: ExecutionContext = mcc.executionContext
@@ -90,7 +82,7 @@ class SelfAssessmentActionSpec
     }
   }
 
-  "refine with non empty utr and non empty agent ref" should {
+  "refine with non empty utr and non empty agent ref" must {
     "do nothing" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
@@ -99,13 +91,13 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result)(timeout) should include(utr)
+      status(result) mustBe OK
+      contentAsString(result)(timeout) must include(utr)
       verifyZeroInteractions(citizenDetailsService)
     }
   }
 
-  "refine with empty utr and non empty agent ref" should {
+  "refine with empty utr and non empty agent ref" must {
     "do nothing" in {
       val uar = testUar
 
@@ -113,13 +105,13 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result)(timeout) should include("None")
+      status(result) mustBe OK
+      contentAsString(result)(timeout) must include("None")
       verifyZeroInteractions(citizenDetailsService)
     }
   }
 
-  "refine with non empty utr and not an agent" should {
+  "refine with non empty utr and not an agent" must {
     "do nothing" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
@@ -128,13 +120,13 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result)(timeout) should include(utr)
+      status(result) mustBe OK
+      contentAsString(result)(timeout) must include(utr)
       verifyZeroInteractions(citizenDetailsService)
     }
   }
 
-  "refine with empty utr and not an agent" should {
+  "refine with empty utr and not an agent" must {
     "redirect to unauthorized if nino is not present" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
@@ -145,8 +137,8 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result)(timeout).get must endWith(unauthorizedRoute)
       verifyZeroInteractions(citizenDetailsService)
     }
 
@@ -159,8 +151,8 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result)(timeout).get should startWith(appConfig.identityVerificationUpliftUrl)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result)(timeout).get must startWith(appConfig.identityVerificationUpliftUrl)
       verifyZeroInteractions(citizenDetailsService)
     }
 
@@ -176,8 +168,8 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result)(timeout).get must endWith(unauthorizedRoute)
       verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
     }
 
@@ -194,8 +186,8 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result)(timeout).get must endWith(unauthorizedRoute)
       verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
     }
 
@@ -207,8 +199,8 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result)(timeout).get should endWith(unauthorizedRoute)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result)(timeout).get must endWith(unauthorizedRoute)
       verifyZeroInteractions(citizenDetailsService)
     }
 
@@ -226,8 +218,8 @@ class SelfAssessmentActionSpec
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result)(timeout) should include(utr)
+      status(result) mustBe OK
+      contentAsString(result)(timeout) must include(utr)
       verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
     }
   }

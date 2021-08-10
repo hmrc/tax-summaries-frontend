@@ -16,20 +16,11 @@
 
 package connectors
 
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.WireMockHelper
+import utils.{BaseSpec, WireMockHelper}
 
-import scala.concurrent.ExecutionContext
-
-trait ConnectorSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper with IntegrationPatience
-    with Injecting {
+trait ConnectorSpec extends BaseSpec with WireMockHelper {
 
   implicit val hc = HeaderCarrier()
-  implicit lazy val ec = inject[ExecutionContext]
 
 }

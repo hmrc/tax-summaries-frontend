@@ -42,7 +42,7 @@ class SelfAssessmentActionImpl @Inject()(
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     if (request.agentRef.isDefined && !request.isAgentActive) {
-      Future(Left(Redirect(controllers.routes.ErrorController.notAuthorised())))
+      Future(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
     } else if (request.saUtr.isEmpty && request.agentRef.isEmpty) {
       ninoAuthAction.getNino().flatMap { atsNinoResponse =>
         handleResponse(request, atsNinoResponse)
@@ -64,24 +64,24 @@ class SelfAssessmentActionImpl @Inject()(
           detailsResponse match {
             case SucccessMatchingDetailsResponse(value) =>
               if (value.saUtr.isDefined) { Right(createAuthenticatedRequest(request, value.saUtr)) } else {
-                Left(Redirect(controllers.routes.ErrorController.notAuthorised()))
+                Left(Redirect(controllers.routes.ErrorController.notAuthorised))
               }
             case _ =>
               Left(
-                Redirect(controllers.routes.ErrorController.notAuthorised())
+                Redirect(controllers.routes.ErrorController.notAuthorised)
               )
           }
         }
       case NoAtsNinoFound =>
         Future(
           Left(
-            Redirect(controllers.routes.ErrorController.notAuthorised())
+            Redirect(controllers.routes.ErrorController.notAuthorised)
           )
         )
       case InsufficientCredsNino =>
         Future(
           Left(
-            Redirect(controllers.routes.ErrorController.notAuthorised())
+            Redirect(controllers.routes.ErrorController.notAuthorised)
           )
         )
       case UpliftRequiredAtsNino =>

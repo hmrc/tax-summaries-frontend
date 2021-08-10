@@ -16,14 +16,14 @@
 
 package controllers.auth
 
-import controllers.ControllerBaseSpec
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
+import utils.ControllerBaseSpec
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeSelfAssessmentAuthAction extends SelfAssessmentAction with ControllerBaseSpec {
+object FakeSelfAssessmentAuthAction extends ControllerBaseSpec with SelfAssessmentAction {
 
   override protected def executionContext: ExecutionContext = mcc.executionContext
 

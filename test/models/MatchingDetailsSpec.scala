@@ -18,17 +18,17 @@ package models
 
 import play.api.libs.json.{JsResultException, Json}
 import uk.gov.hmrc.domain.SaUtrGenerator
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
-class MatchingDetailsSpec extends UnitSpec {
+class MatchingDetailsSpec extends BaseSpec {
   val utr = new SaUtrGenerator().nextSaUtr
 
-  "MatchingDetails" should {
+  "MatchingDetails" must {
     "do a round trip through" in {
       val matchingDetails = MatchingDetails(Some(utr))
       val json = Json.toJson(matchingDetails)
 
-      json.as[MatchingDetails] shouldBe matchingDetails
+      json.as[MatchingDetails] mustBe matchingDetails
     }
 
     "invalid json returns None" in {
@@ -38,7 +38,7 @@ class MatchingDetailsSpec extends UnitSpec {
                               |}
                               |""".stripMargin)
 
-      json.as[MatchingDetails] shouldBe MatchingDetails(None)
+      json.as[MatchingDetails] mustBe MatchingDetails(None)
 
     }
   }

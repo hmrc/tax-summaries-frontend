@@ -28,22 +28,21 @@ import play.api.test.Helpers._
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class CitizenDetailsServiceSpec
-    extends UnitSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with Injecting {
+    extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with Injecting {
 
   implicit val hc = HeaderCarrier()
-  lazy implicit val ec = inject[ExecutionContext]
   val citizenDetailsConnector = mock[CitizenDetailsConnector]
   val service = new CitizenDetailsService(citizenDetailsConnector)
 
   val nino = new Generator().nextNino
   val utr = new SaUtrGenerator().nextSaUtr
 
-  "getUtr" should {
+  "getUtr" must {
     "return the utr from CID" in {
       val json = Json.parse(s"""
                                |{
@@ -58,7 +57,7 @@ class CitizenDetailsServiceSpec
       when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any())).thenReturn(Future.successful(response))
 
       val result = service.getMatchingDetails(nino.toString()).futureValue
-      result shouldBe SucccessMatchingDetailsResponse(MatchingDetails(Some(utr)))
+      result mustBe SucccessMatchingDetailsResponse(MatchingDetails(Some(utr)))
     }
 
     List(BAD_REQUEST, NOT_FOUND, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
@@ -68,7 +67,7 @@ class CitizenDetailsServiceSpec
         when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any())).thenReturn(Future.successful(response))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
-        result shouldBe FailedMatchingDetailsResponse
+        result mustBe FailedMatchingDetailsResponse
       }
     }
   }

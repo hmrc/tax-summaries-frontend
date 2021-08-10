@@ -26,19 +26,18 @@ import uk.gov.hmrc.auth.core.{IncorrectCredentialStrength, InsufficientConfidenc
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite with Injecting with ScalaFutures {
+class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite with Injecting with ScalaFutures {
 
   implicit val hc = HeaderCarrier()
-  lazy implicit val ec = inject[ExecutionContext]
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ninoAuthAction = new NinoAuthAction(mockAuthConnector)
 
-  "getNino" should {
+  "getNino" must {
     "return a NINO when auth returns a NINO" in {
       val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Option[String]] =
@@ -49,7 +48,7 @@ class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerS
           .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      ninoAuthAction.getNino().futureValue shouldBe SuccessAtsNino(nino)
+      ninoAuthAction.getNino().futureValue mustBe SuccessAtsNino(nino)
     }
 
     "return no NINO when auth returns no NINO" in {
@@ -61,7 +60,7 @@ class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerS
           .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      ninoAuthAction.getNino().futureValue shouldBe NoAtsNinoFound
+      ninoAuthAction.getNino().futureValue mustBe NoAtsNinoFound
     }
 
     "return an InsufficientConfidenceLevel Response when the user needs to uplift" in {
@@ -73,7 +72,7 @@ class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerS
           .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      ninoAuthAction.getNino().futureValue shouldBe UpliftRequiredAtsNino
+      ninoAuthAction.getNino().futureValue mustBe UpliftRequiredAtsNino
     }
 
     "return an InsufficientCredsNino Response when the user doesn't have strong credentials" in {
@@ -85,7 +84,7 @@ class NinoAuthActionSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerS
           .authorise[Option[String]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      ninoAuthAction.getNino().futureValue shouldBe InsufficientCredsNino
+      ninoAuthAction.getNino().futureValue mustBe InsufficientCredsNino
     }
   }
 }
