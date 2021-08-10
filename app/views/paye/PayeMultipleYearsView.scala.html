@@ -16,20 +16,22 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.views.html.helpers._
+
 @import view_models.AtsForms
 @import views.html.main
 @import views.html.helpers.BackLinkView
 @import views.html.helpers.ErrorSummaryTemplateView
 @import views.html.helpers.InputRadioGroupView
-@import views.html.helpers.BackLinkView
+@import scala.concurrent.ExecutionContext
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
 @this(
     main: main,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
     backLinkView: BackLinkView,
-    inputRadioGroupView: InputRadioGroupView
+    inputRadioGroupView: InputRadioGroupView,
+        atsForms: AtsForms,
+        form: FormWithCSRF
 )
 
 @(  years: List[Int],
@@ -38,9 +40,10 @@
     )(
     implicit request: PayeAuthenticatedRequest[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
+
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 @main(
@@ -55,7 +58,7 @@
     @form(action = controllers.paye.routes.PayeMultipleYearsController.onSubmit){
 
             @inputRadioGroupView(
-            atsYearForm(AtsForms.yearChoice),
+            atsYearForm(atsForms.yearChoice),
             years.map(year => year.toString -> messages("ats.select_tax_year.label", (year-1).toString, s"${year}")),
             '_fieldSetAttributes -> "id=year_field",
             '_legend -> messages("ats.select_tax_year.paye.title"),

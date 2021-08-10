@@ -16,9 +16,7 @@
 
 package view_models.paye
 
-import config.PayeConfig
 import models.{PayeAtsData, TaxBand}
-import play.api.Play
 import view_models.{Amount, Rate}
 
 case class PayeIncomeTaxAndNics(
@@ -37,13 +35,11 @@ case class PayeIncomeTaxAndNics(
 
 object PayeIncomeTaxAndNics {
 
-  lazy val scottishRates: List[String] = Play.current.injector.instanceOf[PayeConfig].scottishTaxBandKeys
-
-  lazy val uKRates: List[String] = Play.current.injector.instanceOf[PayeConfig].ukTaxBandKeys
-
-  lazy val adjustments: Set[String] = Play.current.injector.instanceOf[PayeConfig].adjustmentsKeys.toSet
-
-  def apply(payeAtsData: PayeAtsData): PayeIncomeTaxAndNics =
+  def apply(
+    payeAtsData: PayeAtsData,
+    scottishRates: List[String],
+    uKRates: List[String],
+    adjustments: Set[String]): PayeIncomeTaxAndNics =
     PayeIncomeTaxAndNics(
       payeAtsData.taxYear,
       getTaxBands(payeAtsData, scottishRates),
@@ -51,7 +47,7 @@ object PayeIncomeTaxAndNics {
       getTotalIncomeTax(payeAtsData, "scottish_total_tax"),
       getTotalIncomeTax(payeAtsData, "total_UK_income_tax"),
       getTotalIncomeTax(payeAtsData, "total_income_tax_2"),
-      getAdjustments(payeAtsData),
+      getAdjustments(payeAtsData, adjustments),
       getNationalInsuranceContribution(payeAtsData, "employee_nic_amount"),
       getNationalInsuranceContribution(payeAtsData, "employer_nic_amount"),
       getNationalInsuranceContribution(payeAtsData, "total_income_tax_2_nics"),
@@ -87,7 +83,7 @@ object PayeIncomeTaxAndNics {
         .filter(_.bandRate != Rate.empty)
     }).getOrElse(List.empty)
 
-  private def getAdjustments(payeAtsData: PayeAtsData): List[AdjustmentRow] =
+  private def getAdjustments(payeAtsData: PayeAtsData, adjustments: Set[String]): List[AdjustmentRow] =
     (for {
       incomeTax <- payeAtsData.income_tax
       payload   <- incomeTax.payload

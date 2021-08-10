@@ -15,11 +15,19 @@
  *@
 
 @import config.ApplicationConfig
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
 @import controllers.auth.CommonRequest
+@import scala.concurrent.ExecutionContext
+@import uk.gov.hmrc.play.views.html.layouts._
+@import uk.gov.hmrc.play.partials.FormPartialRetriever
 
-@this()
+
+@this(
+        trackingConsentSnippet: TrackingConsentSnippet,
+        article: Article,
+        formPartialRetriever: FormPartialRetriever
+)
 
 @(
     title: String,
@@ -34,9 +42,9 @@
 )(
     implicit request: Request[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 @isSa = @{
@@ -83,14 +91,8 @@
 }
 
 @headInlineScript = @{
-    playLayouts.trackingConsentSnippet()
+    trackingConsentSnippet()
 }
-
-
-@article = @{
-    playLayouts.article(mainContent, includeGridWrapper, articleClasses)
-}
-
 
 @navTitle = @{
     Some(messages("generic.ats"))
@@ -118,7 +120,7 @@
         "mainClass" -> mainClasses,
         "mainAttributes" -> mainDataAttributes,
         "isWelsh" -> isWelsh,
-        "signOutUrl" -> controllers.routes.AccountController.signOut(),
+        "signOutUrl" -> controllers.routes.AccountController.signOut,
         "ssoUrl" -> None,
         "getHelpForm" -> getHelpForm,
         "navTitle" -> navTitle,
@@ -137,5 +139,5 @@
         arguments
     }
 
-    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article, extraArguments)
+    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article(mainContent, includeGridWrapper, articleClasses), extraArguments)
 }

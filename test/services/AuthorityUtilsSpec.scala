@@ -18,14 +18,12 @@ package services
 
 import controllers.auth.AuthenticatedRequest
 import models.AgentToken
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{AccountUtils, AgentTokenException, AuthorityUtils}
 import utils.TestConstants._
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 
-class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
+class AuthorityUtilsSpec extends BaseSpec {
 
   class TestService extends AuthorityUtils {
 
@@ -69,76 +67,76 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
     )
   }
 
-  "checkUtr" should {
+  "checkUtr" must {
 
     "return true when an SA User has a matching utr and no agent token is passed" in new TestService {
       val result = checkUtr(utr, None)(request)
-      result shouldBe true
+      result mustBe true
     }
 
     "return true when an SA User has a matching utr and an agent token is passed" in new TestService {
       val result = checkUtr(utr, Some(agentToken))(request)
-      result shouldBe true
+      result mustBe true
     }
 
     "return false when an SA User has a non-matching utr and no agent token is passed" in new TestService {
       val result = checkUtr(nonMatchingUtr, None)(request)
-      result shouldBe false
+      result mustBe false
     }
 
     "return false when an SA User has a non-matching utr and an agent token is passed" in new TestService {
       val result = checkUtr(nonMatchingUtr, Some(agentToken))(request)
-      result shouldBe false
+      result mustBe false
     }
 
     "return true when the user is an Agent user and the agentToken.clientUtr matches" in new TestService {
       val result = checkUtr(utr, Some(agentToken))(agentRequest)
-      result shouldBe true
+      result mustBe true
     }
 
     "return true when the user is an Agent user and there is no agentToken" in new TestService {
       val result = checkUtr(utr, None)(agentRequest)
-      result shouldBe true
+      result mustBe true
     }
 
     "return false when the user is an Agent and the agentToken.clientUtr does not match" in new TestService {
       val result = checkUtr(nonMatchingUtr, Some(agentToken))(agentRequest)
-      result shouldBe false
+      result mustBe false
     }
 
     "return false when the utr is None" in new TestService {
       val result = checkUtr(None, None)(request)
-      result shouldBe false
+      result mustBe false
     }
 
-    "return true when the utr is Some(_) and the criteria should match" in new TestService {
+    "return true when the utr is Some(_) and the criteria must match" in new TestService {
       val result = checkUtr(Some(utr), None)(request)
-      result shouldBe true
+      result mustBe true
     }
   }
 
-  "getRequestedUtr" should {
+  "getRequestedUtr" must {
 
     "return the utr when user account with no agent token" in new TestService {
       val result = getRequestedUtr(account, None)
-      result shouldBe SaUtr(utr)
+      result mustBe SaUtr(utr)
     }
 
     "return the utr when user account with agent token" in new TestService {
       val result = getRequestedUtr(account, Some(agentToken))
-      result shouldBe SaUtr(utr)
+      result mustBe SaUtr(utr)
     }
 
     "throw AgentTokenException when agent account with no agent token" in new TestService {
       val exception = intercept[AgentTokenException] {
         getRequestedUtr(agentAccount, None)
       }
-      exception.message shouldBe "Token is empty"
+      exception.message mustBe "Token is empty"
     }
 
     "return the client utr when agent account with valid agent token" in new TestService {
       val result = getRequestedUtr(agentAccount, Some(agentToken))
-      result shouldBe SaUtr(utr)
+      result mustBe SaUtr(utr)
     }
 
     "return the client utr when agent account with invalid agent token" in new TestService {
@@ -153,7 +151,7 @@ class AuthorityUtilsSpec extends UnitSpec with MockitoSugar {
         getRequestedUtr(agentAccount, Some(agentToken))
       }
 
-      exception.message should include("Incorrect agent UAR")
+      exception.message must include("Incorrect agent UAR")
     }
   }
 }

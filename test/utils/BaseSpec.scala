@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.paye
+package utils
 
 import config.ApplicationConfig
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
-import uk.gov.hmrc.play.test.UnitSpec
 
-trait AppConfigBaseSpec extends UnitSpec with GuiceOneAppPerSuite with Injecting {
+import scala.concurrent.ExecutionContext
+
+trait BaseSpec
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
+    with ScalaFutures with IntegrationPatience {
 
   implicit lazy val appConfig = inject[ApplicationConfig]
 
   val taxYear: Int = appConfig.payeYear
 
+  implicit lazy val ec = inject[ExecutionContext]
 }

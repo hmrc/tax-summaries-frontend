@@ -19,8 +19,8 @@ package utils.prevalidation
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.TaxsUnitTestTraits
-import utils.prevalidation.TrimOption.TrimOption
 import utils.prevalidation.CaseOption.CaseOption
+import utils.prevalidation.TrimOption.TrimOption
 import utils.prevalidation.prevalidation._
 
 class PrevalidationSpec extends TaxsUnitTestTraits {
@@ -42,7 +42,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
 
   def testData(data: String): Map[String, String] = Map[String, String]("string1" -> data)
 
-  "Form submission " should {
+  "Form submission " must {
     "trim any text strings at both ends when additional whitespace exists for option 'both'" in {
       import TrimOption._
       val defaultTrims = Map[String, TrimOption](
@@ -51,7 +51,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
-      result.string1 shouldBe "Vinnie and the \t    grenades"
+      result.string1 mustBe "Vinnie and the \t    grenades"
     }
 
     "remove all whitespace if it exists for option 'all'" in {
@@ -61,7 +61,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
-      result.string1 shouldBe "Vinnieandthegrenades"
+      result.string1 mustBe "Vinnieandthegrenades"
     }
 
     "trim any text strings at both ends and compress when additional whitespace exists for option 'bothAndCompress'" in {
@@ -72,7 +72,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
-      result.string1 shouldBe "Vinnie and the grenades"
+      result.string1 mustBe "Vinnie and the grenades"
     }
 
     "not trim any text strings when additional whitespace exists for option 'none'" in {
@@ -83,7 +83,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
-      result.string1 shouldBe " Vinnie and the \t    grenades    \t"
+      result.string1 mustBe " Vinnie and the \t    grenades    \t"
     }
 
     "amend the case of any text strings to uppercase for option 'upper'" in {
@@ -94,7 +94,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(caseRules = defaultCase)
 
       val result = form.bind(testData("Vinnie and the grenades")).get
-      result.string1 shouldBe "VINNIE AND THE GRENADES"
+      result.string1 mustBe "VINNIE AND THE GRENADES"
     }
 
     "amend the case of any text strings to lowercase for option 'lower'" in {
@@ -105,7 +105,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(caseRules = defaultCase)
 
       val result = form.bind(testData("Vinnie and the grenades")).get
-      result.string1 shouldBe "vinnie and the grenades"
+      result.string1 mustBe "vinnie and the grenades"
     }
 
     "leave the case of any text strings for option 'none'" in {
@@ -116,7 +116,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val form = DummyForm.preprocessedForm(caseRules = defaultCase)
 
       val result = form.bind(testData("Vinnie and the grenades")).get
-      result.string1 shouldBe "Vinnie and the grenades"
+      result.string1 mustBe "Vinnie and the grenades"
     }
   }
 }

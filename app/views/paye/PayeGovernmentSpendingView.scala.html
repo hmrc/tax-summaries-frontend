@@ -16,14 +16,16 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeGovernmentSpend
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
+
 @import utils.HtmlFormatter
 @import views.html.main
 @import views.html.helpers.BackLinkView
+@import scala.concurrent.ExecutionContext
 
 @this(
 	main: main,
-	backLinkView: BackLinkView
+	backLinkView: BackLinkView,
+	htmlFormatter: HtmlFormatter
 )
 
 @(	viewModel:PayeGovernmentSpend,
@@ -31,9 +33,9 @@
 	)(
 	implicit messages: Messages,
 	request: Request[_],
-	formPartialRetriever: FormPartialRetriever,
 	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-	appConfig: ApplicationConfig
+	appConfig: ApplicationConfig,
+		ec: ExecutionContext
 )
 
 @main(
@@ -47,8 +49,8 @@
 		<div class="column-two-thirds">
 			<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.treasury_spending.title"))</h1>
 			<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-				HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-				HtmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+				htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+				htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 
 				<p id="intro-paragraph">@Messages("paye.ats.treasury_spending.introParagraph")</p>
 			</div>

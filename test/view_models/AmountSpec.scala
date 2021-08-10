@@ -16,38 +16,39 @@
 
 package view_models
 
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
 
-class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
+class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 
   val testCurrency: String = "GBP"
 
   "Amount" when {
 
-    "toString is called" should {
+    "toString is called" must {
 
       "format with two decimal places" in {
         val testValue: BigDecimal = 1000.00
         val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toString() shouldEqual "1,000"
+        testAmount.toString() mustEqual "1,000"
       }
 
       "formats the decimal places to zero" in {
         val testValue: BigDecimal = 1000.63
         val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toString() shouldEqual "1,000"
+        testAmount.toString() mustEqual "1,000"
       }
 
       "produces a comma for thousands" in {
         val testValue: BigDecimal = 1000.00
         val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toString() shouldEqual "1,000"
+        testAmount.toString() mustEqual "1,000"
       }
     }
 
-    "parsed as JSON" should {
+    "parsed as JSON" must {
       "carry out JSON transformation" in {
         val amountText = """{"amount":1.0,"currency":"GBP"}"""
         val jsonFromText = Json.parse(amountText)
@@ -57,26 +58,26 @@ class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
       }
     }
 
-    "toHalfRoundedUpAmount is called" should {
+    "toHalfRoundedUpAmount is called" must {
       "can round up if testValue is Greater than or 1000.5" in {
         val testValue: BigDecimal = 1000.5
         val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toHalfRoundedUpAmount shouldEqual "1,001"
+        testAmount.toHalfRoundedUpAmount mustEqual "1,001"
       }
 
       "can round down if testValue is less than 1000.4" in {
         val testValue: BigDecimal = 1000.4
         val testAmount: Amount = new Amount(testValue, testCurrency)
-        testAmount.toHalfRoundedUpAmount shouldEqual "1,000"
+        testAmount.toHalfRoundedUpAmount mustEqual "1,000"
       }
     }
 
-    "isZero is called" should {
+    "isZero is called" must {
 
       "return true" when {
         "the amount is zero" in {
           val amount = Amount(0, testCurrency)
-          amount.isZero shouldBe true
+          amount.isZero mustBe true
         }
       }
 
@@ -85,7 +86,7 @@ class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll { bd: BigDecimal =>
             whenever(bd > 0) {
               val amount = Amount(bd, testCurrency)
-              amount.isZero shouldBe false
+              amount.isZero mustBe false
             }
           }
         }
@@ -94,26 +95,26 @@ class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll { bd: BigDecimal =>
             whenever(bd < 0) {
               val amount = Amount(bd, testCurrency)
-              amount.isZero shouldBe false
+              amount.isZero mustBe false
             }
           }
         }
       }
     }
 
-    "isZeroOrLess is called" should {
+    "isZeroOrLess is called" must {
 
       "return true" when {
         "the amount is zero" in {
           val amount = Amount(0, testCurrency)
-          amount.isZeroOrLess shouldBe true
+          amount.isZeroOrLess mustBe true
         }
 
         "the amount is less than zero" in {
           forAll { bd: BigDecimal =>
             whenever(bd < 0) {
               val amount = Amount(bd, testCurrency)
-              amount.isZeroOrLess shouldBe true
+              amount.isZeroOrLess mustBe true
             }
           }
         }
@@ -124,20 +125,20 @@ class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
           forAll { bd: BigDecimal =>
             whenever(bd > 0) {
               val amount = Amount(bd, testCurrency)
-              amount.isZeroOrLess shouldBe false
+              amount.isZeroOrLess mustBe false
             }
           }
         }
       }
     }
 
-    "nonZero is called" should {
+    "nonZero is called" must {
 
       "the amount is not zero" in {
         forAll { bd: BigDecimal =>
           whenever(bd.compareTo(0) != 0) {
             val amount = Amount(bd, testCurrency)
-            amount.nonZero shouldBe true
+            amount.nonZero mustBe true
           }
         }
       }
@@ -146,53 +147,53 @@ class AmountSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
     "return false" when {
       "the amount is zero" in {
         val amount = Amount(0, testCurrency)
-        amount.nonZero shouldBe false
+        amount.nonZero mustBe false
       }
     }
   }
 
-  "toCreditString is called" should {
+  "toCreditString is called" must {
     "can round up if it's a credit" in {
       val testValue: BigDecimal = 1000.01
       val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toCreditString shouldEqual "1,001"
+      testAmount.toCreditString mustEqual "1,001"
     }
   }
 
-  "toTwoDecimalString is called" should {
+  "toTwoDecimalString is called" must {
     "have a comma and two decimal places for government spend values" in {
       val testValue: BigDecimal = 1000.01
       val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toTwoDecimalString shouldEqual "1,000.01"
+      testAmount.toTwoDecimalString mustEqual "1,000.01"
     }
 
     "not round up government spend values" in {
       val testValue: BigDecimal = 1000.99
       val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toTwoDecimalString shouldEqual "1,000.99"
+      testAmount.toTwoDecimalString mustEqual "1,000.99"
     }
 
     "round down government spend values after the second decimal place" in {
       val testValue: BigDecimal = 1000.018796799
       val testAmount: Amount = new Amount(testValue, testCurrency)
-      testAmount.toTwoDecimalString shouldEqual "1,000.01"
+      testAmount.toTwoDecimalString mustEqual "1,000.01"
     }
   }
 
-  "toHundredthsString is called" should {
+  "toHundredthsString is called" must {
     "give the amount as a string with the amount multiplied by 100" in {
       val amt = Amount(BigDecimal(123.45678), testCurrency)
-      amt.toHundredthsString shouldBe "12,345.67"
+      amt.toHundredthsString mustBe "12,345.67"
     }
   }
 
-  "unary '-' is called" should {
+  "unary '-' is called" must {
     "turn the amount negative" in {
 
       forAll { bd: BigDecimal =>
         whenever(bd > 1) {
           val result = -Amount(bd, testCurrency)
-          result.amount shouldBe -bd
+          result.amount mustBe -bd
         }
       }
     }

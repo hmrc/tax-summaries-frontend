@@ -16,8 +16,6 @@
 
 package controllers.paye
 
-import java.time.LocalDate
-
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
@@ -26,12 +24,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors._
-import uk.gov.hmrc.renderer.TemplateRenderer
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class PayeErrorController @Inject()(
@@ -42,8 +40,7 @@ class PayeErrorController @Inject()(
   howTaxIsSpentView: HowTaxIsSpentView,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
+  implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {

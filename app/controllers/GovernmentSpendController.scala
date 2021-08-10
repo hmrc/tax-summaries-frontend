@@ -22,7 +22,6 @@ import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.{ErrorResponse, SpendData}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, GovernmentSpendService}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.GenericViewModel
 import view_models.GovernmentSpend
@@ -39,8 +38,7 @@ class GovernmentSpendController @Inject()(
   governmentSpendingView: GovernmentSpendingView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView)(
-  implicit val formPartialRetriever: FormPartialRetriever,
-  override val templateRenderer: TemplateRenderer,
+  implicit override val templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {

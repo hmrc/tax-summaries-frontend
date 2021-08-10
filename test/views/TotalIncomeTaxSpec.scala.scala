@@ -114,13 +114,13 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
     Gen.frequency((1, Gen.const(SavingsRates.empty)), (19, sr))
   }
 
-  "view" should {
+  "view" must {
 
     "include scottish table" in {
 
       forAll { (tax: ScottishTax, rates: ScottishRates) =>
         val data = testTotalIncomeTax.copy(scottishTax = tax, scottishRates = rates)
-        view(data) should include(scottishTableView(tax, rates).body)
+        view(data) must include(scottishTableView(tax, rates).body)
       }
     }
 
@@ -128,7 +128,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
 
       forAll { (tax: SavingsTax, rates: SavingsRates) =>
         val data = testTotalIncomeTax.copy(savingsTax = tax, savingsRates = rates)
-        view(data) should include(savingsTableView(tax, rates).body)
+        view(data) must include(savingsTableView(tax, rates).body)
       }
     }
 
@@ -142,12 +142,12 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
           Amount.empty,
           Amount.empty),
         incomeTaxStatus = "0002")
-      view(data) should include("total-uk-income-tax-amount")
+      view(data) must include("total-uk-income-tax-amount")
     }
 
     "not show total uk income tax if there no values (and scottish)" in {
       val data = testTotalIncomeTax
-      view(data) shouldNot include("total-uk-income-tax-amount")
+      view(data) mustNot include("total-uk-income-tax-amount")
     }
 
     "not show total uk income tax if there any values (and not scottish)" in {
@@ -159,7 +159,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
           Amount.empty,
           Amount.empty,
           Amount.empty))
-      view(data) shouldNot include("total-uk-income-tax-amount")
+      view(data) mustNot include("total-uk-income-tax-amount")
     }
   }
 }

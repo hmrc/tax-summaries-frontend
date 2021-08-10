@@ -18,9 +18,10 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get}
 import com.github.tomakehurst.wiremock.http.Fault
-import config.ApplicationConfig
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED}
@@ -29,12 +30,13 @@ import play.api.libs.json.{Json, Reads}
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext
 
-class HttpHandlerSpec extends ConnectorSpec {
+class HttpHandlerSpec
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
+    with IntegrationPatience with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -44,7 +46,9 @@ class HttpHandlerSpec extends ConnectorSpec {
       )
       .build()
 
-  implicit lazy val appConfig = inject[ApplicationConfig]
+  implicit val hc = HeaderCarrier()
+
+  implicit lazy val ec = inject[ExecutionContext]
 
   def sut: HttpHandler = new HttpHandler(inject[DefaultHttpClient])
 
@@ -59,7 +63,7 @@ class HttpHandlerSpec extends ConnectorSpec {
 
   "HttpHandler" when {
 
-    "get is called" should {
+    "get is called" must {
 
       "return a AtsSuccessResponseWithPayload" when {
 
@@ -76,7 +80,7 @@ class HttpHandlerSpec extends ConnectorSpec {
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe AtsSuccessResponseWithPayload(TestClass(expectedBody))
+          result mustBe AtsSuccessResponseWithPayload(TestClass(expectedBody))
         }
       }
 
@@ -95,7 +99,7 @@ class HttpHandlerSpec extends ConnectorSpec {
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe AtsNotFoundResponse(NOT_FOUND.toString)
+          result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
         }
       }
 
@@ -112,7 +116,7 @@ class HttpHandlerSpec extends ConnectorSpec {
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe an[AtsErrorResponse]
+          result mustBe an[AtsErrorResponse]
         }
 
         "the connector returns a 5xx response" in {
@@ -126,7 +130,7 @@ class HttpHandlerSpec extends ConnectorSpec {
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe an[AtsErrorResponse]
+          result mustBe an[AtsErrorResponse]
         }
 
         "the connector throws an exception" in {
@@ -139,7 +143,7 @@ class HttpHandlerSpec extends ConnectorSpec {
 
           val result = sut.get[TestClass](url).futureValue
 
-          result shouldBe an[AtsErrorResponse]
+          result mustBe an[AtsErrorResponse]
         }
       }
     }

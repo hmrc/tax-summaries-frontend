@@ -23,15 +23,19 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.i18n.Messages
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants.testNino
 import views.html.paye.PayeYourIncomeAndTaxesView
 
+import scala.concurrent.Future
+
 class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
 
   val sut = new PayeYourIncomeAndTaxesController(
     mockPayeAtsService,
@@ -39,22 +43,22 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
     mcc,
     inject[PayeYourIncomeAndTaxesView])
 
-  "Government spend controller" should {
+  "Government spend controller" must {
 
     "return OK response" in {
 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(expectedResponse.as[PayeAtsData]))
+        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe OK
+      status(result) mustBe OK
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.title should include(
+      document.title must include(
         Messages("paye.ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
 
@@ -63,11 +67,11 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(PayeAtsTestData.malformedYourIncomeAndTaxesData))
+        .thenReturn(Future(Right(payeAtsTestData.malformedYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe OK
+      status(result) mustBe OK
     }
 
     "throw internal server exception when summary data is missing" in {
@@ -75,13 +79,13 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Right(PayeAtsTestData.missingYourIncomeAndTaxesData))
+        .thenReturn(Future(Right(payeAtsTestData.missingYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) mustBe INTERNAL_SERVER_ERROR
 
-      contentAsString(result) shouldBe "Missing Paye ATS data"
+      contentAsString(result) mustBe "Missing Paye ATS data"
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
@@ -89,12 +93,12 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(NOT_FOUND, "")))
+        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe routes.PayeErrorController.authorisedNoAts().url
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.authorisedNoAts.url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in {
@@ -102,12 +106,12 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(BAD_REQUEST, "")))
+        .thenReturn(Future(Left(HttpResponse(BAD_REQUEST, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(BAD_REQUEST).url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.PayeErrorController.genericError(BAD_REQUEST).url)
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from service" in {
@@ -115,12 +119,12 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Left(HttpResponse(INTERNAL_SERVER_ERROR, "")))
+        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
     }
   }
 

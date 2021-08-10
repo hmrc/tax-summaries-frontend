@@ -16,19 +16,21 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import uk.gov.hmrc.play.views.html.helpers._
 @import view_models.AtsForms
 @import views.html.helpers.ErrorSummaryTemplateView
 @import views.html.helpers.InputRadioGroupView
 @import views.html.main
 @import views.html.helpers.HeaderSection
+@import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
     headerSection: HeaderSection,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
-    inputRadioGroupView: InputRadioGroupView
+    inputRadioGroupView: InputRadioGroupView,
+        atsForms: AtsForms,
+        form: FormWithCSRF
 )
 
 @(  atsList: view_models.AtsList,
@@ -37,9 +39,9 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 @main(
@@ -64,7 +66,7 @@
         @form(action = controllers.routes.IndexController.authorisedOnSubmit){
 
                 @inputRadioGroupView(
-                atsYearForm(AtsForms.yearChoice),
+                atsYearForm(atsForms.yearChoice),
                 atsList.getDescendingYearList.map(year => year.year.get -> year.taxYearPeriod),
                 '_fieldSetAttributes -> "id=year_field",
                 '_legend -> Messages("ats.select_tax_year.title"),

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-import com.google.inject.Inject
-import uk.gov.hmrc.http.HttpClient
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.partials.FormPartialRetriever
+import scala.io.Source.fromFile
 
-class AppFormPartialRetriever @Inject()(val cookieCrypto: SessionCookieCrypto, val httpGet: HttpClient)
-    extends FormPartialRetriever {
+object FileHelper {
 
-  override val crypto: String => String = cookie => cookie
+  def loadFile(name: String): String = {
+    val source = fromFile(name)
+    try source.mkString finally source.close()
+  }
 }

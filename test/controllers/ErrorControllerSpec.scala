@@ -16,12 +16,9 @@
 
 package controllers
 
-import java.time.LocalDate
-
-import controllers.auth._
+import controllers.auth.{AuthAction, _}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, BodyParser, Request, Result}
@@ -30,17 +27,19 @@ import play.api.test.Helpers._
 import services.GovernmentSpendService
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
+import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with CurrentTaxYear {
+class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   override def now: () => LocalDate = () => LocalDate.now()
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
 
-  class CustomAuthAction(utr: Option[SaUtr]) extends AuthAction with ControllerBaseSpec {
+  class CustomAuthAction(utr: Option[SaUtr]) extends ControllerBaseSpec with AuthAction {
     override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
       block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, false, fakeCredentials, request))
@@ -60,7 +59,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
 
   "ErrorController" when {
 
-    "authorisedNoAts is called" should {
+    "authorisedNoAts is called" must {
 
       "show the how tax was spent page" when {
 
@@ -90,8 +89,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
           val result = sut().authorisedNoAts()(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe OK
-          document shouldBe contentAsString(howTaxIsSpentView(response, appConfig.saYear))
+          status(result) mustBe OK
+          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.saYear))
         }
       }
 
@@ -119,8 +118,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
           val result = sut(None).authorisedNoAts()(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe BAD_REQUEST
-          document shouldBe contentAsString(serviceUnavailableView())
+          status(result) mustBe BAD_REQUEST
+          document mustBe contentAsString(serviceUnavailableView())
         }
       }
 
@@ -148,13 +147,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
           val result = sut(None).authorisedNoAts()(request)
           val document = contentAsString(result)
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          document shouldBe contentAsString(serviceUnavailableView())
+          status(result) mustBe INTERNAL_SERVER_ERROR
+          document mustBe contentAsString(serviceUnavailableView())
         }
       }
     }
 
-    "notAuthorised is called" should {
+    "notAuthorised is called" must {
 
       "show the not authorised view" in {
 
@@ -174,13 +173,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 
-        status(result) shouldBe OK
+        status(result) mustBe OK
 
-        document shouldBe contentAsString(notAuthorisedView())
+        document mustBe contentAsString(notAuthorisedView())
       }
     }
 
-    "serviceUnavailable is called" should {
+    "serviceUnavailable is called" must {
 
       "show the service unavailable view" in {
 
@@ -188,8 +187,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with MockitoSugar with Curr
         val result = sut().serviceUnavailable()(request)
         val document = contentAsString(result)
 
-        status(result) shouldBe OK
-        document shouldBe contentAsString(serviceUnavailableView())
+        status(result) mustBe OK
+        document mustBe contentAsString(serviceUnavailableView())
       }
     }
   }

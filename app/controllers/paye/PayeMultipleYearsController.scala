@@ -19,29 +19,24 @@ package controllers.paye
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import javax.inject.Inject
 import models.PayeAtsData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PayeAtsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
-import view_models.AtsForms.atsYearFormMapping
-import view_models.TaxYearEnd
+import view_models.{AtsForms, TaxYearEnd}
 import views.html.paye.PayeMultipleYearsView
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PayeMultipleYearsController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeMultipleYearsView: PayeMultipleYearsView)(
-  implicit formPartialRetriever: FormPartialRetriever,
-  templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  payeMultipleYearsView: PayeMultipleYearsView,
+  atsForms: AtsForms)(implicit templateRenderer: TemplateRenderer, appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with LazyLogging {
 
   private val payeYear: Int = appConfig.payeYear
@@ -72,7 +67,7 @@ class PayeMultipleYearsController @Inject()(
       case 1 => redirectToMain(data.head.taxYear)
       case _ =>
         val taxYears = data.map(_.taxYear).reverse
-        Ok(payeMultipleYearsView(taxYears, atsYearFormMapping)).addingToSession(
+        Ok(payeMultipleYearsView(taxYears, atsForms.atsYearFormMapping)).addingToSession(
           taxYearFromKey -> taxYears.last.toString,
           taxYearToKey   -> taxYears.head.toString
         )
@@ -81,7 +76,7 @@ class PayeMultipleYearsController @Inject()(
   private def handleOnSubmit(implicit request: PayeAuthenticatedRequest[_]): Result = {
     def yearsFrom: Int = request.session(taxYearFromKey).toInt
     def yearsTo: Int = request.session(taxYearToKey).toInt
-    atsYearFormMapping.bindFromRequest.fold(
+    atsForms.atsYearFormMapping.bindFromRequest.fold(
       formWithErrors => {
         BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList.reverse, formWithErrors))
       },
@@ -89,7 +84,7 @@ class PayeMultipleYearsController @Inject()(
         value.year.map(_.toInt) match {
           case Some(taxYear) => redirectToMain(taxYear)
           case _ =>
-            val emptyForm = atsYearFormMapping.fill(TaxYearEnd(None))
+            val emptyForm = atsForms.atsYearFormMapping.fill(TaxYearEnd(None))
             BadRequest(payeMultipleYearsView((yearsFrom to yearsTo).toList.reverse, emptyForm))
         }
       }
@@ -100,5 +95,5 @@ class PayeMultipleYearsController @Inject()(
     Redirect(routes.PayeAtsMainController.show(taxYear))
 
   private def redirectToNoAts: Result =
-    Redirect(routes.PayeErrorController.authorisedNoAts())
+    Redirect(routes.PayeErrorController.authorisedNoAts)
 }

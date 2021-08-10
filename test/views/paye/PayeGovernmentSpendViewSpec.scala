@@ -24,7 +24,7 @@ import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeGovernmentSpendingView
 
-class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
+class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request =
     PayeAuthenticatedRequest(
@@ -32,124 +32,126 @@ class PayeGovernmentSpendViewSpec extends TestConstants with ViewSpecBase {
       false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+
+  lazy val payeAtsTestData = inject[PayeAtsTestData]
   lazy val payeGovernmentSpendingView: PayeGovernmentSpendingView = inject[PayeGovernmentSpendingView]
 
-  "view" should {
+  "view" must {
     "have correct data and heading for given taxYear" in {
 
-      val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
+      val view = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
-      document.getElementById("Welfare").text() shouldBe "Welfare (23.5%)"
-      document.select("#Welfare + dd").text() shouldBe "£451"
+      document.getElementById("Welfare").text() mustBe "Welfare (23.5%)"
+      document.select("#Welfare + dd").text() mustBe "£451"
 
-      document.getElementById("Health").text() shouldBe "Health (20.2%)"
-      document.select("#Health + dd").text() shouldBe "£388"
+      document.getElementById("Health").text() mustBe "Health (20.2%)"
+      document.select("#Health + dd").text() mustBe "£388"
 
-      document.getElementById("StatePensions").text() shouldBe "State Pensions (12.8%)"
-      document.select("#StatePensions + dd").text() shouldBe "£246"
+      document.getElementById("StatePensions").text() mustBe "State Pensions (12.8%)"
+      document.select("#StatePensions + dd").text() mustBe "£246"
 
-      document.getElementById("Education").text() shouldBe "Education (11.8%)"
-      document.select("#Education + dd").text() shouldBe "£226"
+      document.getElementById("Education").text() mustBe "Education (11.8%)"
+      document.select("#Education + dd").text() mustBe "£226"
 
-      document.getElementById("Defence").text() shouldBe "Defence (5.3%)"
-      document.select("#Defence + dd").text() shouldBe "£102"
+      document.getElementById("Defence").text() mustBe "Defence (5.3%)"
+      document.select("#Defence + dd").text() mustBe "£102"
 
-      document.getElementById("NationalDebtInterest").text() shouldBe "National Debt Interest (5.3%)"
-      document.select("#NationalDebtInterest + dd").text() shouldBe "£102"
+      document.getElementById("NationalDebtInterest").text() mustBe "National Debt Interest (5.3%)"
+      document.select("#NationalDebtInterest + dd").text() mustBe "£102"
 
-      document.getElementById("Transport").text() shouldBe "Transport (4.3%)"
-      document.select("#Transport + dd").text() shouldBe "£83"
+      document.getElementById("Transport").text() mustBe "Transport (4.3%)"
+      document.select("#Transport + dd").text() mustBe "£83"
 
-      document.getElementById("PublicOrderAndSafety").text() shouldBe "Public Order and Safety (4.3%)"
-      document.select("#PublicOrderAndSafety + dd").text() shouldBe "£83"
+      document.getElementById("PublicOrderAndSafety").text() mustBe "Public Order and Safety (4.3%)"
+      document.select("#PublicOrderAndSafety + dd").text() mustBe "£83"
 
-      document.getElementById("BusinessAndIndustry").text() shouldBe "Business and Industry (3.6%)"
-      document.select("#BusinessAndIndustry + dd").text() shouldBe "£69"
+      document.getElementById("BusinessAndIndustry").text() mustBe "Business and Industry (3.6%)"
+      document.select("#BusinessAndIndustry + dd").text() mustBe "£69"
 
-      document.getElementById("GovernmentAdministration").text() shouldBe "Government Administration (2.1%)"
-      document.select("#GovernmentAdministration + dd").text() shouldBe "£40"
+      document.getElementById("GovernmentAdministration").text() mustBe "Government Administration (2.1%)"
+      document.select("#GovernmentAdministration + dd").text() mustBe "£40"
 
       document
         .getElementById("HousingAndUtilities")
-        .text() shouldBe "Housing and Utilities, like street lighting (1.6%)"
-      document.select("#HousingAndUtilities + dd").text() shouldBe "£31"
+        .text() mustBe "Housing and Utilities, like street lighting (1.6%)"
+      document.select("#HousingAndUtilities + dd").text() mustBe "£31"
 
-      document.getElementById("Environment").text() shouldBe "Environment (1.5%)"
-      document.select("#Environment + dd").text() shouldBe "£29"
+      document.getElementById("Environment").text() mustBe "Environment (1.5%)"
+      document.select("#Environment + dd").text() mustBe "£29"
 
-      document.getElementById("Culture").text() shouldBe "Culture, like sports, libraries and museums (1.5%)"
-      document.select("#Culture + dd").text() shouldBe "£29"
+      document.getElementById("Culture").text() mustBe "Culture, like sports, libraries and museums (1.5%)"
+      document.select("#Culture + dd").text() mustBe "£29"
 
-      document.getElementById("OverseasAid").text() shouldBe "Overseas Aid (1.2%)"
-      document.select("#OverseasAid + dd").text() shouldBe "£23"
+      document.getElementById("OverseasAid").text() mustBe "Overseas Aid (1.2%)"
+      document.select("#OverseasAid + dd").text() mustBe "£23"
 
-      document.getElementById("UkContributionToEuBudget").text() shouldBe "UK Contribution to the EU Budget (1%)"
-      document.select("#UkContributionToEuBudget + dd").text() shouldBe "£19"
+      document.getElementById("UkContributionToEuBudget").text() mustBe "UK Contribution to the EU Budget (1%)"
+      document.select("#UkContributionToEuBudget + dd").text() mustBe "£19"
 
-      document.select("#TotalAmount + dd").text() shouldBe "£200"
+      document.select("#TotalAmount + dd").text() mustBe "£200"
 
       document
         .select("h1")
-        .text shouldBe "How your tax was spent"
+        .text mustBe "How your tax was spent"
       document
         .select("h2.heading-xlarge")
-        .text shouldBe "6 April 2019 to 5 April 2020"
+        .text mustBe "6 April 2019 to 5 April 2020"
     }
 
     "link to Scottish government spending page for Scottish users" in {
       val view =
         payeGovernmentSpendingView(
-          PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true),
           isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document
         .select("#scottish-spending-link a")
-        .attr("href") shouldBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {
       val view =
         payeGovernmentSpendingView(
-          PayeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = false),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = false),
           isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
-      document.select("#scottish-spending-link") shouldBe empty
+      document.select("#scottish-spending-link") mustBe empty
     }
 
     "have text relevant to non welsh users on government spending page for non welsh tax payer" in {
-      val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
+      val view = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document
         .getElementById("paragraph-1")
-        .text() shouldBe "These figures show how government spent money across the whole of the UK, including spending by the devolved administrations."
-      document.getElementById("paragraph-2").text() shouldBe "All figures are rounded to the nearest pound."
+        .text() mustBe "These figures show how government spent money across the whole of the UK, including spending by the devolved administrations."
+      document.getElementById("paragraph-2").text() mustBe "All figures are rounded to the nearest pound."
       document
         .getElementById("paragraph-3")
-        .text() shouldBe "The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure."
-      document.getElementById("paragraph-4").text() shouldBe "Spending information is published by HM Treasury."
+        .text() mustBe "The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure."
+      document.getElementById("paragraph-4").text() mustBe "Spending information is published by HM Treasury."
 
     }
 
     "have text relevant to welsh users on government spending page for welsh tax payer" in {
-      val view = payeGovernmentSpendingView(PayeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = true).body
+      val view = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = true).body
       val document = Jsoup.parse(view)
 
       document
         .getElementById("welsh-tax-payer-paragraph-1")
-        .text() shouldBe "The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure."
+        .text() mustBe "The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure."
       document
         .getElementById("welsh-tax-payer-paragraph-2")
-        .text() shouldBe "All figures are rounded to the nearest pound."
+        .text() mustBe "All figures are rounded to the nearest pound."
       document
         .getElementById("welsh-tax-payer-paragraph-3")
-        .text() shouldBe "Spending information is published by HM Treasury."
+        .text() mustBe "Spending information is published by HM Treasury."
       document
         .getElementById("welsh-tax-payer-paragraph-4")
-        .text() shouldBe "The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit https://www.gov.wales/calculate-welsh-income-tax-spend"
+        .text() mustBe "The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit https://www.gov.wales/calculate-welsh-income-tax-spend"
 
     }
   }

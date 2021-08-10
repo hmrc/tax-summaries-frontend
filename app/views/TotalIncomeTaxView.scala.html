@@ -15,22 +15,22 @@
  *@
 
 @import controllers.auth.AuthenticatedRequest
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
 @import config.ApplicationConfig
 @import utils.ViewUtils
-@import utils.ViewUtils.positiveOrZero
 @import total_income_tax_includes._
 @import views.html.includes.CurrencyAmountView
 @import views.html.total_income_tax_includes._
 @import views.html.main
 @import views.html.helpers.HeaderSection
+@import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
     headerSection: HeaderSection,
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+        viewUtils: ViewUtils
 )
 
 @(  viewModel: view_models.TotalIncomeTax,
@@ -38,9 +38,9 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    formPartialRetriever: FormPartialRetriever,
     templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 @main(
@@ -212,7 +212,7 @@
           <tbody>
             <tr>
               <th scope="row">@Messages("ats.total_income_tax.total_income_tax")</th>
-              <td id="total-income-tax-amount-nics" class="no-bold">@currencyAmountView(positiveOrZero(viewModel.totalIncomeTax))</td>
+              <td id="total-income-tax-amount-nics" class="no-bold">@currencyAmountView(viewUtils.positiveOrZero(viewModel.totalIncomeTax))</td>
             </tr>
             @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
             <tr>

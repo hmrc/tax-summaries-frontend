@@ -18,10 +18,11 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import play.api.mvc.{Action, AnyContent}
-import play.api.mvc.Results._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class AccountController @Inject()()(implicit val appConfig: ApplicationConfig) {
+class AccountController @Inject()(mcc: MessagesControllerComponents)(implicit val appConfig: ApplicationConfig)
+    extends FrontendController(mcc) {
 
   def signOut: Action[AnyContent] = Action {
     Redirect(appConfig.feedbackUrl).withNewSession

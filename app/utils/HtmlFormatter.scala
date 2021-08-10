@@ -16,7 +16,9 @@
 
 package utils
 
-object HtmlFormatter {
+import com.google.inject.Inject
+
+class HtmlFormatter @Inject()() {
 
   def toHtmlNonBroken(string: String): String =
     string.replace(" ", "&nbsp;")

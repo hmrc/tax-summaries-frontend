@@ -16,10 +16,8 @@
 
 package controllers.auth
 
-import config.ApplicationConfig
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
@@ -29,19 +27,17 @@ import play.api.test.Helpers.{redirectLocation, _}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.TestConstants.fakeCredentials
+import utils.BaseSpec
 import utils.RetrievalOps._
+import utils.TestConstants.fakeCredentials
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class MinAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
 
   class Harness(minAuthAction: MinAuthActionImpl) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = minAuthAction { _ =>
@@ -53,19 +49,19 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
-  "A user with no active session" should {
+  "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
       val controller = new Harness(minAuthAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(ggSignInUrl)
     }
   }
 
-  "A user with insufficient enrolments" should {
+  "A user with insufficient enrolments" must {
     "be redirected to the Sorry there is a problem page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
@@ -74,12 +70,12 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
       whenReady(result.failed) { ex =>
-        ex shouldBe an[InsufficientEnrolments]
+        ex mustBe an[InsufficientEnrolments]
       }
     }
   }
 
-  "A user with a confidence level 50" should {
+  "A user with a confidence level 50" must {
     "create a minimum authenticated request" in {
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some("") ~ Some(fakeCredentials))
@@ -93,7 +89,7 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
       val controller = new Harness(minAuthAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
+      status(result) mustBe OK
     }
   }
 
@@ -114,6 +110,6 @@ class MinAuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSu
       await(controller.onPageLoad()(FakeRequest("", "")))
     }
 
-    ex.getMessage should include("Can't find credentials for user")
+    ex.getMessage must include("Can't find credentials for user")
   }
 }

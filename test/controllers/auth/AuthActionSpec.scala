@@ -16,12 +16,9 @@
 
 package controllers.auth
 
-import config.ApplicationConfig
 import controllers.routes
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
@@ -30,18 +27,15 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtrGenerator
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants._
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
-class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
-
-  implicit lazy val appConfig = app.injector.instanceOf[ApplicationConfig]
-  implicit lazy val ec = app.injector.instanceOf[ExecutionContext]
+class AuthActionSpec extends BaseSpec {
 
   class Harness(authAction: AuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -59,19 +53,19 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
-  "A user with no active session" should {
+  "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get should endWith(ggSignInUrl)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(ggSignInUrl)
     }
   }
 
-  "A user with insufficient enrolments" should {
+  "A user with insufficient enrolments" must {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
@@ -79,11 +73,11 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
-      redirectLocation(result) shouldBe Some("/annual-tax-summary/not-authorised")
+      redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
   }
 
-  "A user with a confidence level 50 and an SA enrolment and an IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an SA enrolment and an IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
@@ -106,15 +100,15 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(utr)
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("true")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("true")
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50 and an SA enrolment" should {
+  "A user with a confidence level 50 and an SA enrolment" must {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
 
@@ -133,13 +127,13 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(utr)
-      contentAsString(result) should include("true")
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include("true")
     }
   }
 
-  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
       val uar = testUar
 
@@ -158,14 +152,14 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" should {
+  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
       val uar = testUar
 
@@ -184,14 +178,14 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include(uar)
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 
-  "A user with a confidence level 50 and neither SA enrolment" should {
+  "A user with a confidence level 50 and neither SA enrolment" must {
     "create an authenticated request" in {
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
         Future.successful(
@@ -208,9 +202,9 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) shouldBe OK
-      contentAsString(result) should include("false")
-      contentAsString(result) should include("bar")
+      status(result) mustBe OK
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 
@@ -235,11 +229,11 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       await(controller.onPageLoad()(FakeRequest("", "")))
     }
 
-    ex.getMessage should include("Can't find credentials for user")
+    ex.getMessage must include("Can't find credentials for user")
 
   }
 
-  "A user visiting the service when it is shuttered" should {
+  "A user visiting the service when it is shuttered" must {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
@@ -248,8 +242,8 @@ class AuthActionSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar
       }
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result).get shouldBe (controllers.routes.ErrorController.serviceUnavailable().url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe (controllers.routes.ErrorController.serviceUnavailable.url)
       verifyZeroInteractions(mockAuthConnector)
     }
   }

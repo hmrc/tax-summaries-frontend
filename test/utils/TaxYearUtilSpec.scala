@@ -18,16 +18,17 @@ package utils
 
 import controllers.auth.AuthenticatedRequest
 import models.InvalidTaxYear
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.TestConstants._
 
-class TaxYearUtilSpec extends UnitSpec {
+class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
   val authenticatedRequest =
 
-    "TaxYearUtil" should {
+    "TaxYearUtil" must {
       "extract tax year when a valid tax year is present" in {
 
         val taxYear = 2019
@@ -47,7 +48,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
         val result = TaxYearUtil.extractTaxYear
 
-        result shouldBe Right(taxYear)
+        result mustBe Right(taxYear)
 
       }
 
@@ -70,7 +71,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
           val result = TaxYearUtil.extractTaxYear
 
-          result shouldBe Left(InvalidTaxYear)
+          result mustBe Left(InvalidTaxYear)
         }
 
         " taxYear is less than 4 digits long " in {
@@ -90,7 +91,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
           val result = TaxYearUtil.extractTaxYear
 
-          result shouldBe Left(InvalidTaxYear)
+          result mustBe Left(InvalidTaxYear)
         }
 
         "request has no taxYear field " in {
@@ -111,7 +112,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
           val result = TaxYearUtil.extractTaxYear
 
-          result shouldBe Left(InvalidTaxYear)
+          result mustBe Left(InvalidTaxYear)
 
         }
 
@@ -132,7 +133,7 @@ class TaxYearUtilSpec extends UnitSpec {
 
           val result = TaxYearUtil.extractTaxYear
 
-          result shouldBe Left(InvalidTaxYear)
+          result mustBe Left(InvalidTaxYear)
         }
       }
     }

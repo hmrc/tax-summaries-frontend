@@ -22,23 +22,19 @@ import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.GenericViewModel
 import utils.TestConstants._
+import utils.{BaseSpec, GenericViewModel}
 import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.Future
 import scala.io.Source
 
-class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with ScalaFutures {
+class AtsYearListServiceSpec extends BaseSpec {
 
   val data = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -72,7 +68,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
     val atsService = mock[AtsService]
   }
 
-  "storeSelectedAtsTaxYear" should {
+  "storeSelectedAtsTaxYear" must {
 
     "Return a successful future upon success" in new TestService {
 
@@ -81,7 +77,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
       val result = storeSelectedAtsTaxYear(2014)
 
       whenReady(result) { result =>
-        result shouldBe 2014
+        result mustBe 2014
       }
     }
 
@@ -93,13 +89,13 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
       val result = storeSelectedAtsTaxYear(2014)
 
       whenReady(result.failed) { exception =>
-        exception shouldBe a[Exception]
+        exception mustBe a[Exception]
       }
     }
 
   }
 
-  "getAtsListData" should {
+  "getAtsListData" must {
 
     "Return a successful future upon success" in new TestService {
 
@@ -130,7 +126,7 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
 
       val model: GenericViewModel = atsListModel
 
-      when(mockAtsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(model)
+      when(mockAtsListService.createModel(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future(model))
 
       val result = getAtsListData(hc, request)
 
@@ -140,12 +136,12 @@ class AtsYearListServiceSpec extends UnitSpec with GuiceOneAppPerSuite with Mock
 
   }
 
-  "AtsYearListService.atsListDataConverter" should {
+  "AtsYearListService.atsListDataConverter" must {
     "return an AtsList when given complete AtsListData" in new TestService {
       val atsListData = AtsTestData.atsListData
       val result = atsListDataConverter(atsListData)
 
-      result shouldBe AtsList(
+      result mustBe AtsList(
         "1111111111",
         "John",
         "Smith",
