@@ -59,7 +59,7 @@ class PayeErrorController @Inject()(
 
   def authorisedNoAts: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
-      governmentSpendService.getGovernmentSpendFigures(payeYear, Some(request.nino)) map { data =>
+      governmentSpendService.getGovernmentSpendFigures(payeYear) map { data =>
         Ok(howTaxIsSpentView(data, payeYear))
       } recover {
         case e: IllegalArgumentException =>

@@ -28,7 +28,6 @@ import uk.gov.hmrc.domain._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
@@ -86,25 +85,21 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
                   .map(key => Vrn(key.value))
               }
 
-            if (saUtr.isDefined || isAgentActive) {
-              block {
-                AuthenticatedRequest(
-                  externalId,
-                  agentRef,
-                  saUtr.map(SaUtr(_)),
-                  None,
-                  payeEmpRef,
-                  ctUtr,
-                  vrn,
-                  saUtr.isDefined,
-                  credentials,
-                  request
-                )
-              }
-            } else {
-              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
+            block {
+              AuthenticatedRequest(
+                externalId,
+                agentRef,
+                saUtr.map(SaUtr(_)),
+                None,
+                payeEmpRef,
+                ctUtr,
+                vrn,
+                saUtr.isDefined,
+                isAgentActive,
+                credentials,
+                request
+              )
             }
-
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
         }

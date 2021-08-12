@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
@@ -56,7 +56,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         new AllowancesController(
           mockAllowanceService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           taxFreeAmountView,
           genericErrorView,
@@ -81,7 +81,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         new CapitalGainsTaxController(
           mockCapitalGainsService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           capitalGainsView,
           genericErrorView,
@@ -106,7 +106,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         new GovernmentSpendController(
           mockGovernmentSpendService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           governmentSpendingView,
           genericErrorView,
@@ -131,7 +131,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         new IncomeController(
           mockIncomeService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           incomeBeforeTaxView,
           genericErrorView,
@@ -156,7 +156,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         new TotalIncomeTaxController(
           mockTotalIncomeTaxService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           totalIncomeTaxView,
           genericErrorView,
@@ -180,7 +180,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val sut = new SummaryController(
         mockSummaryService,
         mockAuditService,
-        FakeAuthAction,
+        FakeAuthJourney,
         mcc,
         summaryView,
         genericErrorView,
@@ -205,7 +205,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         new NicsController(
           mockSummaryService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           nicsView,
           genericErrorView,

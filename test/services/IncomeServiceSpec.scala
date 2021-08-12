@@ -58,6 +58,7 @@ class IncomeServiceSpec extends BaseSpec {
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 

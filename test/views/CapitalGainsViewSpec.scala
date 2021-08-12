@@ -35,6 +35,7 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
       None,
       None,
       true,
+      false,
       fakeCredentials,
       FakeRequest())
   lazy val capitalGainsView = inject[CapitalGainsView]

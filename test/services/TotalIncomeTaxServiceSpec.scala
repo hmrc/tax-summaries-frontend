@@ -70,6 +70,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", "?taxYear=2015"))
       val result = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)

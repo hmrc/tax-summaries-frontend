@@ -37,16 +37,11 @@ class GovernmentSpendService @Inject()(
     taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
-  def getGovernmentSpendFigures(taxYear: Int, taxIdentifier: Option[TaxIdentifier])(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Seq[(String, Double)]] =
-    taxIdentifier match {
-      case Some(value) =>
-        middleConnector.connectToGovernmentSpend(taxYear, value).map { response =>
-          val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
-          CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
-        }
-      case _ => Future.failed(new IllegalArgumentException("No tax identifier was found, cannot complete request"))
+  def getGovernmentSpendFigures(
+    taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[(String, Double)]] =
+    middleConnector.connectToGovernmentSpend(taxYear).map { response =>
+      val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
+      CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
     }
 
   private[services] def govSpend(atsData: AtsData): GovernmentSpend = {

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import play.api.test.Helpers._
@@ -41,7 +41,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     new IncomeController(
       mockIncomeService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       incomeBeforeTaxView,
       genericErrorView,
@@ -61,7 +61,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         new TotalIncomeTaxController(
           mockTotalIncomeTaxService,
           mockAuditService,
-          FakeAuthAction,
+          FakeAuthJourney,
           mcc,
           totalIncomeTaxView,
           genericErrorView,
@@ -100,7 +100,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       new AllowancesController(
         allowanceService,
         mockAuditService,
-        FakeAuthAction,
+        FakeAuthJourney,
         mcc,
         taxFreeAmountView,
         genericErrorView,
@@ -123,7 +123,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       new CapitalGainsTaxController(
         mockCapitalGainsService,
         mockAuditService,
-        FakeAuthAction,
+        FakeAuthJourney,
         mcc,
         capitalGainsView,
         genericErrorView,
@@ -146,7 +146,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       new GovernmentSpendController(
         mockGovernmentSpendService,
         mockAuditService,
-        FakeAuthAction,
+        FakeAuthJourney,
         mcc,
         governmentSpendingView,
         genericErrorView,
@@ -167,7 +167,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       new SummaryController(
         mockSummaryService,
         mockAuditService,
-        FakeAuthAction,
+        FakeAuthJourney,
         mcc,
         summaryView,
         genericErrorView,
@@ -188,7 +188,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       new NicsController(
         mockSummaryService,
         mockAuditService,
-        FakeAuthAction,
+        FakeAuthJourney,
         mcc,
         nicsView,
         genericErrorView,

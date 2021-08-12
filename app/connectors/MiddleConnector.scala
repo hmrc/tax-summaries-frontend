@@ -52,7 +52,6 @@ class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: Ap
     implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data"))
 
-  def connectToGovernmentSpend(taxYear: Int, taxIdentifier: TaxIdentifier)(
-    implicit hc: HeaderCarrier): Future[HttpResponse] =
-    http.GET[HttpResponse](url(s"/taxs/government-spend/$taxYear/${taxIdentifier.value}"))
+  def connectToGovernmentSpend(taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    http.GET[HttpResponse](url(s"/taxs/government-spend/$taxYear"))
 }

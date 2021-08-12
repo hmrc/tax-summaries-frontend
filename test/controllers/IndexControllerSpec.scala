@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.DataCacheConnector
-import controllers.auth.{AuthenticatedRequest, FakeAuthAction}
+import controllers.auth.{AuthenticatedRequest, FakeAuthAction, FakeAuthJourney, FakeSelfAssessmentAuthAction, SelfAssessmentAction}
 import models.AtsListData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -51,6 +51,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
     None,
     None,
     true,
+    true,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))
 
@@ -70,7 +71,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
     mockAtsYearListService,
     mockAtsListService,
     mock[AuditService],
-    FakeAuthAction,
+    FakeAuthJourney,
     mcc,
     taxsIndexView,
     genericErrorView,
@@ -108,6 +109,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
@@ -134,6 +136,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "?ref=PORTAL")
       )
@@ -157,6 +160,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest(
           "GET",
@@ -182,6 +186,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
       )
@@ -230,6 +235,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        true,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?ref=PORTAL")
       )
@@ -252,6 +258,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         None,
+        true,
         true,
         fakeCredentials,
         FakeRequest(
@@ -280,6 +287,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         None,
+        true,
         true,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.IndexController.authorisedIndex + "/?id=bxk2Z3Q84R0W2XSklMb7Kg")
@@ -327,6 +335,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
@@ -374,6 +383,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )
@@ -398,6 +408,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
       )

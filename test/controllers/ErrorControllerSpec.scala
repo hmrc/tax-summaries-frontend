@@ -42,7 +42,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
   class CustomAuthAction(utr: Option[SaUtr]) extends ControllerBaseSpec with AuthAction {
     override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, fakeCredentials, request))
+      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, false, fakeCredentials, request))
     override protected def executionContext: ExecutionContext = ec
   }
 
@@ -70,7 +70,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               key -> value.percentage.toDouble
           }
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .successful(response)
 
           implicit lazy val request =
@@ -83,6 +83,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest())
           val result = sut().authorisedNoAts()(request)
@@ -97,7 +98,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service throws an illegal argument exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new IllegalArgumentException("Oops"))
 
           implicit lazy val request =
@@ -110,6 +111,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest())
 
@@ -125,7 +127,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service throws another exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new Exception("Oops"))
 
           implicit lazy val request =
@@ -138,6 +140,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               None,
               true,
+              false,
               fakeCredentials,
               FakeRequest())
 
@@ -155,7 +158,18 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "show the not authorised view" in {
 
         implicit lazy val request =
-          AuthenticatedRequest("userId", None, None, None, None, None, None, true, fakeCredentials, FakeRequest())
+          AuthenticatedRequest(
+            "userId",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            true,
+            false,
+            fakeCredentials,
+            FakeRequest())
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 

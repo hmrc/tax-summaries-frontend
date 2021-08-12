@@ -67,6 +67,7 @@ class AtsServiceSpec extends BaseSpec {
       None,
       None,
       true,
+      false,
       fakeCredentials,
       FakeRequest())
 
@@ -185,6 +186,7 @@ class AtsServiceSpec extends BaseSpec {
                   None,
                   None,
                   true,
+                  false,
                   fakeCredentials,
                   FakeRequest())
 

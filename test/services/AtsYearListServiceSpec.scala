@@ -55,6 +55,7 @@ class AtsYearListServiceSpec extends BaseSpec {
         None,
         None,
         true,
+        false,
         fakeCredentials,
         FakeRequest())
     implicit val hc = new HeaderCarrier

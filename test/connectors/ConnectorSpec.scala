@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package connectors
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{BaseSpec, WireMockHelper}
 
-case class AuthenticatedRequest[A](
-  userId: String,
-  agentRef: Option[Uar],
-  saUtr: Option[SaUtr],
-  nino: Option[Nino],
-  payeEmpRef: Option[EmpRef],
-  ctUtr: Option[CtUtr],
-  vrn: Option[Vrn],
-  isSa: Boolean,
-  isAgentActive: Boolean,
-  credentials: Credentials,
-  request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+trait ConnectorSpec extends BaseSpec with WireMockHelper {
+
+  implicit val hc = HeaderCarrier()
+
+}

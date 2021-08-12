@@ -160,7 +160,7 @@ class AuthActionSpec extends BaseSpec {
   }
 
   "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" must {
-    "see unauthorized" in {
+    "create an authenticated request" in {
       val uar = testUar
 
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
@@ -178,15 +178,15 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 
   "A user with a confidence level 50 and neither SA enrolment" must {
-    "see unauthorized" in {
-      val unauthorisedRoute = routes.ErrorController.notAuthorised.url
-
+    "create an authenticated request" in {
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
         Future.successful(
           Enrolments(Set.empty) ~
@@ -202,8 +202,9 @@ class AuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
+      status(result) mustBe OK
+      contentAsString(result) must include("false")
+      contentAsString(result) must include("bar")
     }
   }
 

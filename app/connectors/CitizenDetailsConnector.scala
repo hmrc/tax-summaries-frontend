@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package connectors
 
-import play.api.mvc.{AnyContent, Request, _}
-import utils.ControllerBaseSpec
+import config.ApplicationConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeMinAuthAction extends ControllerBaseSpec with MinAuthAction {
+class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfig: ApplicationConfig)(
+  implicit ec: ExecutionContext) {
 
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
-  override protected val executionContext: ExecutionContext = mcc.executionContext
+  private val baseUrl = applicationConfig.cidHost
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest("userId", None, None, None, None, None, None, true, false, fakeCredentials, request))
+  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/nino/$nino")
 }

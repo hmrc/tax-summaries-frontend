@@ -79,6 +79,7 @@ trait ControllerBaseSpec extends BaseSpec {
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -91,6 +92,7 @@ trait ControllerBaseSpec extends BaseSpec {
     None,
     None,
     true,
+    false,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"))
 

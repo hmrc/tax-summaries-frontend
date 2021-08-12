@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -41,7 +41,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     new AtsMainController(
       mockSummaryService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       taxsMainView,
       genericErrorView,
