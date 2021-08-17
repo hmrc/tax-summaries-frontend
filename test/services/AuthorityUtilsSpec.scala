@@ -38,6 +38,7 @@ class AuthorityUtilsSpec extends BaseSpec {
       Some(SaUtr(utr)),
       None,
       true,
+      false,
       ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest())
@@ -48,6 +49,7 @@ class AuthorityUtilsSpec extends BaseSpec {
         Some(SaUtr(utr)),
         None,
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest())

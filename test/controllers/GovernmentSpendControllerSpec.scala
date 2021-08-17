@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.Matchers
@@ -43,7 +43,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     new GovernmentSpendController(
       mockGovernmentSpendService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       governmentSpendingView,
       genericErrorView,

@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, AuthenticatedRequest}
+import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeService}
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeController @Inject()(
   incomeService: IncomeService,
   val auditService: AuditService,
-  authAction: AuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   incomeBeforeTaxView: IncomeBeforeTaxView,
   genericErrorView: GenericErrorView,
@@ -43,7 +43,7 @@ class IncomeController @Inject()(
   ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedIncomeBeforeTax: Action[AnyContent] = authAction.async { request =>
+  def authorisedIncomeBeforeTax: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
     show(request)
   }
 

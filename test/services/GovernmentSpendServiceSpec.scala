@@ -59,6 +59,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     Some(SaUtr(testUtr)),
     None,
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=2015"))
@@ -115,10 +116,10 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val expectedBody = Seq(("Environment", 5.5))
 
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
+      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
         .successful(HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> Seq(""))))
 
-      val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
+      val result = sut.getGovernmentSpendFigures(taxYear).futureValue
 
       result mustBe expectedBody
     }
@@ -127,11 +128,11 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 2.3))
 
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
+      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
         .successful(
           HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq(""))))
 
-      val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
+      val result = sut.getGovernmentSpendFigures(taxYear).futureValue
 
       result mustBe expectedBody
     }
@@ -142,11 +143,11 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 5.5))
 
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear), meq(testNino))(any())) thenReturn Future
+      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
         .successful(
           HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":5.5, "Welfare":23.4}"""), Map("" -> Seq(""))))
 
-      val result = sut.getGovernmentSpendFigures(taxYear, Some(testNino)).futureValue
+      val result = sut.getGovernmentSpendFigures(taxYear).futureValue
 
       result mustBe expectedBody
     }

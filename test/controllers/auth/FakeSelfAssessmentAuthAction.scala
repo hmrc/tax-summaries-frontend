@@ -17,28 +17,30 @@
 package controllers.auth
 
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeAuthAction extends ControllerBaseSpec with AuthAction {
+object FakeSelfAssessmentAuthAction extends ControllerBaseSpec with SelfAssessmentAction {
 
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
-  override protected val executionContext: ExecutionContext = mcc.executionContext
+  override protected def executionContext: ExecutionContext = mcc.executionContext
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(
-      AuthenticatedRequest(
-        "userId",
-        None,
-        Some(SaUtr(testUtr)),
-        None,
-        true,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        request))
+  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] =
+    Future(
+      Right(
+        AuthenticatedRequest(
+          "userId",
+          None,
+          Some(SaUtr(testUtr)),
+          None,
+          None,
+          None,
+          None,
+          true,
+          false,
+          fakeCredentials,
+          request)))
+
 }

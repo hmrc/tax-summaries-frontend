@@ -16,19 +16,18 @@
 
 package controllers.auth
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import com.google.inject.ImplementedBy
+import play.api.mvc.{ActionBuilder, AnyContent}
 
-case class AuthenticatedRequest[A](
-  userId: String,
-  agentRef: Option[Uar],
-  saUtr: Option[SaUtr],
-  nino: Option[Nino],
-  isSa: Boolean,
-  isAgentActive: Boolean,
-  confidenceLevel: ConfidenceLevel,
-  credentials: Credentials,
-  request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+import javax.inject.Inject
+
+@ImplementedBy(classOf[AuthJourneyImpl])
+trait AuthJourney {
+  val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
+}
+
+class AuthJourneyImpl @Inject()(authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction)
+    extends AuthJourney {
+  override val authWithSelfAssessment
+    : ActionBuilder[AuthenticatedRequest, AnyContent] = authAction andThen selfAssessmentAction
+}

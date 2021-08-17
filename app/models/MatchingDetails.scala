@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import play.api.libs.json.{Format, JsValue, Json}
+import uk.gov.hmrc.domain.SaUtr
 
-case class AuthenticatedRequest[A](
-  userId: String,
-  agentRef: Option[Uar],
-  saUtr: Option[SaUtr],
-  nino: Option[Nino],
-  isSa: Boolean,
-  isAgentActive: Boolean,
-  confidenceLevel: ConfidenceLevel,
-  credentials: Credentials,
-  request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+case class MatchingDetails(saUtr: Option[SaUtr])
+
+object MatchingDetails {
+  implicit val matchingDetailsFormat: Format[MatchingDetails] = Json.format[MatchingDetails]
+  def fromJsonMatchingDetails(matchingDetails: JsValue): MatchingDetails =
+    MatchingDetails((matchingDetails \ "ids" \ "sautr").asOpt[String].map(SaUtr.apply))
+}

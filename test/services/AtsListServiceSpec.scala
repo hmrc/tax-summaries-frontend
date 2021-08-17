@@ -97,6 +97,7 @@ class AtsListServiceSpec extends BaseSpec {
       Some(SaUtr(testUtr)),
       None,
       true,
+      false,
       ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest())
@@ -302,6 +303,7 @@ class AtsListServiceSpec extends BaseSpec {
             Some(SaUtr(testUtr)),
             None,
             true,
+            false,
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest())
@@ -366,6 +368,7 @@ class AtsListServiceSpec extends BaseSpec {
           Some(SaUtr(testUtr)),
           None,
           true,
+          false,
           ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest())

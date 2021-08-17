@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package connectors
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import config.ApplicationConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
-case class AuthenticatedRequest[A](
-  userId: String,
-  agentRef: Option[Uar],
-  saUtr: Option[SaUtr],
-  nino: Option[Nino],
-  isSa: Boolean,
-  isAgentActive: Boolean,
-  confidenceLevel: ConfidenceLevel,
-  credentials: Credentials,
-  request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfig: ApplicationConfig)(
+  implicit ec: ExecutionContext) {
+
+  private val baseUrl = applicationConfig.cidHost
+
+  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/nino/$nino")
+}

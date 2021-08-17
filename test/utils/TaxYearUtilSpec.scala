@@ -40,6 +40,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
           Some(SaUtr(testUtr)),
           None,
           true,
+          false,
           ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest("GET", s"?taxYear=$taxYear"))
@@ -60,6 +61,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             Some(SaUtr(testUtr)),
             None,
             true,
+            false,
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=20192"))
@@ -77,6 +79,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             Some(SaUtr(testUtr)),
             None,
             true,
+            false,
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=201"))
@@ -95,6 +98,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
               Some(SaUtr(testUtr)),
               None,
               true,
+              false,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest("GET", "?"))
@@ -113,6 +117,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             Some(SaUtr(testUtr)),
             None,
             true,
+            false,
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=ABCD"))

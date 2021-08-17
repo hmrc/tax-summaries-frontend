@@ -79,6 +79,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               Some(SaUtr(testUtr)),
               None,
               true,
+              false,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -115,6 +116,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               ninoIdentifier,
               false,
+              false,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -131,7 +133,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service throws an illegal argument exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new IllegalArgumentException("Oops"))
 
           implicit lazy val request =
@@ -141,6 +143,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               Some(SaUtr(testUtr)),
               None,
               true,
+              false,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -157,7 +160,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service throws another exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), any())(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new Exception("Oops"))
 
           implicit lazy val request =
@@ -167,6 +170,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               Some(SaUtr(testUtr)),
               None,
               true,
+              false,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -185,7 +189,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "show the not authorised view" in {
 
         implicit lazy val request =
-          AuthenticatedRequest("userId", None, None, None, true, ConfidenceLevel.L50, fakeCredentials, FakeRequest())
+          AuthenticatedRequest("userId", None, None, None, true, false, ConfidenceLevel.L50, fakeCredentials, FakeRequest())
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 

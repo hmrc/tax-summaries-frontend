@@ -16,19 +16,10 @@
 
 package controllers.auth
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import play.api.mvc._
+import utils.ControllerBaseSpec
 
-case class AuthenticatedRequest[A](
-  userId: String,
-  agentRef: Option[Uar],
-  saUtr: Option[SaUtr],
-  nino: Option[Nino],
-  isSa: Boolean,
-  isAgentActive: Boolean,
-  confidenceLevel: ConfidenceLevel,
-  credentials: Credentials,
-  request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
+  override val authWithSelfAssessment
+    : ActionBuilder[AuthenticatedRequest, AnyContent] = FakeAuthAction andThen FakeSelfAssessmentAuthAction
+}

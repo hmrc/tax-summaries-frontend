@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.FakeAuthAction
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -68,7 +68,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
     new SummaryController(
       mockSummaryService,
       mockAuditService,
-      FakeAuthAction,
+      FakeAuthJourney,
       mcc,
       summaryView,
       genericErrorView,

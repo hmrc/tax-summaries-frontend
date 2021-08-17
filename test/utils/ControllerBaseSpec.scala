@@ -77,6 +77,7 @@ trait ControllerBaseSpec extends BaseSpec {
     Some(SaUtr(testUtr)),
     Some(testNino),
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
@@ -87,6 +88,7 @@ trait ControllerBaseSpec extends BaseSpec {
     Some(SaUtr(testUtr)),
     None,
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"))
