@@ -63,6 +63,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       Some(SaUtr(testUtr)),
       Some(testNino),
       true,
+      false,
       ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest())

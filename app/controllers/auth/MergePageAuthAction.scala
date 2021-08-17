@@ -53,6 +53,8 @@ class MergePageAuthActionImpl @Inject()(
               .map(key => Uar(key.value))
           }
 
+          val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
+
           if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
             Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
           } else {
@@ -63,6 +65,7 @@ class MergePageAuthActionImpl @Inject()(
                 saUtr.map(SaUtr(_)),
                 nino.map(Nino(_)),
                 saUtr.nonEmpty,
+                isAgentActive,
                 confidenceLevel,
                 credentials,
                 request

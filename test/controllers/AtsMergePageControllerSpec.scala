@@ -58,6 +58,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     Some(SaUtr(testUtr)),
     Some(testNino),
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
@@ -94,6 +95,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         None,
+        true,
         true,
         ConfidenceLevel.L50,
         fakeCredentials,
@@ -153,9 +155,11 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         Some(SaUtr(testUtr)),
         Some(testNino),
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
 
       val result = sut.onSubmit(requestWithQuery)
 
@@ -175,9 +179,11 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         Some(SaUtr(testUtr)),
         Some(testNino),
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
 
       val result = sut.onSubmit(requestWithQuery)
 
@@ -197,9 +203,11 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         Some(SaUtr(testUtr)),
         Some(testNino),
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
 
       val result = sut.onSubmit(requestWithQuery)
 
@@ -219,6 +227,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(testNino),
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
@@ -241,6 +250,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         Some(SaUtr(testUtr)),
         None,
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
@@ -263,9 +273,11 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         Some(SaUtr(testUtr)),
         Some(testNino),
         true,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*))
+        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
 
       val result = sut.onSubmit(requestWithQuery)
 

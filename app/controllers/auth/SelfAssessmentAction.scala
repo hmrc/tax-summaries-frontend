@@ -108,11 +108,9 @@ class SelfAssessmentActionImpl @Inject()(
       agentRef = request.agentRef,
       saUtr = newSaUtr,
       nino = request.nino,
-      payeEmpRef = request.payeEmpRef,
-      ctUtr = request.ctUtr,
-      vrn = request.vrn,
       isSa = request.isSa,
       isAgentActive = request.isAgentActive,
+      confidenceLevel = request.confidenceLevel,
       credentials = request.credentials,
       request = request
     )

@@ -50,7 +50,7 @@ class ErrorController @Inject()(
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
     val taxIdentifier = if (request.isSa) request.saUtr else request.nino
-    governmentSpendService.getGovernmentSpendFigures(taxYear, taxIdentifier) map { spendData =>
+    governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))
     } recover {
       case e: IllegalArgumentException =>

@@ -39,6 +39,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     Some(SaUtr(testUtr)),
     None,
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))

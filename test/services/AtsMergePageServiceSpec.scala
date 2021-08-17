@@ -85,6 +85,7 @@ class AtsMergePageServiceSpec
     Some(SaUtr(testUtr)),
     Some(testNino),
     true,
+    true,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
@@ -103,6 +104,7 @@ class AtsMergePageServiceSpec
               Some(Uar("ref")),
               Some(SaUtr(testUtr)),
               Some(testNino),
+              true,
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
@@ -133,6 +135,7 @@ class AtsMergePageServiceSpec
               Some(SaUtr(testUtr)),
               Some(testNino),
               true,
+              true,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -155,6 +158,7 @@ class AtsMergePageServiceSpec
               None,
               Some(SaUtr(testUtr)),
               None,
+              true,
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
@@ -179,6 +183,7 @@ class AtsMergePageServiceSpec
               Some(SaUtr(testUtr)),
               Some(testNino),
               true,
+              true,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -198,6 +203,7 @@ class AtsMergePageServiceSpec
               Some(SaUtr(testUtr)),
               Some(testNino),
               true,
+              true,
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
@@ -216,6 +222,7 @@ class AtsMergePageServiceSpec
               None,
               Some(SaUtr(testUtr)),
               Some(testNino),
+              true,
               true,
               ConfidenceLevel.L50,
               fakeCredentials,

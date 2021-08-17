@@ -69,7 +69,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           }
 
           val saUtrIdentifier = Some(SaUtr(testUtr))
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), Matchers.eq(saUtrIdentifier))(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .successful(response)
 
           implicit lazy val request =
@@ -107,7 +107,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               key -> value.percentage.toDouble
           }
           val ninoIdentifier = Some(testNino)
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any(), Matchers.eq(ninoIdentifier))(any(), any())) thenReturn Future
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .successful(response)
           implicit lazy val request =
             AuthenticatedRequest(
@@ -189,7 +189,16 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "show the not authorised view" in {
 
         implicit lazy val request =
-          AuthenticatedRequest("userId", None, None, None, true, false, ConfidenceLevel.L50, fakeCredentials, FakeRequest())
+          AuthenticatedRequest(
+            "userId",
+            None,
+            None,
+            None,
+            true,
+            false,
+            ConfidenceLevel.L50,
+            fakeCredentials,
+            FakeRequest())
         val result = sut().notAuthorised()(request)
         val document = contentAsString(result)
 

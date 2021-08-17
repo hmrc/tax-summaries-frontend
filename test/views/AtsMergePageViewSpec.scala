@@ -45,6 +45,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     Some(SaUtr(testUtr)),
     None,
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))
@@ -58,6 +59,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     Some(SaUtr(testUtr)),
     None,
     true,
+    false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))
@@ -68,6 +70,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     Some(SaUtr(testUtr)),
     None,
     true,
+    false,
     ConfidenceLevel.L200,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))

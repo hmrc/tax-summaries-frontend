@@ -60,23 +60,20 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
 
             val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
-            if (saUtr.isDefined || isAgentActive) {
-              block {
-                AuthenticatedRequest(
-                  externalId,
-                  agentRef,
-                  saUtr.map(s => SaUtr(s)),
-                  None,
-                  saUtr.isDefined,
-                  isAgentActive,
-                  confidenceLevel,
-                  credentials,
-                  request
-                )
-              }
-            } else {
-              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
+            block {
+              AuthenticatedRequest(
+                externalId,
+                agentRef,
+                saUtr.map(s => SaUtr(s)),
+                None,
+                saUtr.isDefined,
+                isAgentActive,
+                confidenceLevel,
+                credentials,
+                request
+              )
             }
+
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
         }

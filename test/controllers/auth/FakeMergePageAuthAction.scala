@@ -37,6 +37,7 @@ class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with
         if (isSa) Some(SaUtr(testUtr)) else None,
         if (isSa) None else Some(testNino),
         isSa,
+        false,
         ConfidenceLevel.L50,
         fakeCredentials,
         request))

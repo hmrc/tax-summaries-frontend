@@ -199,7 +199,8 @@ class AuthActionSpec extends BaseSpec {
 
   "A user with a confidence level 50 and neither SA enrolment" must {
     "create an authenticated request" in {
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+      val retrievalResult
+        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set.empty) ~
             Some("") ~ Some(fakeCredentials) ~ None ~ L50
