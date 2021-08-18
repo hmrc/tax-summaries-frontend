@@ -19,7 +19,7 @@ package view_models
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{AtsYearChoice, NoATS, PAYE, SA}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -44,28 +44,10 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"))
 
+  override def beforeEach() =
+    reset(mockAppConfig)
+
   "AtsMergePageViewModel" must {
-    "set showSaYearList flag to true if saData is present " in {
-      val model = AtsMergePageViewModel(AtsList("", "", "", List(1)), List.empty, mockAppConfig, ConfidenceLevel.L200)
-      model.showSaYearList mustBe true
-    }
-
-    "set showSaYearList flag to false if saData is not present " in {
-      val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200)
-      model.showSaYearList mustBe false
-    }
-
-    "set showPayeYearList flag to true if payeTaxYearList is present " in {
-      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200)
-      model.showPayeYearList mustBe true
-    }
-
-    "set showPayeYearList flag to false if payeTaxYearList is not present " in {
-      val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200)
-      model.showPayeYearList mustBe false
-    }
 
     "set showNoAts to true if not all years from 2018 are present in sa or paye data" in {
       val model =
@@ -154,70 +136,6 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       val model =
         AtsMergePageViewModel(AtsList("", "name", "surname", List(1)), List.empty, mockAppConfig, ConfidenceLevel.L200)
       model.name mustBe "name surname"
-    }
-
-    "set onlyPaye to true if the user only has Paye years to display" in {
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "name", "surname", List.empty),
-          List(2017, 2018, 2019, 2020),
-          mockAppConfig,
-          ConfidenceLevel.L200)
-      model.onlyPaye mustBe true
-    }
-
-    "set onlyPaye to false if the user has SA years to display" in {
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "name", "surname", List(2018)),
-          List(2019, 2020),
-          mockAppConfig,
-          ConfidenceLevel.L200)
-      model.onlyPaye mustBe false
-    }
-
-    "set onlyPaye to false if the user has no ats years to display" in {
-      when(mockAppConfig.taxYear).thenReturn(2020)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "name", "surname", List.empty),
-          List(2017, 2018),
-          mockAppConfig,
-          ConfidenceLevel.L200)
-      model.onlyPaye mustBe false
-    }
-
-    "set onlySa to true if the user only has Sa years to display" in {
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "name", "surname", List(2017, 2018, 2019, 2020)),
-          List.empty,
-          mockAppConfig,
-          ConfidenceLevel.L200)
-      model.onlySa mustBe true
-    }
-
-    "set onlySa to false if the user has Paye years to display" in {
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "name", "surname", List(2018)),
-          List(2019, 2020),
-          mockAppConfig,
-          ConfidenceLevel.L200)
-      model.onlySa mustBe false
-    }
-
-    "set onlySa to false if the user has no ats years to display" in {
-      when(mockAppConfig.taxYear).thenReturn(2020)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "name", "surname", List(2017, 2018)),
-          List.empty,
-          mockAppConfig,
-          ConfidenceLevel.L200)
-      model.onlySa mustBe false
     }
 
   }

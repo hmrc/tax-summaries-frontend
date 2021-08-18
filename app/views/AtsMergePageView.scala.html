@@ -62,9 +62,7 @@
 }
 
 @main(
-        title = if(atsMergePageViewModel.onlyPaye && atsMergePageViewModel.showIvUpliftLink){
-messages("merge.page.paye.ivuplift.header")
-}else{messages("merge.page.ats.select_tax_year.title")},
+        title = messages(atsMergePageViewModel.titleMsg),
         actingAttorney = actingAsAttorney,
         articleClasses = Some("full-width selectYear")
 
@@ -87,9 +85,7 @@ messages("merge.page.paye.ivuplift.header")
                 <span class="gray heading-medium block-heading">
                     @messages("generic.ats")
                 </span>
-            @if(atsMergePageViewModel.onlyPaye && atsMergePageViewModel.showIvUpliftLink){
-            @messages("merge.page.paye.ivuplift.header")
-            }else{@messages("merge.page.ats.select_tax_year.title")}
+            @messages(atsMergePageViewModel.subtitleMsg)
         </h1>
 
         @if(atsMergePageViewModel.showNoAtsYearList){@pastAtsParagraph}

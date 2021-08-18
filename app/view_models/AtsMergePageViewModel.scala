@@ -30,34 +30,33 @@ case class AtsMergePageViewModel(
 
   private val totalTaxYearList = ((appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) to appConfig.taxYear).toList
 
-  private val saDataYearChoiceList = saData.getDescendingYearList.map(year => AtsYearChoice(SA, year))
+  private val showSaYearList: Boolean = saData.yearList.nonEmpty
 
-  private val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(PAYE, year))
+  private val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
 
-  private val noAtsYearChoiceList =
-    totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).map(year => AtsYearChoice(NoATS, year))
-
-  val showSaYearList: Boolean = saData.yearList.nonEmpty
-
-  val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
-
-  val showNoAtsText: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ < 2019).nonEmpty
-
-  val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).nonEmpty
+  private val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
 
   val showIvUpliftLink: Boolean = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
+  val completeYearList: List[AtsYearChoice] = {
+    val saDataYearChoiceList = saData.getDescendingYearList.map(year => AtsYearChoice(SA, year))
+    val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(PAYE, year))
+    val noAtsYearChoiceList =
+      totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).map(year => AtsYearChoice(NoATS, year))
 
-  val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
-
-  val onlySa: Boolean = showSaYearList && !showPayeYearList && !showNoAtsYearList
-
-  val showContinueButton: Boolean = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
-
-  val completeYearList: List[AtsYearChoice] = if (showIvUpliftLink) {
-    (saDataYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
-  } else {
-    (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
+    if (showIvUpliftLink) {
+      (saDataYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
+    } else {
+      (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
+    }
   }
-
+  val showNoAtsText: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ < 2019).nonEmpty
+  val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).nonEmpty
+  val showContinueButton: Boolean = (showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList)
   val name = s"${saData.forename} ${saData.surname}"
+  val titleMsg = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" } else {
+    "merge.page.ats.select_tax_year.title"
+  }
+  val subtitleMsg = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" } else {
+    "merge.page.ats.select_tax_year.title"
+  }
 }
