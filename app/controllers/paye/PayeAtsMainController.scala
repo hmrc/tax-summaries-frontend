@@ -55,7 +55,7 @@ class PayeAtsMainController @Inject()(
         Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(response: HttpResponse) =>
         response.status match {
-          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear))
+          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
           case _ =>
             logger.error(s"Error received, Http status: ${response.status}")
             Redirect(routes.PayeErrorController.genericError(response.status))

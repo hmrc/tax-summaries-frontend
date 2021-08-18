@@ -49,7 +49,6 @@ class ErrorController @Inject()(
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    val taxIdentifier = if (request.isSa) request.saUtr else request.nino
     governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))
     } recover {
