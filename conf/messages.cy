@@ -18,7 +18,7 @@ generic.tax.year.end=5 Ebrill
 generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} i Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Allgofnodi
-generic.errors_heading=Mae problem gyda’r ffurflen
+generic.errors_heading=Mae problem wedi codi
 generic.menu = Dewislen
 generic.beta = Beta
 generic.hm.revenue = Cyllid
@@ -35,8 +35,7 @@ view.languageToggle.welsh=Cymraeg
 ats.select_tax_year.title=Dewis blwyddyn dreth ar gyfer Hunanasesiad
 ats.select_tax_year.paye.title=Dewiswch flwyddyn dreth ar gyfer TWE
 ats.select_tax_year.continue=Parhau
-ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
-ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth
+ats.select_tax_year.required=Select the tax year you want to view
 ats.select_tax_year.label={0} i {1}
 
 # View ATS - Landing page

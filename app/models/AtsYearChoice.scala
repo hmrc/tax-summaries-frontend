@@ -31,16 +31,18 @@ object AtsYearChoice {
 
   implicit val formats = Json.format[AtsYearChoice]
 
-  def fromString(value: String): AtsYearChoice = {
-    val json = Json.parse(value)
-    Json
-      .fromJson[AtsYearChoice](json)
-      .getOrElse(
-        throw new Exception(s"Could not parse json $value to AtsYearChoice")
-      )
-  }
+  def fromString(value: Option[String]): AtsYearChoice =
+    value match {
+      case Some(v) =>
+        val json = Json.parse(v)
+        Json
+          .fromJson[AtsYearChoice](json)
+          .getOrElse(
+            throw new Exception(s"Could not parse json $value to AtsYearChoice")
+          )
+      case _ => throw new Exception(s"Could not parse json $value to AtsYearChoice")
+    }
 
-  def toOptionString(choice: AtsYearChoice): Option[String] = Some(Json.stringify(Json.toJson(choice)))
-
+  def toOptionString(choice: AtsYearChoice): Option[Option[String]] = Some(Some(Json.stringify(Json.toJson(choice))))
   def toString(choice: AtsYearChoice): String = Json.stringify(Json.toJson(choice))
 }

@@ -28,13 +28,13 @@ class AtsYearChoiceSpec extends BaseSpec {
     "fromString" must {
 
       "return the correct object from correct string" in {
-        val actual = AtsYearChoice.fromString(correctString)
+        val actual = AtsYearChoice.fromString(Some(correctString))
         actual mustBe choice
       }
 
       "throw exception with an incorrect string" in {
         val exception = intercept[Exception] {
-          AtsYearChoice.fromString("{\"incorrect\":12}")
+          AtsYearChoice.fromString(Some("{\"incorrect\":12}"))
         }
 
         exception.getMessage must include("Could not parse json")
@@ -45,7 +45,7 @@ class AtsYearChoiceSpec extends BaseSpec {
 
       "return json" in {
         val actual = AtsYearChoice.toOptionString(choice)
-        actual mustBe Some(correctString)
+        actual mustBe Some(Some(correctString))
       }
     }
 
