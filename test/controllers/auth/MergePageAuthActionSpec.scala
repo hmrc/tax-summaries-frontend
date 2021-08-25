@@ -17,6 +17,7 @@
 package controllers.auth
 
 import config.ApplicationConfig
+import models.MatchingDetails
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -25,9 +26,11 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
+import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.domain.SaUtrGenerator
+import uk.gov.hmrc.domain.{SaUtr, SaUtrGenerator}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps._
@@ -45,21 +48,31 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
           s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
           s"isSa: ${request.isSa}" +
-          s"credentials: ${request.credentials.providerType}")
+          s"credentials: ${request.credentials.providerType}" +
+          s"nino: ${request.nino.map(_.nino).getOrElse("fail")}")
     }
   }
   val fakeCredentials = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  val citizenDetailsService: CitizenDetailsService = mock[CitizenDetailsService]
 
   val ggSignInUrl =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
+  val unauthorisedRoute = controllers.routes.ErrorController.notAuthorised.url
+  implicit val hc = new HeaderCarrier
+
+  override def beforeEach() = {
+    reset(mockAuthConnector)
+    reset(citizenDetailsService)
+  }
 
   "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
@@ -71,7 +84,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -80,7 +94,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
   }
 
   "A user with a confidence level 50 and an SA enrolment" must {
-    "create an authenticated request" in {
+    "create an authenticated request and not call citizen details" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult: Future[
         Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
@@ -97,18 +111,116 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
             any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      when(citizenDetailsService.getMatchingDetails(any())(any()))
+        .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include(utr)
-      contentAsString(result) must include("true")
+      verify(citizenDetailsService, never()).getMatchingDetails(any())(any())
     }
   }
 
-  "A user with a confidence level 50 and an IR-SA-AGENT enrolment" must {
+  "A user with a confidence level 200, a nino and an SA enrolment" must {
+    "create an authenticated request and not call citizen details" in {
+      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val retrievalResult: Future[
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Future.successful(
+          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
+            fakeCredentials) ~ Some(utr) ~ Some(testNino.nino) ~ ConfidenceLevel.L50
+        )
+
+      when(
+        mockAuthConnector
+          .authorise[
+            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      when(citizenDetailsService.getMatchingDetails(any())(any()))
+        .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include(testNino.nino)
+      verify(citizenDetailsService, never()).getMatchingDetails(any())(any())
+    }
+  }
+
+  "A user with a confidence level 200, a nino and no utr" must {
+    "create an authenticated request and call citizen details" in {
+      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val retrievalResult: Future[
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Future.successful(
+          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
+            fakeCredentials) ~ None ~ Some(testNino.nino) ~ ConfidenceLevel.L50
+        )
+
+      when(
+        mockAuthConnector
+          .authorise[
+            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      when(citizenDetailsService.getMatchingDetails(any())(any()))
+        .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
+
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) mustBe OK
+      contentAsString(result) must include(utr)
+      contentAsString(result) must include(testNino.nino)
+      verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
+    }
+  }
+
+  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" must {
     "create an authenticated request" in {
+      val uar = testUar
+
+      val retrievalResult: Future[
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Future.successful(
+          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
+            Some("") ~ Some(fakeCredentials) ~ Some(testUtr) ~ None ~ ConfidenceLevel.L50)
+
+      when(
+        mockAuthConnector
+          .authorise[
+            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest("", ""))
+      status(result) mustBe OK
+      contentAsString(result) must include(uar)
+      contentAsString(result) must include(testUtr)
+      contentAsString(result) must include("bar")
+    }
+  }
+
+  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" must {
+    "redirect to unauthorised" in {
       val uar = testUar
 
       val retrievalResult: Future[
@@ -125,25 +237,24 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
             any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
-      status(result) mustBe OK
-      contentAsString(result) must include(uar)
-      contentAsString(result) must include(testUtr)
-      contentAsString(result) must include("bar")
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get must endWith(unauthorisedRoute)
     }
   }
 
-  "A user with a confidence level 50 and an IR-SA-AGENT enrolment, no nino and no utr" must {
+  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment, no nino and no utr" must {
     "create an authenticated request" in {
       val uar = testUar
 
       val retrievalResult: Future[
         Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
-          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
+          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
             Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
 
       when(
@@ -154,7 +265,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
             any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -182,7 +294,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
             any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      val authAction =
+        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -207,7 +320,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         any())(any(), any()))
       .thenReturn(retrievalResult)
 
-    val authAction = new MergePageAuthActionImpl(mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+    val authAction =
+      new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
     val controller = new Harness(authAction)
 
     val ex = intercept[RuntimeException] {

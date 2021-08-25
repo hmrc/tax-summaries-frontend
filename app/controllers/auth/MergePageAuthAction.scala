@@ -20,6 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core._
@@ -31,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 
 class MergePageAuthActionImpl @Inject()(
+  citizenDetailsService: CitizenDetailsService,
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends MergePageAuthAction with AuthorisedFunctions {
@@ -58,18 +60,31 @@ class MergePageAuthActionImpl @Inject()(
           if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
             Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
           } else {
-            block {
-              AuthenticatedRequest(
-                externalId,
-                agentRef,
-                saUtr.map(SaUtr(_)),
-                nino.map(Nino(_)),
-                saUtr.nonEmpty,
-                isAgentActive,
-                confidenceLevel,
-                credentials,
-                request
-              )
+
+            val authenticatedRequest = AuthenticatedRequest(
+              externalId,
+              agentRef,
+              saUtr.map(SaUtr(_)),
+              nino.map(Nino(_)),
+              saUtr.nonEmpty,
+              isAgentActive,
+              confidenceLevel,
+              credentials,
+              request
+            )
+
+            if (agentRef.isDefined && !isAgentActive) {
+              Future(Redirect(controllers.routes.ErrorController.notAuthorised))
+            } else if (saUtr.isEmpty && agentRef.isEmpty) {
+              nino
+                .map { n =>
+                  handleResponse(authenticatedRequest, n).flatMap(
+                    response => block(response)
+                  )
+                }
+                .getOrElse(block(authenticatedRequest))
+            } else {
+              block(authenticatedRequest)
             }
           }
         }
@@ -93,6 +108,35 @@ class MergePageAuthActionImpl @Inject()(
       Redirect(controllers.routes.ErrorController.notAuthorised)
     }
   }
+
+  private def handleResponse[T](request: AuthenticatedRequest[T], nino: String)(
+    implicit hc: HeaderCarrier): Future[AuthenticatedRequest[T]] =
+    for {
+      detailsResponse <- citizenDetailsService.getMatchingDetails(nino)
+    } yield {
+      detailsResponse match {
+        case SucccessMatchingDetailsResponse(value) =>
+          if (value.saUtr.isDefined) { createAuthenticatedRequest(request, value.saUtr) } else {
+            request
+          }
+        case _ => request
+      }
+    }
+
+  private def createAuthenticatedRequest[T](
+    request: AuthenticatedRequest[T],
+    newSaUtr: Option[SaUtr]): AuthenticatedRequest[T] =
+    AuthenticatedRequest(
+      userId = request.userId,
+      agentRef = request.agentRef,
+      saUtr = newSaUtr,
+      nino = request.nino,
+      isSa = request.isSa,
+      isAgentActive = request.isAgentActive,
+      confidenceLevel = request.confidenceLevel,
+      credentials = request.credentials,
+      request = request
+    )
 }
 
 @ImplementedBy(classOf[MergePageAuthActionImpl])
