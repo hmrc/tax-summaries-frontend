@@ -401,7 +401,7 @@ ats.howYourTaxWasSpent.table.department.Total = Cyfanswm
 #Sa and Paye Merge Page
 #=============================================================
 merge.page.no.ats.title=Blynyddoedd pan gawsoch Grynodeb Treth Blynyddol gyffredinol
-merge.page.no.ats.summary.available.text=Mae’r Grynodeb Treth Blynyddol gyffredinol ond ar gael i’w gweld ar-lein o’r flwyddyn dreth 2018 i 2019 ymlaen.
+merge.page.no.ats.summary.unavailable.text=Mae’r Grynodeb Treth Blynyddol gyffredinol ond ar gael i’w gweld ar-lein o’r flwyddyn dreth 2018 i 2019 ymlaen.
 merge.page.no.ats.summary.text=Mae’n bosibl y byddwch yn gweld Crynodeb Treth Blynyddol gyffredinol gan na fydd pawb yn cael un personol ar gyfer pob blwyddyn dreth. Gall hyn fod oherwydd na thalwyd Treth Incwm ar gyfer y flwyddyn honno, neu oherwydd bod CThEM yn aros am wybodaeth megis newid cyfeiriad.
 merge.page.sa.unavailable=Nid yw blynyddoedd treth Hunanasesiad ar gael ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 merge.page.paye.unavailable=Nid yw blynyddoedd treth TWE ar gael ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
