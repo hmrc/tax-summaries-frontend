@@ -39,8 +39,8 @@ class AtsMergePageService @Inject()(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Either[HttpResponse, AtsMergePageViewModel]] =
     for {
-      saData   <- getSaYearList
-      payeData <- getPayeAtsYearList
+      saData   <- if (!appConfig.saShuttered) { getSaYearList } else { Future(Right(AtsList.empty)) }
+      payeData <- if (!appConfig.payeShuttered) { getPayeAtsYearList } else { Future(Right(List())) }
     } yield {
       (saData, payeData) match {
         case (Right(saTaxYearData), Right(payeTaxYearList)) => {
