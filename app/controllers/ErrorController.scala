@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, MinAuthAction}
+import controllers.auth.{AuthAction, MergePageAuthAction, MinAuthAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
@@ -35,6 +35,7 @@ import scala.concurrent.ExecutionContext
 class ErrorController @Inject()(
   governmentSpendService: GovernmentSpendService,
   authAction: AuthAction,
+  mergePageAuthAction: MergePageAuthAction,
   minAuthAction: MinAuthAction,
   mcc: MessagesControllerComponents,
   notAuthorisedView: NotAuthorisedView,
@@ -47,9 +48,7 @@ class ErrorController @Inject()(
 
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def authorisedNoAts: Action[AnyContent] = authAction.async { implicit request =>
-    val taxYear = appConfig.saYear
-
+  def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
     governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
       Ok(howTaxIsSpentView(spendData, taxYear))
     } recover {

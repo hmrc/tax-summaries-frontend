@@ -22,8 +22,10 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Results.Redirect
+import play.api.mvc._
 import services.PayeAtsService
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
@@ -53,10 +55,11 @@ class PayeAtsMainController @Inject()(
         Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(response: HttpResponse) =>
         response.status match {
-          case NOT_FOUND => Redirect(routes.PayeErrorController.authorisedNoAts)
+          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
           case _ =>
             logger.error(s"Error received, Http status: ${response.status}")
             Redirect(routes.PayeErrorController.genericError(response.status))
         }
     }
+
 }

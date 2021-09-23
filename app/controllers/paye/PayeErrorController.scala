@@ -45,7 +45,7 @@ class PayeErrorController @Inject()(
   ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
-  val payeYear = appConfig.payeYear
+  val payeYear = appConfig.taxYear
   override def now: () => LocalDate = () => LocalDate.now()
 
   def genericError(status: Int): Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>
@@ -53,21 +53,6 @@ class PayeErrorController @Inject()(
       status match {
         case INTERNAL_SERVER_ERROR => InternalServerError(payeGenericErrorView())
         case _                     => BadGateway(payeGenericErrorView())
-      }
-    }
-  }
-
-  def authorisedNoAts: Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    {
-      governmentSpendService.getGovernmentSpendFigures(payeYear) map { data =>
-        Ok(howTaxIsSpentView(data, payeYear))
-      } recover {
-        case e: IllegalArgumentException =>
-          logger.error(e.getMessage)
-          BadRequest(payeGenericErrorView())
-        case e =>
-          logger.error(e.getMessage)
-          InternalServerError(payeGenericErrorView())
       }
     }
   }

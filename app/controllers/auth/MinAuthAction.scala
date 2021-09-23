@@ -43,8 +43,9 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(ConfidenceLevel.L50)
-      .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials) {
-        case enrolments ~ Some(externalId) ~ Some(credentials) =>
+      .retrieve(
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.confidenceLevel) {
+        case enrolments ~ Some(externalId) ~ Some(credentials) ~ confidenceLevel =>
           val isSa = enrolments.getEnrolment("IR-SA").isDefined
           val isAgentActive: Boolean = enrolments.getEnrolment("IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
@@ -54,11 +55,9 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
               None,
               None,
               None,
-              None,
-              None,
-              None,
               isSa,
               isAgentActive,
+              confidenceLevel,
               credentials,
               request))
 

@@ -17,6 +17,7 @@
 package controllers.auth
 
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain._
 
@@ -25,11 +26,9 @@ case class AuthenticatedRequest[A](
   agentRef: Option[Uar],
   saUtr: Option[SaUtr],
   nino: Option[Nino],
-  payeEmpRef: Option[EmpRef],
-  ctUtr: Option[CtUtr],
-  vrn: Option[Vrn],
   isSa: Boolean,
   isAgentActive: Boolean,
+  confidenceLevel: ConfidenceLevel,
   credentials: Credentials,
   request: Request[A])
     extends WrappedRequest[A](request) with CommonRequest

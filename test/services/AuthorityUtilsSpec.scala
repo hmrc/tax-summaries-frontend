@@ -19,6 +19,7 @@ package services
 import controllers.auth.AuthenticatedRequest
 import models.AgentToken
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import utils.TestConstants._
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
@@ -36,11 +37,9 @@ class AuthorityUtilsSpec extends BaseSpec {
       None,
       Some(SaUtr(utr)),
       None,
-      None,
-      None,
-      None,
       true,
       false,
+      ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest())
     val agentRequest =
@@ -49,11 +48,9 @@ class AuthorityUtilsSpec extends BaseSpec {
         Some(Uar(uar)),
         Some(SaUtr(utr)),
         None,
-        None,
-        None,
-        None,
         true,
         false,
+        ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest())
 

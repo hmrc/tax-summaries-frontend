@@ -77,12 +77,12 @@ class MinAuthActionSpec extends BaseSpec {
 
   "A user with a confidence level 50" must {
     "create a minimum authenticated request" in {
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
-        Future.successful(Enrolments(Set.empty) ~ Some("") ~ Some(fakeCredentials))
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel] =
+        Future.successful(Enrolments(Set.empty) ~ Some("") ~ Some(fakeCredentials) ~ ConfidenceLevel.L50)
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
@@ -95,12 +95,12 @@ class MinAuthActionSpec extends BaseSpec {
 
   "A user with no credentials will fail to auth" in {
 
-    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
-      Future.successful(Enrolments(Set.empty) ~ Some("") ~ None)
+    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel] =
+      Future.successful(Enrolments(Set.empty) ~ Some("") ~ None ~ ConfidenceLevel.L50)
 
     when(
       mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any()))
       .thenReturn(retrievalResult)
 
     val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)

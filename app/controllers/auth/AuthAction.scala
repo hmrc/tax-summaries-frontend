@@ -48,8 +48,9 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
         HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
       authorised(ConfidenceLevel.L50)
-        .retrieve(Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr) {
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr => {
+        .retrieve(
+          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel) {
+          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel => {
 
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
@@ -59,47 +60,20 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
 
             val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
-            val payeEmpRef: Option[EmpRef] = enrolments
-              .find(_.key == "IR-PAYE")
-              .map { enrolment =>
-                val taxOfficeNumber = enrolment.identifiers.find(id => id.key == "TaxOfficeNumber").map(_.value)
-                val taxOfficeReference = enrolment.identifiers.find(id => id.key == "TaxOfficeReference").map(_.value)
-
-                (taxOfficeNumber, taxOfficeReference) match {
-                  case (Some(number), Some(reference)) =>
-                    EmpRef(number, reference)
-                }
-              }
-
-            val ctUtr: Option[CtUtr] = enrolments.find(_.key == "IR-CT").flatMap { enrolment =>
-              enrolment.identifiers
-                .find(id => id.key == "UTR")
-                .map(key => CtUtr(key.value))
-            }
-
-            val vrn: Option[Vrn] = enrolments
-              .find(vatEnrolments => vatEnrolments.key == "HMCE-VATDEC-ORG" || vatEnrolments.key == "HMCE-VATVAR-ORG")
-              .flatMap { enrolment =>
-                enrolment.identifiers
-                  .find(id => id.key == "VATRegNo")
-                  .map(key => Vrn(key.value))
-              }
-
             block {
               AuthenticatedRequest(
                 externalId,
                 agentRef,
-                saUtr.map(SaUtr(_)),
+                saUtr.map(s => SaUtr(s)),
                 None,
-                payeEmpRef,
-                ctUtr,
-                vrn,
                 saUtr.isDefined,
                 isAgentActive,
+                confidenceLevel,
                 credentials,
                 request
               )
             }
+
           }
           case _ => throw new RuntimeException("Can't find credentials for user")
         }

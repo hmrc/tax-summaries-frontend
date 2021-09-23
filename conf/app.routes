@@ -1,8 +1,8 @@
 # TAXS routes
 GET     /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
 
-GET     /                                                      controllers.IndexController.authorisedIndex
-POST    /                                                      controllers.IndexController.authorisedOnSubmit
+GET     /                                                      controllers.AtsMergePageController.onPageLoad
+POST    /                                                      controllers.AtsMergePageController.onSubmit
 GET     /main                                                  controllers.AtsMainController.authorisedAtsMain
 GET     /summary                                               controllers.SummaryController.authorisedSummaries
 GET     /nics                                                  controllers.NicsController.authorisedNics
@@ -13,7 +13,7 @@ GET     /total-income-tax                                      controllers.Total
 GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised
-GET     /no-ats                                                controllers.ErrorController.authorisedNoAts
+GET     /no-ats                                                controllers.ErrorController.authorisedNoAts(taxYear:Int)
 GET     /service-unavailable                                   controllers.ErrorController.serviceUnavailable
 
 GET     /language/:lang                                        controllers.paye.PayeLanguageController.switchToLanguage(lang: String)
@@ -23,10 +23,11 @@ GET     /sign-out                                              controllers.Accou
 
 GET     /paye/treasury-spending/:taxYear                       controllers.paye.PayeGovernmentSpendController.show(taxYear: Int)
 
-GET     /paye/main                                             controllers.paye.PayeMultipleYearsController.onPageLoad
-POST    /paye/main                                             controllers.paye.PayeMultipleYearsController.onSubmit
+GET     /paye/main                                             controllers.AtsMergePageController.onPageLoad
+POST    /paye/main                                             controllers.AtsMergePageController.onSubmit
 
 GET     /paye/main/:taxYear                                    controllers.paye.PayeAtsMainController.show(taxYear: Int)
+GET     /upliftConfidenceLevel                                 controllers.IvUpliftRedirectController.upliftConfidenceLevel
 
 GET     /paye/summary/:taxYear                                 controllers.paye.PayeYourIncomeAndTaxesController.show(taxYear: Int)
 
@@ -35,8 +36,6 @@ GET     /paye/income-tax-and-national-insurance/:taxYear       controllers.paye.
 GET     /paye/income-before-tax/:taxYear                       controllers.paye.PayeYourTaxableIncomeController.show(taxYear: Int)
 
 GET     /paye/tax-free-amount/:taxYear                         controllers.paye.PayeTaxFreeAmountController.show(taxYear: Int)
-
-GET     /paye/no-ats                                           controllers.paye.PayeErrorController.authorisedNoAts
 
 GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
 

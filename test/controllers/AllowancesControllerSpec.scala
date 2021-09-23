@@ -51,9 +51,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   implicit val hc = new HeaderCarrier
@@ -151,7 +149,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
   }

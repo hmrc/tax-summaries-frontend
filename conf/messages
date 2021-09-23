@@ -23,7 +23,7 @@ generic.tax_year_heading=Tax year: April 6 {0} to April 5 {1}
 paye.generic.tax_year_heading={0} to {1}
 generic.to_from=: {0} to {1}
 generic.sign_out=Sign out
-generic.errors_heading=There is a problem with the form
+generic.errors_heading=There is a problem
 generic.menu = Menu
 generic.beta = Beta
 generic.hm.revenue.and.customs = HM Revenue & Customs
@@ -42,11 +42,8 @@ view.languageToggle.welsh=Cymraeg
 ats.select_tax_year.title=Select a Self Assessment tax year
 ats.select_tax_year.paye.title=Select a PAYE tax year
 ats.select_tax_year.continue=Continue
-ats.select_tax_year.required.summary=Please select the tax year
-ats.select_tax_year.required=Select an option for the tax year
+ats.select_tax_year.required=Select the tax year you want to view
 ats.select_tax_year.label={0} to {1}
-ats.summary.view.sa.link=View Self Assessment Annual Tax Summary
-ats.summary.view.paye.link=View PAYE Annual Tax Summary
 
 
 # View ATS - Landing page
@@ -418,3 +415,24 @@ ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insur
 ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties.
 ats.howYourTaxWasSpent.table.department.title = Department spend
 ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
+
+#Sa and Paye Merge Page
+#=============================================================
+merge.page.no.ats.title=Years where you received a general Annual Tax Summary
+merge.page.no.ats.summary.unavailable.text=The general Annual Tax Summary is only available to view online from the 2018 to 2019 tax year onward.
+merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not everyone will have a personal one for each tax year. This may be because no income tax was paid for that year, or HMRC is waiting for information such as a change of address.
+merge.page.sa.unavailable=Self Assessment tax years are unavailable at the moment. Try again later.
+merge.page.paye.unavailable=PAYE tax years are unavailable at the moment. Try again later.
+merge.page.paye.ivuplift.text=To see your PAYE Annual Tax Summary you need to
+merge.page.paye.ivuplift.link.text=answer some extra security questions.
+merge.page.sa.text=Self Assessment
+merge.page.paye.text=PAYE
+merge.page.ats.select_tax_year.title=Which tax year do you want to view?
+ats.select_tax_year.sa.label={0} to {1} for Self Assessment
+ats.select_tax_year.paye.label={0} to {1} for PAYE
+ats.select_tax_year.no_ats.label={0} to {1} for a general Annual Tax Summary
+merge.page.paye.ivuplift.header = You need to answer some extra security questions
+merge.page.sa.utr.inactive.header = You need to request access to your Self Assessment
+merge.page.sa.utr.inactive.text = To see your Self Assessment Annual Tax Summary you need to
+merge.page.sa.utr.inactive.link = request access to your Self Assessment.
+

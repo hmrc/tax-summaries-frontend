@@ -1,0 +1,127 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.ApplicationConfig
+@import controllers.auth.AuthenticatedRequest
+@import uk.gov.hmrc.play.views.html.helpers._
+@import view_models.AtsForms
+@import views.html.helpers.ErrorSummaryTemplateView
+@import views.html.helpers.InputRadioGroupView
+@import views.html.main
+@import views.html.helpers.HeaderSection
+@import view_models.AtsMergePageViewModel
+@import scala.concurrent.ExecutionContext
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+
+@this(
+    main: main,
+    headerSection: HeaderSection,
+    errorSummaryTemplateView: ErrorSummaryTemplateView,
+    inputRadioGroupView: InputRadioGroupView,
+    atsForms: AtsForms,
+    formWithCSRF: FormWithCSRF
+)
+
+@(  atsMergePageViewModel: AtsMergePageViewModel,
+    atsYearForm: Form[models.AtsYearChoice],
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages,
+    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
+    appConfig: ApplicationConfig,
+    ec : ExecutionContext
+)
+
+@pastAtsParagraph = {
+@if(atsMergePageViewModel.showNoAtsText) {
+<p class='gray' id='no-ats-before-2019'>
+    @messages("merge.page.no.ats.summary.unavailable.text")
+</p>
+<p class='gray' id='generic-no-ats'>
+    @messages("merge.page.no.ats.summary.text")
+</p>
+}else {
+<p class='gray' id='generic-no-ats'>
+    @messages("merge.page.no.ats.summary.text")
+</p>
+}
+}
+
+@main(
+        title = messages(atsMergePageViewModel.titleMsg),
+        actingAttorney = actingAsAttorney,
+        articleClasses = Some("full-width selectYear")
+
+    ) {
+
+    @headerSection(
+        pageHeading = Messages("ats.summary.title"),
+        name = atsMergePageViewModel.name,
+        utr = atsMergePageViewModel.saData.utr,
+        taxYear = 0,
+        actingAsAttorney = actingAsAttorney
+    )
+
+    <div class="main-content">
+
+        @errorSummaryTemplateView(atsYearForm)
+
+        @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
+        <h1 id="index-page-header" class="heading-xlarge">
+                <span class="gray heading-medium block-heading">
+                    @messages("generic.ats")
+                </span>
+            @messages(atsMergePageViewModel.subtitleMsg)
+        </h1>
+
+        @if(atsMergePageViewModel.showNoAtsYearList){@pastAtsParagraph}
+
+
+        @inputRadioGroupView(
+        atsYearForm(atsForms.yearChoice),
+        atsMergePageViewModel.completeYearList.map(
+        yearChoice => yearChoice -> yearChoice.getLabel
+        ),
+        '_fieldSetAttributes -> "id=year_field",
+        '_headingClass -> "heading-48"
+        )
+
+        @if(appConfig.saShuttered){
+<p id="sa-unavailable">@messages("merge.page.sa.unavailable")</p>
+
+}
+@if(appConfig.payeShuttered){
+
+<p id="paye-unavailable">@messages("merge.page.paye.unavailable")</p>
+
+
+}else if(atsMergePageViewModel.showIvUpliftLink){
+<p id="paye-uplift">@messages("merge.page.paye.ivuplift.text")
+    <a id="ivUplift-link" href="@controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel">
+        @messages("merge.page.paye.ivuplift.link.text")</a></p>
+
+}
+
+
+        @if(atsMergePageViewModel.showContinueButton){
+        <div class="form-field">
+            <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
+        </div>
+        }
+}
+    </div>
+}

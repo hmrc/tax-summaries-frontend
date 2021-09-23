@@ -20,9 +20,12 @@ import play.api.i18n.Messages
 import play.api.libs.json.{Format, Json}
 import utils.GenericViewModel
 
-case class AtsList(utr: String, forename: String, surname: String, yearList: List[TaxYearEnd])
-    extends GenericViewModel {
+case class AtsList(utr: String, forename: String, surname: String, yearList: List[Int]) extends GenericViewModel {
   def getDescendingYearList = yearList.reverse
+}
+
+object AtsList {
+  val empty = AtsList("", "", "", List.empty)
 }
 
 case class TaxYearEnd(year: Option[String]) extends GenericViewModel {

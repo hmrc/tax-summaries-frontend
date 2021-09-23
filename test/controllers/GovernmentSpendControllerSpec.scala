@@ -53,9 +53,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   val model = new GovernmentSpend(
@@ -129,7 +127,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
     "have correct data for 2014" in {

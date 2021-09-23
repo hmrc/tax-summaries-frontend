@@ -24,6 +24,7 @@ import org.scalatest.MustMatchers._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
@@ -39,9 +40,7 @@ class AllowanceServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
@@ -53,18 +52,15 @@ class AllowanceServiceSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     false,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=${sut.taxYear}"))
 
   val mockAtsService: AtsService = mock[AtsService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
 
-  def sut = new AllowanceService(mockAtsService, mockAtsYearListService) with MockitoSugar {
+  def sut = new AllowanceService(mockAtsService) with MockitoSugar {
     implicit val hc = new HeaderCarrier
     val taxYear = 2015
 

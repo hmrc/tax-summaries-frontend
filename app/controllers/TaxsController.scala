@@ -52,7 +52,7 @@ abstract class TaxsController @Inject()(
 
   def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel map {
-      case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts)
+      case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts(appConfig.taxYear))
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
       case Right(result: ViewModel)          => obtainResult(result)
       case Left(InvalidTaxYear)              => BadRequest(genericErrorView())

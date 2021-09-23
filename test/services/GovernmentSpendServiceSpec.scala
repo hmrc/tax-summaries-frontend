@@ -27,6 +27,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants._
@@ -42,15 +43,12 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   override val taxYear = 2015
 
   val mockAtsService = mock[AtsService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
@@ -60,15 +58,13 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     false,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=2015"))
 
-  def sut = new GovernmentSpendService(mockAtsService, mockAtsYearListService, mockMiddleConnector) with MockitoSugar
+  def sut = new GovernmentSpendService(mockAtsService, mockMiddleConnector) with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" must {
 

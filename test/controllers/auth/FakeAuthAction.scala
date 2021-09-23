@@ -17,6 +17,7 @@
 package controllers.auth
 
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.ControllerBaseSpec
 import utils.TestConstants._
@@ -35,11 +36,9 @@ object FakeAuthAction extends ControllerBaseSpec with AuthAction {
         None,
         Some(SaUtr(testUtr)),
         None,
-        None,
-        None,
-        None,
         true,
         false,
+        ConfidenceLevel.L50,
         fakeCredentials,
         request))
 }

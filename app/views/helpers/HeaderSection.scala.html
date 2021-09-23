@@ -39,7 +39,7 @@
 }
 
 <div class="info-header-section">
-    @if(!actingAsAttorney.isDefined){
+    @if(!actingAsAttorney.isDefined && utr.nonEmpty){
             <p id="user-info"><strong>@name</strong> <br>@Html(Messages("generic.utr")) @utr</p>
 
     }

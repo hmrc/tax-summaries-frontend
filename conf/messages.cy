@@ -18,7 +18,7 @@ generic.tax.year.end=5 Ebrill
 generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} i Ebrill 5 {1}
 generic.to_from=: {0} i {1}
 generic.sign_out=Allgofnodi
-generic.errors_heading=Mae problem gyda’r ffurflen
+generic.errors_heading=Mae problem wedi codi
 generic.menu = Dewislen
 generic.beta = Beta
 generic.hm.revenue = Cyllid
@@ -35,11 +35,8 @@ view.languageToggle.welsh=Cymraeg
 ats.select_tax_year.title=Dewis blwyddyn dreth ar gyfer Hunanasesiad
 ats.select_tax_year.paye.title=Dewiswch flwyddyn dreth ar gyfer TWE
 ats.select_tax_year.continue=Parhau
-ats.select_tax_year.required.summary=Dewiswch flwyddyn dreth
-ats.select_tax_year.required=Dewiswch opsiwn am y flwyddyn dreth
+ats.select_tax_year.required=Dewiswch y flwyddyn dreth rydych am fwrw golwg drosti
 ats.select_tax_year.label={0} i {1}
-ats.summary.view.sa.link=Bwrw golwg dros Grynodeb Treth Blynyddol Hunanasesiad
-ats.summary.view.paye.link=Bwrw golwg dros Grynodeb Treth Blynyddol TWE
 
 # View ATS - Landing page
 #============================================================
@@ -400,3 +397,23 @@ ats.howYourTaxWasSpent.caveat = Nid yw’n cynnwys TAW, ecséis na thollau erail
 ats.howYourTaxWasSpent.table.department.title = Gwariant y llywodraeth
 ats.howYourTaxWasSpent.table.percentage.title  = Canran o’r dreth
 ats.howYourTaxWasSpent.table.department.Total = Cyfanswm
+
+#Sa and Paye Merge Page
+#=============================================================
+merge.page.no.ats.title=Blynyddoedd pan gawsoch Grynodeb Treth Blynyddol gyffredinol
+merge.page.no.ats.summary.unavailable.text=Mae’r Grynodeb Treth Blynyddol gyffredinol ond ar gael i’w gweld ar-lein o’r flwyddyn dreth 2018 i 2019 ymlaen.
+merge.page.no.ats.summary.text=Mae’n bosibl y byddwch yn gweld Crynodeb Treth Blynyddol gyffredinol gan na fydd pawb yn cael un personol ar gyfer pob blwyddyn dreth. Gall hyn fod oherwydd na thalwyd Treth Incwm ar gyfer y flwyddyn honno, neu oherwydd bod CThEM yn aros am wybodaeth megis newid cyfeiriad.
+merge.page.sa.unavailable=Nid yw blynyddoedd treth Hunanasesiad ar gael ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
+merge.page.paye.unavailable=Nid yw blynyddoedd treth TWE ar gael ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
+merge.page.paye.ivuplift.text=Er mwyn gweld eich Crynodeb Treth Blynyddol TWE, mae angen i chi
+merge.page.paye.ivuplift.link.text=ateb rhai cwestiynau diogelwch ychwanegol.
+merge.page.sa.text=Hunanasesiad
+merge.page.paye.text=TWE
+merge.page.ats.select_tax_year.title=Pa flwyddyn dreth ydych am fwrw golwg drosti?
+ats.select_tax_year.sa.label={0} i {1} ar gyfer Hunanasesiad
+ats.select_tax_year.paye.label={0} i {1} ar gyfer TWE
+ats.select_tax_year.no_ats.label={0} i {1} ar gyfer Crynodeb Treth Blynyddol
+merge.page.paye.ivuplift.header = Mae angen i chi ateb rhai cwestiynau diogelwch ychwanegol
+merge.page.sa.utr.inactive.header = Mae angen i chi wneud cais i gael mynediad at eich cyfrif Hunanasesiad
+merge.page.sa.utr.inactive.text = Er mwyn gweld eich Crynodeb Treth Blynyddol Hunanasesiad, mae angen i chi
+merge.page.sa.utr.inactive.link = wneud cais i gael mynediad at eich cyfrif Hunanasesiad.

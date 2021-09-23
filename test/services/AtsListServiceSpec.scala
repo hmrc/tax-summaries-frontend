@@ -26,11 +26,14 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.TestConstants._
 import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
+import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
@@ -47,7 +50,7 @@ class AtsListServiceSpec extends BaseSpec {
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
-  val mockAppConfig = mock[ApplicationConfig]
+  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
@@ -84,7 +87,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(mockAppConfig.saYear).thenReturn(2020)
+    when(mockAppConfig.taxYear).thenReturn(2020)
   }
 
   implicit val request =
@@ -93,11 +96,9 @@ class AtsListServiceSpec extends BaseSpec {
       None,
       Some(SaUtr(testUtr)),
       None,
-      None,
-      None,
-      None,
       true,
       false,
+      ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest())
   implicit val hc = new HeaderCarrier
@@ -115,7 +116,7 @@ class AtsListServiceSpec extends BaseSpec {
   }
 
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, mockAppConfig)
+    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
 
   "storeSelectedTaxYear" must {
 
@@ -182,6 +183,46 @@ class AtsListServiceSpec extends BaseSpec {
     }
   }
 
+  "createModel" must {
+
+    "Return a ats list when received a success response from connector" in {
+
+      when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(AtsTestData.atsListData)))
+
+      whenReady(sut.createModel) { result =>
+        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2018)))
+      }
+
+    }
+
+    "Return an empty ats list when received a not found response from connector" in {
+
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
+
+      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+        .successful(AtsNotFoundResponse("Not found"))
+
+      whenReady(sut.createModel) { result =>
+        result mustBe Right(AtsList.empty)
+      }
+
+    }
+
+    "Return the error status ats list when received an error response from connector" in {
+
+      when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
+
+      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+        .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
+
+      whenReady(sut.createModel) { result =>
+        result mustBe Left(INTERNAL_SERVER_ERROR)
+      }
+
+    }
+  }
+
   "getAtsYearList" must {
 
     "Return a ats list with 2020 year data" in {
@@ -194,7 +235,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a ats list without 2020 year data" in {
 
-      when(mockAppConfig.saYear).thenReturn(2019)
+      when(mockAppConfig.taxYear).thenReturn(2019)
 
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(dataFor2019)))
@@ -261,11 +302,9 @@ class AtsListServiceSpec extends BaseSpec {
             Some(Uar(testUtr)),
             Some(SaUtr(testUtr)),
             None,
-            None,
-            None,
-            None,
             true,
             false,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest())
 
@@ -328,11 +367,9 @@ class AtsListServiceSpec extends BaseSpec {
           Some(Uar(testUar)),
           Some(SaUtr(testUtr)),
           None,
-          None,
-          None,
-          None,
           true,
           false,
+          ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest())
 

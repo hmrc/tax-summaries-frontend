@@ -21,6 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models._
@@ -35,11 +36,9 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       None,
       Some(SaUtr(testUtr)),
       None,
-      None,
-      None,
-      None,
       true,
       false,
+      ConfidenceLevel.L200,
       fakeCredentials,
       FakeRequest())
   lazy val scottishTableView = inject[ScottishTableView]

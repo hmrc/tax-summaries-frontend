@@ -23,6 +23,7 @@ import org.mockito.Mockito._
 import org.scalatest.MustMatchers._
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
@@ -38,9 +39,7 @@ class SummaryServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   val mockAtsService = mock[AtsService]
@@ -52,11 +51,9 @@ class SummaryServiceSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     false,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 

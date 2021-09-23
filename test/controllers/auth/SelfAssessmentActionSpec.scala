@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, BodyParser, InjectedController, Request
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import services.{CitizenDetailsService, FailedMatchingDetailsResponse, SucccessMatchingDetailsResponse}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{Generator, SaUtr, SaUtrGenerator, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -63,11 +64,9 @@ class SelfAssessmentActionSpec
           uar,
           utr,
           None,
-          None,
-          None,
-          None,
           utr.isDefined,
           uar.isDefined,
+          ConfidenceLevel.L50,
           fakeCredentials,
           request))
   }

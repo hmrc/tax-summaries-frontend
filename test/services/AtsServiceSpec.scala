@@ -23,6 +23,7 @@ import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
@@ -63,11 +64,9 @@ class AtsServiceSpec extends BaseSpec {
       None,
       Some(SaUtr(testUtr)),
       None,
-      None,
-      None,
-      None,
       true,
       false,
+      ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest())
 
@@ -182,11 +181,9 @@ class AtsServiceSpec extends BaseSpec {
                   Some(Uar(testUar)),
                   Some(SaUtr(testUtr)),
                   None,
-                  None,
-                  None,
-                  None,
                   true,
                   false,
+                  ConfidenceLevel.L50,
                   fakeCredentials,
                   FakeRequest())
 

@@ -28,10 +28,8 @@ import view_models.GovernmentSpend
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentSpendService @Inject()(
-  atsService: AtsService,
-  atsYearListService: AtsYearListService,
-  middleConnector: MiddleConnector)(implicit val appConfig: ApplicationConfig) {
+class GovernmentSpendService @Inject()(atsService: AtsService, middleConnector: MiddleConnector)(
+  implicit val appConfig: ApplicationConfig) {
 
   def getGovernmentSpendData(
     taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =

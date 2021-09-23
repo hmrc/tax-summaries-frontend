@@ -92,8 +92,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   //Application name
   lazy val appName = config.getString("appName")
 
-  val payeYear: Int = config.getInt("paye.year")
-
   val saShuttered: Boolean = config.getBoolean("shuttering.sa")
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
@@ -120,7 +118,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 
-  val saYear: Int = config.getInt("sa.year")
+  val taxYear: Int = config.getInt("taxYear")
+  val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
   def spendCategories(taxYear: Int): List[String] =
     configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList

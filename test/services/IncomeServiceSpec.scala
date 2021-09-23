@@ -24,6 +24,7 @@ import org.scalatest.MustMatchers._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
@@ -39,30 +40,25 @@ class IncomeServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(
-      TaxYearEnd(Some("2015"))
-    )
+    yearList = List(2015)
   )
 
   implicit val hc = new HeaderCarrier
 
   val mockAtsService = mock[AtsService]
-  val mockAtsYearListService: AtsYearListService = mock[AtsYearListService]
   override val taxYear = 2015
   val request = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     false,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
-  def sut = new IncomeService(mockAtsService, mockAtsYearListService) with MockitoSugar
+  def sut = new IncomeService(mockAtsService) with MockitoSugar
 
   "IncomeService getIncomeData" must {
 

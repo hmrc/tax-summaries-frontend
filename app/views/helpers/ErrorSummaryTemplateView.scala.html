@@ -27,10 +27,10 @@ upperLimit: Option[Int] = None)(implicit messages: Messages)
 
         <div class="error-summary-body">
             <ul class="error-summary-list">
-                @form.errors.map(_.key).distinct.map { errorKey =>
+                @form.errors.map { error =>
                 <li role="tooltip" class="validation-summary-message">
-                    <a href='#@errorKey.replaceAll("""[\.\[\]]""", "-").concat("_field")' data-focuses='@errorKey.replaceAll("""[\.\[\]]""", "-").concat("_field")'>
-                        @Messages("ats.select_tax_year.required.summary")
+                    <a href='#@error.key.replaceAll("""[\.\[\]]""", "-").concat("_field")' data-focuses='@error.key.replaceAll("""[\.\[\]]""", "-").concat("_field")'>
+                        @Messages(error.message)
                     </a>
                 </li>
                 }

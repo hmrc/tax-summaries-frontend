@@ -112,7 +112,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts.url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
     "have the right user data in the view" in {
@@ -456,7 +456,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       val result = sut.show(request)
 
       status(result) mustBe 303
-      redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats")
+      redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
     }
   }
 }

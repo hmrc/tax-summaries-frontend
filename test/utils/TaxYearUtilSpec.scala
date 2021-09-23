@@ -21,6 +21,7 @@ import models.InvalidTaxYear
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 
@@ -38,11 +39,9 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
           None,
           Some(SaUtr(testUtr)),
           None,
-          None,
-          None,
-          None,
           true,
           false,
+          ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -61,11 +60,9 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             None,
             Some(SaUtr(testUtr)),
             None,
-            None,
-            None,
-            None,
             true,
             false,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=20192"))
 
@@ -81,11 +78,9 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             None,
             Some(SaUtr(testUtr)),
             None,
-            None,
-            None,
-            None,
             true,
             false,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=201"))
 
@@ -102,11 +97,9 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
               None,
               Some(SaUtr(testUtr)),
               None,
-              None,
-              None,
-              None,
               true,
               false,
+              ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest("GET", "?"))
 
@@ -123,11 +116,9 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             None,
             Some(SaUtr(testUtr)),
             None,
-            None,
-            None,
-            None,
             true,
             false,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest("GET", "?taxYear=ABCD"))
 

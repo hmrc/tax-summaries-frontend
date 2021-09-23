@@ -25,12 +25,15 @@ import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.GovernmentSpendService
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Nino}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
-
 import java.time.LocalDate
+
+import org.mockito.Matchers
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
@@ -39,22 +42,17 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
 
-  class CustomAuthAction(utr: Option[SaUtr]) extends ControllerBaseSpec with AuthAction {
-    override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-      block(AuthenticatedRequest("userId", None, utr, None, None, None, None, true, false, fakeCredentials, request))
-    override protected def executionContext: ExecutionContext = ec
-  }
-
   def sut(utr: Option[SaUtr] = Some(SaUtr(testUtr))) =
     new ErrorController(
       mockGovernmentSpendService,
-      new CustomAuthAction(utr),
+      FakeAuthAction,
+      new FakeMergePageAuthAction(true),
       FakeMinAuthAction,
       mcc,
       notAuthorisedView,
       howTaxIsSpentView,
-      serviceUnavailableView)
+      serviceUnavailableView
+    )
   implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" when {
@@ -63,13 +61,14 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
       "show the how tax was spent page" when {
 
-        "the service returns the government spend data" in {
+        "the service returns the government spend data with utr" in {
 
           val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
             case (key, value) =>
               key -> value.percentage.toDouble
           }
 
+          val saUtrIdentifier = Some(SaUtr(testUtr))
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .successful(response)
 
@@ -79,19 +78,55 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               Some(SaUtr(testUtr)),
               None,
-              None,
-              None,
-              None,
               true,
               false,
+              ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
-          val result = sut().authorisedNoAts()(request)
+          val result = sut().authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe OK
-          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.saYear))
+          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
         }
+
+        "the service returns the government spend data with nino" in {
+          val controller =
+            new ErrorController(
+              mockGovernmentSpendService,
+              FakeAuthAction,
+              new FakeMergePageAuthAction(false),
+              FakeMinAuthAction,
+              mcc,
+              notAuthorisedView,
+              howTaxIsSpentView,
+              serviceUnavailableView
+            )
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
+            case (key, value) =>
+              key -> value.percentage.toDouble
+          }
+          val ninoIdentifier = Some(testNino)
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
+            .successful(response)
+          implicit lazy val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              None,
+              ninoIdentifier,
+              false,
+              false,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
+          val result = controller.authorisedNoAts(appConfig.taxYear)(request)
+          val document = contentAsString(result)
+
+          status(result) mustBe OK
+          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
+        }
+
       }
 
       "return bad request" when {
@@ -107,15 +142,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               Some(SaUtr(testUtr)),
               None,
-              None,
-              None,
-              None,
               true,
               false,
+              ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
 
-          val result = sut(None).authorisedNoAts()(request)
+          val result = sut(None).authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe BAD_REQUEST
@@ -136,15 +169,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               None,
               Some(SaUtr(testUtr)),
               None,
-              None,
-              None,
-              None,
               true,
               false,
+              ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
 
-          val result = sut(None).authorisedNoAts()(request)
+          val result = sut(None).authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe INTERNAL_SERVER_ERROR
@@ -163,11 +194,9 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
             None,
             None,
             None,
-            None,
-            None,
-            None,
             true,
             false,
+            ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest())
         val result = sut().notAuthorised()(request)

@@ -17,6 +17,7 @@
 package view_models
 
 import com.google.inject.Inject
+import models.AtsYearChoice
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -24,8 +25,8 @@ class AtsForms @Inject()() {
 
   val yearChoice = "year"
 
-  val atsYearFormMapping: Form[TaxYearEnd] = Form(
-    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", { _.isDefined }))(TaxYearEnd.apply)(
-      TaxYearEnd.unapply)
+  val atsYearFormMapping: Form[AtsYearChoice] = Form(
+    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", { _.nonEmpty }))(
+      AtsYearChoice.fromString)(AtsYearChoice.toOptionString)
   )
 }

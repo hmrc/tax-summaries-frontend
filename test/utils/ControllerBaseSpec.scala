@@ -23,11 +23,12 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants.testUtr
-import views.html._
-import views.html.errors.{GenericErrorView, NotAuthorisedView, ServiceUnavailableView, TokenErrorView}
+import utils.TestConstants.{testNino, testUtr}
+import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
+import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
 
 import scala.concurrent.ExecutionContext
 
@@ -55,6 +56,7 @@ trait ControllerBaseSpec extends BaseSpec {
 
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]
   lazy val genericErrorView = inject[GenericErrorView]
+  lazy val atsMergePageView = inject[AtsMergePageView]
   lazy val tokenErrorView = inject[TokenErrorView]
   lazy val taxsMainView = inject[TaxsMainView]
   lazy val capitalGainsView = inject[CapitalGainsView]
@@ -63,7 +65,6 @@ trait ControllerBaseSpec extends BaseSpec {
   lazy val serviceUnavailableView = inject[ServiceUnavailableView]
   lazy val governmentSpendingView = inject[GovernmentSpendingView]
   lazy val incomeBeforeTaxView = inject[IncomeBeforeTaxView]
-  lazy val taxsIndexView = inject[TaxsIndexView]
   lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
   lazy val summaryView = inject[SummaryView]
   lazy val nicsView = inject[NicsView]
@@ -74,12 +75,10 @@ trait ControllerBaseSpec extends BaseSpec {
     "userId",
     None,
     Some(SaUtr(testUtr)),
-    None,
-    None,
-    None,
-    None,
+    Some(testNino),
     true,
     false,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"))
 
@@ -88,11 +87,9 @@ trait ControllerBaseSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     None,
-    None,
-    None,
-    None,
     true,
     false,
+    ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"))
 

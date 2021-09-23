@@ -23,6 +23,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtrGenerator
@@ -82,18 +83,21 @@ class AuthActionSpec extends BaseSpec {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+      val retrievalResult
+        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(
             Set(
               Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""),
               Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), ""))) ~ Some("") ~ Some(fakeCredentials) ~ Some(
-            utr)
+            utr) ~ L50
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -111,16 +115,18 @@ class AuthActionSpec extends BaseSpec {
   "A user with a confidence level 50 and an SA enrolment" must {
     "create an authenticated request" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
-
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+      val retrievalResult
+        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
-          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), ""))) ~ Some("") ~ Some(
-            fakeCredentials) ~ Some(utr)
+          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
+            fakeCredentials) ~ Some(utr) ~ ConfidenceLevel.L50
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -137,15 +143,18 @@ class AuthActionSpec extends BaseSpec {
     "create an authenticated request" in {
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+      val retrievalResult
+        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ None
+            Some("") ~ Some(fakeCredentials) ~ None ~ ConfidenceLevel.L50
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -163,15 +172,18 @@ class AuthActionSpec extends BaseSpec {
     "create an authenticated request" in {
       val uar = testUar
 
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+      val retrievalResult
+        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("") ~ Some(fakeCredentials) ~ None
+            Some("") ~ Some(fakeCredentials) ~ None ~ L50
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -187,15 +199,18 @@ class AuthActionSpec extends BaseSpec {
 
   "A user with a confidence level 50 and neither SA enrolment" must {
     "create an authenticated request" in {
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+      val retrievalResult
+        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set.empty) ~
-            Some("") ~ Some(fakeCredentials) ~ None
+            Some("") ~ Some(fakeCredentials) ~ None ~ L50
         )
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
+            any(),
+            any())(any(), any()))
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -211,15 +226,17 @@ class AuthActionSpec extends BaseSpec {
   "A user with no credentials will fail to auth" in {
     val uar = testUar
 
-    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]] =
+    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
       Future.successful(
         Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-          Some("") ~ None ~ None
+          Some("") ~ None ~ Some(uar) ~ ConfidenceLevel.L50
       )
 
     when(
       mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String]](any(), any())(any(), any()))
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](any(), any())(
+          any(),
+          any()))
       .thenReturn(retrievalResult)
 
     val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
