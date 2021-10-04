@@ -37,10 +37,10 @@ class AuthorityUtils @Inject()() {
     implicit request: AuthenticatedRequest[_]): Boolean =
     utr.fold { false } { checkUtr(_, agentToken) }
 
-  def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr =
+  def getRequestedUtr(account: Option[TaxIdentifier], agentToken: Option[AgentToken] = None): SaUtr =
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
-      case taxsAgent: Uar =>
+      case Some(taxsAgent: Uar) =>
         agentToken.fold {
           throw AgentTokenException("Token is empty")
         } { agentToken =>
@@ -50,6 +50,8 @@ class AuthorityUtils @Inject()() {
             throw AgentTokenException(s"Incorrect agent UAR: ${taxsAgent.uar}, ${agentToken.agentUar}")
           }
         }
-      case sa: SaUtr => sa
+      case Some(sa: SaUtr) => sa
+
+      case None => SaUtr("")
     }
 }

@@ -66,6 +66,7 @@ class AtsListService @Inject()(
             getAtsListAndStore()
           }
         case _ =>
+          //when the user does not have any agent token in URL they still fall into this if, this then calls getAtsListAndStore with empty token, thus throwing the exception
           if (isAgent(request)) {
             dataCache.getAgentToken.flatMap { token =>
               getAtsListAndStore(token)
