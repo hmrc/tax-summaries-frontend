@@ -29,7 +29,7 @@ trait AccountUtils {
       Some(request.agentRef.get)
     } else if (request.saUtr.isDefined) {
       Some(request.saUtr.get)
-    } else (None)
+    } else None
 
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
   def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {

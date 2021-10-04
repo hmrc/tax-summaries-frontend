@@ -91,8 +91,8 @@ class AtsService @Inject()(
 
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     val gotData = (account: @unchecked) match {
-      case agentUar: Uar        => middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
-      case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
+      case Some(agentUar: Uar)        => middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
+      case Some(individualUtr: SaUtr) => middleConnector.connectToAts(individualUtr, taxYear)
     }
 
     EitherT {
@@ -120,11 +120,11 @@ class AtsService @Inject()(
       data.get
     }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(
+  private def sendAuditEvent(account: Option[TaxIdentifier], data: AtsData)(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]) =
     (account: @unchecked) match {
-      case _: Uar =>
+      case Some(_: Uar) =>
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
@@ -134,7 +134,7 @@ class AtsService @Inject()(
             "time"      -> new Date().toString
           )
         )
-      case _: SaUtr =>
+      case Some(_: SaUtr) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,

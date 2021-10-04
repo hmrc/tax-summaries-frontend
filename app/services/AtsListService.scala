@@ -99,8 +99,8 @@ class AtsListService @Inject()(
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val gotData = (account: @unchecked) match {
-      case agent: Uar        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
-      case individual: SaUtr => middleConnector.connectToAtsList(individual)
+      case Some(agent: Uar)        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
+      case Some(individual: SaUtr) => middleConnector.connectToAtsList(individual)
     }
 
     val result = gotData flatMap {
@@ -141,18 +141,18 @@ class AtsListService @Inject()(
       data.get
     }
 
-  private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[Int, AtsListData])(
+  private def sendAuditEvent(account: Option[TaxIdentifier], dataOpt: Either[Int, AtsListData])(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[AuditResult] =
     (dataOpt, account: @unchecked) match {
-      case (Right(data), _: Uar) =>
+      case (Right(data), Some(_: Uar)) =>
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
             "agentId"   -> AccountUtils.getAccountId(request),
             "clientUtr" -> data.utr
           ))
-      case (Right(data), _: SaUtr) =>
+      case (Right(data), Some(_: SaUtr)) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
@@ -161,7 +161,7 @@ class AtsListService @Inject()(
             "userUtr"  -> data.utr,
             "userType" -> userType
           ))
-      case (Left(_), identifier) =>
+      case (Left(_), Some(identifier)) =>
         auditService.sendEvent(
           AuditTypes.Tx_FAILED,
           Map(
