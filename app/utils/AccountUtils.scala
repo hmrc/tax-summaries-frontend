@@ -38,8 +38,8 @@ trait AccountUtils {
 
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
   def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
-    case sa: SaUtr => sa.utr
-    case ta: Uar   => ta.uar
+    case Some(sa: SaUtr) => sa.utr
+    case Some(ta: Uar)   => ta.uar
   }
   def isPortalUser(request: Request[_]): Boolean =
     request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)
