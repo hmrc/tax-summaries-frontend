@@ -116,24 +116,22 @@ class AuthorityUtilsSpec extends BaseSpec {
 
     "return the utr when user account with no agent token" in new TestService {
       val result = getRequestedUtr(account, None)
-      result mustBe SaUtr(utr)
+      result mustBe Some(SaUtr(utr))
     }
 
     "return the utr when user account with agent token" in new TestService {
       val result = getRequestedUtr(account, Some(agentToken))
-      result mustBe SaUtr(utr)
+      result mustBe Some(SaUtr(utr))
     }
 
-    "throw AgentTokenException when agent account with no agent token" in new TestService {
-      val exception = intercept[AgentTokenException] {
-        getRequestedUtr(agentAccount, None)
-      }
-      exception.message mustBe "Token is empty"
+    "return None when agent account with no agent token" in new TestService {
+      val result = getRequestedUtr(agentAccount, None)
+      result mustBe None
     }
 
     "return the client utr when agent account with valid agent token" in new TestService {
       val result = getRequestedUtr(agentAccount, Some(agentToken))
-      result mustBe SaUtr(utr)
+      result mustBe Some(SaUtr(utr))
     }
 
     "return the client utr when agent account with invalid agent token" in new TestService {
