@@ -85,7 +85,8 @@ class AtsListServiceSpec extends BaseSpec {
       AuditResult.Success)
 
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
-    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+    when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]])) thenReturn Some(
+      SaUtr(testUtr))
 
     when(mockAppConfig.taxYear).thenReturn(2020)
   }
@@ -467,7 +468,7 @@ class AtsListServiceSpec extends BaseSpec {
 
         when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
           .thenReturn(false)
-        when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]]))
+        when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]]))
           .thenThrow(AgentTokenException("Token is empty"))
 
         whenReady(sut.getAtsYearList.failed) { exception =>

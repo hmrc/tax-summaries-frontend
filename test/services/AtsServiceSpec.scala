@@ -158,9 +158,10 @@ class AtsServiceSpec extends BaseSpec {
 
               when(mockAccountUtils.isAgent(any())) thenReturn true
 
-              when(mockAuthUtils.getRequestedUtr(eqTo(Uar(testUar)), any())) thenReturn SaUtr(testNonMatchingUtr)
+              when(mockAuthUtils.getRequestedUtr(eqTo(Some(Uar(testUar))), any())) thenReturn Some(
+                SaUtr(testNonMatchingUtr))
 
-              when(mockAccountUtils.getAccount(any())) thenReturn Uar(testUar)
+              when(mockAccountUtils.getAccount(any())) thenReturn Some(Uar(testUar))
 
               when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
 
