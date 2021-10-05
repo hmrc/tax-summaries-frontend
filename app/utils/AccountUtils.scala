@@ -17,7 +17,7 @@
 package utils
 
 import controllers.auth.AuthenticatedRequest
-import models.ActingAsAttorneyFor
+import models.{ActingAsAttorneyFor, AgentToken}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
@@ -25,11 +25,16 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 trait AccountUtils {
   def getAccount(request: AuthenticatedRequest[_]): Option[TaxIdentifier] =
     //request.agentRef.getOrElse(request.saUtr.getOrElse(SaUtr("")))
-    if (request.agentRef.isDefined) {
-      Some(request.agentRef.get)
-    } else if (request.saUtr.isDefined) {
-      Some(request.saUtr.get)
-    } else None
+    request match {
+      case x if (x.agentRef.isDefined) => Some(x.agentRef.get)
+      case x if (x.saUtr.isDefined)    => Some(x.saUtr.get)
+      case _                           => Some(SaUtr(""))
+    }
+//    if (request.agentRef.isDefined) {
+//      Some(request.agentRef.get)
+//    } else if (request.saUtr.isDefined) {
+//      Some(request.saUtr.get)
+//    } else None
 
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
   def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {

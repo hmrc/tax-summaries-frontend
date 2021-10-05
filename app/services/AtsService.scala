@@ -90,9 +90,10 @@ class AtsService @Inject()(
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-    val gotData = (account: @unchecked) match {
-      case Some(agentUar: Uar)        => middleConnector.connectToAtsOnBehalfOf(agentUar, requestedUTR, taxYear)
-      case Some(individualUtr: SaUtr) => middleConnector.connectToAts(individualUtr, taxYear)
+    val gotData = (account: @unchecked, requestedUTR) match {
+      case (Some(agent: Uar), Some(saUtr)) => middleConnector.connectToAtsListOnBehalfOf(agent, saUtr)
+      case (Some(individual: SaUtr), _)    => middleConnector.connectToAtsList(individual)
+      case _                               => Future.successful(AtsNotFoundResponse("No SaUTR found for this agent"))
     }
 
     EitherT {

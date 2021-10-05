@@ -98,9 +98,10 @@ class AtsListService @Inject()(
     val account = getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
-    val gotData = (account: @unchecked) match {
-      case Some(agent: Uar)        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
-      case Some(individual: SaUtr) => middleConnector.connectToAtsList(individual)
+    val gotData = (account: @unchecked, requestedUTR) match {
+      case (Some(agent: Uar), Some(saUtr)) => middleConnector.connectToAtsListOnBehalfOf(agent, saUtr)
+      case (Some(individual: SaUtr), _)    => middleConnector.connectToAtsList(individual)
+      case _                               => Future(AtsNotFoundResponse("No SaUTR found for this agent"))
     }
 
     val result = gotData flatMap {
@@ -161,12 +162,16 @@ class AtsListService @Inject()(
             "userUtr"  -> data.utr,
             "userType" -> userType
           ))
-      case (Left(_), Some(identifier)) =>
+      case (Left(_), identifier) =>
         auditService.sendEvent(
           AuditTypes.Tx_FAILED,
-          Map(
-            "userId"         -> request.userId,
-            "userIdentifier" -> identifier.value
-          ))
+          Map("userId" -> request.userId, "userIdentifier" -> {
+            identifier match {
+              case Some(x: TaxIdentifier) => x.value
+              case _                      => "-"
+            }
+          })
+        )
+
     }
 }
