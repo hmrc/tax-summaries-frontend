@@ -115,6 +115,31 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
     }
 
+    "return a 200 response when called with agentRef and without '?ref=PORTAL' and must not contain agent-banner" in {
+
+      val agentRequest = AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        true,
+        true,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "")
+      )
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+
+      val result = sut.onPageLoad(agentRequest)
+
+      status(result) mustBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.text() contains "Select the tax year"
+      document.text() contains "2018"
+      document.toString must not include "agent-banner"
+    }
+
     "redirect to serviceUnavailable page if sa and paye are shuttered" in {
 
       when(mockAppConfig.saShuttered).thenReturn(true)
