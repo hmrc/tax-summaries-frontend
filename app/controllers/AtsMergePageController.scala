@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, MergePageAuthAction}
-import models.{AtsYearChoice, PAYE, SA}
+import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -58,15 +58,20 @@ class AtsMergePageController @Inject()(
 
     atsMergePageService.getSaAndPayeYearList.map {
       case Right(atsMergePageViewModel) =>
-        Ok(
-          atsMergePageView(
-            atsMergePageViewModel,
-            formWithErrors.getOrElse(atsForms.atsYearFormMapping),
+        val actingAsAttorneyFor: Option[ActingAsAttorneyFor] = atsMergePageViewModel.saData.utr.isEmpty match {
+          case true => None
+          case false =>
             getActingAsAttorneyFor(
               request,
               atsMergePageViewModel.saData.forename,
               atsMergePageViewModel.saData.surname,
               atsMergePageViewModel.saData.utr)
+        }
+        Ok(
+          atsMergePageView(
+            atsMergePageViewModel,
+            formWithErrors.getOrElse(atsForms.atsYearFormMapping),
+            actingAsAttorneyFor
           ))
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
