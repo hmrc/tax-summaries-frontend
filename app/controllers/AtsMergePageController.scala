@@ -58,20 +58,15 @@ class AtsMergePageController @Inject()(
 
     atsMergePageService.getSaAndPayeYearList.map {
       case Right(atsMergePageViewModel) =>
-        val actingAsAttorneyFor: Option[ActingAsAttorneyFor] = atsMergePageViewModel.saData.utr.isEmpty match {
-          case true => None
-          case false =>
+        Ok(
+          atsMergePageView(
+            atsMergePageViewModel,
+            formWithErrors.getOrElse(atsForms.atsYearFormMapping),
             getActingAsAttorneyFor(
               request,
               atsMergePageViewModel.saData.forename,
               atsMergePageViewModel.saData.surname,
               atsMergePageViewModel.saData.utr)
-        }
-        Ok(
-          atsMergePageView(
-            atsMergePageViewModel,
-            formWithErrors.getOrElse(atsForms.atsYearFormMapping),
-            actingAsAttorneyFor
           ))
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
