@@ -167,7 +167,7 @@ class AtsListService @Inject()(
           Map("userId" -> request.userId, "userIdentifier" -> {
             identifier match {
               case Some(taxIdentifier: TaxIdentifier) => taxIdentifier.value
-              case _                      => "-"
+              case _                                  => "-"
             }
           })
         )

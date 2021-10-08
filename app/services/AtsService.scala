@@ -147,6 +147,5 @@ class AtsService @Inject()(
             "time"     -> new Date().toString
           )
         )
-      case None =>
     }
 }

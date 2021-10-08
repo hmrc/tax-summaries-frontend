@@ -440,6 +440,41 @@ class AtsListServiceSpec extends BaseSpec {
         }
       }
 
+      "Return a left for empty token" when {
+
+        val agentRequest =
+          AuthenticatedRequest(
+            "userId",
+            Some(Uar(testUar)),
+            None,
+            None,
+            true,
+            false,
+            ConfidenceLevel.L50,
+            fakeCredentials,
+            FakeRequest())
+
+        "the connector returns a 404" in {
+
+          when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(
+            None)
+
+          when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]])) thenReturn None
+
+          whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
+            result mustBe Left(NOT_FOUND)
+
+            verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+              any[Request[AnyRef]],
+              any[HeaderCarrier])
+            verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+            verify(mockDataCacheConnector, never())
+              .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+
+          }
+        }
+      }
+
       "Return a left" when {
 
         "the connector returns a 500" in {
