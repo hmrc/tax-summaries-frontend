@@ -25,7 +25,7 @@ class AuthorityUtils @Inject()() {
 
   def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean =
     (AccountUtils.getAccount(request), agentToken) match {
-      case (Some(agentAccount), None) if (AccountUtils.isAgent(request)) =>
+      case (Some(agentAccount), None) if AccountUtils.isAgent(request) =>
         true
       case (Some(agentAccount), Some(agentToken)) if (AccountUtils.isAgent(request)) =>
         SaUtr(utr) == SaUtr(agentToken.clientUtr)
@@ -49,7 +49,5 @@ class AuthorityUtils @Inject()() {
           }
         }
       case Some(sa: SaUtr) => Some(sa)
-
-      case _ => None
     }
 }

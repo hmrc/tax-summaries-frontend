@@ -163,10 +163,10 @@ class AtsListService @Inject()(
           ))
       case (Left(_), identifier) =>
         auditService.sendEvent(
-          AuditTypes.Tx_FAILED,
+          AuditTypes.Tx_SUCCEEDED,
           Map("userId" -> request.userId, "userIdentifier" -> {
             identifier match {
-              case Some(x: TaxIdentifier) => x.value
+              case Some(taxIdentifier: TaxIdentifier) => taxIdentifier.value
               case _                      => "-"
             }
           })
