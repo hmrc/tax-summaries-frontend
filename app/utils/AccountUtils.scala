@@ -46,9 +46,9 @@ trait AccountUtils {
 trait AttorneyUtils {
   def getActingAsAttorneyFor(request: AuthenticatedRequest[_], forename: String, surname: String, utr: String)(
     implicit messages: Messages): Option[ActingAsAttorneyFor] =
-    if (AccountUtils.isAgent(request) && utr.nonEmpty)
+    if (AccountUtils.isAgent(request) && utr.nonEmpty) {
       Some(ActingAsAttorneyFor(Some(s"$forename $surname (${messages("generic.utr_abbrev")}: $utr)"), Map()))
-    else None
+    } else None
 }
 
 object AccountUtils extends AccountUtils
