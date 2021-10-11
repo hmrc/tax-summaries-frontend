@@ -32,7 +32,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.TestConstants._
-import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
+import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,6 +50,7 @@ class AtsListServiceSpec extends BaseSpec {
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAuditService: AuditService = mock[AuditService]
   val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
+  val mockAccountUtils: AccountUtils = mock[AccountUtils]
   val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   override def beforeEach() = {
@@ -440,26 +441,30 @@ class AtsListServiceSpec extends BaseSpec {
         }
       }
 
-      "Return a left for empty token" when {
+      "Return a left" when {
 
         val agentRequest =
           AuthenticatedRequest(
             "userId",
-            Some(Uar(testUar)),
+            None,
             None,
             None,
             true,
-            false,
+            true,
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest())
 
-        "the connector returns a 404" in {
+        "the connector is called with empty agent token" in {
 
           when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(
             None)
 
-          when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]])) thenReturn None
+          when(mockDataCacheConnector.getAgentToken) thenReturn Future.successful(None)
+
+          when(mockAccountUtils.getAccount(any())) thenReturn None
+
+          when(mockAuthUtils.getRequestedUtr(None, None)) thenReturn None
 
           whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
             result mustBe Left(NOT_FOUND)

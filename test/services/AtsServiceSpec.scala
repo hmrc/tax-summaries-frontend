@@ -213,6 +213,36 @@ class AtsServiceSpec extends BaseSpec {
           verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
         }
 
+        "an agent makes a request with empty agent token" in {
+
+          implicit val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              None,
+              None,
+              true,
+              true,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
+
+          when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
+            None)
+
+          when(mockAccountUtils.isAgent(any())) thenReturn true
+
+          when(mockAccountUtils.getAccount(any())) thenReturn None
+
+          when(mockDataCacheConnector.getAgentToken) thenReturn Future.successful(None)
+
+          when(mockAuthUtils.getRequestedUtr(None, None)) thenReturn None
+
+          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
+
+          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+        }
+
         "there is a NoAtsError in the AtsData" in {
 
           val dataWithError = data.copy(errors = Some(IncomingAtsError("NoAtsError")))
