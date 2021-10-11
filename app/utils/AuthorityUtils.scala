@@ -50,5 +50,6 @@ class AuthorityUtils @Inject()() {
           }
         }
       case Some(sa: SaUtr) => Some(sa)
+      case _               => None
     }
 }

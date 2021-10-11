@@ -124,6 +124,16 @@ class AuthorityUtilsSpec extends BaseSpec {
       result mustBe Some(SaUtr(utr))
     }
 
+    "return the None when user account is None with agent token" in new TestService {
+      val result = getRequestedUtr(None, Some(agentToken))
+      result mustBe None
+    }
+
+    "return the None when user account is None with no agent token" in new TestService {
+      val result = getRequestedUtr(None, None)
+      result mustBe None
+    }
+
     "return None when agent account with no agent token" in new TestService {
       val result = getRequestedUtr(agentAccount, None)
       result mustBe None
