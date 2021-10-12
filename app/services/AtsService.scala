@@ -129,7 +129,7 @@ class AtsService @Inject()(
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "agentId"   -> AccountUtils.getAccountId(request),
+            "agentId"   -> AccountUtils.getAccountIdForAudit(request),
             "clientUtr" -> data.utr.get,
             "taxYear"   -> data.taxYear.toString,
             "time"      -> new Date().toString
@@ -145,6 +145,13 @@ class AtsService @Inject()(
             "userType" -> userType,
             "taxYear"  -> data.taxYear.toString,
             "time"     -> new Date().toString
+          )
+        )
+      case _ =>
+        auditService.sendEvent(
+          AuditTypes.Tx_FAILED,
+          Map(
+            "error" -> "SaUtr/Uar is not present"
           )
         )
     }

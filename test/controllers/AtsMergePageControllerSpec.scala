@@ -126,7 +126,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         true,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad.url)
       )
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))

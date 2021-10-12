@@ -149,7 +149,7 @@ class AtsListService @Inject()(
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "agentId"   -> AccountUtils.getAccountId(request),
+            "agentId"   -> AccountUtils.getAccountIdForAudit(request),
             "clientUtr" -> data.utr
           ))
       case (Right(data), Some(_: SaUtr)) =>
@@ -170,6 +170,13 @@ class AtsListService @Inject()(
               case _                                  => "-"
             }
           })
+        )
+      case _ =>
+        auditService.sendEvent(
+          AuditTypes.Tx_FAILED,
+          Map(
+            "error" -> "SaUtr/Uar is not present"
+          )
         )
 
     }

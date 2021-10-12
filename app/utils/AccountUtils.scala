@@ -23,20 +23,13 @@ import play.api.mvc.Request
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
 trait AccountUtils {
-  def getAccount(request: AuthenticatedRequest[_]): Option[TaxIdentifier] =
-    if (request.agentRef.isDefined) {
-      Some(request.agentRef.get)
-    } else if (request.saUtr.isDefined) {
-      Some(request.saUtr.get)
-    } else {
-      None
-    }
+  def getAccount(request: AuthenticatedRequest[_]): Option[TaxIdentifier] = request.agentRef.orElse(request.saUtr)
 
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-  def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
+  def getAccountIdForAudit(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
     case Some(sa: SaUtr) => sa.utr
     case Some(ta: Uar)   => ta.uar
-    case _               => ""
+    case _               => "-"
   }
   def isPortalUser(request: Request[_]): Boolean =
     request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)

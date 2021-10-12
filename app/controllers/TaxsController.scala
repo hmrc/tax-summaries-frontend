@@ -67,7 +67,7 @@ abstract class TaxsController @Inject()(
             auditService.sendEvent(
               AuditTypes.Tx_FAILED,
               Map(
-                "userId"         -> getAccountId(request),
+                "userId"         -> getAccountIdForAudit(request),
                 "error"          -> token_error.message,
                 "time"           -> new Date().toString,
                 "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")

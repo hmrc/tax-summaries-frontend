@@ -40,8 +40,8 @@ class AuthorityUtils @Inject()() {
 
   def getRequestedUtr(account: Option[TaxIdentifier], agentToken: Option[AgentToken] = None): Option[SaUtr] =
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-    (account: @unchecked) match {
-      case Some(taxsAgent: Uar) =>
+    (account: @unchecked) flatMap {
+      case taxsAgent: Uar =>
         agentToken map { agentToken =>
           if (taxsAgent == Uar(agentToken.agentUar)) {
             SaUtr(agentToken.clientUtr)
@@ -49,7 +49,6 @@ class AuthorityUtils @Inject()() {
             throw AgentTokenException(s"Incorrect agent UAR: ${taxsAgent.uar}, ${agentToken.agentUar}")
           }
         }
-      case Some(sa: SaUtr) => Some(sa)
-      case _               => None
+      case sa: SaUtr => Some(sa)
     }
 }
