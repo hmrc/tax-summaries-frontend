@@ -18,6 +18,8 @@ package services
 
 import controllers.auth.AuthenticatedRequest
 import models.AgentToken
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
@@ -109,6 +111,20 @@ class AuthorityUtilsSpec extends BaseSpec {
     "return true when the utr is Some(_) and the criteria must match" in new TestService {
       val result = checkUtr(Some(utr), None)(request)
       result mustBe true
+    }
+    "return false when account is None" in new TestService {
+      val requestForNoneAccount = AuthenticatedRequest(
+        "userId",
+        None,
+        None,
+        None,
+        true,
+        false,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest())
+      val result = checkUtr(utr, Some(agentToken))(requestForNoneAccount)
+      result mustBe false
     }
   }
 

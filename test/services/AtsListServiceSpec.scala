@@ -32,7 +32,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.TestConstants._
-import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
+import utils.{AccountUtils, AgentTokenException, AuditTypes, AuthorityUtils, BaseSpec}
 import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -469,9 +469,8 @@ class AtsListServiceSpec extends BaseSpec {
           whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
             result mustBe Left(NOT_FOUND)
 
-            verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-              any[Request[AnyRef]],
-              any[HeaderCarrier])
+            verify(mockAuditService)
+              .sendEvent(AuditTypes.Tx_SUCCEEDED, Map("userId" -> request.userId, "userIdentifier" -> "-"))
             verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
             verify(mockDataCacheConnector, never())
               .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
@@ -509,11 +508,11 @@ class AtsListServiceSpec extends BaseSpec {
         when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
           .thenReturn(false)
         when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]]))
-          .thenThrow(AgentTokenException("Token is empty"))
+          .thenThrow(AgentTokenException("Incorrect agent UAR: 1234, 4321"))
 
         whenReady(sut.getAtsYearList.failed) { exception =>
           exception mustBe a[AgentTokenException]
-          exception.getMessage mustBe "Token is empty"
+          exception.getMessage mustBe "Incorrect agent UAR: 1234, 4321"
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never())

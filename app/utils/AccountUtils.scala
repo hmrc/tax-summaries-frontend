@@ -36,7 +36,7 @@ trait AccountUtils {
   def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
     case Some(sa: SaUtr) => sa.utr
     case Some(ta: Uar)   => ta.uar
-    case _ => ""
+    case _               => ""
   }
   def isPortalUser(request: Request[_]): Boolean =
     request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)
