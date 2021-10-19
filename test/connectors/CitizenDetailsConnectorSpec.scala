@@ -27,7 +27,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException, Upstream4xxResponse, Upstream5xxResponse, UpstreamErrorResponse}
 import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
@@ -54,42 +54,26 @@ class CitizenDetailsConnectorSpec
     "return an OK response when the CID API returns OK" in {
       server.stubFor(get(url).willReturn(ok("my cid response")))
 
-      val result = connector.connectToCid(nino.toString()).futureValue
+      val result = connector.connectToCid(nino.toString()).futureValue.right.get
 
       result.status mustBe OK
       result.body mustBe "my cid response"
     }
 
-    "throws a BadRequestException when the CID API returns BAD_REQUEST" in {
-      server.stubFor(get(url).willReturn(badRequest()))
-
-      val result = connector.connectToCid(nino.toString()).failed.futureValue
-
-      result mustBe a[BadRequestException]
-    }
-
-    "throws a NotFoundException when the CID API returns NOT_FOUND" in {
-      server.stubFor(get(url).willReturn(notFound()))
-
-      val result = connector.connectToCid(nino.toString()).failed.futureValue
-
-      result mustBe a[NotFoundException]
-    }
-
-    "throws a Upstream4xxResponse when the CID API returns LOCKED" in {
-      server.stubFor(get(url).willReturn(aResponse().withStatus(LOCKED)))
-
-      val result = connector.connectToCid(nino.toString()).failed.futureValue
-
-      result mustBe a[Upstream4xxResponse]
-    }
-
-    "throws a Upstream5xxResponse when the CID API returns INTERNAL_SERVER_ERROR" in {
-      server.stubFor(get(url).willReturn(serverError()))
-
-      val result = connector.connectToCid(nino.toString()).failed.futureValue
-
-      result mustBe a[Upstream5xxResponse]
+    "return an upstream error response" when {
+      List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504).foreach { status =>
+        s"a response with status $status is received" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(
+                aResponse()
+                  .withStatus(status)
+              )
+          )
+          val result = connector.connectToCid(nino.toString()).futureValue
+          result.left.get mustBe a[UpstreamErrorResponse]
+        }
+      }
     }
   }
 }

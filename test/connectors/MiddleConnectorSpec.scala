@@ -45,7 +45,9 @@ class MiddleConnectorSpec
     new GuiceApplicationBuilder()
       .configure(
         "microservice.services.tax-summaries.port"       -> server.port(),
-        "microservice.services.tax-summaries-agent.port" -> server.port()
+        "microservice.services.tax-summaries-agent.port" -> server.port(),
+        "play.ws.timeout.request"                        -> "1000ms",
+        "play.ws.timeout.connection"                     -> "500ms"
       )
       .build()
 
@@ -168,7 +170,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -235,7 +237,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -288,7 +290,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsList(utr).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -355,7 +357,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {

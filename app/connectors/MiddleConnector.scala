@@ -30,7 +30,7 @@ class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: Ap
 
   def http: HttpClient = httpHandler.http
 
-  def url(path: String) = s"$serviceUrl$path"
+  private def url(path: String) = s"$serviceUrl$path"
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
@@ -45,13 +45,16 @@ class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: Ap
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     connectToAtsList(requestedUTR)
 
+  // TODO
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data"))
 
+  // TODO
   def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(
     implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data"))
 
+  // TODO
   def connectToGovernmentSpend(taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.GET[HttpResponse](url(s"/taxs/government-spend/$taxYear"))
 }

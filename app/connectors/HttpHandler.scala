@@ -17,37 +17,36 @@
 package connectors
 
 import com.typesafe.scalalogging.LazyLogging
-import javax.inject.Inject
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsResponse, AtsSuccessResponseWithPayload}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionContext) extends LazyLogging {
 
   def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
-    http.GET[HttpResponse](url) map { response =>
-      response.status match {
-        case OK => extractJson[A](response.json)
-        case e @ _ =>
-          val message = s"Connector returned $e: $url"
-          logger.error(message)
-          AtsErrorResponse(message)
-
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url) map { response =>
+      response match {
+        case Left(upstreamErrorResponse) =>
+          upstreamErrorResponse.statusCode match {
+            case NOT_FOUND =>
+              logger.warn(upstreamErrorResponse.getMessage())
+              AtsNotFoundResponse(upstreamErrorResponse.getMessage())
+            case _ =>
+              logger.error(upstreamErrorResponse.message)
+              AtsErrorResponse(upstreamErrorResponse.message)
+          }
+        case Right(response) => extractJson[A](response.json)
       }
     } recover {
-      case e: NotFoundException =>
-        logger.warn(e.message)
-        AtsNotFoundResponse(e.responseCode.toString)
-      case e: Upstream4xxResponse if (e.upstreamResponseCode == UNAUTHORIZED) =>
-        logger.error(e.getMessage)
-        AtsErrorResponse(e.getMessage)
-      case e @ (_: Upstream5xxResponse | _: Exception) =>
-        logger.error(e.getMessage)
-        AtsErrorResponse(e.getMessage)
+      case e: HttpException =>
+        logger.error(e.message)
+        AtsErrorResponse(e.message)
     }
 
   private def extractJson[A](value: JsValue)(implicit reads: Reads[A]): AtsResponse =
