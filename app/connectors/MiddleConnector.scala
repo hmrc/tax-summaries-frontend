@@ -19,16 +19,16 @@ package connectors
 import com.google.inject.Inject
 import config.ApplicationConfig
 import models.{AtsData, AtsListData, AtsResponse}
-import uk.gov.hmrc.domain.{Nino, SaUtr, TaxIdentifier, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MiddleConnector @Inject()(httpHandler: HttpHandler)(implicit appConfig: ApplicationConfig, ec: ExecutionContext) {
+class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
+  implicit appConfig: ApplicationConfig,
+  ec: ExecutionContext) {
 
   val serviceUrl = appConfig.serviceUrl
-
-  def http: HttpClient = httpHandler.http
 
   private def url(path: String) = s"$serviceUrl$path"
 

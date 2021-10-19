@@ -21,13 +21,12 @@ import models.{AtsErrorResponse, AtsNotFoundResponse, AtsResponse, AtsSuccessRes
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Reads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, UpstreamErrorResponse}
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionContext) extends LazyLogging {
+class HttpHandler @Inject()(http: HttpClient)(implicit ec: ExecutionContext) extends LazyLogging {
 
   def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
     http.GET[Either[UpstreamErrorResponse, HttpResponse]](url) map { response =>

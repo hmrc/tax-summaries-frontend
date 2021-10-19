@@ -57,7 +57,7 @@ class MiddleConnectorSpec
   private val currentYear = 2018
   private val currentYearMinus1 = currentYear - 1
 
-  def sut = new MiddleConnector(inject[HttpHandler])
+  def sut = new MiddleConnector(inject[HttpClient], inject[HttpHandler])
 
   val utr = SaUtr(testUtr)
 
