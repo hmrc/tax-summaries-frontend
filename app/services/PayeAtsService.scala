@@ -37,14 +37,31 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
   def getPayeATSData(nino: Nino, taxYear: Int)(
     implicit hc: HeaderCarrier,
     request: PayeAuthenticatedRequest[_]): Future[Either[HttpResponse, PayeAtsData]] =
-    middleConnector.connectToPayeATS(nino, taxYear) map { response =>
-      handleConnectorResponse[PayeAtsData](response, nino, taxYear)
-    } recover {
-      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
-      case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
-      case e: Exception =>
-        logger.error(s"Exception in PayeAtsService: $e", e)
-        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
+    for {
+      response <- middleConnector.connectToPayeATS(nino, taxYear)
+    } yield {
+      response match {
+        case Right(response) => {
+          response.status match {
+            case OK =>
+              sendAuditEvent(nino, taxYear)
+              Right(response.json.as[PayeAtsData])
+            case _ =>
+              logger.error(s"Error received, Http status: ${response.status}")
+              Left(response)
+          }
+        }
+        case Left(upstreamErrorResponse) => {
+          val errorMessage = upstreamErrorResponse.message
+          upstreamErrorResponse.statusCode match {
+            case BAD_REQUEST => Left(HttpResponse(BAD_REQUEST, errorMessage))
+            case NOT_FOUND   => Left(HttpResponse(NOT_FOUND, errorMessage))
+            case _ =>
+              logger.error(s"Exception in PayeAtsService: $errorMessage")
+              Left(HttpResponse(INTERNAL_SERVER_ERROR, errorMessage))
+          }
+        }
+      }
     }
 
   def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(
@@ -68,20 +85,6 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       case OK =>
         val res = response.json.as[List[PayeAtsData]]
         Right(res.map(_.taxYear).reverse)
-      case _ => {
-        logger.error(s"Error received, Http status: ${response.status}")
-        Left(response)
-      }
-    }
-
-  private def handleConnectorResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(
-    implicit reads: Reads[A],
-    hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Either[HttpResponse, A] =
-    response.status match {
-      case OK =>
-        sendAuditEvent(nino, taxYear)
-        Right(response.json.as[A])
       case _ => {
         logger.error(s"Error received, Http status: ${response.status}")
         Left(response)

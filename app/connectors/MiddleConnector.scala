@@ -18,7 +18,7 @@ package connectors
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import models.{AtsData, AtsErrorResponse, AtsListData, AtsResponse}
+import models.{AtsData, AtsListData, AtsResponse}
 import play.api.Logging
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -48,11 +48,9 @@ class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     connectToAtsList(requestedUTR)
 
-  // TODO
-  def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    import uk.gov.hmrc.http.HttpReads.readRaw
-    http.GET[HttpResponse](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data"))
-  }
+  def connectToPayeATS(nino: Nino, taxYear: Int)(
+    implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")) recover handleHttpExceptions
 
   // TODO
   def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(
@@ -63,9 +61,11 @@ class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
 
   def connectToGovernmentSpend(taxYear: Int)(
     implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url(s"/taxs/government-spend/$taxYear")) recover {
-      case e: HttpException =>
-        logger.error(e.message)
-        Left(UpstreamErrorResponse(e.message, e.responseCode))
-    }
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url(s"/taxs/government-spend/$taxYear")) recover handleHttpExceptions
+
+  val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
+    case e: HttpException =>
+      logger.error(e.message)
+      Left(UpstreamErrorResponse(e.message, e.responseCode))
+  }
 }
