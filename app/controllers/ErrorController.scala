@@ -52,8 +52,8 @@ class ErrorController @Inject()(
     governmentSpendService
       .getGovernmentSpendFigures(taxYear)
       .fold(
-        upstreamErrorResponse => {
-          logger.error(upstreamErrorResponse.message)
+        errorResponse => {
+          logger.error(errorResponse.message)
           InternalServerError(serviceUnavailableView())
         },
         spendData => Ok(howTaxIsSpentView(spendData, taxYear))

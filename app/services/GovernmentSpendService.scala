@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, GovernmentSpendingOutputWrapper}
+import models.{AtsData, AtsErrorResponse, AtsResponse, GovernmentSpendingOutputWrapper}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
@@ -37,13 +37,17 @@ class GovernmentSpendService @Inject()(atsService: AtsService, middleConnector: 
 
   def getGovernmentSpendFigures(taxYear: Int)(
     implicit hc: HeaderCarrier,
-    ec: ExecutionContext): EitherT[Future, UpstreamErrorResponse, Seq[(String, Double)]] =
+    ec: ExecutionContext): EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] = {
+    val governmentSpend = EitherT(middleConnector.connectToGovernmentSpend(taxYear)).leftMap(upStreamErrorResponse =>
+      AtsErrorResponse(upStreamErrorResponse.message))
+
     for {
-      response <- EitherT(middleConnector.connectToGovernmentSpend(taxYear))
+      response <- governmentSpend
     } yield {
       val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
       CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
     }
+  }
 
   private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get

@@ -18,6 +18,7 @@ package controllers
 
 import cats.data.EitherT
 import controllers.auth._
+import models.AtsErrorResponse
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.OK
@@ -27,7 +28,6 @@ import play.api.test.Helpers._
 import services.GovernmentSpendService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.time.CurrentTaxYear
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
@@ -67,7 +67,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               key -> value.percentage.toDouble
           }
 
-          val serviceResponse: EitherT[Future, UpstreamErrorResponse, Seq[(String, Double)]] =
+          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
             EitherT.rightT(response)
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
@@ -107,7 +107,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               key -> value.percentage.toDouble
           }
 
-          val serviceResponse: EitherT[Future, UpstreamErrorResponse, Seq[(String, Double)]] =
+          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
             EitherT.rightT(response)
 
           val ninoIdentifier = Some(testNino)
@@ -137,8 +137,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "return internal server error" when {
         "the service return an UpstreamErrorResponse" in {
 
-          val response: EitherT[Future, UpstreamErrorResponse, Seq[(String, Double)]] =
-            EitherT.leftT(UpstreamErrorResponse("some error occured", BAD_REQUEST))
+          val response: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.leftT(AtsErrorResponse("some error occured"))
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn (response)
 
