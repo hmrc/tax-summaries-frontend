@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, AtsResponse, PayeAtsData}
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Reads
@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.AuditTypes
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: AuditService)(
   implicit ec: ExecutionContext)
@@ -36,29 +37,29 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
 
   def getPayeATSData(nino: Nino, taxYear: Int)(
     implicit hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Future[Either[HttpResponse, PayeAtsData]] =
+    request: PayeAuthenticatedRequest[_]): Future[Either[AtsResponse, PayeAtsData]] =
     for {
       response <- middleConnector.connectToPayeATS(nino, taxYear)
     } yield {
       response match {
         case Right(response) => {
-          response.status match {
-            case OK =>
-              sendAuditEvent(nino, taxYear)
-              Right(response.json.as[PayeAtsData])
-            case _ =>
-              logger.error(s"Error received, Http status: ${response.status}")
-              Left(response)
+          Try(response.json.as[PayeAtsData]) match {
+            case Success(result) =>
+              sendAuditEvent(nino, taxYear, true)
+              Right(result)
+            case Failure(e) => // TODO missing JsResultException test
+              sendAuditEvent(nino, taxYear, false)
+              throw e
           }
         }
         case Left(upstreamErrorResponse) => {
           val errorMessage = upstreamErrorResponse.message
           upstreamErrorResponse.statusCode match {
-            case BAD_REQUEST => Left(HttpResponse(BAD_REQUEST, errorMessage))
-            case NOT_FOUND   => Left(HttpResponse(NOT_FOUND, errorMessage))
+            case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
+            case NOT_FOUND   => Left(AtsNotFoundResponse(errorMessage))
             case _ =>
               logger.error(s"Exception in PayeAtsService: $errorMessage")
-              Left(HttpResponse(INTERNAL_SERVER_ERROR, errorMessage))
+              Left(AtsErrorResponse(errorMessage))
           }
         }
       }
@@ -91,11 +92,11 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
       }
     }
 
-  private def sendAuditEvent(nino: Nino, taxYear: Int)(
+  private def sendAuditEvent(nino: Nino, taxYear: Int, isSuccess: Boolean)(
     implicit hc: HeaderCarrier,
     request: PayeAuthenticatedRequest[_]): Future[AuditResult] =
     auditService.sendEvent(
-      auditType = AuditTypes.Tx_SUCCEEDED,
+      auditType = if (isSuccess) AuditTypes.Tx_SUCCEEDED else AuditTypes.Tx_FAILED,
       details = Map(
         "userNino" -> nino.nino,
         "taxYear"  -> taxYear.toString
