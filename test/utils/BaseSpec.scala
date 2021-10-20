@@ -17,7 +17,7 @@
 package utils
 
 import config.ApplicationConfig
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{BeforeAndAfterEach, EitherValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 
 trait BaseSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
-    with ScalaFutures with IntegrationPatience {
+    with ScalaFutures with IntegrationPatience with EitherValues {
 
   implicit lazy val appConfig = inject[ApplicationConfig]
 

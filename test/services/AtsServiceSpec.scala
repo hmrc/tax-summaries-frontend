@@ -32,7 +32,7 @@ import utils.TestConstants._
 import utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class AtsServiceSpec extends BaseSpec {
 

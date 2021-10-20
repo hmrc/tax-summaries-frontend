@@ -18,6 +18,7 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
+import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -34,7 +35,7 @@ import scala.concurrent.ExecutionContext
 
 class CitizenDetailsConnectorSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
-    with IntegrationPatience with JsonUtil with Injecting {
+    with IntegrationPatience with JsonUtil with Injecting with EitherValues {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -60,7 +61,7 @@ class CitizenDetailsConnectorSpec
       result.body mustBe "my cid response"
     }
 
-    "return an upstream error response" when {
+    "return an UpstreamErrorResponse" when {
       List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504).foreach { status =>
         s"a response with status $status is received" in {
           server.stubFor(
@@ -70,8 +71,9 @@ class CitizenDetailsConnectorSpec
                   .withStatus(status)
               )
           )
-          val result = connector.connectToCid(nino.toString()).futureValue
-          result.left.get mustBe a[UpstreamErrorResponse]
+
+          val result = connector.connectToCid(nino.toString()).futureValue.left.value
+          result.statusCode mustBe status
         }
       }
     }

@@ -18,15 +18,18 @@ package connectors
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import models.{AtsData, AtsListData, AtsResponse}
+import models.{AtsData, AtsErrorResponse, AtsListData, AtsResponse}
+import play.api.Logging
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
   implicit appConfig: ApplicationConfig,
-  ec: ExecutionContext) {
+  ec: ExecutionContext)
+    extends Logging {
 
   val serviceUrl = appConfig.serviceUrl
 
@@ -46,15 +49,23 @@ class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
     connectToAtsList(requestedUTR)
 
   // TODO
-  def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def connectToPayeATS(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    import uk.gov.hmrc.http.HttpReads.readRaw
     http.GET[HttpResponse](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data"))
+  }
 
   // TODO
   def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(
-    implicit hc: HeaderCarrier): Future[HttpResponse] =
+    implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    import uk.gov.hmrc.http.HttpReads.readRaw
     http.GET[HttpResponse](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data"))
+  }
 
-  // TODO
-  def connectToGovernmentSpend(taxYear: Int)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    http.GET[HttpResponse](url(s"/taxs/government-spend/$taxYear"))
+  def connectToGovernmentSpend(taxYear: Int)(
+    implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url(s"/taxs/government-spend/$taxYear")) recover {
+      case e: HttpException =>
+        logger.error(e.message)
+        Left(UpstreamErrorResponse(e.message, e.responseCode))
+    }
 }

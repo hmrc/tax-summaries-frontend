@@ -16,10 +16,11 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
 import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
 import models._
+import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -39,7 +40,7 @@ import scala.io.Source
 
 class MiddleConnectorSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
-    with IntegrationPatience with JsonUtil with Injecting {
+    with IntegrationPatience with JsonUtil with Injecting with EitherValues {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -470,53 +471,41 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentYear).futureValue
+      val result = sut.connectToGovernmentSpend(currentYear).futureValue.right.value
+
       result.status mustBe OK
       result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
     }
 
-    "return a BadRequest response" in {
+    "return an UpstreamErrorResponse" when {
+      List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504).foreach { status =>
+        s"a response with status $status is received" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(
+                aResponse()
+                  .withStatus(status)
+              )
+          )
 
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Oops")
-        )
-      )
+          val result = sut.connectToGovernmentSpend(currentYear).futureValue
 
-      val result = sut.connectToGovernmentSpend(currentYear).failed.futureValue
-
-      result mustBe a[BadRequestException]
-    }
-
-    "return a InternalServerError response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(INTERNAL_SERVER_ERROR)
-            .withBody("Oops")
-        )
-      )
-
-      val result = sut.connectToGovernmentSpend(currentYear).failed.futureValue
-
-      result mustBe a[Upstream5xxResponse]
-    }
-
-    "return an exception when a fault with the request occurs" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withFault(Fault.MALFORMED_RESPONSE_CHUNK)
-        )
-      )
-
-      intercept[Exception] {
-        sut.connectToGovernmentSpend(currentYear).futureValue
+          result.left.value.statusCode mustBe status
+        }
       }
+    }
+
+    "the connector times out" in {
+      server.stubFor(
+        get(anyUrl()).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody("""{"Environment" : 5.5}""")
+            .withFixedDelay(2000))
+      )
+
+      val result = sut.connectToGovernmentSpend(currentYear).futureValue.left.value
+      result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
 }
