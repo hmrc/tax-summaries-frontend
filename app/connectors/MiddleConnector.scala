@@ -52,12 +52,9 @@ class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
     implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
     http.GET[Either[UpstreamErrorResponse, HttpResponse]](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")) recover handleHttpExceptions
 
-  // TODO
   def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(
-    implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    import uk.gov.hmrc.http.HttpReads.readRaw
-    http.GET[HttpResponse](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data"))
-  }
+    implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")) recover handleHttpExceptions
 
   def connectToGovernmentSpend(taxYear: Int)(
     implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =

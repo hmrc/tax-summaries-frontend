@@ -145,7 +145,8 @@ class PayeAtsServiceSpec extends BaseSpec {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]())))
+        .thenReturn(
+          Future.successful(Right(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]()))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
@@ -158,33 +159,32 @@ class PayeAtsServiceSpec extends BaseSpec {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(Status.NOT_FOUND, "body")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("body", Status.NOT_FOUND))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result.left.get.status mustBe Status.NOT_FOUND
+      result.right.value mustBe Nil
     }
 
-    "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
+    "return a BAD_REQUEST response after receiving a BAD_REQUEST from connector" in {
 
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.failed(new BadRequestException("Bad Request")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("Bad Request", BAD_REQUEST))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result.left.get.status mustBe 400
+      result.left.value mustBe an[AtsBadRequestResponse]
     }
 
-    "return an empty list after receiving NotFoundException from connector" in {
-
+    "return an empty list after receiving NOT_FOUND from connector" in {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.failed(new NotFoundException("Not Found")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("Not Found", NOT_FOUND))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
@@ -192,5 +192,4 @@ class PayeAtsServiceSpec extends BaseSpec {
       result mustBe Right(List.empty)
     }
   }
-
 }

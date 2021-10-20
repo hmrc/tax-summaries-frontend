@@ -17,7 +17,6 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
-import com.github.tomakehurst.wiremock.http.Fault
 import config.ApplicationConfig
 import models._
 import org.scalatest.EitherValues
@@ -381,66 +380,39 @@ class MiddleConnectorSpec
             .withBody(expectedResponse))
       )
 
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.right.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return BadRequest response" in {
+    "return an UpstreamErrorResponse" when {
+      listOfErrors.foreach { status =>
+        s"a response with status $status is received" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(
+                aResponse()
+                  .withStatus(status)
+              )
+          )
 
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Bad Request"))
-      )
-
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
-
-      result mustBe a[BadRequestException]
-    }
-
-    "return NotFound response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(NOT_FOUND)
-            .withBody("Not found")
-        )
-      )
-
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
-
-      result mustBe a[NotFoundException]
-    }
-
-    "return a InternalServerError response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(INTERNAL_SERVER_ERROR)
-            .withBody("An error occurred"))
-      )
-
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
-
-      result mustBe a[Upstream5xxResponse]
-    }
-
-    "return an exception when a fault with the request occurs" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withFault(Fault.MALFORMED_RESPONSE_CHUNK)
-        )
-      )
-
-      intercept[Exception] {
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+          val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+          result.left.value.statusCode mustBe status
+        }
       }
+    }
+
+    "the connector times out" in {
+      server.stubFor(
+        get(anyUrl()).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody("""{"Environment" : 5.5}""")
+            .withFixedDelay(2000))
+      )
+
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.left.value
+      result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
 
