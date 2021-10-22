@@ -40,19 +40,17 @@ class AtsListService @Inject()(
   def createModel()(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsList]] =
-    getAtsYearList map { response =>
-      response match {
-        case Right(atsList) =>
-          Right(
-            AtsList(
-              atsList.utr,
-              atsList.taxPayer.get.taxpayer_name.get("forename"),
-              atsList.taxPayer.get.taxpayer_name.get("surname"),
-              atsList.atsYearList.get
-            ))
-        case Left(_: AtsNotFoundResponse) => Right(AtsList.empty)
-        case Left(status)                 => Left(status)
-      }
+    getAtsYearList map {
+      case Right(atsList) =>
+        Right(
+          AtsList(
+            atsList.utr,
+            atsList.taxPayer.get.taxpayer_name.get("forename"),
+            atsList.taxPayer.get.taxpayer_name.get("surname"),
+            atsList.atsYearList.get
+          ))
+      case Left(_: AtsNotFoundResponse) => Right(AtsList.empty)
+      case Left(status)                 => Left(status)
     }
 
   def getAtsYearList(

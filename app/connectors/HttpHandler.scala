@@ -29,19 +29,20 @@ import scala.concurrent.{ExecutionContext, Future}
 class HttpHandler @Inject()(http: HttpClient)(implicit ec: ExecutionContext) extends LazyLogging {
 
   def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url) map { response =>
-      response match {
-        case Left(upstreamErrorResponse) =>
-          upstreamErrorResponse.statusCode match {
-            case NOT_FOUND =>
-              logger.warn(upstreamErrorResponse.getMessage())
-              AtsNotFoundResponse(upstreamErrorResponse.getMessage())
-            case _ =>
-              logger.error(upstreamErrorResponse.message)
-              AtsErrorResponse(upstreamErrorResponse.message)
-          }
-        case Right(response) => extractJson[A](response.json)
-      }
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url) map {
+      case Left(upstreamErrorResponse) =>
+        upstreamErrorResponse.statusCode match {
+          case NOT_FOUND =>
+            logger.warn(upstreamErrorResponse.message)
+            AtsNotFoundResponse(upstreamErrorResponse.message)
+          case _ if upstreamErrorResponse.statusCode >= 500 =>
+            logger.error(upstreamErrorResponse.message)
+            AtsErrorResponse(upstreamErrorResponse.message)
+          case _ =>
+            logger.error(upstreamErrorResponse.message, upstreamErrorResponse)
+            AtsErrorResponse(upstreamErrorResponse.message)
+        }
+      case Right(response) => extractJson[A](response.json)
     } recover {
       case e: HttpException =>
         logger.error(e.message)
