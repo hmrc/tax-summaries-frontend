@@ -22,7 +22,7 @@ import utils.BaseSpec
 
 class AccountControllerTest extends BaseSpec {
 
-  val feedbackUrl = "http://localhost:9514/feedback/ATS/personal"
+  val feedbackUrl = "http://localhost:9514/feedback/ATS"
   val controller: AccountController = inject[AccountController]
 
   "signOut" must {
