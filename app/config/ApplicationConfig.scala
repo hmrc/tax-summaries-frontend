@@ -98,6 +98,9 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
 
+  val sessionTimeoutInSeconds: String = config.getString("timeout.sessionTimeOut")
+  val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
+
   val accessibilityStatementToggle: Boolean = config.getBoolean("accessibility-statement.enabled")
   val accessibilityBaseUrl: String = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")

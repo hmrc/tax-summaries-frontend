@@ -417,3 +417,13 @@ merge.page.paye.ivuplift.header = Mae angen i chi ateb rhai cwestiynau diogelwch
 merge.page.sa.utr.inactive.header = Mae angen i chi wneud cais i gael mynediad at eich cyfrif Hunanasesiad
 merge.page.sa.utr.inactive.text = Er mwyn gweld eich Crynodeb Treth Blynyddol Hunanasesiad, mae angen i chi
 merge.page.sa.utr.inactive.link = wneud cais i gael mynediad at eich cyfrif Hunanasesiad.
+
+session_expired.title=Er eich diogelwch, gwnaethom eich allgofnodi
+session_expired.guidance = Mae’r manylion yr ydych wedi’u rhoi wedi cael eu dileu gan nad ydych wedi mynd yn eich blaen â’r gwasanaeth am 15 o funudau.
+
+timeout.dialog.title=Rydych ar fin cael eich allgofnodi
+timeout.dialog.message=Am resymau diogelwch, byddwch yn cael eich allgofnodi ymhen
+timeout.dialog.minutes=o funudau
+timeout.dialog.seconds=eiliad
+timeout.dialog.keepAlive.button=Parhau i fod wedi’ch mewngofnodi
+timeout.dialog.signout.button=Allgofnodi nawr
