@@ -437,7 +437,10 @@
 
 
   $.magnaCharta = function(table, options) {
-    return new MagnaCharta().init(table, options);
+    var mcChart = document.getElementById("mc-chart");
+    if(mcChart != "") {
+        return new MagnaCharta().init(table, options);
+    }
   };
 
 
