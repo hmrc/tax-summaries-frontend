@@ -81,7 +81,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
   override def beforeEach() = {
     when(mockAppConfig.payeShuttered).thenReturn(false)
     when(mockAppConfig.saShuttered).thenReturn(false)
-    when(mockAppConfig.taxYear).thenReturn(2020)
+    when(mockAppConfig.taxYear).thenReturn(2021)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
     when(mockAppConfig.reportAProblemPartialUrl).thenReturn(appConfig.reportAProblemPartialUrl)
   }
@@ -113,7 +113,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             List.empty,
             mockAppConfig,
             ConfidenceLevel.L200),
-          atsForms.atsYearFormMapping)
+          atsForms.atsYearFormMapping
+        )
 
       result must include(messages("merge.page.no.ats.summary.text"))
       result must include(messages("2018 to 2019 for a general Annual Tax Summary"))
@@ -125,7 +126,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         view(
           AtsMergePageViewModel(
             AtsList("", "", "", List.empty),
-            List(2015, 2016, 2017, 2018, 2019, 2020),
+            (2015 to mockAppConfig.taxYear).toList,
             mockAppConfig,
             ConfidenceLevel.L200),
           atsForms.atsYearFormMapping
@@ -268,7 +269,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     }
 
-    "show paye uplisft header message if user only has paye data and needs uplift" in {
+    "show paye uplift header message if user only has paye data and needs uplift" in {
       when(mockAppConfig.saShuttered).thenReturn(true)
       val result = view(
         AtsMergePageViewModel(

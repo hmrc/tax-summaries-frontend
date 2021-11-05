@@ -119,6 +119,9 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 
   val taxYear: Int = config.getInt("taxYear")
+
+  val currentTaxYearSpendData: Boolean = config.getBoolean("feature.CurrentTaxYearSpendData.enabled")
+
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
   def spendCategories(taxYear: Int): List[String] =

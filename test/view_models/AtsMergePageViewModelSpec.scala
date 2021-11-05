@@ -84,16 +84,47 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is false" in {
-      when(mockAppConfig.taxYear).thenReturn(2020)
+      when(mockAppConfig.taxYear).thenReturn(2021)
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(true)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
-      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), appConfig, ConfidenceLevel.L200)
+      val model =
+        AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), mockAppConfig, ConfidenceLevel.L200)
+      println(model.completeYearList)
+      model.completeYearList mustBe List(
+        AtsYearChoice(NoATS, mockAppConfig.taxYear),
+        AtsYearChoice(PAYE, 2020),
+        AtsYearChoice(NoATS, 2019),
+        AtsYearChoice(SA, 2018))
+    }
+
+    "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is false but without 2021 data if currentTaxYearSpendData toggle is false" in {
+      when(mockAppConfig.taxYear).thenReturn(2021)
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(false)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model =
+        AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), mockAppConfig, ConfidenceLevel.L200)
+      println(model.completeYearList)
       model.completeYearList mustBe List(AtsYearChoice(PAYE, 2020), AtsYearChoice(NoATS, 2019), AtsYearChoice(SA, 2018))
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
-      when(mockAppConfig.taxYear).thenReturn(2020)
+      when(mockAppConfig.taxYear).thenReturn(2021)
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(true)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
-      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), appConfig, ConfidenceLevel.L50)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), mockAppConfig, ConfidenceLevel.L50)
+      println(model.completeYearList)
+      model.completeYearList mustBe List(
+        AtsYearChoice(NoATS, mockAppConfig.taxYear),
+        AtsYearChoice(NoATS, 2019),
+        AtsYearChoice(SA, 2018))
+    }
+
+    "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true but without 2021 data if currentTaxYearSpendData toggle is false" in {
+      when(mockAppConfig.taxYear).thenReturn(2021)
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(false)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      val model = AtsMergePageViewModel(AtsList("", "", "", List(2018)), List(2020), mockAppConfig, ConfidenceLevel.L50)
+      println(model.completeYearList)
       model.completeYearList mustBe List(AtsYearChoice(NoATS, 2019), AtsYearChoice(SA, 2018))
     }
 

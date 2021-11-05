@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{FakeAuthAction, FakeAuthJourney}
+import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -24,17 +24,17 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
-import utils.ControllerBaseSpec
+import utils.{BaseSpec, ControllerBaseSpec}
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 
-object SummaryControllerSpec {
+object SummaryControllerSpec extends BaseSpec {
 
   val baseModel = Summary(
-    year = 2014,
+    year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -56,8 +56,6 @@ object SummaryControllerSpec {
 }
 
 class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenPropertyChecks {
-
-  override val taxYear = 2014
 
   val baseModel = SummaryControllerSpec.baseModel
 
@@ -84,6 +82,8 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       val result = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
+      println(document.title)
+
       document.title must include(
         Messages("ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
     }
@@ -456,7 +456,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       val result = sut.show(request)
 
       status(result) mustBe 303
-      redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+      redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
     }
   }
 }
