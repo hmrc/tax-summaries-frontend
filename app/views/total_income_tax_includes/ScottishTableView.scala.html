@@ -50,8 +50,8 @@
     <table>
         <thead>
             <tr>
-                <th scope="row">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
-                <td class="numeric">@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</td>
+                <th scope="col">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
+                <th>@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</th>
             </tr>
         </thead>
     </table>
