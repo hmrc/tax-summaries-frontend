@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{FakeAuthAction, FakeAuthJourney}
+import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -31,7 +31,6 @@ import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
 
   val mockSummaryService = mock[SummaryService]
@@ -102,7 +101,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       document.getElementById("tax-services-link").text mustBe "Your taxes and public spending"
       document
         .getElementById("index-page-header")
-        .text mustBe "Tax year: April 6 2013 to April 5 2014 Self Assessment Annual Tax Summary"
+        .text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear Self Assessment Annual Tax Summary"
       document
         .getElementById("index-page-description")
         .text mustBe "This summarises your personal tax and National Insurance, and how they are spent by government."

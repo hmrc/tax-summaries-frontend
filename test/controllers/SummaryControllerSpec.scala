@@ -24,17 +24,17 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
-import utils.ControllerBaseSpec
+import utils.{BaseSpec, ControllerBaseSpec}
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 
-object SummaryControllerSpec {
+object SummaryControllerSpec extends BaseSpec {
 
   val baseModel = Summary(
-    year = 2014,
+    year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -56,8 +56,6 @@ object SummaryControllerSpec {
 }
 
 class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenPropertyChecks {
-
-  override val taxYear = 2014
 
   val baseModel = SummaryControllerSpec.baseModel
 

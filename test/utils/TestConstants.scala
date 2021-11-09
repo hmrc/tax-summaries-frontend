@@ -23,7 +23,7 @@ import view_models._
 
 import scala.util.Random
 
-trait TestConstants {
+trait TestConstants extends BaseSpec {
 
   // We only want one test nino and utr throughout, therefore assign a value in the object declaration
   lazy val testUtr = new SaUtrGenerator().nextSaUtr.utr
@@ -37,7 +37,7 @@ trait TestConstants {
   def genRandNumString(length: Int) = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax = TotalIncomeTax(
-    year = 2014,
+    year = taxYear,
     utr = "",
     Amount.empty,
     Amount.empty,
@@ -77,7 +77,7 @@ trait TestConstants {
   )
 
   val capitalGains = CapitalGains(
-    taxYear = 2014,
+    taxYear = taxYear,
     utr = testUtr,
     taxableGains = Amount(20000, "GBP"),
     lessTaxFreeAmount = Amount(10600, "GBP"),

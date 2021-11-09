@@ -96,7 +96,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
         .text mustBe "How your tax was spent"
       document
         .select("h2.heading-xlarge")
-        .text mustBe "6 April 2019 to 5 April 2020"
+        .text mustBe s"6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
     "link to Scottish government spending page for Scottish users" in {
@@ -108,7 +108,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .select("#scottish-spending-link a")
-        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+        .attr("href") mustBe s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {
