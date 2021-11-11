@@ -24,14 +24,14 @@ import view_models.{Amount, Rate}
 class PayeAtsTestData extends BaseSpec {
 
   val govSpendingData = PayeAtsData(
-    2021,
+    taxYear,
     None,
     None,
     None,
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2021,
+        taxYear,
         Some(
           Map(
             "UkContributionToEuBudget" -> SpendData(Amount(6.00, "GBP"), 0.60),
@@ -402,7 +402,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeGovernmentSpendViewModel2020 = PayeGovernmentSpend(
-    taxYear,
+    2020,
     List(
       SpendRow("Welfare", SpendData(Amount(451, "GBP"), 22.1)),
       SpendRow("Health", SpendData(Amount(388, "GBP"), 20.5)),
@@ -425,7 +425,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeGovernmentSpendViewModel2021 = PayeGovernmentSpend(
-    taxYear,
+    2021,
     List(
       SpendRow("Health", SpendData(Amount(219, "GBP"), 21.9)),
       SpendRow("Welfare", SpendData(Amount(196, "GBP"), 19.6)),

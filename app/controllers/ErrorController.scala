@@ -50,7 +50,12 @@ class ErrorController @Inject()(
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
     governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
-      Ok(howTaxIsSpentView(spendData, taxYear))
+      if (!appConfig.currentTaxYearSpendData && taxYear == appConfig.taxYear) {
+        logger.error(s"$taxYear is unavailable at this time")
+        BadRequest(serviceUnavailableView())
+      } else {
+        Ok(howTaxIsSpentView(spendData, taxYear))
+      }
     } recover {
       case e: IllegalArgumentException =>
         logger.error(e.getMessage)

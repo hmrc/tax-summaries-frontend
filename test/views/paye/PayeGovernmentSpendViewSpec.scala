@@ -16,10 +16,15 @@
 
 package views.paye
 
+import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeGovernmentSpendingView
@@ -100,10 +105,14 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
     }
 
     "link to Scottish government spending page for Scottish users" in {
+
+      lazy val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
+
       val view =
         payeGovernmentSpendingView(
           payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true),
-          isWelshTaxPayer = false).body
+          isWelshTaxPayer = false
+        )(implicitly, implicitly, implicitly, mockAppConfig, implicitly).body
       val document = Jsoup.parse(view)
 
       document

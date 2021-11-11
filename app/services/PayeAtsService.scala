@@ -18,6 +18,7 @@ package services
 
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
+import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -31,8 +32,10 @@ import utils.AuditTypes
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: AuditService)(
-  implicit ec: ExecutionContext)
+class PayeAtsService @Inject()(
+  middleConnector: MiddleConnector,
+  auditService: AuditService,
+  applicationConfig: ApplicationConfig)(implicit ec: ExecutionContext)
     extends Logging {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(
@@ -80,6 +83,8 @@ class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: A
     hc: HeaderCarrier,
     request: PayeAuthenticatedRequest[_]): Either[HttpResponse, A] =
     response.status match {
+      case OK if (!applicationConfig.currentTaxYearSpendData && taxYear == applicationConfig.taxYear) =>
+        Left(HttpResponse(NOT_FOUND, s"$taxYear is currently unavailable"))
       case OK =>
         sendAuditEvent(nino, taxYear)
         Right(response.json.as[A])

@@ -49,9 +49,9 @@ class AtsMergePageServiceSpec
     Json.fromJson[AtsData](json).get
   }
 
-  val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
-  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
-  val mockAtsListService: AtsListService = mock[AtsListService]
+  lazy val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
+  lazy val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  lazy val mockAtsListService: AtsListService = mock[AtsListService]
 
   override def beforeEach() =
     reset(mockDataCacheConnector)
@@ -64,7 +64,7 @@ class AtsMergePageServiceSpec
     timestamp = 0
   )
 
-  def sut =
+  def sut: AtsMergePageService =
     new AtsMergePageService(mockDataCacheConnector, mockPayeAtsService, mockAtsListService, appConfig)
 
   val saDataResponse: AtsList = AtsList(
@@ -72,12 +72,12 @@ class AtsMergePageServiceSpec
     forename = "forename",
     surname = "surname",
     yearList = List(
-      2014,
-      2015
+      taxYear - 2,
+      taxYear - 3
     )
   )
 
-  val payeDataResponse = List(2018, 2019)
+  val payeDataResponse = List(taxYear - 2, taxYear - 1)
 
   val agentRequestWithQuery = AuthenticatedRequest(
     "userId",
@@ -114,7 +114,7 @@ class AtsMergePageServiceSpec
           when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful("token"))
           when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
-          when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
+          when(mockPayeAtsService.getPayeTaxYearData(testNino, taxYear - 1, taxYear))
             .thenReturn(Future(Right(payeDataResponse)))
 
           val result = sut.getSaAndPayeYearList.futureValue
@@ -141,7 +141,7 @@ class AtsMergePageServiceSpec
               FakeRequest())
 
           when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
-          when(mockPayeAtsService.getPayeTaxYearData(testNino, appConfig.taxYear - 1, appConfig.taxYear))
+          when(mockPayeAtsService.getPayeTaxYearData(testNino, taxYear - 1, taxYear))
             .thenReturn(Future(Right(payeDataResponse)))
 
           val result = sut.getSaAndPayeYearList.futureValue

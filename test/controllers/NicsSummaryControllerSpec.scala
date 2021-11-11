@@ -31,12 +31,10 @@ import scala.concurrent.Future
 
 class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
-
   val dataPath = "/summary_json_test.json"
 
   val model = Summary(
-    year = 2014,
+    year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
