@@ -30,7 +30,7 @@ import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
-  lazy implicit val mockAppConfig = mock[ApplicationConfig]
+  lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   implicit val agentRequest = AuthenticatedRequest(
     "userId",
@@ -99,6 +99,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     s"show generic no ats message and radiobuttons if there are years missing from paye and sa data from ${taxYear - 2}" in {
+
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(true)
+
+      when(mockAppConfig.taxYear).thenReturn(2021)
+
       val result =
         view(
           AtsMergePageViewModel(
@@ -112,6 +117,28 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must include(messages("merge.page.no.ats.summary.text"))
       result must include(messages(s"${taxYear - 2} to ${taxYear - 1} for a general Annual Tax Summary"))
       result must include(messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary"))
+    }
+
+    s"not show $taxYear when currentTaxYearSpendData toggle is false" in {
+
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(false)
+
+      when(mockAppConfig.taxYear).thenReturn(2021)
+
+      val result =
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 3, taxYear - 2)),
+            List.empty,
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping
+        )
+
+      result must include(messages("merge.page.no.ats.summary.text"))
+      result must include(messages(s"${taxYear - 2} to ${taxYear - 1} for a general Annual Tax Summary"))
+      result mustNot include(messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary"))
+
     }
 
     s"not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from ${taxYear - 2}" in {
