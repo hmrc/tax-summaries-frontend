@@ -16,6 +16,7 @@
 
 package services
 
+import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PayeAtsData
@@ -23,7 +24,7 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -53,6 +54,7 @@ class PayeAtsServiceSpec extends BaseSpec {
   }
 
   val mockMiddleConnector = mock[MiddleConnector]
+  val mockAppConfig = mock[ApplicationConfig]
   val payeAuthenticatedRequest =
     PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
@@ -69,7 +71,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       FakeRequest())
   val mockAuditService: AuditService = mock[AuditService]
 
-  def sut = new PayeAtsService(mockMiddleConnector, mockAuditService)
+  def sut = new PayeAtsService(mockMiddleConnector, mockAuditService, mockAppConfig)
 
   override protected def afterEach(): Unit =
     Mockito.reset(mockAuditService)
@@ -84,6 +86,34 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
       result mustBe Right(expectedResponse.as[PayeAtsData])
+    }
+
+    "return a successful response after transforming tax-summaries data to PAYE model for current year when currentTaxYearSpendData is true" in {
+
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(true)
+
+      when(mockAppConfig.taxYear).thenReturn(taxYear)
+
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]())))
+
+      val result = sut.getPayeATSData(testNino, taxYear)(hc, payeAuthenticatedRequest).futureValue
+
+      result mustBe Right(expectedResponse.as[PayeAtsData])
+    }
+
+    "return a NOT_FOUND response when trying to access the current year when currentTaxYearSpendData is false" in {
+
+      when(mockAppConfig.currentTaxYearSpendData).thenReturn(false)
+
+      when(mockAppConfig.taxYear).thenReturn(taxYear)
+
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]())))
+
+      val result = sut.getPayeATSData(testNino, taxYear)(hc, payeAuthenticatedRequest).futureValue
+
+      result.left.get.status mustBe 404
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
