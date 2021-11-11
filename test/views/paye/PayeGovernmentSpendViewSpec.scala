@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.renderer.TemplateRenderer
@@ -104,20 +105,32 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
         .text mustBe s"6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
-    "link to Scottish government spending page for Scottish users" in {
-
-      lazy val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
+    "link to Scottish government spending page for Scottish users for tax year 2020" in {
 
       val view =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = taxYear - 1),
           isWelshTaxPayer = false
-        )(implicitly, implicitly, implicitly, mockAppConfig, implicitly).body
+        ).body
       val document = Jsoup.parse(view)
 
       document
         .select("#scottish-spending-link a")
         .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+    }
+
+    "link to Scottish government spending page for Scottish users for tax year 2021" in {
+
+      val view =
+        payeGovernmentSpendingView(
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = taxYear),
+          isWelshTaxPayer = false
+        ).body
+      val document = Jsoup.parse(view)
+
+      document
+        .select("#scottish-spending-link a")
+        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2020-2021/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {

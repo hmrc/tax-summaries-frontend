@@ -84,7 +84,7 @@
 		 <p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
 		 @if(viewModel.isScottish) {
 		   <p id="scottish-spending-link">@Messages("paye.ats.treasury_spending.scottish.spending.1")
-			   <a href="@if(appConfig.currentTaxYearSpendData) {@appConfig.scottishIncomeTaxLinkCy} else {@appConfig.scottishIncomeTaxLinkCyMinusOne}" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
+			   <a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
 			   @Messages("paye.ats.treasury_spending.scottish.spending.3")
 		   </p>
 		 }
