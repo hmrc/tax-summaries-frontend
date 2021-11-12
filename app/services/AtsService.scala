@@ -16,8 +16,7 @@
 
 package services
 
-import java.util.Date
-
+import cats.data.EitherT
 import com.google.inject.Inject
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
@@ -28,8 +27,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
+import java.util.Date
 import scala.concurrent.{ExecutionContext, Future}
-import cats.data.EitherT
 
 class AtsService @Inject()(
   middleConnector: MiddleConnector,

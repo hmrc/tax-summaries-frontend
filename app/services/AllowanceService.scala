@@ -22,6 +22,7 @@ import models.{AtsData, DataHolder}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models.Allowances
+
 import scala.concurrent.Future
 
 class AllowanceService @Inject()(atsService: AtsService) {

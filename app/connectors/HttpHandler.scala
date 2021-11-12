@@ -17,13 +17,13 @@
 package connectors
 
 import com.typesafe.scalalogging.LazyLogging
-import javax.inject.Inject
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsResponse, AtsSuccessResponseWithPayload}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Reads}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HttpHandler @Inject()(val http: DefaultHttpClient)(implicit ec: ExecutionContext) extends LazyLogging {

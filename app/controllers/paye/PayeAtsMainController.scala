@@ -22,10 +22,8 @@ import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PayeAtsService
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer

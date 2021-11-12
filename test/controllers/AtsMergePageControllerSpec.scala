@@ -18,7 +18,6 @@ package controllers
 
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
-import models.{AtsType, AtsYearChoice}
 import org.jsoup.Jsoup
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, when}
@@ -26,16 +25,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
-import play.twirl.api.Html
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testNino, testUtr}
-import view_models.AtsForms
-import view_models.{AtsList, AtsMergePageViewModel}
+import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.Future
 

@@ -20,8 +20,8 @@ import connectors.CitizenDetailsConnector
 import models.MatchingDetails
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait MatchingDetailsResponse

@@ -17,12 +17,11 @@
 package services
 
 import com.google.inject.Inject
-import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PayeAtsData
-import play.api.{Logger, Logging}
+import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino

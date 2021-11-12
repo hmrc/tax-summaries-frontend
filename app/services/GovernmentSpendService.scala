@@ -21,7 +21,6 @@ import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, GovernmentSpendingOutputWrapper}
-import uk.gov.hmrc.domain.TaxIdentifier
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend

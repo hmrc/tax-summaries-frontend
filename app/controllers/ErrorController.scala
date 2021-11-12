@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, MergePageAuthAction, MinAuthAction}
+import controllers.auth.{MergePageAuthAction, MinAuthAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
@@ -30,11 +30,10 @@ import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorController @Inject()(
   governmentSpendService: GovernmentSpendService,
-  authAction: AuthAction,
   mergePageAuthAction: MergePageAuthAction,
   minAuthAction: MinAuthAction,
   mcc: MessagesControllerComponents,
@@ -49,20 +48,20 @@ class ErrorController @Inject()(
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
-      if (!appConfig.currentTaxYearSpendData && taxYear == appConfig.taxYear) {
-        logger.error(s"$taxYear is unavailable at this time")
-        BadRequest(serviceUnavailableView())
-      } else {
+    if (!appConfig.currentTaxYearSpendData && taxYear == appConfig.taxYear) {
+      logger.error(s"$taxYear is unavailable at this time")
+      Future(BadRequest(serviceUnavailableView()))
+    } else {
+      governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
         Ok(howTaxIsSpentView(spendData, taxYear))
+      } recover {
+        case e: IllegalArgumentException =>
+          logger.error(e.getMessage)
+          BadRequest(serviceUnavailableView())
+        case e =>
+          logger.error(e.getMessage)
+          InternalServerError(serviceUnavailableView())
       }
-    } recover {
-      case e: IllegalArgumentException =>
-        logger.error(e.getMessage)
-        BadRequest(serviceUnavailableView())
-      case e =>
-        logger.error(e.getMessage)
-        InternalServerError(serviceUnavailableView())
     }
   }
 

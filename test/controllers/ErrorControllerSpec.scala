@@ -16,25 +16,25 @@
 
 package controllers
 
-import controllers.auth.{AuthAction, _}
+import config.ApplicationConfig
+import controllers.auth._
 import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import play.api.Configuration
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.GovernmentSpendService
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Nino}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.time.CurrentTaxYear
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
+
 import java.time.LocalDate
-
-import org.mockito.Matchers
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
@@ -42,18 +42,23 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
 
-  def sut(utr: Option[SaUtr] = Some(SaUtr(testUtr))) =
+  override def beforeEach() = {
+    super.beforeEach()
+    reset(mockGovernmentSpendService)
+  }
+
+  def sut: ErrorController =
     new ErrorController(
       mockGovernmentSpendService,
-      FakeAuthAction,
       new FakeMergePageAuthAction(true),
       FakeMinAuthAction,
       mcc,
       notAuthorisedView,
       howTaxIsSpentView,
       serviceUnavailableView
-    )
-  implicit lazy val messageApi = inject[MessagesApi]
+    )(templateRenderer, appConfig, ec)
+
+  implicit lazy val messageApi: MessagesApi = inject[MessagesApi]
 
   "ErrorController" when {
 
@@ -68,7 +73,6 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               key -> value.percentage.toDouble
           }
 
-          val saUtrIdentifier = Some(SaUtr(testUtr))
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .successful(response)
 
@@ -83,18 +87,17 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
-          val result = sut().authorisedNoAts(appConfig.taxYear)(request)
+          val result = sut.authorisedNoAts(fakeTaxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe OK
-          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
+          document mustBe contentAsString(howTaxIsSpentView(response, fakeTaxYear))
         }
 
         "the service returns the government spend data with nino" in {
           val controller =
             new ErrorController(
               mockGovernmentSpendService,
-              FakeAuthAction,
               new FakeMergePageAuthAction(false),
               FakeMinAuthAction,
               mcc,
@@ -120,11 +123,11 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               ConfidenceLevel.L50,
               fakeCredentials,
               FakeRequest())
-          val result = controller.authorisedNoAts(appConfig.taxYear)(request)
+          val result = controller.authorisedNoAts(fakeTaxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe OK
-          document mustBe contentAsString(howTaxIsSpentView(response, appConfig.taxYear))
+          document mustBe contentAsString(howTaxIsSpentView(response, fakeTaxYear))
         }
 
       }
@@ -148,7 +151,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               fakeCredentials,
               FakeRequest())
 
-          val result = sut(None).authorisedNoAts(appConfig.taxYear)(request)
+          val result = sut.authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe BAD_REQUEST
@@ -159,6 +162,25 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "return internal server error" when {
 
         "the service throws another exception" in {
+
+          lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
+
+          class FakeConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+            override val currentTaxYearSpendData: Boolean = true
+          }
+
+          val fakeAppConfig = new FakeConfig
+
+          def sutWithMockAppConfig =
+            new ErrorController(
+              mockGovernmentSpendService,
+              new FakeMergePageAuthAction(true),
+              FakeMinAuthAction,
+              mcc,
+              notAuthorisedView,
+              howTaxIsSpentView,
+              serviceUnavailableView
+            )(templateRenderer, fakeAppConfig, ec)
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new Exception("Oops"))
@@ -175,11 +197,12 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               fakeCredentials,
               FakeRequest())
 
-          val result = sut(None).authorisedNoAts(appConfig.taxYear)(request)
+          val result = sutWithMockAppConfig.authorisedNoAts(taxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe INTERNAL_SERVER_ERROR
-          document mustBe contentAsString(serviceUnavailableView())
+          document mustBe contentAsString(
+            serviceUnavailableView()(implicitly, implicitly, implicitly, fakeAppConfig, implicitly))
         }
       }
     }
@@ -199,7 +222,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest())
-        val result = sut().notAuthorised()(request)
+        val result = sut.notAuthorised()(request)
         val document = contentAsString(result)
 
         status(result) mustBe OK
@@ -213,11 +236,41 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "show the service unavailable view" in {
 
         implicit val request = FakeRequest()
-        val result = sut().serviceUnavailable()(request)
+        val result = sut.serviceUnavailable()(request)
         val document = contentAsString(result)
 
         status(result) mustBe OK
         document mustBe contentAsString(serviceUnavailableView())
+      }
+    }
+
+    "currentTaxYearSpend data is false" must {
+      "return Bad Request and show the service unavailable view when trying to access the current year data" in {
+
+        class FakeConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+          override val currentTaxYearSpendData: Boolean = false
+        }
+
+        val fakeAppConfig = new FakeConfig
+
+        def sutWithMockAppConfig =
+          new ErrorController(
+            mockGovernmentSpendService,
+            new FakeMergePageAuthAction(true),
+            FakeMinAuthAction,
+            mcc,
+            notAuthorisedView,
+            howTaxIsSpentView,
+            serviceUnavailableView
+          )(templateRenderer, fakeAppConfig, ec)
+
+        val result = sutWithMockAppConfig.authorisedNoAts(taxYear)(request)
+
+        val document = contentAsString(result)
+
+        status(result) mustBe BAD_REQUEST
+        document mustBe contentAsString(
+          serviceUnavailableView()(request, testMessages, templateRenderer, fakeAppConfig, ec))
       }
     }
   }
