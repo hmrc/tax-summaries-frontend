@@ -437,7 +437,9 @@
 
 
   $.magnaCharta = function(table, options) {
-    return new MagnaCharta().init(table, options);
+    if(document.getElementById("mc-chart") == null) {
+        return new MagnaCharta().init(table, options);
+    }
   };
 
 

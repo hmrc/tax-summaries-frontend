@@ -36,6 +36,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Services url config
   val serviceUrl = config.baseUrl("tax-summaries")
   val agentServiceUrl = config.baseUrl("tax-summaries-agent")
+  val serviceIdentifier = config.getString("service-identifier")
 
   private val contactHost = config.baseUrl("contact-frontend")
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
