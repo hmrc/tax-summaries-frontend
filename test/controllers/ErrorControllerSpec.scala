@@ -247,30 +247,31 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
     "currentTaxYearSpend data is false" must {
       "return Bad Request and show the service unavailable view when trying to access the current year data" in {
 
-        class FakeConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-          override val currentTaxYearSpendData: Boolean = false
+        val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
+          case (key, value) =>
+            key -> value.percentage.toDouble
         }
 
-        val fakeAppConfig = new FakeConfig
+        when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
+          .successful(response)
 
-        def sutWithMockAppConfig =
-          new ErrorController(
-            mockGovernmentSpendService,
-            new FakeMergePageAuthAction(true),
-            FakeMinAuthAction,
-            mcc,
-            notAuthorisedView,
-            howTaxIsSpentView,
-            serviceUnavailableView
-          )(templateRenderer, fakeAppConfig, ec)
-
-        val result = sutWithMockAppConfig.authorisedNoAts(taxYear)(request)
-
+        implicit lazy val request =
+          AuthenticatedRequest(
+            "userId",
+            None,
+            Some(SaUtr(testUtr)),
+            None,
+            true,
+            false,
+            ConfidenceLevel.L50,
+            fakeCredentials,
+            FakeRequest())
+        val result = sut.authorisedNoAts(taxYear)(request)
         val document = contentAsString(result)
 
-        status(result) mustBe BAD_REQUEST
+        status(result) mustBe OK
         document mustBe contentAsString(
-          serviceUnavailableView()(request, testMessages, templateRenderer, fakeAppConfig, ec))
+          howTaxIsSpentView(response, taxYear)(request, implicitly, implicitly, appConfig, implicitly))
       }
     }
   }

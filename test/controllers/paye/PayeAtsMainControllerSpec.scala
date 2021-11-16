@@ -39,7 +39,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
   def getSingleYearData: PayeAtsData =
     parseData[PayeAtsData](
-      loadAndReplace("/paye_ats.json", Map("$nino" -> testNino.nino))
+      loadAndReplace("/paye_ats_2020.json", Map("$nino" -> testNino.nino))
     )
 
   private def parseData[A](str: String)(implicit reads: Reads[A]): A = Json.parse(str).as[A]

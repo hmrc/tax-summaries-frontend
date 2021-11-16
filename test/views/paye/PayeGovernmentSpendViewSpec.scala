@@ -22,9 +22,11 @@ import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.TestConstants
 import views.ViewSpecBase
@@ -109,7 +111,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
       val view =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = taxYear - 1),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = taxYear),
           isWelshTaxPayer = false
         ).body
       val document = Jsoup.parse(view)
@@ -121,9 +123,15 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {
 
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override val currentTaxYearSpendData: Boolean = true
+      }
+
+      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+
       val view =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = taxYear),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = appConfig.taxYear),
           isWelshTaxPayer = false
         ).body
       val document = Jsoup.parse(view)

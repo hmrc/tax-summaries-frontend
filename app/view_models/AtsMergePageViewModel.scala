@@ -40,19 +40,8 @@ case class AtsMergePageViewModel(
   val completeYearList: List[AtsYearChoice] = {
     val saDataYearChoiceList = saData.getDescendingYearList.map(year => AtsYearChoice(SA, year))
     val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(PAYE, year))
-
-    val noAtsYearChoiceList = if (appConfig.currentTaxYearSpendData) {
-      totalTaxYearList
-        .filterNot(saAndPayeTaxYearList.toSet)
-        .filter(_ >= 2019)
-        .map(year => AtsYearChoice(NoATS, year))
-    } else {
-      totalTaxYearList
-        .filterNot(saAndPayeTaxYearList.toSet)
-        .filter(_ >= 2019)
-        .filter(_ < appConfig.taxYear)
-        .map(year => AtsYearChoice(NoATS, year))
-    }
+    val noAtsYearChoiceList =
+      totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).map(year => AtsYearChoice(NoATS, year))
 
     if (showIvUpliftLink) {
       (saDataYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)

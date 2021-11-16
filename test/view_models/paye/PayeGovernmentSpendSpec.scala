@@ -24,9 +24,11 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.Configuration
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
-import utils.{JsonUtil, TestConstants}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.{BaseSpec, JsonUtil, TestConstants}
 import view_models.Amount
 
 class PayeGovernmentSpendSpec
@@ -35,7 +37,13 @@ class PayeGovernmentSpendSpec
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
 
-  implicit lazy val appConfig = inject[ApplicationConfig]
+  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+    override val currentTaxYearSpendData: Boolean = true
+  }
+
+  implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+
+  val taxYear: Int = 2021
 
   "PayeGovernmentSpend" must {
 
@@ -77,6 +85,12 @@ class PayeGovernmentSpendSpec
     }
 
     "reorder categories for tax year 2020" in {
+
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override val currentTaxYearSpendData: Boolean = false
+      }
+
+      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
       val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2020
       val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)

@@ -48,7 +48,7 @@ class ErrorController @Inject()(
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    if (!appConfig.currentTaxYearSpendData && taxYear == appConfig.taxYear) {
+    if (!appConfig.currentTaxYearSpendData && taxYear == 2021) {
       logger.error(s"$taxYear is unavailable at this time")
       Future(BadRequest(serviceUnavailableView()))
     } else {

@@ -23,7 +23,9 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Configuration
 import play.api.test.Injecting
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
 
@@ -31,7 +33,11 @@ trait BaseSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
     with ScalaFutures with IntegrationPatience {
 
-  implicit lazy val appConfig = inject[ApplicationConfig]
+  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+    override val currentTaxYearSpendData: Boolean = false
+  }
+
+  implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
   val taxYear: Int = appConfig.taxYear
 

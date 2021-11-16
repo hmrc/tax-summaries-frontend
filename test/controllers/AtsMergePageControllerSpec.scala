@@ -46,7 +46,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     mcc,
     atsMergePageView,
     genericErrorView,
-    atsForms)
+    atsForms)(implicitly, mockAppConfig, implicitly)
 
   lazy implicit val authRequest = AuthenticatedRequest(
     "userId",
@@ -133,9 +133,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       status(result) mustBe 500
       val document = contentAsString(result)
-      document mustBe contentAsString(genericErrorView())
+      document mustBe contentAsString(genericErrorView()(implicitly, implicitly, implicitly, mockAppConfig, implicitly))
     }
-
   }
 
   "AtsMergePageController for onSubmit" must {

@@ -26,7 +26,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
-import view_models.AtsList
+import view_models.{AtsList, TaxYearEnd}
 
 import scala.concurrent.{ExecutionContext, Future}
 

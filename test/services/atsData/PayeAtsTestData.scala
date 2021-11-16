@@ -24,14 +24,14 @@ import view_models.{Amount, Rate}
 class PayeAtsTestData extends BaseSpec {
 
   val govSpendingData = PayeAtsData(
-    taxYear,
+    2021,
     None,
     None,
     None,
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        taxYear,
+        2021,
         Some(
           Map(
             "UkContributionToEuBudget" -> SpendData(Amount(6.00, "GBP"), 0.60),

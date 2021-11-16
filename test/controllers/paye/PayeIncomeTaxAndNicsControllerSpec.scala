@@ -16,22 +16,30 @@
 
 package controllers.paye
 
-import config.PayeConfig
+import config.{ApplicationConfig, PayeConfig}
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.http.Status._
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.TestConstants.testNino
 import views.html.paye.PayeIncomeTaxAndNicsView
 
 import scala.concurrent.Future
 
 class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
+
+  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+    override val currentTaxYearSpendData: Boolean = false
+  }
+
+  val fakeAppConfig = new FakeAppConfig
 
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
   val sut =
@@ -40,7 +48,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       FakePayeAuthAction,
       mcc,
       inject[PayeIncomeTaxAndNicsView],
-      inject[PayeConfig])
+      inject[PayeConfig])(implicitly, fakeAppConfig, implicitly)
 
   "Paye your income tax and nics controller" must {
 
@@ -48,10 +56,12 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -60,8 +70,52 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString))
+          (fakeAppConfig.taxYear - 1).toString,
+          fakeAppConfig.taxYear.toString))
+    }
+
+    "return OK response with currentTaxYearSpendData toggle on" in {
+
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override val currentTaxYearSpendData: Boolean = true
+        override lazy val taxYear = 2021
+      }
+
+      val fakeAppConfig = new FakeAppConfig
+
+      class FakePayeConfig extends PayeConfig {
+        override val payeYear: Int = fakeAppConfig.taxYear
+      }
+
+      val fakePayeConfig = new FakePayeConfig
+
+      val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+      val sut =
+        new PayeIncomeTaxAndNicsController(
+          mockPayeAtsService,
+          FakePayeAuthAction,
+          mcc,
+          inject[PayeIncomeTaxAndNicsView],
+          fakePayeConfig)(implicitly, fakeAppConfig, implicitly)
+
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+
+      val result = sut.show(fakePayeConfig.payeYear)(fakeAuthenticatedRequest)
+
+      status(result) mustBe OK
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.title must include(
+        Messages("paye.ats.total_income_tax.title") + Messages(
+          "generic.to_from",
+          (fakePayeConfig.payeYear - 1).toString,
+          fakePayeConfig.payeYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {

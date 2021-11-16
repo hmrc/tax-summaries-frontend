@@ -29,7 +29,9 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val expectedResponse: JsValue = readJson("/paye_ats.json")
+  val expectedResponse2020: JsValue = readJson("/paye_ats_2020.json")
+
+  val expectedResponse2021: JsValue = readJson("/paye_ats_2021.json")
 
   def buildPayeRequest(endpoint: String) =
     PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", endpoint))

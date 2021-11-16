@@ -24,7 +24,7 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.OK
 import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -33,16 +33,16 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import utils.BaseSpec
-import utils.TestConstants.testNino
-import utils.TestConstants.{fakeCredentials, testNino, testUtr}
+import utils.TestConstants.{testNino, testUtr}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.io.Source
 
 class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc = HeaderCarrier()
-  val expectedResponse: JsValue = readJson("/paye_ats.json")
+  val expectedResponse: JsValue = readJson("/paye_ats_2020.json")
+  val expectedResponseCurrentYear: JsValue = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
   private val currentYearMinus1 = 2018
   private val currentYear = 2019
@@ -100,20 +100,6 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result = sut.getPayeATSData(testNino, taxYear)(hc, payeAuthenticatedRequest).futureValue
 
       result mustBe Right(expectedResponse.as[PayeAtsData])
-    }
-
-    "return a NOT_FOUND response when trying to access the current year when currentTaxYearSpendData is false" in {
-
-      when(mockAppConfig.currentTaxYearSpendData).thenReturn(false)
-
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
-
-      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]())))
-
-      val result = sut.getPayeATSData(testNino, taxYear)(hc, payeAuthenticatedRequest).futureValue
-
-      result.left.get.status mustBe 404
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {

@@ -21,10 +21,12 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsYearChoice
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
+import play.api.Configuration
 import play.api.data.Form
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
@@ -69,7 +71,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     FakeRequest("Get", s"?taxYear=$taxYear"))
 
   def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
-    atsMergePageView(model, form).body
+    atsMergePageView(model, form)(implicitly, implicitly, implicitly, mockAppConfig, implicitly).body
 
   override def beforeEach() = {
     when(mockAppConfig.payeShuttered).thenReturn(false)
@@ -119,25 +121,27 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must include(messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary"))
     }
 
-    s"not show $taxYear when currentTaxYearSpendData toggle is false" in {
+    s"not show 2021 when currentTaxYearSpendData toggle is false" in {
 
-      when(mockAppConfig.currentTaxYearSpendData).thenReturn(false)
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override val currentTaxYearSpendData: Boolean = false
+      }
 
-      when(mockAppConfig.taxYear).thenReturn(2021)
+      val fakeAppConfig = new FakeAppConfig
 
       val result =
         view(
           AtsMergePageViewModel(
             AtsList("", "", "", List(taxYear - 3, taxYear - 2)),
             List.empty,
-            mockAppConfig,
+            fakeAppConfig,
             ConfidenceLevel.L200),
           atsForms.atsYearFormMapping
         )
 
       result must include(messages("merge.page.no.ats.summary.text"))
-      result must include(messages(s"${taxYear - 2} to ${taxYear - 1} for a general Annual Tax Summary"))
-      result mustNot include(messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary"))
+      result must include(messages(s"2019 to 2020 for a general Annual Tax Summary"))
+      result mustNot include(messages(s"2020 to 2021 for a general Annual Tax Summary"))
 
     }
 
