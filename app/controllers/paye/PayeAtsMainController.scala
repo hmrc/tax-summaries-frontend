@@ -50,14 +50,12 @@ class PayeAtsMainController @Inject()(
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(_) if !appConfig.currentTaxYearSpendData && taxYear == 2021 =>
         logger.error(s"$taxYear is unavailable at this time")
-        println("*" * 100)
         Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
       case Right(_: PayeAtsData) =>
         Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(response: HttpResponse) =>
         response.status match {
           case NOT_FOUND =>
-            println("$" * 100)
             Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
           case _ =>
             logger.error(s"Error received, Http status: ${response.status}")
