@@ -81,8 +81,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val govScotAccounts = "https://www.gov.scot/accounts"
   lazy val govScotHowItWorks = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
 
-  lazy val scottishIncomeTaxLinkCyMinusOne = "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
-
   def scottishIncomeTaxLink(taxYear: Int): String =
     s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
 
