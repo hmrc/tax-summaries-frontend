@@ -90,7 +90,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   lazy val frontendTemplatePath: String =
     config.getString("microservice.services.frontend-template-provider.path")
-
+//
   //Application name
   lazy val appName = config.getString("appName")
 
