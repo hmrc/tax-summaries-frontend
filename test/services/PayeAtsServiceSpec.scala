@@ -18,24 +18,23 @@ package services
 
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsResultException, JsValue, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException, UpstreamErrorResponse}
 import utils.BaseSpec
-import utils.TestConstants.testNino
-import utils.TestConstants.{fakeCredentials, testNino, testUtr}
+import utils.TestConstants.{testNino, testUtr}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.io.Source
 
 class PayeAtsServiceSpec extends BaseSpec {
@@ -69,7 +68,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       FakeRequest())
   val mockAuditService: AuditService = mock[AuditService]
 
-  def sut = new PayeAtsService(mockMiddleConnector, mockAuditService)
+  val sut = new PayeAtsService(mockMiddleConnector, mockAuditService)
 
   override protected def afterEach(): Unit =
     Mockito.reset(mockAuditService)
@@ -77,48 +76,59 @@ class PayeAtsServiceSpec extends BaseSpec {
   "getPayeATSData" must {
 
     "return a successful response after transforming tax-summaries data to PAYE model" in {
-
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]())))
+        .thenReturn(Future.successful(Right(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]()))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
       result mustBe Right(expectedResponse.as[PayeAtsData])
     }
 
-    "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
+    "return will rethrow a JsResultException when the Json is invalid" in {
+      val badJson = Json.parse("""
+                                 |{
+                                 | "some error": 12345
+                                 |}
+                                 |""".stripMargin)
 
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))
-        .thenReturn(Future.failed(new JsResultException(List())))
+        .thenReturn(Future.successful(Right(HttpResponse(OK, badJson, Map[String, Seq[String]]()))))
 
-      val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
+      val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).failed.futureValue
 
-      result.left.get.status mustBe 500
+      result mustBe a[JsResultException]
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
-
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))
-        .thenReturn(Future.failed(new BadRequestException("Bad Request")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("bad request", BAD_REQUEST))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
-      result.left.get.status mustBe 400
+      result.left.value mustBe an[AtsBadRequestResponse]
     }
 
-    "return a NOT_FOUND response after receiving NotFoundException from connector" in {
-
+    "return a NOT_FOUND response after receiving NOT_FOUND from connector" in {
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))
-        .thenReturn(Future.failed(new NotFoundException("Not Found")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("not found", NOT_FOUND))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
-      result.left.get.status mustBe 404
+      result.left.value mustBe an[AtsNotFoundResponse]
+    }
+
+    "return a INTERNAL_SERVER_ERROR response after receiving some other error status" in {
+      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("some error", INTERNAL_SERVER_ERROR))))
+
+      val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
+
+      result.left.value mustBe an[AtsErrorResponse]
     }
 
     "produce a 'success' audit event when returning a successful response" in {
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]())))
+        .thenReturn(Future.successful(Right(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]()))))
 
       sut.getPayeATSData(testNino, currentYearMinus1)(hc, payeAuthenticatedRequest).futureValue
 
@@ -131,13 +141,12 @@ class PayeAtsServiceSpec extends BaseSpec {
   }
 
   "getPayeATSMultipleYearData" must {
-
     "return a successful response as list of tax years" in {
-
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]())))
+        .thenReturn(
+          Future.successful(Right(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]()))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
@@ -150,33 +159,32 @@ class PayeAtsServiceSpec extends BaseSpec {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(Status.NOT_FOUND, "body")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("body", Status.NOT_FOUND))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result.left.get.status mustBe Status.NOT_FOUND
+      result.right.value mustBe Nil
     }
 
-    "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
+    "return a BAD_REQUEST response after receiving a BAD_REQUEST from connector" in {
 
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.failed(new BadRequestException("Bad Request")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("Bad Request", BAD_REQUEST))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
 
-      result.left.get.status mustBe 400
+      result.left.value mustBe an[AtsBadRequestResponse]
     }
 
-    "return an empty list after receiving NotFoundException from connector" in {
-
+    "return an empty list after receiving NOT_FOUND from connector" in {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
           any[HeaderCarrier]))
-        .thenReturn(Future.failed(new NotFoundException("Not Found")))
+        .thenReturn(Future.successful(Left(UpstreamErrorResponse("Not Found", NOT_FOUND))))
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
@@ -184,5 +192,4 @@ class PayeAtsServiceSpec extends BaseSpec {
       result mustBe Right(List.empty)
     }
   }
-
 }
