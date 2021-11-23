@@ -37,13 +37,13 @@ class PayeGovernmentSpendSpec
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
 
+  val taxYear: Int = 2021
+
   class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-    override val currentTaxYearSpendData: Boolean = true
+    override lazy val taxYear: Int = taxYear
   }
 
   implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
-
-  val taxYear: Int = 2021
 
   "PayeGovernmentSpend" must {
 
@@ -87,7 +87,7 @@ class PayeGovernmentSpendSpec
     "reorder categories for tax year 2020" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-        override val currentTaxYearSpendData: Boolean = false
+        override lazy val taxYear: Int = 2020
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig

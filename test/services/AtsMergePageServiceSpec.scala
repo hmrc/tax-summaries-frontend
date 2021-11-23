@@ -16,6 +16,7 @@
 
 package services
 
+import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.AuthenticatedRequest
 import models._
@@ -25,12 +26,14 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Configuration
 import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.BaseSpec
 import utils.JsonUtil._
 import utils.TestConstants.{testNino, _}
@@ -40,6 +43,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageServiceSpec
     extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
+
+  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+    override lazy val taxYear: Int = 2021
+  }
+
+  override implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
   val data = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
@@ -69,12 +78,12 @@ class AtsMergePageServiceSpec
     forename = "forename",
     surname = "surname",
     yearList = List(
-      taxYear - 3,
-      taxYear - 2
+      taxYear - 4,
+      taxYear - 3
     )
   )
 
-  val payeDataResponse = List(taxYear - 2, taxYear - 1)
+  val payeDataResponse = List(taxYear - 3, taxYear)
 
   val agentRequestWithQuery = AuthenticatedRequest(
     "userId",
@@ -95,6 +104,7 @@ class AtsMergePageServiceSpec
       "call data cache connector" when {
 
         "user is an agent" in {
+
           implicit val request =
             AuthenticatedRequest(
               "userId",
@@ -111,7 +121,7 @@ class AtsMergePageServiceSpec
           when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful("token"))
           when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
-          when(mockPayeAtsService.getPayeTaxYearData(testNino, taxYear - 2, taxYear))
+          when(mockPayeAtsService.getPayeTaxYearData(testNino, 2019, appConfig.taxYear))
             .thenReturn(Future(Right(payeDataResponse)))
 
           val result = sut.getSaAndPayeYearList.futureValue

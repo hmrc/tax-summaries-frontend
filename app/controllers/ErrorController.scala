@@ -48,20 +48,16 @@ class ErrorController @Inject()(
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    if (!appConfig.currentTaxYearSpendData && taxYear == 2021) {
-      logger.error(s"$taxYear is unavailable at this time")
-      Future(BadRequest(serviceUnavailableView()))
-    } else {
-      governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
-        Ok(howTaxIsSpentView(spendData, taxYear))
-      } recover {
-        case e: IllegalArgumentException =>
-          logger.error(e.getMessage)
-          BadRequest(serviceUnavailableView())
-        case e =>
-          logger.error(e.getMessage)
-          InternalServerError(serviceUnavailableView())
-      }
+    governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
+      Ok(howTaxIsSpentView(spendData, taxYear))
+    } recover {
+      case e: IllegalArgumentException =>
+        logger.error(e.getMessage)
+        BadRequest(serviceUnavailableView())
+      case e =>
+        logger.error(e.getMessage)
+        InternalServerError(serviceUnavailableView())
+
     }
   }
 

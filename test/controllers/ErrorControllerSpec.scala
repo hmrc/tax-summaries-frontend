@@ -163,14 +163,6 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service throws another exception" in {
 
-          lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
-
-          class FakeConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-            override val currentTaxYearSpendData: Boolean = true
-          }
-
-          val fakeAppConfig = new FakeConfig
-
           def sutWithMockAppConfig =
             new ErrorController(
               mockGovernmentSpendService,
@@ -180,7 +172,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               notAuthorisedView,
               howTaxIsSpentView,
               serviceUnavailableView
-            )(templateRenderer, fakeAppConfig, ec)
+            )
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
             .failed(new Exception("Oops"))
@@ -202,7 +194,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
           status(result) mustBe INTERNAL_SERVER_ERROR
           document mustBe contentAsString(
-            serviceUnavailableView()(implicitly, implicitly, implicitly, fakeAppConfig, implicitly))
+            serviceUnavailableView()(implicitly, implicitly, implicitly, appConfig, implicitly))
         }
       }
     }
@@ -241,37 +233,6 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         status(result) mustBe OK
         document mustBe contentAsString(serviceUnavailableView())
-      }
-    }
-
-    "currentTaxYearSpend data is false" must {
-      "return Bad Request and show the service unavailable view when trying to access the current year data" in {
-
-        val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
-          case (key, value) =>
-            key -> value.percentage.toDouble
-        }
-
-        when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
-          .successful(response)
-
-        implicit lazy val request =
-          AuthenticatedRequest(
-            "userId",
-            None,
-            Some(SaUtr(testUtr)),
-            None,
-            true,
-            false,
-            ConfidenceLevel.L50,
-            fakeCredentials,
-            FakeRequest())
-        val result = sut.authorisedNoAts(taxYear)(request)
-        val document = contentAsString(result)
-
-        status(result) mustBe OK
-        document mustBe contentAsString(
-          howTaxIsSpentView(response, taxYear)(request, implicitly, implicitly, appConfig, implicitly))
       }
     }
   }

@@ -35,12 +35,6 @@ import scala.concurrent.Future
 
 class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
-  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-    override val currentTaxYearSpendData: Boolean = false
-  }
-
-  val fakeAppConfig = new FakeAppConfig
-
   val fakeAuthenticatedRequest =
     PayeAuthenticatedRequest(
       testNino,
@@ -57,46 +51,38 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
-            any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.income_before_tax.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString))
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
-    "return OK response when feature toggle is true" in {
+    "return OK response when set to 2020" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-        override val currentTaxYearSpendData: Boolean = true
-      }
-
-      val fakeAppConfig = new FakeAppConfig
+      val taxYear = 2020
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
-            any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.income_before_tax.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString))
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {

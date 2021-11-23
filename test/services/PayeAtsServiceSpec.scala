@@ -88,20 +88,6 @@ class PayeAtsServiceSpec extends BaseSpec {
       result mustBe Right(expectedResponse.as[PayeAtsData])
     }
 
-    "return a successful response after transforming tax-summaries data to PAYE model for current year when currentTaxYearSpendData is true" in {
-
-      when(mockAppConfig.currentTaxYearSpendData).thenReturn(true)
-
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
-
-      when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]())))
-
-      val result = sut.getPayeATSData(testNino, taxYear)(hc, payeAuthenticatedRequest).futureValue
-
-      result mustBe Right(expectedResponse.as[PayeAtsData])
-    }
-
     "return a INTERNAL_SERVER_ERROR response after receiving JsResultException while json parsing" in {
 
       when(mockMiddleConnector.connectToPayeATS(eqTo(testNino), eqTo(currentYearMinus1))(any[HeaderCarrier]))

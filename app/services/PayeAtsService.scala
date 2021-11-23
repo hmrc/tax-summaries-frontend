@@ -82,8 +82,6 @@ class PayeAtsService @Inject()(
     hc: HeaderCarrier,
     request: PayeAuthenticatedRequest[_]): Either[HttpResponse, A] =
     response.status match {
-      case OK if (!applicationConfig.currentTaxYearSpendData && taxYear == 2021) =>
-        Left(HttpResponse(NOT_FOUND, s"$taxYear is currently unavailable"))
       case OK =>
         sendAuditEvent(nino, taxYear)
         Right(response.json.as[A])

@@ -35,12 +35,6 @@ import scala.concurrent.Future
 
 class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
-  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-    override val currentTaxYearSpendData: Boolean = false
-  }
-
-  val fakeAppConfig = new FakeAppConfig
-
   val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
   val sut =
     new PayeIncomeTaxAndNicsController(
@@ -48,7 +42,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       FakePayeAuthAction,
       mcc,
       inject[PayeIncomeTaxAndNicsView],
-      inject[PayeConfig])(implicitly, fakeAppConfig, implicitly)
+      inject[PayeConfig])
 
   "Paye your income tax and nics controller" must {
 
@@ -56,12 +50,10 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
-            any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -70,15 +62,14 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString))
+          (taxYear - 1).toString,
+          taxYear.toString))
     }
 
-    "return OK response with currentTaxYearSpendData toggle on" in {
+    "return OK response when tax year is set to 2020" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-        override val currentTaxYearSpendData: Boolean = true
-        override lazy val taxYear = 2021
+        override lazy val taxYear = 2020
       }
 
       val fakeAppConfig = new FakeAppConfig
@@ -103,7 +94,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
           .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
             any[HeaderCarrier],
             any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(fakePayeConfig.payeYear)(fakeAuthenticatedRequest)
 

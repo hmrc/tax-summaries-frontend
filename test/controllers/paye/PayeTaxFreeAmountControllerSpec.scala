@@ -16,14 +16,17 @@
 
 package controllers.paye
 
+import config.{ApplicationConfig, PayeConfig}
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.PayeAtsData
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.TestConstants.testNino
 import views.html.paye.PayeTaxFreeAmountView
 
@@ -42,7 +45,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -55,6 +58,37 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
           "generic.to_from",
           (taxYear - 1).toString,
           taxYear.toString))
+    }
+
+    "return OK response for 2020" in {
+
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear = 2020
+      }
+
+      val fakeAppConfig = new FakeAppConfig
+
+      val fakeAuthenticatedRequest =
+        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYear).url)
+
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+
+      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+
+      status(result) mustBe OK
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.title must include(
+        Messages("paye.ats.tax_free_amount.title") + Messages(
+          "generic.to_from",
+          (fakeAppConfig.taxYear - 1).toString,
+          fakeAppConfig.taxYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {

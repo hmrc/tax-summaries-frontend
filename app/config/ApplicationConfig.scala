@@ -120,9 +120,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 
-  val currentTaxYearSpendData: Boolean = config.getBoolean("feature.CurrentTaxYearSpendData.enabled")
-
-  lazy val taxYear: Int = if (currentTaxYearSpendData) config.getInt("taxYear") else config.getInt("taxYear") - 1
+  lazy val taxYear: Int = config.getInt("taxYear")
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 

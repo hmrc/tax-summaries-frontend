@@ -45,9 +45,6 @@ class PayeIncomeTaxAndNicsController @Inject()(
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
-      case Right(_) if (!appConfig.currentTaxYearSpendData && taxYear == 2021) =>
-        logger.error(s"$taxYear is unavailable at this time")
-        Redirect(controllers.paye.routes.PayeErrorController.genericError(BAD_REQUEST))
       case Right(successResponse: PayeAtsData) =>
         Ok(
           payeIncomeTaxAndNicsView(

@@ -33,11 +33,7 @@ trait BaseSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
     with ScalaFutures with IntegrationPatience {
 
-  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-    override val currentTaxYearSpendData: Boolean = false
-  }
-
-  implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
   val taxYear: Int = appConfig.taxYear
 
