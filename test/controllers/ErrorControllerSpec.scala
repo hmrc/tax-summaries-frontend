@@ -16,11 +16,11 @@
 
 package controllers
 
-import config.ApplicationConfig
+import cats.data.EitherT
 import controllers.auth._
+import models.AtsErrorResponse
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
-import play.api.Configuration
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
@@ -28,7 +28,6 @@ import play.api.test.Helpers._
 import services.GovernmentSpendService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.time.CurrentTaxYear
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
@@ -56,9 +55,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       notAuthorisedView,
       howTaxIsSpentView,
       serviceUnavailableView
-    )(templateRenderer, appConfig, ec)
-
-  implicit lazy val messageApi: MessagesApi = inject[MessagesApi]
+    )
+  implicit lazy val messageApi = inject[MessagesApi]
 
   "ErrorController" when {
 
@@ -73,8 +71,10 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               key -> value.percentage.toDouble
           }
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
-            .successful(response)
+          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.rightT(response)
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
 
           implicit lazy val request =
             AuthenticatedRequest(
@@ -109,9 +109,14 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
             case (key, value) =>
               key -> value.percentage.toDouble
           }
+
+          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.rightT(response)
+
           val ninoIdentifier = Some(testNino)
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
-            .successful(response)
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
+
           implicit lazy val request =
             AuthenticatedRequest(
               "userId",
@@ -136,8 +141,10 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service throws an illegal argument exception" in {
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
-            .failed(new IllegalArgumentException("Oops"))
+          val response: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.leftT(AtsErrorResponse("some error occured"))
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)
 
           implicit lazy val request =
             AuthenticatedRequest(
@@ -154,14 +161,16 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result = sut.authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
-          status(result) mustBe BAD_REQUEST
+          status(result) mustBe INTERNAL_SERVER_ERROR
           document mustBe contentAsString(serviceUnavailableView())
         }
       }
 
       "return internal server error" when {
+        "the service return an UpstreamErrorResponse" in {
 
-        "the service throws another exception" in {
+          val response: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.leftT(AtsErrorResponse("some error occured"))
 
           def sutWithMockAppConfig =
             new ErrorController(
@@ -174,8 +183,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               serviceUnavailableView
             )
 
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn Future
-            .failed(new Exception("Oops"))
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)
 
           implicit lazy val request =
             AuthenticatedRequest(

@@ -16,13 +16,14 @@
 
 package services
 
+import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.AuthenticatedRequest
+import models.AtsResponse
 import play.api.Logging
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils._
 import view_models.{AtsList, AtsMergePageViewModel}
 
@@ -37,26 +38,17 @@ class AtsMergePageService @Inject()(
 
   def getSaAndPayeYearList(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[HttpResponse, AtsMergePageViewModel]] =
-    for {
-      saData   <- if (!appConfig.saShuttered) { getSaYearList } else { Future(Right(AtsList.empty)) }
-      payeData <- if (!appConfig.payeShuttered) { getPayeAtsYearList } else { Future(Right(List())) }
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsMergePageViewModel]] =
+    (for {
+      saData   <- EitherT(if (!appConfig.saShuttered) { getSaYearList } else { Future(Right(AtsList.empty)) })
+      payeData <- EitherT(if (!appConfig.payeShuttered) { getPayeAtsYearList } else { Future(Right(List.empty[Int])) })
     } yield {
-      (saData, payeData) match {
-        case (Right(saTaxYearData), Right(payeTaxYearList)) => {
-          Right(AtsMergePageViewModel(saTaxYearData, payeTaxYearList, appConfig, request.confidenceLevel))
-        }
-        case _ => {
-          logger.error(s"Error received when retrieving Paye and SA data, Http status: $INTERNAL_SERVER_ERROR")
-          Left(HttpResponse(INTERNAL_SERVER_ERROR, "Error when retrieving Paye and SA data"))
-        }
-      }
-
-    }
+      AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)
+    }).value
 
   private def getSaYearList(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] = {
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsList]] = {
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
@@ -75,9 +67,8 @@ class AtsMergePageService @Inject()(
 
   private def getPayeAtsYearList(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] =
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, List[Int]]] =
     request.nino
-      .map(
-        payeAtsService.getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear))
+      .map(payeAtsService.getPayeTaxYearData(_, 2019, appConfig.taxYear))
       .getOrElse(Future(Right(List.empty)))
 }

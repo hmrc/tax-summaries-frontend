@@ -17,85 +17,82 @@
 package services
 
 import com.google.inject.Inject
-import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{PayeAtsData, _}
 import play.api.Logging
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import play.api.libs.json.Reads
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.AuditTypes
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
-class PayeAtsService @Inject()(
-  middleConnector: MiddleConnector,
-  auditService: AuditService,
-  applicationConfig: ApplicationConfig)(implicit ec: ExecutionContext)
+class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: AuditService)(
+  implicit ec: ExecutionContext)
     extends Logging {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(
     implicit hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Future[Either[HttpResponse, PayeAtsData]] =
-    middleConnector.connectToPayeATS(nino, taxYear) map { response =>
-      handleConnectorResponse[PayeAtsData](response, nino, taxYear)
-    } recover {
-      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
-      case e: NotFoundException   => Left(HttpResponse(NOT_FOUND, e.getMessage))
-      case e: Exception =>
-        logger.error(s"Exception in PayeAtsService: $e", e)
-        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
+    request: PayeAuthenticatedRequest[_]): Future[Either[AtsResponse, PayeAtsData]] =
+    for {
+      response <- middleConnector.connectToPayeATS(nino, taxYear)
+    } yield {
+      response match {
+        case Right(atsData) => {
+          Try(atsData.json.as[PayeAtsData]) match {
+            case Success(result) =>
+              sendAuditEvent(nino, taxYear, true)
+              Right(result)
+            case Failure(e) =>
+              sendAuditEvent(nino, taxYear, false)
+              throw e
+          }
+        }
+        case Left(upstreamErrorResponse) => {
+          val errorMessage = upstreamErrorResponse.message
+          upstreamErrorResponse.statusCode match {
+            case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
+            case NOT_FOUND   => Left(AtsNotFoundResponse(errorMessage))
+            case _ =>
+              logger.error(s"Exception in PayeAtsService: $errorMessage")
+              Left(AtsErrorResponse(errorMessage))
+          }
+        }
+      }
     }
 
   def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[HttpResponse, List[Int]]] =
-    middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo) map { response =>
-      handlePayeTaxYearDataResponse[List[PayeAtsData]](response)
-    } recover {
-      case e: BadRequestException => Left(HttpResponse(BAD_REQUEST, e.getMessage))
-      case _: NotFoundException   => Right(List.empty)
-      case e: Exception =>
-        logger.error(s"Exception in PayeAtsService: $e", e)
-        Left(HttpResponse(INTERNAL_SERVER_ERROR, e.getMessage))
-    }
-
-  private def handlePayeTaxYearDataResponse[A](response: HttpResponse)(
-    implicit reads: Reads[List[PayeAtsData]],
-    hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Either[HttpResponse, List[Int]] =
-    response.status match {
-      case OK =>
-        val res = response.json.as[List[PayeAtsData]]
-        Right(res.map(_.taxYear).reverse)
-      case _ => {
-        logger.error(s"Error received, Http status: ${response.status}")
-        Left(response)
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, List[Int]]] =
+    for {
+      response <- middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)
+    } yield {
+      response match {
+        case Right(atsData) => {
+          val res = atsData.json.as[List[PayeAtsData]]
+          Right(res.map(_.taxYear).reverse)
+        }
+        case Left(upstreamErrorResponse) => {
+          val errorMessage = upstreamErrorResponse.message
+          upstreamErrorResponse.statusCode match {
+            case NOT_FOUND   => Right(List.empty)
+            case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
+            case _ =>
+              logger.error(s"Exception in PayeAtsService: $errorMessage")
+              Left(AtsErrorResponse(errorMessage))
+          }
+        }
       }
     }
 
-  private def handleConnectorResponse[A](response: HttpResponse, nino: Nino, taxYear: Int)(
-    implicit reads: Reads[A],
-    hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Either[HttpResponse, A] =
-    response.status match {
-      case OK =>
-        sendAuditEvent(nino, taxYear)
-        Right(response.json.as[A])
-      case _ => {
-        logger.error(s"Error received, Http status: ${response.status}")
-        Left(response)
-      }
-    }
-
-  private def sendAuditEvent(nino: Nino, taxYear: Int)(
+  private def sendAuditEvent(nino: Nino, taxYear: Int, isSuccess: Boolean)(
     implicit hc: HeaderCarrier,
     request: PayeAuthenticatedRequest[_]): Future[AuditResult] =
     auditService.sendEvent(
-      auditType = AuditTypes.Tx_SUCCEEDED,
+      auditType = if (isSuccess) AuditTypes.Tx_SUCCEEDED else AuditTypes.Tx_FAILED,
       details = Map(
         "userNino" -> nino.nino,
         "taxYear"  -> taxYear.toString

@@ -16,28 +16,33 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import play.api.Configuration
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants.testNino
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeGovernmentSpendingView
 
 import scala.concurrent.Future
 
 class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
-  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+
+  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
 
   val sut =
-    new PayeGovernmentSpendController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeGovernmentSpendingView])
+    new PayeGovernmentSpendController(
+      mockPayeAtsService,
+      FakePayeAuthAction,
+      mcc,
+      inject[PayeGovernmentSpendingView],
+      payeGenericErrorView)
 
   "Government spend controller" must {
 
@@ -84,7 +89,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
+        .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -97,12 +102,12 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
+        .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) mustBe payeGenericErrorView().toString()
     }
   }
 

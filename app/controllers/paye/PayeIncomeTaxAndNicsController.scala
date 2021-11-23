@@ -19,15 +19,15 @@ package controllers.paye
 import com.google.inject.Inject
 import config.{ApplicationConfig, PayeConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsNotFoundResponse, AtsResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeIncomeTaxAndNics
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeIncomeTaxAndNicsView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +37,8 @@ class PayeIncomeTaxAndNicsController @Inject()(
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView,
-  payeConfig: PayeConfig)(
+  payeConfig: PayeConfig,
+  payeGenericErrorView: PayeGenericErrorView)(
   implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
@@ -56,14 +57,9 @@ class PayeIncomeTaxAndNicsController @Inject()(
             ),
             successResponse.isWelshTaxPayer
           ))
-      case Left(response: HttpResponse) =>
-        response.status match {
-          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-          case _ => {
-            logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
-          }
-        }
+
+      case Left(response: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                                   => InternalServerError(payeGenericErrorView())
     }
   }
 }

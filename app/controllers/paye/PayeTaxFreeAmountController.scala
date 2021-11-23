@@ -19,15 +19,15 @@ package controllers.paye
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsNotFoundResponse, AtsResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeTaxFreeAmount
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeTaxFreeAmountView
 
 import scala.concurrent.ExecutionContext
@@ -36,7 +36,8 @@ class PayeTaxFreeAmountController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeTaxFreeAmountView: PayeTaxFreeAmountView)(
+  payeTaxFreeAmountView: PayeTaxFreeAmountView,
+  payeGenericErrorView: PayeGenericErrorView)(
   implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
@@ -46,14 +47,8 @@ class PayeTaxFreeAmountController @Inject()(
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(successResponse: PayeAtsData) =>
         Ok(payeTaxFreeAmountView(PayeTaxFreeAmount(successResponse)))
-      case Left(response: HttpResponse) =>
-        response.status match {
-          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-          case _ => {
-            logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
-          }
-        }
+      case Left(response: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                                   => InternalServerError(payeGenericErrorView())
     }
   }
 }

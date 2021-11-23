@@ -18,6 +18,7 @@ package controllers
 
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
+import models.AtsErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, when}
@@ -28,7 +29,6 @@ import play.api.test.Helpers.{contentAsString, _}
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HttpResponse
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testNino, testUtr}
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
@@ -46,7 +46,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     mcc,
     atsMergePageView,
     genericErrorView,
-    atsForms)(implicitly, mockAppConfig, implicitly)
+    atsForms)
 
   lazy implicit val authRequest = AuthenticatedRequest(
     "userId",
@@ -127,13 +127,13 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     "redirect to genericErrorView page if service returns an error" in {
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any()))
-        .thenReturn(Future(Left(HttpResponse(BAD_GATEWAY))))
+        .thenReturn(Future(Left(AtsErrorResponse("some error"))))
 
       val result = sut.onPageLoad(authRequest)
 
       status(result) mustBe 500
       val document = contentAsString(result)
-      document mustBe contentAsString(genericErrorView()(implicitly, implicitly, implicitly, mockAppConfig, implicitly))
+      document mustBe contentAsString(genericErrorView())
     }
   }
 

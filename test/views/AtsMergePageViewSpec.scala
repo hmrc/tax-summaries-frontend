@@ -21,12 +21,10 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsYearChoice
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
 import play.api.data.Form
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
