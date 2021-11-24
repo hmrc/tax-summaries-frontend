@@ -31,9 +31,9 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
   "/paye/income-before-tax" must {
 
-    lazy val url = "/annual-tax-summary/paye/income-before-tax/2020"
+    lazy val url = "/annual-tax-summary/paye/income-before-tax/2021"
 
-    lazy val backendUrl = s"/taxs/$generatedNino/2020/paye-ats-data"
+    lazy val backendUrl = s"/taxs/$generatedNino/2021/paye-ats-data"
 
     "return an OK response" in {
 
@@ -49,9 +49,22 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
       result.map(status) mustBe Some(OK)
     }
 
+    "return an SEE_OTHER when the call to backend returns a NOT_FOUND response" in {
+
+      server.stubFor(
+        get(urlEqualTo(backendUrl))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
+      )
+
+      val request = FakeRequest(GET, url)
+
+      val result = route(fakeApplication(), request)
+
+      result.map(status) mustBe Some(SEE_OTHER)
+    }
+
     List(
       BAD_REQUEST,
-      NOT_FOUND,
       IM_A_TEAPOT,
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
@@ -67,7 +80,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
         val result = route(fakeApplication(), request)
 
-        result.map(status) mustBe Some(SEE_OTHER)
+        result.map(status) mustBe Some(INTERNAL_SERVER_ERROR)
       }
     }
   }
