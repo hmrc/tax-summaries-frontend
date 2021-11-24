@@ -50,6 +50,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
 
+  lazy val navTitleLink = "/annual-tax-summary/"
+
   lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
   lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
