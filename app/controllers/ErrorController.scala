@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, MergePageAuthAction, MinAuthAction}
+import controllers.auth.{MergePageAuthAction, MinAuthAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService

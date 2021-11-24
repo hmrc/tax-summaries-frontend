@@ -19,7 +19,7 @@ package controllers.paye
 import com.google.inject.Inject
 import config.{ApplicationConfig, PayeConfig}
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.{AtsNotFoundResponse, AtsResponse, PayeAtsData}
+import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +30,7 @@ import view_models.paye.PayeIncomeTaxAndNics
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeIncomeTaxAndNicsView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class PayeIncomeTaxAndNicsController @Inject()(
   payeAtsService: PayeAtsService,
