@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
-  val dataPath = "/summary_json_test.json"
+  val dataPath = "/summary_json_test_2021.json"
 
   val model = Summary(
     year = taxYear,

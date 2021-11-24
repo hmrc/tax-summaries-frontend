@@ -49,12 +49,23 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear = 2021
+      }
+
+      val fakeAppConfig = new FakeAppConfig
+
+      val fakeAuthenticatedRequest =
+        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYear).url)
+
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -63,8 +74,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.tax_free_amount.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString))
+          (fakeAppConfig.taxYear - 1).toString,
+          fakeAppConfig.taxYear.toString))
     }
 
     "return OK response for 2020" in {

@@ -109,9 +109,15 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {
 
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear: Int = 2021
+      }
+
+      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+
       val view =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = taxYear),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = appConfig.taxYear),
           isWelshTaxPayer = false
         ).body
       val document = Jsoup.parse(view)

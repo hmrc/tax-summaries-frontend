@@ -53,12 +53,37 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear = 2021
+      }
+
+      val fakeAppConfig = new FakeAppConfig
+
+      class FakePayeConfig extends PayeConfig {
+        override val payeYear: Int = fakeAppConfig.taxYear
+      }
+
+      val fakePayeConfig = new FakePayeConfig
+
+      val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+      val sut =
+        new PayeIncomeTaxAndNicsController(
+          mockPayeAtsService,
+          FakePayeAuthAction,
+          mcc,
+          inject[PayeIncomeTaxAndNicsView],
+          fakePayeConfig,
+          payeGenericErrorView
+        )(implicitly, fakeAppConfig, implicitly)
+
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -67,8 +92,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString))
+          (fakeAppConfig.taxYear - 1).toString,
+          fakeAppConfig.taxYear.toString))
     }
 
     "return OK response when tax year is set to 2020" in {

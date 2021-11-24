@@ -55,7 +55,12 @@ class ErrorController @Inject()(
           logger.error(errorResponse.message)
           InternalServerError(serviceUnavailableView())
         },
-        spendData => Ok(howTaxIsSpentView(spendData, taxYear))
+        spendData =>
+          if (taxYear > appConfig.taxYear) {
+            InternalServerError(serviceUnavailableView())
+          } else {
+            Ok(howTaxIsSpentView(spendData, taxYear))
+        }
       )
   }
 

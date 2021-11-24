@@ -53,7 +53,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
   "Government spend controller" must {
 
-    "return OK response" in {
+    "return OK response when set to 2021" in {
+
+      val taxYear = 2021
 
       when(
         mockPayeAtsService

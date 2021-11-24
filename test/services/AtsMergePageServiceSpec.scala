@@ -44,7 +44,7 @@ class AtsMergePageServiceSpec
     extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with MockitoSugar with BeforeAndAfterEach {
 
   val data = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
+    val json = loadAndParseJsonWithDummyData(s"/summary_json_test_$taxYear.json")
     Json.fromJson[AtsData](json).get
   }
 
