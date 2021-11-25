@@ -57,7 +57,7 @@ class ErrorController @Inject()(
         },
         spendData =>
           if (taxYear > appConfig.taxYear) {
-            InternalServerError(serviceUnavailableView())
+            Forbidden(serviceUnavailableView())
           } else {
             Ok(howTaxIsSpentView(spendData, taxYear))
         }

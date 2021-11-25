@@ -46,7 +46,6 @@ class PayeYourTaxableIncomeController @Inject()(
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
-
         case Right(successResponse: PayeAtsData) =>
           val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
           Ok(payeYourTaxableIncomeView(viewModel))

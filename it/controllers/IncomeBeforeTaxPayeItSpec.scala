@@ -69,7 +69,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an SEE_OTHER when the call to backend to retrieve paye-ats-data throws a $httpResponse" in {
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve paye-ats-data throws a $httpResponse" in {
 
         server.stubFor(
           get(urlEqualTo(backendUrl))

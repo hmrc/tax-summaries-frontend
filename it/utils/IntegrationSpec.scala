@@ -17,6 +17,7 @@
 package utils
 
 import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, urlEqualTo}
+import config.ApplicationConfig
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
