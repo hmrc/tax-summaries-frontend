@@ -16,7 +16,7 @@ $(function() {
 
     var options = {
           outOf: 65, // number to calculate the bar % out of
-          applyOnInit: false, // apply the chart immediately
+          applyOnInit: true, // apply the chart immediately
           toggleText: "Toggle between chart and table", // if you want toggle links to be added
           autoOutdent: true, // will automatically place values too big for a bar outside it
           outdentAll: true // will place all bar values just outside the bar rather than sitting in the bar
