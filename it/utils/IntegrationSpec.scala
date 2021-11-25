@@ -38,6 +38,10 @@ class IntegrationSpec extends AnyWordSpec with GuiceOneAppPerSuite with Matchers
 
   lazy val messages = inject[Messages]
 
+  lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+
+  lazy val taxYear: Int = appConfig.taxYear
+
   override def beforeEach() = {
 
     super.beforeEach()
