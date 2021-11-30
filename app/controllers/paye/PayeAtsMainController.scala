@@ -19,17 +19,15 @@ package controllers.paye
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PayeAtsService
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeAtsMain
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeTaxsMainView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +36,8 @@ class PayeAtsMainController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeTaxsMainView: PayeTaxsMainView)(
+  payeTaxsMainView: PayeTaxsMainView,
+  payeGenericErrorView: PayeGenericErrorView)(
   implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
@@ -50,16 +49,8 @@ class PayeAtsMainController @Inject()(
 
   private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
-
-      case Right(_: PayeAtsData) =>
-        Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
-      case Left(response: HttpResponse) =>
-        response.status match {
-          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-          case _ =>
-            logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(routes.PayeErrorController.genericError(response.status))
-        }
+      case Right(_: PayeAtsData)        => Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
+      case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                            => InternalServerError(payeGenericErrorView())
     }
-
 }

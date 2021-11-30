@@ -29,4 +29,5 @@ sealed trait AtsFailureResponse extends AtsResponse {
 }
 
 case class AtsNotFoundResponse(message: String) extends AtsFailureResponse
+case class AtsBadRequestResponse(message: String) extends AtsFailureResponse
 case class AtsErrorResponse(message: String) extends AtsFailureResponse

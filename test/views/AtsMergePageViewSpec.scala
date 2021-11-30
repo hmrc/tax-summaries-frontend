@@ -19,21 +19,15 @@ package views
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.AtsYearChoice
-import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.test.FakeRequest
-import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.TestConstants
-import view_models.AtsForms
-import view_models.{AtsList, AtsMergePageViewModel}
+import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
-
-import scala.concurrent.Future
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig = mock[ApplicationConfig]

@@ -22,7 +22,7 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -216,10 +216,8 @@ class AtsListServiceSpec extends BaseSpec {
       when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
         .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
 
-      whenReady(sut.createModel) { result =>
-        result mustBe Left(INTERNAL_SERVER_ERROR)
-      }
-
+      val result = sut.createModel.futureValue.left.value
+      result mustBe an[AtsErrorResponse]
     }
   }
 
@@ -425,41 +423,37 @@ class AtsListServiceSpec extends BaseSpec {
           when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
-          whenReady(sut.getAtsYearList) { result =>
-            result mustBe Left(NOT_FOUND)
+          val result = sut.getAtsYearList.futureValue.left.value
+          result mustBe an[AtsNotFoundResponse]
 
-            verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-              any[Request[AnyRef]],
-              any[HeaderCarrier])
-            verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-            verify(mockDataCacheConnector, never())
-              .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-            verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
-          }
+          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+            any[Request[AnyRef]],
+            any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+          verify(mockDataCacheConnector, never())
+            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
         }
       }
 
       "Return a left" when {
-
         "the connector returns a 500" in {
-
           when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(
             None)
 
           when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
             .successful(AtsErrorResponse("Something went wrong"))
 
-          whenReady(sut.getAtsYearList) { result =>
-            result mustBe Left(INTERNAL_SERVER_ERROR)
+          val result = sut.getAtsYearList.futureValue.left.value
+          result mustBe an[AtsErrorResponse]
 
-            verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-              any[Request[AnyRef]],
-              any[HeaderCarrier])
-            verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-            verify(mockDataCacheConnector, never())
-              .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-            verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
-          }
+          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+            any[Request[AnyRef]],
+            any[HeaderCarrier])
+          verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
+          verify(mockDataCacheConnector, never())
+            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
         }
       }
 
