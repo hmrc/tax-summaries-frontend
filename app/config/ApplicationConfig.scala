@@ -48,17 +48,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
-  lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
-
-  lazy val navTitleLink = "/annual-tax-summary/"
-
-  lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
-  lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
-  lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val homePageUrl = "/annual-tax-summary/"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
-
-  lazy val switchToPayeUrl = "/annual-tax-summary/paye/main"
-  lazy val switchToSAUrl = "/annual-tax-summary/"
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
