@@ -137,6 +137,72 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
       }
 
+      "return forbidden request" when {
+
+        "the service tries to access a future year" in {
+
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
+            case (key, value) =>
+              key -> value.percentage.toDouble
+          }
+
+          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.rightT(response)
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
+
+          implicit lazy val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              None,
+              true,
+              false,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
+
+          val result = sut.authorisedNoAts(appConfig.taxYear + 1)(request)
+          val document = contentAsString(result)
+
+          status(result) mustBe FORBIDDEN
+          document mustBe contentAsString(serviceUnavailableView())
+        }
+
+        "the service tries to access a year before the current year minus the max years to be displayed" in {
+
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map {
+            case (key, value) =>
+              key -> value.percentage.toDouble
+          }
+
+          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.rightT(response)
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
+
+          implicit lazy val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              None,
+              true,
+              false,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest())
+
+          val result = sut.authorisedNoAts(appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed - 1)(request)
+          val document = contentAsString(result)
+
+          status(result) mustBe FORBIDDEN
+          document mustBe contentAsString(serviceUnavailableView())
+        }
+
+      }
+
       "return bad request" when {
 
         "the service throws an illegal argument exception" in {

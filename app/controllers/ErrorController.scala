@@ -56,7 +56,7 @@ class ErrorController @Inject()(
           InternalServerError(serviceUnavailableView())
         },
         spendData =>
-          if (taxYear > appConfig.taxYear) {
+          if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
             Forbidden(serviceUnavailableView())
           } else {
             Ok(howTaxIsSpentView(spendData, taxYear))

@@ -82,7 +82,6 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       val result = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      println(document.title)
 
       document.title must include(
         Messages("ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
