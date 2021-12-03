@@ -67,10 +67,9 @@ class AtsMergePageService @Inject()(
 
   private def getPayeAtsYearList(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, List[Int]]] = {
-    val payeYear: Int = appConfig.taxYear
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, List[Int]]] =
     request.nino
-      .map(payeAtsService.getPayeTaxYearData(_, payeYear - 1, payeYear))
+      .map(
+        payeAtsService.getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear))
       .getOrElse(Future(Right(List.empty)))
-  }
 }

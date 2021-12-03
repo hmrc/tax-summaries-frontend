@@ -19,7 +19,7 @@ package controllers.paye
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.{AtsNotFoundResponse, AtsResponse, PayeAtsData}
+import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,7 +46,6 @@ class PayeYourTaxableIncomeController @Inject()(
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
-
         case Right(successResponse: PayeAtsData) =>
           val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
           Ok(payeYourTaxableIncomeView(viewModel))

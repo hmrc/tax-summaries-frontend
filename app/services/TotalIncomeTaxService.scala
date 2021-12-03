@@ -21,7 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models._
 
 import scala.concurrent.Future
 

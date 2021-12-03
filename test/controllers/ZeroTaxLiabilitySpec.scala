@@ -28,8 +28,6 @@ import scala.concurrent.Future
 
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
-  override val taxYear = 2015
-
   val dataPath = "/no_ats_json_test.json"
   val model = new NoATSViewModel
 
@@ -72,7 +70,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       val result = sut.show(request)
 
       status(result) mustBe 303
-      redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+      redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
     }
   }
 
@@ -81,7 +79,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = incomeController.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 
   "show no ats page for income-before-tax" in {
@@ -89,7 +87,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = incomeController.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 
   "show no ats page for tax-free-amount" in {
@@ -112,7 +110,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = sut.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 
   "show no ats page for capital-gains-tax" in {
@@ -135,7 +133,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = sut.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 
   "show no ats page for government spend" in {
@@ -158,7 +156,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = sut.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 
   "show no ats page for summary page" in {
@@ -179,7 +177,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = sut.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 
   "show no ats page for nics summary page" in {
@@ -200,6 +198,6 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     val result = sut.show(request)
 
     status(result) mustBe 303
-    redirectLocation(result) mustBe Some("/annual-tax-summary/no-ats?taxYear=2020")
+    redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
   }
 }

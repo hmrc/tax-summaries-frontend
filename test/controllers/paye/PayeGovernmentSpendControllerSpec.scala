@@ -46,12 +46,14 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
   "Government spend controller" must {
 
-    "return OK response" in {
+    "return OK response for 2021" in {
+
+      val taxYear: Int = 2021
 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -61,6 +63,26 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
+          taxYear.toString))
+    }
+
+    "return OK response for 2020" in {
+
+      val taxYear: Int = 2020
+
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+
+      status(result) mustBe OK
+
+      contentAsString(result) must include(
+        Messages("paye.ats.treasury_spending.title") + Messages(
+          "generic.to_from",
+          ((taxYear - 1).toString),
           taxYear.toString))
     }
 

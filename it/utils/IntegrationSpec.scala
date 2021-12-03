@@ -17,6 +17,7 @@
 package utils
 
 import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, urlEqualTo}
+import config.ApplicationConfig
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -36,6 +37,10 @@ class IntegrationSpec extends AnyWordSpec with GuiceOneAppPerSuite with Matchers
   lazy val ec = inject[ExecutionContext]
 
   lazy val messages = inject[Messages]
+
+  lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+
+  lazy val taxYear: Int = appConfig.taxYear
 
   override def beforeEach() = {
 
