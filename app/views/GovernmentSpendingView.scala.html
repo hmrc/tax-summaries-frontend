@@ -79,6 +79,61 @@
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
             }
 
+        <dl id="govSpendingGraph">
+            <div>
+                <dt>@Html(Messages("generic.description"))</dt>
+                <dd>@Html(Messages("generic.amount_pounds"))</dd>
+            </div>
+
+
+
+            @viewModel.filteredDataWithHigherTransport(appConfig).map {
+                case (key, value) => {
+                    @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
+                        <div>
+                            <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
+                                <span class="gray">(@value.percentage%)</span>
+                            </dt>
+                            <dd>@currencyAmountView(value.amount, true)</dd>
+                        </div>
+                    } else {
+                        @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
+                            <div>
+                                <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
+                                    <span class="gray">(@value.percentage%)</span>
+                                </dt>
+                                <dd>@currencyAmountView(value.amount, true)</dd>
+                            </div>
+                        } else {
+                            @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
+                                <div>
+                                    <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
+                                        <span class="gray">(@value.percentage%)</span>
+                                    </dt>
+                                    <dd>@currencyAmountView(value.amount, true)</dd>
+                                </div>
+                            } else {
+                                <div>
+                                    <div class="content">
+                                        <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
+                                            <span class="gray">(@value.percentage%)</span>
+                                        </dt>
+                                        <dd>@currencyAmountView(value.amount, true)</dd>
+                                    </div>
+                                    <div class="graph" data-value="@value.percentage%"></div>
+                                </div>
+                            }
+                        }
+                    }
+                }
+            }
+
+            <div>
+                <dt scope="row" id="gov-spend-total">@Html(Messages("ats.treasury_spending.total"))</dt>
+                <dd class="no-bold">@currencyAmountView(viewModel.totalAmount, true)</dd>
+            </div>
+        </dl>
+
             <table id="tax-spent" aria-hidden="false">
                 <thead>
                 <tr>

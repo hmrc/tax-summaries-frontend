@@ -387,3 +387,26 @@ h2, article h2 {
       }
    }
 }
+
+
+#govSpendingGraph {
+        div.content {
+            display: flex;
+            flex-flow: row wrap;
+            margin: 0.7em 0 0.2em;
+        }
+
+        .graph {
+            border-bottom: 10px solid #b1b4b6;
+        }
+
+        dd {
+            flex-grow: 1;
+        }
+        dt {
+            flex-grow: 3;
+        }
+        dd {
+          text-align: right;
+        }
+}
