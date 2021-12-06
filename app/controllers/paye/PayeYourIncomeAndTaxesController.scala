@@ -48,10 +48,9 @@ class PayeYourIncomeAndTaxesController @Inject()(
     {
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
         case Right(_: PayeAtsData)
-            if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) => {
-          Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-        }
-        case Right(successResponse: PayeAtsData) => {
+            if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
+          Forbidden(payeGenericErrorView())
+        case Right(successResponse: PayeAtsData) =>
           PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
             case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
             case _ =>
@@ -59,7 +58,6 @@ class PayeYourIncomeAndTaxesController @Inject()(
               logger.error(s"Internal server error ${exception.getMessage}", exception)
               InternalServerError(exception.getMessage)
           }
-        }
         case Left(response: AtsNotFoundResponse) =>
           Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
         case _ => InternalServerError(payeGenericErrorView())

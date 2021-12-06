@@ -47,7 +47,7 @@ class PayeGovernmentSpendController @Inject()(
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(_: PayeAtsData)
           if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
-        Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        Forbidden(payeGenericErrorView())
       case Right(successResponse: PayeAtsData) =>
         Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer))
       case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
