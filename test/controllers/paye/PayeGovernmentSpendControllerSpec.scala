@@ -57,13 +57,22 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         override lazy val taxYear: Int = fakeTaxYear
       }
 
+      implicit val appConfig: FakeAppConfig = new FakeAppConfig
+
+      val sut =
+        new PayeGovernmentSpendController(
+          mockPayeAtsService,
+          FakePayeAuthAction,
+          mcc,
+          inject[PayeGovernmentSpendingView],
+          payeGenericErrorView)
 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(fakeTaxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeTaxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -102,6 +111,15 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         override lazy val taxYear: Int = 2020
       }
 
+      implicit val appConfig: FakeAppConfig = new FakeAppConfig
+
+      val sut =
+        new PayeGovernmentSpendController(
+          mockPayeAtsService,
+          FakePayeAuthAction,
+          mcc,
+          inject[PayeGovernmentSpendingView],
+          payeGenericErrorView)
 
       when(
         mockPayeAtsService
