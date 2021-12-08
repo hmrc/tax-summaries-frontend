@@ -47,13 +47,7 @@ lazy val microservice = Project(appName, file("."))
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(Resolver.jcenterRepo),
     Concat.groups := Seq(
-      "javascripts/ats-app.js" -> group(
-        Seq(
-          "javascripts/jquery.min.js",
-          "javascripts/jquery-ui.min.js",
-          "javascripts/magna-charta.js",
-          "javascripts/details.polyfill.js",
-          "javascripts/taxs.js"))
+      "javascripts/ats-app.js" -> group(Seq("javascripts/details.polyfill.js", "javascripts/taxs.js"))
     ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),

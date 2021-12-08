@@ -259,28 +259,6 @@ h2, article h2 {
      text-decoration: none;
      overflow: hidden;
 }
-/*= Tax summary Magna charta ----------------------------------------------*/
- .mc-chart {
-     width: 90%;
-     margin-bottom:30px;
-     margin-top:30px;
-}
- @media (max-width: 640px) {
-     .mc-chart {
-         max-width: -moz-min-content;
-    }
-}
-
-#mc-chart .mc-tbody .mc-tr .mc-key-cell {
-     padding-right: 20px;
-}
- .mc-key-2 {
-    display: none !important;
-}
- .mc-bar-cell {
-     border: 2px solid #296969 !important;
-     font-weight: 700;
-}
 
  .gray {
      color: #6f777b;
@@ -389,15 +367,19 @@ h2, article h2 {
 }
 
 
-#govSpendingGraph {
-        div.content {
+#tax-spent {
+        .content, .tax-spent-header-footer {
             display: flex;
-            flex-flow: row wrap;
-            margin: 0.7em 0 0.2em;
+            flex-flow: row nowrap;
+            margin: 1em 0 0.2em;
         }
 
-        .graph {
-            border-bottom: 10px solid #b1b4b6;
+        .graph-green-bar {
+            border-bottom: 10px solid #28a197;
+        }
+
+        .graph-grey-bar {
+            border-top: 2px solid #b1b4b6;
         }
 
         dd {
@@ -408,5 +390,14 @@ h2, article h2 {
         }
         dd {
           text-align: right;
+        }
+        .tax-spent-header-footer dt {
+            font-size: 24px;
+            line-height: 1.25;
+            font-weight: 700;
+        }
+
+        .tax-spent-header-footer {
+            margin-top: 2em;
         }
 }
