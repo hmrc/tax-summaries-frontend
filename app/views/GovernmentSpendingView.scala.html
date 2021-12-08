@@ -95,8 +95,8 @@
                                     </dt>
                                     <dd>@currencyAmountView(value.amount, true)</dd>
                                 </div>
-                                <div class="graph-green-bar" style=width:@value.percentage%;></div>
-                                <div class="graph-grey-bar"></div>
+                                <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                <div class="graph-grey-bar" aria-hidden="true"></div>
                             </div>
                         } else {
                             @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
@@ -107,8 +107,8 @@
                                         </dt>
                                         <dd>@currencyAmountView(value.amount, true)</dd>
                                     </div>
-                                    <div class="graph-green-bar" style=width:@value.percentage%;></div>
-                                    <div class="graph-grey-bar"></div>
+                                    <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                    <div class="graph-grey-bar" aria-hidden="true"></div>
                                 </div>
                             } else {
                                 @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
@@ -119,8 +119,8 @@
                                             </dt>
                                             <dd>@currencyAmountView(value.amount, true)</dd>
                                         </div>
-                                        <div class="graph-green-bar" style=width:@value.percentage%;></div>
-                                        <div class="graph-grey-bar"></div>
+                                        <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                        <div class="graph-grey-bar" aria-hidden="true"></div>
                                     </div>
                                 } else {
                                     <div>
@@ -130,8 +130,8 @@
                                             </dt>
                                             <dd>@currencyAmountView(value.amount, true)</dd>
                                         </div>
-                                        <div class="graph-green-bar" style=width:@value.percentage%;></div>
-                                        <div class="graph-grey-bar"></div>
+                                        <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                        <div class="graph-grey-bar" aria-hidden="true"></div>
                                     </div>
                                 }
                             }
