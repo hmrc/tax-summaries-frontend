@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
-import models._
+import models.{PayeAtsData, _}
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.domain.Nino

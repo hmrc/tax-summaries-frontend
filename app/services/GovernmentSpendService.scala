@@ -21,8 +21,8 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, AtsErrorResponse, AtsResponse, GovernmentSpendingOutputWrapper}
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
 

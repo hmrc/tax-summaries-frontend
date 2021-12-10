@@ -16,6 +16,7 @@
 
 package services
 
+import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
@@ -40,7 +41,8 @@ import scala.io.Source
 class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc = HeaderCarrier()
-  val expectedResponse: JsValue = readJson("/paye_ats.json")
+  val expectedResponse: JsValue = readJson("/paye_ats_2020.json")
+  val expectedResponseCurrentYear: JsValue = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
   private val currentYearMinus1 = 2018
   private val currentYear = 2019

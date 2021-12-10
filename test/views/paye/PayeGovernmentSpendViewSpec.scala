@@ -16,10 +16,18 @@
 
 package views.paye
 
+import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import play.api.Configuration
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeGovernmentSpendingView
@@ -96,14 +104,42 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
         .text mustBe "How your tax was spent"
       document
         .select("h2.heading-xlarge")
-        .text mustBe "6 April 2019 to 5 April 2020"
+        .text mustBe s"6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
-    "link to Scottish government spending page for Scottish users" in {
+    "link to Scottish government spending page for Scottish users for tax year 2021" in {
+
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear: Int = 2021
+      }
+
+      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+
       val view =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true),
-          isWelshTaxPayer = false).body
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = appConfig.taxYear),
+          isWelshTaxPayer = false
+        ).body
+      val document = Jsoup.parse(view)
+
+      document
+        .select("#scottish-spending-link a")
+        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2020-2021/"
+    }
+
+    "link to Scottish government spending page for Scottish users for tax year 2020" in {
+
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear: Int = 2020
+      }
+
+      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+
+      val view =
+        payeGovernmentSpendingView(
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = appConfig.taxYear),
+          isWelshTaxPayer = false
+        ).body
       val document = Jsoup.parse(view)
 
       document

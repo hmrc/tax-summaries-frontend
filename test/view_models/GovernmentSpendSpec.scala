@@ -16,14 +16,11 @@
 
 package view_models
 
-import config.ApplicationConfig
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import utils.TestConstants
 
 class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPerSuite {
-
-  implicit val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "GovernmentSpend" when {
 

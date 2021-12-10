@@ -28,7 +28,6 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import utils.TaxYearUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
