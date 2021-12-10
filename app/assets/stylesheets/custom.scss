@@ -334,7 +334,7 @@ h2, article h2 {
 
 
 #tax-spent {
-        .content, .tax-spent-header-footer {
+        .content, #tax-spent-header, #tax-spent-footer {
             display: flex;
             flex-flow: row nowrap;
             margin: 1em 0 0.2em;
@@ -357,13 +357,16 @@ h2, article h2 {
         dd {
           text-align: right;
         }
-        .tax-spent-header-footer dt {
+        #tax-spent-header, #tax-spent-footer dt {
             font-size: 24px;
             line-height: 1.25;
             font-weight: 700;
         }
 
-        .tax-spent-header-footer {
+        #tax-spent-header, #tax-spent-footer {
             margin-top: 2em;
+        }
+        #tax-spent-footer.paye-tax-spent-footer {
+            margin-bottom: 2em;
         }
 }

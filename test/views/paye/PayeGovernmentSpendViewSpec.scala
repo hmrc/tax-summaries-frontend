@@ -89,7 +89,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
       document.getElementById("UkContributionToEuBudget").text() mustBe "UK Contribution to the EU Budget (1%)"
       document.select("#UkContributionToEuBudget + dd").text() mustBe "£19"
 
-      document.select("#TotalAmount + dd").text() mustBe "£200"
+      document.select("#gov-spend-total + dd").text() mustBe "£200"
 
       document
         .select("h1")

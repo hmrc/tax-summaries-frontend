@@ -80,7 +80,7 @@
             }
 
             <dl id="tax-spent">
-                <div class="tax-spent-header-footer">
+                <div id="tax-spent-header">
                     <dt>@Html(Messages("generic.description"))</dt>
                     <dd>@Html(Messages("generic.amount_pounds"))</dd>
                 </div>
@@ -139,7 +139,7 @@
                     }
                 }
 
-                <div class="tax-spent-header-footer">
+                <div id="tax-spent-footer">
                     <dt id="gov-spend-total">@Html(Messages("ats.treasury_spending.total"))</dt>
                     <dd>@currencyAmountView(viewModel.totalAmount, true)</dd>
                 </div>
