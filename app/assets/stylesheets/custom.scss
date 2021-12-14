@@ -351,22 +351,24 @@ h2, article h2 {
         dd {
             flex-grow: 1;
         }
+
         dt {
             flex-grow: 3;
         }
+
         dd {
           text-align: right;
-        }
-        #tax-spent-header, #tax-spent-footer dt {
-            font-size: 24px;
-            line-height: 1.25;
-            font-weight: 700;
         }
 
         #tax-spent-header, #tax-spent-footer {
             margin-top: 2em;
         }
+
         #tax-spent-footer.paye-tax-spent-footer {
             margin-bottom: 2em;
+        }
+        
+        .heading-medium {
+            margin: 0;
         }
 }

@@ -54,7 +54,7 @@
 
 
 		<dl id="tax-spent">
-			<div id="tax-spent-header">
+			<div id="tax-spent-header" class="heading-medium">
 				<dt>@Html(Messages("generic.description"))</dt>
 				<dd>@Html(Messages("generic.amount_pounds"))</dd>
 			</div>
@@ -71,7 +71,7 @@
 				</div>
 			}
 			<div id="tax-spent-footer" class="paye-tax-spent-footer">
-				<dt id="gov-spend-total">@Messages("paye.ats.treasury_spending.total")</dt>
+				<dt id="gov-spend-total" class="heading-medium">@Messages("paye.ats.treasury_spending.total")</dt>
 				<dd>&pound;@viewModel.totalAmount</dd>
 			</div>
 		</dl>
