@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class AtsServiceSpec extends BaseSpec {
 
   val data = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
     Json.fromJson[AtsData](json).get
   }
 

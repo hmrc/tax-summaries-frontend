@@ -18,12 +18,12 @@ package controllers.paye
 
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.{AtsNotFoundResponse, AtsResponse, PayeAtsData}
+import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
-import uk.gov.hmrc.http.{HttpResponse, InternalServerException}
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeYourIncomeAndTaxes
@@ -47,7 +47,10 @@ class PayeYourIncomeAndTaxesController @Inject()(
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     {
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
-        case Right(successResponse: PayeAtsData) => {
+        case Right(_: PayeAtsData)
+            if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
+          Forbidden(payeGenericErrorView())
+        case Right(successResponse: PayeAtsData) =>
           PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
             case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
             case _ =>
@@ -55,7 +58,6 @@ class PayeYourIncomeAndTaxesController @Inject()(
               logger.error(s"Internal server error ${exception.getMessage}", exception)
               InternalServerError(exception.getMessage)
           }
-        }
         case Left(response: AtsNotFoundResponse) =>
           Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
         case _ => InternalServerError(payeGenericErrorView())

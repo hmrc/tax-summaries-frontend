@@ -17,13 +17,13 @@
 package config
 
 import com.google.inject.Inject
-import javax.inject.Singleton
 import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, ServicesConfig}
 
+import javax.inject.Singleton
 import scala.collection.JavaConverters._
 
 @Singleton
@@ -81,7 +81,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val govScotAccounts = "https://www.gov.scot/accounts"
   lazy val govScotHowItWorks = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
 
-  lazy val scottishIncomeTaxLink = "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+  def scottishIncomeTaxLink(taxYear: Int): String =
+    s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
 
   lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
@@ -119,7 +120,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 
-  val taxYear: Int = config.getInt("taxYear")
+  lazy val taxYear: Int = config.getInt("taxYear")
+
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
   def spendCategories(taxYear: Int): List[String] =
