@@ -72,7 +72,6 @@ class AtsMergePageController @Inject()(
 
       case _ => InternalServerError(genericErrorView())
     }
-
   }
 
   def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
