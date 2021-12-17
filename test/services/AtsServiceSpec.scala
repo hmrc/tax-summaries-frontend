@@ -76,7 +76,7 @@ class AtsServiceSpec extends BaseSpec {
     timestamp = 0
   )
 
-  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, mockAuditService, mockAuthUtils) {
+  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
     override val accountUtils: AccountUtils = mockAccountUtils
   }
 
