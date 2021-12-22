@@ -19,15 +19,15 @@ package controllers.paye
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsNotFoundResponse, AtsResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PayeAtsService
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeGovernmentSpend
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeGovernmentSpendingView
 
 import scala.concurrent.ExecutionContext
@@ -36,7 +36,8 @@ class PayeGovernmentSpendController @Inject()(
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeGovernmentSpendingView: PayeGovernmentSpendingView)(
+  payeGovernmentSpendingView: PayeGovernmentSpendingView,
+  payeGenericErrorView: PayeGenericErrorView)(
   implicit templateRenderer: TemplateRenderer,
   appConfig: ApplicationConfig,
   ec: ExecutionContext)
@@ -44,17 +45,13 @@ class PayeGovernmentSpendController @Inject()(
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
-
+      case Right(_: PayeAtsData)
+          if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
+        Forbidden(payeGenericErrorView())
       case Right(successResponse: PayeAtsData) =>
         Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer))
-      case Left(response: HttpResponse) =>
-        response.status match {
-          case NOT_FOUND => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-          case _ => {
-            logger.error(s"Error received, Http status: ${response.status}")
-            Redirect(controllers.paye.routes.PayeErrorController.genericError(response.status))
-          }
-        }
+      case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                            => InternalServerError(payeGenericErrorView())
     }
   }
 }

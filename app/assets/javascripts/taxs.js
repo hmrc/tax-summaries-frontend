@@ -66,5 +66,7 @@ $(function() {
 
     $('.error-summary').focus();
 
+    document.getElementById('proposition-menu').querySelector('.js-header-toggle.menu').setAttribute("aria-hidden", "true");
+
 });
 

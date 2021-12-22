@@ -37,8 +37,6 @@ GET     /paye/income-before-tax/:taxYear                       controllers.paye.
 
 GET     /paye/tax-free-amount/:taxYear                         controllers.paye.PayeTaxFreeAmountController.show(taxYear: Int)
 
-GET		/paye/generic-error                                    controllers.paye.PayeErrorController.genericError(status : Int)
-
 GET     /paye/not-authorised                                   controllers.paye.PayeErrorController.notAuthorised
 
 GET     /paye/service-unavailable                              controllers.paye.PayeErrorController.serviceUnavailable

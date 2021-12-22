@@ -17,21 +17,23 @@
 package utils
 
 import config.ApplicationConfig
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{BeforeAndAfterEach, EitherValues}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Configuration
 import play.api.test.Injecting
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
 
 trait BaseSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
-    with ScalaFutures with IntegrationPatience {
+    with ScalaFutures with IntegrationPatience with EitherValues {
 
-  implicit lazy val appConfig = inject[ApplicationConfig]
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
   val taxYear: Int = appConfig.taxYear
 

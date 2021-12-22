@@ -17,13 +17,13 @@
 package config
 
 import com.google.inject.Inject
-import javax.inject.Singleton
 import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, ServicesConfig}
 
+import javax.inject.Singleton
 import scala.collection.JavaConverters._
 
 @Singleton
@@ -36,6 +36,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Services url config
   val serviceUrl = config.baseUrl("tax-summaries")
   val agentServiceUrl = config.baseUrl("tax-summaries-agent")
+  val serviceIdentifier = config.getString("service-identifier")
 
   private val contactHost = config.baseUrl("contact-frontend")
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
@@ -47,15 +48,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
-  lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
-
-  lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
-  lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
-  lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val homePageUrl = "/annual-tax-summary/"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
-
-  lazy val switchToPayeUrl = "/annual-tax-summary/paye/main"
-  lazy val switchToSAUrl = "/annual-tax-summary/"
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
@@ -80,7 +74,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val govScotAccounts = "https://www.gov.scot/accounts"
   lazy val govScotHowItWorks = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
 
-  lazy val scottishIncomeTaxLink = "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+  def scottishIncomeTaxLink(taxYear: Int): String =
+    s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
 
   lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
@@ -121,7 +116,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 
-  val taxYear: Int = config.getInt("taxYear")
+  lazy val taxYear: Int = config.getInt("taxYear")
+
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
   def spendCategories(taxYear: Int): List[String] =

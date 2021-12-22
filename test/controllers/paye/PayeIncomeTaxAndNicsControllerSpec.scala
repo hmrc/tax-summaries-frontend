@@ -16,42 +16,74 @@
 
 package controllers.paye
 
-import config.PayeConfig
+import config.{ApplicationConfig, PayeConfig}
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.http.Status._
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.TestConstants.testNino
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeIncomeTaxAndNicsView
 
 import scala.concurrent.Future
 
 class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
-  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+
+  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+
   val sut =
     new PayeIncomeTaxAndNicsController(
       mockPayeAtsService,
       FakePayeAuthAction,
       mcc,
       inject[PayeIncomeTaxAndNicsView],
-      inject[PayeConfig])
+      inject[PayeConfig],
+      payeGenericErrorView)
 
   "Paye your income tax and nics controller" must {
 
     "return OK response" in {
 
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear = 2021
+      }
+
+      val fakeAppConfig = new FakeAppConfig
+
+      class FakePayeConfig extends PayeConfig {
+        override val payeYear: Int = fakeAppConfig.taxYear
+      }
+
+      val fakePayeConfig = new FakePayeConfig
+
+      val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+      val sut =
+        new PayeIncomeTaxAndNicsController(
+          mockPayeAtsService,
+          FakePayeAuthAction,
+          mcc,
+          inject[PayeIncomeTaxAndNicsView],
+          fakePayeConfig,
+          payeGenericErrorView
+        )(implicitly, fakeAppConfig, implicitly)
+
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -60,8 +92,53 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString))
+          (fakeAppConfig.taxYear - 1).toString,
+          fakeAppConfig.taxYear.toString))
+    }
+
+    "return OK response when tax year is set to 2020" in {
+
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear = 2020
+      }
+
+      val fakeAppConfig = new FakeAppConfig
+
+      class FakePayeConfig extends PayeConfig {
+        override val payeYear: Int = fakeAppConfig.taxYear
+      }
+
+      val fakePayeConfig = new FakePayeConfig
+
+      val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+      val sut =
+        new PayeIncomeTaxAndNicsController(
+          mockPayeAtsService,
+          FakePayeAuthAction,
+          mcc,
+          inject[PayeIncomeTaxAndNicsView],
+          fakePayeConfig,
+          payeGenericErrorView
+        )(implicitly, fakeAppConfig, implicitly)
+
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
+            any[HeaderCarrier],
+            any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+
+      val result = sut.show(fakePayeConfig.payeYear)(fakeAuthenticatedRequest)
+
+      status(result) mustBe OK
+
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.title must include(
+        Messages("paye.ats.total_income_tax.title") + Messages(
+          "generic.to_from",
+          (fakePayeConfig.payeYear - 1).toString,
+          fakePayeConfig.payeYear.toString))
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
@@ -69,7 +146,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
+        .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -82,12 +159,12 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
+        .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(500).url
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) mustBe payeGenericErrorView().toString()
     }
 
     "redirect user to generic error page when receiving BAD_REQUEST from service" in {
@@ -95,12 +172,12 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(BAD_REQUEST, ""))))
+        .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(400).url
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) mustBe payeGenericErrorView().toString()
     }
   }
 }
