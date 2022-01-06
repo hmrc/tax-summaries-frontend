@@ -371,6 +371,15 @@ h2, article h2 {
     margin-top: 2em;
 }
 
+
+#timeout-keep-signin-btn {
+    font-size: 19px;
+}
+
+#timeout-sign-out-link {
+    vertical-align: sub;
+}
+
 @media (max-width: 768px) {
    #global-header .header-proposition a.menu {
       display: none;

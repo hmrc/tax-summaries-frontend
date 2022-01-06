@@ -1,0 +1,16 @@
+@import views.html.unauthenticated_main
+@import config.ApplicationConfig
+@import scala.concurrent.ExecutionContext
+@import config.ApplicationConfig
+
+@this(unauthenticated_main: unauthenticated_main)
+@()(implicit request: Request[_], templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, messages: Messages, appConfig: ApplicationConfig, ec: ExecutionContext)
+
+
+@unauthenticated_main(
+    title = messages("session_expired.title")) {
+
+    <h1 class="heading-xlarge">@messages("session_expired.title")</h1>
+
+    <p>@messages("session_expired.guidance")</p>
+}
