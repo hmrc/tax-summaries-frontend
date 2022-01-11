@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,8 +48,7 @@ class AtsService @Inject()(
 
   def checkCreateModel(output: Either[Int, AtsData], converter: AtsData => GenericViewModel): GenericViewModel =
     output match {
-      case Right(atsList)
-          if (atsList.taxYear > appConfig.taxYear) =>
+      case Right(atsList) if (atsList.taxYear > appConfig.taxYear) =>
         new ATSUnavailableViewModel
       case Right(atsList)  => converter(atsList)
       case Left(NOT_FOUND) => new NoATSViewModel
