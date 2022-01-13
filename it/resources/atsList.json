@@ -1,16 +1,5 @@
 {
-  "annualTaxSummaries":
-  [
-    {
-      "taxYearEnd":2021,
-      "links":
-      [
-        {"rel":"details", "href":"/self-assessment/individuals/1023584560/annual-tax-summaries/2021"}
-      ]
-    }
-  ],
-  "links":
-  [
-    {"rel":"self", "href":"/self-assessment/individuals/1023584560/annual-tax-summaries"}
-  ]
+  "utr":"$utr",
+  "taxPayer":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}},
+  "atsYearList":[2015,2016,2017,2018,2019,2020]
 }

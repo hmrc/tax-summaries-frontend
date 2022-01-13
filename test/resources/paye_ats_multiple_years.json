@@ -1,6 +1,6 @@
-[
+
   {
-   "taxYear":2019,
+    "taxYear":2019,
     "income_tax":{
       "payload":{
         "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -383,5 +383,5 @@
       }
     }
   }
-]
+
 
