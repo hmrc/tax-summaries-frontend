@@ -187,9 +187,8 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
     }
   }
 
-  "unary '-' is called" must {
+  "unary '-' is called" ignore {
     "turn the amount negative" in {
-
       forAll { bd: BigDecimal =>
         whenever(bd > 1) {
           val result = -Amount(bd, testCurrency)

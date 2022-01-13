@@ -16,10 +16,10 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
-import com.github.tomakehurst.wiremock.http.Fault
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
 import config.ApplicationConfig
 import models._
+import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -39,13 +39,15 @@ import scala.io.Source
 
 class MiddleConnectorSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
-    with IntegrationPatience with JsonUtil with Injecting {
+    with IntegrationPatience with JsonUtil with Injecting with EitherValues {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
         "microservice.services.tax-summaries.port"       -> server.port(),
-        "microservice.services.tax-summaries-agent.port" -> server.port()
+        "microservice.services.tax-summaries-agent.port" -> server.port(),
+        "play.ws.timeout.request"                        -> "1000ms",
+        "play.ws.timeout.connection"                     -> "500ms"
       )
       .build()
 
@@ -55,24 +57,26 @@ class MiddleConnectorSpec
   private val currentYear = 2018
   private val currentYearMinus1 = currentYear - 1
 
-  def sut = new MiddleConnector(inject[HttpHandler])
+  val listOfErrors = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
+
+  def sut = new MiddleConnector(inject[HttpClient], inject[HttpHandler])
 
   val utr = SaUtr(testUtr)
 
   val uar = Uar(testUar)
 
-  val loadSAJson = loadAndParseJsonWithDummyData("/summary_json_test.json")
-  val saResponse: String = loadAndReplace("/summary_json_test.json", Map("$utr" -> utr.utr))
+  val loadSAJson = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
+  val saResponse: String = loadAndReplace("/summary_json_test_2021.json", Map("$utr" -> utr.utr))
   val expectedSAResponse = Json.fromJson[AtsData](loadSAJson).get
 
   val loadAtsListData = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
   val atsListData = Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
 
-  "connectToPayeTaxSummary" must {
+  "connectToPayeATS" must {
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace("/paye_ats.json", Map("$nino" -> testNino.nino))
+      val expectedResponse: String = loadAndReplace("/paye_ats_2020.json", Map("$nino" -> testNino.nino))
       val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
       server.stubFor(
@@ -82,57 +86,42 @@ class MiddleConnectorSpec
             .withBody(expectedResponse))
       )
 
-      val result = sut.connectToPayeATS(testNino, currentYear).futureValue
+      val result = sut.connectToPayeATS(testNino, currentYear).futureValue.right.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return BadRequest response" in {
+    "return an UpstreamErrorResponse" when {
+      listOfErrors.foreach { status =>
+        s"a response with status $status is received" in {
+          val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
-      val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(
+                aResponse()
+                  .withStatus(status)
+              )
+          )
 
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Bad Request"))
-      )
+          val result = sut.connectToPayeATS(testNino, currentYear).futureValue.left.value
 
-      val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
-
-      result mustBe a[BadRequestException]
+          result.statusCode mustBe status
+        }
+      }
     }
 
-    "return NotFound response" in {
-
-      val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
-
+    "the connector times out" in {
       server.stubFor(
-        get(urlEqualTo(url)).willReturn(
+        get(anyUrl()).willReturn(
           aResponse()
-            .withStatus(404)
-            .withBody("Not Found"))
+            .withStatus(OK)
+            .withBody("""{"Environment" : 5.5}""")
+            .withFixedDelay(2000))
       )
 
-      val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
-
-      result mustBe a[NotFoundException]
-    }
-
-    "return InternalServerError response" in {
-
-      val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(500)
-            .withBody("Internal Server Error"))
-      )
-
-      val result = sut.connectToPayeATS(testNino, currentYear).failed.futureValue
-
-      result mustBe a[Upstream5xxResponse]
+      val result = sut.connectToPayeATS(testNino, currentYear).futureValue.left.value
+      result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
 
@@ -168,7 +157,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -235,7 +224,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -288,7 +277,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsList(utr).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -355,7 +344,7 @@ class MiddleConnectorSpec
 
       val result = sut.connectToAtsListOnBehalfOf(uar, utr).futureValue
 
-      result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+      result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
@@ -391,66 +380,39 @@ class MiddleConnectorSpec
             .withBody(expectedResponse))
       )
 
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.right.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return BadRequest response" in {
+    "return an UpstreamErrorResponse" when {
+      listOfErrors.foreach { status =>
+        s"a response with status $status is received" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(
+                aResponse()
+                  .withStatus(status)
+              )
+          )
 
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Bad Request"))
-      )
-
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
-
-      result mustBe a[BadRequestException]
-    }
-
-    "return NotFound response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(NOT_FOUND)
-            .withBody("Not found")
-        )
-      )
-
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
-
-      result mustBe a[NotFoundException]
-    }
-
-    "return a InternalServerError response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(INTERNAL_SERVER_ERROR)
-            .withBody("An error occurred"))
-      )
-
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).failed.futureValue
-
-      result mustBe a[Upstream5xxResponse]
-    }
-
-    "return an exception when a fault with the request occurs" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withFault(Fault.MALFORMED_RESPONSE_CHUNK)
-        )
-      )
-
-      intercept[Exception] {
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+          val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+          result.left.value.statusCode mustBe status
+        }
       }
+    }
+
+    "the connector times out" in {
+      server.stubFor(
+        get(anyUrl()).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody("""{"Environment" : 5.5}""")
+            .withFixedDelay(2000))
+      )
+
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.left.value
+      result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
 
@@ -468,53 +430,41 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentYear).futureValue
+      val result = sut.connectToGovernmentSpend(currentYear).futureValue.right.value
+
       result.status mustBe OK
       result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
     }
 
-    "return a BadRequest response" in {
+    "return an UpstreamErrorResponse" when {
+      listOfErrors.foreach { status =>
+        s"a response with status $status is received" in {
+          server.stubFor(
+            get(urlEqualTo(url))
+              .willReturn(
+                aResponse()
+                  .withStatus(status)
+              )
+          )
 
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(BAD_REQUEST)
-            .withBody("Oops")
-        )
-      )
+          val result = sut.connectToGovernmentSpend(currentYear).futureValue
 
-      val result = sut.connectToGovernmentSpend(currentYear).failed.futureValue
-
-      result mustBe a[BadRequestException]
-    }
-
-    "return a InternalServerError response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(INTERNAL_SERVER_ERROR)
-            .withBody("Oops")
-        )
-      )
-
-      val result = sut.connectToGovernmentSpend(currentYear).failed.futureValue
-
-      result mustBe a[Upstream5xxResponse]
-    }
-
-    "return an exception when a fault with the request occurs" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withFault(Fault.MALFORMED_RESPONSE_CHUNK)
-        )
-      )
-
-      intercept[Exception] {
-        sut.connectToGovernmentSpend(currentYear).futureValue
+          result.left.value.statusCode mustBe status
+        }
       }
+    }
+
+    "the connector times out" in {
+      server.stubFor(
+        get(anyUrl()).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody("""{"Environment" : 5.5}""")
+            .withFixedDelay(2000))
+      )
+
+      val result = sut.connectToGovernmentSpend(currentYear).futureValue.left.value
+      result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
 }

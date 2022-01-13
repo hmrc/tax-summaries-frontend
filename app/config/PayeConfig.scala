@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.Inject
 import com.typesafe.config.{Config, ConfigFactory}
+
 import scala.collection.JavaConversions._
 
 class PayeConfig @Inject()()(implicit val appConfig: ApplicationConfig) {

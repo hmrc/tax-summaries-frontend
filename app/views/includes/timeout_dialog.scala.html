@@ -1,0 +1,23 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+*@
+
+@(sessionTimeoutInSeconds: String, sessionCountdownInSeconds: String, messages: play.api.i18n.Messages)
+
+<script>
+    window.GOVUK.timeoutDialog({
+        timeout: @sessionTimeoutInSeconds,
+        countdown: @sessionCountdownInSeconds,
+        keepAliveUrl: "@controllers.routes.AccountController.keepAlive",
+        signOutUrl: "@controllers.routes.AccountController.sessionExpired",
+        title: "@messages("timeout.dialog.title")",
+        message: "@messages("timeout.dialog.message")",
+        keepAliveButtonText: "@messages("timeout.dialog.keepAlive.button")",
+        signOutButtonText: "@messages("timeout.dialog.signout.button")",
+        properties: {
+            minutes: "@messages("timeout.dialog.minutes")",
+            seconds: "@messages("timeout.dialog.seconds")"
+        }
+    });
+</script>

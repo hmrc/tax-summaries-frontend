@@ -17,7 +17,8 @@
 package connectors
 
 import config.ApplicationConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,6 +28,6 @@ class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfi
 
   private val baseUrl = applicationConfig.cidHost
 
-  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"$baseUrl/citizen-details/nino/$nino")
+  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$baseUrl/citizen-details/nino/$nino")
 }

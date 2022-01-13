@@ -31,15 +31,15 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   "/income-before-tax" must {
 
-    lazy val url = "/annual-tax-summary/income-before-tax?taxYear=2020"
+    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=${taxYear}"
 
-    lazy val backendUrl = s"/taxs/$generatedSaUtr/2020/ats-data"
+    lazy val backendUrl = s"/taxs/$generatedSaUtr/${taxYear}/ats-data"
 
     "return an OK response" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsData.json")))
+          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
       )
 
       val request = FakeRequest(GET, url)
@@ -54,7 +54,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsData.json")))
+          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
       )
 
       val request = FakeRequest(GET, failureUrl)

@@ -32,12 +32,12 @@ import utils.TestConstants._
 import utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class AtsServiceSpec extends BaseSpec {
 
   val data = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
     Json.fromJson[AtsData](json).get
   }
 
@@ -76,7 +76,7 @@ class AtsServiceSpec extends BaseSpec {
     timestamp = 0
   )
 
-  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, mockAuditService, mockAuthUtils) {
+  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
     override val accountUtils: AccountUtils = mockAccountUtils
   }
 
