@@ -48,8 +48,7 @@ class AtsService @Inject()(
 
   def checkCreateModel(output: Either[Int, AtsData], converter: AtsData => GenericViewModel): GenericViewModel =
     output match {
-      case Right(atsList)
-          if (atsList.taxYear > appConfig.taxYear) =>
+      case Right(atsList) if (atsList.taxYear > appConfig.taxYear) =>
         new ATSUnavailableViewModel
       case Right(atsList)  => converter(atsList)
       case Left(NOT_FOUND) => new NoATSViewModel
