@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package models
+package utils
 
-import play.api.libs.json.Json
-import view_models.Amount
+import org.joda.time.DateTime
+import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 
-case class SpendData(amount: Amount, percentage: BigDecimal)
+import java.net.URLEncoder
 
-object SpendData {
-  implicit val formats = Json.format[SpendData]
+object LoginPage {
+
+  private val encKey = "1111111111111111111111"
+
+  private val crypto = new AesCrypto {
+    override protected val encryptionKey: String = encKey
+  }
+
+  def agentToken(utr: String) = {
+    val token = URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (new DateTime().getMillis))).value), "UTF-8")
+    Thread.sleep(1000)
+    token
+  }
+
 }

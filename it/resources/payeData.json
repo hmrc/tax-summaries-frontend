@@ -1,0 +1,76 @@
+{
+  "taxableStateBenefits": 500,
+  "averageRateTax": 25,
+  "adjustments": {
+    "taxFreeAmount": 12500,
+    "marriageAllowanceReceived": 1250,
+    "marriageAllowanceTransferred": 1300,
+    "marriedCouplesAllowanceAdjustment": 500,
+    "lessTaxAdjustmentPreviousYear": 200,
+    "taxUnderpaidPreviousYear": 200
+  },
+  "income": {
+    "incomeFromEmployment": 25000,
+    "statePension": 1000,
+    "otherPensionIncome": 500,
+    "otherIncome": 3000,
+    "incomeBeforeTax": 28000,
+    "taxableIncome": 25550,
+    "otherAllowancesDeductionsExpenses": 6000,
+    "employmentBenefits": 200
+  },
+  "nationalInsurance": {
+    "employerContributions": 100
+  },
+  "calculatedTotals": {
+    "totalIncomeTax": 4000,
+    "totalIncomeTaxNics": 4200,
+    "totalScottishIncomeTax": 2000,
+    "totalIncomeTax2": 4000,
+    "totalUKIncomeTax": 2000,
+    "totalIncomeTax2Nics": 2500,
+    "incomeAfterTaxNics": 5000,
+    "liableTaxAmount": 14950,
+    "incomeAfterTax2Nics": 5000
+  },
+  "basicRateBand": {
+    "basicRateTaxAmount": 10000,
+    "basicRateTax": 2000,
+    "basicRate": 20
+  },
+  "higherRateBand": {
+    "higherRateTaxAmount": 10000,
+    "higherRateTax": 2000,
+    "higherRate": 40
+  },
+  "dividendLowerBand": {
+    "dividendLowRateAmount": 2000,
+    "dividendLowRateTax": 200,
+    "dividendLowRate": 7.5
+  },
+  "dividendHigherBand": {
+    "dividendHigherRateAmount": 2000,
+    "dividendHigherRateTax": 200,
+    "dividendHigherRate": 32.5
+  },
+  "scottishStarterBand": {
+    "scottishStarterRateTaxAmount": 2000,
+    "scottishStarterRateTax": 380,
+    "scottishStarterRate": 19
+  },
+  "scottishBasicBand": {
+    "scottishBasicRateTaxAmount": 10150,
+    "scottishBasicRateTax": 2030,
+    "scottishBasicRate": 20
+  },
+  "scottishIntermediateBand": {
+    "scottishIntermediateRateTaxAmount": 19430,
+    "scottishIntermediateRateTax": 4080.3,
+    "scottishIntermediateRate": 21
+  },
+  "scottishHigherBand": {
+    "scottishHigherRateTaxAmount": 31570,
+    "scottishHigherRateTax": 12943.7,
+    "scottishHigherRate": 41
+  }
+}
