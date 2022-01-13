@@ -117,7 +117,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val backendUrlPaye = s"/taxs/$generatedNino/2019/2020/paye-ats-data"
 
-    "return an OK response when data is retrieved from backend for both atsList and payeData" in {
+    "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
@@ -138,6 +138,35 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe Some("PORTAL")
 
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
+    }
+
+    "return an OK response without query parameters when data is retrieved from backend for both atsList and payeData" in {
+
+      lazy val url = s"/annual-tax-summary/paye/main"
+
+      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
+
+      lazy val backendUrlPaye = s"/taxs/$generatedNino/2019/2020/paye-ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlSa))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+      )
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlPaye))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+      )
+
+      val request = FakeRequest(GET, url)
+
+      val result = route(fakeApplication(), request)
+
+      result.map(status) mustBe Some(OK)
+
+      request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe None
+
+      request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe false
     }
 
     "return an OK response when data is retrieved from backend for atsList but no payeData found" in {
