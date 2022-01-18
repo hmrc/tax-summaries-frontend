@@ -76,18 +76,6 @@ a.data-link + p {
   margin-top: 5px;
   margin-bottom: 20px; }
 
-a.mc-toggle-link {
-  font-family: "nta", Arial, sans-serif;
-  font-size: 14pt;
-  line-height: 1.31579;
-  font-weight: 400;
-  text-transform: none; }
-  @media (max-width: 640px) {
-    a.mc-toggle-link {
-      font-size: 16px;
-      line-height: 1.25; } }
-
-
 /*= Tables
 ----------------------------------------------*/
 /*= Tables ----------------------------------------------*/
@@ -189,25 +177,6 @@ a.mc-toggle-link {
 
 /*= Tax summary Magna charta
 ----------------------------------------------*/
-.mc-chart {
-  font-size: 14pt;
-  line-height: 1.31579;
-  border-spacing: 0 5px; }
-  @media (max-width: 640px) {
-    .mc-chart {
-      font-size: 16px;
-      line-height: 1.25; } }
-
-.mc-key-cell {
-  padding-right: 20px !important;
-  width: 60% !important; }
-
-.mc-bar-cell {
-  border: 2px solid #296969 !important;
-  font-weight: 700; }
-  .mc-bar-cell span {
-    width: 150px !important; }
-
 .gray {
   color: #6f777b !important;
   font-weight: normal; }
@@ -248,10 +217,9 @@ a {
 ---------------------------------------------------------------------------*/
 .js-header-toggle.menu,
 .phase-tag, .alpha-tag,
-.phase-banner, .alpha-banner,
+.phase-banner, .alpha-banner, .beta-banner,
 .service-info,
 .breadcrumbs,
-.mc-chart, .mc-toggle-link,
 .back,
 .report-error, .langToggle, .link-back {
   display: none !important; }
