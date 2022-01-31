@@ -29,26 +29,26 @@
         "basic_rate_income_tax_rate":{"percent":"20%"}
       }
     },
-      "summary_data":{
-          "payload":{
-            "employee_nic_amount":{"amount":1200.0,"currency":"GBP"},
-            "total_income_tax_and_nics":{"amount":1400.0,"currency":"GBP"},
-            "your_total_tax":{"amount":1800.0,"currency":"GBP"},
-            "personal_tax_free_amount":{"amount":9440.0,"currency":"GBP"},
-            "total_tax_free_amount":{"amount":9740.0,"currency":"GBP"},
-            "total_income_before_tax":{"amount":11600.0,"currency":"GBP"},
-            "total_income_tax":{"amount":372.0,"currency":"GBP"},
-            "total_cg_tax":{"amount":5500.00,"currency":"GBP"},
-            "taxable_gains":{"amount":20000.00,"currency":"GBP"},
-            "cg_tax_per_currency_unit":{"amount":0.1234, "currency":"GBP"},
-            "income_after_tax_and_nics":{"amount":0.1234, "currency":"GBP"},
-            "nics_and_tax_per_currency_unit":{"amount":0.5678, "currency":"GBP"}
-          },
-        "rates":{
-          "total_cg_tax_rate":{"percent":"12.34%"},
-          "nics_and_tax_rate":{"percent":"56.78%"}
-        }
+    "summary_data":{
+      "payload":{
+        "employee_nic_amount":{"amount":1200.0,"currency":"GBP"},
+        "total_income_tax_and_nics":{"amount":1400.0,"currency":"GBP"},
+        "your_total_tax":{"amount":1800.0,"currency":"GBP"},
+        "personal_tax_free_amount":{"amount":9440.0,"currency":"GBP"},
+        "total_tax_free_amount":{"amount":9740.0,"currency":"GBP"},
+        "total_income_before_tax":{"amount":11600.0,"currency":"GBP"},
+        "total_income_tax":{"amount":372.0,"currency":"GBP"},
+        "total_cg_tax":{"amount":5500.00,"currency":"GBP"},
+        "taxable_gains":{"amount":20000.00,"currency":"GBP"},
+        "cg_tax_per_currency_unit":{"amount":0.1234, "currency":"GBP"},
+        "income_after_tax_and_nics":{"amount":0.1234, "currency":"GBP"},
+        "nics_and_tax_per_currency_unit":{"amount":0.5678, "currency":"GBP"}
       },
+      "rates":{
+        "total_cg_tax_rate":{"percent":"12.34%"},
+        "nics_and_tax_rate":{"percent":"56.78%"}
+      }
+    },
     "income_data":{
       "payload":{
         "self_employment_income":{"amount":1100.0,"currency":"GBP"},
@@ -72,8 +72,8 @@
     "gov_spending": {
       "taxYear": 2014,
       "totalAmount" : {
-          "amount": 4512.19,
-          "currency": "GBP"
+        "amount": 4512.19,
+        "currency": "GBP"
       },
       "govSpendAmountData": {
         "Health": {
@@ -384,3 +384,4 @@
     }
   }
 ]
+

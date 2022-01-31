@@ -16,12 +16,23 @@
 
 package utils
 
-import scala.io.Source.fromFile
+import org.joda.time.DateTime
+import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 
-object FileHelper {
+import java.net.URLEncoder
 
-  def loadFile(name: String): String = {
-    val source = fromFile(name)
-    try source.mkString finally source.close()
+object LoginPage {
+
+  private val encKey = "1111111111111111111111"
+
+  //KxF3antRTEtdaFgpwbmoISnwJDJRvyl0NAnCRwa3SB5EIrpF0IMS/wZwQnvsprKx
+
+  private val crypto = new AesCrypto {
+    override protected val encryptionKey: String = encKey
+  }
+
+  def agentToken(utr: String) = {
+    val token = URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (new DateTime().getMillis))).value), "UTF-8")
+    token
   }
 }
