@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import models.AtsYearChoice
+import models.{ActingAsAttorneyFor, AtsYearChoice}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -70,6 +70,15 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
   def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
     atsMergePageView(model, form)(implicitly, implicitly, implicitly, mockAppConfig, implicitly).body
+
+  def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(
+    implicit request: AuthenticatedRequest[_]): String =
+    atsMergePageView(model, form, Some(ActingAsAttorneyFor(Some("Agent"), Map())))(
+      implicitly,
+      implicitly,
+      implicitly,
+      mockAppConfig,
+      implicitly).body
 
   override def beforeEach() = {
     when(mockAppConfig.payeShuttered).thenReturn(false)
@@ -285,7 +294,33 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         atsForms.atsYearFormMapping
       )
       result must include(messages("merge.page.paye.ivuplift.header"))
-
     }
+
+    "not show account menu for agent" in {
+
+      val result = agentView(
+        AtsMergePageViewModel(
+          AtsList("", "", "", List.empty),
+          List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear),
+          mockAppConfig,
+          ConfidenceLevel.L50),
+        atsForms.atsYearFormMapping
+      )
+      result must include("<div id=hideAccountMenu>true</div>")
+    }
+
+    "show account menu for non agent users" in {
+
+      val result = view(
+        AtsMergePageViewModel(
+          AtsList("", "", "", List.empty),
+          List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear),
+          mockAppConfig,
+          ConfidenceLevel.L50),
+        atsForms.atsYearFormMapping
+      )
+      result must include("<div id=hideAccountMenu>false</div>")
+    }
+
   }
 }

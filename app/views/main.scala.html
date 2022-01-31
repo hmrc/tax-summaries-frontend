@@ -74,7 +74,6 @@
 @linkElems = @{
     Seq(
         Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs.css")),
-        Map("url" -> controllers.routes.Assets.versioned("stylesheets/magna-charta/magna-charta.css")),
         Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-print.css"), "print" -> Some("print"))
     )
 }
@@ -134,6 +133,7 @@
         "navTitle" -> navTitle,
         "navTitleLink" -> appConfig.homePageUrl,
         "newGovukLogo" -> true,
+        "hideAccountMenu" -> actingAttorney.isDefined,
         "showPropositionLinks" -> true,
         "langSelector" -> languageSelectorLanguages,
         "headInlineScript" -> headInlineScript,
