@@ -445,3 +445,8 @@ timeout.dialog.minutes=minutes
 timeout.dialog.seconds=seconds
 timeout.dialog.keepAlive.button=Stay signed in
 timeout.dialog.signout.button=Sign out now
+
+# Beta Banner Text
+#=============================================================
+betaBanner.message=This is a new service ‐ your {0} will help us to improve it.
+betaBanner.linkText=feedback

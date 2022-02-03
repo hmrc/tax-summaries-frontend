@@ -24,7 +24,8 @@ object AppDependencies {
     "com.mohiva"                 %% "play-html-compressor"       % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
     "com.softwaremill.quicklens" %% "quicklens"                  % "1.6.0",
     "uk.gov.hmrc"                %% "local-template-renderer"    % s"2.15.0-$playVersion",
-    "org.typelevel"              %% "cats-core"                  % "2.3.1"
+    "org.typelevel"              %% "cats-core"                  % "2.3.1",
+    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"3.0.0-play-28"
   )
 
   val test = Seq(

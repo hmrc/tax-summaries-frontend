@@ -24,15 +24,23 @@
 @import views.html.helpers.HeaderSection
 @import view_models.AtsMergePageViewModel
 @import scala.concurrent.ExecutionContext
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import helpers.{H1, P, Link, Button, InputRadios, ErrorSummary, PageHeading}
 
 @this(
-    main: main,
+    main: mainNew,
     headerSection: HeaderSection,
     errorSummaryTemplateView: ErrorSummaryTemplateView,
     inputRadioGroupView: InputRadioGroupView,
     atsForms: AtsForms,
-    formWithCSRF: FormWithCSRF
+    formWithCSRF: FormWithCSRF,
+    h1: H1,
+    p: P,
+    errorSummary: ErrorSummary,
+    link: Link,
+    button: Button,
+    inputRadios: InputRadios,
+    pageHeading: PageHeading
 )
 
 @(  atsMergePageViewModel: AtsMergePageViewModel,
@@ -47,27 +55,13 @@
 )
 
 @pastAtsParagraph = {
-@if(atsMergePageViewModel.showNoAtsText) {
-<p class='gray' id='no-ats-before-2019'>
-    @messages("merge.page.no.ats.summary.unavailable.text")
-</p>
-<p class='gray' id='generic-no-ats'>
-    @messages("merge.page.no.ats.summary.text")
-</p>
-}else {
-<p class='gray' id='generic-no-ats'>
-    @messages("merge.page.no.ats.summary.text")
-</p>
-}
+    @if(atsMergePageViewModel.showNoAtsText) {
+        @p(Text(messages("merge.page.no.ats.summary.unavailable.text")), classes=Some("govuk-body gray"), elmId=Some("no-ats-before-2019"))
+    }
+    @p(Text(messages("merge.page.no.ats.summary.text")), classes=Some("govuk-body gray"), elmId=Some("generic-no-ats"))
 }
 
-@main(
-        title = messages(atsMergePageViewModel.titleMsg),
-        actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width selectYear")
-
-    ) {
-
+@beforeContent = {
     @headerSection(
         pageHeading = Messages("ats.summary.title"),
         name = atsMergePageViewModel.name,
@@ -75,21 +69,25 @@
         taxYear = 0,
         actingAsAttorney = actingAsAttorney
     )
+}
 
-    <div class="main-content">
 
-        @errorSummaryTemplateView(atsYearForm)
+@main(
+        pageTitle = messages(atsMergePageViewModel.titleMsg),
+        actingAttorney = actingAsAttorney,
+        disableBackLink = true,
+        beforeContentHtml = Some(beforeContent)
+) {
 
-        @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
-        <h1 id="index-page-header" class="heading-xlarge">
-                <span class="gray heading-medium block-heading">
-                    @messages("generic.ats")
-                </span>
-            @messages(atsMergePageViewModel.subtitleMsg)
-        </h1>
+    @errorSummary(atsYearForm)
+
+    @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
+        @pageHeading(
+            elmId = "index-page-header",
+            text = atsMergePageViewModel.subtitleMsg
+        )
 
         @if(atsMergePageViewModel.showNoAtsYearList){@pastAtsParagraph}
-
 
         @inputRadioGroupView(
         atsYearForm(atsForms.yearChoice),
@@ -103,27 +101,23 @@
         )
 
         @if(appConfig.saShuttered){
-<p id="sa-unavailable">@messages("merge.page.sa.unavailable")</p>
+            @p(Text(messages("merge.page.sa.unavailable")), elmId=Some("sa-unavailable"))
+        }
+        @if(appConfig.payeShuttered){
 
-}
-@if(appConfig.payeShuttered){
-
-<p id="paye-unavailable">@messages("merge.page.paye.unavailable")</p>
-
-
-}else if(atsMergePageViewModel.showIvUpliftLink){
-<p id="paye-uplift">@messages("merge.page.paye.ivuplift.text")
-    <a id="ivUplift-link" href="@controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel">
-        @messages("merge.page.paye.ivuplift.link.text")</a></p>
-
-}
+            @p(Text(messages("merge.page.paye.unavailable")), elmId=Some("paye-unavailable"))
 
 
+        }else if(atsMergePageViewModel.showIvUpliftLink){
+            @p(HtmlContent(messages("merge.page.paye.ivuplift.text") +
+                            link(link = controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel.url, 
+                                messageKey = "merge.page.paye.ivuplift.link.text", 
+                                id = Some("ivUplift-link"), 
+                                inParagraph = true)
+                        ), elmId = Some("paye-uplift"))xsxs
+        }
         @if(atsMergePageViewModel.showContinueButton){
-        <div class="form-field">
-            <button id="continue" class="button" type="submit">@Messages("ats.select_tax_year.continue")</button>
-        </div>
+            @button(msg="ats.select_tax_year.continue", id = "continue")
         }
 }
-    </div>
 }

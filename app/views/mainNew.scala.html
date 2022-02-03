@@ -1,0 +1,116 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import config.ApplicationConfig
+@import helpers.Link
+@import uk.gov.hmrc.hmrcfrontend.config.AccountMenuConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, SignOut, _}
+@import views.html.helper.CSPNonce
+
+@this(
+    hmrcLayout: HmrcLayout,
+    hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+    hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
+    twoThirdsMainContent: TwoThirdsMainContent,
+    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+    appConfig: ApplicationConfig,
+    govukPhaseBanner : GovukPhaseBanner,
+    link: Link,
+    hmrcAccountMenu: HmrcAccountMenu
+)(implicit accountMenuConfig: AccountMenuConfig)
+
+@(
+    pageTitle: String,
+    backLinkHref: Option[String] = None,
+    disableSessionExpired: Boolean = false,
+    additionalScripts: Option[Html] = None,
+    backLinkAttrs: Map[String, String] = Map.empty,
+    disableBackLink: Boolean = false,
+    actingAttorney: Option[ActingAsAttorneyFor] = None,
+    beforeContentHtml: Option[Html] = None
+)(content: Html)(implicit request: Request[_], messages: Messages)
+
+@headBlock = {
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs.css")'/>
+    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")'/>
+    @if(!disableSessionExpired){
+        @hmrcTimeoutDialogHelper(
+            signOutUrl = routes.AccountController.signOut.url,
+            keepAliveUrl = Some("/keep-alive")
+        )
+    }
+    @additionalScripts.getOrElse("")
+}
+
+@addedScripts = {
+<script src='@controllers.routes.Assets.versioned("javascripts/ats-app.js")'></script>
+}
+
+@beforeContent = {
+    @if(!actingAttorney.isDefined) {
+        @hmrcAccountMenu(AccountMenu(
+                businessTaxAccount = Some(BusinessTaxAccount()),
+                signOut = SignOut(href = controllers.routes.AccountController.signOut.url),
+                language = if(messages.lang.code == "cy") Cy else En
+            ).withUrlsFromConfig())
+    }
+    @hmrcLanguageSelectHelper()
+    @if(beforeContentHtml.isDefined){
+        @beforeContentHtml
+    }
+}
+
+@contentBlock = {
+    @content
+    @hmrcReportTechnicalIssue(ReportTechnicalIssue(
+        serviceId = appConfig.contactFormServiceIdentifier,
+        language = if(messages.lang.code == "cy") Cy else En,
+        referrerUrl = Some(request.uri),
+        baseUrl = Some(appConfig.reportAProblemPartialUrl),
+        classes = Some("govuk-!-margin-bottom-8")
+    ))
+    <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m">
+    @govukPhaseBanner(PhaseBanner(
+        tag = Some(Tag(
+            content = Text("beta")
+        )),
+        content = HtmlContent(messages("betaBanner.message",
+                link(link=appConfig.betaFeedbackUrl,
+                    messageKey="betaBanner.linkText",
+                    inParagraph = true)))
+    ))
+}
+
+@fullPageTitle = @{
+    s"$pageTitle - ${Messages("generic.ats")} - GOV.UK"
+}
+
+@hmrcLayout(
+    pageTitle = Some(fullPageTitle),
+    serviceName = Some(messages("generic.ats")),
+    nonce = CSPNonce.get,
+    isWelshTranslationAvailable = true,
+    accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(request.uri)),
+    displayHmrcBanner = false,
+    additionalHeadBlock = Some(headBlock),
+    additionalScriptsBlock  = Some(addedScripts),
+    beforeContentBlock = Some(beforeContent),
+    mainContentLayout = Some(twoThirdsMainContent(_))
+)(contentBlock)
