@@ -75,10 +75,8 @@
 @main(
         pageTitle = messages(atsMergePageViewModel.titleMsg),
         actingAttorney = actingAsAttorney,
-        disableBackLink = true,
         beforeContentHtml = Some(beforeContent)
 ) {
-
     @errorSummary(atsYearForm)
 
     @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
@@ -89,15 +87,14 @@
 
         @if(atsMergePageViewModel.showNoAtsYearList){@pastAtsParagraph}
 
-        @inputRadioGroupView(
-        atsYearForm(atsForms.yearChoice),
-        atsMergePageViewModel.completeYearList.map(
+        @inputRadios(
+            form = atsYearForm,
+            legend = atsMergePageViewModel.subtitleMsg,
+            name = atsForms.yearChoice,
+            items = radioItems(atsForms.yearChoice, atsMergePageViewModel.completeYearList.map(
         yearChoice => yearChoice -> yearChoice.getLabel
-        ),
-        '_fieldSetAttributes -> "id=year_field",
-        '_headingClass -> "heading-48",
-        '_legend -> messages(atsMergePageViewModel.subtitleMsg),
-        '_legendClass -> "visuallyhidden"
+        )),
+            fieldSetAttrs = Map("id" ->"year_field")
         )
 
         @if(appConfig.saShuttered){
@@ -120,4 +117,14 @@
             @button(msg="ats.select_tax_year.continue", id = "continue")
         }
 }
+}
+
+@radioItems(name: String, radioOptions:Seq[(AtsYearChoice, String)]) = @{
+    radioOptions.map { case (value, label) =>
+        RadioItem(
+                    content = Text(label),
+                    value = Some(AtsYearChoice.toString(value)),
+                    id = Some(s"${name}-${value.year}-${value.atsType}")
+                )
+    }
 }

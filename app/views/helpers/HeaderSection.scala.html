@@ -47,8 +47,8 @@
         @backLink(href="#", attrs = Map("data-journey-click" -> s"link - click:$pageHeading:${messages("site.back")}"))
     </div>
     @if(!actingAsAttorney.isDefined && utr.nonEmpty){
-        <div class="govuk-grid-column-one-half govuk-!-text-align-right info-header-section">
-            @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"))
+        <div class="govuk-grid-column-one-half govuk-!-text-align-right">
+            @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
         </div>
     }
 </div>

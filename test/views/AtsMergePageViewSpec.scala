@@ -306,7 +306,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           ConfidenceLevel.L50),
         atsForms.atsYearFormMapping
       )
-      result must include("<div id=hideAccountMenu>true</div>")
+      result must not include ("hmrc-account-menu")
     }
 
     "show account menu for non agent users" in {
@@ -319,7 +319,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           ConfidenceLevel.L50),
         atsForms.atsYearFormMapping
       )
-      result must include("<div id=hideAccountMenu>false</div>")
+      result must include("hmrc-account-menu")
     }
 
   }

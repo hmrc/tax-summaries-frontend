@@ -104,7 +104,12 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       document.getElementById("total-cg-tax-rate").text() mustBe "12.34%"
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear Capital Gains Tax"
+      document
+        .getElementsByAttributeValueMatching("data-component", "ats_page_heading__h1")
+        .text mustBe "Capital Gains Tax"
+      document
+        .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
+        .text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear"
     }
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in {

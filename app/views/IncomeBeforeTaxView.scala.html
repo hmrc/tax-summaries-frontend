@@ -20,11 +20,14 @@
 @import views.html.main
 @import views.html.helpers.HeaderSection
 @import scala.concurrent.ExecutionContext
+@import helpers.{PageHeading, P}
 
 @this(
-    main: main,
+    main: mainNew,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+    pageHeading: PageHeading,
+    p: P
 )
 
 @(  viewModel: view_models.IncomeBeforeTax,
@@ -37,12 +40,7 @@
         ec: ExecutionContext
 )
 
-@main(
-        title = Messages("ats.income_before_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
-    ) {
-
+@beforeContent = {
     @headerSection(
         pageHeading = Messages("ats.income_before_tax.title"),
         name = viewModel.forename + ' ' + viewModel.surname,
@@ -50,84 +48,87 @@
         taxYear = viewModel.taxYear,
         actingAsAttorney = actingAsAttorney
     )
+}
 
-    <div class="main-content">
+@main(
+        pageTitle = Messages("ats.income_before_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        actingAttorney = actingAsAttorney,
+        beforeContentHtml = Some(beforeContent)
+    ) {
 
-        <h1 class="heading-xlarge">
-            <span class="gray heading-medium block-heading">
-              @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-            </span>
-          @Html(Messages("ats.income_before_tax.title"))
-        </h1>
-        <p class="lede">@Html(Messages("ats.income_before_tax.intro"))</p>
+    @pageHeading(
+      text = "ats.income_before_tax.title",
+      section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    )
 
-        <table>
-          <thead>
-            <tr>
-              <th>@Html(Messages("ats.income_before_tax.table_header"))</th>
-              <th>@Html(Messages("generic.amount_pounds"))</th>
+    @p(Text(Messages("ats.income_before_tax.intro")), classes = Some("govuk-body-l"))
+
+        <table class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header">@Html(Messages("ats.income_before_tax.table_header"))</th>
+              <th class="govuk-table__header">@Html(Messages("generic.amount_pounds"))</th>
             </tr>
           </thead>
 
-          <tbody id="income-before-tax-table">
+          <tbody id="income-before-tax-table" class="govuk-table__body">
             @if(!viewModel.getSelfEmployTotal.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line1"))</td>
-              <td id="self-employment-income">@currencyAmountView(viewModel.getSelfEmployTotal)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line1"))</td>
+              <td id="self-employment-income" class="govuk-table__cell">@currencyAmountView(viewModel.getSelfEmployTotal)</td>
             </tr>
             }
 
             @if(!viewModel.getIncomeFromEmployment.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line2"))</td>
-              <td id="income-from-employment">@currencyAmountView(viewModel.getIncomeFromEmployment)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line2"))</td>
+              <td id="income-from-employment" class="govuk-table__cell">@currencyAmountView(viewModel.getIncomeFromEmployment)</td>
             </tr>
             }
 
             @if(!viewModel.getStatePension.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line3"))</td>
-              <td id="state-pension-amount">@currencyAmountView(viewModel.getStatePension)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line3"))</td>
+              <td id="state-pension-amount" class="govuk-table__cell">@currencyAmountView(viewModel.getStatePension)</td>
             </tr>
             }
 
             @if(!viewModel.getOtherPensionTotal.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line4"))</td>
-              <td id="other-pension-total">@currencyAmountView(viewModel.getOtherPensionTotal)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line4"))</td>
+              <td id="other-pension-total" class="govuk-table__cell">@currencyAmountView(viewModel.getOtherPensionTotal)</td>
             </tr>
             }
 
             @if(!viewModel.getTaxableStateBenefit.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line5"))</td>
-              <td id="taxable-state-benefits">@currencyAmountView(viewModel.getTaxableStateBenefit)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line5"))</td>
+              <td id="taxable-state-benefits" class="govuk-table__cell">@currencyAmountView(viewModel.getTaxableStateBenefit)</td>
             </tr>
             }
 
             @if(!viewModel.getOtherIncome.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line6"))</td>
-              <td id="other-income-amount">@currencyAmountView(viewModel.getOtherIncome)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line6"))</td>
+              <td id="other-income-amount" class="govuk-table__cell">@currencyAmountView(viewModel.getOtherIncome)</td>
             </tr>
             }
 
             @if(!viewModel.getBenefitsFromEmployment.isZero) {
-            <tr>
-              <td>@Html(Messages("ats.income_before_tax.table.line7"))</td>
-              <td id="benefits-from-employment">@currencyAmountView(viewModel.getBenefitsFromEmployment)</td>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@Html(Messages("ats.income_before_tax.table.line7"))</td>
+              <td id="benefits-from-employment" class="govuk-table__cell">@currencyAmountView(viewModel.getBenefitsFromEmployment)</td>
             </tr>
             }
           </tbody>
 
           @if(!viewModel.getIncomeBeforeTaxTotal.isZero) {
-          <tfoot id="income-before-tax-foot">
-            <tr>
-              <th scope="row">@Html(Messages("ats.income_before_tax.html.title"))</th>
-              <td id="income-before-tax" class="no-bold">@currencyAmountView(viewModel.getIncomeBeforeTaxTotal)</td>
+          <tfoot id="income-before-tax-foot" class="govuk-table__footer">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header" scope="row">@Html(Messages("ats.income_before_tax.html.title"))</th>
+              <td id="income-before-tax" class="no-bold govuk-table__cell">@currencyAmountView(viewModel.getIncomeBeforeTaxTotal)</td>
             </tr>
           </tfoot>
           }
         </table>
-    </div>
 }

@@ -41,7 +41,6 @@
     disableSessionExpired: Boolean = false,
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
-    disableBackLink: Boolean = false,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
     beforeContentHtml: Option[Html] = None
 )(content: Html)(implicit request: Request[_], messages: Messages)
@@ -49,7 +48,7 @@
 @headBlock = {
     <meta name="format-detection" content="telephone=no" />
     <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs.css")'/>
-    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")'/>
+    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")' media="print"/>
     @if(!disableSessionExpired){
         @hmrcTimeoutDialogHelper(
             signOutUrl = routes.AccountController.signOut.url,
