@@ -17,13 +17,15 @@
 @import config.ApplicationConfig
 @import views.html.main
 @import views.html.helpers.HeaderSection
-@import views.html.helpers.BackLinkView
 @import scala.concurrent.ExecutionContext
+@import helpers.{HeaderSection,backLink, H1, P}
 
 @this(
-    main: main,
-    backLinkView: BackLinkView,
-    headerSection: HeaderSection
+    main: mainNew,
+    headerSection: HeaderSection,
+    h1: H1,
+    p: P,
+    backLink: backLink
 )
 
 @(  spendData: Seq[(String, Double)],
@@ -37,38 +39,37 @@
 )
 
 @main(
-        title = Messages("ats.howYourTaxWasSpent.heading")
+        pageTitle = Messages("ats.howYourTaxWasSpent.heading"),
+        beforeContentHtml = Some(backLink(href=""))
     ) {
-
-    @backLinkView(Messages("ats.howYourTaxWasSpent.heading"))
 
     <div class="print-this">
         <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
         <a class="print-this__link" href="javascript:window.print()">@Messages("ats.treasury_spending.print.this.page")</a>
     </div>
 
-    <h1 class="heading-xlarge">@messages("ats.howYourTaxWasSpent.heading")</h1>
+    @h1("ats.howYourTaxWasSpent.heading")</h1>
 
-    <p>@Html(messages("ats.howYourTaxWasSpent.subheading", (taxYear-1).toString, taxYear.toString))</p>
-    <p>@messages("ats.howYourTaxWasSpent.caveat")</p>
+    @p(HtmlContent(messages("ats.howYourTaxWasSpent.subheading", (taxYear-1).toString, taxYear.toString)))
+    @p(Text(messages("ats.howYourTaxWasSpent.caveat")))
 
 
-    <table id="howTaxIsSpentTable">
-        <thead>
-        <tr>
-            <th scope="col">@messages("generic.description")</th>
-            <th scope="col">@messages("ats.howYourTaxWasSpent.table.percentage.title")</th>
+    <table id="howTaxIsSpentTable" class="govuk-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@messages("generic.description")</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("ats.howYourTaxWasSpent.table.percentage.title")</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="govuk-table__body">
 
         @{
             spendData.map { case (name, percentage) =>
-                <tr>
-                    <td>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
                         {messages(s"ats.treasury_spending.table.$name")}
                     </td>
-                    <td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
                         {percentage}%
                     </td>
                 </tr>

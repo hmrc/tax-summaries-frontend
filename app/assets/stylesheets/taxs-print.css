@@ -252,7 +252,7 @@ a[href]:after {
 
 /*= Print hidden
 ---------------------------------------------------------------------------*/
-.print-hidden, .header-wrapper, .service-info, .report-error, #english-switch, #welsh-switch, #continue  {
+.print-hidden, .header-wrapper, .service-info, .report-error, #english-switch, #welsh-switch, #continue, #secondary-nav, .hmrc-language-select, header  {
     display: none !important;
 }
 

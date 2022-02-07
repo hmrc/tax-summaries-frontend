@@ -14,19 +14,21 @@
  * limitations under the License.
  *@
 
-@import views.html.unauthenticated_main
 @import config.ApplicationConfig
 @import scala.concurrent.ExecutionContext
 @import config.ApplicationConfig
+@import helpers.{H1, P}
 
-@this(unauthenticated_main: unauthenticated_main)
+@this(main: mainNew, h1: H1, p: P)
 @()(implicit request: Request[_], templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, messages: Messages, appConfig: ApplicationConfig, ec: ExecutionContext)
 
 
-@unauthenticated_main(
-    title = messages("session_expired.title")) {
+@main(
+    pageTitle = messages("session_expired.title"),
+    disableSessionExpired = true    
+) {
 
-    <h1 class="heading-xlarge">@messages("session_expired.title")</h1>
+    @h1("session_expired.title")
 
-    <p>@messages("session_expired.guidance")</p>
+    @p(Text(messages("session_expired.guidance")))
 }

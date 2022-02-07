@@ -18,20 +18,14 @@
 @import controllers.auth.AuthenticatedRequest
 @import uk.gov.hmrc.play.views.html.helpers._
 @import view_models.AtsForms
-@import views.html.helpers.ErrorSummaryTemplateView
-@import views.html.helpers.InputRadioGroupView
-@import views.html.main
-@import views.html.helpers.HeaderSection
 @import view_models.AtsMergePageViewModel
 @import scala.concurrent.ExecutionContext
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import helpers.{H1, P, Link, Button, InputRadios, ErrorSummary, PageHeading}
+@import helpers.{H1, P, Link, Button, InputRadios, ErrorSummary, PageHeading, HeaderSection}
 
 @this(
     main: mainNew,
     headerSection: HeaderSection,
-    errorSummaryTemplateView: ErrorSummaryTemplateView,
-    inputRadioGroupView: InputRadioGroupView,
     atsForms: AtsForms,
     formWithCSRF: FormWithCSRF,
     h1: H1,
