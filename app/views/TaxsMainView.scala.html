@@ -17,12 +17,15 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import views.html.main
-@import views.html.helpers.HeaderSection
+@import views.html.helpers.{HeaderSection, PageHeading, P, Link}
 @import scala.concurrent.ExecutionContext
 
 @this(
-    main: main,
-    headerSection: HeaderSection
+    main: mainNew,
+    headerSection: HeaderSection,
+    pageHeading: PageHeading,
+    p: P,
+    link: Link
 )
 
 @(  viewModel: view_models.Summary,
@@ -35,13 +38,7 @@
         ec: ExecutionContext
 )
 
-
-@main(
-        title = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
-    ) {
-
+@beforeContent = {
     @headerSection(
         pageHeading = Messages("ats.index.html.title"),
         name = viewModel.forename + ' ' + viewModel.surname,
@@ -49,26 +46,31 @@
         taxYear = viewModel.year,
         actingAsAttorney = actingAsAttorney
     )
+}
 
-    <div class="main-content">
+@main(
+        pageTitle = Messages("ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        actingAttorney = actingAsAttorney,
+        beforeContentHtml = Some(beforeContent)
+    ) {
 
-        <h1 id="index-page-header" class="heading-xlarge">
-                <span class="gray heading-medium block-heading">
-                    @Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
-                </span>
-            @Html(Messages("ats.index.html.title"))
-        </h1>
-        <p class="lede" id="index-page-description">@Html(Messages("ats.index.html.lede"))</p>
+        @pageHeading(
+            text = "ats.index.html.title",
+            elmId = "index-page-header",
+            section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+        )
+
+        @p(Text(Messages("ats.index.html.lede")), elmId = Some("index-page-description"), classes = Some("govuk-body-l"))
 
         <div id="tax-summary">
-          <h2><a id="tax-calc-link" href="@controllers.routes.SummaryController.authorisedSummaries?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
-           <p>@Html(Messages("ats.index.html.tax_calc_description"))</p>
+          <h2><a id="tax-calc-link" class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-32" href="@controllers.routes.SummaryController.authorisedSummaries?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
+           @p(HtmlContent(Messages("ats.index.html.tax_calc_description")))
         </div>
+
         <div id="tax-spent">
-          <h2><a id="tax-services-link" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a></h2>
-          <p>@Html(Messages("ats.index.html.tax_spend_description"))</p>
+            <h2>
+                <a id="tax-services-link" class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-32" href="@controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a>
+            </h2>
+            @p(HtmlContent(Messages("ats.index.html.tax_spend_description")))
         </div>
-
-
-    </div>
 }
