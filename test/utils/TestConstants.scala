@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import view_models._
 
 import scala.util.Random
 
-trait TestConstants {
+trait TestConstants extends BaseSpec {
 
   // We only want one test nino and utr throughout, therefore assign a value in the object declaration
   lazy val testUtr = new SaUtrGenerator().nextSaUtr.utr
@@ -37,7 +37,7 @@ trait TestConstants {
   def genRandNumString(length: Int) = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax = TotalIncomeTax(
-    year = 2014,
+    year = taxYear,
     utr = "",
     Amount.empty,
     Amount.empty,
@@ -77,7 +77,7 @@ trait TestConstants {
   )
 
   val capitalGains = CapitalGains(
-    taxYear = 2014,
+    taxYear = taxYear,
     utr = testUtr,
     taxableGains = Amount(20000, "GBP"),
     lessTaxFreeAmount = Amount(10600, "GBP"),
@@ -146,6 +146,9 @@ trait TestConstants {
   val expectedPercentageOrder2020: List[BigDecimal] =
     List(22.1, 20.5, 12.4, 11.6, 6.9, 5.3, 4.3, 4.3, 3.8, 2.1, 1.8, 1.5, 1.5, 1.1, 0.8)
 
+  val expectedPercentageOrder2021: List[BigDecimal] =
+    List(21.9, 19.6, 14.4, 10.1, 9.6, 4.5, 4.5, 4.1, 3.9, 2.0, 1.4, 1.3, 1.2, 0.9, 0.6)
+
   val expectedCategoryOrderFor2019: List[String] =
     List(
       "Welfare",
@@ -180,6 +183,25 @@ trait TestConstants {
       "HousingAndUtilities",
       "Culture",
       "Environment",
+      "OverseasAid",
+      "UkContributionToEuBudget"
+    )
+
+  val expectedCategoryOrderfor2021: List[String] =
+    List(
+      "Health",
+      "Welfare",
+      "BusinessAndIndustry",
+      "StatePensions",
+      "Education",
+      "Transport",
+      "Defence",
+      "NationalDebtInterest",
+      "PublicOrderAndSafety",
+      "GovernmentAdministration",
+      "HousingAndUtilities",
+      "Environment",
+      "Culture",
       "OverseasAid",
       "UkContributionToEuBudget"
     )

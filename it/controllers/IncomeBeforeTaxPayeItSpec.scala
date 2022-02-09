@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
   "/paye/income-before-tax" must {
 
-    lazy val url = "/annual-tax-summary/paye/income-before-tax/2020"
+    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$taxYear"
 
-    lazy val backendUrl = s"/taxs/$generatedNino/2020/paye-ats-data"
+    lazy val backendUrl = s"/taxs/$generatedNino/$taxYear/paye-ats-data"
 
     "return an OK response" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsData.json")))
+          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
       )
 
       val request = FakeRequest(GET, url)
@@ -49,14 +49,27 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
       result.map(status) mustBe Some(OK)
     }
 
+    "return an SEE_OTHER when the call to backend returns a NOT_FOUND response" in {
+
+      server.stubFor(
+        get(urlEqualTo(backendUrl))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
+      )
+
+      val request = FakeRequest(GET, url)
+
+      val result = route(fakeApplication(), request)
+
+      result.map(status) mustBe Some(SEE_OTHER)
+    }
+
     List(
       BAD_REQUEST,
-      NOT_FOUND,
       IM_A_TEAPOT,
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an SEE_OTHER when the call to backend to retrieve paye-ats-data throws a $httpResponse" in {
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve paye-ats-data throws a $httpResponse" in {
 
         server.stubFor(
           get(urlEqualTo(backendUrl))
@@ -67,7 +80,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
         val result = route(fakeApplication(), request)
 
-        result.map(status) mustBe Some(SEE_OTHER)
+        result.map(status) mustBe Some(INTERNAL_SERVER_ERROR)
       }
     }
   }

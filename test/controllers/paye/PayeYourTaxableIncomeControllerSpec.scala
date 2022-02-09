@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,71 @@
 
 package controllers.paye
 
+import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants.testNino
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeYourTaxableIncomeView
 
 import scala.concurrent.Future
 
 class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
-  val fakeAuthenticatedRequest =
+  implicit val fakeAuthenticatedRequest =
     PayeAuthenticatedRequest(
       testNino,
       false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
 
+  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+
   val sut =
-    new PayeYourTaxableIncomeController(mockPayeAtsService, FakePayeAuthAction, mcc, inject[PayeYourTaxableIncomeView])
+    new PayeYourTaxableIncomeController(
+      mockPayeAtsService,
+      FakePayeAuthAction,
+      mcc,
+      inject[PayeYourTaxableIncomeView],
+      payeGenericErrorView)
 
   "Government spend controller" must {
 
-    "return OK response" in {
+    "return OK response when set to 2021" in {
+
+      val taxYear = 2021
 
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
+        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+
+      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+
+      status(result) mustBe OK
+
+      contentAsString(result) must include(
+        Messages("paye.ats.income_before_tax.title") + Messages(
+          "generic.to_from",
+          (taxYear - 1).toString,
+          taxYear.toString))
+    }
+
+    "return OK response when set to 2020" in {
+
+      val taxYear = 2020
+
+      when(
+        mockPayeAtsService
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -67,7 +98,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
+        .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -80,12 +111,12 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
+        .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) mustBe payeGenericErrorView().toString()
     }
   }
 }

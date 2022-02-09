@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ import utils.TestConstants._
 import utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class AtsServiceSpec extends BaseSpec {
 
   val data = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test.json")
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
     Json.fromJson[AtsData](json).get
   }
 
@@ -76,7 +76,7 @@ class AtsServiceSpec extends BaseSpec {
     timestamp = 0
   )
 
-  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, mockAuditService, mockAuthUtils) {
+  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
     override val accountUtils: AccountUtils = mockAccountUtils
   }
 

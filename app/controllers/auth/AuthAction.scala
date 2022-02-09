@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import uk.gov.hmrc.domain._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(

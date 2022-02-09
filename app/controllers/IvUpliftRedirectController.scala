@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,9 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
-import play.api.Logger
-import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.PayeAtsService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.partials.FormPartialRetriever
-import uk.gov.hmrc.renderer.TemplateRenderer
-import view_models.paye.PayeAtsMain
-import views.html.paye.PayeTaxsMainView
 
 import scala.concurrent.{ExecutionContext, Future}
 

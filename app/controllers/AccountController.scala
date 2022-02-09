@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,27 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.renderer.TemplateRenderer
+import views.html.session_expired
+import uk.gov.hmrc.renderer.TemplateRenderer
 
-class AccountController @Inject()(mcc: MessagesControllerComponents)(implicit val appConfig: ApplicationConfig)
+import scala.concurrent.ExecutionContext
+
+class AccountController @Inject()(
+  mcc: MessagesControllerComponents,
+  sessionExpiredView: session_expired
+)(implicit val templateRenderer: TemplateRenderer, appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) {
 
   def signOut: Action[AnyContent] = Action {
     Redirect(appConfig.feedbackUrl).withNewSession
+  }
+
+  def keepAlive: Action[AnyContent] = Action { implicit request =>
+    NoContent
+  }
+
+  def sessionExpired: Action[AnyContent] = Action { implicit request =>
+    Ok(sessionExpiredView()).withNewSession
   }
 }

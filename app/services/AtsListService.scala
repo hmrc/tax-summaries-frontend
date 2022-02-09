@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@ import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models.{AtsListData, _}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
-import view_models.{AtsList, TaxYearEnd}
+import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,23 +37,25 @@ class AtsListService @Inject()(
   appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
     extends AccountUtils {
 
-  def createModel()(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsList]] =
-    getAtsYearList map { response =>
-      response match {
-        case Right(atsList) =>
-          Right(
-            AtsList(
-              atsList.utr,
-              atsList.taxPayer.get.taxpayer_name.get("forename"),
-              atsList.taxPayer.get.taxpayer_name.get("surname"),
-              atsList.atsYearList.get
-            ))
-        case Left(NOT_FOUND) => Right(AtsList.empty)
-        case Left(status)    => Left(status)
-      }
+  def createModel()(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsList]] =
+    getAtsYearList map {
+      case Right(atsList) =>
+        Right(
+          AtsList(
+            atsList.utr,
+            atsList.taxPayer.get.taxpayer_name.get("forename"),
+            atsList.taxPayer.get.taxpayer_name.get("surname"),
+            atsList.atsYearList.get
+          ))
+      case Left(_: AtsNotFoundResponse) => Right(AtsList.empty)
+      case Left(status)                 => Left(status)
     }
 
-  def getAtsYearList(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
+  def getAtsYearList(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
     for {
       data <- dataCache.fetchAndGetAtsListForSession
     } yield {
@@ -79,7 +80,7 @@ class AtsListService @Inject()(
 
   private def fetchAgentInfo(data: AtsListData)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
     for {
       token <- dataCache.getAgentToken
     } yield {
@@ -93,17 +94,17 @@ class AtsListService @Inject()(
 
   private def getAtsListAndStore(agentToken: Option[AgentToken] = None)(
     implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[Int, AtsListData]] = {
+    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
     val account = getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
-    val gotData = (account: @unchecked, requestedUTR) match {
+    val response = (account: @unchecked, requestedUTR) match {
       case (Some(agent: Uar), Some(saUtr)) => middleConnector.connectToAtsListOnBehalfOf(agent, saUtr)
       case (Some(individual: SaUtr), _)    => middleConnector.connectToAtsList(individual)
       case _                               => Future(AtsNotFoundResponse("No SaUTR found for this agent"))
     }
 
-    val result = gotData flatMap {
+    val result = response flatMap {
       case AtsSuccessResponseWithPayload(payload: AtsListData) => {
 
         val atsListData = if (appConfig.taxYear < 2020 && payload.atsYearList.isDefined) {
@@ -111,13 +112,12 @@ class AtsListService @Inject()(
         } else payload
 
         for {
-          data <- storeAtsListData(atsListData)
+          data: AtsListData <- storeAtsListData(atsListData)
         } yield {
           Right(data)
         }
       }
-      case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
-      case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
+      case r => Future.successful(Left(r))
     }
 
     result map { res =>

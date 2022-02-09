@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
-import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models._
 
 import scala.concurrent.Future
 

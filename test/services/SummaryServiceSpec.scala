@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.MustMatchers._
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel

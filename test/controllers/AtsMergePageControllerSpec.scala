@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package controllers
 
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
-import models.{AtsType, AtsYearChoice}
+import models.AtsErrorResponse
 import org.jsoup.Jsoup
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, when}
@@ -26,16 +26,12 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
-import play.twirl.api.Html
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.partials.FormPartialRetriever
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testNino, testUtr}
-import view_models.AtsForms
-import view_models.{AtsList, AtsMergePageViewModel}
+import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.Future
 
@@ -156,7 +152,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     "redirect to genericErrorView page if service returns an error" in {
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any()))
-        .thenReturn(Future(Left(HttpResponse(BAD_GATEWAY))))
+        .thenReturn(Future(Left(AtsErrorResponse("some error"))))
 
       val result = sut.onPageLoad(authRequest)
 
@@ -164,7 +160,6 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val document = contentAsString(result)
       document mustBe contentAsString(genericErrorView())
     }
-
   }
 
   "AtsMergePageController for onSubmit" must {

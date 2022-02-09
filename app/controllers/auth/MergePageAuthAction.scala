@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter

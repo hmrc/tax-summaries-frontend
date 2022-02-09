@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val expectedResponse: JsValue = readJson("/paye_ats.json")
+  val expectedResponse2020: JsValue = readJson("/paye_ats_2020.json")
+
+  val expectedResponse2021: JsValue = readJson("/paye_ats_2021.json")
 
   def buildPayeRequest(endpoint: String) =
     PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", endpoint))

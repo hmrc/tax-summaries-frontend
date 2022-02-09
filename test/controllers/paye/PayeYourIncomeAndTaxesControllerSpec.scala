@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package controllers.paye
 
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
-import models.PayeAtsData
+import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
@@ -25,23 +25,26 @@ import play.api.http.Status._
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants.testNino
+import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeYourIncomeAndTaxesView
 
 import scala.concurrent.Future
 
 class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
-  val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
 
   val sut = new PayeYourIncomeAndTaxesController(
     mockPayeAtsService,
     FakePayeAuthAction,
     mcc,
-    inject[PayeYourIncomeAndTaxesView])
+    inject[PayeYourIncomeAndTaxesView],
+    payeGenericErrorView)
 
   "Government spend controller" must {
 
@@ -50,7 +53,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Right(expectedResponse.as[PayeAtsData])))
+        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -93,7 +96,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(NOT_FOUND, ""))))
+        .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -106,12 +109,12 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(BAD_REQUEST, ""))))
+        .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.PayeErrorController.genericError(BAD_REQUEST).url)
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) mustBe payeGenericErrorView().toString()
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from service" in {
@@ -119,12 +122,12 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
-        .thenReturn(Future(Left(HttpResponse(INTERNAL_SERVER_ERROR, ""))))
+        .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.PayeErrorController.genericError(INTERNAL_SERVER_ERROR).url)
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      contentAsString(result) mustBe payeGenericErrorView().toString()
     }
   }
 

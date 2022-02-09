@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package controllers.auth
 
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, IncorrectCredentialStrength, InsufficientConfidenceLevel, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait AtsNino

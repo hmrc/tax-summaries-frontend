@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,6 @@ class AtsMergePageController @Inject()(
 
       case _ => InternalServerError(genericErrorView())
     }
-
   }
 
   def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
@@ -86,7 +85,7 @@ class AtsMergePageController @Inject()(
     )
   }
 
-  private def redirectWithYear(taxYearChoice: AtsYearChoice)(implicit request: AuthenticatedRequest[_]): Result =
+  private def redirectWithYear(taxYearChoice: AtsYearChoice): Result =
     taxYearChoice.atsType match {
       case SA =>
         Redirect(controllers.routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + taxYearChoice.year)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.MustMatchers._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -29,10 +28,10 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
-import view_models.{Amount, AtsList, IncomeBeforeTax, TaxYearEnd}
+import view_models.{Amount, AtsList, IncomeBeforeTax}
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class IncomeServiceSpec extends BaseSpec {
 

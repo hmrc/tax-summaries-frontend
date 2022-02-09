@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.auth.{FakeAuthAction, FakeAuthJourney}
+import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -31,7 +31,6 @@ import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
   val baseModel = SummaryControllerSpec.baseModel
 
   val mockSummaryService = mock[SummaryService]
@@ -102,7 +101,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       document.getElementById("tax-services-link").text mustBe "Your taxes and public spending"
       document
         .getElementById("index-page-header")
-        .text mustBe "Tax year: April 6 2013 to April 5 2014 Self Assessment Annual Tax Summary"
+        .text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear Self Assessment Annual Tax Summary"
       document
         .getElementById("index-page-description")
         .text mustBe "This summarises your personal tax and National Insurance, and how they are spent by government."
@@ -115,7 +114,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     "display the right years" in {
 
       val model = baseModel.copy(
-        year = 2015
+        year = taxYear
       )
 
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
@@ -125,7 +124,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
-      document.getElementById("index-page-header").text must include("2015")
+      document.getElementById("index-page-header").text must include(taxYear.toString)
     }
 
   }

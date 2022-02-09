@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package views
 
 import controllers.auth.AuthenticatedRequest
+import models.ActingAsAttorneyFor
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -41,6 +42,9 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
   def view(cg: CapitalGains): String =
     capitalGainsView(cg).body
+
+  def agentView(cg: CapitalGains): String =
+    capitalGainsView(cg, Some(ActingAsAttorneyFor(Some("Agent"), Map()))).body
 
   "view" must {
     "show lower rate rcpi row" in {
@@ -68,5 +72,18 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
       result must not include "Individuals for residential property and carried interest (&pound;4,500 at 25%)"
     }
+
+    "not show account menu for agent" in {
+
+      val result = agentView(capitalGains)
+      result must include("<div id=hideAccountMenu>true</div>")
+    }
+
+    "show account menu for non agent users" in {
+
+      val result = view(capitalGains)
+      result must include("<div id=hideAccountMenu>false</div>")
+    }
+
   }
 }

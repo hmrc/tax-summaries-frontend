@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,14 @@ package controllers.auth
 import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Request, Result}
+import play.api.mvc.{ActionRefiner, Result}
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.{CtUtr, EmpRef, SaUtr, Vrn}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import javax.inject.Inject
-import uk.gov.hmrc.auth.core.retrieve.Credentials
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelfAssessmentActionImpl @Inject()(

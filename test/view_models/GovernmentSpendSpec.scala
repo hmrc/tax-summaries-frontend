@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package view_models
 
-import config.ApplicationConfig
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import utils.TestConstants
 
 class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPerSuite {
-
-  implicit val appConfig = app.injector.instanceOf[ApplicationConfig]
 
   "GovernmentSpend" when {
 

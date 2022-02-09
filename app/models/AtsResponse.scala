@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,4 +29,5 @@ sealed trait AtsFailureResponse extends AtsResponse {
 }
 
 case class AtsNotFoundResponse(message: String) extends AtsFailureResponse
+case class AtsBadRequestResponse(message: String) extends AtsFailureResponse
 case class AtsErrorResponse(message: String) extends AtsFailureResponse

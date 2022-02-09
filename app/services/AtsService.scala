@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package services
 
-import java.util.Date
-
+import cats.data.EitherT
 import com.google.inject.Inject
+import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
@@ -28,12 +28,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
+import java.util.Date
 import scala.concurrent.{ExecutionContext, Future}
-import cats.data.EitherT
 
 class AtsService @Inject()(
   middleConnector: MiddleConnector,
   dataCacheConnector: DataCacheConnector,
+  appConfig: ApplicationConfig,
   val auditService: AuditService,
   val authUtils: AuthorityUtils)(implicit ex: ExecutionContext) {
   val accountUtils: AccountUtils = AccountUtils
@@ -47,6 +48,8 @@ class AtsService @Inject()(
 
   def checkCreateModel(output: Either[Int, AtsData], converter: AtsData => GenericViewModel): GenericViewModel =
     output match {
+      case Right(atsList) if (atsList.taxYear > appConfig.taxYear) =>
+        new ATSUnavailableViewModel
       case Right(atsList)  => converter(atsList)
       case Left(NOT_FOUND) => new NoATSViewModel
       case Left(_)         => new ATSUnavailableViewModel

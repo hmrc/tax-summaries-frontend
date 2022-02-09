@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,17 @@ package view_models.paye
 
 import config.ApplicationConfig
 import models.DataHolder
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.Configuration
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
-import utils.{JsonUtil, TestConstants}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.{BaseSpec, JsonUtil, TestConstants}
 import view_models.Amount
 
 class PayeGovernmentSpendSpec
@@ -34,18 +37,25 @@ class PayeGovernmentSpendSpec
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
 
-  implicit lazy val appConfig = inject[ApplicationConfig]
+  val taxYear: Int = 2021
+
+  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+    override lazy val taxYear: Int = taxYear
+  }
+
+  implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
   "PayeGovernmentSpend" must {
 
     "Transform PayeAtsData to view model" when {
 
       "Scottish income is not present" in {
+
         val payeGovSpendingData = payeAtsTestData.govSpendingData
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-        result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2020
-        result mustBe payeAtsTestData.payeGovernmentSpendViewModel2020
+        result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2021
+        result mustBe payeAtsTestData.payeGovernmentSpendViewModel2021
       }
 
       "Scottish income is present and greater than 0" in {
@@ -54,8 +64,8 @@ class PayeGovernmentSpendSpec
         )
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-        result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2020
-        result mustBe payeAtsTestData.payeGovernmentSpendViewModel2020.copy(
+        result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2021
+        result mustBe payeAtsTestData.payeGovernmentSpendViewModel2021.copy(
           isScottish = true
         )
       }
@@ -66,8 +76,8 @@ class PayeGovernmentSpendSpec
         )
         val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
-        result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2020
-        result mustBe payeAtsTestData.payeGovernmentSpendViewModel2020.copy(
+        result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2021
+        result mustBe payeAtsTestData.payeGovernmentSpendViewModel2021.copy(
           isScottish = false
         )
       }
@@ -76,7 +86,13 @@ class PayeGovernmentSpendSpec
 
     "reorder categories for tax year 2020" in {
 
-      val payeGovSpendingData = payeAtsTestData.govSpendingData
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+        override lazy val taxYear: Int = 2020
+      }
+
+      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
+
+      val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2020
       val result = PayeGovernmentSpend(payeGovSpendingData, appConfig)
 
       result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2020

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,10 @@ import scala.concurrent.Future
 
 class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
-
-  val dataPath = "/summary_json_test.json"
+  val dataPath = "/summary_json_test_2021.json"
 
   val model = Summary(
-    year = 2014,
+    year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),

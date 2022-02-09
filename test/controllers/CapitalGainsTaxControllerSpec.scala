@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 import scala.concurrent.Future
 
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
-
-  override val taxYear = 2014
 
   val baseModel = capitalGains
 
@@ -102,11 +100,11 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       document.getElementById("taxable-gains").text() mustBe "£20,000"
       document.getElementById("less-taxable-gains").text() mustBe "minus £10,600 -£10,600"
       document.getElementById("cg-pay-tax-on").text() mustBe "£9,400"
-      document.getElementById("tax-period").text() mustBe "2013 to 2014"
+      document.getElementById("tax-period").text() mustBe s"${taxYear - 1} to $taxYear"
       document.getElementById("total-cg-tax-rate").text() mustBe "12.34%"
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text mustBe "Tax year: April 6 2013 to April 5 2014 Capital Gains Tax"
+      document.select("h1").text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear Capital Gains Tax"
     }
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in {

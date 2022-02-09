@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get}
-import com.github.tomakehurst.wiremock.http.Fault
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -42,7 +41,9 @@ class HttpHandlerSpec
     new GuiceApplicationBuilder()
       .configure(
         "microservice.services.tax-summaries.port"       -> server.port(),
-        "microservice.services.tax-summaries-agent.port" -> server.port()
+        "microservice.services.tax-summaries-agent.port" -> server.port(),
+        "play.ws.timeout.request"                        -> "1000ms",
+        "play.ws.timeout.connection"                     -> "500ms"
       )
       .build()
 
@@ -99,7 +100,7 @@ class HttpHandlerSpec
 
           val result = sut.get[TestClass](url).futureValue
 
-          result mustBe AtsNotFoundResponse(NOT_FOUND.toString)
+          result mustBe an[AtsNotFoundResponse]
         }
       }
 
@@ -133,13 +134,14 @@ class HttpHandlerSpec
           result mustBe an[AtsErrorResponse]
         }
 
-        "the connector throws an exception" in {
-
+        "the connector times out" in {
           server.stubFor(
             get(anyUrl()).willReturn(
               aResponse()
-                .withFault(Fault.EMPTY_RESPONSE)
-            ))
+                .withStatus(OK)
+                .withBody(s"""{"str": "some body"}""")
+                .withFixedDelay(2000))
+          )
 
           val result = sut.get[TestClass](url).futureValue
 

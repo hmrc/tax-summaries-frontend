@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,18 @@ package controllers.paye
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
-import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.time.CurrentTaxYear
-import views.html.HowTaxIsSpentView
 import views.html.errors._
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class PayeErrorController @Inject()(
-  governmentSpendService: GovernmentSpendService,
-  payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
-  payeGenericErrorView: PayeGenericErrorView,
-  howTaxIsSpentView: HowTaxIsSpentView,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView)(
   implicit templateRenderer: TemplateRenderer,
@@ -48,24 +41,11 @@ class PayeErrorController @Inject()(
   val payeYear = appConfig.taxYear
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def genericError(status: Int): Action[AnyContent] = payeAuthAction { implicit request: PayeAuthenticatedRequest[_] =>
-    {
-      status match {
-        case INTERNAL_SERVER_ERROR => InternalServerError(payeGenericErrorView())
-        case _                     => BadGateway(payeGenericErrorView())
-      }
-    }
-  }
-
   def notAuthorised: Action[AnyContent] = Action { implicit request: Request[_] =>
-    {
-      Ok(payeNotAuthorisedView())
-    }
+    Ok(payeNotAuthorisedView())
   }
 
   def serviceUnavailable: Action[AnyContent] = Action { implicit request: Request[_] =>
-    {
-      Ok(payeServiceUnavailableView())
-    }
+    Ok(payeServiceUnavailableView())
   }
 }

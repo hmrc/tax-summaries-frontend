@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,8 @@
     <table>
         <thead>
             <tr>
-                <th scope="col">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
-                <th>@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</th>
+                <th scope="row">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
+                <td class="numeric">@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</td>
             </tr>
         </thead>
     </table>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
-import controllers.auth.{AuthAction, MergePageAuthAction, MinAuthAction}
+import controllers.auth.{MergePageAuthAction, MinAuthAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
@@ -34,7 +34,6 @@ import scala.concurrent.ExecutionContext
 
 class ErrorController @Inject()(
   governmentSpendService: GovernmentSpendService,
-  authAction: AuthAction,
   mergePageAuthAction: MergePageAuthAction,
   minAuthAction: MinAuthAction,
   mcc: MessagesControllerComponents,
@@ -49,16 +48,20 @@ class ErrorController @Inject()(
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    governmentSpendService.getGovernmentSpendFigures(taxYear) map { spendData =>
-      Ok(howTaxIsSpentView(spendData, taxYear))
-    } recover {
-      case e: IllegalArgumentException =>
-        logger.error(e.getMessage)
-        BadRequest(serviceUnavailableView())
-      case e =>
-        logger.error(e.getMessage)
-        InternalServerError(serviceUnavailableView())
-    }
+    governmentSpendService
+      .getGovernmentSpendFigures(taxYear)
+      .fold(
+        errorResponse => {
+          logger.error(errorResponse.message)
+          InternalServerError(serviceUnavailableView())
+        },
+        spendData =>
+          if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
+            Forbidden(serviceUnavailableView())
+          } else {
+            Ok(howTaxIsSpentView(spendData, taxYear))
+        }
+      )
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>

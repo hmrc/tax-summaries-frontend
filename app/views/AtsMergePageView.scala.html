@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,9 @@
         yearChoice => yearChoice -> yearChoice.getLabel
         ),
         '_fieldSetAttributes -> "id=year_field",
-        '_headingClass -> "heading-48"
+        '_headingClass -> "heading-48",
+        '_legend -> messages(atsMergePageViewModel.subtitleMsg),
+        '_legendClass -> "visuallyhidden"
         )
 
         @if(appConfig.saShuttered){
