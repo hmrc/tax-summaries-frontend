@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package views
 
 import controllers.auth.AuthenticatedRequest
+import models.ActingAsAttorneyFor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -49,6 +50,9 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
     totalIncomeTaxView(tax).body
 
   def view: String = view(testTotalIncomeTax)
+
+  def agentView: String =
+    totalIncomeTaxView(testTotalIncomeTax, Some(ActingAsAttorneyFor(Some("Agent"), Map()))).body
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
@@ -160,5 +164,18 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
           Amount.empty))
       view(data) mustNot include("total-uk-income-tax-amount")
     }
+
+    "not show account menu for agent" in {
+
+      val result = agentView
+      result must include("<div id=hideAccountMenu>true</div>")
+    }
+
+    "show account menu for non agent users" in {
+
+      val result = view
+      result must include("<div id=hideAccountMenu>false</div>")
+    }
+
   }
 }

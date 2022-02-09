@@ -1,38 +1,4 @@
-.percentage, .value {
-     display: block;
-     margin-bottom: 20px;
-     float: left;
-     width: 66.66%;
-}
-
-.percentage {
-     clear: both;
-     text-align: right;
-     margin-right: 10px;
-     width: 30%;
-}
-
-.value {
-     position: relative;
-     top: -25px;
-}
-
-.total {
-     top: 0;
-}
-
-.bar-chart {
-     position: relative;
-     top: 14px;
-     background-color: #28a197;
-     border: 2px solid #296969;
-     display: inline-block;
-     height: 40px;
-     margin-right: 10px;
-}
-
-
- #wrapper #content #user-info {
+#wrapper #content #user-info {
      float: right;
      clear: both;
      text-align: right;
@@ -259,28 +225,6 @@ h2, article h2 {
      text-decoration: none;
      overflow: hidden;
 }
-/*= Tax summary Magna charta ----------------------------------------------*/
- .mc-chart {
-     width: 90%;
-     margin-bottom:30px;
-     margin-top:30px;
-}
- @media (max-width: 640px) {
-     .mc-chart {
-         max-width: -moz-min-content;
-    }
-}
-
-#mc-chart .mc-tbody .mc-tr .mc-key-cell {
-     padding-right: 20px;
-}
- .mc-key-2 {
-    display: none !important;
-}
- .mc-bar-cell {
-     border: 2px solid #296969 !important;
-     font-weight: 700;
-}
 
  .gray {
      color: #6f777b;
@@ -371,6 +315,15 @@ h2, article h2 {
     margin-top: 2em;
 }
 
+
+#timeout-keep-signin-btn {
+    font-size: 19px;
+}
+
+#timeout-sign-out-link {
+    vertical-align: sub;
+}
+
 @media (max-width: 768px) {
    #global-header .header-proposition a.menu {
       display: none;
@@ -386,4 +339,45 @@ h2, article h2 {
           margin-left: 1em;
       }
    }
+}
+
+
+#tax-spent {
+        .content, #tax-spent-header, #tax-spent-footer {
+            display: flex;
+            flex-flow: row nowrap;
+            margin: 1em 0 0.2em;
+        }
+
+        .graph-green-bar {
+            border-bottom: 10px solid #28a197;
+        }
+
+        .graph-grey-bar {
+            border-top: 2px solid #b1b4b6;
+        }
+
+        dd {
+            flex-grow: 1;
+        }
+
+        dt {
+            flex-grow: 3;
+        }
+
+        dd {
+          text-align: right;
+        }
+
+        #tax-spent-header, #tax-spent-footer {
+            margin-top: 2em;
+        }
+
+        #tax-spent-footer.paye-tax-spent-footer {
+            margin-bottom: 2em;
+        }
+        
+        .heading-medium {
+            margin: 0;
+        }
 }

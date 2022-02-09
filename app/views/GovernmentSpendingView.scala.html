@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,62 +79,69 @@
                 <p class="lede">@Html(Messages("ats.treasury_spending.section.lede"))</p>
             }
 
-            <table id="tax-spent" aria-hidden="false">
-                <thead>
-                <tr>
-                    <th scope="col">@Html(Messages("generic.description"))</th>
-                    <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
-                </tr>
-                </thead>
-                <tbody>
+            <dl id="tax-spent">
+                <div id="tax-spent-header" class="heading-medium">
+                    <dt>@Html(Messages("generic.description"))</dt>
+                    <dd>@Html(Messages("generic.amount_pounds"))</dd>
+                </div>
 
                 @viewModel.filteredDataWithHigherTransport(appConfig).map {
                     case (key, value) => {
                         @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
+                            <div>
+                                <div class="content">
+                                    <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
+                                        <span>&nbsp;(@value.percentage%)</span>
+                                    </dt>
+                                    <dd>@currencyAmountView(value.amount, true)</dd>
+                                </div>
+                                <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                <div class="graph-grey-bar" aria-hidden="true"></div>
+                            </div>
                         } else {
-                        @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
-                        } else {
-                        @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
-                        } else {
-                        <tr>
-                            <td id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
-                                <span class="gray">(@value.percentage%)</span>
-                            </td>
-                            <td>@currencyAmountView(value.amount, true)</td>
-                        </tr>
+                            @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
+                                <div>
+                                    <div class="content">
+                                        <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
+                                            <span>&nbsp;(@value.percentage%)</span>
+                                        </dt>
+                                        <dd>@currencyAmountView(value.amount, true)</dd>
+                                    </div>
+                                    <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                    <div class="graph-grey-bar" aria-hidden="true"></div>
+                                </div>
+                            } else {
+                                @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
+                                    <div>
+                                        <div class="content">
+                                            <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
+                                                <span>&nbsp;(@value.percentage%)</span>
+                                            </dt>
+                                            <dd>@currencyAmountView(value.amount, true)</dd>
+                                        </div>
+                                        <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                        <div class="graph-grey-bar" aria-hidden="true"></div>
+                                    </div>
+                                } else {
+                                    <div>
+                                        <div class="content">
+                                            <dt id="@key">@Html(Messages(s"ats.treasury_spending.table.$key"))
+                                                <span>&nbsp;(@value.percentage%)</span>
+                                            </dt>
+                                            <dd>@currencyAmountView(value.amount, true)</dd>
+                                        </div>
+                                        <div class="graph-green-bar" style=width:@value.percentage%; aria-hidden="true"></div>
+                                        <div class="graph-grey-bar" aria-hidden="true"></div>
+                                    </div>
+                                }
+                            }
                         }
-                    } }
                     }
                 }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th scope="row" id="gov-spend-total">@Html(Messages("ats.treasury_spending.total"))</th>
-                        <td class="no-bold">@currencyAmountView(viewModel.totalAmount, true)</td>
-                    </tr>
-                </tfoot>
-            </table>
-            </div>
-            <script>
-                var chart_toggle_text = ['@Messages("ats.treasury_spending.table.link")', '@Messages("ats.treasury_spending.chart.link")'];
-                var chart_toggle_text_ga = ['View this information as a table', 'View this information as a chart'];
-            </script>
+
+                <div id="tax-spent-footer">
+                    <dt id="gov-spend-total" class="heading-medium">@Html(Messages("ats.treasury_spending.total"))</dt>
+                    <dd>@currencyAmountView(viewModel.totalAmount, true)</dd>
+                </div>
+            </dl>
 }

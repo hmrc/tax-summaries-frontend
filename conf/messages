@@ -436,3 +436,12 @@ merge.page.sa.utr.inactive.header = You need to request access to your Self Asse
 merge.page.sa.utr.inactive.text = To see your Self Assessment Annual Tax Summary you need to
 merge.page.sa.utr.inactive.link = request access to your Self Assessment.
 
+session_expired.title=For your security, we signed you out
+session_expired.guidance=The details you have given have been deleted because you did not continue the service for 15 minutes.
+
+timeout.dialog.title=You are about to be signed out
+timeout.dialog.message=You will be signed out for security reasons in
+timeout.dialog.minutes=minutes
+timeout.dialog.seconds=seconds
+timeout.dialog.keepAlive.button=Stay signed in
+timeout.dialog.signout.button=Sign out now

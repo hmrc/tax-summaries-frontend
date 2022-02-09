@@ -8,11 +8,10 @@ import com.typesafe.sbt.digest.Import._
 
 val appName = "tax-summaries-frontend"
 
-val silencerVersion = "1.7.0"
+val silencerVersion = "1.7.7"
 
 lazy val plugins: Seq[Plugins] = Seq(
   play.sbt.PlayScala,
-  SbtAutoBuildPlugin,
   SbtDistributablesPlugin,
   PlayNettyServer
 )
@@ -28,8 +27,6 @@ lazy val scoverageSettings = {
   )
 }
 
-lazy val root = (project in file(".")).enablePlugins(SbtWeb)
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
   .settings(
@@ -37,7 +34,7 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.devSettings += "play.server.provider" -> "play.core.server.NettyServerProvider",
     scoverageSettings,
     scalaSettings,
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.13",
     publishingSettings,
     defaultSettings(),
     majorVersion := 1,
@@ -47,13 +44,7 @@ lazy val microservice = Project(appName, file("."))
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(Resolver.jcenterRepo),
     Concat.groups := Seq(
-      "javascripts/ats-app.js" -> group(
-        Seq(
-          "javascripts/jquery.min.js",
-          "javascripts/jquery-ui.min.js",
-          "javascripts/magna-charta.js",
-          "javascripts/details.polyfill.js",
-          "javascripts/taxs.js"))
+      "javascripts/ats-app.js" -> group(Seq("javascripts/details.polyfill.js", "javascripts/taxs.js"))
     ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
       document.getElementById("UkContributionToEuBudget").text() mustBe "UK Contribution to the EU Budget (1%)"
       document.select("#UkContributionToEuBudget + dd").text() mustBe "£19"
 
-      document.select("#TotalAmount + dd").text() mustBe "£200"
+      document.select("#gov-spend-total + dd").text() mustBe "£200"
 
       document
         .select("h1")

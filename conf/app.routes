@@ -40,3 +40,6 @@ GET     /paye/tax-free-amount/:taxYear                         controllers.paye.
 GET     /paye/not-authorised                                   controllers.paye.PayeErrorController.notAuthorised
 
 GET     /paye/service-unavailable                              controllers.paye.PayeErrorController.serviceUnavailable
+
+GET     /keepalive                                             controllers.AccountController.keepAlive
+GET     /session-expired                                       controllers.AccountController.sessionExpired

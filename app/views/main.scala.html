@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@
     includeGridWrapper: Boolean = false,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
     gaDimensions: Option[Map[String, Any]] = None,
+    disableSessionExpired: Boolean = false,
     articleClasses: Option[String] = None
 )(
     mainContent: Html
@@ -73,11 +74,15 @@
 @linkElems = @{
     Seq(
         Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs.css")),
-        Map("url" -> controllers.routes.Assets.versioned("stylesheets/magna-charta/magna-charta.css")),
         Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-print.css"), "print" -> Some("print"))
     )
 }
 
+@inlineScript = {
+    @if(!disableSessionExpired) {
+        @includes.timeout_dialog(appConfig.sessionTimeoutInSeconds, appConfig.sessionCountdownInSeconds, messages)
+    }
+}
 
 @getHelpForm = {
     @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
@@ -126,10 +131,14 @@
         "feedbackIdentifier" -> appConfig.serviceIdentifier,
         "getHelpForm" -> getHelpForm,
         "navTitle" -> navTitle,
+        "navTitleLink" -> appConfig.homePageUrl,
+        "newGovukLogo" -> true,
+        "hideAccountMenu" -> actingAttorney.isDefined,
         "showPropositionLinks" -> true,
         "langSelector" -> languageSelectorLanguages,
         "headInlineScript" -> headInlineScript,
         "isSa" -> isSa,
+        "inlineScript" -> inlineScript,
         "isGovernmentGateway" -> isGovernmentGateway
     )
 

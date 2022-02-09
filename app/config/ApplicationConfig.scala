@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,15 +48,8 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
-  lazy val ssoUrl = Some(getConf("portal.ssoUrl"))
-
-  lazy val reportAProblemUrl = contactHost + getConf("contact-frontend.report-a-problem-url")
-  lazy val externalReportProblemUrl = s"$contactHost/contact/problem_reports"
-  lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val homePageUrl = "/annual-tax-summary/"
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
-
-  lazy val switchToPayeUrl = "/annual-tax-summary/paye/main"
-  lazy val switchToSAUrl = "/annual-tax-summary/"
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
@@ -99,6 +92,9 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
 
   val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
+
+  val sessionTimeoutInSeconds: String = config.getString("timeout.sessionTimeOut")
+  val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
 
   val accessibilityStatementToggle: Boolean = config.getBoolean("accessibility-statement.enabled")
   val accessibilityBaseUrl: String = config.getString(s"accessibility-statement.baseUrl")

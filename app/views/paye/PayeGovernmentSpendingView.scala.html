@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,60 +39,59 @@
 )
 
 @main(
-		title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-		articleClasses = Some("selectYear full-width")
+		title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 	) {
 
 	@backLinkView(Messages("generic.back"))
 
-	<div class="grid-row form-group">
-		<div class="column-two-thirds">
-			<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.treasury_spending.title"))</h1>
-			<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
-				htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-				htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
 
-				<p id="intro-paragraph">@Messages("paye.ats.treasury_spending.introParagraph")</p>
+		<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.treasury_spending.title"))</h1>
+		<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+
+		<p id="intro-paragraph">@Messages("paye.ats.treasury_spending.introParagraph")</p>
+
+
+		<dl id="tax-spent">
+			<div id="tax-spent-header" class="heading-medium">
+				<dt>@Html(Messages("generic.description"))</dt>
+				<dd>@Html(Messages("generic.amount_pounds"))</dd>
 			</div>
-	</div>
+			@for(rowModel <- viewModel.orderedSpendRows){
+				<div>
+					<div class="content">
+						<dt id="@rowModel.category">@Messages("paye.ats.treasury_spending.table." + rowModel.category)
+							<span>&nbsp;(@rowModel.spendData.percentage%)</span>
+						</dt>
+						<dd>&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
+					</div>
+					<div class="graph-green-bar" style="width: @{rowModel.spendData.percentage}%;" aria-hidden="true"></div>
+					<div class="graph-grey-bar" aria-hidden="true"></div>
+				</div>
+			}
+			<div id="tax-spent-footer" class="paye-tax-spent-footer">
+				<dt id="gov-spend-total" class="heading-medium">@Messages("paye.ats.treasury_spending.total")</dt>
+				<dd>&pound;@viewModel.totalAmount</dd>
+			</div>
+		</dl>
 
-	<dl class="form-group" id="bar-chart">
-	@for(rowModel <- viewModel.orderedSpendRows){
-		<dt class="percentage" id="@rowModel.category">@Messages("paye.ats.treasury_spending.table." + rowModel.category) (@rowModel.spendData.percentage%)</dt>
-		<dd class="value"><span class="bar-chart" aria-hidden="true" style="width: @{rowModel.spendData.percentage*2}%;"></span> <strong>&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</strong></dd>
-	}
-  	<dt class="percentage" id="TotalAmount">@Messages("paye.ats.treasury_spending.total")</dt>
-		<dd class="value total"><strong>&pound;@viewModel.totalAmount</strong></dd>
-	</dl>
 
-@if(isWelshTaxPayer){
-
-   <div class="grid-row">
-	  <div class="column-two-thirds">
-		<p id="welsh-tax-payer-paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
-		<p id="welsh-tax-payer-paragraph-1">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para1")</p>
-		<p id="welsh-tax-payer-paragraph-3">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para3")</p>
-		<p id="welsh-tax-payer-paragraph-4">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para4") <a href="@appConfig.calculateWelshIncomeTaxSpend" target="blank" rel="noopener noreferrer">@appConfig.calculateWelshIncomeTaxSpend</a></p>
-	  </div>
-   </div>
-
-} else {
-
-    <div class="grid-row">
-	   <div class="column-two-thirds">
-		 <p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
-		 <p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
-		 @if(viewModel.isScottish) {
-		   <p id="scottish-spending-link">@Messages("paye.ats.treasury_spending.scottish.spending.1")
-			   <a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
-			   @Messages("paye.ats.treasury_spending.scottish.spending.3")
-		   </p>
-		 }
-		 <p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
-		 <p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>
-	   </div>
-    </div>
-
-  }
-
+		@if(isWelshTaxPayer){
+			<p id="welsh-tax-payer-paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
+			<p id="welsh-tax-payer-paragraph-1">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para1")</p>
+			<p id="welsh-tax-payer-paragraph-3">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para3")</p>
+			<p id="welsh-tax-payer-paragraph-4">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para4") <a href="@appConfig.calculateWelshIncomeTaxSpend" target="blank" rel="noopener noreferrer">@appConfig.calculateWelshIncomeTaxSpend</a></p>
+		} else {
+			<p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
+			<p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
+			@if(viewModel.isScottish) {
+				<p id="scottish-spending-link">@Messages("paye.ats.treasury_spending.scottish.spending.1")
+					<a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
+					@Messages("paye.ats.treasury_spending.scottish.spending.3")
+				</p>
+			}
+			<p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
+			<p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>
+		}
 }
