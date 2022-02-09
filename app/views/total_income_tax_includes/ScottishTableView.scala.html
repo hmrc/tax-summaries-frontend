@@ -23,22 +23,22 @@
 
 @taxRow(id: String, tax: Amount, total: Amount, rate: Rate) = {
 @if(tax.nonZero) {
-    <tr>
-        <td>@Html(messages(s"ats.total_income_tax.scottish_income_tax.table.$id", viewUtils.toCurrency(total), rate.percent))</td>
-        <td id="scottish-income-rate-@id">@Html(viewUtils.toCurrency(tax))</td>
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell">@Html(messages(s"ats.total_income_tax.scottish_income_tax.table.$id", viewUtils.toCurrency(total), rate.percent))</td>
+        <td id="scottish-income-rate-@id" class="govuk-table__cell govuk-table__cell--numeric">@Html(viewUtils.toCurrency(tax))</td>
     </tr>
 }
 }
 
 @if(taxModel.hasTax) {
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">@Html(messages("ats.total_income_tax.scottish_income_tax"))</th>
-                <th scope="col">@Html(messages("generic.amount_pounds"))</th>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@Html(messages("ats.total_income_tax.scottish_income_tax"))</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(messages("generic.amount_pounds"))</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="govuk-table__body">
             @taxRow("starter", taxModel.scottishStarterIncomeTax, taxModel.scottishStarterIncomeTaxAmount, ratesModel.scottishStarterRate)
             @taxRow("basic", taxModel.scottishBasicIncomeTax, taxModel.scottishBasicIncomeTaxAmount, ratesModel.scottishBasicRate)
             @taxRow("intermediate", taxModel.scottishIntermediateIncomeTax, taxModel.scottishIntermediateIncomeTaxAmount, ratesModel.scottishIntermediateRate)
@@ -47,11 +47,11 @@
         </tbody>
     </table>
 
-    <table>
-        <thead>
-            <tr>
-                <th scope="row">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
-                <td class="numeric">@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</td>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@messages("ats.total_income_tax.scottish_income_tax.table.total")</th>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@Html(viewUtils.toCurrency(taxModel.scottishTotalTax))</td>
             </tr>
         </thead>
     </table>

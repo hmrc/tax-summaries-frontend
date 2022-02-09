@@ -67,7 +67,7 @@
     @if(!actingAttorney.isDefined) {
         @hmrcAccountMenu(AccountMenu(
                 businessTaxAccount = Some(BusinessTaxAccount()),
-                signOut = SignOut(href = controllers.routes.AccountController.signOut.url),
+                signOut = SignOut(href = controllers.routes.AccountController.sessionExpired.url),
                 language = if(messages.lang.code == "cy") Cy else En
             ).withUrlsFromConfig())
     }

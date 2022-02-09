@@ -53,6 +53,11 @@
         taxYear = viewModel.year,
         actingAsAttorney = actingAsAttorney
     )
+
+        <div class="print-this govuk-!-margin-top-0">
+        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
+        <a class="print-this__link" href="javascript:window.print()">@Messages("ats.treasury_spending.print.this.page")</a>
+    </div>
 }
 
 
@@ -61,11 +66,6 @@
     actingAttorney = actingAsAttorney,
     beforeContentHtml = Some(beforeContent)
 ) {
-
-    <div class="print-this govuk-!-margin-top-0">
-        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
-        <a class="print-this__link" href="javascript:window.print()">@Messages("ats.treasury_spending.print.this.page")</a>
-    </div>
 
     @pageHeading(
         text = "ats.summary.title",
@@ -76,7 +76,7 @@
 
     <section id="taxable-income">
 
-        @h2("ats.summary.total_income.title")
+        @h2("ats.summary.total_income.title", classes = Some("govuk-heading-l govuk-!-margin-bottom-4"))
 
         <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo" class="data-link">
             @linkSectionContents(Messages("screen.reader.total_income"), currencyAmountView(viewModel.yourIncomeBeforeTax), xLargeID="income-before-tax-amount", Messages("ats.summary.total_income.link"))
@@ -88,7 +88,7 @@
 
     <section id="tax-free-amount">
 
-        @h2("ats.summary.tax_free.title")
+        @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-l govuk-!-margin-bottom-4"))
 
         <a href="@controllers.routes.AllowancesController.authorisedAllowance?taxYear=@viewModel.taxYearTo" class="data-link">
             @linkSectionContents(Messages("screen.reader.tax_free_amount"), currencyAmountView(viewModel.totalTaxFreeAllowance), xLargeID="total-tax-free-amount", Messages("ats.summary.tax_free.link"))
@@ -100,7 +100,7 @@
 
         <section id="tax-calculated-as">
 
-            @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"))
+            @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-l govuk-!-margin-bottom-4"))
 
             <a href="@controllers.routes.NicsController.authorisedNics?taxYear=@viewModel.taxYearTo" class="data-link">
                 @linkSectionContents(Messages("screen.reader.income_tax_and_ni"), currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics), xLargeID="total-income-tax-and-nics", Messages("ats.summary.tax_and_nics.link"))
@@ -114,7 +114,7 @@
         @if(viewModel.hasTaxableGains) {
             <section id="capital-gains">
 
-                @h2("ats.summary.capital_gains.title")
+                @h2("ats.summary.capital_gains.title", classes = Some("govuk-heading-l govuk-!-margin-bottom-4"))
 
                 <a href="@controllers.routes.CapitalGainsTaxController.authorisedCapitalGains?taxYear=@viewModel.taxYearTo" class="data-link">
                     @linkSectionContents(Messages("screen.reader.capital_gains_tax"), currencyAmountView(viewModel.totalCapitalGainsTax), xLargeID="total-capital-gains-tax", Messages("ats.summary.capital_gains.link"))
@@ -129,10 +129,10 @@
 
         <section id="your-total-tax">
 
-            @h2("ats.summary.total_tax.your_total_tax")
+            @h2("ats.summary.total_tax.your_total_tax", classes = Some("govuk-heading-l govuk-!-margin-bottom-4"))
 
-            <p class="bold-xlarge">
-                <span class="govk-visually-hidden" id="total-tax-amount-description">
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-48 govuk-!-margin-bottom-1">
+                <span class="govuk-visually-hidden" id="total-tax-amount-description">
                 @if(lang.code == "cy-GB"){
                 @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)
                 } else {
