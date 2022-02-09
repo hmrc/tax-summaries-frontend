@@ -141,7 +141,7 @@ class AtsListService @Inject()(
       data.get
     }
 
-  private def sendAuditEvent(account: Option[TaxIdentifier], dataOpt: Either[Int, AtsListData])(
+  private def sendAuditEvent(account: Option[TaxIdentifier], dataOpt: Either[AtsResponse, AtsListData])(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[AuditResult] =
     (dataOpt, account: @unchecked) match {
