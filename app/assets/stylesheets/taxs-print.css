@@ -11,7 +11,7 @@
 #wrapper #content .page-header h1 {
   clear: right; }
 
-h1.heading-xlarge, .heading-48 {
+h1.heading-xlarge, .heading-48, .govuk-heading-xl{
     padding: 25px 0 15px !important;
 }
 
@@ -27,16 +27,16 @@ section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, 
 }
 
 
-p.lede {
+p.lede, p.govuk-body-l {
   margin: 0 0 30px 0;
   width: 75%;
 }
   @media (max-width: 640px) {
-    p.lede {
+    p.lede, p.govuk-body-l {
       font-size: 20px;
       line-height: 1.2; } }
 
-article p.lede {
+article p.lede, p.govuk-body-l {
   width: 100%; }
 
 .no-bold {
@@ -252,7 +252,7 @@ a[href]:after {
 
 /*= Print hidden
 ---------------------------------------------------------------------------*/
-.print-hidden, .header-wrapper, .service-info, .report-error, #english-switch, #welsh-switch, #continue, #secondary-nav, .hmrc-language-select, header  {
+.print-hidden, .header-wrapper, .service-info, .report-error, #english-switch, #welsh-switch, #continue, #secondary-nav, .hmrc-language-select, .govuk-header, footer, .hmrc-report-technical-issue, .govuk-phase-banner  {
     display: none !important;
 }
 
@@ -279,7 +279,7 @@ section[id] h2, article section[id] h2,
 #wrapper #content section {margin-bottom:5px;}
 
 #wrapper #content #user-info {margin-bottom:0;}
-.heading-medium {margin-bottom:5px;}
+.heading-medium, .govuk-heading-m{margin-bottom:5px;}
 #wrapper #content .page-header h1, #wrapper #content .heading-medium {margin-top:0;}
 
 a.data-link + p {margin-top:0; font-size:14px;}
