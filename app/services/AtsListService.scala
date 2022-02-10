@@ -68,10 +68,12 @@ class AtsListService @Inject()(
           }
         case _ =>
           if (isAgent(request)) {
+            println("Inside getAtsYearList.....isAgent(request).." + isAgent(request))
             dataCache.getAgentToken.flatMap { token =>
               getAtsListAndStore(token)
             }
           } else {
+            println("Inside getAtsYearList.....else isAgent(request).." + false)
             getAtsListAndStore()
           }
       }
@@ -96,8 +98,9 @@ class AtsListService @Inject()(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
     val account = getAccount(request)
+    println("Inside getAtsListAndStore....account.." + account)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
-
+    println("Inside getAtsListAndStore....requestedUTR.." + requestedUTR)
     val response = (account: @unchecked, requestedUTR) match {
       case (Some(agent: Uar), Some(saUtr)) => middleConnector.connectToAtsListOnBehalfOf(agent, saUtr)
       case (Some(individual: SaUtr), _)    => middleConnector.connectToAtsList(individual)

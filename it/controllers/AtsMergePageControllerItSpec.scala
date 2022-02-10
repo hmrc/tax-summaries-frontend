@@ -316,4 +316,43 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       }
     }
   }
+
+
+  "/income-before-tax for empty token" must {
+
+    lazy val url = s"/annual-tax-summary/paye/main"
+
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
+
+    lazy val backendUrlPaye = s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+
+    "return an OK response with empty token" in {
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlSa))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+      )
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlPaye))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+      )
+
+      val request = FakeRequest(GET, url)
+
+      val result = route(fakeApplication(), request)
+
+      result.map(status) mustBe Some(OK)
+
+      request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe Some("PORTAL")
+
+      request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
+
+    //  result.map(contentAsString) mustBe ""
+
+//      request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe Some("PORTAL")
+//
+//      request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
+    }
+  }
 }

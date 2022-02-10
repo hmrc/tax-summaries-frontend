@@ -18,6 +18,7 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import connectors.DataCacheConnector
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
@@ -28,11 +29,13 @@ import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MergePageAuthActionImpl @Inject()(
   citizenDetailsService: CitizenDetailsService,
+  dataCacheConnector: DataCacheConnector,
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends MergePageAuthAction with AuthorisedFunctions {
@@ -56,6 +59,28 @@ class MergePageAuthActionImpl @Inject()(
           }
 
           val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
+
+          if (isAgentActive) {
+
+            println("Inside None MergePageAuthAction.....isAgentActive..." + isAgentActive)
+
+            if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty) {
+
+              dataCacheConnector.getAgentToken map {
+                case None => {
+                  println("Inside None MergePageAuthAction.....")
+                  throw new RuntimeException("empty token")
+                }
+                case _ => {
+                  println(
+                    "Inside Some MergePageAuthAction..... dataCacheConnector.getAgentToken..." + dataCacheConnector.getAgentToken)
+                  println("Inside Some MergePageAuthAction.....")
+                  ""
+                }
+              }
+            }
+
+          }
 
           if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
             Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))

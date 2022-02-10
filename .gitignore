@@ -18,5 +18,5 @@ dist
 /.settings
 *.iws
 .DS_Store
-
+.bsp/
     

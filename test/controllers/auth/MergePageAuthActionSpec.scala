@@ -17,6 +17,7 @@
 package controllers.auth
 
 import config.ApplicationConfig
+import connectors.DataCacheConnector
 import models.MatchingDetails
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -55,6 +56,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
   val fakeCredentials = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
   val citizenDetailsService: CitizenDetailsService = mock[CitizenDetailsService]
+  val dataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
   val ggSignInUrl =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
@@ -65,6 +67,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
   override def beforeEach() = {
     reset(mockAuthConnector)
     reset(citizenDetailsService)
+    reset(dataCacheConnector)
   }
 
   "A user with no active session" must {
@@ -72,7 +75,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
@@ -85,7 +92,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
       val result = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -114,7 +125,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       when(citizenDetailsService.getMatchingDetails(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -145,7 +160,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       when(citizenDetailsService.getMatchingDetails(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -178,7 +197,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
 
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -208,7 +231,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         .thenReturn(retrievalResult)
 
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -238,7 +265,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         .thenReturn(retrievalResult)
 
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -266,7 +297,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         .thenReturn(retrievalResult)
 
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -295,7 +330,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         .thenReturn(retrievalResult)
 
       val authAction =
-        new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+        new MergePageAuthActionImpl(
+          citizenDetailsService,
+          dataCacheConnector,
+          mockAuthConnector,
+          new FakeMergePageAuthAction(true).mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -321,7 +360,11 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       .thenReturn(retrievalResult)
 
     val authAction =
-      new MergePageAuthActionImpl(citizenDetailsService, mockAuthConnector, new FakeMergePageAuthAction(true).mcc)
+      new MergePageAuthActionImpl(
+        citizenDetailsService,
+        dataCacheConnector,
+        mockAuthConnector,
+        new FakeMergePageAuthAction(true).mcc)
     val controller = new Harness(authAction)
 
     val ex = intercept[RuntimeException] {
