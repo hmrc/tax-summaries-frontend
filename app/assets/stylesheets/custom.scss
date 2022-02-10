@@ -257,7 +257,6 @@ h2, article h2 {
 }
  .print-this {
      border-bottom: 1px solid #000;
-     margin: 0 0 15px 0;
      position: relative;
      display: inline;
 }
@@ -360,10 +359,14 @@ h2, article h2 {
 
         dd {
             flex-grow: 1;
+            padding: 0;
+            margin: 0;
         }
 
         dt {
             flex-grow: 3;
+            padding: 0;
+            margin: 0;
         }
 
         dd {
@@ -374,7 +377,7 @@ h2, article h2 {
             margin-top: 2em;
         }
 
-        #tax-spent-footer.paye-tax-spent-footer {
+        #tax-spent-footer {
             margin-bottom: 2em;
         }
         
