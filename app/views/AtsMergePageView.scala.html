@@ -84,9 +84,10 @@
         @inputRadios(
             form = atsYearForm,
             legend = atsMergePageViewModel.subtitleMsg,
+            legendClasses = "govuk-visually-hidden",
             name = atsForms.yearChoice,
             items = radioItems(atsForms.yearChoice, atsMergePageViewModel.completeYearList.map(
-        yearChoice => yearChoice -> yearChoice.getLabel
+            yearChoice => yearChoice -> yearChoice.getLabel
         )),
             fieldSetAttrs = Map("id" ->"year_field")
         )
