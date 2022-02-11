@@ -11,7 +11,7 @@
 #wrapper #content .page-header h1 {
   clear: right; }
 
-h1.heading-xlarge, .heading-48, .govuk-heading-xl{
+h1.heading-xlarge, .heading-48 {
     padding: 25px 0 15px !important;
 }
 
@@ -301,4 +301,12 @@ a.data-link + p {margin-top:0; font-size:14px;}
 
 .print-this {
     display: none;
+}
+
+.govuk-\!-font-size-48 {
+  font-size: 2.5em !important;
+}
+
+.govuk-heading-l {
+  font-size: 2em !important;
 }
