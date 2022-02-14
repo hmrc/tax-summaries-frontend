@@ -39,6 +39,8 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
 
+    println("1" * 100)
+
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
@@ -46,6 +48,7 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
       .retrieve(
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.confidenceLevel) {
         case enrolments ~ Some(externalId) ~ Some(credentials) ~ confidenceLevel =>
+          println("2" * 100)
           val isSa = enrolments.getEnrolment("IR-SA").isDefined
           val isAgentActive: Boolean = enrolments.getEnrolment("IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
@@ -61,10 +64,13 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
               credentials,
               request))
 
-        case _ => throw new RuntimeException("Can't find credentials for user")
+        case _ =>
+          println("3" * 100)
+          throw new RuntimeException("Can't find credentials for user")
       }
   } recover {
     case _: NoActiveSession => {
+      println("3" * 100)
       lazy val ggSignIn = appConfig.loginUrl
       lazy val callbackUrl = appConfig.loginCallback
       Redirect(
@@ -76,7 +82,9 @@ class MinAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnect
       )
     }
 
-    case _: InsufficientEnrolments => throw InsufficientEnrolments("")
+    case _: InsufficientEnrolments =>
+      println("4" * 100)
+      throw InsufficientEnrolments("")
   }
 }
 

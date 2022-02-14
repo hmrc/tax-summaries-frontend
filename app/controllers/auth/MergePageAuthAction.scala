@@ -62,24 +62,33 @@ class MergePageAuthActionImpl @Inject()(
 
           if (isAgentActive) {
 
-            println("Inside None MergePageAuthAction.....isAgentActive..." + isAgentActive)
+            println("Inside MergePageAuthAction with Active Agent.....isAgentActive..." + isAgentActive)
+
+//            println(
+//              "Inside None MergePageAuthAction.....request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty..." + request
+//                .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+//                .isEmpty)
 
             if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty) {
 
               dataCacheConnector.getAgentToken map {
                 case None => {
-                  println("Inside None MergePageAuthAction.....")
-                  throw new RuntimeException("empty token")
+                  println("Inside None MergePageAuthAction.....empty token")
+
+                  Future(Redirect(controllers.routes.ErrorController.notAuthorised))
+                  //Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
+
                 }
                 case _ => {
-                  println(
-                    "Inside Some MergePageAuthAction..... dataCacheConnector.getAgentToken..." + dataCacheConnector.getAgentToken)
-                  println("Inside Some MergePageAuthAction.....")
+//                  println(
+//                    "Inside Some MergePageAuthAction..... dataCacheConnector.getAgentToken..." + dataCacheConnector.getAgentToken)
+//                  println("Inside Some MergePageAuthAction.....")
+                  println("Token is present in cache...")
                   ""
                 }
               }
             }
-
+            println("Token is not empty...")
           }
 
           if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
