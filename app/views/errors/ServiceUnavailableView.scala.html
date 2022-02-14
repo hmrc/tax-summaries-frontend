@@ -16,31 +16,29 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-
-@import views.html.main
-@import views.html.helpers.BackLinkView
+@import views.html.helpers.{backLink, H1, P}
 @import scala.concurrent.ExecutionContext
 
 @this(
-   main: main,
-   backLinkView: BackLinkView
+   main: mainNew,
+   backLink: backLink,
+   h1: H1,
+   p: P
 )
 
 @()(
-    implicit request: Request[_],
-    messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig,
-        ec: ExecutionContext
+   implicit request: Request[_],
+   messages: Messages,
+   appConfig: ApplicationConfig,
+   ec: ExecutionContext
 )
 
 
 @main(
-       title = Messages("ats.service_unavailable.title")
+       pageTitle = Messages("ats.service_unavailable.title")
     ) {
 
-  @backLinkView(Messages("generic.back"))
-  <h1 class="heading-xlarge">@Messages("ats.service_unavailable.heading")</h1>
-  <p>@Messages("ats.service_unavailable.paragraph")</p>
+  @backLink(href="")
+  @h1("ats.service_unavailable.heading")
+  @p(Text(Messages("ats.service_unavailable.paragraph")))
 }

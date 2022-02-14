@@ -16,31 +16,33 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-
-@import views.html.main
 @import scala.concurrent.ExecutionContext
+@import helpers.{H1, P, Link}
 
 @this(
-    main: main
+    main: mainNew,
+    h1: H1,
+    p: P,
+    link: Link
 )
 
 @()(
    implicit request: PayeAuthenticatedRequest[_],
    messages: Messages,
-   templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
    appConfig: ApplicationConfig,
         ec: ExecutionContext
 )
 
 
 @main(
-     title = Messages("global.error.InternalServerError500.title"),
-     articleClasses = Some("selectYear full-width")
+     pageTitle = Messages("global.error.InternalServerError500.title")
    ) {
 
-    <h1 class="heading-xlarge" id="generic-error-page-heading">@Html(Messages("global.error.InternalServerError500.title"))</h1>
+    @h1("global.error.InternalServerError500.title", elmId=Some("generic-error-page-heading"))
 
-    <p>@messages("global.error.InternalServerError500.message.you.can") <a href="@appConfig.contactHmrcPayeUrl">@messages("global.error.InternalServerError500.message.contact.hmrc")</a> @messages("global.error.InternalServerError500.message.by.phone.post")</p>
-
+    @p(HtmlContent(messages("global.error.InternalServerError500.message.you.can") + 
+                    link(link = appConfig.contactHmrcPayeUrl, messageKey = "global.error.InternalServerError500.message.contact.hmrc", inParagraph = true) +
+                    messages("global.error.InternalServerError500.message.by.phone.post")
+    ))
 
 }

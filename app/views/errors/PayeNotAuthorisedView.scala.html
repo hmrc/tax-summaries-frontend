@@ -15,28 +15,27 @@
  *@
 
 @import config.ApplicationConfig
-
-@import views.html.main
 @import scala.concurrent.ExecutionContext
+@import helpers.{H1, P}
 
 @this(
-    main: main
+    main: mainNew,
+    h1: H1,
+    p: P
 )
 
 @()(
     implicit request: Request[_],
     messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @main(
-      title = Messages("paye.not.authorised.title")
+      pageTitle = Messages("paye.not.authorised.title")
     ) {
 
-    <h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.not.authorised.h1"))</h1>
-    <p>@Html(Messages("paye.not.authorised.line1"))</p>
-    <p>@Html(Messages("paye.not.authorised.line2"))</p>
+    @h1("paye.not.authorised.h1")
+    @p(HtmlContent(Messages("paye.not.authorised.line1")))
+    @p(HtmlContent(Messages("paye.not.authorised.line2")))
 }
