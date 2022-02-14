@@ -66,7 +66,7 @@ class ErrorController @Inject()(
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>
     {
-      println("5"*100)
+      println("5" * 100)
       Ok(notAuthorisedView())
     }
 

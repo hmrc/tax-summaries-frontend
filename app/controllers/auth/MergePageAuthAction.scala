@@ -45,7 +45,7 @@ class MergePageAuthActionImpl @Inject()(
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(ConfidenceLevel.L50)
       .retrieve(
@@ -60,38 +60,40 @@ class MergePageAuthActionImpl @Inject()(
 
           val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
-          if (isAgentActive) {
+          val isAgentTokenMissing: Any = {
+            if (isAgentActive) {
 
-            println("Inside MergePageAuthAction with Active Agent.....isAgentActive..." + isAgentActive)
+              println("Inside MergePageAuthAction with Active Agent.....isAgentActive..." + isAgentActive)
 
-//            println(
-//              "Inside None MergePageAuthAction.....request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty..." + request
-//                .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
-//                .isEmpty)
+              //            println(
+              //              "Inside None MergePageAuthAction.....request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty..." + request
+              //                .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+              //                .isEmpty)
 
-            if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty) {
+              if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty) {
 
-              dataCacheConnector.getAgentToken map {
-                case None => {
-                  println("Inside None MergePageAuthAction.....empty token")
+                dataCacheConnector.getAgentToken map {
+                  case None => {
+                    println("Inside None MergePageAuthAction.....empty token")
 
-                  Future(Redirect(controllers.routes.ErrorController.notAuthorised))
-                  //Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
+                    Future(true)
+                    //Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
 
+                  }
+                  case _ => {
+                    //                  println(
+                    //                    "Inside Some MergePageAuthAction..... dataCacheConnector.getAgentToken..." + dataCacheConnector.getAgentToken)
+                    //                  println("Inside Some MergePageAuthAction.....")
+                    println("Token is present in cache...")
+                    Future(false)
+                  }
                 }
-                case _ => {
-//                  println(
-//                    "Inside Some MergePageAuthAction..... dataCacheConnector.getAgentToken..." + dataCacheConnector.getAgentToken)
-//                  println("Inside Some MergePageAuthAction.....")
-                  println("Token is present in cache...")
-                  ""
-                }
-              }
-            }
-            println("Token is not empty...")
+              } else { Future(false) }
+            } else { Future(false) }
           }
 
           if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
+            println("Token is not empty...")
             Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
           } else {
 
@@ -109,7 +111,11 @@ class MergePageAuthActionImpl @Inject()(
 
             if (agentRef.isDefined && !isAgentActive) {
               Future(Redirect(controllers.routes.ErrorController.notAuthorised))
+            } else if (isAgentActive && isAgentTokenMissing.equals(true)) {
+              println("Token is empty...")
+              Future(Redirect(controllers.routes.ErrorController.notAuthorised))
             } else if (saUtr.isEmpty && agentRef.isEmpty) {
+              println("Executing block even if Token is empty...1")
               nino
                 .map { n =>
                   handleResponse(authenticatedRequest, n).flatMap(
@@ -118,6 +124,7 @@ class MergePageAuthActionImpl @Inject()(
                 }
                 .getOrElse(block(authenticatedRequest))
             } else {
+              println("Executing block even if Token is empty...2")
               block(authenticatedRequest)
             }
           }
