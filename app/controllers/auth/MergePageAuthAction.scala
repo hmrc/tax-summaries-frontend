@@ -28,7 +28,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.Globals
 
@@ -139,10 +139,8 @@ class MergePageAuthActionImpl @Inject()(
       if (agentRef.isDefined && !isAgentActive) {
         Future(Redirect(controllers.routes.ErrorController.notAuthorised))
       } else if (isAgentActive && isAgentTokenMissing.equals(true)) {
-        println("Token is empty...")
         Future(Redirect(controllers.routes.ErrorController.notAuthorised))
       } else if (saUtr.isEmpty && agentRef.isEmpty) {
-        println("Executing block even if Token is empty...1")
         nino
           .map { n =>
             handleResponse(authenticatedRequest, n).flatMap(
@@ -151,7 +149,6 @@ class MergePageAuthActionImpl @Inject()(
           }
           .getOrElse(block(authenticatedRequest))
       } else {
-        println("Executing block even if Token is empty...2")
         block(authenticatedRequest)
       }
     }
