@@ -103,7 +103,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
         .select("h1")
         .text mustBe "How your tax was spent"
       document
-        .select("h2.heading-xlarge")
+        .select("h2.govuk-heading-m")
         .text mustBe s"6 April ${taxYear - 1} to 5 April $taxYear"
     }
 

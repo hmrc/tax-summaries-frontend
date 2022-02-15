@@ -52,7 +52,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
         .select("h1")
         .text mustBe "Tax-free amount"
       document
-        .select("h2.heading-xlarge")
+        .select("h2.govuk-heading-xl")
         .text mustBe "6 April 2018 to 5 April 2019"
     }
 

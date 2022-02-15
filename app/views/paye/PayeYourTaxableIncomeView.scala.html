@@ -19,64 +19,66 @@
 @import utils.HtmlFormatter
 @import view_models.paye.PayeYourTaxableIncome
 @import views.html.main
-@import views.html.helpers.BackLinkView
+@import views.html.helpers.{backLink, H1, H2, P}
 @import views.html.includes.CurrencyAmountView
 @import scala.concurrent.ExecutionContext
 
 @this(
-    main: main,
-    backLinkView: BackLinkView,
+    main: mainNew,
+    backLink: backLink,
     currencyAmountView: CurrencyAmountView,
-        htmlFormatter: HtmlFormatter
+    htmlFormatter: HtmlFormatter,
+    h1: H1,
+    h2: H2,
+    p: P
 )
 
 @(  viewModel:PayeYourTaxableIncome
     )(
     implicit messages: Messages,
     request: Request[_],
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 
 @main(
-        title = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+        pageTitle = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
     ) {
 
-	@backLinkView(Messages("paye.ats.income_before_tax.title"))
+	@backLink("")
 
 
-	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.income_before_tax.title"))</h1>
-    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+	@h1("paye.ats.income_before_tax.title")
+    @h2(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
-	<p id="income-before-tax-intro">@Messages("paye.ats.income_before_tax.intro")</p>
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)), 
+        classes = Some("govuk-heading-xl"))
+	@p(Text(Messages("paye.ats.income_before_tax.intro")), elmId=Some("income-before-tax-intro"))
 	
     @if(viewModel.incomeTaxRows.nonEmpty){
-        <table class="paye-ats-data-table" id="income-tax-table">
-            <caption class="visually-hidden">@Messages("paye.ats.income_before_tax.table_caption")</caption>
-            <thead>
-                <tr>
-                    <th scope="col">@Messages("ats.income_before_tax.table_header")</th>
-                    <th scope="col">@Messages("generic.amount_pounds")</th>
+        <table class="paye-ats-data-table govuk-table" id="income-tax-table">
+            <caption class="govuk-visually-hidden">@Messages("paye.ats.income_before_tax.table_caption")</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">@Messages("ats.income_before_tax.table_header")</th>
+                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">@Messages("generic.amount_pounds")</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="govuk-table__body">
             @for(row <- viewModel.incomeTaxRows) {
-                <tr id="@row.messageKey">
-                    <th scope="row">
+                <tr id="@row.messageKey" class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">
                         @Messages("paye.ats.income_before_tax." + row.messageKey)
                     </th>
-                    <td class="numeric">@currencyAmountView(row.value, true)</td>
+                    <td class="numeric" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.value, true)</td>
                 </tr>
             }
             </tbody>
             <tfoot id="income-before-tax-foot">
-                <tr>
-                    <th scope="row">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
-                    <td id="income-before-tax" class="no-bold">@currencyAmountView(viewModel.totalIncomeBeforeTax, true)</td>
+                <tr class="govuk-row">
+                    <th scope="row" class="govuk-table__header">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
+                    <td id="income-before-tax" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalIncomeBeforeTax, true)</td>
                 </tr>
             </tfoot>
         </table>
