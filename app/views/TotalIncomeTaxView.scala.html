@@ -86,7 +86,7 @@
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.basic",
                     """<span id="basic-rate-income-tax-before">"""+currencyAmountView(viewModel.basicRateIncomeTax)+"""</span>""",
                     """<span id="basic-rate-income-tax-rate">"""+viewModel.basicRateIncomeTaxRate+"""</span>"""))</td>
-              <td id="basic-rate-income-tax-amount" class="govuk-table__cell--numeric">@currencyAmountView(viewModel.basicRateIncomeTaxAmount)</td>
+              <td id="basic-rate-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.basicRateIncomeTaxAmount)</td>
             </tr>
             }
 
@@ -96,7 +96,7 @@
                 <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.higher",
                     """<span id="higher-rate-income-tax-before">"""+currencyAmountView(viewModel.higherRateIncomeTax)+"""</span>""",
                     """<span id="higher-rate-income-tax-rate">"""+viewModel.higherRateIncomeTaxRate+"""</span>"""))</td>
-              <td id="higher-rate-income-tax-amount" class="govuk-table govuk-table__cell--numeric">@currencyAmountView(viewModel.higherRateIncomeTaxAmount)</td>
+              <td id="higher-rate-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.higherRateIncomeTaxAmount)</td>
             </tr>
               }
 
@@ -105,7 +105,7 @@
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.additional",
                   """<span id="additional-rate-income-tax-before">"""+currencyAmountView(viewModel.additionalRateIncomeTax)+"""</span>""",
                   """<span id="additional-rate-income-tax-rate">"""+viewModel.additionalRateIncomeTaxRate+"""</span>"""))</td>
-              <td id="additional-rate-income-tax-amount" class="govuk-table__cell--numeric">@currencyAmountView(viewModel.additionalRateIncomeTaxAmount)</td>
+              <td id="additional-rate-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.additionalRateIncomeTaxAmount)</td>
             </tr>
               }
             }
@@ -133,7 +133,7 @@
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.basic",
                   """<span id="ordinary-rate-before">"""+currencyAmountView(viewModel.ordinaryRate)+"""</span>""",
                   """<span id="ordinary-rate-rate">"""+viewModel.ordinaryRateTaxRate+"""</span>"""))</td>
-              <td id="ordinary-rate-amount" class="govuk-table__cell--numeric">@currencyAmountView(viewModel.ordinaryRateAmount)</td>
+              <td id="ordinary-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.ordinaryRateAmount)</td>
             </tr>
             }
 
@@ -142,7 +142,7 @@
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.higher",
                   """<span id="upper-rate-before">"""+currencyAmountView(viewModel.upperRate)+"""</span>""",
                   """<span id="upper-rate-rate">"""+viewModel.upperRateRate+"""</span>"""))</td>
-              <td id="upper-rate-amount" class="govuk-table__cell--numeric">@currencyAmountView(viewModel.upperRateAmount)</td>
+              <td id="upper-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.upperRateAmount)</td>
             </tr>
             }
 
@@ -151,7 +151,7 @@
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.additional",
                   """<span id="additional-rate-before">"""+currencyAmountView(viewModel.additionalRate)+"""</span>""",
                   """<span id="additional-rate-rate">"""+viewModel.additionalRateRate+"""</span>"""))</td>
-              <td id="additional-rate-amount" class="govuk-table__cell--numeric">@currencyAmountView(viewModel.additionalRateAmount)</td>
+              <td id="additional-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.additionalRateAmount)</td>
             </tr>
             }
           </tbody>
@@ -174,7 +174,7 @@
           <thead class="govuk-table__head">
             <tr id="adjustments-section" class="govuk-table__row">
               <th scope="col" class="govuk-table__header">@Html(Messages("ats.total_income_tax.adjustments"))</th>
-              <th scope="col" class="govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
             </tr>
           </thead>
 
@@ -189,7 +189,7 @@
             @if(!viewModel.marriageAllowanceReceivedAmount.isZero) {
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
-              <td id="marriage-allowance-received-amount" class="govuk-table__cell--numeric">@currencyAmountView(viewModel.marriageAllowanceReceivedAmount)</td>
+              <td id="marriage-allowance-received-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.marriageAllowanceReceivedAmount)</td>
             </tr>
             }
 

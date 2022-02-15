@@ -62,7 +62,7 @@
     <section id="taxable-income">
         @h2("paye.ats.summary.total_income.title")
         <p>
-            <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="govuk-link">
+            <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = currencyAmountView(viewModel.incomeBeforeTax, true), 
                                     xLargeID="income-before-tax-amount", 
                                     smallText = Messages("paye.ats.summary.total_income.link"))
@@ -74,19 +74,19 @@
     <section id="tax-free-amount">
         @h2("paye.ats.summary.tax_free.title")
         <p>
-            <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="govuk-link">
+            <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = currencyAmountView(viewModel.taxableIncome, true), 
                                     xLargeID="total-tax-free-amount", 
                                     smallText = Messages("paye.ats.summary.tax_free.link"))
             </a>
         </p>
-        <p>@Html(Messages("paye.ats.summary.tax_free.description"))</p>
+        @p(HtmlContent(Messages("paye.ats.summary.tax_free.description")))
     </section>
 
     <section id="tax-calculated-as">
         @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
-            <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="govuk-link">
+            <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = currencyAmountView(viewModel.totalIncomeTax, true), 
                                     xLargeID="total-income-tax-and-nics", 
                                     smallText = Messages("paye.ats.summary.tax_and_nics.link"))

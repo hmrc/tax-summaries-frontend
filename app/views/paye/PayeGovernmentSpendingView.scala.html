@@ -17,7 +17,7 @@
 @import config.ApplicationConfig
 @import view_models.paye.PayeGovernmentSpend
 @import utils.HtmlFormatter
-@import helpers.{H1, P, Link, Button, PageHeading}
+@import helpers.{H1, P, Link, Button, PageHeading, backLink}
 @import scala.concurrent.ExecutionContext
 
 @this(
@@ -25,7 +25,8 @@
 	h1: H1,
 	p: P,
 	link: Link,
-	htmlFormatter: HtmlFormatter
+	htmlFormatter: HtmlFormatter,
+	backLink: backLink
 )
 
 @(	viewModel:PayeGovernmentSpend,
@@ -41,7 +42,7 @@
 		pageTitle = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 	) {
 
-
+		@backLink("")
 
 		@h1("paye.ats.treasury_spending.title")
 		<h2 class="govuk-heading-m">@Html(Messages("paye.generic.tax_year_heading",

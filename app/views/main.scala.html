@@ -51,7 +51,7 @@
     <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")' media="print"/>
     @if(!disableSessionExpired){
         @hmrcTimeoutDialogHelper(
-            signOutUrl = routes.AccountController.signOut.url,
+            signOutUrl = controllers.routes.AccountController.sessionExpired.url,
             keepAliveUrl = Some("/keep-alive")
         )
     }
@@ -64,10 +64,10 @@
 }
 
 @beforeContent = {
-    @if(!actingAttorney.isDefined) {
+    @if(!actingAttorney.isDefined && !disableSessionExpired) {
         @hmrcAccountMenu(AccountMenu(
                 businessTaxAccount = Some(BusinessTaxAccount()),
-                signOut = SignOut(href = controllers.routes.AccountController.sessionExpired.url),
+                signOut = SignOut(href = routes.AccountController.signOut.url),
                 language = if(messages.lang.code == "cy") Cy else En
             ).withUrlsFromConfig())
     }
@@ -79,23 +79,25 @@
 
 @contentBlock = {
     @content
-    @hmrcReportTechnicalIssue(ReportTechnicalIssue(
-        serviceId = appConfig.contactFormServiceIdentifier,
-        language = if(messages.lang.code == "cy") Cy else En,
-        referrerUrl = Some(request.uri),
-        baseUrl = Some(appConfig.reportAProblemPartialUrl),
-        classes = Some("govuk-!-margin-bottom-8")
-    ))
-    <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m">
-    @govukPhaseBanner(PhaseBanner(
-        tag = Some(Tag(
-            content = Text("beta")
-        )),
-        content = HtmlContent(messages("betaBanner.message",
-                link(link=appConfig.betaFeedbackUrl,
-                    messageKey="betaBanner.linkText",
-                    inParagraph = true)))
-    ))
+    @if(!disableSessionExpired) {
+        @hmrcReportTechnicalIssue(ReportTechnicalIssue(
+            serviceId = appConfig.contactFormServiceIdentifier,
+            language = if(messages.lang.code == "cy") Cy else En,
+            referrerUrl = Some(request.uri),
+            baseUrl = Some(appConfig.reportAProblemPartialUrl),
+            classes = Some("govuk-!-margin-bottom-8")
+        ))
+        <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m">
+        @govukPhaseBanner(PhaseBanner(
+            tag = Some(Tag(
+                content = Text("beta")
+            )),
+            content = HtmlContent(messages("betaBanner.message",
+                    link(link=appConfig.betaFeedbackUrl,
+                        messageKey="betaBanner.linkText",
+                        inParagraph = true)))
+        ))
+    }
 }
 
 @fullPageTitle = @{

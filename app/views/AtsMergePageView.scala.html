@@ -68,7 +68,7 @@
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent)
 ) {
-    @errorSummary(atsYearForm)
+    @errorSummary(atsYearForm, Some("year-2021-NoATS"))
 
     @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
         @pageHeading(

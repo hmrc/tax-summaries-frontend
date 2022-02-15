@@ -47,7 +47,7 @@
 
     @backLink(href = "")
 
-	@h1("paye.ats.total_income_tax.title"))
+	@h1("paye.ats.total_income_tax.title")
     @h2(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))
@@ -95,7 +95,7 @@
                 <th scope="row" class="govuk-table__header">
                     @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
                 </th>
-                <td class="numeric" class="govuk-table__cell govuk-table__cell-numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
             </tr>
             }
             </tbody>
@@ -145,7 +145,7 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">@Messages("paye.ats.adjustments")</th>
-                    <th scope="col" class="govuk-table__header--numeric">@Messages("generic.amount_pounds")</th>
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Messages("generic.amount_pounds")</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
