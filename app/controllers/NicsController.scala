@@ -22,7 +22,6 @@ import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, SummaryService}
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.GenericViewModel
 import view_models.Summary
 import views.html.NicsView
@@ -37,10 +36,7 @@ class NicsController @Inject()(
   mcc: MessagesControllerComponents,
   nicsView: NicsView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit override val templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  tokenErrorView: TokenErrorView)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedNics: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>

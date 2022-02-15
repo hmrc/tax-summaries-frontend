@@ -16,15 +16,13 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-@import uk.gov.hmrc.play.views.html.helpers._
 @import view_models.AtsForms
 @import view_models.AtsMergePageViewModel
 @import scala.concurrent.ExecutionContext
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import helpers.{H1, P, Link, Button, InputRadios, ErrorSummary, PageHeading, HeaderSection}
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     atsForms: AtsForms,
     formWithCSRF: FormWithCSRF,
@@ -43,7 +41,6 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
     ec : ExecutionContext
 )

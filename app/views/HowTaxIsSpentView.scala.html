@@ -15,13 +15,12 @@
  *@
 
 @import config.ApplicationConfig
-@import views.html.main
 @import views.html.helpers.HeaderSection
 @import scala.concurrent.ExecutionContext
 @import helpers.{HeaderSection,backLink, H1, P}
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     h1: H1,
     p: P,
@@ -33,9 +32,8 @@
     )(
     implicit request: Request[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+ec: ExecutionContext
 )
 
 @main(

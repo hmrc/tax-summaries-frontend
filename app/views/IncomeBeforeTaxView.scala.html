@@ -21,7 +21,7 @@
 @import helpers.{PageHeading, P, HeaderSection}
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     currencyAmountView: CurrencyAmountView,
     pageHeading: PageHeading,
@@ -33,9 +33,8 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @beforeContent = {

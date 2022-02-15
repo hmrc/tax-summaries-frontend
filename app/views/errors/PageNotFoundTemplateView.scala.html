@@ -19,7 +19,7 @@
 @import helpers.{H1, P, Link}
 
 @this(
-    main: mainNew,
+    main: main,
     h1: H1,
     p: P,
     link: Link
@@ -29,10 +29,8 @@
     )(
     implicit request: Request[_],
     messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @anchor(text: String, url: String) = {@link(link = url, messageKey = text, attrTarget=true, inParagraph=true)}

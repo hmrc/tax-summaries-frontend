@@ -169,7 +169,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + dd").text() mustBe "£23,912.00"
       document
-        .select("h1")
+        .select("header[data-component='ats_page_heading']")
         .text mustBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
     }
 

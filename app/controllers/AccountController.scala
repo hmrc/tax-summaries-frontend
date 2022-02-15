@@ -20,16 +20,13 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.renderer.TemplateRenderer
 import views.html.session_expired
-import uk.gov.hmrc.renderer.TemplateRenderer
-
 import scala.concurrent.ExecutionContext
 
 class AccountController @Inject()(
   mcc: MessagesControllerComponents,
   sessionExpiredView: session_expired
-)(implicit val templateRenderer: TemplateRenderer, appConfig: ApplicationConfig, ec: ExecutionContext)
+)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) {
 
   def signOut: Action[AnyContent] = Action {

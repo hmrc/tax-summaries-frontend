@@ -24,7 +24,7 @@
 @import scala.concurrent.ExecutionContext
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
@@ -38,9 +38,8 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @beforeContent = {

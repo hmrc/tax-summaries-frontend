@@ -19,8 +19,8 @@
 @import config.ApplicationConfig
 @import helpers.{H1, P}
 
-@this(main: mainNew, h1: H1, p: P)
-@()(implicit request: Request[_], templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, messages: Messages, appConfig: ApplicationConfig, ec: ExecutionContext)
+@this(main: main, h1: H1, p: P)
+@()(implicit request: Request[_], messages: Messages, appConfig: ApplicationConfig, ec: ExecutionContext)
 
 
 @main(

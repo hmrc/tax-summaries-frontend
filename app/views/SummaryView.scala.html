@@ -17,12 +17,11 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import views.html.includes.CurrencyAmountView
-@import views.html.main
 @import views.html.helpers.{PageHeading, HeaderSection, H2, P, Link}
 @import scala.concurrent.ExecutionContext
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     currencyAmountView: CurrencyAmountView,
     pageHeading: PageHeading,
@@ -35,7 +34,6 @@
     )(
     implicit lang: Lang, request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
         ec: ExecutionContext
 )
@@ -155,6 +153,6 @@
 
 @linkSectionContents(hiddenText: String, xLargeText: Html, xLargeID: String, smallText: String) = {
     <span class="govuk-visually-hidden">@Html(hiddenText) </span>
-    <span class="govuk-link govuk-link--no-underline govuk-!-font-weight-bold govuk-!-font-size-48" id=@xLargeID>@xLargeText</span><br>
-    <span class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-16" aria-hidden="true">@Html(smallText)</span>
+    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-48" id=@xLargeID>@xLargeText</span><br>
+    <span class="govuk-link govuk-!-font-weight-bold govuk-link--no-visited-state govuk-!-font-size-16" aria-hidden="true">@Html(smallText)</span>
 }

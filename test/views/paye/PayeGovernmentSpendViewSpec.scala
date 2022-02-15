@@ -27,7 +27,6 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeGovernmentSpendingView

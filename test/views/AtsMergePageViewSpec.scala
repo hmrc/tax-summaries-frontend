@@ -69,12 +69,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     FakeRequest("Get", s"?taxYear=$taxYear"))
 
   def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
-    atsMergePageView(model, form)(implicitly, implicitly, implicitly, mockAppConfig, implicitly).body
+    atsMergePageView(model, form)(implicitly, implicitly, mockAppConfig, implicitly).body
 
   def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(
     implicit request: AuthenticatedRequest[_]): String =
     atsMergePageView(model, form, Some(ActingAsAttorneyFor(Some("Agent"), Map())))(
-      implicitly,
       implicitly,
       implicitly,
       mockAppConfig,

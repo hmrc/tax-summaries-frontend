@@ -18,12 +18,11 @@
 @import config.ApplicationConfig
 @import utils.ViewUtils
 @import views.html.includes.CurrencyAmountView
-@import views.html.main
 @import scala.concurrent.ExecutionContext
 @import helpers.{HeaderSection, PageHeading, P}
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     currencyAmountView: CurrencyAmountView,
     viewUtils: ViewUtils,
@@ -36,9 +35,8 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @beforeContent = {

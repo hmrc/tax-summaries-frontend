@@ -18,13 +18,12 @@
 @import view_models.paye.PayeYourIncomeAndTaxes
 @import controllers.auth.PayeAuthenticatedRequest
 @import utils.HtmlFormatter
-@import views.html.main
 @import views.html.helpers.{backLink, H1, H2, P, Link}
 @import views.html.includes.CurrencyAmountView
 @import scala.concurrent.ExecutionContext
 
 @this(
-    main: mainNew,
+    main: main,
     backLink: backLink,
     currencyAmountView: CurrencyAmountView,
     htmlFormatter: HtmlFormatter,

@@ -17,13 +17,12 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import views.html.includes.CurrencyAmountView
-@import views.html.main
 @import views.html.helpers.HeaderSection
 @import scala.concurrent.ExecutionContext
 @import helpers.{H1, P, Link, Button, PageHeading}
 
 @this(
-    main: mainNew,
+    main: main,
     headerSection: HeaderSection,
     h1: H1,
     p: P,
@@ -37,7 +36,6 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
         ec: ExecutionContext
 )
