@@ -56,8 +56,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
-  lazy val assetsPrefix = config.getString(s"assets.url") + config.getString(s"assets.version") + '/'
-
   // External urls
   lazy val loginCallback = getConf(s"login-callback.url")
   lazy val loginUrl = getConf("login.url")
@@ -81,9 +79,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
   lazy val govUkServiceManual: String = getConf("govUkServiceManual.url")
-
-  lazy val frontendTemplatePath: String =
-    config.getString("microservice.services.frontend-template-provider.path")
 
   //Application name
   lazy val appName = config.getString("appName")
