@@ -44,7 +44,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
-        @backLink(href="")
+        @backLink(href="", attrs = Map("data-journey-click" -> s"""link-click:$pageHeading:${messages("site.back")}"""))
     </div>
     @if(!actingAsAttorney.isDefined && utr.nonEmpty){
         <div class="govuk-grid-column-one-half govuk-!-text-align-right">
