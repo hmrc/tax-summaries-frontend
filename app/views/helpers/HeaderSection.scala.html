@@ -36,15 +36,13 @@
     appConfig: ApplicationConfig
 )
 
-
-
 @if(actingAsAttorney.isDefined) {
     @attorneyBanner(actingAsAttorney)
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
-        @backLink(href="", attrs = Map("data-journey-click" -> s"""link-click:$pageHeading:${messages("site.back")}"""))
+        <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
     </div>
     @if(!actingAsAttorney.isDefined && utr.nonEmpty){
         <div class="govuk-grid-column-one-half govuk-!-text-align-right">
