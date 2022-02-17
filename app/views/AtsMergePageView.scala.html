@@ -116,7 +116,9 @@
         RadioItem(
                     content = Text(label),
                     value = Some(AtsYearChoice.toString(value)),
-                    id = Some(s"${name}-${value.year}-${value.atsType}")
+                    id = Some(s"${name}-${value.year}-${value.atsType}"),
+                    label = Some(Label(content = Text(label),
+                                attributes = Map("id" -> s"${name}-${value.year}-${value.atsType}-label")))
                 )
     }
 }
