@@ -100,10 +100,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .select("h1")
-        .text mustBe "How your tax was spent"
-      document
-        .select("h2.govuk-heading-m")
-        .text mustBe s"6 April ${taxYear - 1} to 5 April $taxYear"
+        .text mustBe s"How your tax was spent 6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {
