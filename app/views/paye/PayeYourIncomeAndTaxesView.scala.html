@@ -53,10 +53,9 @@
         <a class="print-this__link" href="javascript:window.print()">@Messages("ats.treasury_spending.print.this.page")</a>
     </div>
 
-	@h1("paye.ats.summary.title")
-    @h2(Messages("paye.generic.tax_year_heading",
+	@h1("paye.ats.summary.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)), classes = Some("govuk-heading-xl"))
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
     @p(HtmlContent(Messages("paye.ats.summary.lede")))
 
     <section id="taxable-income">
@@ -97,12 +96,12 @@
 
     <section id="income_after_tax_and_nics">
         @h2("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg")
-        <span class="govuk-heading-xl" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, true)</span>
+        <span class="govuk-heading-l" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, true)</span>
     </section>
 
 }
 
 @linkSectionContents(xLargeText: Html, xLargeID: String, smallText: String) = {
-    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-48" id=@xLargeID>@xLargeText</span><br>
+    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-24" id=@xLargeID>@xLargeText</span><br>
     <span class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-16" aria-hidden="true">@Html(smallText)</span>
 }

@@ -47,10 +47,10 @@
 
     @backLink(href = "")
 
-	@h1("paye.ats.total_income_tax.title")
-    @h2(Messages("paye.generic.tax_year_heading",
+	@h1("paye.ats.total_income_tax.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
+        
 	@p(Text(Messages("paye.ats.total_income_tax.introParagraph")), elmId=Some("intro-paragraph"))
 
   @if(viewModel.scottishTaxBands.nonEmpty){

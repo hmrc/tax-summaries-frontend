@@ -42,12 +42,11 @@
 		pageTitle = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 	) {
 
-		@backLink("")
+		@backLink("#")
 
-		@h1("paye.ats.treasury_spending.title")
-		<h2 class="govuk-heading-m">@Html(Messages("paye.generic.tax_year_heading",
+		@h1(msg = "paye.ats.treasury_spending.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
 			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
 
         @p(Text(messages("paye.ats.treasury_spending.introParagraph")), elmId=Some("intro-paragraph"))
 
@@ -58,15 +57,15 @@
 				<dd class="govuk-summary-list__value">@Html(Messages("generic.amount_pounds"))</dd>
 			</div>
 			@for(rowModel <- viewModel.orderedSpendRows){
-				<div class="govuk-summary-list__row--no-actions">
-					<div class="content">
-						<dt id="@rowModel.category" class="govuk-summary-list__key">@Messages("paye.ats.treasury_spending.table." + rowModel.category)
-							<span>&nbsp;(@rowModel.spendData.percentage%)</span>
-						</dt>
-						<dd class="govuk-summary-list__value">&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
-					</div>
-					<div class="graph-green-bar" style="width: @{rowModel.spendData.percentage}%;" aria-hidden="true"></div>
-					<div class="graph-grey-bar" aria-hidden="true"></div>
+				<div class="govuk-summary-list__row--no-actions content">
+					<dt id="@rowModel.category" class="govuk-summary-list__key">@Messages("paye.ats.treasury_spending.table." + rowModel.category)
+						<span>&nbsp;(@rowModel.spendData.percentage%)</span>
+					</dt>
+					<dd class="govuk-summary-list__value">&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
+				</div>
+				<div aria-hidden="true">
+					<dt class="graph-green-bar" style="width: @{rowModel.spendData.percentage}%;"></dt>
+					<dd class="graph-grey-bar"></dd>
 				</div>
 			}
 			<div id="tax-spent-footer" class="paye-tax-spent-footer">
