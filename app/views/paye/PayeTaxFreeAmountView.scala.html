@@ -60,9 +60,9 @@
 		<tbody class="govuk-table__body">
 		@for(row <- viewModel.adjustmentRows) {
 		<tr id="@row.label" class="govuk-table__row">
-			<th scope="row" class="govuk-table__header">
+			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
-			</th>
+			</td>
 			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, true)</td>
 		</tr>
 		}
@@ -89,9 +89,9 @@
 		<tbody class="govuk-table__body">
 		@for(row <- viewModel.summaryRows) {
 		<tr id="@row.label" class="govuk-table__row">
-			<th scope="row" class="govuk-table__header">
+			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
-			</th>
+			</td>
 			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, true)</td>
 		</tr>
 		}

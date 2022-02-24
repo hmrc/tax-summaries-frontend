@@ -108,15 +108,15 @@
 
               @if(viewModel.rpciLowerTax.nonZero) {
               <tr class="govuk-table__row">
-                <td class="width80 govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
-                <td id="rpci-lower-rate-amount" class="width20 govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.rpciLowerTax)</td>
+                <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
+                <td id="rpci-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.rpciLowerTax)</td>
               </tr>
               }
 
               @if(viewModel.rpciHigherTax.nonZero) {
                 <tr class="govuk-table__row">
-                    <td class="width80 govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
-                    <td id="rpci-higher-rate-amount" class="width20 govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.rpciHigherTax)</td>
+                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
+                    <td id="rpci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.rpciHigherTax)</td>
                 </tr>
               }
 

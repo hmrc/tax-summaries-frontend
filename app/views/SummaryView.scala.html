@@ -72,7 +72,7 @@
 
     @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
 
-    <section id="taxable-income">
+    <div id="taxable-income" class="incomeTaxesSection">
 
         @h2("ats.summary.total_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -82,9 +82,9 @@
 
         @p(HtmlContent(Messages("ats.summary.total_income.description")))
 
-    </section>
+    </div>
 
-    <section id="tax-free-amount">
+    <div id="tax-free-amount" class="incomeTaxesSection">
 
         @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -94,9 +94,9 @@
 
         @p(HtmlContent(Messages("ats.summary.tax_free.description")))
 
-    </section>
+    </div>
 
-        <section id="tax-calculated-as">
+        <div id="tax-calculated-as" class="incomeTaxesSection">
 
             @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -106,11 +106,11 @@
 
             @p(HtmlContent(Messages("ats.summary.tax_and_nics.description")))
 
-        </section>
+        </div>
 
 
         @if(viewModel.hasTaxableGains) {
-            <section id="capital-gains">
+            <div id="capital-gains" class="incomeTaxesSection">
 
                 @h2("ats.summary.capital_gains.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -122,10 +122,10 @@
                     @p(HtmlContent(Messages("ats.summary.capital_gains.description")), elmId = Some("total-cg-description"))
                 }
 
-            </section>
+            </div>
         }
 
-        <section id="your-total-tax">
+        <div id="your-total-tax" class="incomeTaxesSection">
 
             @h2("ats.summary.total_tax.your_total_tax", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -139,7 +139,7 @@
                 <span id="total-tax-amount" aria-hidden="true">@currencyAmountView(viewModel.yourTotalTax)</span>
             </p>
 
-            <p id="total-tax-description" class="govuk-body-s govuk-!-font-weight-bold" aria-hidden="true">
+            <p id="total-tax-description" class="govuk-body-m govuk-!-font-weight-bold" aria-hidden="true">
                 @if(lang.code == "cy-GB"){
                 @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
                 } else {
@@ -148,11 +148,11 @@
                 }
             </p>
 
-        </section>
+        </div>
 }
 
 @linkSectionContents(hiddenText: String, xLargeText: Html, xLargeID: String, smallText: String) = {
     <span class="govuk-visually-hidden">@Html(hiddenText) </span>
-    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-24" id=@xLargeID>@xLargeText</span><br>
-    <span class="govuk-link govuk-!-font-weight-bold govuk-link--no-visited-state govuk-!-font-size-16" aria-hidden="true">@Html(smallText)</span>
+    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-36" id=@xLargeID>@xLargeText</span><br>
+    <span class="govuk-link govuk-!-font-weight-bold govuk-link--no-visited-state govuk-!-font-size-19" aria-hidden="true">@Html(smallText)</span>
 }

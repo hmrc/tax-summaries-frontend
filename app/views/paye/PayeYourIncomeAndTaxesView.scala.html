@@ -58,7 +58,7 @@
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
     @p(HtmlContent(Messages("paye.ats.summary.lede")))
 
-    <section id="taxable-income">
+    <div id="taxable-income" class="incomeTaxesSection">
         @h2("paye.ats.summary.total_income.title")
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
@@ -68,9 +68,9 @@
             </a>
         </p>
         @p(HtmlContent(Messages("paye.ats.summary.total_income.description")))
-    </section>
+    </div>
 
-    <section id="tax-free-amount">
+    <div id="tax-free-amount" class="incomeTaxesSection">
         @h2("paye.ats.summary.tax_free.title")
         <p>
             <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
@@ -80,9 +80,9 @@
             </a>
         </p>
         @p(HtmlContent(Messages("paye.ats.summary.tax_free.description")))
-    </section>
+    </div>
 
-    <section id="tax-calculated-as">
+    <div id="tax-calculated-as" class="incomeTaxesSection">
         @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
             <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
@@ -92,16 +92,16 @@
             </a>
         </p>
         @govukInsetText(InsetText(content = Text(Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate))))
-    </section>
+    </div>
 
-    <section id="income_after_tax_and_nics">
+    <div id="income_after_tax_and_nics" class="incomeTaxesSection">
         @h2("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg")
         <span class="govuk-heading-l" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, true)</span>
-    </section>
+    </div>
 
 }
 
 @linkSectionContents(xLargeText: Html, xLargeID: String, smallText: String) = {
-    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-24" id=@xLargeID>@xLargeText</span><br>
-    <span class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-16" aria-hidden="true">@Html(smallText)</span>
+    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-36 display-block" id='@xLargeID'>@xLargeText</span>
+    <span class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-19" aria-hidden="true">@Html(smallText)</span>
 }

@@ -45,7 +45,7 @@
     pageTitle = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 ) {
 
-    @backLink(href = "")
+    @backLink(href = "#")
 
 	@h1("paye.ats.total_income_tax.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
@@ -65,9 +65,9 @@
     <tbody class="govuk-table__body">
         @for(row <- viewModel.scottishTaxBands) {
             <tr id="@row.label" class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">
+                    <td class="govuk-table__cell">
                         @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
-                    </th>
+                    </td>
               <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
           </tr>
         }
@@ -92,9 +92,9 @@
             <tbody class="govuk-table__body">
             @for(row <- viewModel.ukTaxBands) {
             <tr id="@row.label" class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">
+                <td class="govuk-table__cell">
                     @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
-                </th>
+                </td>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
             </tr>
             }
@@ -119,19 +119,19 @@
         <tbody class="govuk-table__body">
         @for(row <- viewModel.ukTaxBands) {
         <tr id="@row.label" class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">
+            <td class="govuk-table__cell">
                 @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
-            </th>
+            </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, true)</td>
         </tr>
         }
         <tr id="totalUkIncomeTax" class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">@Messages("paye.ats.treasury_spending.total")</th>
+                <td class="govuk-table__cell">@Messages("paye.ats.treasury_spending.total")</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalUKIncomeTax, true)</td>
         </tr>
         @if(isWelshTaxPayer){
         <tr id="welshIncomeTax" class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">@Messages("paye.ats.welsh_income_tax")</th>
+            <td class="govuk-table__cell">@Messages("paye.ats.welsh_income_tax")</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax, true)</td>
         </tr>
         }
@@ -171,9 +171,9 @@
         </thead>
         <tbody class="govuk-table__body">
         <tr id="employeeContributions" class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">
+            <td class="govuk-table__cell">
                 @Messages("paye.ats.national_insurance.title")
-            </th>
+            </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.employeeContributions, true)</td>
         </tr>
         </tbody>

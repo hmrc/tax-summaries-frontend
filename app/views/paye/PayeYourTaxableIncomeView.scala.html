@@ -65,9 +65,9 @@
             <tbody class="govuk-table__body">
             @for(row <- viewModel.incomeTaxRows) {
                 <tr id="@row.messageKey" class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">
+                    <td class="govuk-table__cell">
                         @Messages("paye.ats.income_before_tax." + row.messageKey)
-                    </th>
+                    </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.value, true)</td>
                 </tr>
             }
