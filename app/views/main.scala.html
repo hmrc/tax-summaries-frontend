@@ -58,6 +58,9 @@
     @additionalScripts.getOrElse("")
 }
 
+@addedScripts = {
+    <script src='@controllers.routes.Assets.versioned("javascripts/ats-app.js")'></script>
+}
 
 @beforeContent = {
     @if(!actingAttorney.isDefined && !disableSessionExpired) {
@@ -108,6 +111,7 @@
     accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(request.uri)),
     displayHmrcBanner = false,
     additionalHeadBlock = Some(headBlock),
+    additionalScriptsBlock = Some(addedScripts),
     beforeContentBlock = Some(beforeContent),
     mainContentLayout = Some(twoThirdsMainContent(_))
 )(contentBlock)
