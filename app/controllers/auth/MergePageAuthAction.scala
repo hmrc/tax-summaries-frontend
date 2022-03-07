@@ -18,21 +18,25 @@ package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import connectors.DataCacheConnector
+import models.AgentToken
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MergePageAuthActionImpl @Inject()(
   citizenDetailsService: CitizenDetailsService,
+  dataCacheConnector: DataCacheConnector,
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends MergePageAuthAction with AuthorisedFunctions {
@@ -42,7 +46,7 @@ class MergePageAuthActionImpl @Inject()(
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(ConfidenceLevel.L50)
       .retrieve(
@@ -55,37 +59,23 @@ class MergePageAuthActionImpl @Inject()(
               .map(key => Uar(key.value))
           }
 
-          val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
+          val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").exists(_.isActivated)
 
-          if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
-            Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
-          } else {
-
-            val authenticatedRequest = AuthenticatedRequest(
-              externalId,
-              agentRef,
-              saUtr.map(SaUtr(_)),
-              nino.map(Nino(_)),
-              saUtr.nonEmpty,
-              isAgentActive,
-              confidenceLevel,
-              credentials,
-              request
-            )
-
-            if (agentRef.isDefined && !isAgentActive) {
-              Future(Redirect(controllers.routes.ErrorController.notAuthorised))
-            } else if (saUtr.isEmpty && agentRef.isEmpty) {
-              nino
-                .map { n =>
-                  handleResponse(authenticatedRequest, n).flatMap(
-                    response => block(response)
-                  )
-                }
-                .getOrElse(block(authenticatedRequest))
-            } else {
-              block(authenticatedRequest)
-            }
+          for {
+            getAgentTokenCache <- dataCacheConnector.getAgentToken
+            blockData <- executeAuthActions(
+                          request,
+                          block,
+                          externalId,
+                          credentials,
+                          saUtr,
+                          nino,
+                          confidenceLevel,
+                          agentRef,
+                          isAgentActive,
+                          getAgentTokenCache)
+          } yield {
+            blockData
           }
         }
 
@@ -109,6 +99,60 @@ class MergePageAuthActionImpl @Inject()(
     }
   }
 
+  private def executeAuthActions[A](
+    request: Request[A],
+    block: AuthenticatedRequest[A] => Future[Result],
+    externalId: String,
+    credentials: Credentials,
+    saUtr: Option[String],
+    nino: Option[String],
+    confidenceLevel: ConfidenceLevel,
+    agentRef: Option[Uar],
+    isAgentActive: Boolean,
+    agentToken: Option[AgentToken])(implicit hc: HeaderCarrier) =
+    if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
+      Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
+    } else {
+
+      val authenticatedRequest = AuthenticatedRequest(
+        externalId,
+        agentRef,
+        saUtr.map(SaUtr(_)),
+        nino.map(Nino(_)),
+        saUtr.nonEmpty,
+        isAgentActive,
+        confidenceLevel,
+        credentials,
+        request
+      )
+
+      val isAgentTokenMissing = isAgentActive && (request
+        .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+        .isEmpty || request
+        .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
+        .isEmpty) &&
+        (agentToken match {
+          case None => true
+          case _    => false
+        })
+
+      if (agentRef.isDefined && !isAgentActive) {
+        Future(Redirect(controllers.routes.ErrorController.notAuthorised))
+      } else if (isAgentActive && isAgentTokenMissing.equals(true)) {
+        Future(Redirect(controllers.routes.ErrorController.notAuthorised))
+      } else if (saUtr.isEmpty && agentRef.isEmpty) {
+        nino
+          .map { n =>
+            handleResponse(authenticatedRequest, n).flatMap(
+              response => block(response)
+            )
+          }
+          .getOrElse(block(authenticatedRequest))
+      } else {
+        block(authenticatedRequest)
+      }
+    }
+
   private def handleResponse[T](request: AuthenticatedRequest[T], nino: String)(
     implicit hc: HeaderCarrier): Future[AuthenticatedRequest[T]] =
     for {
@@ -116,7 +160,9 @@ class MergePageAuthActionImpl @Inject()(
     } yield {
       detailsResponse match {
         case SucccessMatchingDetailsResponse(value) =>
-          if (value.saUtr.isDefined) { createAuthenticatedRequest(request, value.saUtr) } else {
+          if (value.saUtr.isDefined) {
+            createAuthenticatedRequest(request, value.saUtr)
+          } else {
             request
           }
         case _ => request
