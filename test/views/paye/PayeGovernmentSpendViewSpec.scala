@@ -27,7 +27,6 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeGovernmentSpendingView
@@ -101,10 +100,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
       document
         .select("h1")
-        .text mustBe "How your tax was spent"
-      document
-        .select("h2.heading-xlarge")
-        .text mustBe s"6 April ${taxYear - 1} to 5 April $taxYear"
+        .text mustBe s"How your tax was spent 6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {

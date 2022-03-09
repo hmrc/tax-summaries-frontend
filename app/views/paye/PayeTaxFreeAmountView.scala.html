@@ -16,93 +16,90 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeTaxFreeAmount
-
 @import utils.HtmlFormatter
-@import views.html.main
-@import views.html.helpers.BackLinkView
+@import views.html.helpers.{H1, H2, backLink}
 @import views.html.includes.CurrencyAmountView
 @import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
-	backLinkView: BackLinkView,
+	backLink: backLink,
 	currencyAmountView: CurrencyAmountView,
-		htmlFormatter: HtmlFormatter
-
+	htmlFormatter: HtmlFormatter,
+	h1: H1,
+	h2: H2
 )
 
 @(	viewModel:PayeTaxFreeAmount
 	)(
 	implicit messages: Messages,
 	request: Request[_],
-	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
 	appConfig: ApplicationConfig,
 		ec: ExecutionContext
 )
 
 @main(
-		title = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
-	) {
+	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+) {
 
-	@backLinkView(Messages("generic.back"))
+	@backLink(href = "")
 
-	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.tax_free_amount.title"))</h1>
-	<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+	@h1("paye.ats.tax_free_amount.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
 		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
 
 	@if(viewModel.adjustmentRows.nonEmpty) {
-	<table class="paye-ats-data-table" id="adjustmentRows">
-		<caption class="visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
-		<thead>
-		<tr>
-			<th scope="col">@Messages("paye.ats.tax_free_amount.description")</th>
-			<th scope="col">@Messages("paye.ats.tax_free_amount.amount")</th>
+	<table class="paye-ats-data-table govuk-table"  id="adjustmentRows">
+		<caption class="govuk-visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
+		<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.description")</th>
+			<th scope="col" class="govuk-table__header govuk-table__header--numeric">@Messages("paye.ats.tax_free_amount.amount")</th>
 		</tr>
 		</thead>
-		<tbody>
+		<tbody class="govuk-table__body">
 		@for(row <- viewModel.adjustmentRows) {
-		<tr id="@row.label">
-			<th scope="row">
+		<tr id="@row.label" class="govuk-table__row">
+			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
-			</th>
-			<td class="numeric">@currencyAmountView(row.amount, true)</td>
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, true)</td>
 		</tr>
 		}
 		</tbody>
 		@if(viewModel.adjustmentRows.size > 1) {
 			<tfoot>
-			<tr id="totalTaxFreeAmount">
-				<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
-				<td class="numeric">@currencyAmountView(viewModel.totalTaxFreeAmount, true)</td>
+			<tr id="totalTaxFreeAmount" class="govuk-table__row">
+				<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
+				<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalTaxFreeAmount, true)</td>
 			</tr>
 			</tfoot>
 		}
 	</table>
 	}
 
-	<table class="paye-ats-data-table" id="summaryRows">
-		<caption class="visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
-		<thead>
-		<tr>
-			<th scope="col">@Messages("paye.ats.tax_free_amount.description")</th>
-			<th scope="col">@Messages("paye.ats.tax_free_amount.amount")</th>
+	<table class="paye-ats-data-table govuk-table" id="summaryRows">
+		<caption class="govuk-visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
+		<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.description")</th>
+			<th scope="col" class="govuk-table__header govuk-table__header--numeric">@Messages("paye.ats.tax_free_amount.amount")</th>
 		</tr>
 		</thead>
-		<tbody>
+		<tbody class="govuk-table__body">
 		@for(row <- viewModel.summaryRows) {
-		<tr id="@row.label">
-			<th scope="row">
+		<tr id="@row.label" class="govuk-table__row">
+			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
-			</th>
-			<td class="numeric">@currencyAmountView(row.amount, true)</td>
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, true)</td>
 		</tr>
 		}
 		</tbody>
 		<tfoot>
-		<tr id="taxLiableAmount">
-			<th scope="row">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
-			<td class="numeric">@currencyAmountView(viewModel.liableTaxAmount, true)</td>
+		<tr id="taxLiableAmount" class="govuk-table__row">
+			<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.liableTaxAmount, true)</td>
 		</tr>
 		</tfoot>
 	</table>

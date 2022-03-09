@@ -14,31 +14,15 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-@import controllers.auth.AuthenticatedRequest
-@import views.html.helpers.{backLink, H1, P}
-@import scala.concurrent.ExecutionContext
+@this()
 
-@this(
-   main: main,
-   backLink: backLink,
-   h1: H1,
-   p: P
-)
+@(href: String, attrs: Map[String, String] = Map.empty)(implicit messages: Messages)
 
-@()(
-   implicit request: Request[_],
-   messages: Messages,
-   appConfig: ApplicationConfig,
-   ec: ExecutionContext
-)
-
-
-@main(
-       pageTitle = Messages("ats.service_unavailable.title")
-    ) {
-
-  @backLink(href="")
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
+@attrValues = @{
+  attrs.map{
+    case(key, value) => key + "=" + value
+  }
 }
+    <a id="back-link" href="@href" class="govuk-back-link print-hidden" @attrValues>@messages("site.back")</a>
+
+

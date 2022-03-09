@@ -57,11 +57,11 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     "show the correct contents of the generic error page in English" in {
 
       val resultEn =
-        genericErrorView()(requestWithSession, messagesEn, templateRenderer, appConfig, ec)
+        genericErrorView()(requestWithSession, messagesEn, appConfig, ec)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString must include(messagesEn("global.error.InternalServerError500.title"))
       documentEn.toString must include(
-        messagesEn("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">" + messagesEn(
+        messagesEn("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\">" + messagesEn(
           "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesEn(
           "global.error.InternalServerError500.message.by.phone.post"))
     }
@@ -69,11 +69,11 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     "show the correct contents of the generic error page in Welsh" in {
 
       val resultCy =
-        genericErrorView()(requestWithSession, messagesCy, templateRenderer, appConfig, ec)
+        genericErrorView()(requestWithSession, messagesCy, appConfig, ec)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString must include(messagesCy("global.error.InternalServerError500.title"))
       documentCy.toString must include(
-        messagesCy("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\">" + messagesCy(
+        messagesCy("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\">" + messagesCy(
           "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesCy(
           "global.error.InternalServerError500.message.by.phone.post"))
     }

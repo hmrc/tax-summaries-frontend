@@ -15,8 +15,12 @@
  *@
 
 @this()
-@(pageHeading: String=null)(implicit messages: Messages)
 
-<div class="js-visible">
- <p><a id="back-link" class="link-back" href="#">@messages("site.back")</a></p>
-</div>
+@(msg: String, classes: Option[String] = None, elmId: Option[String] = None, payeHeading: Option[String] = None)(implicit messages: Messages)
+<header class="hmrc-page-heading">
+    @if(payeHeading) {
+        <h1 id=@elmId.getOrElse("pageHeading") class="@classes.getOrElse("govuk-heading-l") govuk-!-margin-bottom-3">@Html(messages(msg)) <span class="display-block">@Html(payeHeading)</span></h1>
+    } else {
+        <h1 id=@elmId.getOrElse("pageHeading") class="@classes.getOrElse("govuk-heading-l") govuk-!-margin-bottom-3">@Html(messages(msg))</h1>
+    }
+</header>

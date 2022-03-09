@@ -76,13 +76,13 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
     "not show account menu for agent" in {
 
       val result = agentView(capitalGains)
-      result must include("<div id=hideAccountMenu>true</div>")
+      result must not include ("hmrc-account-menu")
     }
 
     "show account menu for non agent users" in {
 
       val result = view(capitalGains)
-      result must include("<div id=hideAccountMenu>false</div>")
+      result must include("hmrc-account-menu")
     }
 
   }

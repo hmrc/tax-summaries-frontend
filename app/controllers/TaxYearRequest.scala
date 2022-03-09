@@ -21,7 +21,6 @@ import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.MessagesControllerComponents
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{GenericViewModel, TaxYearUtil}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -30,10 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class TaxYearRequest @Inject()(
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  tokenErrorView: TokenErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
   def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(

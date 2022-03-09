@@ -25,7 +25,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PayeAtsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.renderer.TemplateRenderer
 import view_models.paye.PayeAtsMain
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeTaxsMainView
@@ -37,10 +36,7 @@ class PayeAtsMainController @Inject()(
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeTaxsMainView: PayeTaxsMainView,
-  payeGenericErrorView: PayeGenericErrorView)(
-  implicit templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  payeGenericErrorView: PayeGenericErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request =>

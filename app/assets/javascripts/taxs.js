@@ -1,22 +1,29 @@
-// No conflict
-$(function() {
-    // This will be used for the back link
-      var docReferrer = document.referrer
-      if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
-          window.history.replaceState(null, null, window.location.href);
+(function(){
+  // =====================================================
+  // Back link mimics browser back functionality
+  // =====================================================
+  // store referrer value to cater for IE - https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10474810/  */
+  var docReferrer = document.referrer;
+  // prevent resubmit warning
+  if (
+    window.history &&
+    window.history.replaceState &&
+    typeof window.history.replaceState === 'function'
+  ) {
+    window.history.replaceState(null, null, window.location.href);
+  }
+  // back click handle, dependent upon presence of referrer & no host change
+  var backLink = document.querySelector('#back-link')
+  if (backLink) backLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (
+        window.history &&
+        window.history.back &&
+        typeof window.history.back === 'function' &&
+        docReferrer !== '' &&
+        docReferrer.indexOf(window.location.host) !== -1
+      ) {
+        window.history.back();
       }
-      var backLinkElem = document.getElementById("back-link");
-      if (backLinkElem !=  null){
-          if (window.history && window.history.back && typeof window.history.back === 'function') {
-              var backScript = (docReferrer === "" || docReferrer.indexOf(window.location.host) !== -1) ? "javascript:window.history.back(); return false;" : "javascript:void(0);"
-              backLinkElem.setAttribute("onclick",backScript);
-              backLinkElem.setAttribute("href","javascript:void(0);");
-          }
-      }
-
-    $('.error-summary').focus();
-
-    document.getElementById('proposition-menu').querySelector('.js-header-toggle.menu').setAttribute("aria-hidden", "true");
-
-});
-
+  });
+})();

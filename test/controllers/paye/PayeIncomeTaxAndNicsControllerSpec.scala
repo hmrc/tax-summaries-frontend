@@ -74,7 +74,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
           inject[PayeIncomeTaxAndNicsView],
           fakePayeConfig,
           payeGenericErrorView
-        )(implicitly, fakeAppConfig, implicitly)
+        )(fakeAppConfig, implicitly)
 
       when(
         mockPayeAtsService
@@ -119,7 +119,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
           inject[PayeIncomeTaxAndNicsView],
           fakePayeConfig,
           payeGenericErrorView
-        )(implicitly, fakeAppConfig, implicitly)
+        )(fakeAppConfig, implicitly)
 
       when(
         mockPayeAtsService

@@ -100,7 +100,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       document.getElementById("tax-calc-link").text mustBe "Your income and taxes"
       document.getElementById("tax-services-link").text mustBe "Your taxes and public spending"
       document
-        .getElementById("index-page-header")
+        .select("header[data-component='ats_page_heading']")
         .text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear Self Assessment Annual Tax Summary"
       document
         .getElementById("index-page-description")
@@ -124,7 +124,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
-      document.getElementById("index-page-header").text must include(taxYear.toString)
+      document.select("header[data-component='ats_page_heading']").text must include(taxYear.toString)
     }
 
   }

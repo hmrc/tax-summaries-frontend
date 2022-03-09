@@ -16,16 +16,17 @@
 
 @import config.ApplicationConfig
 @import view_models.paye.PayeGovernmentSpend
-
 @import utils.HtmlFormatter
-@import views.html.main
-@import views.html.helpers.BackLinkView
+@import helpers.{H1, P, Link, Button, PageHeading, backLink}
 @import scala.concurrent.ExecutionContext
 
 @this(
 	main: main,
-	backLinkView: BackLinkView,
-	htmlFormatter: HtmlFormatter
+	h1: H1,
+	p: P,
+	link: Link,
+	htmlFormatter: HtmlFormatter,
+	backLink: backLink
 )
 
 @(	viewModel:PayeGovernmentSpend,
@@ -33,65 +34,72 @@
 	)(
 	implicit messages: Messages,
 	request: Request[_],
-	templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
 	appConfig: ApplicationConfig,
-		ec: ExecutionContext
+	ec: ExecutionContext
 )
 
 @main(
-		title = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+		pageTitle = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 	) {
 
-	@backLinkView(Messages("generic.back"))
+		@backLink("#")
 
-
-		<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.treasury_spending.title"))</h1>
-		<h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+		@h1(msg = "paye.ats.treasury_spending.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
 			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
+			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
 
-		<p id="intro-paragraph">@Messages("paye.ats.treasury_spending.introParagraph")</p>
+        @p(Text(messages("paye.ats.treasury_spending.introParagraph")), elmId=Some("intro-paragraph"))
 
 
-		<dl id="tax-spent">
-			<div id="tax-spent-header" class="heading-medium">
-				<dt>@Html(Messages("generic.description"))</dt>
-				<dd>@Html(Messages("generic.amount_pounds"))</dd>
+		<dl id="tax-spent" class="govuk-summary-list">
+			<div id="tax-spent-header" class="govuk-summary-list__row--no-actions govuk-heading-m">
+				<dt class="govuk-summary-list__key">@Html(Messages("generic.description"))</dt>
+				<dd class="govuk-summary-list__value">@Html(Messages("generic.amount_pounds"))</dd>
 			</div>
 			@for(rowModel <- viewModel.orderedSpendRows){
-				<div>
-					<div class="content">
-						<dt id="@rowModel.category">@Messages("paye.ats.treasury_spending.table." + rowModel.category)
-							<span>&nbsp;(@rowModel.spendData.percentage%)</span>
-						</dt>
-						<dd>&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
-					</div>
-					<div class="graph-green-bar" style="width: @{rowModel.spendData.percentage}%;" aria-hidden="true"></div>
-					<div class="graph-grey-bar" aria-hidden="true"></div>
+				<div class="govuk-summary-list__row--no-actions content">
+					<dt id="@rowModel.category" class="govuk-summary-list__key">@Messages("paye.ats.treasury_spending.table." + rowModel.category)
+						<span>&nbsp;(@rowModel.spendData.percentage%)</span>
+					</dt>
+					<dd class="govuk-summary-list__value">&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
+				</div>
+				<div aria-hidden="true">
+					<dt class="graph-green-bar" style="width: @{rowModel.spendData.percentage}%;"></dt>
+					<dd class="graph-grey-bar"></dd>
 				</div>
 			}
 			<div id="tax-spent-footer" class="paye-tax-spent-footer">
-				<dt id="gov-spend-total" class="heading-medium">@Messages("paye.ats.treasury_spending.total")</dt>
+				<dt id="gov-spend-total" class="govuk-heading-m">@Messages("paye.ats.treasury_spending.total")</dt>
 				<dd>&pound;@viewModel.totalAmount</dd>
 			</div>
 		</dl>
 
 
 		@if(isWelshTaxPayer){
-			<p id="welsh-tax-payer-paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
-			<p id="welsh-tax-payer-paragraph-1">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para1")</p>
-			<p id="welsh-tax-payer-paragraph-3">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para3")</p>
-			<p id="welsh-tax-payer-paragraph-4">@Messages("paye.ats.treasury_spending.welsh.tax.payer.para4") <a href="@appConfig.calculateWelshIncomeTaxSpend" target="blank" rel="noopener noreferrer">@appConfig.calculateWelshIncomeTaxSpend</a></p>
+
+			@p(Text(messages("paye.ats.treasury_spending.para2")), elmId=Some("welsh-tax-payer-paragraph-2"))
+			@p(Text(messages("paye.ats.treasury_spending.welsh.tax.payer.para1")), elmId=Some("welsh-tax-payer-paragraph-1"))
+			@p(Text(messages("paye.ats.treasury_spending.welsh.tax.payer.para3")), elmId=Some("welsh-tax-payer-paragraph-3"))
+
+			@p(HtmlContent(messages("paye.ats.treasury_spending.welsh.tax.payer.para4") +
+				link(link = appConfig.calculateWelshIncomeTaxSpend,
+				messageKey = appConfig.calculateWelshIncomeTaxSpend,
+				inParagraph = true,
+				attrTarget = true)
+				), elmId = Some("welsh-tax-payer-paragraph-4"))
+
 		} else {
-			<p id="paragraph-2">@Messages("paye.ats.treasury_spending.para2")</p>
-			<p id="paragraph-1">@Messages("paye.ats.treasury_spending.para1")</p>
+			@p(Text(messages("paye.ats.treasury_spending.para2")), elmId=Some("paragraph-2"))
+			@p(Text(messages("paye.ats.treasury_spending.para1")), elmId=Some("paragraph-1"))
+
 			@if(viewModel.isScottish) {
-				<p id="scottish-spending-link">@Messages("paye.ats.treasury_spending.scottish.spending.1")
-					<a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
+				<p id="scottish-spending-link" class="govuk-body">@Messages("paye.ats.treasury_spending.scottish.spending.1")
+					<a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" class="govuk-link" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
 					@Messages("paye.ats.treasury_spending.scottish.spending.3")
 				</p>
 			}
-			<p id="paragraph-3">@Messages("paye.ats.treasury_spending.para3")</p>
-			<p id="paragraph-4">@Messages("paye.ats.treasury_spending.para4")</p>
+			@p(Text(messages("paye.ats.treasury_spending.para3")), elmId=Some("paragraph-3"))
+			@p(Text(messages("paye.ats.treasury_spending.para4")), elmId=Some("paragraph-4"))
+
 		}
 }

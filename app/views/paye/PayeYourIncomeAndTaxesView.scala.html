@@ -18,89 +18,90 @@
 @import view_models.paye.PayeYourIncomeAndTaxes
 @import controllers.auth.PayeAuthenticatedRequest
 @import utils.HtmlFormatter
-@import views.html.main
-@import views.html.helpers.BackLinkView
+@import views.html.helpers.{backLink, H1, H2, P, Link}
 @import views.html.includes.CurrencyAmountView
 @import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
-    backLinkView: BackLinkView,
+    backLink: backLink,
     currencyAmountView: CurrencyAmountView,
-        htmlFormatter: HtmlFormatter
+    htmlFormatter: HtmlFormatter,
+    h1: H1,
+    h2: H2,
+    p: P,
+    link: Link,
+    govukInsetText: GovukInsetText
 )
 
 @(  viewModel:PayeYourIncomeAndTaxes
     )(
     implicit messages: Messages,
     request: PayeAuthenticatedRequest[_],
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 
 @main(
-        title = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        articleClasses = Some("selectYear")
+        pageTitle = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        beforeContentHtml = Some(backLink(""))
     ) {
-
-    <div class="hmrc-logo-print" aria-hidden="true">
-        <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
-        <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
-    </div>
-
-    @backLinkView(Messages("paye.ats.summary.title"))
 
     <div class="print-this">
         <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
         <a class="print-this__link" href="javascript:window.print()">@Messages("ats.treasury_spending.print.this.page")</a>
     </div>
 
-	<h1 class="heading-xlarge flush--bottom">@Html(Messages("paye.ats.summary.title"))</h1>
-    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+	@h1("paye.ats.summary.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
-    <p>@Html(Messages("paye.ats.summary.lede")) </p>
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
+    @p(HtmlContent(Messages("paye.ats.summary.lede")))
 
-        <section id="taxable-income">
-        <h2>@Html(Messages("paye.ats.summary.total_income.title"))</h2>
+    <div id="taxable-income" class="incomeTaxesSection">
+        @h2("paye.ats.summary.total_income.title")
         <p>
-            <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)">
-                <span class="bold-xlarge" id="income-before-tax-amount">@currencyAmountView(viewModel.incomeBeforeTax, true)</span><br>
-                <span class="bold-small">@Html(Messages("paye.ats.summary.total_income.link"))</span>
+            <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
+                @linkSectionContents(xLargeText = currencyAmountView(viewModel.incomeBeforeTax, true), 
+                                    xLargeID="income-before-tax-amount", 
+                                    smallText = Messages("paye.ats.summary.total_income.link"))
             </a>
         </p>
-        <p>@Html(Messages("paye.ats.summary.total_income.description"))</p>
-    </section>
+        @p(HtmlContent(Messages("paye.ats.summary.total_income.description")))
+    </div>
 
-    <section id="tax-free-amount">
-        <h2>@Html(Messages("paye.ats.summary.tax_free.title"))</h2>
+    <div id="tax-free-amount" class="incomeTaxesSection">
+        @h2("paye.ats.summary.tax_free.title")
         <p>
-            <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)">
-            <span class="bold-xlarge" id="total-tax-free-amount">@currencyAmountView(viewModel.taxableIncome, true)</span><br>
-            <span class="bold-small">@Html(Messages("paye.ats.summary.tax_free.link"))</span><br>
+            <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
+                @linkSectionContents(xLargeText = currencyAmountView(viewModel.taxableIncome, true), 
+                                    xLargeID="total-tax-free-amount", 
+                                    smallText = Messages("paye.ats.summary.tax_free.link"))
             </a>
         </p>
-        <p>@Html(Messages("paye.ats.summary.tax_free.description"))</p>
-    </section>
+        @p(HtmlContent(Messages("paye.ats.summary.tax_free.description")))
+    </div>
 
-    <section id="tax-calculated-as">
-        <h2 id="tax-and-nics-title">@Messages("paye.ats.summary.nicsheading")</h2>
+    <div id="tax-calculated-as" class="incomeTaxesSection">
+        @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
-            <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)">
-            <span class="bold-xlarge" id="total-income-tax-and-nics">@currencyAmountView(viewModel.totalIncomeTax, true)</span><br>
-            <span class="bold-small">@Html(Messages("paye.ats.summary.tax_and_nics.link"))</span><br>
+            <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
+                @linkSectionContents(xLargeText = currencyAmountView(viewModel.totalIncomeTax, true), 
+                                    xLargeID="total-income-tax-and-nics", 
+                                    smallText = Messages("paye.ats.summary.tax_and_nics.link"))
             </a>
         </p>
-        <p class="panel panel-border-wide">@Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate)</p>
-    </section>
+        @govukInsetText(InsetText(content = Text(Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate))))
+    </div>
 
-    <section id="income_after_tax_and_nics">
-        <h2>@Html(Messages("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg"))</h2>
-        <span class="bold-xlarge" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, true)</span>
-    </section>
+    <div id="income_after_tax_and_nics" class="incomeTaxesSection">
+        @h2("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg")
+        <span class="govuk-heading-l" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, true)</span>
+    </div>
 
+}
 
+@linkSectionContents(xLargeText: Html, xLargeID: String, smallText: String) = {
+    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-36 display-block" id='@xLargeID'>@xLargeText</span>
+    <span class="govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-19" aria-hidden="true">@Html(smallText)</span>
 }

@@ -22,7 +22,6 @@ import config.ApplicationConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors._
 
@@ -32,10 +31,7 @@ import scala.concurrent.ExecutionContext
 class PayeErrorController @Inject()(
   mcc: MessagesControllerComponents,
   payeNotAuthorisedView: PayeNotAuthorisedView,
-  payeServiceUnavailableView: PayeServiceUnavailableView)(
-  implicit templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  payeServiceUnavailableView: PayeServiceUnavailableView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
   val payeYear = appConfig.taxYear

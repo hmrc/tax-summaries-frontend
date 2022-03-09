@@ -127,7 +127,12 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       document.toString must include("Your total income")
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text mustBe "Tax year: April 6 2013 to April 5 2014 Your total income"
+      document
+        .getElementsByAttributeValueMatching("data-component", "ats_page_heading__h1")
+        .text mustBe "Your total income"
+      document
+        .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
+        .text mustBe s"Tax year: April 6 2013 to April 5 2014"
     }
 
     "have zero-value fields hidden in the view" in {

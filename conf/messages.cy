@@ -427,3 +427,8 @@ timeout.dialog.minutes=o funudau
 timeout.dialog.seconds=eiliad
 timeout.dialog.keepAlive.button=Parhau i fod wedi’ch mewngofnodi
 timeout.dialog.signout.button=Allgofnodi nawr
+
+# Beta Banner Text
+#=============================================================
+betaBanner.message=Mae hwn yn wasanaeth newydd ‐ bydd eich {0} yn ein helpu i'w wella.
+betaBanner.linkText=adborth

@@ -15,10 +15,6 @@ h1.heading-xlarge, .heading-48 {
     padding: 25px 0 15px !important;
 }
 
-section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, section[id] h6 {
-  margin-top: 55px;
-  padding: 0; }
-
 
  #wrapper #content #user-info {
      float: right;
@@ -27,168 +23,16 @@ section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, 
 }
 
 
-p.lede {
-  margin: 0 0 30px 0;
-  width: 75%;
-}
-  @media (max-width: 640px) {
-    p.lede {
-      font-size: 20px;
-      line-height: 1.2; } }
-
-article p.lede {
-  width: 100%; }
-
-.no-bold {
-  font-weight: normal; }
-
-.bold-xlarge {
-  font-size: 18pt;
-  line-height: 1.04167;
-  font-weight: 700;
-  margin: 0; }
-  @media (max-width: 640px) {
-    .bold-xlarge {
-      font-size: 32px;
-      line-height: 1.09375; } }
-
-.bold-small {
-  font-size: 12pt;
-  line-height: 1.25;
-  font-weight: 700;
-  margin-top: 0; }
-  @media (max-width: 640px) {
-    .bold-small {
-      font-size: 14px;
-      line-height: 1.14286; } }
-
-a .bold-small {
-  text-decoration: underline; }
-
-.bold-xlarge + .bold-small {
-  margin-top: 0; }
-
-.bold-xlarge + p margin, .bold-small + p margin {
-  top: 5px;
-  bottom: 20px; }
-
 a.data-link + p {
   margin-top: 5px;
   margin-bottom: 20px; }
 
-/*= Tables
-----------------------------------------------*/
-/*= Tables ----------------------------------------------*/
- article table {
-    margin: 48px 0 15px 0;
-}
 
-
- article table thead th[colspan], article table thead th:nth-child(2), article table tfoot th:nth-child(2) {
-     font-size: 14px;
-     line-height: 1.31579;
-     font-weight: 400;
-     font-weight: normal;
-}
- @media (max-width: 640px) {
-     article table thead th[colspan], article table thead th:nth-child(2), article table tfoot th:nth-child(2) {
-         font-size: 16px;
-         line-height: 1.25;
-    }
-}
-
- article table thead th[colspan], article table thead td + th, article table thead th + th {
-     padding-right: 30px;
-}
- article table tbody th[colspan="2"], article table tbody th[colspan="3"] {
-     padding-top: 48px;
-}
-
- article table tfoot th, article table tfoot td {
-     padding-top: 70px;
-     padding-bottom: 15px;
-     border-bottom: 0;
-}
-
- article table tfoot th + td {
-     padding-right: 30px;
-}
-
- article table th {
-     font-size: 16px;
-     line-height: 1.25;
-     font-weight: 400;
-     text-transform: none;
-     font-weight: 700;
-}
- @media (max-width: 640px) {
-     article table th {
-         font-size: 20px;
-         line-height: 1.2;
-    }
-}
-
- article table th, article table td {
-     padding: 15px 15px 15px 0;
-     border-top: 0;
-     border-right: 0;
-     border-bottom: 1px solid #bfc1c3;
-     border-left: 0;
-     background: none;
-     background-color: #fff;
-}
- article table td + td {
-     padding-right: 30px;
-}
- @media (min-width: 641px) {
-     article table.others {
-         vertical-align: top;
-    }
-     article table.others td + td {
-         line-height: 1;
-         padding-top: 3px;
-    }
-}
-
-#tax-summary h2, #tax-spent h2 {
-  font-size: 16pt;
-  line-height: 1.25;
-  font-weight: 700;
-  padding: 6px 0 9px 0;
-  margin: 0; }
-  @media (max-width: 640px) {
-    #tax-summary h2, #tax-spent h2 {
-      font-size: 20px;
-      line-height: 1.2; } }
-#tax-summary p, #tax-spent p {
-  margin-top: 0; }
-
-/*= Tax summary index page
-----------------------------------------------*/
-#taxable-income a,
-#tax-calculated-as a,
-#tax-free-amount a,
-#capital-gains a {
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  text-decoration: none;
-  overflow: hidden; }
-
-/*= Tax summary Magna charta
-----------------------------------------------*/
-.gray {
-  color: #6f777b !important;
-  font-weight: normal; }
 
 /*= Resets
 ---------------------------------------------------------------------------*/
 html {
   background-color: #fff; }
-
-.header-proposition {
-  float: left !important;
-  width: auto !important; }
 
 .header-global {
   float: right !important;
@@ -229,18 +73,6 @@ a {
 a[href]:after {
   content: none !important; }
 
-/*= Your taxes and public spending
----------------------------------------------------------------------------*/
-#tax-spent {
-  position: static !important;
-  clip: auto !important;
-  display: table !important;
-  width: 100% !important;
-  height: auto !important;
-  margin: 0 !important; }
-  #tax-spent thead th {
-    padding-top: 0; }
-
 /*= Tax calculation
 ---------------------------------------------------------------------------*/
 #capital-gains {
@@ -252,37 +84,20 @@ a[href]:after {
 
 /*= Print hidden
 ---------------------------------------------------------------------------*/
-.print-hidden, .header-wrapper, .service-info, .report-error, #english-switch, #welsh-switch, #continue  {
+.print-hidden, .header-wrapper, .service-info, .report-error, #english-switch, #welsh-switch, #continue, #secondary-nav, .hmrc-language-select, .govuk-header, footer, .hmrc-report-technical-issue, .govuk-phase-banner  {
     display: none !important;
 }
 
 
 /*---------------------------------------------------------------------------*/
-.block-heading {
+.display-block {
   display: block;
 }
 
-#total-income-tax tbody th, #total-capital-gains-tax tbody th {
-    border-bottom: 0 none;
+
+a.data-link, #total-income-tax a {
+  color: #0b0c0c;
 }
-
-#total-income-tax-amount, #total-capital-gains-tax-amount {
-    border-bottom: 0 none;
-    padding-right: 30px;
-    text-align: right;
-}
-
-
-#tax-spent tfoot { display: table-row-group }
-
-section[id] h2, article section[id] h2,
-#wrapper #content section {margin-bottom:5px;}
-
-#wrapper #content #user-info {margin-bottom:0;}
-.heading-medium {margin-bottom:5px;}
-#wrapper #content .page-header h1, #wrapper #content .heading-medium {margin-top:0;}
-
-a.data-link + p {margin-top:0; font-size:14px;}
 
 .hmrc-logo-print {
     display: block;
@@ -301,4 +116,12 @@ a.data-link + p {margin-top:0; font-size:14px;}
 
 .print-this {
     display: none;
+}
+
+.govuk-\!-font-size-48 {
+  font-size: 2.5em !important;
+}
+
+.govuk-heading-l {
+  font-size: 2em !important;
 }
