@@ -43,14 +43,13 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val cidHost = config.baseUrl("citizen-details")
 
   lazy val authHost = config.baseUrl("auth")
-  lazy val contactFormServiceIdentifier = "TAX-SUMMARIES"
+  lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   lazy val homePageUrl = "/annual-tax-summary/"
-  lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports?secure=true"
-  lazy val betaFeedbackUrl = s"$contactHost/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrl = s"/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")

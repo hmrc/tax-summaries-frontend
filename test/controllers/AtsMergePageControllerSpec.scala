@@ -66,7 +66,6 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     reset(mockAppConfig)
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.payeShuttered).thenReturn(false)
-    when(mockAppConfig.reportAProblemPartialUrl).thenReturn(appConfig.reportAProblemPartialUrl)
   }
 
   "AtsMergePageController for onPageLoad" must {
