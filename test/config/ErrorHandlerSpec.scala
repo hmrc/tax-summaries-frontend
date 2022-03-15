@@ -50,7 +50,7 @@ class ErrorHandlerSpec extends ViewSpecBase with MockitoSugar {
     notFoundView.getElementsByTag("p").get(2).toString must include(
       messages(
         "global.page.not.found.error.contact",
-        "<a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" target=\"_blank\">" + messages(
+        "<a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\" target=\"_blank\" rel=\"noopener noreferrer\">" + messages(
           "global.page.not.found.error.contact.link.text") + "</a>"
       ))
 

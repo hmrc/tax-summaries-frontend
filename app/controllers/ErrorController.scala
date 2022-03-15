@@ -24,7 +24,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
@@ -39,10 +38,7 @@ class ErrorController @Inject()(
   mcc: MessagesControllerComponents,
   notAuthorisedView: NotAuthorisedView,
   howTaxIsSpentView: HowTaxIsSpentView,
-  serviceUnavailableView: ServiceUnavailableView)(
-  implicit val templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  serviceUnavailableView: ServiceUnavailableView)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
 
   override def now: () => LocalDate = () => LocalDate.now()

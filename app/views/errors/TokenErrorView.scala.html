@@ -16,30 +16,29 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
-
-@import views.html.main
 @import scala.concurrent.ExecutionContext
+@import helpers.{H1, P}
 
 @this(
-    main: main
+    main: main,
+    h1: H1,
+    p: P
 )
 
 @()(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 
 @main(
-       title = Messages("token_error.html.title")
+       pageTitle = Messages("token_error.html.title")
     ) {
 
-    <h1 id="error-page-heading" class="heading-xlarge">@Html(Messages("token_error.title"))</h1>
+    @h1("token_error.title", elmId=Some("error-page-heading"))
 
-    <p>@Html(Messages("token_error.lede"))</p>
+    @p(HtmlContent(Messages("token_error.lede")))
 
 }

@@ -17,32 +17,31 @@
 @import config.ApplicationConfig
 
 @import controllers.auth.AuthenticatedRequest
-@import views.html.main
+@import helpers.{H1, P}
 @import scala.concurrent.ExecutionContext
 
 @this(
-    main: main
+    main: main,
+    h1: H1,
+    p: P
 )
 
-@(
-    )(
+@()(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @main(
-        title = Messages("generic.not_authorised")
+        pageTitle = Messages("generic.not_authorised")
     ) {
 
-    <h1 class="heading-xlarge">@Html(Messages("generic.not_authorised"))</h1>
+    @h1("generic.not_authorised")
 
-    <p class="lede">@Html(Messages("not.authorised.line1"))</p>
+    @p(HtmlContent(Messages("not.authorised.line1")), classes=Some("govuk-body-l"))
 
-    <p>@Html(Messages("client_agent.notice.line1"))</p>
+    @p(HtmlContent(Messages("client_agent.notice.line1")))
 
-    <p>@Html(Messages("client_agent.notice.line2"))</p>
+    @p(HtmlContent(Messages("client_agent.notice.line2")))
 }

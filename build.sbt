@@ -43,9 +43,6 @@ lazy val microservice = Project(appName, file("."))
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(Resolver.jcenterRepo),
-    Concat.groups := Seq(
-      "javascripts/ats-app.js" -> group(Seq("javascripts/details.polyfill.js", "javascripts/taxs.js"))
-    ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
     pipelineStages in Assets := Seq(concat, uglify),
@@ -66,3 +63,9 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-P:silencer:pathFilters=target/.*"
     // scalacOptions += s"-Wconf:src=${target.value}/.*:s"  // Scala 2.12.14 equivalent
   )
+
+TwirlKeys.templateImports ++= Seq(
+  "uk.gov.hmrc.govukfrontend.views.html.components._",
+  "uk.gov.hmrc.hmrcfrontend.views.html.components._",
+  "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
+)

@@ -25,7 +25,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -36,10 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class TaxsController @Inject()(
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit val templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  tokenErrorView: TokenErrorView)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with AccountUtils with AttorneyUtils with I18nSupport with Logging {
 
   def auditService: AuditService

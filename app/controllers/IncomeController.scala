@@ -22,7 +22,6 @@ import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeService}
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.GenericViewModel
 import view_models.IncomeBeforeTax
 import views.html.IncomeBeforeTaxView
@@ -37,10 +36,7 @@ class IncomeController @Inject()(
   mcc: MessagesControllerComponents,
   incomeBeforeTaxView: IncomeBeforeTaxView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(
-  implicit override val templateRenderer: TemplateRenderer,
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext)
+  tokenErrorView: TokenErrorView)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>

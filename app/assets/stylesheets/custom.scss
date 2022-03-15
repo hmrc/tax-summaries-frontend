@@ -1,268 +1,25 @@
-#wrapper #content #user-info {
-     float: right;
-     clear: both;
-     text-align: right;
-     @media (max-width: 640px) {
-        float: none;
-        text-align: left;
-     }
-}
-
-
-
-
- .langToggle {
-     clear: both;
-     float: right;
-}
-
-h2, article h2 {
-  font-size: 36px;
-  line-height: 1.1111111111;
-  font-weight: 700;
-  margin-top: 45px;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 640px) {
-
-    #wrapper #content #user-info {
-        width: 100%;
-        margin-bottom: 0;
-    }
-
-    .print-this + h1 {
-        padding-top: 10px;
-    }
-
-    h2, article h2 {
-      font-size: 24px;
-      line-height: 1.0416666667;
-    }
-}
-
-
-/*= Headings and text styles ----------------------------------------------*/
- section[id] h1, section[id] h2, section[id] h3, section[id] h4, section[id] h5, section[id] h6 {
-     margin-top: 55px;
-     padding: 0;
-}
- p.lede {
-     margin: 0 0 30px 0;
-     width: 75%;
-}
- @media (max-width: 640px) {
-     p.lede {
-         font-size: 20px;
-         line-height: 1.2;
-    }
-}
- article p.lede {
-     width: 100%;
-}
- .no-bold {
-     font-weight: normal;
-}
- .bold-xlarge {
-     margin: 0;
-     @media (min-width: 641px) {
-         font-size: 48px;
-         line-height: 1.0416666667;
-    }
-}
- .bold-small {
-     font-size: 16px;
-     @media (max-width: 640px) {
-         font-size: 14px;
-    }
-}
- a .bold-small {
-     text-decoration: underline;
-}
- .bold-xlarge + .bold-small {
-     margin-top: 0;
-}
- .bold-xlarge + p margin, .bold-small + p margin {
-     top: 5px;
-     bottom: 20px;
-}
-
- a.mc-toggle-link {
-     font-family: "nta", Arial, sans-serif;
-     font-size: 19px;
-     line-height: 1.3157894737;
-     font-weight: 400;
-     text-transform: none;
-}
- @media (max-width: 640px) {
-     a.mc-toggle-link {
-         font-size: 16px;
-         line-height: 1.25;
-    }
-}
- strong, b {
-     font-weight: 600;
-}
-
-
-/*= Tables ----------------------------------------------*/
- article table {
-    margin: 48px 0 15px 0;
-}
-
-
- article table thead th[colspan], article table thead th:nth-child(2), article table tfoot th:nth-child(2) {
-     font-size: 19px;
-     line-height: 1.3157894737;
-     font-weight: 400;
-     font-weight: normal;
-}
- @media (max-width: 640px) {
-     article table thead th[colspan], article table thead th:nth-child(2), article table tfoot th:nth-child(2) {
-         font-size: 16px;
-         line-height: 1.25;
-    }
-}
-
- article table thead th[colspan], article table thead td + th, article table thead th + th {
-     padding-right: 30px;
-     text-align: right;
-}
- article table tbody th[colspan="2"], article table tbody th[colspan="3"] {
-     padding-top: 48px;
-}
-
- article table tfoot th, article table tfoot td {
-     padding-top: 70px;
-     padding-bottom: 15px;
-     border-bottom: 0;
-}
-
- article table tfoot th + td {
-     padding-right: 30px;
-     text-align: right;
-}
-
- article table th {
-     font-size: 24px;
-     line-height: 1.25;
-     font-weight: 400;
-     text-transform: none;
-     font-weight: 700;
-}
- @media (max-width: 640px) {
-     article table th {
-         font-size: 20px;
-         line-height: 1.2;
-    }
-}
-
- article table th, article table td {
-     padding: 15px 15px 15px 0;
-     border-top: 0;
-     border-right: 0;
-     border-bottom: 1px solid #bfc1c3;
-     border-left: 0;
-     background: none;
-     background-color: #fff;
-}
- article table td + td {
-     padding-right: 30px;
-     text-align: right;
-}
- @media (min-width: 641px) {
-     article table.others {
-         vertical-align: top;
-    }
-     article table.others td + td {
-         line-height: 1;
-         padding-top: 3px;
-    }
-}
- .paye-ats-data-table {
-     margin-top: 0;
-}
- .paye-ats-data-table th {
-     font-size: 19px;
-     font-weight: 400;
-}
- .paye-ats-data-table thead th, .paye-ats-data-table thead th:last-child {
-     font-weight: 700;
-}
- .paye-ats-data-table tfoot th, .paye-ats-data-table tfoot td {
-     font-weight: 700;
-     font-size: 19px;
-     padding: 15px 15px 15px 0;
-}
- .paye-ats-data-table tfoot td {
-     font-weight: 400;
-     padding-right: 0;
-}
- #tax-summary h2, #tax-spent h2 {
-     font-family: "nta", Arial, sans-serif;
-     font-size: 24px;
-     line-height: 1.25;
-     font-weight: 400;
-     text-transform: none;
-     font-weight: 700;
-     padding: 6px 0 9px 0;
-     margin: 0;
-}
- @media (max-width: 640px) {
-     #tax-summary h2, #tax-spent h2 {
-         font-size: 20px;
-         line-height: 1.2;
-    }
-}
- #tax-summary p, #tax-spent p {
-     margin-top: 0;
-}
 /*= Tax summary index page ----------------------------------------------*/
  #taxable-income a, #tax-calculated-as a, #tax-free-amount a, #capital-gains a {
      display: inline-block;
      *display: inline;
-     zoom: 1;
      text-decoration: none;
      overflow: hidden;
 }
 
- .gray {
-     color: #6f777b;
-     font-weight: normal;
-}
- .block-heading {
+ .display-block {
      display: block;
 }
  a, a:visited {
     color:#005ea5;
 }
 
- #total-income-tax-amount, #total-capital-gains-tax-amount, #total-uk-income-tax-amount {
-     text-align: right;
-     border-bottom: 0 none;
-}
- #total-income-tax-amount-nics {
-     text-align: right;
-}
- #total-income-tax tbody th, #total-uk-income-tax tbody th, #total-capital-gains-tax tbody th {
-     border-bottom: 0 none;
-}
-
- .scottish-income-tax {
-    padding-top:0;
-     border-width:0;
-}
  .hmrc-logo-print {
      display: none;
 }
  .print-this {
      border-bottom: 1px solid #000;
-     margin: 0 0 15px 0;
      position: relative;
      display: inline;
-}
- .page-header h1 {
-     margin-top: 0;
 }
  .print-this__icon {
      left: 0;
@@ -274,45 +31,23 @@ h2, article h2 {
      font-size: 16px;
      padding-left: 25px;
      text-decoration: none;
+     font-family: "GDS Transport", Arial, sans-serif;
 }
 
- .width80 {
-     width: 80%;
-}
- .width20 {
-     width: 20%;
-}
- .error-message {
-     margin-bottom: 0.5em;
-}
- .heading-48 {
-     margin-bottom: 15px;
-}
- .form-group-error .heading-48 {
-     margin-top: 0;
-}
  #howTaxIsSpentTable td:first-child, #totalUkIncomeTax th {
      font-weight: 700;
 }
+
  #adjustments-table {
      margin-top: 2.0em;
 }
  #national-insurance-contribution-table {
      margin-top: 2.0em;
 }
- @media (min-width: 641px) {
-     .main-content {
-         float: left;
-         width: 61.666667%;
-    }
-}
 
-.margin-top-1 {
-    margin-top: 1em;
-}
 
 .info-header-section {
-    margin-top: 2em;
+    margin-top: 0.5em;
 }
 
 
@@ -324,21 +59,13 @@ h2, article h2 {
     vertical-align: sub;
 }
 
-@media (max-width: 768px) {
-   #global-header .header-proposition a.menu {
-      display: none;
-   }
+.incomeTaxesSection {
+    margin-bottom: 3em;
+    padding: 0;
+}
 
-   .js-enabled #global-header .header-proposition #proposition-links {
-      display: inline;
-      float: none;
-      li {
-          float: right;
-          width: auto;
-          border: none;
-          margin-left: 1em;
-      }
-   }
+#your-total-tax, #income_after_tax_and_nics {
+   margin-bottom: 6em;
 }
 
 
@@ -359,10 +86,14 @@ h2, article h2 {
 
         dd {
             flex-grow: 1;
+            padding: 0;
+            margin: 0;
         }
 
         dt {
             flex-grow: 3;
+            padding: 0;
+            margin: 0;
         }
 
         dd {
@@ -373,7 +104,7 @@ h2, article h2 {
             margin-top: 2em;
         }
 
-        #tax-spent-footer.paye-tax-spent-footer {
+        #tax-spent-footer {
             margin-bottom: 2em;
         }
         

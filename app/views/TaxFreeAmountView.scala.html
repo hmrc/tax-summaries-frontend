@@ -17,14 +17,15 @@
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import views.html.includes.CurrencyAmountView
-@import views.html.main
-@import views.html.helpers.HeaderSection
+@import views.html.helpers.{PageHeading, HeaderSection, P}
 @import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+    pageHeading: PageHeading,
+    p: P
 )
 
 @(  viewModel: view_models.Allowances,
@@ -32,72 +33,66 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
+@beforeContent = {
+  @headerSection(
+      pageHeading = Messages("ats.tax_free_amount.tax_free_amount"),
+      name = viewModel.forename + ' ' + viewModel.surname,
+      utr = viewModel.utr,
+      taxYear = viewModel.taxYear,
+      actingAsAttorney = actingAsAttorney
+    )
+}
+
 @main(
-        title = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        pageTitle = Messages("ats.tax_free_amount.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
-        articleClasses = Some("full-width")
+        beforeContentHtml = Some(beforeContent)
     ) {
 
+        @pageHeading(
+          text = "ats.tax_free_amount.tax_free_amount",
+          section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+        )
 
-    @headerSection(
-        pageHeading = Messages("ats.tax_free_amount.tax_free_amount"),
-        name = viewModel.forename + ' ' + viewModel.surname,
-        utr = viewModel.utr,
-        taxYear = viewModel.taxYear,
-        actingAsAttorney = actingAsAttorney
-    )
+        @p(HtmlContent(Messages("ats.tax_free_amount.lede")), classes=Some("govuk-body-l"))
+        @p(HtmlContent(Messages("ats.tax_free_amount.description")))
 
-    <div class="main-content">
-
-        <h1 class="heading-xlarge">
-            <span class="gray heading-medium block-heading">
-                @Html(Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo))
-            </span>
-            @Html(Messages("ats.tax_free_amount.tax_free_amount"))
-        </h1>
-
-          <p class="lede">@Html(Messages("ats.tax_free_amount.lede"))</p>
-          <p>@Html(Messages("ats.tax_free_amount.description"))</p>
-
-      <table id="tax-free-allowance">
-        <thead>
-          <tr>
-            <th scope="col">@Html(Messages("generic.description"))</th>
-            <th scope="col">@Html(Messages("generic.amount_pounds"))</th>
+      <table id="tax-free-allowance" class="govuk-table">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@Html(Messages("generic.description"))</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
           </tr>
         </thead>
         <tbody>
           @if(!viewModel.taxFreeAllowance.isZero) {
-          <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line1", viewModel.taxYear.toString))</td>
-            <td id="tax-free-allowance-amount">@currencyAmountView(viewModel.taxFreeAllowance)</td>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">@Html(Messages("ats.tax_free_amount.table.line1", viewModel.taxYear.toString))</td>
+            <td id="tax-free-allowance-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.taxFreeAllowance)</td>
           </tr>
           }
           @if(!viewModel.marriageAllowanceTransferred.isZero) {
-          <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line3", viewModel.taxYear.toString))</td>
-            <td id="marriage_allowance_transferred_amount">@currencyAmountView(viewModel.marriageAllowanceTransferred)</td>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">@Html(Messages("ats.tax_free_amount.table.line3", viewModel.taxYear.toString))</td>
+            <td id="marriage_allowance_transferred_amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.marriageAllowanceTransferred)</td>
           </tr>
           }
           @if(!viewModel.otherAllowances.isZero) {
-          <tr>
-            <td>@Html(Messages("ats.tax_free_amount.table.line2"))</td>
-            <td id="other-allowances">@currencyAmountView(viewModel.otherAllowances)</td>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">@Html(Messages("ats.tax_free_amount.table.line2"))</td>
+            <td id="other-allowances" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.otherAllowances)</td>
           </tr>
           }
         </tbody>
         <tfoot>
-          <tr>
-            <th scope="row">@Html(Messages("ats.tax_free_amount.table.total", viewModel.taxYear.toString))</th>
-            <td id="tax-free-total" class="no-bold">@currencyAmountView(viewModel.totalTaxFree)</td>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">@Html(Messages("ats.tax_free_amount.table.total", viewModel.taxYear.toString))</th>
+            <td id="tax-free-total" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalTaxFree)</td>
           </tr>
         </tfoot>
       </table>
-    </div>
-
 }

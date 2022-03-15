@@ -267,8 +267,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val document = contentAsString(result)
 
           status(result) mustBe INTERNAL_SERVER_ERROR
-          document mustBe contentAsString(
-            serviceUnavailableView()(implicitly, implicitly, implicitly, appConfig, implicitly))
+          document mustBe contentAsString(serviceUnavailableView()(implicitly, implicitly, appConfig, implicitly))
         }
       }
     }

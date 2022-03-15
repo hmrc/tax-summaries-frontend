@@ -15,28 +15,27 @@
  *@
 
 @import config.ApplicationConfig
-
-@import views.html.main
 @import scala.concurrent.ExecutionContext
+@import helpers.{H1, P}
 
 @this(
-    main: main
+    main: main,
+    h1: H1,
+    p: P
 )
 
 @()(
     implicit request: Request[_],
     messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    ec: ExecutionContext
 )
 
 @main(
-      title = Messages("paye.ats.service_unavailable.title")
+      pageTitle = Messages("paye.ats.service_unavailable.title")
     ) {
 
-   <h1 class="heading-xlarge">@Messages("paye.ats.service_unavailable.heading")</h1>
-   <p>@Messages("paye.ats.service_unavailable.paragraph")</p>
+   @h1("paye.ats.service_unavailable.heading")</h1>
+   @p(Text(Messages("paye.ats.service_unavailable.paragraph")))
 
 }

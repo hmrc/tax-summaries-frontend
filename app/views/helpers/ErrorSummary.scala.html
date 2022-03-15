@@ -14,31 +14,20 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-@import controllers.auth.AuthenticatedRequest
-@import views.html.helpers.{backLink, H1, P}
-@import scala.concurrent.ExecutionContext
+@this(govukErrorSummary: GovukErrorSummary)
 
-@this(
-   main: main,
-   backLink: backLink,
-   h1: H1,
-   p: P
-)
+@(form: Form[_], errorFieldName: Option[String] = None)(implicit messages: Messages)
 
-@()(
-   implicit request: Request[_],
-   messages: Messages,
-   appConfig: ApplicationConfig,
-   ec: ExecutionContext
-)
-
-
-@main(
-       pageTitle = Messages("ats.service_unavailable.title")
-    ) {
-
-  @backLink(href="")
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
+@if(form.errors.nonEmpty) {
+    @defining(form.errors.groupBy(_.key).values.flatMap(_.headOption).map { error =>
+        ErrorLink(
+        href = Some(s"#${errorFieldName.getOrElse(error.key)}"),
+        content = Text(messages(error.message, error.args:_*))
+        )
+    }) { errorLinks =>
+        @govukErrorSummary(ErrorSummary(
+        errorList = errorLinks.toSeq,
+        title = Text(messages("error.summary.title"))
+        ))
+    }
 }

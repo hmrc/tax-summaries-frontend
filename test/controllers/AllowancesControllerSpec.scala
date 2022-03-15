@@ -93,7 +93,9 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.toString must include("tax-free-allowance")
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
-      document.select("h1").text mustBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+      document
+        .select("header[data-component='ats_page_heading']")
+        .text mustBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
     }
 
     "have zero-value fields hidden in the view" in {

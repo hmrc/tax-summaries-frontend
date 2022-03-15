@@ -52,8 +52,6 @@ trait ControllerBaseSpec extends BaseSpec {
   implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
 
   val mockPayeAtsService: PayeAtsService = mock[PayeAtsService]
-  implicit lazy val templateRenderer = MockTemplateRenderer
-
   lazy val taxFreeAmountView = inject[TaxFreeAmountView]
   lazy val genericErrorView = inject[GenericErrorView]
   lazy val atsMergePageView = inject[AtsMergePageView]

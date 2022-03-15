@@ -15,11 +15,13 @@
  *@
 
 @import config.ApplicationConfig
-@import views.html.main
 @import scala.concurrent.ExecutionContext
+@import helpers.{H1, P}
 
 @this(
-    main: main
+    main: main,
+    h1: H1,
+    p: P
 )
 
 @(
@@ -29,16 +31,15 @@
     )(
     implicit request: Request[_],
     messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
         ec: ExecutionContext
  )
 
 @main(
-        title = title
+        pageTitle = title
     ) {
 
-    <h1 class="heading-xlarge">@header</h1>
+    @h1(header)
 
-    <p>@message</p>
+    @p(HtmlContent(message))
 }

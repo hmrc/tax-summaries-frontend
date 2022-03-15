@@ -14,141 +14,104 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import config.ApplicationConfig
-
-@import uk.gov.hmrc.play.views.html.{layouts => playLayouts}
-@import controllers.auth.CommonRequest
-@import scala.concurrent.ExecutionContext
-@import uk.gov.hmrc.play.views.html.layouts._
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
-
+@import helpers.Link
+@import uk.gov.hmrc.hmrcfrontend.config.AccountMenuConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, SignOut, _}
+@import views.html.helper.CSPNonce
 
 @this(
-        trackingConsentSnippet: TrackingConsentSnippet,
-        article: Article,
-        formPartialRetriever: FormPartialRetriever
-)
+    hmrcLayout: HmrcLayout,
+    hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+    hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
+    twoThirdsMainContent: TwoThirdsMainContent,
+    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+    appConfig: ApplicationConfig,
+    govukPhaseBanner : GovukPhaseBanner,
+    link: Link,
+    hmrcAccountMenu: HmrcAccountMenu
+)(implicit accountMenuConfig: AccountMenuConfig)
 
 @(
-    title: String,
-    mainClasses: Option[String] = None,
-    mainDataAttributes: Option[Html] = None,
-    includeGridWrapper: Boolean = false,
-    actingAttorney: Option[ActingAsAttorneyFor] = None,
-    gaDimensions: Option[Map[String, Any]] = None,
+    pageTitle: String,
+    backLinkHref: Option[String] = None,
     disableSessionExpired: Boolean = false,
-    articleClasses: Option[String] = None
-)(
-    mainContent: Html
-)(
-    implicit request: Request[_],
-    messages: Messages,
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
-    appConfig: ApplicationConfig,
-        ec: ExecutionContext
-)
+    additionalScripts: Option[Html] = None,
+    backLinkAttrs: Map[String, String] = Map.empty,
+    actingAttorney: Option[ActingAsAttorneyFor] = None,
+    beforeContentHtml: Option[Html] = None
+)(content: Html)(implicit request: Request[_], messages: Messages)
 
-@isSa = @{
-    try {
-        val commonRequest = request.asInstanceOf[CommonRequest]
-        commonRequest.isSa
-    } catch {
-        case _ : ClassCastException => false
-    }
-}
-
-@isGovernmentGateway = @{
-    try {
-        val commonRequest = request.asInstanceOf[CommonRequest]
-        commonRequest.credentials.providerType == "GovernmentGateway"
-    } catch {
-        case _ : ClassCastException => false
-    }
-}
-
-@scriptElement = @{
-    Map("url" -> routes.Assets.versioned("javascripts/ats-app.js"))
-}
-
-
-@linkElems = @{
-    Seq(
-        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs.css")),
-        Map("url" -> controllers.routes.Assets.versioned("stylesheets/taxs-print.css"), "print" -> Some("print"))
-    )
-}
-
-@inlineScript = {
-    @if(!disableSessionExpired) {
-        @includes.timeout_dialog(appConfig.sessionTimeoutInSeconds, appConfig.sessionCountdownInSeconds, messages)
-    }
-}
-
-@getHelpForm = {
-    @formPartialRetriever.getPartialContent(appConfig.reportAProblemPartialUrl)
-}
-
-@pageTitle = {@title - @Messages("generic.ats") - GOV.UK}
-
-
-@isWelsh = @{
-    messages.lang.code == "cy" && appConfig.isWelshEnabled
-}
-
-@headInlineScript = @{
-    trackingConsentSnippet()
-}
-
-@navTitle = @{
-    Some(messages("generic.ats"))
-}
-
-@accessibilityFooterUrl = {
-    @appConfig.accessibilityStatementUrl(request.uri)
-}
-
-@{
-
-    val languageSelectorLanguages = if (appConfig.isWelshEnabled) {
-        Map("enUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("english"),
-            "cyUrl" -> controllers.paye.routes.PayeLanguageController.switchToLanguage("welsh")
+@headBlock = {
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs.css")'/>
+    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/taxs-print.css")' media="print"/>
+    @if(!disableSessionExpired){
+        @hmrcTimeoutDialogHelper(
+            signOutUrl = controllers.routes.AccountController.sessionExpired.url,
+            keepAliveUrl = Some("/keep-alive")
         )
-        } else {
-            Map.empty
-        }
-
-    val arguments:Map[String,Any] = Map[String, Any](
-        "pageTitle" -> Some(pageTitle),
-        "linkElems" -> linkElems,
-        "scriptElems" -> scriptElement,
-        "assetsPath" -> appConfig.assetsPrefix,
-        "mainClass" -> mainClasses,
-        "mainAttributes" -> mainDataAttributes,
-        "isWelsh" -> isWelsh,
-        "signOutUrl" -> controllers.routes.AccountController.signOut,
-        "ssoUrl" -> None,
-        "betaBanner" -> true,
-        "feedbackIdentifier" -> appConfig.serviceIdentifier,
-        "getHelpForm" -> getHelpForm,
-        "navTitle" -> navTitle,
-        "navTitleLink" -> appConfig.homePageUrl,
-        "newGovukLogo" -> true,
-        "hideAccountMenu" -> actingAttorney.isDefined,
-        "showPropositionLinks" -> true,
-        "langSelector" -> languageSelectorLanguages,
-        "headInlineScript" -> headInlineScript,
-        "isSa" -> isSa,
-        "inlineScript" -> inlineScript,
-        "isGovernmentGateway" -> isGovernmentGateway
-    )
-
-    val extraArguments:Map[String,Any] = if(appConfig.accessibilityStatementToggle) {
-        arguments ++ Map[String,Any](
-           "accessibilityFooterUrl" -> accessibilityFooterUrl
-            )
-    } else {
-        arguments
     }
-
-    templateRenderer.renderDefaultTemplate(appConfig.frontendTemplatePath, article(mainContent, includeGridWrapper, articleClasses), extraArguments)
+    @additionalScripts.getOrElse("")
 }
+
+@addedScripts = {
+    <script src='@controllers.routes.Assets.versioned("javascripts/taxs.js")'></script>
+}
+
+@beforeContent = {
+    @if(!actingAttorney.isDefined && !disableSessionExpired) {
+        @hmrcAccountMenu(AccountMenu(
+                businessTaxAccount = Some(BusinessTaxAccount()),
+                signOut = SignOut(href = routes.AccountController.signOut.url),
+                language = if(messages.lang.code == "cy") Cy else En
+            ).withUrlsFromConfig())
+    }
+    @hmrcLanguageSelectHelper()
+    @if(beforeContentHtml.isDefined){
+        @beforeContentHtml
+    }
+}
+
+@contentBlock = {
+    @content
+    @if(!disableSessionExpired) {
+        @hmrcReportTechnicalIssue(ReportTechnicalIssue(
+            serviceId = appConfig.contactFormServiceIdentifier,
+            language = if(messages.lang.code == "cy") Cy else En,
+            referrerUrl = Some(request.uri),
+            baseUrl = Some(appConfig.reportAProblemPartialUrl),
+            classes = Some("govuk-!-margin-bottom-8")
+        ))
+        <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m">
+        @govukPhaseBanner(PhaseBanner(
+            tag = Some(Tag(
+                content = Text("beta")
+            )),
+            content = HtmlContent(messages("betaBanner.message",
+                    link(link=appConfig.betaFeedbackUrl,
+                        messageKey="betaBanner.linkText",
+                        inParagraph = true)))
+        ))
+    }
+}
+
+@fullPageTitle = @{
+    s"$pageTitle - ${Messages("generic.ats")} - GOV.UK"
+}
+
+@hmrcLayout(
+    pageTitle = Some(fullPageTitle),
+    serviceName = Some(messages("generic.ats")),
+    nonce = CSPNonce.get,
+    isWelshTranslationAvailable = true,
+    accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(request.uri)),
+    displayHmrcBanner = false,
+    additionalHeadBlock = Some(headBlock),
+    additionalScriptsBlock = Some(addedScripts),
+    beforeContentBlock = Some(beforeContent),
+    mainContentLayout = Some(twoThirdsMainContent(_))
+)(contentBlock)

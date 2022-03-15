@@ -16,8 +16,14 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import config.ApplicationConfig
+@import helpers.{P, backLink}
+@import includes.AttorneyBannerView
 
-@this()
+@this(
+    p: P,
+    backLink: backLink,
+    attorneyBanner: AttorneyBannerView
+)
 
 @(  pageHeading: String=null,
     name: String,
@@ -30,21 +36,17 @@
     appConfig: ApplicationConfig
 )
 
-
-
 @if(actingAsAttorney.isDefined) {
-    <div class="nested-banner">
-        <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAsAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}.</p>
-    </div>
+    @attorneyBanner(actingAsAttorney)
 }
 
-<div class="info-header-section">
-    @if(!actingAsAttorney.isDefined && utr.nonEmpty){
-            <p id="user-info"><strong>@name</strong> <br>@Html(Messages("generic.utr")) @utr</p>
-
-    }
-
-    <div class="js-visible">
-        <p><a id="back-link" class="link-back" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a></p>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
     </div>
+    @if(!actingAsAttorney.isDefined && utr.nonEmpty){
+        <div class="govuk-grid-column-one-half govuk-!-text-align-right">
+            @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
+        </div>
+    }
 </div>

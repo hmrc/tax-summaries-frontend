@@ -25,7 +25,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.renderer.TemplateRenderer
 import utils.{AttorneyUtils, Globals}
 import view_models.AtsForms
 import views.html.AtsMergePageView
@@ -39,7 +38,7 @@ class AtsMergePageController @Inject()(
   mcc: MessagesControllerComponents,
   atsMergePageView: AtsMergePageView,
   genericErrorView: GenericErrorView,
-  atsForms: AtsForms)(implicit templateRenderer: TemplateRenderer, appConfig: ApplicationConfig, ec: ExecutionContext)
+  atsForms: AtsForms)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) with AttorneyUtils with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>

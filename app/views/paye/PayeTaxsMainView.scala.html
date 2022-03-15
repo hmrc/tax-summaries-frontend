@@ -16,44 +16,44 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
-@import views.html.main
-@import helpers.BackLinkView
+@import helpers.{backLink, H1, H2, P, Link}
 @import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
-    backLinkView: BackLinkView,
-        htmlFormatter: HtmlFormatter
+    backLink: backLink,
+    htmlFormatter: HtmlFormatter,
+    h1: H1,
+    h2: H2,
+    p: P,
+    link: Link
 )
 
 @(  viewModel: PayeAtsMain
     )(
     implicit request: PayeAuthenticatedRequest[_],
     messages: Messages,
-
-    templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer,
     appConfig: ApplicationConfig,
-        executionContext: ExecutionContext
+    executionContext: ExecutionContext
 )
 
 @main(
-    title = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+    pageTitle = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
     ) {
 
-    @backLinkView(Messages("paye.ats.index.html.title"))
+    @backLink("#")
 
-    <h1 class="heading-xlarge flush--bottom" id="index-page-header">@Messages("paye.ats.index.html.title")</h1>
-    <h2 class="heading-xlarge flush--top">@Html(Messages("paye.generic.tax_year_heading",
+    @h1("paye.ats.index.html.title", elmId=Some("index-page-header"), payeHeading = Some(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
-        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo)))</h2>
-    <p id="index-page-description">@Html(Messages("paye.ats.index.html.lede"))</p>
-    <h2 class="heading-medium"><a id="tax-calc-link" href="@controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear)">@Messages("ats.index.html.tax_calc_link")</a></h2>
-    <p>@Messages("paye.ats.index.html.tax_calc_description")</p>
-    <h2 class="heading-medium"><a id="tax-services-link" href="@controllers.paye.routes.PayeGovernmentSpendController.show(viewModel.taxYear)">@Messages("paye.ats.index.html.tax_spend_link")</a></h2>
-    <p>@Messages("paye.ats.index.html.tax_spend_description")</p>
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
+
+    @p(HtmlContent(Messages("paye.ats.index.html.lede")), elmId=Some("index-page-description"))
+    @h2(link(link=controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear).url, messageKey = "ats.index.html.tax_calc_link", id=Some("tax-calc-link"), inParagraph=true).toString, classes=Some("govuk-heading-m"))
+    @p(Text(Messages("paye.ats.index.html.tax_calc_description")))
+    @h2(link(link=controllers.paye.routes.PayeGovernmentSpendController.show(viewModel.taxYear).url, messageKey="paye.ats.index.html.tax_spend_link", id=Some("tax-services-link"), inParagraph = true).toString, classes=Some("govuk-heading-m"))
+    @p(Text(Messages("paye.ats.index.html.tax_spend_description")))
 
 
 
