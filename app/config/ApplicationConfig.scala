@@ -38,7 +38,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   val agentServiceUrl = config.baseUrl("tax-summaries-agent")
   val serviceIdentifier = config.getString("service-identifier")
 
-  private val contactHost = config.baseUrl("contact-frontend")
+  private val contactHost = configuration.getOptional[String]("contact-frontend.host").getOrElse("")
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
   lazy val cidHost = config.baseUrl("citizen-details")
 
@@ -49,7 +49,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   lazy val homePageUrl = "/annual-tax-summary/"
-  lazy val betaFeedbackUrl = s"/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
