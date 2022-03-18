@@ -30,6 +30,7 @@ import scala.collection.JavaConverters._
 class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configuration) {
 
   def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  def getExternalUrl(key: String): String = config.getString(s"external-urls.$key")
 
   val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, appName).get()
 
@@ -38,18 +39,19 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   val agentServiceUrl = config.baseUrl("tax-summaries-agent")
   val serviceIdentifier = config.getString("service-identifier")
 
-  private val contactHost = configuration.getOptional[String]("contact-frontend.host").getOrElse("")
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
   lazy val cidHost = config.baseUrl("citizen-details")
 
   lazy val authHost = config.baseUrl("auth")
-  lazy val contactFormServiceIdentifier = "ATS"
+  lazy val contactFormServiceIdentifier = "TAX-SUMMARIES"
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
   lazy val homePageUrl = "/annual-tax-summary/"
-  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  lazy val contactFrontendBaseUrl = getExternalUrl("contact-frontend.host")
+  lazy val betaFeedbackUrl =
+    s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   // Encryption config
   lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
