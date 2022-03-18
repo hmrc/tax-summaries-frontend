@@ -43,7 +43,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   lazy val cidHost = config.baseUrl("citizen-details")
 
   lazy val authHost = config.baseUrl("auth")
-  lazy val contactFormServiceIdentifier = "TAX-SUMMARIES"
+  lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
