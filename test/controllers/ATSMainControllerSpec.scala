@@ -58,6 +58,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
         Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+      contentAsString(result) must include("contact/beta-feedback-unauthenticated"
     }
 
     "display an error page for an invalid request" in {
