@@ -84,7 +84,6 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.taxYear).thenReturn(taxYear)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
-    when(mockAppConfig.reportAProblemPartialUrl).thenReturn(appConfig.reportAProblemPartialUrl)
   }
 
   "view" must {
