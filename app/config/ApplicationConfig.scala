@@ -38,7 +38,7 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
   val agentServiceUrl = config.baseUrl("tax-summaries-agent")
   val serviceIdentifier = config.getString("service-identifier")
 
-  private val contactHost = configuration.getOptional[String]("contact-frontend.host").getOrElse("")
+  private val contactHost = configuration.getOptional[String]("external-urls.contact-frontend.host").getOrElse("")
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
   lazy val cidHost = config.baseUrl("citizen-details")
 
