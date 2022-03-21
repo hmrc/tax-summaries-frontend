@@ -40,8 +40,10 @@ class BigDecimalUtilsSpec extends AnyWordSpec with BigDecimalUtils with Matchers
       "two big decimals are not the same" in {
 
         forAll { (bd1: BigDecimal, bd2: BigDecimal) =>
-          assert(!(bd1 === bd2))
-          assert(bd1 !== bd2)
+          if (bd1 !== bd2) {
+            assert(!(bd1 === bd2))
+            assert(bd1 !== bd2)
+          }
         }
       }
     }
