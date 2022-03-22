@@ -79,13 +79,7 @@
 @contentBlock = {
     @content
     @if(!disableSessionExpired) {
-        @hmrcReportTechnicalIssue(ReportTechnicalIssue(
-            serviceId = appConfig.contactFormServiceIdentifier,
-            language = if(messages.lang.code == "cy") Cy else En,
-            referrerUrl = Some(request.uri),
-            baseUrl = Some(appConfig.reportAProblemPartialUrl),
-            classes = Some("govuk-!-margin-bottom-8")
-        ))
+        @hmrcReportTechnicalIssueHelper()
         <hr aria-hidden="true" class="govuk-section-break govuk-section-break--m">
         @govukPhaseBanner(PhaseBanner(
             tag = Some(Tag(
