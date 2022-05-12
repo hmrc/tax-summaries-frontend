@@ -93,7 +93,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, mockAppConfig, ConfidenceLevel.L200),
         atsForms.atsYearFormMapping)
 
-      result must include(messages("ats.summary.title"))
+      result must include(messages("merge.page.ats.select_tax_year.title"))
     }
 
     "display h1" in {

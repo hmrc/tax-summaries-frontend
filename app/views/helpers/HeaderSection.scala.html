@@ -29,7 +29,8 @@
     name: String,
     utr: String,
     taxYear: Int,
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+    showBackLink: Boolean = true
     )(
     implicit messages: Messages,
     request: AuthenticatedRequest[_],
@@ -41,11 +42,13 @@
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
-        <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
-    </div>
+    @if(showBackLink) {
+        <div class="govuk-grid-column-one-half">
+            <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
+        </div>
+    }
     @if(!actingAsAttorney.isDefined && utr.nonEmpty){
-        <div class="govuk-grid-column-one-half govuk-!-text-align-right">
+        <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
             @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
         </div>
     }
