@@ -82,6 +82,7 @@
             form = atsYearForm,
             legend = atsMergePageViewModel.subtitleMsg,
             legendClasses = "govuk-visually-hidden",
+            legendAsHeading = false,
             name = atsForms.yearChoice,
             items = radioItems(atsForms.yearChoice, atsMergePageViewModel.completeYearList.map(
             yearChoice => yearChoice -> yearChoice.getLabel
