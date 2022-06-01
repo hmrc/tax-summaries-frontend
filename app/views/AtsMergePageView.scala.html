@@ -63,9 +63,12 @@
     )
 }
 
+@title = {
+    @if(atsYearForm.errors) {@messages("error.form.error") @messages(atsMergePageViewModel.titleMsg)} else {@messages(atsMergePageViewModel.titleMsg)}
+}
 
 @main(
-        pageTitle = messages(atsMergePageViewModel.titleMsg),
+        pageTitle = title.toString,
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent)
 ) {

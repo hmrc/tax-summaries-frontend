@@ -35,6 +35,7 @@ site.back=Back
 generic.error = Error:
 view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
+error.form.error = Error:
 
 
 # View ATS - Select the tax year page
