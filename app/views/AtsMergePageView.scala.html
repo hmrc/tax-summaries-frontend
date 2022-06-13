@@ -58,13 +58,17 @@
         name = atsMergePageViewModel.name,
         utr = atsMergePageViewModel.saData.utr,
         taxYear = 0,
-        actingAsAttorney = actingAsAttorney
+        actingAsAttorney = actingAsAttorney,
+        showBackLink = false
     )
 }
 
+@title = {
+    @if(atsYearForm.errors) {@messages("error.form.error") @messages(atsMergePageViewModel.titleMsg)} else {@messages(atsMergePageViewModel.titleMsg)}
+}
 
 @main(
-        pageTitle = messages(atsMergePageViewModel.titleMsg),
+        pageTitle = title.toString,
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent)
 ) {
@@ -82,6 +86,7 @@
             form = atsYearForm,
             legend = atsMergePageViewModel.subtitleMsg,
             legendClasses = "govuk-visually-hidden",
+            legendAsHeading = false,
             name = atsForms.yearChoice,
             items = radioItems(atsForms.yearChoice, atsMergePageViewModel.completeYearList.map(
             yearChoice => yearChoice -> yearChoice.getLabel

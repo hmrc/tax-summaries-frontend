@@ -28,6 +28,7 @@ site.back=Yn ôl
 generic.error = Gwall:
 view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
+error.form.error = Gwall:
 
 
 # View ATS - Select tax year page
