@@ -52,7 +52,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     additionalRateAmount = Amount(40, "GBP"),
     otherAdjustmentsIncreasing = Amount(90, "GBP"),
     marriageAllowanceReceivedAmount = Amount(0, "GBP"),
-    otherAdjustmentsReducing = Amount(20, "GBP"),
+    otherAdjustmentsReducing = Amount(-20, "GBP"),
     ScottishTax.empty,
     totalIncomeTax = Amount(372, "GBP"),
     scottishIncomeTax = Amount(100, "GBP"),
@@ -279,7 +279,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("other-adjustments-increasing-amount").text() must equal("£90")
-      document.getElementById("other-adjustments-reducing-amount").text() must equal("minus £20 -£20")
+      document.getElementById("other-adjustments-reducing-amount").text() must equal("minus £20 − £20")
     }
 
     "hide other adjustments increasing your tax section if the amount is 0.00" in {

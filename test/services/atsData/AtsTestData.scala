@@ -420,7 +420,7 @@ object AtsTestData {
             "additional_rate_amount"             -> Amount(1400, "GBP"),
             "other_adjustments_increasing"       -> Amount(1500, "GBP"),
             "marriage_allowance_received_amount" -> Amount(1600, "GBP"),
-            "other_adjustments_reducing"         -> Amount(1700, "GBP"),
+            "other_adjustments_reducing"         -> Amount(-1700, "GBP"),
             "savings_lower_rate_tax"             -> Amount.gbp(2900),
             "savings_lower_income"               -> Amount.gbp(3000),
             "savings_higher_rate_tax"            -> Amount.gbp(3100),

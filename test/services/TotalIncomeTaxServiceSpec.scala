@@ -135,7 +135,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         Amount(1400, "GBP"),
         Amount(1500, "GBP"),
         Amount(1600, "GBP"),
-        Amount(1700, "GBP"),
+        Amount(-1700, "GBP"),
         scottishTax,
         Amount.gbp(3500),
         Amount.gbp(3600),
