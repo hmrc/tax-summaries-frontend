@@ -19,11 +19,11 @@ package services
 import com.google.inject.Inject
 import config.ApplicationConfig
 import models.AgentToken
-import org.joda.time.{DateTime, Interval}
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
 import utils.AgentTokenException
 
+import java.time.{Duration, Instant, LocalDateTime}
 import scala.util.matching.Regex
 
 class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
@@ -80,5 +80,9 @@ class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
     val tokenDateTime = new DateTime(timeStamp)
     val tokenExpiryDateTime = tokenDateTime.plusSeconds(tokenMaxAge)
     new Interval(tokenDateTime, tokenExpiryDateTime)
+
+//    val tokenDateTime: Instant = new Instant(timeStamp)
+//    val tokenExpiryDateTime: Instant = tokenDateTime.plusSeconds(tokenMaxAge)
+//    Duration.between(tokenDateTime, tokenExpiryDateTime)
   }
 }
