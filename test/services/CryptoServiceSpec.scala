@@ -22,7 +22,6 @@ import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 import utils.TestConstants._
 import utils.{AgentTokenException, BaseSpec}
 
-import java.time.Instant
 import java.util.Date
 
 class CryptoServiceSpec extends BaseSpec {
