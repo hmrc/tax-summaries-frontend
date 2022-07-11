@@ -17,9 +17,9 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "play-language"              % s"5.1.0-$playVersion",
     "uk.gov.hmrc"                %% "govuk-template"             % s"5.69.0-$playVersion",
     "uk.gov.hmrc"                %% "play-partials"              % s"8.1.0-$playVersion",
-    "uk.gov.hmrc"                %% "domain"                     % s"6.1.0-$playVersion",
+    "uk.gov.hmrc"                %% "domain"                     % s"8.1.0-$playVersion",
     "uk.gov.hmrc"                %% "json-encryption"            % s"4.10.0-$playVersion",
-    "uk.gov.hmrc"                %% "tax-year"                   % "1.4.0",
+    "uk.gov.hmrc"                %% "tax-year"                   % "3.0.0",
     "com.mohiva"                 %% "play-html-compressor"       % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
     "com.softwaremill.quicklens" %% "quicklens"                  % "1.6.0",
     "org.typelevel"              %% "cats-core"                  % "2.3.1",
