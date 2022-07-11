@@ -19,7 +19,6 @@ package controllers
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import connectors.DataCacheConnector
 import models.{AgentToken, AtsListData}
-import org.joda.time.DateTime
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,6 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
@@ -42,7 +42,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
   val atsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
 
-  val agentTokenMock = AgentToken("uar", generatedSaUtr.utr, new DateTime().getMillis)
+  val agentTokenMock = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
   val mockDataCacheConnector = mock[DataCacheConnector]
 

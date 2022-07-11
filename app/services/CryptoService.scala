@@ -64,25 +64,13 @@ class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
   }
 
   protected def validateTimestamp(agentToken: AgentToken) = {
-    val timeStamp = agentToken.timestamp
-    val validInterval = getTokenValidityInterval(timeStamp)
-    val timeNow = new DateTime
+    val timeStamp = Instant.ofEpochMilli(agentToken.timestamp)
+    val maxAge = timeStamp.plusMillis(tokenMaxAge)
+    val timeNow = Instant.now()
 
-    if (!validInterval.contains(timeNow)) {
-      throw AgentTokenException(
-        s"Expired token. Time now : $timeNow valid interval : $validInterval timestamp : $timeStamp")
+    if (timeNow.isAfter(maxAge) || timeNow.isBefore(timeStamp)) {
+      throw AgentTokenException(s"Expired token. Time now : $timeNow valid interval : $timeStamp timestamp : $maxAge")
     }
-
     agentToken
-  }
-
-  protected def getTokenValidityInterval(timeStamp: Long) = {
-    val tokenDateTime = new DateTime(timeStamp)
-    val tokenExpiryDateTime = tokenDateTime.plusSeconds(tokenMaxAge)
-    new Interval(tokenDateTime, tokenExpiryDateTime)
-
-//    val tokenDateTime: Instant = new Instant(timeStamp)
-//    val tokenExpiryDateTime: Instant = tokenDateTime.plusSeconds(tokenMaxAge)
-//    Duration.between(tokenDateTime, tokenExpiryDateTime)
   }
 }
