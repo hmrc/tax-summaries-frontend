@@ -346,6 +346,5 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         ))
       assert(result.getElementById(s"year-$taxYear-PAYE").hasAttr("checked"))
     }
-
   }
 }
