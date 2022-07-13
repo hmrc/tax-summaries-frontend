@@ -338,13 +338,13 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1)),
-            List(taxYear),
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 2, taxYear - 1)),
+            List(taxYear - 3, taxYear),
             mockAppConfig,
             ConfidenceLevel.L200),
-          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear))
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear - 3))
         ))
-      assert(result.getElementById(s"year-$taxYear-PAYE").hasAttr("checked"))
+      assert(result.getElementById(s"year-${taxYear - 3}-PAYE").hasAttr("checked"))
     }
   }
 }
