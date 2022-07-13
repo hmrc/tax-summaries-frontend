@@ -55,12 +55,20 @@ class AtsMergePageController @Inject()(
         request.session
       )(parameter => request.session + (Globals.TAXS_USER_TYPE_KEY -> parameter))
 
+    val form = formWithErrors.getOrElse(
+      request.session
+        .get("yearChoice")
+        .fold(
+          atsForms.atsYearFormMapping
+        )(value => atsForms.atsYearFormMapping.fill(AtsYearChoice.fromString(Some(value))))
+    )
+
     atsMergePageService.getSaAndPayeYearList.map {
       case Right(atsMergePageViewModel) =>
         Ok(
           atsMergePageView(
             atsMergePageViewModel,
-            formWithErrors.getOrElse(atsForms.atsYearFormMapping),
+            form,
             getActingAsAttorneyFor(
               request,
               atsMergePageViewModel.saData.forename,
@@ -79,7 +87,8 @@ class AtsMergePageController @Inject()(
         getSaAndPayeYearList(Some(formWithErrors))(request)
       },
       value => {
-        Future.successful(redirectWithYear(value))
+        Future.successful(
+          redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value))))
       }
     )
   }

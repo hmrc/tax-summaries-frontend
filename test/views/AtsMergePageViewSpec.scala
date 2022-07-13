@@ -18,7 +18,8 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import models.{ActingAsAttorneyFor, AtsYearChoice}
+import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
+import org.jsoup.Jsoup
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -318,6 +319,32 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         atsForms.atsYearFormMapping
       )
       result must include("hmrc-account-menu")
+    }
+
+    "have the correct radio option checked when form is filled with SA value" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
+            List.empty,
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(SA, taxYear))
+        ))
+      assert(result.getElementById(s"year-$taxYear-SA").hasAttr("checked"))
+    }
+
+    "have the correct radio option checked when form is filled with PAYE value" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1)),
+            List(taxYear),
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear))
+        ))
+      assert(result.getElementById(s"year-$taxYear-PAYE").hasAttr("checked"))
     }
 
   }
