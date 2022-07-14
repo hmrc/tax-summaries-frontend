@@ -19,6 +19,7 @@ package views
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{ActingAsAttorneyFor, AtsYearChoice}
+import org.jsoup.Jsoup
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -319,6 +320,44 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       )
       result must include("hmrc-account-menu")
     }
+    "have an error link to the first radio button if there is an error with SA data" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
+            List.empty,
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.withError("error", "broken")
+        ))
 
+      assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-SA").isEmpty)
+    }
+    "have an error link to the first radio button if there is an error with PAYE data" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2)),
+            List(taxYear, taxYear - 1),
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.withError("error", "broken")
+        ))
+
+      assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-PAYE").isEmpty)
+    }
+    "have an error link to the first radio button if there is an error no ATS" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2)),
+            List.empty,
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.withError("error", "broken")
+        ))
+
+      assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-NoATS").isEmpty)
+    }
   }
 }
