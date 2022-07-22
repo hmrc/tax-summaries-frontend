@@ -16,10 +16,10 @@
 
 package utils
 
-import org.joda.time.DateTime
 import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 
 import java.net.URLEncoder
+import java.time.Instant
 
 object LoginPage {
 
@@ -32,7 +32,7 @@ object LoginPage {
   }
 
   def agentToken(utr: String) = {
-    val token = URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (new DateTime().getMillis))).value), "UTF-8")
+    val token = URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value), "UTF-8")
     token
   }
 }

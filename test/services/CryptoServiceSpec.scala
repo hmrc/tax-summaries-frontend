@@ -50,7 +50,7 @@ class CryptoServiceSpec extends BaseSpec {
   }
 
   // Common method for creating a valid encryped token
-  def encryptToken(agent: String = agentUar, client: String = clientUtr, timestamp: Long = new Date().getTime()) = {
+  def encryptToken(agent: String = agentUar, client: String = clientUtr, timestamp: Long = new Date().getTime) = {
     val plain = s"$agent:$client:$timestamp"
     val encrypted = crypto.encrypt(PlainText(plain)).value
     UriEncoding.encodePathSegment(encrypted, "UTF-8")
@@ -66,7 +66,7 @@ class CryptoServiceSpec extends BaseSpec {
 
     "throw an AgentTokenException when an expired token is passed" in {
 
-      val token = encryptToken(timestamp = (new Date().getTime() - (maxAge * 1000)))
+      val token = encryptToken(timestamp = (new Date().getTime - (maxAge * 1000)))
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
@@ -77,7 +77,7 @@ class CryptoServiceSpec extends BaseSpec {
 
     "throw an exception when the token date is in the future" in {
 
-      val token = encryptToken(timestamp = (new Date().getTime() + (maxAge * 1000)))
+      val token = encryptToken(timestamp = (new Date().getTime + (maxAge * 1000)))
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
