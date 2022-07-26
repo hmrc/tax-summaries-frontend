@@ -37,7 +37,7 @@ class CapitalGainsService @Inject()(atsService: AtsService) {
       atsData.taxYear,
       atsData.utr.get,
       capitalGainsData.payload.get("taxable_gains"),
-      capitalGainsData.payload.get("less_tax_free_amount"),
+      -capitalGainsData.payload.get("less_tax_free_amount"),
       capitalGainsData.payload.get("pay_cg_tax_on"),
       capitalGainsData.payload.get("amount_at_entrepreneurs_rate"),
       capitalGainsData.payload.get("amount_due_at_entrepreneurs_rate"),

@@ -197,8 +197,8 @@
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
               <td id="other-adjustments-reducing-amount" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="reducing-amount" class="govuk-visually-hidden">@Html(Messages("generic.minus")) @currencyAmountView(viewModel.otherAdjustmentsReducing)</span>
-                  <span aria-hidden="true">-@currencyAmountView(viewModel.otherAdjustmentsReducing)</span>
+                  <span id="reducing-amount" class="govuk-visually-hidden">@currencyAmountView(viewModel.otherAdjustmentsReducing, false, true)</span>
+                  <span aria-hidden="true">@currencyAmountView(viewModel.otherAdjustmentsReducing)</span>
               </td>
             </tr>
             }

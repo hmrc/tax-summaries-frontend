@@ -82,7 +82,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
         2019,
         "1111111111",
         Amount.gbp(100),
-        Amount.gbp(200),
+        Amount.gbp(-200),
         Amount.gbp(300),
         Amount.gbp(400),
         Amount.gbp(500),

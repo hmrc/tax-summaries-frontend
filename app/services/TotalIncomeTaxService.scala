@@ -97,7 +97,7 @@ class TotalIncomeTaxService @Inject()(atsService: AtsService) {
       payload("additional_rate_amount"),
       payload("other_adjustments_increasing"),
       payload("marriage_allowance_received_amount"),
-      payload("other_adjustments_reducing"),
+      -payload("other_adjustments_reducing"),
       scottishTax,
       payload("total_income_tax"),
       payload("scottish_income_tax"),

@@ -98,7 +98,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("taxable-gains").text() mustBe "£20,000"
-      document.getElementById("less-taxable-gains").text() mustBe "minus £10,600 -£10,600"
+      document.getElementById("less-taxable-gains").text() mustBe "minus £10,600 − £10,600"
       document.getElementById("cg-pay-tax-on").text() mustBe "£9,400"
       document.getElementById("tax-period").text() mustBe s"${taxYear - 1} to $taxYear"
       document.getElementById("total-cg-tax-rate").text() mustBe "12.34%"
@@ -216,7 +216,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("adjustment-to-capital-gains-tax-amount").text() must equal("minus £500 -£500")
+      document.getElementById("adjustment-to-capital-gains-tax-amount").text() must equal("minus £500 − £500")
     }
 
     "show Total Capital Gains Tax with correct user data" in {
