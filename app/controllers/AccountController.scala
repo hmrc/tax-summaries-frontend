@@ -21,6 +21,7 @@ import config.ApplicationConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.session_expired
+
 import scala.concurrent.ExecutionContext
 
 class AccountController @Inject()(

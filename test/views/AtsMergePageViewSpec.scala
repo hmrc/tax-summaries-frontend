@@ -18,7 +18,7 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import models.{ActingAsAttorneyFor, AtsYearChoice}
+import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -330,9 +330,9 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             ConfidenceLevel.L200),
           atsForms.atsYearFormMapping.withError("error", "broken")
         ))
-
       assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-SA").isEmpty)
     }
+    
     "have an error link to the first radio button if there is an error with PAYE data" in {
       val result = Jsoup.parse(
         view(
@@ -346,6 +346,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
       assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-PAYE").isEmpty)
     }
+    
     "have an error link to the first radio button if there is an error no ATS" in {
       val result = Jsoup.parse(
         view(
@@ -358,6 +359,32 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         ))
 
       assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-NoATS").isEmpty)
+    }
+
+    "have the correct radio option checked when form is filled with SA value" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
+            List.empty,
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(SA, taxYear))
+        ))
+      assert(result.getElementById(s"year-$taxYear-SA").hasAttr("checked"))
+    }
+
+    "have the correct radio option checked when form is filled with PAYE value" in {
+      val result = Jsoup.parse(
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 2, taxYear - 1)),
+            List(taxYear - 3, taxYear),
+            mockAppConfig,
+            ConfidenceLevel.L200),
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear - 3))
+        ))
+      assert(result.getElementById(s"year-${taxYear - 3}-PAYE").hasAttr("checked"))
     }
   }
 }

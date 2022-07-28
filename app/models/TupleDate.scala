@@ -16,14 +16,14 @@
 
 package models
 
-import java.text.SimpleDateFormat
-
-import org.joda.time.LocalDate
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 case class TupleDate(day: String, month: String, year: String) {
-  lazy val localDate = new LocalDate(year.toInt, month.toInt, day.toInt)
+  lazy val localDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
 
-  lazy val date = localDate.toDate
-
-  def toString(format: String) = new SimpleDateFormat(format).format(date)
+  def toString(format: String) = {
+    val dateFormatter = DateTimeFormatter.ofPattern(format)
+    localDate.format(dateFormatter)
+  }
 }
