@@ -67,12 +67,21 @@
     @if(atsYearForm.errors) {@messages("error.form.error") @messages(atsMergePageViewModel.titleMsg)} else {@messages(atsMergePageViewModel.titleMsg)}
 }
 
+@errorSummaryLink = @{
+    if(!atsMergePageViewModel.completeYearList.isEmpty){
+        Some(atsMergePageViewModel.completeYearList.map{
+            x => s"${atsForms.yearChoice}-${x.year}-${x.atsType}"
+        }.head)
+    } else None
+}
+
+
 @main(
         pageTitle = title.toString,
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent)
 ) {
-    @errorSummary(atsYearForm, Some("year-2021-NoATS"))
+    @errorSummary(atsYearForm, errorSummaryLink)
 
     @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
         @pageHeading(
