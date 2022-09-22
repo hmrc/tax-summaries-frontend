@@ -117,6 +117,6 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
-  def spendCategories(taxYear: Int): List[String] =
-    configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
+//  def spendCategories(taxYear: Int): List[String] =
+//    configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
 }
