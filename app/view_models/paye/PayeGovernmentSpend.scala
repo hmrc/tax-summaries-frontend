@@ -18,7 +18,6 @@ package view_models.paye
 
 import config.ApplicationConfig
 import models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
-import utils.CategoriesUtils
 import view_models.Amount
 
 case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
@@ -36,10 +35,8 @@ object PayeGovernmentSpend {
             govSpending.govSpendAmountData
               .map { govSpendAmountDataMap =>
                 val sortedSpendData = govSpendAmountDataMap.toList.sortWith(_._2.percentage > _._2.percentage)
-                val orderedSpendData =
-                  CategoriesUtils.reorderCategories(appConfig, payeAtsData.taxYear, sortedSpendData)
 
-                for ((category, spendData) <- orderedSpendData)
+                for ((category, spendData) <- sortedSpendData)
                   yield SpendRow(category, spendData)
               }
           }

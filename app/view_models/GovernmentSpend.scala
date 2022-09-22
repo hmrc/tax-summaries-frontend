@@ -18,7 +18,7 @@ package view_models
 
 import config.ApplicationConfig
 import models.SpendData
-import utils.{CategoriesUtils, GenericViewModel}
+import utils.GenericViewModel
 import view_models.paye.TaxYearFormatting
 
 case class GovernmentSpend(
@@ -39,5 +39,5 @@ case class GovernmentSpend(
     govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
 
   def filteredDataWithHigherTransport(appConfig: ApplicationConfig): List[(String, SpendData)] =
-    CategoriesUtils.reorderCategories(appConfig, taxYear, sortedSpendData)
+    sortedSpendData
 }
