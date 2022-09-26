@@ -108,7 +108,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     s"show generic no ats message and radiobuttons if there are years missing from paye and sa data from ${taxYear - 2}" in {
 
-      when(mockAppConfig.taxYear).thenReturn(2021)
+      when(mockAppConfig.taxYear).thenReturn(2022)
 
       val result =
         view(
@@ -332,7 +332,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         ))
       assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-SA").isEmpty)
     }
-    
+
     "have an error link to the first radio button if there is an error with PAYE data" in {
       val result = Jsoup.parse(
         view(
@@ -346,7 +346,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
       assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-PAYE").isEmpty)
     }
-    
+
     "have an error link to the first radio button if there is an error no ATS" in {
       val result = Jsoup.parse(
         view(
