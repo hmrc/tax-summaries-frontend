@@ -23,7 +23,7 @@ import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.GenericViewModel
+import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,8 @@ class GovernmentSpendService @Inject()(atsService: AtsService, middleConnector: 
     for {
       response <- governmentSpend
     } yield {
-      response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
+      val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
+      CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
     }
   }
 

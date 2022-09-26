@@ -68,6 +68,8 @@ class CryptoServiceSpec extends BaseSpec {
 
       val token = encryptToken(timestamp = (new Date().getTime - (maxAge * 1000)))
 
+      println(token)
+
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
       }
