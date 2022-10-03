@@ -35,6 +35,35 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPe
       }
     }
 
+    "filteredDataWithHigherTransport" must {
+      "sort transport above Public Order" when {
+
+        "the tax year is 2019" in {
+          fakeGovernmentSpend.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe expectedCategoryOrderFor2019
+        }
+      }
+
+      "sort public order above transport" when {
+
+        "the tax year is not 2019" in {
+          val spendFor2018 = fakeGovernmentSpend.copy(taxYear = 2018)
+
+          spendFor2018.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe
+            spendFor2018.sortedSpendData.map(_._1)
+        }
+      }
+
+    "sort public order above transport and culture above environment" when {
+
+      "the tax year is 2020" in {
+        val spendFor2020 = fakeGovernmentSpend.copy(taxYear = 2020)
+
+        spendFor2020.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe
+          expectedCategoryOrderfor2020
+      }
+    }
+  }
+
     "taxYearInterval" must {
       "return a string in the correct format" in {
         fakeGovernmentSpend.taxYearInterval mustBe "2018-19"
