@@ -22,7 +22,7 @@ import utils.BaseSpec
 trait ViewSpecBase extends BaseSpec {
 
   implicit val messagesApi: MessagesApi = inject[MessagesApi]
-  implicit val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
-  implicit val lang: Lang = messages.lang
+  implicit val messages: Messages       = MessagesImpl(Lang("en"), messagesApi)
+  implicit val lang: Lang               = messages.lang
 
 }

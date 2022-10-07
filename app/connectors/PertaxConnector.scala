@@ -16,19 +16,24 @@
 
 package connectors
 
+import cats.data.EitherT
 import config.ApplicationConfig
+import models.PertaxErrorResponse
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CitizenDetailsConnector @Inject() (httpClient: HttpClient, applicationConfig: ApplicationConfig)(implicit
+class PertaxConnector @Inject() (httpClient: HttpClient, applicationConfig: ApplicationConfig)(implicit
   ec: ExecutionContext
 ) {
 
-  private val baseUrl = applicationConfig.cidHost
+  private val baseUrl = applicationConfig.pertaxHost
 
-  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$baseUrl/citizen-details/nino/$nino")
+  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, PertaxErrorResponse, HttpResponse] =
+    EitherT(
+      httpClient.GET[Either[JsValue, HttpResponse]](s"$baseUrl/pertax/$nino/authorise")
+    ).leftMap(error => error.as[PertaxErrorResponse])
 }

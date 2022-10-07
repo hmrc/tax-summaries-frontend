@@ -44,13 +44,14 @@ class AuthActionSpec extends BaseSpec {
         s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
           s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
           s"isSa: ${request.isSa}" +
-          s"credentials: ${request.credentials.providerType}")
+          s"credentials: ${request.credentials.providerType}"
+      )
     }
   }
-  val fakeCredentials = Credentials("foo", "bar")
+  val fakeCredentials                         = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
-  val ggSignInUrl =
+  val ggSignInUrl                      =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
@@ -60,7 +61,7 @@ class AuthActionSpec extends BaseSpec {
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result     = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get must endWith(ggSignInUrl)
     }
@@ -72,7 +73,7 @@ class AuthActionSpec extends BaseSpec {
         .thenReturn(Future.failed(InsufficientEnrolments()))
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result     = controller.onPageLoad()(FakeRequest("", ""))
 
       redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
@@ -89,15 +90,18 @@ class AuthActionSpec extends BaseSpec {
           Enrolments(
             Set(
               Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""),
-              Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), ""))) ~ Some("") ~ Some(fakeCredentials) ~ Some(
-            utr) ~ L50
+              Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "")
+            )
+          ) ~ Some("") ~ Some(fakeCredentials) ~ Some(utr) ~ L50
         )
 
       when(
         mockAuthConnector
           .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
             any(),
-            any())(any(), any()))
+            any()
+          )(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -114,19 +118,22 @@ class AuthActionSpec extends BaseSpec {
 
   "A user with a confidence level 50 and an SA enrolment" must {
     "create an authenticated request" in {
-      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val utr                                                                                          = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult
         : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
-            fakeCredentials) ~ Some(utr) ~ ConfidenceLevel.L50
+            fakeCredentials
+          ) ~ Some(utr) ~ ConfidenceLevel.L50
         )
 
       when(
         mockAuthConnector
           .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
             any(),
-            any())(any(), any()))
+            any()
+          )(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -154,7 +161,9 @@ class AuthActionSpec extends BaseSpec {
         mockAuthConnector
           .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
             any(),
-            any())(any(), any()))
+            any()
+          )(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -183,7 +192,9 @@ class AuthActionSpec extends BaseSpec {
         mockAuthConnector
           .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
             any(),
-            any())(any(), any()))
+            any()
+          )(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -210,7 +221,9 @@ class AuthActionSpec extends BaseSpec {
         mockAuthConnector
           .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
             any(),
-            any())(any(), any()))
+            any()
+          )(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -236,7 +249,9 @@ class AuthActionSpec extends BaseSpec {
       mockAuthConnector
         .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](any(), any())(
           any(),
-          any()))
+          any()
+        )
+    )
       .thenReturn(retrievalResult)
 
     val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
@@ -258,7 +273,7 @@ class AuthActionSpec extends BaseSpec {
         override val saShuttered: Boolean = true
       }
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest())
+      val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe (controllers.routes.ErrorController.serviceUnavailable.url)
       verifyZeroInteractions(mockAuthConnector)

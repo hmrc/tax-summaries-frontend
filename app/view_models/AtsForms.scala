@@ -21,12 +21,13 @@ import models.AtsYearChoice
 import play.api.data.Form
 import play.api.data.Forms._
 
-class AtsForms @Inject()() {
+class AtsForms @Inject() () {
 
   val yearChoice = "year"
 
   val atsYearFormMapping: Form[AtsYearChoice] = Form(
-    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", { _.nonEmpty }))(
-      AtsYearChoice.fromString)(AtsYearChoice.toOptionString)
+    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", _.nonEmpty))(
+      AtsYearChoice.fromString
+    )(AtsYearChoice.toOptionString)
   )
 }

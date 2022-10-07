@@ -22,7 +22,8 @@ import view_models.{Amount, Rate}
 case class DataHolder(
   payload: Option[Map[String, Amount]],
   rates: Option[Map[String, Rate]],
-  incomeTaxStatus: Option[String])
+  incomeTaxStatus: Option[String]
+)
 
 object DataHolder {
   implicit val formats = Json.format[DataHolder]

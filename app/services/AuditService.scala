@@ -24,13 +24,14 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 
 import scala.concurrent.ExecutionContext
 
-class AuditService @Inject()(auditConnector: DefaultAuditConnector)(implicit ec: ExecutionContext) {
+class AuditService @Inject() (auditConnector: DefaultAuditConnector)(implicit ec: ExecutionContext) {
 
   val taxsAuditSource = "tax-summaries-frontend"
 
-  def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(
-    implicit request: Request[_],
-    hc: HeaderCarrier) =
+  def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(implicit
+    request: Request[_],
+    hc: HeaderCarrier
+  ) =
     auditConnector.sendEvent(eventFor(auditType, details, sessionId))
 
   def eventFor(auditType: String, details: Map[String, String], sessionId: Option[String])(implicit hc: HeaderCarrier) =
@@ -38,5 +39,6 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector)(implicit ec:
       auditSource = taxsAuditSource,
       auditType = auditType,
       tags = hc.headers(HeaderNames.explicitlyIncludedHeaders).toMap,
-      detail = details)
+      detail = details
+    )
 }

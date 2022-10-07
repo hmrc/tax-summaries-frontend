@@ -40,6 +40,9 @@ object FakeSelfAssessmentAuthAction extends ControllerBaseSpec with SelfAssessme
           false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          request)))
+          request
+        )
+      )
+    )
 
 }

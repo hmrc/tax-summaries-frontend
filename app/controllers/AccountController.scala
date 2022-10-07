@@ -24,7 +24,7 @@ import views.html.session_expired
 
 import scala.concurrent.ExecutionContext
 
-class AccountController @Inject()(
+class AccountController @Inject() (
   mcc: MessagesControllerComponents,
   sessionExpiredView: session_expired
 )(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)

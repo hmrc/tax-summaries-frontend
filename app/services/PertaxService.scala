@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
+import cats.data.EitherT
 import config.ApplicationConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import connectors.PertaxConnector
+import models.PertaxErrorResponse
+import play.api.http.Status.BAD_REQUEST
+import play.api.libs.json.JsValue
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CitizenDetailsConnector @Inject() (httpClient: HttpClient, applicationConfig: ApplicationConfig)(implicit
+class PertaxService @Inject() (pertaxConnector: PertaxConnector, applicationConfig: ApplicationConfig)(implicit
   ec: ExecutionContext
 ) {
 
-  private val baseUrl = applicationConfig.cidHost
+  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, PertaxErrorResponse, HttpResponse] =
+    pertaxConnector.pertaxAuth(nino).leftMap { error =>
+      error.reportAs match {
+        case BAD_REQUEST => error
+      }
 
-  def connectToCid(nino: String)(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$baseUrl/citizen-details/nino/$nino")
+    }
 }

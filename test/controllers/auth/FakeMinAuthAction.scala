@@ -24,7 +24,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object FakeMinAuthAction extends ControllerBaseSpec with MinAuthAction {
 
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+  override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =

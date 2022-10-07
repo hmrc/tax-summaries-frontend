@@ -40,7 +40,8 @@ class FormatValidationsSpec extends AnyWordSpec with Matchers {
   private def testStringValidationFunction(
     function: (String) => Boolean,
     validData: Seq[String],
-    invalidData: Seq[String]): Unit = {
+    invalidData: Seq[String]
+  ): Unit = {
     withClue("the regex must allow these valid cases\n") {
       for (data <- validData)
         withClue(f"$data did not pass\n") {
@@ -57,7 +58,7 @@ class FormatValidationsSpec extends AnyWordSpec with Matchers {
 
   "alpha numeric reg ex" must {
     "satisfy the following valid and invalid cases" in {
-      val validData = Seq("0", "9", "a", "A", "z", "Z")
+      val validData   = Seq("0", "9", "a", "A", "z", "Z")
       val invalidData = Seq("α", "&", "*", "@", "£")
       testRegex(alphaNumericRegex, validData, invalidData)
     }
@@ -65,7 +66,7 @@ class FormatValidationsSpec extends AnyWordSpec with Matchers {
 
   "validation functions" must {
     "satisfy the following valid and invalid cases" in {
-      val validData = Seq("0", "9", "a", "A", "z", "Z")
+      val validData   = Seq("0", "9", "a", "A", "z", "Z")
       val invalidData = Seq("α")
       testStringValidationFunction(validText, validData, invalidData)
     }

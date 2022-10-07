@@ -51,7 +51,7 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
       rateValue <- Gen.chooseNum(0, 20)
       year      <- Gen.chooseNum(2010, 2099)
     } yield {
-      val utr = new SaUtrGenerator().nextSaUtr.utr
+      val utr  = new SaUtrGenerator().nextSaUtr.utr
       val rate = Rate(rateValue.toString)
       Summary(
         year,
@@ -71,7 +71,8 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
         rate,
         "Mr",
         "Fake",
-        "Man")
+        "Man"
+      )
     }
 
   val zero = BigDecimal(0)
@@ -254,8 +255,8 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
       def expectedTitle(msg: String) = s"ats.summary.taxable_income.your_total_tax.msg_$msg"
 
       val incomeTaxDescription = "ats.summary.taxable_income.your_total_tax.description_total_income_tax"
-      val nicsDescription = "ats.summary.taxable_income.your_total_tax.description_nics"
-      val cgtDescription = "ats.summary.taxable_income.your_total_tax.description_cg"
+      val nicsDescription      = "ats.summary.taxable_income.your_total_tax.description_nics"
+      val cgtDescription       = "ats.summary.taxable_income.your_total_tax.description_cg"
 
       "return the UNARY message keys" when {
 

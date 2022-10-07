@@ -31,7 +31,7 @@ import views.html.total_income_tax_includes._
 
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  implicit val request =
+  implicit val request        =
     AuthenticatedRequest(
       "userId",
       None,
@@ -41,9 +41,10 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       false,
       ConfidenceLevel.L200,
       fakeCredentials,
-      FakeRequest())
-  lazy val scottishTableView = inject[ScottishTableView]
-  lazy val savingsTableView = inject[SavingsTableView]
+      FakeRequest()
+    )
+  lazy val scottishTableView  = inject[ScottishTableView]
+  lazy val savingsTableView   = inject[SavingsTableView]
   lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
 
   def view(tax: TotalIncomeTax): String =
@@ -54,8 +55,8 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
   def agentView: String =
     totalIncomeTaxView(testTotalIncomeTax, Some(ActingAsAttorneyFor(Some("Agent"), Map()))).body
 
-  implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
-  implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
+  implicit val arbAmount: Arbitrary[Amount]           = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
+  implicit val arbRate: Arbitrary[Rate]               = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
   implicit val arbScottishTax: Arbitrary[ScottishTax] = Arbitrary {
     val st = for {
       a <- arbitrary[Amount]
@@ -69,9 +70,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       i <- arbitrary[Amount]
       j <- arbitrary[Amount]
       k <- arbitrary[Amount]
-    } yield {
-      ScottishTax(a, b, c, d, e, f, g, h, i, j, k)
-    }
+    } yield ScottishTax(a, b, c, d, e, f, g, h, i, j, k)
 
     Gen.frequency((1, Gen.const(ScottishTax.empty)), (19, st))
   }
@@ -83,9 +82,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       c <- arbitrary[Rate]
       d <- arbitrary[Rate]
       e <- arbitrary[Rate]
-    } yield {
-      ScottishRates(a, b, c, d, e)
-    }
+    } yield ScottishRates(a, b, c, d, e)
 
     Gen.frequency((1, Gen.const(ScottishRates.empty)), (19, sr))
   }
@@ -98,9 +95,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       d <- arbitrary[Amount]
       e <- arbitrary[Amount]
       f <- arbitrary[Amount]
-    } yield {
-      SavingsTax(a, b, c, d, e, f)
-    }
+    } yield SavingsTax(a, b, c, d, e, f)
 
     Gen.frequency((1, Gen.const(SavingsTax.empty)), (19, st))
   }
@@ -110,9 +105,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       a <- arbitrary[Rate]
       b <- arbitrary[Rate]
       c <- arbitrary[Rate]
-    } yield {
-      SavingsRates(a, b, c)
-    }
+    } yield SavingsRates(a, b, c)
 
     Gen.frequency((1, Gen.const(SavingsRates.empty)), (19, sr))
   }
@@ -143,8 +136,10 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
           Amount.empty,
           Amount.empty,
           Amount.empty,
-          Amount.empty),
-        incomeTaxStatus = "0002")
+          Amount.empty
+        ),
+        incomeTaxStatus = "0002"
+      )
       view(data) must include("total-uk-income-tax-amount")
     }
 
@@ -161,14 +156,16 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
           Amount.empty,
           Amount.empty,
           Amount.empty,
-          Amount.empty))
+          Amount.empty
+        )
+      )
       view(data) mustNot include("total-uk-income-tax-amount")
     }
 
     "not show account menu for agent" in {
 
       val result = agentView
-      result must not include ("hmrc-account-menu")
+      result must not include "hmrc-account-menu"
     }
 
     "show account menu for non agent users" in {

@@ -32,23 +32,25 @@ import scala.concurrent.Future
 
 class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures with MockitoSugar {
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc             = HeaderCarrier()
   val citizenDetailsConnector = mock[CitizenDetailsConnector]
-  val service = new CitizenDetailsService(citizenDetailsConnector)
+  val service                 = new CitizenDetailsService(citizenDetailsConnector)
 
   val nino = new Generator().nextNino
-  val utr = new SaUtrGenerator().nextSaUtr
+  val utr  = new SaUtrGenerator().nextSaUtr
 
   "getUtr" must {
     "return the utr from CID for an OK response" in {
-      val json = Json.parse(s"""
+      val json = Json
+        .parse(s"""
                                |{
                                |"ids":
                                |{
                                | "sautr": "$utr"
                                |}
                                |}
-                               |""".stripMargin).toString
+                               |""".stripMargin)
+        .toString
 
       val response = HttpResponse.apply(OK, json)
       when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any()))

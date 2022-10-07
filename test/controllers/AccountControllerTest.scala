@@ -22,7 +22,7 @@ import utils.BaseSpec
 
 class AccountControllerTest extends BaseSpec {
 
-  val feedbackUrl = "http://localhost:9514/feedback/ATS"
+  val feedbackUrl                   = "http://localhost:9514/feedback/ATS"
   val controller: AccountController = inject[AccountController]
 
   "signOut" must {
@@ -35,7 +35,7 @@ class AccountControllerTest extends BaseSpec {
 
     "clear user session after redirect" in {
 
-      val result = controller.signOut(FakeRequest().withSession("test" -> "session"))
+      val result   = controller.signOut(FakeRequest().withSession("test" -> "session"))
       val expected = result.futureValue
 
       expected mustBe expected.withNewSession

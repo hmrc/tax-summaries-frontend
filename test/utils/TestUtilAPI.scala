@@ -93,7 +93,7 @@ trait TestUtilAPI {
     * @param dataValue the value of the new data field
     * @return the new test data Map(fieldId -> dataValue)
     */
-  def generateFormTestData(fieldId: String, dataValue: String): Map[String, String] =
+  def generateFormTestData(fieldId: String, dataValue: String): Map[String, String]       =
     Map(fieldId -> dataValue)
 
   /**
@@ -124,7 +124,8 @@ trait TestUtilAPI {
   def generateFormTestData(
     preCondition: Map[String, String],
     fieldIds: Set[String],
-    dataValue: String): Map[String, String] =
+    dataValue: String
+  ): Map[String, String]                                                                  =
     fieldIds.foldLeft(preCondition)((map, fieldId) => map + (fieldId -> dataValue))
 
   /**

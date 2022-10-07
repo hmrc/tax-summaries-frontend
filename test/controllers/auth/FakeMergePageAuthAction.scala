@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with MergePageAuthAction {
 
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+  override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
@@ -40,5 +40,7 @@ class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        request))
+        request
+      )
+    )
 }

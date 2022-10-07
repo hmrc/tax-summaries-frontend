@@ -21,7 +21,7 @@ import utils.BaseSpec
 
 class AtsYearChoiceSpec extends BaseSpec {
 
-  val choice = AtsYearChoice(SA, 2015)
+  val choice        = AtsYearChoice(SA, 2015)
   val correctString = "{\"atsType\":\"SA\",\"year\":2015}"
 
   "AtsYearChoice" when {

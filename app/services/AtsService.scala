@@ -31,28 +31,30 @@ import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import java.util.Date
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsService @Inject()(
+class AtsService @Inject() (
   middleConnector: MiddleConnector,
   dataCacheConnector: DataCacheConnector,
   appConfig: ApplicationConfig,
   val auditService: AuditService,
-  val authUtils: AuthorityUtils)(implicit ex: ExecutionContext) {
+  val authUtils: AuthorityUtils
+)(implicit ex: ExecutionContext) {
   val accountUtils: AccountUtils = AccountUtils
 
-  def createModel(taxYear: Int, converter: AtsData => GenericViewModel)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[GenericViewModel] =
+  def createModel(taxYear: Int, converter: AtsData => GenericViewModel)(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[GenericViewModel] =
     getAts(taxYear) map {
       checkCreateModel(_, converter)
     }
 
   def checkCreateModel(output: Either[Int, AtsData], converter: AtsData => GenericViewModel): GenericViewModel =
     output match {
-      case Right(atsList) if (atsList.taxYear > appConfig.taxYear) =>
+      case Right(atsList) if atsList.taxYear > appConfig.taxYear =>
         new ATSUnavailableViewModel
-      case Right(atsList)  => converter(atsList)
-      case Left(NOT_FOUND) => new NoATSViewModel
-      case Left(_)         => new ATSUnavailableViewModel
+      case Right(atsList)                                        => converter(atsList)
+      case Left(NOT_FOUND)                                       => new NoATSViewModel
+      case Left(_)                                               => new ATSUnavailableViewModel
     }
 
   def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsData]] =
@@ -63,7 +65,7 @@ class AtsService @Inject()(
         } else {
           getAtsAndStore(taxYear).value
         }
-      case None =>
+      case None       =>
         if (accountUtils.isAgent(request)) {
           dataCacheConnector.getAgentToken.flatMap { token =>
             getAtsAndStore(taxYear, token).value
@@ -73,9 +75,10 @@ class AtsService @Inject()(
         }
     }
 
-  private def fetchAgentInfo(data: AtsData, taxYear: Int)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): EitherT[Future, Int, AtsData] =
+  private def fetchAgentInfo(data: AtsData, taxYear: Int)(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): EitherT[Future, Int, AtsData] =
     EitherT {
       dataCacheConnector.getAgentToken.flatMap { token =>
         if (authUtils.checkUtr(data.utr, token)) {
@@ -86,10 +89,11 @@ class AtsService @Inject()(
       }
     }
 
-  private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): EitherT[Future, Int, AtsData] = {
-    val account = utils.AccountUtils.getAccount(request)
+  private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): EitherT[Future, Int, AtsData] = {
+    val account      = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
@@ -100,16 +104,16 @@ class AtsService @Inject()(
 
     EitherT {
       gotData flatMap {
-        case AtsSuccessResponseWithPayload(data: AtsData) if hasNoAts(data) => Future.successful(Left(NOT_FOUND))
+        case AtsSuccessResponseWithPayload(data: AtsData) if hasNoAts(data)       => Future.successful(Left(NOT_FOUND))
         case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty =>
           Future.successful(Left(INTERNAL_SERVER_ERROR))
-        case AtsSuccessResponseWithPayload(data: AtsData) =>
+        case AtsSuccessResponseWithPayload(data: AtsData)                         =>
           for {
             result <- storeAtsData(data) map (Right(_))
             _      <- sendAuditEvent(account, data)
           } yield result
-        case AtsNotFoundResponse(_) => Future.successful(Left(NOT_FOUND))
-        case AtsErrorResponse(_)    => Future.successful(Left(INTERNAL_SERVER_ERROR))
+        case AtsNotFoundResponse(_)                                               => Future.successful(Left(NOT_FOUND))
+        case AtsErrorResponse(_)                                                  => Future.successful(Left(INTERNAL_SERVER_ERROR))
       }
     }
   }
@@ -123,11 +127,12 @@ class AtsService @Inject()(
       data.get
     }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]) =
+  private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ) =
     (account: @unchecked) match {
-      case _: Uar =>
+      case _: Uar   =>
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(

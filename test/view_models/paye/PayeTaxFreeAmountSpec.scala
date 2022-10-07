@@ -26,7 +26,12 @@ import utils.JsonUtil
 import view_models.Amount
 
 class PayeTaxFreeAmountSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends AnyWordSpec
+    with Matchers
+    with MockitoSugar
+    with JsonUtil
+    with GuiceOneAppPerTest
+    with ScalaFutures
     with IntegrationPatience {
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
@@ -197,7 +202,7 @@ class PayeTaxFreeAmountSpec
       val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-          ),
+        ),
         Amount.gbp(9740),
         List(
           AmountRow("income_before_tax", Amount.gbp(500)),
@@ -221,13 +226,13 @@ class PayeTaxFreeAmountSpec
           "liable_tax_amount"        -> Amount(1200, "GBP")
         ),
         allowance_data = Map(
-          )
+        )
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-          ),
+        ),
         Amount.gbp(9740),
         List(
           AmountRow("income_before_tax", Amount.gbp(500)),
@@ -259,7 +264,7 @@ class PayeTaxFreeAmountSpec
       val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-          ),
+        ),
         Amount.gbp(0),
         List(
           AmountRow("income_before_tax", Amount.gbp(0)),
@@ -277,15 +282,15 @@ class PayeTaxFreeAmountSpec
 
       val data = payeAtsData(
         summary_data = Map(
-          ),
+        ),
         allowance_data = Map(
-          )
+        )
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
         2018,
         List(
-          ),
+        ),
         Amount.gbp(0),
         List(
           AmountRow("income_before_tax", Amount.gbp(0)),

@@ -48,12 +48,15 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
   val agentToken = LoginPage.agentToken(generatedSaUtr.utr)
 
-  override def fakeApplication(): Application = new GuiceApplicationBuilder().configure(
-    "microservice.services.auth.port" -> server.port(),
-    "microservice.services.tax-summaries.port" -> server.port()
-  ).overrides(
-    api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
-  ).build()
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .configure(
+      "microservice.services.auth.port"          -> server.port(),
+      "microservice.services.tax-summaries.port" -> server.port()
+    )
+    .overrides(
+      api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
+    )
+    .build()
 
   override def beforeEach(): Unit = {
 
@@ -93,8 +96,10 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
          |}
          |""".stripMargin
 
-    server.stubFor(post(urlEqualTo("/auth/authorise"))
-      .willReturn(ok(authResponse)))
+    server.stubFor(
+      post(urlEqualTo("/auth/authorise"))
+        .willReturn(ok(authResponse))
+    )
   }
 
   when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
@@ -115,7 +120,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
 
-    lazy val backendUrlPaye = s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+    lazy val backendUrlPaye =
+      s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
 
     "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
 
@@ -146,7 +152,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
       lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
 
-      lazy val backendUrlPaye = s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+      lazy val backendUrlPaye =
+        s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))

@@ -24,10 +24,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IvUpliftRedirectController @Inject()(mcc: MessagesControllerComponents)(
+class IvUpliftRedirectController @Inject() (mcc: MessagesControllerComponents)(
   appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends FrontendController(mcc) {
+  ec: ExecutionContext
+) extends FrontendController(mcc) {
 
   def upliftConfidenceLevel: Action[AnyContent] = Action.async {
     Future.successful(
@@ -39,6 +39,7 @@ class IvUpliftRedirectController @Inject()(mcc: MessagesControllerComponents)(
           "completionURL"   -> Seq(appConfig.loginCallback),
           "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
         )
-      ))
+      )
+    )
   }
 }

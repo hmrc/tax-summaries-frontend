@@ -26,7 +26,7 @@ class MatchingDetailsSpec extends BaseSpec {
   "MatchingDetails" must {
     "do a round trip through" in {
       val matchingDetails = MatchingDetails(Some(utr))
-      val json = Json.toJson(matchingDetails)
+      val json            = Json.toJson(matchingDetails)
 
       json.as[MatchingDetails] mustBe matchingDetails
     }

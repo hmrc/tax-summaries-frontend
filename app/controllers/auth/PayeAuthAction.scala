@@ -19,8 +19,10 @@ package controllers.auth
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import play.api.Logging
+import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import services.PertaxService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
@@ -32,7 +34,7 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents, pertaxService: PertaxService)(
   implicit ec: ExecutionContext,
   appConfig: ApplicationConfig)
     extends PayeAuthAction with AuthorisedFunctions with Logging {
@@ -56,14 +58,29 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
           case enrolments ~ Some(nino) ~ Some(credentials) => {
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
 
-            block {
-              PayeAuthenticatedRequest(
-                Nino(nino),
-                isSa,
-                credentials,
-                request
-              )
-            }
+            pertaxService.pertaxAuth(nino).fold(
+              error => {
+                val redirect = error.redirect
+                val errorView = error.errorView
+
+                if (redirect.isDefined) {
+                  redirect.map(url => Redirect(url, SEE_OTHER))
+                } else if (errorView.isDefined) {
+                  errorView.map(data => Redirect(data.url, data.statusCode))
+                } else {
+                  Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+                }
+              },
+              _ =>
+                block {
+                  PayeAuthenticatedRequest(
+                    Nino(nino),
+                    isSa,
+                    credentials,
+                    request
+                  )
+                }
+            )
           }
           case _ => throw new RuntimeException("Auth retrieval failed for user")
         } recover {

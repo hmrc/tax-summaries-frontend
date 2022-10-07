@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
+import play.api.libs.json.Json
 
-import java.net.URLEncoder
-import java.time.Instant
+case class ErrorView(url: String, statusCode: Int)
 
-object LoginPage {
-
-  private val encKey = "1111111111111111111111"
-
-  //KxF3antRTEtdaFgpwbmoISnwJDJRvyl0NAnCRwa3SB5EIrpF0IMS/wZwQnvsprKx
-
-  private val crypto = new AesCrypto {
-    override protected val encryptionKey: String = encKey
-  }
-
-  def agentToken(utr: String) = {
-    val token =
-      URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value), "UTF-8")
-    token
-  }
+object ErrorView {
+  implicit val format = Json.format[ErrorView]
 }
