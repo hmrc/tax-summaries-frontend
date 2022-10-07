@@ -74,7 +74,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
   )
 
   val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService          = mock[AuditService]
 
   def sut =
     new TotalIncomeTaxController(
@@ -84,27 +84,32 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       mcc,
       totalIncomeTaxView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach(): Unit =
-    when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))) thenReturn Future
+    when(
+      mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+    ) thenReturn Future
       .successful(baseModel)
 
   "Calling Total Income Tax" must {
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
         Messages("ats.total_income_tax.income_tax") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "display an error page for an invalid request" in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -132,7 +137,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "have the right user data in the view" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -156,7 +161,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       document.getElementById("ordinary-rate-amount").text() mustBe "£50"
       document.getElementById("total-income-tax-amount-nics").text() mustBe "£372"
 
-      document.toString must include("Total Income Tax")
+      document.toString                         must include("Total Income Tax")
       document.getElementById("user-info").text must include("forename surname")
       document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }
@@ -171,7 +176,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -192,7 +197,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -207,22 +212,22 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
   "Dividends section" must {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include "Technical Difficulties"
+      document.toString                                      must not include "Technical Difficulties"
       document.getElementById("ordinary-rate-amount").text() must equal("£50")
       document.getElementById("ordinary-rate-before").text() must equal("£100")
-      document.getElementById("ordinary-rate-rate").text() must equal("10%")
+      document.getElementById("ordinary-rate-rate").text()   must equal("10%")
 
       document.getElementById("upper-rate-amount").text() must equal("£120")
       document.getElementById("upper-rate-before").text() must equal("£30")
-      document.getElementById("upper-rate-rate").text() must equal("32.5%")
+      document.getElementById("upper-rate-rate").text()   must equal("32.5%")
 
       document.getElementById("additional-rate-amount").text() must equal("£40")
       document.getElementById("additional-rate-before").text() must equal("£10")
-      document.getElementById("additional-rate-rate").text() must equal("37.5%")
+      document.getElementById("additional-rate-rate").text()   must equal("37.5%")
     }
 
     "hide Dividends section if the amount before in each row is 0.00" in {
@@ -236,7 +241,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -257,7 +262,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model5))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -274,12 +279,12 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "have the right user data for adjustments increasing and reducing income tax" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("other-adjustments-increasing-amount").text() must equal("£90")
-      document.getElementById("other-adjustments-reducing-amount").text() must equal("minus £20 − £20")
+      document.getElementById("other-adjustments-reducing-amount").text()   must equal("minus £20 − £20")
     }
 
     "hide other adjustments increasing your tax section if the amount is 0.00" in {
@@ -291,7 +296,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -309,7 +314,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -327,7 +332,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model8))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -348,7 +353,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model9))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-income-tax-amount-nics").text() must equal("£0")

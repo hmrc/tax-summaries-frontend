@@ -24,8 +24,8 @@ case class PayeTaxFreeAmount(
   adjustmentRows: List[AmountRow],
   totalTaxFreeAmount: Amount,
   summaryRows: List[AmountRow],
-  liableTaxAmount: Amount)
-    extends TaxYearFormatting
+  liableTaxAmount: Amount
+) extends TaxYearFormatting
 
 object PayeTaxFreeAmount {
 
@@ -36,11 +36,11 @@ object PayeTaxFreeAmount {
   )
 
   def apply(payeAtsData: PayeAtsData): PayeTaxFreeAmount = {
-    val totalTaxFreeAmount =
+    val totalTaxFreeAmount    =
       payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_tax_free_amount")).getOrElse(Amount.empty)
-    val liableTaxAmount =
+    val liableTaxAmount       =
       payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("liable_tax_amount")).getOrElse(Amount.empty)
-    val totalIncomeBeforeTax =
+    val totalIncomeBeforeTax  =
       payeAtsData.summary_data.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
     val personalTaxFreeAmount =
       payeAtsData.allowance_data.flatMap(_.payload).flatMap(_.get("personal_tax_free_amount")).getOrElse(Amount.empty)
@@ -48,19 +48,18 @@ object PayeTaxFreeAmount {
     val adjustmentRows = (for {
       allowanceData <- payeAtsData.allowance_data
       payload       <- allowanceData.payload
-    } yield {
-      adjustments
-        .map { adjustment =>
-          AmountRow(adjustment, payload.getOrElse(adjustment, Amount.empty))
-        }
-        .filter(_.amount != Amount.empty)
-    }).getOrElse(List.empty)
+    } yield adjustments
+      .map { adjustment =>
+        AmountRow(adjustment, payload.getOrElse(adjustment, Amount.empty))
+      }
+      .filter(_.amount != Amount.empty)).getOrElse(List.empty)
 
     val summaryRows = List(
       AmountRow("income_before_tax", totalIncomeBeforeTax),
       AmountRow(
         "tax_free_amount",
-        if (totalTaxFreeAmount == Amount.empty) personalTaxFreeAmount else totalTaxFreeAmount)
+        if (totalTaxFreeAmount == Amount.empty) personalTaxFreeAmount else totalTaxFreeAmount
+      )
     )
 
     PayeTaxFreeAmount(payeAtsData.taxYear, adjustmentRows, totalTaxFreeAmount, summaryRows, liableTaxAmount)

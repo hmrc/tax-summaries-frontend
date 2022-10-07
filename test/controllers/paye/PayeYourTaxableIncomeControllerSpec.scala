@@ -39,7 +39,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
+    )
 
   lazy val payeGenericErrorView = inject[PayeGenericErrorView]
 
@@ -49,7 +50,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       FakePayeAuthAction,
       mcc,
       inject[PayeYourTaxableIncomeView],
-      payeGenericErrorView)
+      payeGenericErrorView
+    )
 
   "Government spend controller" must {
 
@@ -59,7 +61,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -70,7 +73,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.income_before_tax.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "return OK response when set to 2020" in {
@@ -79,7 +84,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -90,14 +96,17 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.income_before_tax.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -110,7 +119,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)

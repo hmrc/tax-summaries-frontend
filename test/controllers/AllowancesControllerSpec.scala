@@ -61,7 +61,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
   lazy val taxsController = mock[TaxsController]
 
   val mockAllowanceService = mock[AllowanceService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService     = mock[AuditService]
 
   def sut =
     new AllowancesController(
@@ -71,10 +71,13 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       mcc,
       taxFreeAmountView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach(): Unit =
-    when(mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any())) thenReturn Future
+    when(
+      mockAllowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any())
+    ) thenReturn Future
       .successful(baseModel)
 
   "Calling allowances" must {
@@ -90,7 +93,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.getElementById("tax-free-total").text() mustBe "£9,740"
       document.getElementById("tax-free-allowance-amount").text() mustBe "£9,440"
       document.getElementById("other-allowances").text() mustBe "£300"
-      document.toString must include("tax-free-allowance")
+      document.toString                           must include("tax-free-allowance")
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document
@@ -110,25 +113,27 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
       val result: Future[Result] = sut.show(request)
       status(result) mustBe 200
-      val document = Jsoup.parse(contentAsString(result))
+      val document               = Jsoup.parse(contentAsString(result))
 
       document.toString must not include "tax-free-allowance-amount"
       document.toString must not include "other-allowances"
     }
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
         Messages("ats.tax_free_amount.html.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "display an error page for an invalid request" in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))

@@ -39,13 +39,14 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"))
+    FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL")
+  )
 
   val languageEn = Lang("en")
   val languageCy = Lang("cy")
-  val utr = testUtr
-  val amount = new Amount(0.00, "GBP")
-  val rate = new Rate("5")
+  val utr        = testUtr
+  val amount     = new Amount(0.00, "GBP")
+  val rate       = new Rate("5")
 
   implicit val messagesEn = MessagesImpl(languageEn, messagesApi)
   implicit val messagesCy = MessagesImpl(languageCy, messagesApi)
@@ -56,26 +57,32 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
 
     "show the correct contents of the generic error page in English" in {
 
-      val resultEn =
+      val resultEn   =
         genericErrorView()(requestWithSession, messagesEn, appConfig, ec)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString must include(messagesEn("global.error.InternalServerError500.title"))
       documentEn.toString must include(
-        messagesEn("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\">" + messagesEn(
-          "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesEn(
-          "global.error.InternalServerError500.message.by.phone.post"))
+        messagesEn(
+          "global.error.InternalServerError500.message.you.can"
+        ) + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\">" + messagesEn(
+          "global.error.InternalServerError500.message.contact.hmrc"
+        ) + "</a> " + messagesEn("global.error.InternalServerError500.message.by.phone.post")
+      )
     }
 
     "show the correct contents of the generic error page in Welsh" in {
 
-      val resultCy =
+      val resultCy   =
         genericErrorView()(requestWithSession, messagesCy, appConfig, ec)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString must include(messagesCy("global.error.InternalServerError500.title"))
       documentCy.toString must include(
-        messagesCy("global.error.InternalServerError500.message.you.can") + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\">" + messagesCy(
-          "global.error.InternalServerError500.message.contact.hmrc") + "</a> " + messagesCy(
-          "global.error.InternalServerError500.message.by.phone.post"))
+        messagesCy(
+          "global.error.InternalServerError500.message.you.can"
+        ) + " <a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\">" + messagesCy(
+          "global.error.InternalServerError500.message.contact.hmrc"
+        ) + "</a> " + messagesCy("global.error.InternalServerError500.message.by.phone.post")
+      )
     }
   }
 }

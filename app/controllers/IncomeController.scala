@@ -29,14 +29,15 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeController @Inject()(
+class IncomeController @Inject() (
   incomeService: IncomeService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   incomeBeforeTaxView: IncomeBeforeTaxView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
+  tokenErrorView: TokenErrorView
+)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
@@ -45,8 +46,9 @@ class IncomeController @Inject()(
 
   type ViewModel = IncomeBeforeTax
 
-  override def extractViewModel()(
-    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
+  override def extractViewModel()(implicit
+    request: AuthenticatedRequest[_]
+  ): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(incomeService.getIncomeData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =

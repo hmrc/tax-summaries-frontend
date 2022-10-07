@@ -28,5 +28,6 @@ case class Allowances(
   totalTaxFree: Amount,
   title: String,
   forename: String,
-  surname: String)
-    extends GenericViewModel with TaxYearFormatting
+  surname: String
+) extends GenericViewModel
+    with TaxYearFormatting

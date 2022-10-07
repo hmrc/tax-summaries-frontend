@@ -43,9 +43,9 @@ class SummaryServiceSpec extends BaseSpec {
 
   val mockAtsService = mock[AtsService]
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc      = new HeaderCarrier
   override val taxYear = 2015
-  val request = AuthenticatedRequest(
+  val request          = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -54,7 +54,8 @@ class SummaryServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
+    FakeRequest("GET", s"?taxYear=$taxYear")
+  )
 
   def sut = new SummaryService(mockAtsService)
 
@@ -64,7 +65,9 @@ class SummaryServiceSpec extends BaseSpec {
       when(
         mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(Future(genericViewModel))
+          Matchers.any()
+        )
+      ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getSummaryData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
@@ -74,7 +77,7 @@ class SummaryServiceSpec extends BaseSpec {
 
     "return a complete Summary when given complete AtsData" in {
       val atsData = AtsTestData.summaryData
-      val result = sut.summaryConverter(atsData)
+      val result  = sut.summaryConverter(atsData)
 
       result mustBe Summary(
         2019,

@@ -26,9 +26,9 @@ import utils.AgentTokenException
 import java.time.{Duration, Instant, LocalDateTime}
 import scala.util.matching.Regex
 
-class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
+class CryptoService @Inject() ()(implicit val appConfig: ApplicationConfig) {
 
-  def key: String = appConfig.encryptionKey
+  def key: String      = appConfig.encryptionKey
   def tokenMaxAge: Int = appConfig.encryptionTokenMaxAge
 
   protected def aesCrypto = new AesCrypto {
@@ -38,15 +38,14 @@ class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
   def getAgentToken(token: String): AgentToken = {
     val decryptedToken =
       decryptToken(UriEncoding.decodePath(token, "UTF-8")).value
-    val agentToken = parseToken(decryptedToken)
+    val agentToken     = parseToken(decryptedToken)
 
     validateTimestamp(agentToken)
   }
 
   protected def decryptToken(token: String): PlainText =
-    try {
-      aesCrypto.decrypt(Crypted(token))
-    } catch {
+    try aesCrypto.decrypt(Crypted(token))
+    catch {
       case exception: Exception =>
         throw AgentTokenException("Cannot decrypt token: '" + token + "'", exception)
     }
@@ -65,8 +64,8 @@ class CryptoService @Inject()()(implicit val appConfig: ApplicationConfig) {
 
   protected def validateTimestamp(agentToken: AgentToken) = {
     val timeStamp = Instant.ofEpochMilli(agentToken.timestamp)
-    val maxAge = timeStamp.plusSeconds(tokenMaxAge)
-    val timeNow = Instant.now()
+    val maxAge    = timeStamp.plusSeconds(tokenMaxAge)
+    val timeNow   = Instant.now()
 
     if (timeNow.isAfter(maxAge) || timeNow.isBefore(timeStamp)) {
       throw AgentTokenException(s"Expired token. Time now : $timeNow valid interval : $timeStamp timestamp : $maxAge")

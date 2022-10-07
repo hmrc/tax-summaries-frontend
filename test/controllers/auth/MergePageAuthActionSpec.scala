@@ -49,19 +49,20 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
           s"isSa: ${request.isSa}" +
           s"credentials: ${request.credentials.providerType}" +
-          s"nino: ${request.nino.map(_.nino).getOrElse("fail")}")
+          s"nino: ${request.nino.map(_.nino).getOrElse("fail")}"
+      )
     }
   }
-  val fakeCredentials = Credentials("foo", "bar")
-  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  val fakeCredentials                              = Credentials("foo", "bar")
+  val mockAuthConnector: DefaultAuthConnector      = mock[DefaultAuthConnector]
   val citizenDetailsService: CitizenDetailsService = mock[CitizenDetailsService]
-  val dataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  val dataCacheConnector: DataCacheConnector       = mock[DataCacheConnector]
 
-  val ggSignInUrl =
+  val ggSignInUrl                      =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
-  val unauthorisedRoute = controllers.routes.ErrorController.notAuthorised.url
-  implicit val hc = new HeaderCarrier
+  val unauthorisedRoute                = controllers.routes.ErrorController.notAuthorised.url
+  implicit val hc                      = new HeaderCarrier
 
   override def beforeEach() = {
     reset(mockAuthConnector)
@@ -78,9 +79,10 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result     = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get must endWith(ggSignInUrl)
     }
@@ -95,9 +97,10 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result     = controller.onPageLoad()(FakeRequest("", ""))
 
       redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
@@ -107,18 +110,20 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
     "create an authenticated request and not call citizen details" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ]       =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
-            fakeCredentials) ~ Some(utr) ~ None ~ ConfidenceLevel.L50
+            fakeCredentials
+          ) ~ Some(utr) ~ None ~ ConfidenceLevel.L50
         )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       when(citizenDetailsService.getMatchingDetails(any())(any()))
@@ -129,7 +134,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -143,18 +149,20 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
     "create an authenticated request and not call citizen details" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ]       =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
-            fakeCredentials) ~ Some(utr) ~ Some(testNino.nino) ~ ConfidenceLevel.L50
+            fakeCredentials
+          ) ~ Some(utr) ~ Some(testNino.nino) ~ ConfidenceLevel.L50
         )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       when(citizenDetailsService.getMatchingDetails(any())(any()))
@@ -165,7 +173,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -180,18 +189,20 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
     "create an authenticated request and call citizen details" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ]       =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
-            fakeCredentials) ~ None ~ Some(testNino.nino) ~ ConfidenceLevel.L50
+            fakeCredentials
+          ) ~ None ~ Some(testNino.nino) ~ ConfidenceLevel.L50
         )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       when(citizenDetailsService.getMatchingDetails(any())(any()))
@@ -204,7 +215,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -220,17 +232,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       val uar = testUar
 
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ Some(testUtr) ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ Some(testUtr) ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(None)
@@ -240,7 +254,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", "/annual-tax-summary?ref=PORTAL&id=agentToken"))
@@ -256,17 +271,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       val uar = testUar
 
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-            Some("") ~ Some(fakeCredentials) ~ Some(testUtr) ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ Some(testUtr) ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(None)
@@ -275,7 +292,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -289,17 +307,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       val uar = testUar
 
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(None)
 
@@ -308,7 +328,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", "/annual-tax-summary?ref=PORTAL&id=agentToken"))
@@ -322,17 +343,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       val uar = testUar
 
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(None)
 
@@ -341,7 +364,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", "/annual-tax-summary"))
@@ -353,17 +377,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
       val uar = testUar
 
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(None)
 
@@ -372,7 +398,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", "/annual-tax-summary?ref=PORTAL"))
@@ -389,17 +416,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         timestamp = 0
       )
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ]              =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
 
@@ -408,7 +437,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", "/annual-tax-summary"))
@@ -423,17 +453,19 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
     "see access denied" in {
 
       val retrievalResult: Future[
-        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel] =
+        Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel
+      ] =
         Future.successful(
           Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testUtr)), "Activated"))) ~
-            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50)
+            Some("") ~ Some(fakeCredentials) ~ None ~ None ~ ConfidenceLevel.L50
+        )
 
       when(
         mockAuthConnector
-          .authorise[
-            Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-            any(),
-            any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+            String
+          ] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
       when(dataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(None)
 
@@ -442,7 +474,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           citizenDetailsService,
           dataCacheConnector,
           mockAuthConnector,
-          new FakeMergePageAuthAction(true).mcc)
+          new FakeMergePageAuthAction(true).mcc
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -461,10 +494,12 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
           Some("") ~ None ~ Some(uar) ~ None ~ ConfidenceLevel.L50
       )
 
-    when(mockAuthConnector
-      .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[String] ~ ConfidenceLevel](
-        any(),
-        any())(any(), any()))
+    when(
+      mockAuthConnector
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
+          String
+        ] ~ ConfidenceLevel](any(), any())(any(), any())
+    )
       .thenReturn(retrievalResult)
 
     val authAction =
@@ -472,7 +507,8 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Moc
         citizenDetailsService,
         dataCacheConnector,
         mockAuthConnector,
-        new FakeMergePageAuthAction(true).mcc)
+        new FakeMergePageAuthAction(true).mcc
+      )
     val controller = new Harness(authAction)
 
     val ex = intercept[RuntimeException] {

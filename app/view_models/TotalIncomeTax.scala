@@ -55,22 +55,22 @@ case class TotalIncomeTax(
   savingsRates: SavingsRates,
   title: String,
   forename: String,
-  surname: String)
-    extends GenericViewModel {
+  surname: String
+) extends GenericViewModel {
 
-  val isScottishTaxPayer: Boolean = (incomeTaxStatus == "0002")
-  val isWelshTaxPayer: Boolean = (incomeTaxStatus == "0003")
+  val isScottishTaxPayer: Boolean = incomeTaxStatus == "0002"
+  val isWelshTaxPayer: Boolean    = incomeTaxStatus == "0003"
 
   def taxYear = year.toString
 
-  def startingRateForSavingsRate = startingRateForSavingsRateRate.percent
-  def basicRateIncomeTaxRate = basicRateIncomeTaxRateRate.percent
-  def higherRateIncomeTaxRate = higherRateIncomeTaxRateRate.percent
+  def startingRateForSavingsRate  = startingRateForSavingsRateRate.percent
+  def basicRateIncomeTaxRate      = basicRateIncomeTaxRateRate.percent
+  def higherRateIncomeTaxRate     = higherRateIncomeTaxRateRate.percent
   def additionalRateIncomeTaxRate = additionalRateIncomeTaxRateRate.percent
-  def ordinaryRateTaxRate = ordinaryRateTaxRateRate.percent
-  def upperRateRate = upperRateRateRate.percent
-  def additionalRateRate = additionalRateRateRate.percent
-  def taxYearFrom = (year - 1).toString
+  def ordinaryRateTaxRate         = ordinaryRateTaxRateRate.percent
+  def upperRateRate               = upperRateRateRate.percent
+  def additionalRateRate          = additionalRateRateRate.percent
+  def taxYearFrom                 = (year - 1).toString
 
   def showIncomeTaxTable =
     startingRateForSavings.nonZero ||

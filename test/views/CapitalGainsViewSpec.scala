@@ -27,7 +27,7 @@ import views.html.CapitalGainsView
 
 class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
-  implicit val request =
+  implicit val request      =
     AuthenticatedRequest(
       "userId",
       None,
@@ -37,7 +37,8 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest())
+      FakeRequest()
+    )
   lazy val capitalGainsView = inject[CapitalGainsView]
 
   def view(cg: CapitalGains): String =
@@ -76,7 +77,7 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
     "not show account menu for agent" in {
 
       val result = agentView(capitalGains)
-      result must not include ("hmrc-account-menu")
+      result must not include "hmrc-account-menu"
     }
 
     "show account menu for non agent users" in {

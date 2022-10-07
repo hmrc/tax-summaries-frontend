@@ -30,67 +30,62 @@ import utils.AuditTypes
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class PayeAtsService @Inject()(middleConnector: MiddleConnector, auditService: AuditService)(
-  implicit ec: ExecutionContext)
-    extends Logging {
+class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: AuditService)(implicit
+  ec: ExecutionContext
+) extends Logging {
 
-  def getPayeATSData(nino: Nino, taxYear: Int)(
-    implicit hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Future[Either[AtsResponse, PayeAtsData]] =
+  def getPayeATSData(nino: Nino, taxYear: Int)(implicit
+    hc: HeaderCarrier,
+    request: PayeAuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, PayeAtsData]] =
     for {
       response <- middleConnector.connectToPayeATS(nino, taxYear)
-    } yield {
-      response match {
-        case Right(atsData) => {
-          Try(atsData.json.as[PayeAtsData]) match {
-            case Success(result) =>
-              sendAuditEvent(nino, taxYear, true)
-              Right(result)
-            case Failure(e) =>
-              sendAuditEvent(nino, taxYear, false)
-              throw e
-          }
+    } yield response match {
+      case Right(atsData)              =>
+        Try(atsData.json.as[PayeAtsData]) match {
+          case Success(result) =>
+            sendAuditEvent(nino, taxYear, true)
+            Right(result)
+          case Failure(e)      =>
+            sendAuditEvent(nino, taxYear, false)
+            throw e
         }
-        case Left(upstreamErrorResponse) => {
-          val errorMessage = upstreamErrorResponse.message
-          upstreamErrorResponse.statusCode match {
-            case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
-            case NOT_FOUND   => Left(AtsNotFoundResponse(errorMessage))
-            case _ =>
-              logger.error(s"Exception in PayeAtsService: $errorMessage")
-              Left(AtsErrorResponse(errorMessage))
-          }
+      case Left(upstreamErrorResponse) =>
+        val errorMessage = upstreamErrorResponse.message
+        upstreamErrorResponse.statusCode match {
+          case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
+          case NOT_FOUND   => Left(AtsNotFoundResponse(errorMessage))
+          case _           =>
+            logger.error(s"Exception in PayeAtsService: $errorMessage")
+            Left(AtsErrorResponse(errorMessage))
         }
-      }
     }
 
-  def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, List[Int]]] =
+  def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, List[Int]]] =
     for {
       response <- middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)
-    } yield {
-      response match {
-        case Right(atsData) => {
-          val res = atsData.json.as[List[PayeAtsData]]
-          Right(res.map(_.taxYear).reverse)
+    } yield response match {
+      case Right(atsData)              =>
+        val res = atsData.json.as[List[PayeAtsData]]
+        Right(res.map(_.taxYear).reverse)
+      case Left(upstreamErrorResponse) =>
+        val errorMessage = upstreamErrorResponse.message
+        upstreamErrorResponse.statusCode match {
+          case NOT_FOUND   => Right(List.empty)
+          case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
+          case _           =>
+            logger.error(s"Exception in PayeAtsService: $errorMessage")
+            Left(AtsErrorResponse(errorMessage))
         }
-        case Left(upstreamErrorResponse) => {
-          val errorMessage = upstreamErrorResponse.message
-          upstreamErrorResponse.statusCode match {
-            case NOT_FOUND   => Right(List.empty)
-            case BAD_REQUEST => Left(AtsBadRequestResponse(errorMessage))
-            case _ =>
-              logger.error(s"Exception in PayeAtsService: $errorMessage")
-              Left(AtsErrorResponse(errorMessage))
-          }
-        }
-      }
     }
 
-  private def sendAuditEvent(nino: Nino, taxYear: Int, isSuccess: Boolean)(
-    implicit hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]): Future[AuditResult] =
+  private def sendAuditEvent(nino: Nino, taxYear: Int, isSuccess: Boolean)(implicit
+    hc: HeaderCarrier,
+    request: PayeAuthenticatedRequest[_]
+  ): Future[AuditResult] =
     auditService.sendEvent(
       auditType = if (isSuccess) AuditTypes.Tx_SUCCEEDED else AuditTypes.Tx_FAILED,
       details = Map(

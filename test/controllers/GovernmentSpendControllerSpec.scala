@@ -37,7 +37,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
   override val taxYear = 2014
 
   val mockGovernmentSpendService = mock[GovernmentSpendService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService           = mock[AuditService]
 
   def sut =
     new GovernmentSpendController(
@@ -47,7 +47,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       mcc,
       governmentSpendingView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -91,18 +92,20 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
   "Calling government spend" must {
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
         Messages("ats.treasury_spending.html.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "display an error page for an invalid request" in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -111,7 +114,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+      )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -123,7 +127,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+      )
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
@@ -132,36 +137,36 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
     "have correct data for 2014" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
       document.select("#welfare + dd").text() mustBe "£5,863.22"
-      document.select("#welfare").text() must include("24.52%")
+      document.select("#welfare").text()                      must include("24.52%")
       document.select("#health + dd").text() mustBe "£4,512.19"
-      document.select("#health").text() must include("18.87%")
+      document.select("#health").text()                       must include("18.87%")
       document.select("#education + dd").text() mustBe "£3,144.43"
-      document.select("#education").text() must include("13.15%")
+      document.select("#education").text()                    must include("13.15%")
       document.select("#pension + dd").text() mustBe "£2,898.13"
-      document.select("#pension").text() must include("12.12%")
+      document.select("#pension").text()                      must include("12.12%")
       document.select("#national_debt_interest + dd").text() mustBe "£1,673.84"
-      document.select("#national_debt_interest").text() must include("7.0%")
+      document.select("#national_debt_interest").text()       must include("7.0%")
       document.select("#defence + dd").text() mustBe "£1,269.73"
-      document.select("#defence").text() must include("5.31%")
+      document.select("#defence").text()                      must include("5.31%")
       document.select("#criminal_justice + dd").text() mustBe "£1,052.13"
-      document.select("#criminal_justice").text() must include("4.4%")
+      document.select("#criminal_justice").text()             must include("4.4%")
       document.select("#transport + dd").text() mustBe "£705.40"
-      document.select("#transport").text() must include("2.95%")
+      document.select("#transport").text()                    must include("2.95%")
       document.select("#business_and_industry + dd").text() mustBe "£655.19"
-      document.select("#business_and_industry").text() must include("2.74%")
+      document.select("#business_and_industry").text()        must include("2.74%")
       document.select("#government_administration + dd").text() mustBe "£490.20"
-      document.select("#government_administration").text() must include("2.05%")
+      document.select("#government_administration").text()    must include("2.05%")
       document.select("#Culture + dd").text() mustBe "£404.11"
-      document.select("#Culture").text() must include("1.69%")
+      document.select("#Culture").text()                      must include("1.69%")
       document.select("#Environment + dd").text() mustBe "£396.94"
-      document.select("#Environment").text() must include("1.66%")
+      document.select("#Environment").text()                  must include("1.66%")
       document.select("#HousingAndUtilities + dd").text() mustBe "£392.16"
-      document.select("#HousingAndUtilities").text() must include("1.64%")
+      document.select("#HousingAndUtilities").text()          must include("1.64%")
       document.select("#overseas_aid + dd").text() mustBe "£274.99"
-      document.select("#overseas_aid").text() must include("1.15%")
+      document.select("#overseas_aid").text()                 must include("1.15%")
       document.select("#uk_contribution_to_eu_budget + dd").text() mustBe "£179.34"
       document.select("#uk_contribution_to_eu_budget").text() must include("0.75%")
 
@@ -204,40 +209,41 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+      )
         .thenReturn(Future.successful(model2))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.select("#welfare + dd").text() mustBe "£2,530.00"
-      document.select("#welfare").text() must include("25.3%")
+      document.select("#welfare").text()                      must include("25.3%")
       document.select("#health + dd").text() mustBe "£1,990.00"
-      document.select("#health").text() must include("19.9%")
+      document.select("#health").text()                       must include("19.9%")
       document.select("#pension + dd").text() mustBe "£1,280.00"
-      document.select("#pension").text() must include("12.8%")
+      document.select("#pension").text()                      must include("12.8%")
       document.select("#education + dd").text() mustBe "£1,250.00"
-      document.select("#education").text() must include("12.5%")
+      document.select("#education").text()                    must include("12.5%")
       document.select("#defence + dd").text() mustBe "£540.00"
-      document.select("#defence").text() must include("5.4%")
+      document.select("#defence").text()                      must include("5.4%")
       document.select("#national_debt_interest + dd").text() mustBe "£500.00"
-      document.select("#national_debt_interest").text() must include("5.0%")
+      document.select("#national_debt_interest").text()       must include("5.0%")
       document.select("#public_order_and_safety + dd").text() mustBe "£440.00"
-      document.select("#public_order_and_safety").text() must include("4.4%")
+      document.select("#public_order_and_safety").text()      must include("4.4%")
       document.select("#transport + dd").text() mustBe "£300.00"
-      document.select("#transport").text() must include("3.0%")
+      document.select("#transport").text()                    must include("3.0%")
       document.select("#business_and_industry + dd").text() mustBe "£270.00"
-      document.select("#business_and_industry").text() must include("2.7%")
+      document.select("#business_and_industry").text()        must include("2.7%")
       document.select("#government_administration + dd").text() mustBe "£200.00"
-      document.select("#government_administration").text() must include("2.0%")
+      document.select("#government_administration").text()    must include("2.0%")
       document.select("#Culture + dd").text() mustBe "£180.00"
-      document.select("#Culture").text() must include("1.8%")
+      document.select("#Culture").text()                      must include("1.8%")
       document.select("#Environment + dd").text() mustBe "£170.00"
-      document.select("#Environment").text() must include("1.7%")
+      document.select("#Environment").text()                  must include("1.7%")
       document.select("#HousingAndUtilities + dd").text() mustBe "£160.00"
-      document.select("#HousingAndUtilities").text() must include("1.6%")
+      document.select("#HousingAndUtilities").text()          must include("1.6%")
       document.select("#overseas_aid + dd").text() mustBe "£130.00"
-      document.select("#overseas_aid").text() must include("1.3%")
+      document.select("#overseas_aid").text()                 must include("1.3%")
       document.select("#uk_contribution_to_eu_budget + dd").text() mustBe "£600.00"
       document.select("#uk_contribution_to_eu_budget").text() must include("0.6%")
 

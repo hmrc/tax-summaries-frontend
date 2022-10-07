@@ -376,7 +376,8 @@ class PayeAtsTestData extends BaseSpec {
       Amount(800, "GBP"),
       Amount(200, "GBP"),
       Amount(100, "GBP"),
-      "20")
+      "20"
+    )
 
   val payeGovernmentSpendViewModel = PayeGovernmentSpend(
     taxYear,
@@ -525,7 +526,8 @@ class PayeAtsTestData extends BaseSpec {
     Amount.empty,
     Amount.empty,
     Amount.empty,
-    Amount.empty)
+    Amount.empty
+  )
 
   val payeYourTaxableIncomeViewModel = PayeYourTaxableIncome(
     taxYear,

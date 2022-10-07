@@ -36,12 +36,12 @@ object PayeYourTaxableIncome {
     incomeData.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
 
   def getIncomeTaxRows(incomeData: Option[DataHolder]): List[IncomeTaxRow] = {
-    val selfEmploymentIncome = Amount(incomeData.flatMap(_.payload).flatMap(_.get("self_employment_income")))
-    val incomeFromEmployment = Amount(incomeData.flatMap(_.payload).flatMap(_.get("income_from_employment")))
-    val statePension = Amount(incomeData.flatMap(_.payload).flatMap(_.get("state_pension")))
-    val otherPensionIncome = Amount(incomeData.flatMap(_.payload).flatMap(_.get("other_pension_income")))
-    val taxableStateBenefits = Amount(incomeData.flatMap(_.payload).flatMap(_.get("taxable_state_benefits")))
-    val otherIncome = Amount(incomeData.flatMap(_.payload).flatMap(_.get("other_income")))
+    val selfEmploymentIncome   = Amount(incomeData.flatMap(_.payload).flatMap(_.get("self_employment_income")))
+    val incomeFromEmployment   = Amount(incomeData.flatMap(_.payload).flatMap(_.get("income_from_employment")))
+    val statePension           = Amount(incomeData.flatMap(_.payload).flatMap(_.get("state_pension")))
+    val otherPensionIncome     = Amount(incomeData.flatMap(_.payload).flatMap(_.get("other_pension_income")))
+    val taxableStateBenefits   = Amount(incomeData.flatMap(_.payload).flatMap(_.get("taxable_state_benefits")))
+    val otherIncome            = Amount(incomeData.flatMap(_.payload).flatMap(_.get("other_income")))
     val benefitsFromEmployment = Amount(incomeData.flatMap(_.payload).flatMap(_.get("benefits_from_employment")))
 
     List(
@@ -50,7 +50,8 @@ object PayeYourTaxableIncome {
       IncomeTaxRow("state_pension", statePension),
       IncomeTaxRow(
         if (statePension == Amount.empty) "personal_pension_income" else "other_pension_income",
-        otherPensionIncome),
+        otherPensionIncome
+      ),
       IncomeTaxRow("taxable_state_benefits", taxableStateBenefits),
       IncomeTaxRow("other_income", otherIncome),
       IncomeTaxRow("benefits_from_employment", benefitsFromEmployment)

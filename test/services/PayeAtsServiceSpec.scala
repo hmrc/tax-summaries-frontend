@@ -40,24 +40,24 @@ import scala.io.Source
 
 class PayeAtsServiceSpec extends BaseSpec {
 
-  implicit val hc = HeaderCarrier()
-  val expectedResponse: JsValue = readJson("/paye_ats_2020.json")
-  val expectedResponseCurrentYear: JsValue = readJson("/paye_ats_2021.json")
+  implicit val hc                           = HeaderCarrier()
+  val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
+  val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
-  private val currentYearMinus1 = 2018
-  private val currentYear = 2019
-  val fakeCredentials = new Credentials("provider ID", "provider type")
+  private val currentYearMinus1             = 2018
+  private val currentYear                   = 2019
+  val fakeCredentials                       = new Credentials("provider ID", "provider type")
 
   private def readJson(path: String) = {
     val resource = getClass.getResourceAsStream(path)
     Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
 
-  val mockMiddleConnector = mock[MiddleConnector]
+  val mockMiddleConnector      = mock[MiddleConnector]
   val payeAuthenticatedRequest =
     PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
-  val authenticatedRequest =
+  val authenticatedRequest           =
     AuthenticatedRequest(
       "userId",
       None,
@@ -67,7 +67,8 @@ class PayeAtsServiceSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest())
+      FakeRequest()
+    )
   val mockAuditService: AuditService = mock[AuditService]
 
   val sut = new PayeAtsService(mockMiddleConnector, mockAuditService)
@@ -146,9 +147,12 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return a successful response as list of tax years" in {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]))
+          any[HeaderCarrier]
+        )
+      )
         .thenReturn(
-          Future.successful(Right(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]()))))
+          Future.successful(Right(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]())))
+        )
 
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc, authenticatedRequest).futureValue
@@ -160,7 +164,9 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]))
+          any[HeaderCarrier]
+        )
+      )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("body", Status.NOT_FOUND))))
 
       val result =
@@ -173,7 +179,9 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]))
+          any[HeaderCarrier]
+        )
+      )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("Bad Request", BAD_REQUEST))))
 
       val result =
@@ -185,7 +193,9 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return an empty list after receiving NOT_FOUND from connector" in {
       when(
         mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]))
+          any[HeaderCarrier]
+        )
+      )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("Not Found", NOT_FOUND))))
 
       val result =

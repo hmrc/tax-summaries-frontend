@@ -23,11 +23,11 @@ import play.api.mvc._
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 @Singleton
-class SaLanguageController @Inject()(
+class SaLanguageController @Inject() (
   languageUtils: LanguageUtils,
   mcc: MessagesControllerComponents,
-  appConfig: ApplicationConfig)
-    extends LanguageController(languageUtils, mcc) {
+  appConfig: ApplicationConfig
+) extends LanguageController(languageUtils, mcc) {
 
   override def languageMap: Map[String, Lang] = appConfig.languageMap
 

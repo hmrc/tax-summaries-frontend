@@ -26,19 +26,21 @@ import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
 import scala.concurrent.ExecutionContext
 
-class ErrorHandler @Inject()(
+class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
   val configuration: Configuration,
   val environment: Environment,
   errorTemplateView: ErrorTemplateView,
-  pageNotFoundTemplateView: PageNotFoundTemplateView)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
+  pageNotFoundTemplateView: PageNotFoundTemplateView
+)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendErrorHandler {
 
   private def lang(implicit request: Request[_]): Lang =
     Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
-    implicit request: Request[_]): Html = {
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
+    request: Request[_]
+  ): Html = {
     implicit val _: Lang = lang
     errorTemplateView(pageTitle, heading, message)
   }

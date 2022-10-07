@@ -23,8 +23,9 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CitizenDetailsConnector @Inject()(httpClient: HttpClient, applicationConfig: ApplicationConfig)(
-  implicit ec: ExecutionContext) {
+class CitizenDetailsConnector @Inject() (httpClient: HttpClient, applicationConfig: ApplicationConfig)(implicit
+  ec: ExecutionContext
+) {
 
   private val baseUrl = applicationConfig.cidHost
 

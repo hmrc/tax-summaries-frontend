@@ -26,14 +26,14 @@ import scala.util.Random
 trait TestConstants extends BaseSpec {
 
   // We only want one test nino and utr throughout, therefore assign a value in the object declaration
-  lazy val testUtr = new SaUtrGenerator().nextSaUtr.utr
-  lazy val testUar = "V" + genRandNumString(4) + "H"
-  lazy val testInvalidUtr = genRandNumString(4)
-  lazy val testKey = genRandNumString(22)
-  lazy val testOid = genRandNumString(12)
-  lazy val testNonMatchingUtr = new SaUtrGenerator().nextSaUtr.utr
-  lazy val testNino = new Generator().nextNino
-  val fakeCredentials = new Credentials("provider ID", "provider type")
+  lazy val testUtr                  = new SaUtrGenerator().nextSaUtr.utr
+  lazy val testUar                  = "V" + genRandNumString(4) + "H"
+  lazy val testInvalidUtr           = genRandNumString(4)
+  lazy val testKey                  = genRandNumString(22)
+  lazy val testOid                  = genRandNumString(12)
+  lazy val testNonMatchingUtr       = new SaUtrGenerator().nextSaUtr.utr
+  lazy val testNino                 = new Generator().nextNino
+  val fakeCredentials               = new Credentials("provider ID", "provider type")
   def genRandNumString(length: Int) = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax = TotalIncomeTax(

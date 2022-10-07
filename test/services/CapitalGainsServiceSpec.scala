@@ -45,9 +45,9 @@ class CapitalGainsServiceSpec extends BaseSpec {
 
   implicit val hc = new HeaderCarrier
 
-  val mockAtsService = mock[AtsService]
+  val mockAtsService   = mock[AtsService]
   override val taxYear = 2015
-  val request = AuthenticatedRequest(
+  val request          = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -56,7 +56,8 @@ class CapitalGainsServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
+    FakeRequest("GET", s"?taxYear=$taxYear")
+  )
 
   val sut = new CapitalGainsService(mockAtsService) with MockitoSugar
 
@@ -66,7 +67,9 @@ class CapitalGainsServiceSpec extends BaseSpec {
       when(
         mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(Future(genericViewModel))
+          Matchers.any()
+        )
+      ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getCapitalGains(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
@@ -76,7 +79,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
 
     "return a complete CapitalGains when given complete AtsData" in {
       val atsData = AtsTestData.capitalGainsData
-      val result = sut.capitalGains(atsData)
+      val result  = sut.capitalGains(atsData)
 
       result mustBe CapitalGains(
         2019,

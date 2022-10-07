@@ -27,10 +27,10 @@ import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
-  implicit appConfig: ApplicationConfig,
-  ec: ExecutionContext)
-    extends Logging {
+class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(implicit
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext
+) extends Logging {
 
   val serviceUrl = appConfig.serviceUrl
 
@@ -39,8 +39,9 @@ class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
-  def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(
-    implicit hc: HeaderCarrier): Future[AtsResponse] =
+  def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(implicit
+    hc: HeaderCarrier
+  ): Future[AtsResponse] =
     connectToAts(requestedUTR, taxYear)
 
   def connectToAtsList(UTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
@@ -49,17 +50,26 @@ class MiddleConnector @Inject()(http: HttpClient, httpHandler: HttpHandler)(
   def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     connectToAtsList(requestedUTR)
 
-  def connectToPayeATS(nino: Nino, taxYear: Int)(
-    implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")) recover handleHttpExceptions
+  def connectToPayeATS(nino: Nino, taxYear: Int)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](
+      url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")
+    ) recover handleHttpExceptions
 
-  def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(
-    implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")) recover handleHttpExceptions
+  def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](
+      url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")
+    ) recover handleHttpExceptions
 
-  def connectToGovernmentSpend(taxYear: Int)(
-    implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url(s"/taxs/government-spend/$taxYear")) recover handleHttpExceptions
+  def connectToGovernmentSpend(
+    taxYear: Int
+  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](
+      url(s"/taxs/government-spend/$taxYear")
+    ) recover handleHttpExceptions
 
   val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
     case e: HttpException =>

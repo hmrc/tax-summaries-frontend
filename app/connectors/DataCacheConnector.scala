@@ -26,11 +26,12 @@ import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: TAXSSessionCache)(
-  implicit ec: ExecutionContext) {
+class DataCacheConnector @Inject() (cryptoService: CryptoService, sessionCache: TAXSSessionCache)(implicit
+  ec: ExecutionContext
+) {
 
-  val sourceId: String = Globals.TAXS_CACHE_KEY
-  val sourceAtsListId: String = Globals.TAXS_ATS_LIST_CACHE_KEY
+  val sourceId: String                   = Globals.TAXS_CACHE_KEY
+  val sourceAtsListId: String            = Globals.TAXS_ATS_LIST_CACHE_KEY
   val sourceAtsSelectedTaxYearId: String = Globals.TAXS_SELECTED_TAX_YEAR_CACHE_KEY
 
   def fetchAndGetAtsForSession(taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[AtsData]] = {
@@ -40,9 +41,9 @@ class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: T
 
   def storeAtsForSession(data: AtsData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsData]] = {
     val atsSourceId = sourceId + data.taxYear
-    val result = sessionCache.cache[AtsData](atsSourceId, data)
-    result flatMap {
-      case data: CacheMap => Future.successful(data.getEntry[AtsData](atsSourceId))
+    val result      = sessionCache.cache[AtsData](atsSourceId, data)
+    result flatMap { case data: CacheMap =>
+      Future.successful(data.getEntry[AtsData](atsSourceId))
     }
   }
 
@@ -50,17 +51,18 @@ class DataCacheConnector @Inject()(cryptoService: CryptoService, sessionCache: T
     sessionCache.fetchAndGetEntry[AtsListData](sourceAtsListId)
 
   def storeAtsListForSession(
-    data: AtsListData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsListData]] = {
+    data: AtsListData
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[AtsListData]] = {
     val result = sessionCache.cache[AtsListData](sourceAtsListId, data)
-    result flatMap {
-      case data: CacheMap => Future.successful(data.getEntry[AtsListData](sourceAtsListId))
+    result flatMap { case data: CacheMap =>
+      Future.successful(data.getEntry[AtsListData](sourceAtsListId))
     }
   }
 
   def storeAtsTaxYearForSession(taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Int]] = {
     val result = sessionCache.cache[Int](sourceAtsSelectedTaxYearId, taxYear)
-    result flatMap {
-      case data => Future.successful(data.getEntry[Int](sourceAtsSelectedTaxYearId))
+    result flatMap { case data =>
+      Future.successful(data.getEntry[Int](sourceAtsSelectedTaxYearId))
     }
   }
 

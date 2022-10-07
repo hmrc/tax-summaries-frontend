@@ -29,14 +29,15 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMainController @Inject()(
+class AtsMainController @Inject() (
   summaryService: SummaryService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   taxsMainView: TaxsMainView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
+  tokenErrorView: TokenErrorView
+)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedAtsMain: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
@@ -45,8 +46,9 @@ class AtsMainController @Inject()(
 
   type ViewModel = Summary
 
-  override def extractViewModel()(
-    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
+  override def extractViewModel()(implicit
+    request: AuthenticatedRequest[_]
+  ): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(summaryService.getSummaryData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =

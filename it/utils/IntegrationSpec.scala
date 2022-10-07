@@ -28,7 +28,14 @@ import uk.gov.hmrc.domain.Generator
 
 import scala.concurrent.ExecutionContext
 
-class IntegrationSpec extends AnyWordSpec with GuiceOneAppPerSuite with Matchers with WireMockHelper with ScalaFutures with IntegrationPatience with Injecting {
+class IntegrationSpec
+    extends AnyWordSpec
+    with GuiceOneAppPerSuite
+    with Matchers
+    with WireMockHelper
+    with ScalaFutures
+    with IntegrationPatience
+    with Injecting {
 
   val generatedNino = new Generator().nextNino
 
@@ -72,7 +79,9 @@ class IntegrationSpec extends AnyWordSpec with GuiceOneAppPerSuite with Matchers
          |}
          |""".stripMargin
 
-    server.stubFor(post(urlEqualTo("/auth/authorise"))
-      .willReturn(ok(authResponse)))
+    server.stubFor(
+      post(urlEqualTo("/auth/authorise"))
+        .willReturn(ok(authResponse))
+    )
   }
 }

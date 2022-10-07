@@ -46,10 +46,11 @@ case class CapitalGains(
   totalCgTaxRate: Rate,
   title: String,
   forename: String,
-  surname: String)
-    extends GenericViewModel with TaxYearFormatting {
+  surname: String
+) extends GenericViewModel
+    with TaxYearFormatting {
 
   def entrepreneursReliefRate = entrepreneursReliefRateRate.percent
-  def ordinaryRate = ordinaryRateRate.percent
-  def upperRate = upperRateRate.percent
+  def ordinaryRate            = ordinaryRateRate.percent
+  def upperRate               = upperRateRate.percent
 }

@@ -38,15 +38,16 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"))
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
+    )
 
-  lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeAtsTestData                                        = inject[PayeAtsTestData]
   lazy val payeGovernmentSpendingView: PayeGovernmentSpendingView = inject[PayeGovernmentSpendingView]
 
   "view" must {
     "have correct data and heading for given taxYear" in {
 
-      val view = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
+      val view     = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document.getElementById("Welfare").text() mustBe "Welfare (23.5%)"
@@ -111,7 +112,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
-      val view =
+      val view     =
         payeGovernmentSpendingView(
           payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = appConfig.taxYear),
           isWelshTaxPayer = false
@@ -131,7 +132,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
-      val view =
+      val view     =
         payeGovernmentSpendingView(
           payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = appConfig.taxYear),
           isWelshTaxPayer = false
@@ -144,17 +145,18 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {
-      val view =
+      val view     =
         payeGovernmentSpendingView(
           payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = false),
-          isWelshTaxPayer = false).body
+          isWelshTaxPayer = false
+        ).body
       val document = Jsoup.parse(view)
 
       document.select("#scottish-spending-link") mustBe empty
     }
 
     "have text relevant to non welsh users on government spending page for non welsh tax payer" in {
-      val view = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
+      val view     = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document
@@ -169,7 +171,7 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
     }
 
     "have text relevant to welsh users on government spending page for welsh tax payer" in {
-      val view = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = true).body
+      val view     = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = true).body
       val document = Jsoup.parse(view)
 
       document

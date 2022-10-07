@@ -25,7 +25,7 @@ import view_models.{Amount, Rate}
 class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
-  lazy val payeConfig = inject[PayeConfig]
+  lazy val payeConfig      = inject[PayeConfig]
 
   "PayeYourIncomeAndTaxesData" must {
 
@@ -116,7 +116,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
             ),
             None
           )
-        ))
+        )
+      )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
         taxYear,
@@ -137,7 +138,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount(10477, "GBP"),
         List(
           AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
-          AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))),
+          AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))
+        ),
         Amount(70, "GBP"),
         Amount(90, "GBP"),
         Amount(431, "GBP"),
@@ -223,7 +225,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         ),
         List(
           TaxBand("ordinary_rate", Amount(3000, "GBP"), Amount(480, "GBP"), Rate("19%")),
-          TaxBand("upper_rate", Amount(20150, "GBP"), Amount(3030, "GBP"), Rate("41%"))),
+          TaxBand("upper_rate", Amount(20150, "GBP"), Amount(3030, "GBP"), Rate("41%"))
+        ),
         Amount(19433, "GBP"),
         Amount(20224, "GBP"),
         Amount(10477, "GBP"),
@@ -350,7 +353,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount.empty,
         Amount.empty,
         Amount.empty,
-        Amount.empty)
+        Amount.empty
+      )
 
       val result = PayeIncomeTaxAndNics(
         incomeTaxData,
@@ -383,7 +387,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount.empty,
         Amount.empty,
         Amount.empty,
-        Amount.empty)
+        Amount.empty
+      )
 
       val result = PayeIncomeTaxAndNics(
         incomeTaxData,
@@ -409,7 +414,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount.empty,
         Amount.empty,
         Amount.empty,
-        Amount(2500, "GBP"))
+        Amount(2500, "GBP")
+      )
 
       val result = PayeIncomeTaxAndNics(
         incomeData,

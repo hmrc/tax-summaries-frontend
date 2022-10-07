@@ -60,7 +60,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
   val baseModel = SummaryControllerSpec.baseModel
 
   val mockSummaryService = mock[SummaryService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService   = mock[AuditService]
 
   def sut =
     new SummaryController(
@@ -70,7 +70,8 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       mcc,
       summaryView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach(): Unit =
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
@@ -79,16 +80,17 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
   "Calling Summary" must {
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.title must include(
-        Messages("ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+        Messages("ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+      )
     }
 
     "display an error page for an invalid request" in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -116,7 +118,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "have the right user data in the view" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -128,7 +130,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "have the correct tax free amount" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -144,7 +146,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -153,7 +155,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show total income tax and NICs value on the summary page" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -162,7 +164,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show capital gains (and description) on the summary if capital gains is not 0" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -178,17 +180,17 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                        must not include "Technical Difficulties"
       document.getElementById("capital-gains") must be(null)
     }
 
     "show Total Capital Gains Tax value" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-capital-gains-tax").text() must equal("£5,500")
@@ -196,7 +198,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show capital gains description on the summary if total capital gains tax is not 0" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -212,11 +214,11 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                               must not include "Technical Difficulties"
       document.getElementById("total-cg-description") must be(null)
     }
 
@@ -234,7 +236,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
             when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
               .thenReturn(Future.successful(model5))
 
-            val result = sut.show(request)
+            val result   = sut.show(request)
             status(result) mustBe 200
             val document = Jsoup.parse(contentAsString(result))
 
@@ -246,7 +248,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show Tax and Nics description having (income tax and employee nics)" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() must equal("Income Tax and National Insurance")
@@ -262,7 +264,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() must equal("Your tax was calculated as")
@@ -278,7 +280,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() must equal("Your tax was calculated as")
@@ -294,7 +296,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model8))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() must equal("Your NICs were calculated as")
@@ -309,7 +311,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model9))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() must equal("Income Tax and National Insurance")
@@ -324,7 +326,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model10))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("tax-and-nics-title").text() must equal("Your NICs were calculated as")
@@ -332,7 +334,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show Your Total Tax as sum of Income Tax, capital gains and employee nics)" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-amount").text() mustBe "£1,800"
@@ -343,11 +345,12 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(baseModel))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal(
-        "Your total Income Tax, National Insurance and Capital Gains Tax.")
+        "Your total Income Tax, National Insurance and Capital Gains Tax."
+      )
     }
 
     "show Your Total Tax description having only (total income tax)" in {
@@ -360,7 +363,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model11))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal("Your total Income Tax.")
@@ -376,7 +379,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model12))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal("Your Capital Gains Tax.")
@@ -392,7 +395,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model13))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal("Your National Insurance.")
@@ -407,7 +410,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model14))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal("Your total Income Tax and Capital Gains Tax.")
@@ -422,11 +425,12 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model15))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal(
-        "Your total Income Tax and National Insurance.")
+        "Your total Income Tax and National Insurance."
+      )
     }
 
     "show Your Total Tax description having only (capital gains, employee nics)" in {
@@ -438,11 +442,12 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model16))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("total-tax-description").text() must equal(
-        "Your National Insurance and Capital Gains Tax.")
+        "Your National Insurance and Capital Gains Tax."
+      )
     }
 
     "Redirect to 'No ATS' page" in {

@@ -51,14 +51,14 @@ trait PrevalidationAPI[T] {
     }
 
   def addNewPreprocessFunction(preprocessFunction: PreprocessFunction): PrevalidationAPI[T] = {
-    val fValidation = formValidation
-    val trules = trimRules
-    val crules = caseRules
+    val fValidation            = formValidation
+    val trules                 = trimRules
+    val crules                 = caseRules
     val newPreprocessFunctions = preprocessFunctions :+ preprocessFunction
     new PrevalidationAPI[T] {
-      val formValidation = fValidation
-      val trimRules = trules
-      val caseRules = crules
+      val formValidation               = fValidation
+      val trimRules                    = trules
+      val caseRules                    = crules
       override val preprocessFunctions = newPreprocessFunctions
     }
   }
@@ -81,15 +81,14 @@ trait PrevalidationAPI[T] {
   }
 
   private def cleanRequestForm(data: Map[String, Seq[String]]): Map[String, Seq[String]] =
-    data.map {
-      case (key, values) =>
-        (key, values.map(preprocess(key, _)))
+    data.map { case (key, values) =>
+      (key, values.map(preprocess(key, _)))
     }
 
   private def cleanForm(data: Map[String, String]): Map[String, String] =
     data.map { case (key, value) => (key, preprocess(key, value)) }
 
-  def bind(data: Map[String, String]): Form[T] =
+  def bind(data: Map[String, String]): Form[T]                          =
     formValidation.bind(preProcessFormData(cleanForm(data)))
 
   private def bindFromRequest(data: Map[String, Seq[String]]): Form[T] =
@@ -100,15 +99,15 @@ trait PrevalidationAPI[T] {
   def bindFromRequest()(implicit request: play.api.mvc.Request[_]): Form[T] =
     bindFromRequest {
       (request.body match {
-        case body: play.api.mvc.AnyContent if body.asFormUrlEncoded.isDefined => body.asFormUrlEncoded.get
+        case body: play.api.mvc.AnyContent if body.asFormUrlEncoded.isDefined    => body.asFormUrlEncoded.get
         case body: play.api.mvc.AnyContent if body.asMultipartFormData.isDefined =>
           body.asMultipartFormData.get.asFormUrlEncoded
-        case body: play.api.mvc.AnyContent if body.asJson.isDefined =>
+        case body: play.api.mvc.AnyContent if body.asJson.isDefined              =>
           FormUtils.fromJson(js = body.asJson.get).mapValues(Seq(_))
-        case body: Map[_, _]                         => body.asInstanceOf[Map[String, Seq[String]]]
-        case body: play.api.mvc.MultipartFormData[_] => body.asFormUrlEncoded
-        case body: play.api.libs.json.JsValue        => FormUtils.fromJson(js = body).mapValues(Seq(_))
-        case _                                       => Map.empty[String, Seq[String]]
+        case body: Map[_, _]                                                     => body.asInstanceOf[Map[String, Seq[String]]]
+        case body: play.api.mvc.MultipartFormData[_]                             => body.asFormUrlEncoded
+        case body: play.api.libs.json.JsValue                                    => FormUtils.fromJson(js = body).mapValues(Seq(_))
+        case _                                                                   => Map.empty[String, Seq[String]]
       }) ++ request.queryString
     }
 
@@ -117,7 +116,7 @@ trait PrevalidationAPI[T] {
     data.foldLeft(Map.empty[String, String]) {
       case (s, (key, values)) if key.endsWith("[]") =>
         s ++ values.zipWithIndex.map { case (v, i) => (key.dropRight(2) + "[" + i + "]") -> v }
-      case (s, (key, values)) => s + (key -> values.headOption.getOrElse(""))
+      case (s, (key, values))                       => s + (key -> values.headOption.getOrElse(""))
     }
 
   def form: play.api.data.Form[T] = formValidation
@@ -132,11 +131,11 @@ private object FormUtils {
   def fromJson(prefix: String = "", js: JsValue): Map[String, String] = js match {
     case JsObject(fields) =>
       fields
-        .map {
-          case (key, value) => fromJson(Option(prefix).filterNot(_.isEmpty).map(_ + ".").getOrElse("") + key, value)
+        .map { case (key, value) =>
+          fromJson(Option(prefix).filterNot(_.isEmpty).map(_ + ".").getOrElse("") + key, value)
         }
         .foldLeft(Map.empty[String, String])(_ ++ _)
-    case JsArray(values) =>
+    case JsArray(values)  =>
       values.zipWithIndex
         .map { case (value, i) => fromJson(prefix + "[" + i + "]", value) }
         .foldLeft(Map.empty[String, String])(_ ++ _)

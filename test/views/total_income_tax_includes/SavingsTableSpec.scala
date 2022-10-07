@@ -27,19 +27,19 @@ import views.html.total_income_tax_includes.SavingsTableView
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   lazy val savingsTableView = inject[SavingsTableView]
-  lazy val viewUtils = inject[ViewUtils]
+  lazy val viewUtils        = inject[ViewUtils]
 
-  val savingsTaxData = SavingsTax.empty
+  val savingsTaxData  = SavingsTax.empty
   val savingsRateData = SavingsRates.empty
 
   def view(tax: SavingsTax, rates: SavingsRates): String =
     savingsTableView(tax, rates).body
 
   def view(tax: SavingsTax): String = view(tax, savingsRateData)
-  def view: String = view(savingsTaxData, savingsRateData)
+  def view: String                  = view(savingsTaxData, savingsRateData)
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
-  implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
+  implicit val arbRate: Arbitrary[Rate]     = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
 
   "view" must {
 
@@ -63,25 +63,28 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
         "lower",
         modify[SavingsTax](_.savingsLowerRateTax),
         modify[SavingsTax](_.savingsLowerRateTaxAmount),
-        modify[SavingsRates](_.savingsLowerRate)),
+        modify[SavingsRates](_.savingsLowerRate)
+      ),
       (
         "higher",
         modify[SavingsTax](_.savingsHigherRateTax),
         modify[SavingsTax](_.savingsHigherRateTaxAmount),
-        modify[SavingsRates](_.savingsHigherRate)),
+        modify[SavingsRates](_.savingsHigherRate)
+      ),
       (
         "additional",
         modify[SavingsTax](_.savingsAdditionalRateTax),
         modify[SavingsTax](_.savingsAdditionalRateTaxAmount),
-        modify[SavingsRates](_.savingsAdditionalRate))
+        modify[SavingsRates](_.savingsAdditionalRate)
+      )
     )
 
-    for ((id, taxLens, totalLens, rateLens) <- rowData) {
+    for ((id, taxLens, totalLens, rateLens) <- rowData)
       s"display $id tax row" in {
 
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
           val taxData = (taxLens.setTo(tax) andThen totalLens.setTo(total))(savingsTaxData)
-          val rates = rateLens.setTo(rate)(savingsRateData)
+          val rates   = rateLens.setTo(rate)(savingsRateData)
 
           val result = view(taxData, rates)
 
@@ -89,16 +92,17 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
             case Amount.empty =>
               result must not include viewUtils.toCurrency(tax)
 
-            case _ =>
+            case _            =>
               result must include(
                 messages(
                   s"ats.total_income_tax.savings_income_tax.table.$id",
                   viewUtils.toCurrency(total),
-                  rate.percent))
+                  rate.percent
+                )
+              )
               result must include(viewUtils.toCurrency(tax))
           }
         }
       }
-    }
   }
 }

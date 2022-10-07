@@ -31,13 +31,16 @@ import views.html.paye.PayeTaxsMainView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeAtsMainController @Inject()(
+class PayeAtsMainController @Inject() (
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeTaxsMainView: PayeTaxsMainView,
-  payeGenericErrorView: PayeGenericErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with Logging {
+  payeGenericErrorView: PayeGenericErrorView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request =>
     getPayeAts(taxYear)
@@ -46,7 +49,7 @@ class PayeAtsMainController @Inject()(
   private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(_: PayeAtsData)
-          if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
+          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
         Forbidden(payeGenericErrorView())
       case Right(_: PayeAtsData)        => Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))

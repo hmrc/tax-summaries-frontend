@@ -31,15 +31,19 @@ import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
-class ErrorController @Inject()(
+class ErrorController @Inject() (
   governmentSpendService: GovernmentSpendService,
   mergePageAuthAction: MergePageAuthAction,
   minAuthAction: MinAuthAction,
   mcc: MessagesControllerComponents,
   notAuthorisedView: NotAuthorisedView,
   howTaxIsSpentView: HowTaxIsSpentView,
-  serviceUnavailableView: ServiceUnavailableView)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
+  serviceUnavailableView: ServiceUnavailableView
+)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with CurrentTaxYear
+    with LazyLogging {
 
   override def now: () => LocalDate = () => LocalDate.now()
 
@@ -56,7 +60,7 @@ class ErrorController @Inject()(
             Forbidden(serviceUnavailableView())
           } else {
             Ok(howTaxIsSpentView(spendData, taxYear))
-        }
+          }
       )
   }
 

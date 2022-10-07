@@ -31,16 +31,17 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"))
+      FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax")
+    )
 
-  lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeAtsTestData          = inject[PayeAtsTestData]
   lazy val payeIncomeTaxAndNicsView = inject[PayeIncomeTaxAndNicsView]
 
   "PayeIncomeTaxAndNicsView" must {
 
     "have correct data for scottish and rUK tax payer with all adjustments" in {
 
-      val view = payeIncomeTaxAndNicsView(payeAtsTestData.payeIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
+      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document.getElementById("scottish_starter_rate").text() mustBe "Starter rate (£2,000 at 19%) £380.00"
@@ -84,7 +85,7 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
     "have correct data for UK tax payer" in {
 
-      val view = payeIncomeTaxAndNicsView(payeAtsTestData.payeUKIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
+      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeUKIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document.getElementById("ordinary_rate").text() mustBe "Basic rate Dividend Tax (£19,430 at 19%) £4,080.00"
@@ -103,7 +104,7 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
     "have correct data for Welsh tax payer" in {
 
-      val view =
+      val view     =
         payeIncomeTaxAndNicsView(payeAtsTestData.payeEmployeeContributionNicsViewModel, isWelshTaxPayer = true).body
       val document = Jsoup.parse(view)
 
@@ -115,10 +116,11 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
     "not display adjustments table when they have no adjustments" in {
 
-      val view =
+      val view     =
         payeIncomeTaxAndNicsView(
           payeAtsTestData.payeUKIncomeTaxAndNicsViewModel.copy(adjustments = List.empty),
-          isWelshTaxPayer = false).body
+          isWelshTaxPayer = false
+        ).body
       val document = Jsoup.parse(view)
 
       document.select("#adjustments-table") mustBe empty
@@ -127,7 +129,7 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
     "have correct data for national insurance contributions" in {
 
-      val view =
+      val view     =
         payeIncomeTaxAndNicsView(payeAtsTestData.payeEmployeeContributionNicsViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
@@ -149,7 +151,7 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
     "have no data for national insurance contributions" in {
 
-      val view = payeIncomeTaxAndNicsView(payeAtsTestData.payeEmptyNicsViewModel, isWelshTaxPayer = false).body
+      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeEmptyNicsViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
 
       document.getElementById("employeeContributions").text() mustBe "National Insurance contributions £0.00"
