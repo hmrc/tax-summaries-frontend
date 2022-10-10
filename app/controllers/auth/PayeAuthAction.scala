@@ -19,7 +19,7 @@ package controllers.auth
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import play.api.Logging
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PertaxService
@@ -61,11 +61,18 @@ class PayeAuthActionImpl @Inject() (
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
+            println("1" * 100)
+
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
             singleGGAccountCheck(nino, isSa, credentials, request, block)
-          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+          case _                                           =>
+            println("0" * 100)
+
+            throw new RuntimeException("Auth retrieval failed for user")
         } recover {
         case _: NoActiveSession             =>
+          println("A" * 100)
+
           Redirect(
             appConfig.payeLoginUrl,
             Map(
@@ -74,8 +81,12 @@ class PayeAuthActionImpl @Inject() (
             )
           )
         case _: InsufficientConfidenceLevel =>
+          println("B" * 100)
+
           upliftConfidenceLevel(request)
         case NonFatal(e)                    =>
+          println("C" * 100)
+
           logger.error(s"Exception in PayeAuthAction: $e", e)
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
       }
@@ -87,27 +98,42 @@ class PayeAuthActionImpl @Inject() (
     credentials: Credentials,
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
-  )(implicit hc: HeaderCarrier) =
+  )(implicit hc: HeaderCarrier) = {
+    println("GG " * 100)
+
     pertaxService
       .pertaxAuth(nino)
       .fold(
         error => {
+          println(error.message)
+
           val redirect  = error.redirect
           val errorView = error.errorView
+          println("2" * 100)
 
           if (redirect.isDefined) {
+            println("3" * 100)
             redirect
-              .map(url => Future.successful(Redirect(url, SEE_OTHER)))
-              .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+              .map(url => Future.successful(Redirect(url, UNAUTHORIZED)))
+              .getOrElse(
+                Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised, SEE_OTHER))
+              )
           } else if (errorView.isDefined) {
+            println("4" * 100)
+
             errorView
-              .map(data => Future.successful(Redirect(data.url, data.statusCode)))
-              .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+              .map(data => Future.successful(Redirect(data.url, UNAUTHORIZED)))
+              .getOrElse(
+                Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised, UNAUTHORIZED))
+              )
           } else {
-            Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+            println("5" * 100)
+            Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised, UNAUTHORIZED))
           }
         },
-        _ =>
+        _ => {
+          println("6" * 100)
+
           block {
             PayeAuthenticatedRequest(
               Nino(nino),
@@ -116,8 +142,10 @@ class PayeAuthActionImpl @Inject() (
               request
             )
           }
+        }
       )
       .flatten
+  }
 
   private def upliftConfidenceLevel(request: Request[_]) =
     Redirect(
