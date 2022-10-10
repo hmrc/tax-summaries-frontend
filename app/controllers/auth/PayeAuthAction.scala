@@ -24,7 +24,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PertaxService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
@@ -62,56 +62,62 @@ class PayeAuthActionImpl @Inject() (
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
-
-            val x = pertaxService
-              .pertaxAuth(nino)
-              .fold(
-                error => {
-                  val redirect  = error.redirect
-                  val errorView = error.errorView
-
-                  if (redirect.isDefined) {
-                    redirect
-                      .map(url => Future.successful(Redirect(url, SEE_OTHER)))
-                      .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
-                  } else if (errorView.isDefined) {
-                    errorView
-                      .map(data => Future.successful(Redirect(data.url, data.statusCode)))
-                      .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
-                  } else {
-                    Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-                  }
-                },
-                _ =>
-                  block {
-                    PayeAuthenticatedRequest(
-                      Nino(nino),
-                      isSa,
-                      credentials,
-                      request
-                    )
-                  }
-              )
-
-          case _ => throw new RuntimeException("Auth retrieval failed for user")
+            singleGGAccountCheck(nino, isSa, credentials, request, block)
+          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
         } recover {
-        case _: NoActiveSession =>
-          val x = Redirect(
+        case _: NoActiveSession             =>
+          Redirect(
             appConfig.payeLoginUrl,
             Map(
               "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
               "origin"       -> Seq(appConfig.appName)
             )
           )
-
-
         case _: InsufficientConfidenceLevel =>
-          val x = upliftConfidenceLevel(request)
+          upliftConfidenceLevel(request)
         case NonFatal(e)                    =>
           logger.error(s"Exception in PayeAuthAction: $e", e)
-          val x = Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
       }
     }
+
+  private def singleGGAccountCheck[A](
+    nino: String,
+    isSa: Boolean,
+    credentials: Credentials,
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier) =
+    pertaxService
+      .pertaxAuth(nino)
+      .fold(
+        error => {
+          val redirect  = error.redirect
+          val errorView = error.errorView
+
+          if (redirect.isDefined) {
+            redirect
+              .map(url => Future.successful(Redirect(url, SEE_OTHER)))
+              .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+          } else if (errorView.isDefined) {
+            errorView
+              .map(data => Future.successful(Redirect(data.url, data.statusCode)))
+              .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+          } else {
+            Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+          }
+        },
+        _ =>
+          block {
+            PayeAuthenticatedRequest(
+              Nino(nino),
+              isSa,
+              credentials,
+              request
+            )
+          }
+      )
+      .flatten
 
   private def upliftConfidenceLevel(request: Request[_]) =
     Redirect(

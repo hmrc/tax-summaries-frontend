@@ -18,10 +18,8 @@ package connectors
 
 import cats.data.EitherT
 import config.ApplicationConfig
-import models.PertaxErrorResponse
-import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,8 +30,8 @@ class PertaxConnector @Inject() (httpClient: HttpClient, applicationConfig: Appl
 
   private val baseUrl = applicationConfig.pertaxHost
 
-  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, PertaxErrorResponse, HttpResponse] =
+  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, HttpResponse] =
     EitherT(
-      httpClient.GET[Either[JsValue, HttpResponse]](s"$baseUrl/pertax/$nino/authorise")
-    ).leftMap(error => error.as[PertaxErrorResponse])
+      httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$baseUrl/pertax/$nino/authorise")
+    )
 }

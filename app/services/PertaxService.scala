@@ -21,7 +21,7 @@ import config.ApplicationConfig
 import connectors.PertaxConnector
 import models.PertaxErrorResponse
 import play.api.http.Status.BAD_REQUEST
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
 
 import javax.inject.Inject
@@ -32,10 +32,5 @@ class PertaxService @Inject() (pertaxConnector: PertaxConnector, applicationConf
 ) {
 
   def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, PertaxErrorResponse, HttpResponse] =
-    pertaxConnector.pertaxAuth(nino).leftMap { error =>
-      error.reportAs match {
-        case BAD_REQUEST => error
-      }
-
-    }
+    pertaxConnector.pertaxAuth(nino).leftMap(error => Json.parse(error.message).as[PertaxErrorResponse])
 }
