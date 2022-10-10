@@ -16,13 +16,17 @@
 
 package controllers.auth
 
+import cats.data.EitherT
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import connectors.PertaxConnector
+import models.PertaxApiResponse
 import play.api.Logging
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
-import play.api.mvc.Results.Redirect
+import play.api.i18n.Messages.implicitMessagesProviderToMessages
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.{InternalServerError, Redirect}
 import play.api.mvc._
-import services.PertaxService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
@@ -30,18 +34,22 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class PayeAuthActionImpl @Inject() (
-  override val authConnector: DefaultAuthConnector,
-  cc: MessagesControllerComponents,
-  pertaxService: PertaxService
+                                     override val authConnector: DefaultAuthConnector,
+                                     cc: ControllerComponents,
+                                     pertaxConnector: PertaxConnector,
+                                     serviceUnavailableView: ServiceUnavailableView
 )(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends PayeAuthAction
-    with AuthorisedFunctions
-    with Logging {
+      with I18nSupport
+      with AuthorisedFunctions
+      with Logging {
 
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -61,18 +69,21 @@ class PayeAuthActionImpl @Inject() (
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
-            println("1" * 100)
-
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
-            singleGGAccountCheck(nino, isSa, credentials, request, block)
+            singleGGAccountCheck(nino, isSa, credentials)(implicitly, request).semiflatMap { _ =>
+              block {
+                PayeAuthenticatedRequest(
+                  Nino(nino),
+                  isSa,
+                  credentials,
+                  request
+                )
+              }
+            }.merge
           case _                                           =>
-            println("0" * 100)
-
             throw new RuntimeException("Auth retrieval failed for user")
         } recover {
         case _: NoActiveSession             =>
-          println("A" * 100)
-
           Redirect(
             appConfig.payeLoginUrl,
             Map(
@@ -81,71 +92,31 @@ class PayeAuthActionImpl @Inject() (
             )
           )
         case _: InsufficientConfidenceLevel =>
-          println("B" * 100)
-
           upliftConfidenceLevel(request)
         case NonFatal(e)                    =>
-          println("C" * 100)
-
           logger.error(s"Exception in PayeAuthAction: $e", e)
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
       }
     }
 
-  private def singleGGAccountCheck[A](
+  private def singleGGAccountCheck(
     nino: String,
     isSa: Boolean,
-    credentials: Credentials,
-    request: Request[A],
-    block: PayeAuthenticatedRequest[A] => Future[Result]
-  )(implicit hc: HeaderCarrier) = {
-    println("GG " * 100)
-
-    pertaxService
+    credentials: Credentials
+  )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, Result, Unit] = {
+    pertaxConnector
       .pertaxAuth(nino)
-      .fold(
-        error => {
-          println(error.message)
-
-          val redirect  = error.redirect
-          val errorView = error.errorView
-          println("2" * 100)
-
-          if (redirect.isDefined) {
-            println("3" * 100)
-            redirect
-              .map(url => Future.successful(Redirect(url, UNAUTHORIZED)))
-              .getOrElse(
-                Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised, SEE_OTHER))
-              )
-          } else if (errorView.isDefined) {
-            println("4" * 100)
-
-            errorView
-              .map(data => Future.successful(Redirect(data.url, UNAUTHORIZED)))
-              .getOrElse(
-                Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised, UNAUTHORIZED))
-              )
-          } else {
-            println("5" * 100)
-            Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised, UNAUTHORIZED))
-          }
-        },
-        _ => {
-          println("6" * 100)
-
-          block {
-            PayeAuthenticatedRequest(
-              Nino(nino),
-              isSa,
-              credentials,
-              request
-            )
-          }
-        }
-      )
-      .flatten
+      .transform {
+        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _)) => Right(())
+        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
+          Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
+        case Right(error) =>
+          logger.error(s"Invalid code response from pertax with message: ${error.message}")
+          Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+        case _ => Left(InternalServerError(serviceUnavailableView()))
+      }
   }
+
 
   private def upliftConfidenceLevel(request: Request[_]) =
     Redirect(
