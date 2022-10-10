@@ -34,10 +34,14 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents, pertaxService: PertaxService)(
-  implicit ec: ExecutionContext,
-  appConfig: ApplicationConfig)
-    extends PayeAuthAction with AuthorisedFunctions with Logging {
+class PayeAuthActionImpl @Inject() (
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  pertaxService: PertaxService
+)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+    extends PayeAuthAction
+    with AuthorisedFunctions
+    with Logging {
 
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -59,36 +63,40 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
 
-            pertaxService.pertaxAuth(nino).fold(
-              error => {
-                val redirect = error.redirect
-                val errorView = error.errorView
+            val x = pertaxService
+              .pertaxAuth(nino)
+              .fold(
+                error => {
+                  val redirect  = error.redirect
+                  val errorView = error.errorView
 
-                if (redirect.isDefined) {
-                  redirect.map(url => Future.successful(Redirect(url, SEE_OTHER)))
-                    .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
-                } else if (errorView.isDefined) {
-                  errorView.map(data => Future.successful(Redirect(data.url, data.statusCode)))
-                    .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
-                } else {
-                  Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-                }
-              },
-              _ =>
-                block {
-                  PayeAuthenticatedRequest(
-                    Nino(nino),
-                    isSa,
-                    credentials,
-                    request
-                  )
-                }
-            )
+                  if (redirect.isDefined) {
+                    redirect
+                      .map(url => Future.successful(Redirect(url, SEE_OTHER)))
+                      .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+                  } else if (errorView.isDefined) {
+                    errorView
+                      .map(data => Future.successful(Redirect(data.url, data.statusCode)))
+                      .getOrElse(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+                  } else {
+                    Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+                  }
+                },
+                _ =>
+                  block {
+                    PayeAuthenticatedRequest(
+                      Nino(nino),
+                      isSa,
+                      credentials,
+                      request
+                    )
+                  }
+              )
 
           case _ => throw new RuntimeException("Auth retrieval failed for user")
         } recover {
         case _: NoActiveSession =>
-          Redirect(
+          val x = Redirect(
             appConfig.payeLoginUrl,
             Map(
               "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
@@ -96,11 +104,12 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
             )
           )
 
+
         case _: InsufficientConfidenceLevel =>
-          upliftConfidenceLevel(request)
+          val x = upliftConfidenceLevel(request)
         case NonFatal(e)                    =>
           logger.error(s"Exception in PayeAuthAction: $e", e)
-          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+          val x = Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
       }
     }
 
