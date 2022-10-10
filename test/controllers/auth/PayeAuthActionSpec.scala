@@ -18,7 +18,7 @@ package controllers.auth
 
 import cats.data.EitherT
 import controllers.paye.routes
-import models.PertaxErrorResponse
+import models.{ErrorView, PertaxErrorResponse}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -243,6 +243,83 @@ class PayeAuthActionSpec extends BaseSpec {
         val result = controller.onPageLoad()(FakeRequest())
         status(result) mustBe UNAUTHORIZED
         result.map(_.header.headers.get(LOCATION)).futureValue.get mustBe "/tax-enrolment-assignment-frontend/account"
+      }
+
+      "redirect to the provided errorView if it exists" in {
+        val nino                                                                       = new Generator().nextNino.nino
+        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+          Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+
+        when(
+          mockAuthConnector
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+        )
+          .thenReturn(retrievalResult)
+
+        when(
+          mockPertaxService.pertaxAuth(any())(any())
+        ).thenReturn(
+          EitherT[Future, PertaxErrorResponse, HttpResponse](
+            Future.successful(
+              Left(
+                PertaxErrorResponse(
+                  "NO_HMRC_PT_ENROLMENT",
+                  "",
+                  Some(ErrorView("/partials/wrong-account", UNAUTHORIZED)),
+                  None,
+                  OK
+                )
+              )
+            )
+          )
+        )
+
+        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxService)
+        val controller = new Harness(authAction)
+
+        val result = controller.onPageLoad()(FakeRequest())
+        status(result) mustBe UNAUTHORIZED
+        result.map(_.header.headers.get(LOCATION)).futureValue.get mustBe "/partials/wrong-account"
+      }
+
+      "redirect to the notAuthorised page if neither redirectUrl or errorView is provided" in {
+        val nino                                                                       = new Generator().nextNino.nino
+        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+          Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+
+        when(
+          mockAuthConnector
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+        )
+          .thenReturn(retrievalResult)
+
+        when(
+          mockPertaxService.pertaxAuth(any())(any())
+        ).thenReturn(
+          EitherT[Future, PertaxErrorResponse, HttpResponse](
+            Future.successful(
+              Left(
+                PertaxErrorResponse(
+                  "NO_HMRC_PT_ENROLMENT",
+                  "",
+                  None,
+                  None,
+                  OK
+                )
+              )
+            )
+          )
+        )
+
+        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxService)
+        val controller = new Harness(authAction)
+
+        val result = controller.onPageLoad()(FakeRequest())
+        status(result) mustBe UNAUTHORIZED
+        result
+          .map(_.header.headers.get(LOCATION))
+          .futureValue
+          .get mustBe controllers.paye.routes.PayeErrorController.notAuthorised.url
       }
     }
   }
