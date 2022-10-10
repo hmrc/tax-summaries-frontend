@@ -36,14 +36,15 @@ import scala.concurrent.Future
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show(taxYear).url)
-  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+  lazy val payeGenericErrorView         = inject[PayeGenericErrorView]
 
   val sut = new PayeTaxFreeAmountController(
     mockPayeAtsService,
     FakePayeAuthAction,
     mcc,
     inject[PayeTaxFreeAmountView],
-    payeGenericErrorView)
+    payeGenericErrorView
+  )
 
   "Tax Free Amount controller" must {
 
@@ -62,7 +63,9 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
             any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
+            any[PayeAuthenticatedRequest[_]]
+          )
+      )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
@@ -75,7 +78,9 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.tax_free_amount.title") + Messages(
           "generic.to_from",
           (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString))
+          fakeAppConfig.taxYear.toString
+        )
+      )
     }
 
     "return OK response for 2020" in {
@@ -93,7 +98,9 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
             any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
+            any[PayeAuthenticatedRequest[_]]
+          )
+      )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
@@ -106,14 +113,17 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.tax_free_amount.title") + Messages(
           "generic.to_from",
           (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString))
+          fakeAppConfig.taxYear.toString
+        )
+      )
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -126,7 +136,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)

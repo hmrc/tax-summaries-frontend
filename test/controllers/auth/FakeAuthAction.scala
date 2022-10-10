@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object FakeAuthAction extends ControllerBaseSpec with AuthAction {
 
-  override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+  override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
@@ -40,5 +40,7 @@ object FakeAuthAction extends ControllerBaseSpec with AuthAction {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        request))
+        request
+      )
+    )
 }

@@ -32,20 +32,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite with Injecting with ScalaFutures {
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc                             = HeaderCarrier()
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ninoAuthAction = new NinoAuthAction(mockAuthConnector)
 
   "getNino" must {
     "return a NINO when auth returns a NINO" in {
-      val nino = new Generator().nextNino.nino
+      val nino                                    = new Generator().nextNino.nino
       val retrievalResult: Future[Option[String]] =
         Future.successful(Some(nino))
 
       when(
         mockAuthConnector
-          .authorise[Option[String]](any(), any())(any(), any()))
+          .authorise[Option[String]](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       ninoAuthAction.getNino().futureValue mustBe SuccessAtsNino(nino)
@@ -57,7 +58,8 @@ class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerS
 
       when(
         mockAuthConnector
-          .authorise[Option[String]](any(), any())(any(), any()))
+          .authorise[Option[String]](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       ninoAuthAction.getNino().futureValue mustBe NoAtsNinoFound
@@ -69,7 +71,8 @@ class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerS
 
       when(
         mockAuthConnector
-          .authorise[Option[String]](any(), any())(any(), any()))
+          .authorise[Option[String]](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       ninoAuthAction.getNino().futureValue mustBe UpliftRequiredAtsNino
@@ -81,7 +84,8 @@ class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerS
 
       when(
         mockAuthConnector
-          .authorise[Option[String]](any(), any())(any(), any()))
+          .authorise[Option[String]](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       ninoAuthAction.getNino().futureValue mustBe InsufficientCredsNino

@@ -32,5 +32,6 @@ case class IncomeBeforeTax(
   getIncomeBeforeTaxTotal: Amount,
   title: String,
   forename: String,
-  surname: String)
-    extends GenericViewModel with TaxYearFormatting
+  surname: String
+) extends GenericViewModel
+    with TaxYearFormatting

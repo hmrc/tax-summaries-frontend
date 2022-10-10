@@ -21,4 +21,5 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain._
 
 case class PayeAuthenticatedRequest[A](nino: Nino, isSa: Boolean, credentials: Credentials, request: Request[A])
-    extends WrappedRequest[A](request) with CommonRequest
+    extends WrappedRequest[A](request)
+    with CommonRequest

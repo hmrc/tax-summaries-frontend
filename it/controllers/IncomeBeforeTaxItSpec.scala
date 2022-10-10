@@ -24,16 +24,18 @@ import utils.{FileHelper, IntegrationSpec}
 
 class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
-  override def fakeApplication() = GuiceApplicationBuilder().configure(
-    "microservice.services.auth.port" -> server.port(),
-    "microservice.services.tax-summaries.port" -> server.port()
-  ).build()
+  override def fakeApplication() = GuiceApplicationBuilder()
+    .configure(
+      "microservice.services.auth.port"          -> server.port(),
+      "microservice.services.tax-summaries.port" -> server.port()
+    )
+    .build()
 
   "/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=${taxYear}"
+    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$taxYear"
 
-    lazy val backendUrl = s"/taxs/$generatedSaUtr/${taxYear}/ats-data"
+    lazy val backendUrl = s"/taxs/$generatedSaUtr/$taxYear/ats-data"
 
     "return an OK response" in {
 

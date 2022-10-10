@@ -26,14 +26,16 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class TaxYearRequest @Inject()(
+abstract class TaxYearRequest @Inject() (
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+  tokenErrorView: TokenErrorView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
-  def extractViewModelWithTaxYear(genericViewModel: Int => Future[GenericViewModel])(
-    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
+  def extractViewModelWithTaxYear(
+    genericViewModel: Int => Future[GenericViewModel]
+  )(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     TaxYearUtil.extractTaxYear match {
       case Right(taxYear)      => genericViewModel(taxYear).map(Right(_))
       case Left(errorResponse) => Future.successful(Left(errorResponse))

@@ -17,6 +17,6 @@
 package utils
 
 object AuditTypes {
-  val Tx_FAILED = "TxFailed"
+  val Tx_FAILED    = "TxFailed"
   val Tx_SUCCEEDED = "TxSuccessful"
 }

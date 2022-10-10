@@ -32,14 +32,17 @@ import views.html.errors.GenericErrorView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageController @Inject()(
+class AtsMergePageController @Inject() (
   atsMergePageService: AtsMergePageService,
   authAction: MergePageAuthAction,
   mcc: MessagesControllerComponents,
   atsMergePageView: AtsMergePageView,
   genericErrorView: GenericErrorView,
-  atsForms: AtsForms)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with AttorneyUtils with I18nSupport {
+  atsForms: AtsForms
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with AttorneyUtils
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
     if (appConfig.saShuttered && appConfig.payeShuttered)
@@ -47,15 +50,16 @@ class AtsMergePageController @Inject()(
     else getSaAndPayeYearList()
   }
 
-  private def getSaAndPayeYearList(formWithErrors: Option[Form[AtsYearChoice]] = None)(
-    implicit request: AuthenticatedRequest[_]) = {
+  private def getSaAndPayeYearList(
+    formWithErrors: Option[Form[AtsYearChoice]] = None
+  )(implicit request: AuthenticatedRequest[_]) = {
     val session = request
       .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
       .fold(
         request.session
       )(parameter => request.session + (Globals.TAXS_USER_TYPE_KEY -> parameter))
 
-    val form = formWithErrors.getOrElse(
+    val form    = formWithErrors.getOrElse(
       request.session
         .get("yearChoice")
         .fold(
@@ -73,35 +77,34 @@ class AtsMergePageController @Inject()(
               request,
               atsMergePageViewModel.saData.forename,
               atsMergePageViewModel.saData.surname,
-              atsMergePageViewModel.saData.utr)
-          ))
+              atsMergePageViewModel.saData.utr
+            )
+          )
+        )
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-      case _ => InternalServerError(genericErrorView())
+      case _                            => InternalServerError(genericErrorView())
     }
   }
 
   def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
     atsForms.atsYearFormMapping.bindFromRequest.fold(
-      formWithErrors => {
-        getSaAndPayeYearList(Some(formWithErrors))(request)
-      },
-      value => {
+      formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
+      value =>
         Future.successful(
-          redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value))))
-      }
+          redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
+        )
     )
   }
 
   private def redirectWithYear(taxYearChoice: AtsYearChoice): Result =
     taxYearChoice.atsType match {
-      case SA =>
+      case SA   =>
         Redirect(controllers.routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + taxYearChoice.year)
       case PAYE =>
         Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year))
-      case _ => {
+      case _    =>
         Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYearChoice.year))
-      }
     }
 
 }

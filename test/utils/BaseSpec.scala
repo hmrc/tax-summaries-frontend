@@ -30,8 +30,15 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.ExecutionContext
 
 trait BaseSpec
-    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting
-    with ScalaFutures with IntegrationPatience with EitherValues {
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with BeforeAndAfterEach
+    with MockitoSugar
+    with Injecting
+    with ScalaFutures
+    with IntegrationPatience
+    with EitherValues {
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 

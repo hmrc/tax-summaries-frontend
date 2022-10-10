@@ -28,7 +28,8 @@ case class AtsData(
   capital_gains_data: Option[DataHolder],
   gov_spending: Option[GovernmentSpendingOutputWrapper],
   taxPayerData: Option[UserData],
-  errors: Option[IncomingAtsError])
+  errors: Option[IncomingAtsError]
+)
 
 object AtsData {
   implicit val formats = Json.format[AtsData]

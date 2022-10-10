@@ -30,8 +30,8 @@ case class PayeIncomeTaxAndNics(
   employeeContributions: Amount,
   employerContributions: Amount,
   totalIncomeTax2Nics: Amount,
-  welshIncomeTax: Amount)
-    extends TaxYearFormatting
+  welshIncomeTax: Amount
+) extends TaxYearFormatting
 
 object PayeIncomeTaxAndNics {
 
@@ -39,7 +39,8 @@ object PayeIncomeTaxAndNics {
     payeAtsData: PayeAtsData,
     scottishRates: List[String],
     uKRates: List[String],
-    adjustments: Set[String]): PayeIncomeTaxAndNics =
+    adjustments: Set[String]
+  ): PayeIncomeTaxAndNics =
     PayeIncomeTaxAndNics(
       payeAtsData.taxYear,
       getTaxBands(payeAtsData, scottishRates),
@@ -69,34 +70,26 @@ object PayeIncomeTaxAndNics {
       incomeTax <- payeAtsData.income_tax
       rates     <- incomeTax.rates
       payload   <- incomeTax.payload
-    } yield {
-      taxBandRates
-        .flatMap { name =>
-          for {
-            rate            <- rates.get("paye_" + name)
-            incomeInTaxBand <- payload.get(name)
-            taxPaidInBand   <- payload.get(name + "_amount")
-          } yield {
-            TaxBand(name, incomeInTaxBand, taxPaidInBand, rate)
-          }
-        }
-        .filter(_.bandRate != Rate.empty)
-    }).getOrElse(List.empty)
+    } yield taxBandRates
+      .flatMap { name =>
+        for {
+          rate            <- rates.get("paye_" + name)
+          incomeInTaxBand <- payload.get(name)
+          taxPaidInBand   <- payload.get(name + "_amount")
+        } yield TaxBand(name, incomeInTaxBand, taxPaidInBand, rate)
+      }
+      .filter(_.bandRate != Rate.empty)).getOrElse(List.empty)
 
   private def getAdjustments(payeAtsData: PayeAtsData, adjustments: Set[String]): List[AdjustmentRow] =
     (for {
       incomeTax <- payeAtsData.income_tax
       payload   <- incomeTax.payload
-    } yield {
-      payload
-        .filterKeys(adjustments)
-        .toList
-        .map(
-          adjustment => AdjustmentRow(adjustment._1, adjustment._2)
-        )
-        .filter(_.adjustmentAmount != Amount.empty)
-        .sortBy(_.label)
-    }).getOrElse(List.empty)
+    } yield payload
+      .filterKeys(adjustments)
+      .toList
+      .map(adjustment => AdjustmentRow(adjustment._1, adjustment._2))
+      .filter(_.adjustmentAmount != Amount.empty)
+      .sortBy(_.label)).getOrElse(List.empty)
 
   private def getNationalInsuranceContribution(payeAtsData: PayeAtsData, nicKey: String): Amount =
     payeAtsData.summary_data

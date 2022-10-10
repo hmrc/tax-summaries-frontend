@@ -25,11 +25,9 @@ object TaxYearUtil {
 
   def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] =
     request.getQueryString("taxYear") match {
-      case Some(taxYearPattern(year, _)) => {
+      case Some(taxYearPattern(year, _)) =>
         Right(year.toInt)
-      }
-      case _ => {
+      case _                             =>
         Left(InvalidTaxYear)
-      }
     }
 }

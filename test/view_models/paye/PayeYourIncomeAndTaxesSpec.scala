@@ -27,8 +27,14 @@ import utils.JsonUtil
 import view_models.Amount
 
 class PayeYourIncomeAndTaxesSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
-    with IntegrationPatience with Injecting {
+    extends AnyWordSpec
+    with Matchers
+    with MockitoSugar
+    with JsonUtil
+    with GuiceOneAppPerTest
+    with ScalaFutures
+    with IntegrationPatience
+    with Injecting {
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
 
@@ -47,7 +53,9 @@ class PayeYourIncomeAndTaxesSpec
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
           Amount(1100, "GBP"),
-          "20"))
+          "20"
+        )
+      )
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
@@ -65,7 +73,9 @@ class PayeYourIncomeAndTaxesSpec
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
           Amount(1100, "GBP"),
-          "20"))
+          "20"
+        )
+      )
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
@@ -83,7 +93,9 @@ class PayeYourIncomeAndTaxesSpec
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
           Amount(1100, "GBP"),
-          "20"))
+          "20"
+        )
+      )
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 
@@ -101,7 +113,9 @@ class PayeYourIncomeAndTaxesSpec
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
           Amount(1100, "GBP"),
-          "20"))
+          "20"
+        )
+      )
 
       val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
 

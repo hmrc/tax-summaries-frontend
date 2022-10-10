@@ -24,7 +24,8 @@ case class PayeAtsData(
   summary_data: Option[DataHolder],
   income_data: Option[DataHolder],
   allowance_data: Option[DataHolder],
-  gov_spending: Option[GovernmentSpendingOutputWrapper]) {
+  gov_spending: Option[GovernmentSpendingOutputWrapper]
+) {
 
   //using scottish_income_tax to identify WelshTaxPayer is not a bug and we expect the field to be changed in the backend in 2021.
   def isWelshTaxPayer: Boolean =

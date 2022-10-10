@@ -36,7 +36,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeAtsTestData      = inject[PayeAtsTestData]
   lazy val payeGenericErrorView = inject[PayeGenericErrorView]
 
   val sut = new PayeYourIncomeAndTaxesController(
@@ -44,7 +44,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
     FakePayeAuthAction,
     mcc,
     inject[PayeYourIncomeAndTaxesView],
-    payeGenericErrorView)
+    payeGenericErrorView
+  )
 
   "Government spend controller" must {
 
@@ -52,7 +53,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -62,14 +64,16 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       val document = Jsoup.parse(contentAsString(result))
 
       document.title must include(
-        Messages("paye.ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+        Messages("paye.ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+      )
     }
 
     "return 200 when total_income_before_tax key is missing in PAYE ATS data" in {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(payeAtsTestData.malformedYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -81,7 +85,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(payeAtsTestData.missingYourIncomeAndTaxesData)))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -95,7 +100,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -108,7 +114,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -121,7 +128,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)

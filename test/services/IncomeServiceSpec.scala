@@ -44,9 +44,9 @@ class IncomeServiceSpec extends BaseSpec {
 
   implicit val hc = new HeaderCarrier
 
-  val mockAtsService = mock[AtsService]
+  val mockAtsService   = mock[AtsService]
   override val taxYear = 2015
-  val request = AuthenticatedRequest(
+  val request          = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -55,7 +55,8 @@ class IncomeServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"))
+    FakeRequest("GET", s"?taxYear=$taxYear")
+  )
 
   def sut = new IncomeService(mockAtsService) with MockitoSugar
 
@@ -65,7 +66,9 @@ class IncomeServiceSpec extends BaseSpec {
       when(
         mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(Future(genericViewModel))
+          Matchers.any()
+        )
+      ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
@@ -76,7 +79,7 @@ class IncomeServiceSpec extends BaseSpec {
 
     "return complete IncomeBeforeTaxData when given complete AtsData" in {
 
-      val incomeData: AtsData = AtsTestData.incomeData
+      val incomeData: AtsData     = AtsTestData.incomeData
       val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
         2019,

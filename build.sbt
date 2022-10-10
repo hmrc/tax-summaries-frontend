@@ -20,10 +20,10 @@ lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
     ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;views.html.*;app.Routes.*;prod.*;uk.gov.hmrc.*;testOnlyDoNotUseInAppConf.*;config.*;models.*;connectors.*;awrs.app.*;view_models.*;views.helpers.*;utils.validation.*;utils.prevalidation.*;",
-    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
-    parallelExecution in Test := false
+    Test / parallelExecution := false
   )
 }
 
@@ -40,14 +40,13 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 1,
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
-    evictionWarningOptions in update :=
-      EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(Resolver.jcenterRepo),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
-    pipelineStages in Assets := Seq(concat, uglify),
+    Assets / pipelineStages := Seq(concat, uglify),
     scalafmtOnCompile := true,
-    includeFilter in uglify := GlobFilter("ats-*.js")
+    uglify / includeFilter := GlobFilter("ats-*.js")
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings())
@@ -69,3 +68,7 @@ TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.hmrcfrontend.views.html.components._",
   "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
 )
+
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
+addCommandAlias("testAll", ";coverage ;test ;it:test ;coverageReport")
+addCommandAlias("testAllWithScalafmt", ";scalafmtAll ;testAll")

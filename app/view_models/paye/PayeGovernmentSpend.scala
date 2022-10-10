@@ -28,24 +28,20 @@ object PayeGovernmentSpend {
 
   def apply(payeAtsData: PayeAtsData, appConfig: ApplicationConfig): PayeGovernmentSpend = {
 
-    val spendRows: List[SpendRow] = {
-
+    val spendRows: List[SpendRow] =
       payeAtsData.gov_spending
         .flatMap { govSpending: GovernmentSpendingOutputWrapper =>
-          {
-            govSpending.govSpendAmountData
-              .map { govSpendAmountDataMap =>
-                val sortedSpendData = govSpendAmountDataMap.toList.sortWith(_._2.percentage > _._2.percentage)
-                val orderedSpendData =
-                  CategoriesUtils.reorderCategories(appConfig, payeAtsData.taxYear, sortedSpendData)
+          govSpending.govSpendAmountData
+            .map { govSpendAmountDataMap =>
+              val sortedSpendData  = govSpendAmountDataMap.toList.sortWith(_._2.percentage > _._2.percentage)
+              val orderedSpendData =
+                CategoriesUtils.reorderCategories(appConfig, payeAtsData.taxYear, sortedSpendData)
 
-                for ((category, spendData) <- orderedSpendData)
-                  yield SpendRow(category, spendData)
-              }
-          }
+              for ((category, spendData) <- orderedSpendData)
+                yield SpendRow(category, spendData)
+            }
         }
         .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
-    }
 
     val totalSpendingAmount = payeAtsData.gov_spending
       .map { spending =>

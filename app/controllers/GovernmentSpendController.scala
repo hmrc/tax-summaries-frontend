@@ -29,14 +29,15 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentSpendController @Inject()(
+class GovernmentSpendController @Inject() (
   governmentSpendService: GovernmentSpendService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   governmentSpendingView: GovernmentSpendingView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
+  tokenErrorView: TokenErrorView
+)(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
   def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
@@ -45,8 +46,9 @@ class GovernmentSpendController @Inject()(
 
   type ViewModel = GovernmentSpend
 
-  override def extractViewModel()(
-    implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
+  override def extractViewModel()(implicit
+    request: AuthenticatedRequest[_]
+  ): Future[Either[ErrorResponse, GenericViewModel]] =
     extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
@@ -54,22 +56,23 @@ class GovernmentSpendController @Inject()(
       governmentSpendingView(
         result,
         assignPercentage(result.govSpendAmountData),
-        getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)))
+        getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)
+      )
+    )
 
   def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
-    var percentEnviron = 0.0
+    var percentEnviron  = 0.0
     var percentCultural = 0.0
-    var percentHousing = 0.0
+    var percentHousing  = 0.0
 
-    govSpendList.foreach {
-      case (key, value) =>
-        if (key == "Environment") {
-          percentEnviron = value.percentage.doubleValue()
-        } else if (key == "Culture") {
-          percentCultural = value.percentage.doubleValue()
-        } else if (key == "HousingAndUtilities") {
-          percentHousing = value.percentage.doubleValue()
-        }
+    govSpendList.foreach { case (key, value) =>
+      if (key == "Environment") {
+        percentEnviron = value.percentage.doubleValue()
+      } else if (key == "Culture") {
+        percentCultural = value.percentage.doubleValue()
+      } else if (key == "HousingAndUtilities") {
+        percentHousing = value.percentage.doubleValue()
+      }
 
     }
 

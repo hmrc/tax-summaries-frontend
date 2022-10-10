@@ -37,20 +37,20 @@ case class Summary(
   nicsAndTaxRate: Rate,
   title: String,
   forename: String,
-  surname: String)
-    extends GenericViewModel {
+  surname: String
+) extends GenericViewModel {
 
-  def taxYearInterval: String = taxYearFrom + "-" + taxYearTo.substring(2)
+  def taxYearInterval: String   = taxYearFrom + "-" + taxYearTo.substring(2)
   def taxYearIntervalTo: String = taxYearFrom + " to " + taxYearTo
 
   def hasTotalIncomeTaxAmount: Boolean = !totalIncomeTaxAmount.isZeroOrLess
-  def hasTotalCapitalGains: Boolean = !totalCapitalGainsTax.isZero
-  def hasEmployeeNicAmount: Boolean = !employeeNicAmount.isZero
+  def hasTotalCapitalGains: Boolean    = !totalCapitalGainsTax.isZero
+  def hasEmployeeNicAmount: Boolean    = !employeeNicAmount.isZero
 
   def nonNegativeTotalIncomeTaxAndNics: Amount = {
-    val viewUtils = new ViewUtils
+    val viewUtils     = new ViewUtils
     val nonNegativeIT = viewUtils.positiveOrZero(totalIncomeTaxAmount)
-    val total = nonNegativeIT.amount + employeeNicAmount.amount
+    val total         = nonNegativeIT.amount + employeeNicAmount.amount
     Amount(total, totalIncomeTaxAndNics.currency)
   }
 
@@ -67,6 +67,6 @@ case class Summary(
     TextGenerator.createOnScreenText(hasTotalIncomeTaxAmount, hasTotalCapitalGains, hasEmployeeNicAmount)
 
   def hasTaxableGains: Boolean = !taxableGains.isZero
-  def taxYearTo = year.toString
-  def taxYearFrom = (year - 1).toString
+  def taxYearTo                = year.toString
+  def taxYearFrom              = (year - 1).toString
 }

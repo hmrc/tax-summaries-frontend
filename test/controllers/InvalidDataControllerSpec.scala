@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
 
-  val dataPath = "/json_containing_errors_test.json"
-  val dataPathNoAts = "/no_ats_json_test.json"
+  val dataPath         = "/json_containing_errors_test.json"
+  val dataPathNoAts    = "/no_ats_json_test.json"
   override val taxYear = 2014
 
   implicit val hc = new HeaderCarrier
@@ -48,7 +48,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
 
     "show ats error page for allowances" in {
       val mockAllowanceService = mock[AllowanceService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService     = mock[AuditService]
 
       def sut =
         new AllowancesController(
@@ -58,12 +58,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           taxFreeAmountView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
 
       when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failed")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -73,7 +74,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for capital-gains" in {
 
       val mockCapitalGainsService = mock[CapitalGainsService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService        = mock[AuditService]
 
       def sut =
         new CapitalGainsTaxController(
@@ -83,12 +84,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           capitalGainsView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
 
       when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -98,7 +100,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for government-spend" in {
 
       val mockGovernmentSpendService = mock[GovernmentSpendService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService           = mock[AuditService]
 
       def sut =
         new GovernmentSpendController(
@@ -108,12 +110,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           governmentSpendingView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
 
       when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -123,7 +126,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for income" in {
 
       val mockIncomeService = mock[IncomeService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService  = mock[AuditService]
 
       def sut =
         new IncomeController(
@@ -133,12 +136,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           incomeBeforeTaxView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
 
       when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -148,7 +152,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for total-income-tax" in {
 
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService          = mock[AuditService]
 
       def sut =
         new TotalIncomeTaxController(
@@ -158,12 +162,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           totalIncomeTaxView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
 
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -173,7 +178,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for summary page" in {
 
       val mockSummaryService = mock[SummaryService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService   = mock[AuditService]
 
       val sut = new SummaryController(
         mockSummaryService,
@@ -182,12 +187,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         mcc,
         summaryView,
         genericErrorView,
-        tokenErrorView)
+        tokenErrorView
+      )
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -197,7 +203,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for nics on summary page" in {
 
       val mockSummaryService = mock[SummaryService]
-      val mockAuditService = mock[AuditService]
+      val mockAuditService   = mock[AuditService]
 
       def sut =
         new NicsController(
@@ -207,12 +213,13 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           nicsView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
 
       when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200

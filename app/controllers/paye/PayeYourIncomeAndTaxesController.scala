@@ -32,32 +32,33 @@ import views.html.paye.PayeYourIncomeAndTaxesView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class PayeYourIncomeAndTaxesController @Inject()(
+class PayeYourIncomeAndTaxesController @Inject() (
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView,
-  payeGenericErrorView: PayeGenericErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with Logging {
+  payeGenericErrorView: PayeGenericErrorView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    {
-      payeAtsService.getPayeATSData(request.nino, taxYear).map {
-        case Right(_: PayeAtsData)
-            if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
-          Forbidden(payeGenericErrorView())
-        case Right(successResponse: PayeAtsData) =>
-          PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
-            case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
-            case _ =>
-              val exception = new InternalServerException("Missing Paye ATS data")
-              logger.error(s"Internal server error ${exception.getMessage}", exception)
-              InternalServerError(exception.getMessage)
-          }
-        case Left(response: AtsNotFoundResponse) =>
-          Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-        case _ => InternalServerError(payeGenericErrorView())
-      }
+    payeAtsService.getPayeATSData(request.nino, taxYear).map {
+      case Right(_: PayeAtsData)
+          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
+        Forbidden(payeGenericErrorView())
+      case Right(successResponse: PayeAtsData) =>
+        PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
+          case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
+          case _               =>
+            val exception = new InternalServerException("Missing Paye ATS data")
+            logger.error(s"Internal server error ${exception.getMessage}", exception)
+            InternalServerError(exception.getMessage)
+        }
+      case Left(response: AtsNotFoundResponse) =>
+        Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                                   => InternalServerError(payeGenericErrorView())
     }
   }
 }

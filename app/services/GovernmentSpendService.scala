@@ -28,18 +28,21 @@ import view_models.GovernmentSpend
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentSpendService @Inject()(atsService: AtsService, middleConnector: MiddleConnector)(
-  implicit val appConfig: ApplicationConfig) {
+class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector: MiddleConnector)(implicit
+  val appConfig: ApplicationConfig
+) {
 
   def getGovernmentSpendData(
-    taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
+    taxYear: Int
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, govSpend)
 
-  def getGovernmentSpendFigures(taxYear: Int)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] = {
+  def getGovernmentSpendFigures(
+    taxYear: Int
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] = {
     val governmentSpend = EitherT(middleConnector.connectToGovernmentSpend(taxYear)).leftMap(upStreamErrorResponse =>
-      AtsErrorResponse(upStreamErrorResponse.message))
+      AtsErrorResponse(upStreamErrorResponse.message)
+    )
 
     for {
       response <- governmentSpend

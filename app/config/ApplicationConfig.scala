@@ -27,52 +27,52 @@ import javax.inject.Singleton
 import scala.collection.JavaConverters._
 
 @Singleton
-class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configuration) {
+class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Configuration) {
 
-  def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  def getConf(key: String): String        = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
   def getExternalUrl(key: String): String = config.getString(s"external-urls.$key")
 
   val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, appName).get()
 
   // Services url config
-  val serviceUrl = config.baseUrl("tax-summaries")
-  val agentServiceUrl = config.baseUrl("tax-summaries-agent")
+  val serviceUrl        = config.baseUrl("tax-summaries")
+  val agentServiceUrl   = config.baseUrl("tax-summaries-agent")
   val serviceIdentifier = config.getString("service-identifier")
 
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
-  lazy val cidHost = config.baseUrl("citizen-details")
+  lazy val cidHost          = config.baseUrl("citizen-details")
 
-  lazy val authHost = config.baseUrl("auth")
+  lazy val authHost                     = config.baseUrl("auth")
   lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
   lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
 
-  lazy val homePageUrl = "/annual-tax-summary/"
+  lazy val homePageUrl            = "/annual-tax-summary/"
   lazy val contactFrontendBaseUrl = getExternalUrl("contact-frontend.host")
-  lazy val betaFeedbackUrl =
+  lazy val betaFeedbackUrl        =
     s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   // Encryption config
-  lazy val encryptionKey = config.getString("portal.clientagent.encryption.key")
+  lazy val encryptionKey         = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
 
   // External urls
-  lazy val loginCallback = getConf(s"login-callback.url")
-  lazy val loginUrl = getConf("login.url")
-  lazy val ytaUrl = getConf("yta.url")
-  lazy val portalUrl = getConf("portal.url")
-  lazy val optimizelyProjectId: String = config.getString("optimizely.projectId")
-  lazy val feedbackUrl: String = getConf("feedback.url")
-  lazy val payeLoginUrl = getConf("paye.login.url")
-  lazy val payeLoginCallbackUrl = getConf("paye.login-callback.url")
+  lazy val loginCallback                 = getConf(s"login-callback.url")
+  lazy val loginUrl                      = getConf("login.url")
+  lazy val ytaUrl                        = getConf("yta.url")
+  lazy val portalUrl                     = getConf("portal.url")
+  lazy val optimizelyProjectId: String   = config.getString("optimizely.projectId")
+  lazy val feedbackUrl: String           = getConf("feedback.url")
+  lazy val payeLoginUrl                  = getConf("paye.login.url")
+  lazy val payeLoginCallbackUrl          = getConf("paye.login-callback.url")
   lazy val identityVerificationUpliftUrl = getConf("paye.iv-uplift-redirect.url")
-  lazy val iVUpliftFailureCallback = getConf("paye.iv-uplift-failure.url")
-  lazy val contactHmrcSAUrl = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
-  lazy val contactHmrcPayeUrl =
+  lazy val iVUpliftFailureCallback       = getConf("paye.iv-uplift-failure.url")
+  lazy val contactHmrcSAUrl              = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
+  lazy val contactHmrcPayeUrl            =
     "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
-  lazy val govScotAccounts = "https://www.gov.scot/accounts"
-  lazy val govScotHowItWorks = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
+  lazy val govScotAccounts               = "https://www.gov.scot/accounts"
+  lazy val govScotHowItWorks             = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
 
   def scottishIncomeTaxLink(taxYear: Int): String =
     s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
@@ -90,20 +90,19 @@ class ApplicationConfig @Inject()(config: ServicesConfig, configuration: Configu
 
   val isWelshEnabled: Boolean = config.getBoolean("welsh.enabled")
 
-  val sessionTimeoutInSeconds: String = config.getString("timeout.sessionTimeOut")
+  val sessionTimeoutInSeconds: String   = config.getString("timeout.sessionTimeOut")
   val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
 
-  val accessibilityStatementToggle: Boolean = config.getBoolean("accessibility-statement.enabled")
-  val accessibilityBaseUrl: String = config.getString(s"accessibility-statement.baseUrl")
-  private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
+  val accessibilityStatementToggle: Boolean       = config.getBoolean("accessibility-statement.enabled")
+  val accessibilityBaseUrl: String                = config.getString(s"accessibility-statement.baseUrl")
+  private val accessibilityRedirectUrl: String    = config.getString(s"accessibility-statement.redirectUrl")
   def accessibilityStatementUrl(referrer: String) =
-    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(
-      accessibilityBaseUrl + referrer).encodedUrl}"
+    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(accessibilityBaseUrl + referrer).encodedUrl}"
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 
-  def payeRouteToSwitchLanguage =
+  def payeRouteToSwitchLanguage      =
     (lang: String) => controllers.routes.SaLanguageController.switchToLanguage(lang)
 
   def saRouteToSwitchLanguage =
