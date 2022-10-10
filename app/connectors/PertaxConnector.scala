@@ -18,6 +18,7 @@ package connectors
 
 import cats.data.EitherT
 import config.ApplicationConfig
+import models.PertaxApiResponse
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 
@@ -30,8 +31,8 @@ class PertaxConnector @Inject() (httpClient: HttpClient, applicationConfig: Appl
 
   private val baseUrl = applicationConfig.pertaxHost
 
-  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, HttpResponse] =
+  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
     EitherT(
-      httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$baseUrl/pertax/$nino/authorise")
+      httpClient.GET[Either[UpstreamErrorResponse, PertaxApiResponse]](s"$baseUrl/pertax/$nino/authorise")
     )
 }
