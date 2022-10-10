@@ -32,5 +32,9 @@ class PertaxService @Inject() (pertaxConnector: PertaxConnector, applicationConf
 ) {
 
   def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, PertaxErrorResponse, HttpResponse] =
-    pertaxConnector.pertaxAuth(nino).leftMap(error => Json.parse(error.message).as[PertaxErrorResponse])
+    pertaxConnector.pertaxAuth(nino).leftMap { error =>
+      println(error.message)
+      println(Json.parse(error.message).as[PertaxErrorResponse])
+      Json.parse(error.message).as[PertaxErrorResponse]
+    }
 }
