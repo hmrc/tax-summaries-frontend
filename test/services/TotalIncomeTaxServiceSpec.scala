@@ -48,7 +48,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
 
   def sut = new TotalIncomeTaxService(mockAtsService) with MockitoSugar {
     implicit val hc = new HeaderCarrier
-    val taxYear = 2015
+    val taxYear     = 2015
   }
 
   "TotalIncomeTaxService getIncomeData" must {
@@ -57,7 +57,9 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       when(
         mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(Future(genericViewModel))
+          Matchers.any()
+        )
+      ).thenReturn(Future(genericViewModel))
       lazy val request = AuthenticatedRequest(
         "userId",
         None,
@@ -67,8 +69,9 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", "?taxYear=2015"))
-      val result = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)
+        FakeRequest("GET", "?taxYear=2015")
+      )
+      val result       = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
@@ -91,7 +94,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
     )
 
     "return complete TotalIncomeTax data when given complete AtsData for scottish tax payer" in {
-      val incomeData: AtsData = AtsTestData.totalIncomeTaxData
+      val incomeData: AtsData    = AtsTestData.totalIncomeTaxData
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
       val scottishTax = ScottishTax(
@@ -158,7 +161,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
     }
 
     "return complete TotalIncomeTax data when given complete AtsData for welsh tax payer" in {
-      val incomeData: AtsData = AtsTestData.incomeTaxDataForWelshTaxPayer
+      val incomeData: AtsData    = AtsTestData.incomeTaxDataForWelshTaxPayer
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
       result mustEqual TotalIncomeTax(
@@ -203,14 +206,14 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
     }
 
     "return a isScottishTaxPayer as true and isWelshTaxPayer as false when incomeTaxStatus is 0002" in {
-      val incomeData: AtsData = AtsTestData.totalIncomeTaxData
+      val incomeData: AtsData    = AtsTestData.totalIncomeTaxData
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
       result.isScottishTaxPayer mustEqual true
       result.isWelshTaxPayer mustEqual false
     }
 
     "return a isScottishTaxPayer as false and isWelshTaxPayer as true when incomeTaxStatus is 0003" in {
-      val incomeData: AtsData = AtsTestData.incomeTaxDataForWelshTaxPayer
+      val incomeData: AtsData    = AtsTestData.incomeTaxDataForWelshTaxPayer
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
       result.isScottishTaxPayer mustEqual false
       result.isWelshTaxPayer mustEqual true

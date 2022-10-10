@@ -26,61 +26,75 @@ import utils.JsonUtil
 import view_models.Amount
 
 class PayeYourTaxableIncomeSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with JsonUtil with GuiceOneAppPerTest with ScalaFutures
+    extends AnyWordSpec
+    with Matchers
+    with MockitoSugar
+    with JsonUtil
+    with GuiceOneAppPerTest
+    with ScalaFutures
     with IntegrationPatience {
   val incomeTaxDataStatePensionAndOther = Some(
     DataHolder(
-      payload = Some(Map(
-        "self_employment_income"   -> Amount(100, "GBP"),
-        "income_from_employment"   -> Amount(200, "GBP"),
-        "state_pension"            -> Amount(300, "GBP"),
-        "other_pension_income"     -> Amount(400, "GBP"),
-        "taxable_state_benefits"   -> Amount(500, "GBP"),
-        "other_income"             -> Amount(600, "GBP"),
-        "benefits_from_employment" -> Amount(700, "GBP"),
-        "total_income_before_tax"  -> Amount(800, "GBP")
-      )),
+      payload = Some(
+        Map(
+          "self_employment_income"   -> Amount(100, "GBP"),
+          "income_from_employment"   -> Amount(200, "GBP"),
+          "state_pension"            -> Amount(300, "GBP"),
+          "other_pension_income"     -> Amount(400, "GBP"),
+          "taxable_state_benefits"   -> Amount(500, "GBP"),
+          "other_income"             -> Amount(600, "GBP"),
+          "benefits_from_employment" -> Amount(700, "GBP"),
+          "total_income_before_tax"  -> Amount(800, "GBP")
+        )
+      ),
       rates = None,
       incomeTaxStatus = None
-    ))
+    )
+  )
 
   val incomeTaxDataStatePensionNoIncomeFromEmployment = Some(
     DataHolder(
-      payload = Some(Map(
-        "self_employment_income"   -> Amount(100, "GBP"),
-        "income_from_employment"   -> Amount(0, "GBP"),
-        "state_pension"            -> Amount(300, "GBP"),
-        "other_pension_income"     -> Amount(400, "GBP"),
-        "taxable_state_benefits"   -> Amount(500, "GBP"),
-        "other_income"             -> Amount(600, "GBP"),
-        "benefits_from_employment" -> Amount(700, "GBP"),
-        "total_income_before_tax"  -> Amount(800, "GBP")
-      )),
+      payload = Some(
+        Map(
+          "self_employment_income"   -> Amount(100, "GBP"),
+          "income_from_employment"   -> Amount(0, "GBP"),
+          "state_pension"            -> Amount(300, "GBP"),
+          "other_pension_income"     -> Amount(400, "GBP"),
+          "taxable_state_benefits"   -> Amount(500, "GBP"),
+          "other_income"             -> Amount(600, "GBP"),
+          "benefits_from_employment" -> Amount(700, "GBP"),
+          "total_income_before_tax"  -> Amount(800, "GBP")
+        )
+      ),
       rates = None,
       incomeTaxStatus = None
-    ))
+    )
+  )
 
   val IncomeTaxJustOtherPension = Some(
     DataHolder(
-      payload = Some(Map(
-        "self_employment_income"   -> Amount(100, "GBP"),
-        "income_from_employment"   -> Amount(200, "GBP"),
-        "other_pension_income"     -> Amount(400, "GBP"),
-        "taxable_state_benefits"   -> Amount(500, "GBP"),
-        "other_income"             -> Amount(600, "GBP"),
-        "benefits_from_employment" -> Amount(700, "GBP"),
-        "total_income_before_tax"  -> Amount(800, "GBP")
-      )),
+      payload = Some(
+        Map(
+          "self_employment_income"   -> Amount(100, "GBP"),
+          "income_from_employment"   -> Amount(200, "GBP"),
+          "other_pension_income"     -> Amount(400, "GBP"),
+          "taxable_state_benefits"   -> Amount(500, "GBP"),
+          "other_income"             -> Amount(600, "GBP"),
+          "benefits_from_employment" -> Amount(700, "GBP"),
+          "total_income_before_tax"  -> Amount(800, "GBP")
+        )
+      ),
       rates = None,
       incomeTaxStatus = None
-    ))
+    )
+  )
 
   def incomeTaxPayeAtsData(incomeTax: Option[DataHolder]): PayeAtsData =
     PayeAtsData(2018, None, None, incomeTax, None, None)
 
   "PayeYourTaxableIncome" must {
     "Transform income tax data just other pension to view model" in {
-      val expectedIncomeeTaxRows = List(
+      val expectedIncomeeTaxRows       = List(
         IncomeTaxRow("self_employment_income", Amount(100, "GBP")),
         IncomeTaxRow("income_from_employment", Amount(200, "GBP")),
         IncomeTaxRow("state_pension", Amount(300, "GBP")),
@@ -92,9 +106,9 @@ class PayeYourTaxableIncomeSpec
       val expectedIncomeBeforeTaxTotal = Amount(800, "GBP")
 
       val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionAndOther)
-      val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
+      val viewModel   = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-      viewModel.incomeTaxRows mustBe (expectedIncomeeTaxRows)
+      viewModel.incomeTaxRows mustBe expectedIncomeeTaxRows
       viewModel.totalIncomeBeforeTax mustBe expectedIncomeBeforeTaxTotal
     }
 
@@ -109,9 +123,9 @@ class PayeYourTaxableIncomeSpec
       )
 
       val payeAtsData = incomeTaxPayeAtsData(incomeTaxDataStatePensionNoIncomeFromEmployment)
-      val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
+      val viewModel   = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-      viewModel.incomeTaxRows mustBe (expectedIncomeeTaxRows)
+      viewModel.incomeTaxRows mustBe expectedIncomeeTaxRows
     }
 
     "Transform income tax data, state and other pension, to view model" in {
@@ -125,9 +139,9 @@ class PayeYourTaxableIncomeSpec
       )
 
       val payeAtsData = incomeTaxPayeAtsData(IncomeTaxJustOtherPension)
-      val viewModel = PayeYourTaxableIncome.buildViewModel(payeAtsData)
+      val viewModel   = PayeYourTaxableIncome.buildViewModel(payeAtsData)
 
-      viewModel.incomeTaxRows mustBe (expectedIncomeeTaxRows)
+      viewModel.incomeTaxRows mustBe expectedIncomeeTaxRows
     }
   }
 }

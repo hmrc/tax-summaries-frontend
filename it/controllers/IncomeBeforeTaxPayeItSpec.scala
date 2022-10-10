@@ -24,10 +24,12 @@ import utils.{FileHelper, IntegrationSpec}
 
 class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
-  override def fakeApplication() = GuiceApplicationBuilder().configure(
-    "microservice.services.auth.port" -> server.port(),
-    "microservice.services.tax-summaries.port" -> server.port()
-  ).build()
+  override def fakeApplication() = GuiceApplicationBuilder()
+    .configure(
+      "microservice.services.auth.port"          -> server.port(),
+      "microservice.services.tax-summaries.port" -> server.port()
+    )
+    .build()
 
   "/paye/income-before-tax" must {
 

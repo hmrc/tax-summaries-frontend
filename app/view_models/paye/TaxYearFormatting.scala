@@ -20,7 +20,7 @@ trait TaxYearFormatting {
 
   val taxYear: Int
 
-  def taxYearFrom: String = (taxYear - 1).toString
-  def taxYearTo: String = taxYear.toString
+  def taxYearFrom: String     = (taxYear - 1).toString
+  def taxYearTo: String       = taxYear.toString
   def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
 }

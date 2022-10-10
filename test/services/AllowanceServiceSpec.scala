@@ -56,13 +56,14 @@ class AllowanceServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=${sut.taxYear}"))
+    FakeRequest("GET", s"?taxYear=${sut.taxYear}")
+  )
 
   val mockAtsService: AtsService = mock[AtsService]
 
   def sut = new AllowanceService(mockAtsService) with MockitoSugar {
     implicit val hc = new HeaderCarrier
-    val taxYear = 2015
+    val taxYear     = 2015
 
   }
 
@@ -72,7 +73,9 @@ class AllowanceServiceSpec extends BaseSpec {
       when(
         mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
           Matchers.any(),
-          Matchers.any())).thenReturn(Future(genericViewModel))
+          Matchers.any()
+        )
+      ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
@@ -82,7 +85,7 @@ class AllowanceServiceSpec extends BaseSpec {
     "return a complete AllowancesData when given complete AtsData" in {
 
       val atsData = AtsTestData.atsAllowancesData
-      val result = sut.allowanceDataConverter(atsData)
+      val result  = sut.allowanceDataConverter(atsData)
 
       result mustBe Allowances(
         2019,

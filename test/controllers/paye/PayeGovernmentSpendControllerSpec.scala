@@ -45,7 +45,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       FakePayeAuthAction,
       mcc,
       inject[PayeGovernmentSpendingView],
-      payeGenericErrorView)
+      payeGenericErrorView
+    )
 
   "Government spend controller" must {
 
@@ -65,11 +66,13 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           FakePayeAuthAction,
           mcc,
           inject[PayeGovernmentSpendingView],
-          payeGenericErrorView)
+          payeGenericErrorView
+        )
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(fakeTaxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(fakeTaxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(fakeTaxYear)(fakeAuthenticatedRequest)
@@ -80,7 +83,9 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
           (fakeTaxYear - 1).toString,
-          fakeTaxYear.toString))
+          fakeTaxYear.toString
+        )
+      )
     }
 
     "return OK response for 2020" in {
@@ -89,7 +94,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -100,7 +106,9 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
           ((taxYear - 1).toString),
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "return SEE_OTHER response for 2021 when tax year is 2020" in {
@@ -119,11 +127,13 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           FakePayeAuthAction,
           mcc,
           inject[PayeGovernmentSpendingView],
-          payeGenericErrorView)
+          payeGenericErrorView
+        )
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -135,7 +145,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -148,7 +159,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)

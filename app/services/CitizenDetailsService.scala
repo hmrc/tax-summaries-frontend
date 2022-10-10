@@ -28,7 +28,9 @@ sealed trait MatchingDetailsResponse
 case class SucccessMatchingDetailsResponse(matchingDetails: MatchingDetails) extends MatchingDetailsResponse
 object FailedMatchingDetailsResponse extends MatchingDetailsResponse
 
-class CitizenDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector)(implicit ec: ExecutionContext) {
+class CitizenDetailsService @Inject() (citizenDetailsConnector: CitizenDetailsConnector)(implicit
+  ec: ExecutionContext
+) {
   def getMatchingDetails(nino: String)(implicit hc: HeaderCarrier): Future[MatchingDetailsResponse] =
     EitherT(citizenDetailsConnector.connectToCid(nino)).fold(
       _ => FailedMatchingDetailsResponse,
@@ -36,6 +38,6 @@ class CitizenDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsCon
         httpResponse.status match {
           case OK => SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
           case _  => FailedMatchingDetailsResponse
-      }
+        }
     )
 }

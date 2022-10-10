@@ -25,8 +25,8 @@ case class PayeYourIncomeAndTaxes(
   taxableIncome: Amount,
   totalIncomeTax: Amount,
   incomeAfterTaxNics: Amount,
-  averageTaxRate: String)
-    extends TaxYearFormatting
+  averageTaxRate: String
+) extends TaxYearFormatting
 
 object PayeYourIncomeAndTaxes {
 
@@ -34,11 +34,9 @@ object PayeYourIncomeAndTaxes {
 
     val taxableIncome = payeAtsData.allowance_data.flatMap { allowanceData =>
       allowanceData.payload.flatMap { payload =>
-        {
-          payload.get("total_tax_free_amount") match {
-            case Some(amount) if amount == Amount.empty => payload.get("personal_tax_free_amount")
-            case _                                      => payload.get("total_tax_free_amount")
-          }
+        payload.get("total_tax_free_amount") match {
+          case Some(amount) if amount == Amount.empty => payload.get("personal_tax_free_amount")
+          case _                                      => payload.get("total_tax_free_amount")
         }
       }
     }
@@ -46,19 +44,15 @@ object PayeYourIncomeAndTaxes {
     val totalIncomeTax = payeAtsData.gov_spending.map(govSpendingData => govSpendingData.totalAmount)
 
     payeAtsData.summary_data.flatMap { summaryData =>
-      {
-        val averageTaxRate = summaryData.rates.map(rates => rates("nics_and_tax_rate"))
-        summaryData.payload.map(
-          payload => {
-            PayeYourIncomeAndTaxes(
-              taxYear,
-              Amount(payload.get("total_income_before_tax")),
-              Amount(taxableIncome),
-              Amount(totalIncomeTax),
-              Amount(payload.get("income_after_tax_and_nics")),
-              averageTaxRate.getOrElse(Rate.empty).percent.replaceAll("%", "")
-            )
-          }
+      val averageTaxRate = summaryData.rates.map(rates => rates("nics_and_tax_rate"))
+      summaryData.payload.map { payload =>
+        PayeYourIncomeAndTaxes(
+          taxYear,
+          Amount(payload.get("total_income_before_tax")),
+          Amount(taxableIncome),
+          Amount(totalIncomeTax),
+          Amount(payload.get("income_after_tax_and_nics")),
+          averageTaxRate.getOrElse(Rate.empty).percent.replaceAll("%", "")
         )
       }
     }

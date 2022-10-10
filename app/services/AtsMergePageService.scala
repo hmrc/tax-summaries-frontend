@@ -29,26 +29,29 @@ import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageService @Inject()(
+class AtsMergePageService @Inject() (
   dataCacheConnector: DataCacheConnector,
   payeAtsService: PayeAtsService,
   atsListService: AtsListService,
-  appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
+  appConfig: ApplicationConfig
+)(implicit ec: ExecutionContext)
     extends Logging {
 
-  def getSaAndPayeYearList(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsMergePageViewModel]] =
+  def getSaAndPayeYearList(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, AtsMergePageViewModel]] =
     (for {
-      saData   <- EitherT(if (!appConfig.saShuttered) { getSaYearList } else { Future(Right(AtsList.empty)) })
-      payeData <- EitherT(if (!appConfig.payeShuttered) { getPayeAtsYearList } else { Future(Right(List.empty[Int])) })
-    } yield {
-      AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)
-    }).value
+      saData   <- EitherT(if (!appConfig.saShuttered) { getSaYearList }
+                  else { Future(Right(AtsList.empty)) })
+      payeData <- EitherT(if (!appConfig.payeShuttered) { getPayeAtsYearList }
+                  else { Future(Right(List.empty[Int])) })
+    } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
 
-  private def getSaYearList(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsList]] = {
+  private def getSaYearList(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, AtsList]] = {
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
@@ -65,11 +68,13 @@ class AtsMergePageService @Inject()(
     atsListService.createModel
   }
 
-  private def getPayeAtsYearList(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Either[AtsResponse, List[Int]]] =
+  private def getPayeAtsYearList(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, List[Int]]] =
     request.nino
       .map(
-        payeAtsService.getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear))
+        payeAtsService.getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+      )
       .getOrElse(Future(Right(List.empty)))
 }

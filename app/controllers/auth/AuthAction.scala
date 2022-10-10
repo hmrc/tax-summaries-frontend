@@ -31,12 +31,15 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
-  implicit ec: ExecutionContext,
-  appConfig: ApplicationConfig)
-    extends AuthAction with AuthorisedFunctions with Logging {
+class AuthActionImpl @Inject() (override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+  implicit
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
+) extends AuthAction
+    with AuthorisedFunctions
+    with Logging {
 
-  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+  override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
   val saShuttered: Boolean = appConfig.saShuttered
@@ -50,9 +53,9 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
 
       authorised(ConfidenceLevel.L50)
         .retrieve(
-          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel) {
-          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel => {
-
+          Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel
+        ) {
+          case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel =>
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
                 .find(id => id.key == "IRAgentReference")
@@ -75,12 +78,11 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
               )
             }
 
-          }
           case _ => throw new RuntimeException("Can't find credentials for user")
         }
     } recover {
-      case _: NoActiveSession => {
-        lazy val ggSignIn = appConfig.loginUrl
+      case _: NoActiveSession =>
+        lazy val ggSignIn    = appConfig.loginUrl
         lazy val callbackUrl = appConfig.loginCallback
         Redirect(
           ggSignIn,
@@ -89,7 +91,6 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
             "origin"       -> Seq(appConfig.appName)
           )
         )
-      }
 
       case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised)
     }
@@ -97,4 +98,5 @@ class AuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector,
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction
-    extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+    extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, AuthenticatedRequest]

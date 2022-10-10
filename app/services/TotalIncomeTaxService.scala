@@ -25,10 +25,11 @@ import view_models._
 
 import scala.concurrent.Future
 
-class TotalIncomeTaxService @Inject()(atsService: AtsService) {
+class TotalIncomeTaxService @Inject() (atsService: AtsService) {
 
   def getIncomeData(
-    taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
+    taxYear: Int
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, totalIncomeConverter)
 
   private[services] def totalIncomeConverter(atsData: AtsData): TotalIncomeTax = {

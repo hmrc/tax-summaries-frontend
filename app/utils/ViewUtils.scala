@@ -19,7 +19,7 @@ package utils
 import com.google.inject.Inject
 import view_models.{Amount, Rate}
 
-class ViewUtils @Inject()() {
+class ViewUtils @Inject() () {
 
   def toCurrency(amount: Amount, twoDecimalPlaces: Boolean = false): String =
     s"&pound;${if (twoDecimalPlaces) amount.toTwoDecimalString else amount}"
@@ -28,7 +28,7 @@ class ViewUtils @Inject()() {
     currentAmount.copy(amount = currentAmount.amount.max(BigDecimal(0)))
 
   def positiveOrZero(currentRate: Rate): Rate =
-    if (currentRate.percent.head == ('-'))
+    if (currentRate.percent.head == '-')
       Rate.empty
     else
       currentRate

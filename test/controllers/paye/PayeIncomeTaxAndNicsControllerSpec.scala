@@ -47,7 +47,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       mcc,
       inject[PayeIncomeTaxAndNicsView],
       inject[PayeConfig],
-      payeGenericErrorView)
+      payeGenericErrorView
+    )
 
   "Paye your income tax and nics controller" must {
 
@@ -66,7 +67,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       val fakePayeConfig = new FakePayeConfig
 
       val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
-      val sut =
+      val sut                      =
         new PayeIncomeTaxAndNicsController(
           mockPayeAtsService,
           FakePayeAuthAction,
@@ -80,7 +81,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
             any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
+            any[PayeAuthenticatedRequest[_]]
+          )
+      )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
@@ -93,7 +96,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
           (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString))
+          fakeAppConfig.taxYear.toString
+        )
+      )
     }
 
     "return OK response when tax year is set to 2020" in {
@@ -111,7 +116,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       val fakePayeConfig = new FakePayeConfig
 
       val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
-      val sut =
+      val sut                      =
         new PayeIncomeTaxAndNicsController(
           mockPayeAtsService,
           FakePayeAuthAction,
@@ -125,7 +130,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
         mockPayeAtsService
           .getPayeATSData(eqTo(testNino), eqTo(fakeAppConfig.taxYear))(
             any[HeaderCarrier],
-            any[PayeAuthenticatedRequest[_]]))
+            any[PayeAuthenticatedRequest[_]]
+          )
+      )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
       val result = sut.show(fakePayeConfig.payeYear)(fakeAuthenticatedRequest)
@@ -138,14 +145,17 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
           (fakePayeConfig.payeYear - 1).toString,
-          fakePayeConfig.payeYear.toString))
+          fakePayeConfig.payeYear.toString
+        )
+      )
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -158,7 +168,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -171,7 +182,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)

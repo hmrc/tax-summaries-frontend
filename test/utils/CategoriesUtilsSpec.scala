@@ -33,7 +33,8 @@ class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 
       when(
         mockAppConfig
-          .spendCategories(taxYear))
+          .spendCategories(taxYear)
+      )
         .thenReturn(List("A", "C", "B", "D"))
 
       val spendData = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)
@@ -51,7 +52,8 @@ class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 
       when(
         mockAppConfig
-          .spendCategories(taxYear))
+          .spendCategories(taxYear)
+      )
         .thenThrow(new ConfigException.Missing(s"categoryOrder.$taxYear"))
 
       val spendData = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)

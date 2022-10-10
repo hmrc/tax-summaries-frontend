@@ -37,13 +37,15 @@ class PayeAtsDataSpec extends AnyWordSpec with Matchers {
 
       "the user is not welsh tax payer since scottish_income_tax exists with zero value in the payload" in {
         val data = payeAtsTestData.incomeData.copy(
-          income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(0))), None, None)))
+          income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(0))), None, None))
+        )
         data.isWelshTaxPayer mustBe false
       }
 
       "the user is not welsh tax payer since scottish_income_tax exists with negative value in the payload" in {
         val data = payeAtsTestData.incomeData.copy(
-          income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(-2550))), None, None)))
+          income_data = Some(DataHolder(Some(Map("scottish_income_tax" -> Amount.gbp(-2550))), None, None))
+        )
         data.isWelshTaxPayer mustBe false
       }
 

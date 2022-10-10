@@ -31,28 +31,28 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
 
       "format with two decimal places" in {
         val testValue: BigDecimal = 1000.00
-        val testAmount: Amount = new Amount(testValue, testCurrency)
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.toString() mustEqual "1,000"
       }
 
       "formats the decimal places to zero" in {
         val testValue: BigDecimal = 1000.63
-        val testAmount: Amount = new Amount(testValue, testCurrency)
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.toString() mustEqual "1,000"
       }
 
       "produces a comma for thousands" in {
         val testValue: BigDecimal = 1000.00
-        val testAmount: Amount = new Amount(testValue, testCurrency)
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.toString() mustEqual "1,000"
       }
     }
 
     "parsed as JSON" must {
       "carry out JSON transformation" in {
-        val amountText = """{"amount":1.0,"currency":"GBP"}"""
-        val jsonFromText = Json.parse(amountText)
-        val amountObject = Amount(1.0, testCurrency)
+        val amountText     = """{"amount":1.0,"currency":"GBP"}"""
+        val jsonFromText   = Json.parse(amountText)
+        val amountObject   = Amount(1.0, testCurrency)
         val jsonFromObject = Json.toJson(amountObject)
         assert(jsonFromText equals jsonFromObject)
       }
@@ -61,13 +61,13 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
     "toHalfRoundedUpAmount is called" must {
       "can round up if testValue is Greater than or 1000.5" in {
         val testValue: BigDecimal = 1000.5
-        val testAmount: Amount = new Amount(testValue, testCurrency)
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.toHalfRoundedUpAmount mustEqual "1,001"
       }
 
       "can round down if testValue is less than 1000.4" in {
         val testValue: BigDecimal = 1000.4
-        val testAmount: Amount = new Amount(testValue, testCurrency)
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.toHalfRoundedUpAmount mustEqual "1,000"
       }
     }
@@ -155,7 +155,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
   "toCreditString is called" must {
     "can round up if it's a credit" in {
       val testValue: BigDecimal = 1000.01
-      val testAmount: Amount = new Amount(testValue, testCurrency)
+      val testAmount: Amount    = new Amount(testValue, testCurrency)
       testAmount.toCreditString mustEqual "1,001"
     }
   }
@@ -163,19 +163,19 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
   "toTwoDecimalString is called" must {
     "have a comma and two decimal places for government spend values" in {
       val testValue: BigDecimal = 1000.01
-      val testAmount: Amount = new Amount(testValue, testCurrency)
+      val testAmount: Amount    = new Amount(testValue, testCurrency)
       testAmount.toTwoDecimalString mustEqual "1,000.01"
     }
 
     "not round up government spend values" in {
       val testValue: BigDecimal = 1000.99
-      val testAmount: Amount = new Amount(testValue, testCurrency)
+      val testAmount: Amount    = new Amount(testValue, testCurrency)
       testAmount.toTwoDecimalString mustEqual "1,000.99"
     }
 
     "round down government spend values after the second decimal place" in {
       val testValue: BigDecimal = 1000.018796799
-      val testAmount: Amount = new Amount(testValue, testCurrency)
+      val testAmount: Amount    = new Amount(testValue, testCurrency)
       testAmount.toTwoDecimalString mustEqual "1,000.01"
     }
   }

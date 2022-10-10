@@ -32,19 +32,23 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
-  implicit ec: ExecutionContext,
-  appConfig: ApplicationConfig)
-    extends PayeAuthAction with AuthorisedFunctions with Logging {
+class PayeAuthActionImpl @Inject() (override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+  implicit
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
+) extends PayeAuthAction
+    with AuthorisedFunctions
+    with Logging {
 
-  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+  override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
   val payeShuttered: Boolean = appConfig.payeShuttered
 
   override def invokeBlock[A](
     request: Request[A],
-    block: PayeAuthenticatedRequest[A] => Future[Result]): Future[Result] =
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] =
     if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
@@ -53,7 +57,7 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
 
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-          case enrolments ~ Some(nino) ~ Some(credentials) => {
+          case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
 
             block {
@@ -64,10 +68,9 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
                 request
               )
             }
-          }
-          case _ => throw new RuntimeException("Auth retrieval failed for user")
+          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
         } recover {
-        case _: NoActiveSession => {
+        case _: NoActiveSession =>
           Redirect(
             appConfig.payeLoginUrl,
             Map(
@@ -75,15 +78,12 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
               "origin"       -> Seq(appConfig.appName)
             )
           )
-        }
 
-        case _: InsufficientConfidenceLevel => {
+        case _: InsufficientConfidenceLevel =>
           upliftConfidenceLevel(request)
-        }
-        case NonFatal(e) => {
+        case NonFatal(e)                    =>
           logger.error(s"Exception in PayeAuthAction: $e", e)
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
-        }
       }
     }
 
@@ -101,4 +101,5 @@ class PayeAuthActionImpl @Inject()(override val authConnector: DefaultAuthConnec
 
 @ImplementedBy(classOf[PayeAuthActionImpl])
 trait PayeAuthAction
-    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent] with ActionFunction[Request, PayeAuthenticatedRequest]
+    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, PayeAuthenticatedRequest]

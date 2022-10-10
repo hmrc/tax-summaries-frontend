@@ -28,19 +28,19 @@ import views.html.total_income_tax_includes.ScottishTableView
 
 class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  val scottishTaxData = ScottishTax.empty
-  val scottishRateData = ScottishRates.empty
+  val scottishTaxData        = ScottishTax.empty
+  val scottishRateData       = ScottishRates.empty
   lazy val scottishTableView = inject[ScottishTableView]
-  lazy val viewUtils = inject[ViewUtils]
+  lazy val viewUtils         = inject[ViewUtils]
 
   def view(tax: ScottishTax, rates: ScottishRates): String =
     scottishTableView(tax, rates).body
 
   def view(tax: ScottishTax): String = view(tax, scottishRateData)
-  def view: String = view(scottishTaxData, scottishRateData)
+  def view: String                   = view(scottishTaxData, scottishRateData)
 
   implicit val arbAmount: Arbitrary[Amount] = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
-  implicit val arbRate: Arbitrary[Rate] = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
+  implicit val arbRate: Arbitrary[Rate]     = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
 
   "view" must {
 
@@ -64,35 +64,40 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
         "starter",
         modify[ScottishTax](_.scottishStarterIncomeTax),
         modify[ScottishTax](_.scottishStarterIncomeTaxAmount),
-        modify[ScottishRates](_.scottishStarterRate)),
+        modify[ScottishRates](_.scottishStarterRate)
+      ),
       (
         "basic",
         modify[ScottishTax](_.scottishBasicIncomeTax),
         modify[ScottishTax](_.scottishBasicIncomeTaxAmount),
-        modify[ScottishRates](_.scottishBasicRate)),
+        modify[ScottishRates](_.scottishBasicRate)
+      ),
       (
         "intermediate",
         modify[ScottishTax](_.scottishIntermediateIncomeTax),
         modify[ScottishTax](_.scottishIntermediateIncomeTaxAmount),
-        modify[ScottishRates](_.scottishIntermediateRate)),
+        modify[ScottishRates](_.scottishIntermediateRate)
+      ),
       (
         "higher",
         modify[ScottishTax](_.scottishHigherIncomeTax),
         modify[ScottishTax](_.scottishHigherIncomeTaxAmount),
-        modify[ScottishRates](_.scottishHigherRate)),
+        modify[ScottishRates](_.scottishHigherRate)
+      ),
       (
         "additional",
         modify[ScottishTax](_.scottishAdditionalIncomeTax),
         modify[ScottishTax](_.scottishAdditionalIncomeTaxAmount),
-        modify[ScottishRates](_.scottishAdditionalRate))
+        modify[ScottishRates](_.scottishAdditionalRate)
+      )
     )
 
-    for ((id, taxLens, totalLens, rateLens) <- rowData) {
+    for ((id, taxLens, totalLens, rateLens) <- rowData)
       s"display $id tax row" in {
 
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
           val taxData = (taxLens.setTo(tax) andThen totalLens.setTo(total))(scottishTaxData)
-          val rates = rateLens.setTo(rate)(scottishRateData)
+          val rates   = rateLens.setTo(rate)(scottishRateData)
 
           val result = view(taxData, rates)
 
@@ -100,29 +105,30 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
             case Amount.empty =>
               result must not include viewUtils.toCurrency(tax)
 
-            case _ =>
+            case _            =>
               result must include(
                 messages(
                   s"ats.total_income_tax.scottish_income_tax.table.$id",
                   viewUtils.toCurrency(total),
-                  rate.percent))
+                  rate.percent
+                )
+              )
               result must include(viewUtils.toCurrency(tax))
           }
         }
       }
-    }
 
     "show total row" in {
 
       forAll { total: Amount =>
         val taxData = scottishTaxData.copy(scottishTotalTax = total)
-        val result = view(taxData)
+        val result  = view(taxData)
 
         total match {
           case Amount.empty =>
             result must not include messages("ats.total_income_tax.scottish_income_tax.table.total")
 
-          case _ =>
+          case _            =>
             result must include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
             result must include(viewUtils.toCurrency(total))
         }

@@ -28,7 +28,8 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
     decimalNumber: Int,
     roundingMode: BigDecimal.RoundingMode.Value,
     setMinFractionDigits: Int = 0,
-    amount: BigDecimal = this.amount) = {
+    amount: BigDecimal = this.amount
+  ) = {
     val formatter = NumberFormat.getNumberInstance(Locale.UK)
     formatter.setMinimumFractionDigits(decimalNumber)
     formatter.format(amount.setScale(decimalNumber, roundingMode))
@@ -56,7 +57,7 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
 object Amount {
   implicit val formats = Json.format[Amount]
 
-  val empty: Amount = gbp(0)
+  val empty: Amount                  = gbp(0)
   def gbp(value: BigDecimal): Amount = Amount(value, "GBP")
 
   def apply(amount: Option[Amount]): Amount = amount.getOrElse(empty)

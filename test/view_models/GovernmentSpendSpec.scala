@@ -70,7 +70,7 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPe
         fakeGovernmentSpend.taxYearInterval mustBe "2018-19"
       }
     }
-    "taxYearFrom" must {
+    "taxYearFrom"     must {
       "return the previous year" in {
         fakeGovernmentSpend.taxYearFrom mustBe (fakeTaxYear - 1).toString
       }

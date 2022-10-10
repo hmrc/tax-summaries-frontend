@@ -31,23 +31,24 @@ import views.html.paye.PayeYourTaxableIncomeView
 
 import scala.concurrent.ExecutionContext
 
-class PayeYourTaxableIncomeController @Inject()(
+class PayeYourTaxableIncomeController @Inject() (
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeYourTaxableIncomeView: PayeYourTaxableIncomeView,
-  payeGenericErrorView: PayeGenericErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with Logging {
+  payeGenericErrorView: PayeGenericErrorView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    {
-      payeAtsService.getPayeATSData(request.nino, taxYear).map {
-        case Right(successResponse: PayeAtsData) =>
-          val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
-          Ok(payeYourTaxableIncomeView(viewModel))
-        case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-        case _                            => InternalServerError(payeGenericErrorView())
-      }
+    payeAtsService.getPayeATSData(request.nino, taxYear).map {
+      case Right(successResponse: PayeAtsData) =>
+        val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
+        Ok(payeYourTaxableIncomeView(viewModel))
+      case Left(_: AtsNotFoundResponse)        => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                                   => InternalServerError(payeGenericErrorView())
     }
   }
 }

@@ -30,7 +30,7 @@ object NoAtsNinoFound extends AtsNino
 object UpliftRequiredAtsNino extends AtsNino
 object InsufficientCredsNino extends AtsNino
 
-class NinoAuthAction @Inject()(override val authConnector: DefaultAuthConnector)(implicit ec: ExecutionContext)
+class NinoAuthAction @Inject() (override val authConnector: DefaultAuthConnector)(implicit ec: ExecutionContext)
     extends AuthorisedFunctions {
 
   def getNino()(implicit hc: HeaderCarrier): Future[AtsNino] =

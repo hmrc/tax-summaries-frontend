@@ -45,7 +45,7 @@ class MinAuthActionSpec extends BaseSpec {
     }
   }
 
-  val ggSignInUrl =
+  val ggSignInUrl                      =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
@@ -54,8 +54,8 @@ class MinAuthActionSpec extends BaseSpec {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
-      val controller = new Harness(minAuthAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val controller    = new Harness(minAuthAction)
+      val result        = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get must endWith(ggSignInUrl)
     }
@@ -66,8 +66,8 @@ class MinAuthActionSpec extends BaseSpec {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
-      val controller = new Harness(minAuthAction)
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val controller    = new Harness(minAuthAction)
+      val result        = controller.onPageLoad()(FakeRequest("", ""))
 
       whenReady(result.failed) { ex =>
         ex mustBe an[InsufficientEnrolments]
@@ -82,11 +82,12 @@ class MinAuthActionSpec extends BaseSpec {
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
-      val controller = new Harness(minAuthAction)
+      val controller    = new Harness(minAuthAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
@@ -100,11 +101,12 @@ class MinAuthActionSpec extends BaseSpec {
 
     when(
       mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any()))
+        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any())
+    )
       .thenReturn(retrievalResult)
 
     val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
-    val controller = new Harness(minAuthAction)
+    val controller    = new Harness(minAuthAction)
 
     val ex = intercept[RuntimeException] {
       await(controller.onPageLoad()(FakeRequest("", "")))

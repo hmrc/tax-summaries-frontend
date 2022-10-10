@@ -23,7 +23,8 @@ case class GovernmentSpendingOutputWrapper(
   taxYear: Int,
   govSpendAmountData: Option[Map[String, SpendData]],
   totalAmount: Amount,
-  errors: Option[List[String]])
+  errors: Option[List[String]]
+)
 
 object GovernmentSpendingOutputWrapper {
   implicit val formats = Json.format[GovernmentSpendingOutputWrapper]

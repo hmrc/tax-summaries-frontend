@@ -47,7 +47,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
   override val taxYear = 2015
 
-  val mockAtsService = mock[AtsService]
+  val mockAtsService                       = mock[AtsService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
   implicit val hc = new HeaderCarrier
@@ -61,7 +61,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", "?taxYear=2015"))
+    FakeRequest("GET", "?taxYear=2015")
+  )
 
   def sut = new GovernmentSpendService(mockAtsService, mockMiddleConnector) with MockitoSugar
 
@@ -79,7 +80,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
     "return a complete GovernmentSpend when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
-      val result = sut.govSpend(atsData)
+      val result  = sut.govSpend(atsData)
 
       result mustBe GovernmentSpend(
         2019,
@@ -96,14 +97,14 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
     "return a isScottishTaxPayer as true when incomeTaxStatus is 0002" in {
       val atsData = AtsTestData.govSpendingData
-      val result = sut.govSpend(atsData)
+      val result  = sut.govSpend(atsData)
 
       result.isScottishTaxPayer mustBe true
     }
 
     "return a isScottishTaxPayer as false when incomeTaxStatus is not 0002" in {
       val atsData = AtsTestData.govSpendingDataForWelshUser
-      val result = sut.govSpend(atsData)
+      val result  = sut.govSpend(atsData)
 
       result.isScottishTaxPayer mustBe false
     }
@@ -119,7 +120,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
         .successful(
           Right(
             HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> List("")))
-          ))
+          )
+        )
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
@@ -133,7 +135,9 @@ class GovernmentSpendServiceSpec extends BaseSpec {
       when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
         .successful(
           Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq("")))))
+            HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq("")))
+          )
+        )
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 

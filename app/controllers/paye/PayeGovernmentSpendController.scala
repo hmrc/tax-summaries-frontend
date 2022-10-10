@@ -31,23 +31,26 @@ import views.html.paye.PayeGovernmentSpendingView
 
 import scala.concurrent.ExecutionContext
 
-class PayeGovernmentSpendController @Inject()(
+class PayeGovernmentSpendController @Inject() (
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeGovernmentSpendingView: PayeGovernmentSpendingView,
-  payeGenericErrorView: PayeGenericErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with Logging {
+  payeGenericErrorView: PayeGenericErrorView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(_: PayeAtsData)
-          if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) =>
+          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
         Forbidden(payeGenericErrorView())
       case Right(successResponse: PayeAtsData) =>
         Ok(payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer))
-      case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-      case _                            => InternalServerError(payeGenericErrorView())
+      case Left(_: AtsNotFoundResponse)        => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                                   => InternalServerError(payeGenericErrorView())
     }
   }
 }

@@ -28,13 +28,17 @@ import views.html.errors._
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
-class PayeErrorController @Inject()(
+class PayeErrorController @Inject() (
   mcc: MessagesControllerComponents,
   payeNotAuthorisedView: PayeNotAuthorisedView,
-  payeServiceUnavailableView: PayeServiceUnavailableView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with CurrentTaxYear with LazyLogging {
+  payeServiceUnavailableView: PayeServiceUnavailableView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with CurrentTaxYear
+    with LazyLogging {
 
-  val payeYear = appConfig.taxYear
+  val payeYear                      = appConfig.taxYear
   override def now: () => LocalDate = () => LocalDate.now()
 
   def notAuthorised: Action[AnyContent] = Action { implicit request: Request[_] =>

@@ -28,11 +28,11 @@ class AuthorityUtilsSpec extends BaseSpec {
 
   class TestService extends AuthorityUtils {
 
-    val utr = testUtr
-    val uar = testUar
+    val utr            = testUtr
+    val uar            = testUar
     val nonMatchingUtr = testNonMatchingUtr
 
-    val request = AuthenticatedRequest(
+    val request      = AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(utr)),
@@ -41,7 +41,8 @@ class AuthorityUtilsSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest())
+      FakeRequest()
+    )
     val agentRequest =
       AuthenticatedRequest(
         "userId",
@@ -52,9 +53,10 @@ class AuthorityUtilsSpec extends BaseSpec {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest())
+        FakeRequest()
+      )
 
-    val account = AccountUtils.getAccount(request)
+    val account      = AccountUtils.getAccount(request)
     val agentAccount = AccountUtils.getAccount(agentRequest)
 
     val agentToken = AgentToken(

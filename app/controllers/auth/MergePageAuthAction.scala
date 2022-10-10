@@ -34,14 +34,16 @@ import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MergePageAuthActionImpl @Inject()(
+class MergePageAuthActionImpl @Inject() (
   citizenDetailsService: CitizenDetailsService,
   dataCacheConnector: DataCacheConnector,
   override val authConnector: DefaultAuthConnector,
-  cc: MessagesControllerComponents)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
-    extends MergePageAuthAction with AuthorisedFunctions {
+  cc: MessagesControllerComponents
+)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+    extends MergePageAuthAction
+    with AuthorisedFunctions {
 
-  override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+  override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = ec
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
@@ -50,9 +52,9 @@ class MergePageAuthActionImpl @Inject()(
 
     authorised(ConfidenceLevel.L50)
       .retrieve(
-        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel) {
-        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel => {
-
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
+      ) {
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
           val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
             enrolment.identifiers
               .find(id => id.key == "IRAgentReference")
@@ -63,27 +65,25 @@ class MergePageAuthActionImpl @Inject()(
 
           for {
             getAgentTokenCache <- dataCacheConnector.getAgentToken
-            blockData <- executeAuthActions(
-                          request,
-                          block,
-                          externalId,
-                          credentials,
-                          saUtr,
-                          nino,
-                          confidenceLevel,
-                          agentRef,
-                          isAgentActive,
-                          getAgentTokenCache)
-          } yield {
-            blockData
-          }
-        }
+            blockData          <- executeAuthActions(
+                                    request,
+                                    block,
+                                    externalId,
+                                    credentials,
+                                    saUtr,
+                                    nino,
+                                    confidenceLevel,
+                                    agentRef,
+                                    isAgentActive,
+                                    getAgentTokenCache
+                                  )
+          } yield blockData
 
         case _ => throw new RuntimeException("Can't find credentials for user")
       }
   } recover {
-    case _: NoActiveSession => {
-      lazy val ggSignIn = appConfig.loginUrl
+    case _: NoActiveSession =>
+      lazy val ggSignIn    = appConfig.loginUrl
       lazy val callbackUrl = appConfig.loginCallback
       Redirect(
         ggSignIn,
@@ -92,11 +92,9 @@ class MergePageAuthActionImpl @Inject()(
           "origin"       -> Seq(appConfig.appName)
         )
       )
-    }
 
-    case _: InsufficientEnrolments => {
+    case _: InsufficientEnrolments =>
       Redirect(controllers.routes.ErrorController.notAuthorised)
-    }
   }
 
   private def executeAuthActions[A](
@@ -109,7 +107,8 @@ class MergePageAuthActionImpl @Inject()(
     confidenceLevel: ConfidenceLevel,
     agentRef: Option[Uar],
     isAgentActive: Boolean,
-    agentToken: Option[AgentToken])(implicit hc: HeaderCarrier) =
+    agentToken: Option[AgentToken]
+  )(implicit hc: HeaderCarrier) =
     if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
       Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
     } else {
@@ -143,9 +142,7 @@ class MergePageAuthActionImpl @Inject()(
       } else if (saUtr.isEmpty && agentRef.isEmpty) {
         nino
           .map { n =>
-            handleResponse(authenticatedRequest, n).flatMap(
-              response => block(response)
-            )
+            handleResponse(authenticatedRequest, n).flatMap(response => block(response))
           }
           .getOrElse(block(authenticatedRequest))
       } else {
@@ -153,25 +150,25 @@ class MergePageAuthActionImpl @Inject()(
       }
     }
 
-  private def handleResponse[T](request: AuthenticatedRequest[T], nino: String)(
-    implicit hc: HeaderCarrier): Future[AuthenticatedRequest[T]] =
+  private def handleResponse[T](request: AuthenticatedRequest[T], nino: String)(implicit
+    hc: HeaderCarrier
+  ): Future[AuthenticatedRequest[T]] =
     for {
       detailsResponse <- citizenDetailsService.getMatchingDetails(nino)
-    } yield {
-      detailsResponse match {
-        case SucccessMatchingDetailsResponse(value) =>
-          if (value.saUtr.isDefined) {
-            createAuthenticatedRequest(request, value.saUtr)
-          } else {
-            request
-          }
-        case _ => request
-      }
+    } yield detailsResponse match {
+      case SucccessMatchingDetailsResponse(value) =>
+        if (value.saUtr.isDefined) {
+          createAuthenticatedRequest(request, value.saUtr)
+        } else {
+          request
+        }
+      case _                                      => request
     }
 
   private def createAuthenticatedRequest[T](
     request: AuthenticatedRequest[T],
-    newSaUtr: Option[SaUtr]): AuthenticatedRequest[T] =
+    newSaUtr: Option[SaUtr]
+  ): AuthenticatedRequest[T] =
     AuthenticatedRequest(
       userId = request.userId,
       agentRef = request.agentRef,
@@ -187,4 +184,5 @@ class MergePageAuthActionImpl @Inject()(
 
 @ImplementedBy(classOf[MergePageAuthActionImpl])
 trait MergePageAuthAction
-    extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+    extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, AuthenticatedRequest]

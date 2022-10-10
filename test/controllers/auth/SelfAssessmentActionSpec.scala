@@ -38,23 +38,27 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class SelfAssessmentActionSpec
-    extends BaseSpec with MockitoSugar with ScalaFutures with GuiceOneAppPerSuite with Injecting
+    extends BaseSpec
+    with MockitoSugar
+    with ScalaFutures
+    with GuiceOneAppPerSuite
+    with Injecting
     with BeforeAndAfterEach {
 
   implicit val timeout: FiniteDuration = 5 seconds
-  implicit val hc = HeaderCarrier()
+  implicit val hc                      = HeaderCarrier()
 
   val unauthorizedRoute = controllers.routes.ErrorController.notAuthorised.url
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
-  val citizenDetailsService = mock[CitizenDetailsService]
-  val ninoAuthAction = mock[NinoAuthAction]
+  val citizenDetailsService                   = mock[CitizenDetailsService]
+  val ninoAuthAction                          = mock[NinoAuthAction]
 
   val action = new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig)
 
   class FakeSelfAssessmentAction(utr: Option[SaUtr], uar: Option[Uar]) extends ControllerBaseSpec with AuthAction {
 
-    override val parser: BodyParser[AnyContent] = mcc.parsers.anyContent
+    override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
     override protected val executionContext: ExecutionContext = mcc.executionContext
 
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
@@ -68,7 +72,9 @@ class SelfAssessmentActionSpec
           uar.isDefined,
           ConfidenceLevel.L50,
           fakeCredentials,
-          request))
+          request
+        )
+      )
   }
 
   override def beforeEach(): Unit =
@@ -157,7 +163,7 @@ class SelfAssessmentActionSpec
 
     "redirect to unauthorized if matching details cant be found for nino" in {
 
-      val uar = testUar
+      val uar  = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
@@ -174,7 +180,7 @@ class SelfAssessmentActionSpec
 
     "redirect to unauthorized if utr cant be found for nino" in {
 
-      val uar = testUar
+      val uar  = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
@@ -205,8 +211,8 @@ class SelfAssessmentActionSpec
 
     "return OK if utr can be found for nino" in {
 
-      val utr = new SaUtrGenerator().nextSaUtr.utr
-      val uar = testUar
+      val utr  = new SaUtrGenerator().nextSaUtr.utr
+      val uar  = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))

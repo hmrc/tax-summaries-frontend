@@ -34,7 +34,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
   val baseModel = SummaryControllerSpec.baseModel
 
   val mockSummaryService = mock[SummaryService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService   = mock[AuditService]
 
   def sut =
     new AtsMainController(
@@ -44,25 +44,29 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       mcc,
       taxsMainView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach(): Unit =
-    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))) thenReturn Future
+    when(
+      mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+    ) thenReturn Future
       .successful(baseModel)
 
   "Calling Index Page" must {
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
-      document.title must include(
-        Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+      document.title          must include(
+        Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+      )
       contentAsString(result) must include("contact/beta-feedback-unauthenticated")
     }
 
     "display an error page for an invalid request" in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -94,7 +98,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
     "have the right user data in the view" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
@@ -121,7 +125,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200

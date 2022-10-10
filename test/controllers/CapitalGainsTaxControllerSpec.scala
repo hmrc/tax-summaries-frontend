@@ -35,7 +35,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
   val baseModel = capitalGains
 
   val mockCapitalGainsService = mock[CapitalGainsService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService        = mock[AuditService]
 
   def sut =
     new CapitalGainsTaxController(
@@ -45,7 +45,8 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       mcc,
       capitalGainsView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach(): Unit =
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
@@ -54,18 +55,20 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
   "Calling Capital Gains" must {
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
         Messages("ats.capital_gains_tax.html.title") + Messages(
           "generic.to_from",
           (taxYear - 1).toString,
-          taxYear.toString))
+          taxYear.toString
+        )
+      )
     }
 
     "display an error page for an invalid request " in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -93,7 +96,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
     "show Your Capital Gains section with the right user data" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -114,7 +117,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -132,7 +135,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -142,20 +145,20 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
     "show Capital Gains Tax section with correct user data" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
       document.getElementById("entrepreneurs-relief-rate-before").text() must equal("£1,111")
-      document.getElementById("entrepreneurs-relief-rate").text() must equal("10%")
+      document.getElementById("entrepreneurs-relief-rate").text()        must equal("10%")
       document.getElementById("entrepreneurs-relief-rate-amount").text() must equal("£1,000")
 
       document.getElementById("ordinary-rate-before").text() must equal("£2,222")
-      document.getElementById("ordinary-rate").text() must equal("18%")
+      document.getElementById("ordinary-rate").text()        must equal("18%")
       document.getElementById("ordinary-rate-amount").text() must equal("£2,000")
 
       document.getElementById("upper-rate-before").text() must equal("£3,333")
-      document.getElementById("upper-rate").text() must equal("28%")
+      document.getElementById("upper-rate").text()        must equal("28%")
       document.getElementById("upper-rate-amount").text() must equal("£3,000")
     }
 
@@ -168,11 +171,11 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                                            must not include "Technical Difficulties"
       document.getElementById("entrepreneurs-relief-rate-section") must be(null)
     }
 
@@ -185,11 +188,11 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                                must not include "Technical Difficulties"
       document.getElementById("ordinary-rate-section") must be(null)
     }
 
@@ -202,17 +205,17 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model5))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                             must not include "Technical Difficulties"
       document.getElementById("upper-rate-section") must be(null)
     }
 
     "show Adjustments section with correct user data" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -221,7 +224,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
     "show Total Capital Gains Tax with correct user data" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -237,20 +240,20 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                              must not include "Technical Difficulties"
       document.getElementById("adjustments-section") must be(null)
     }
 
     "show capital gains description if total capital gains tax is not 0" in {
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-cg-description") must not be null
+      document.getElementById("total-cg-description")     must not be null
       document.getElementById("total-cg-tax-rate").text() must equal("12.34%")
     }
 
@@ -263,10 +266,10 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
-      val result = sut.show(request)
+      val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include ("Technical Difficulties")
+      document.toString                               must not include "Technical Difficulties"
       document.getElementById("total-cg-description") must be(null)
     }
 

@@ -32,7 +32,8 @@ object LoginPage {
   }
 
   def agentToken(utr: String) = {
-    val token = URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value), "UTF-8")
+    val token =
+      URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value), "UTF-8")
     token
   }
 }
