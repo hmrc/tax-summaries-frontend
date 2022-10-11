@@ -25,7 +25,7 @@ import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
@@ -113,9 +113,9 @@ class PertaxAuthActionSpec extends BaseSpec {
           )
         )
 
-      val result = controller.onPageLoad()(FakeRequest())
+      val result = controller.onPageLoad()(FakeRequest(GET, "/blahblah?redirectUrl=testRedirect"))
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe s"/redirect?redirectUrl="
+      redirectLocation(result).get mustBe s"/redirect?redirectUrl=%2Fblahblah%3FredirectUrl%3DtestRedirect"
     }
 
     "create an authenticated request if PertaxConnector returns an unrecognised code" in {

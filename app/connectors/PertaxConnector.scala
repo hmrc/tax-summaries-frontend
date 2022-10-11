@@ -20,12 +20,16 @@ import cats.data.EitherT
 import config.ApplicationConfig
 import models.PertaxApiResponse
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PertaxConnector @Inject() (httpClient: HttpClient, applicationConfig: ApplicationConfig)(implicit
+class PertaxConnector @Inject() (
+  httpClient: HttpClient,
+  httpHandler: HttpHandler,
+  applicationConfig: ApplicationConfig
+)(implicit
   ec: ExecutionContext
 ) {
 
@@ -33,6 +37,6 @@ class PertaxConnector @Inject() (httpClient: HttpClient, applicationConfig: Appl
 
   def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
     EitherT(
-      httpClient.GET[Either[UpstreamErrorResponse, PertaxApiResponse]](s"$baseUrl/pertax/$nino/authorise")
+      httpClient.GET[Either[UpstreamErrorResponse, PertaxApiResponse]](s"$baseUrl/pertax/$nino/check-single-account")
     )
 }
