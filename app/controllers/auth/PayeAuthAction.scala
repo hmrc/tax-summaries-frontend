@@ -28,16 +28,15 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class PayeAuthActionImpl @Inject() (
-  override val authConnector: DefaultAuthConnector,
-  cc: ControllerComponents
-)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
-    extends PayeAuthAction
+class PayeAuthActionImpl @Inject() (override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
+  implicit
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
+) extends PayeAuthAction
     with AuthorisedFunctions
     with Logging {
 
@@ -60,6 +59,7 @@ class PayeAuthActionImpl @Inject() (
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
+
             block {
               PayeAuthenticatedRequest(
                 Nino(nino),
@@ -68,10 +68,9 @@ class PayeAuthActionImpl @Inject() (
                 request
               )
             }
-          case _                                           =>
-            throw new RuntimeException("Auth retrieval failed for user")
+          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
         } recover {
-        case _: NoActiveSession             =>
+        case _: NoActiveSession =>
           Redirect(
             appConfig.payeLoginUrl,
             Map(
@@ -79,6 +78,7 @@ class PayeAuthActionImpl @Inject() (
               "origin"       -> Seq(appConfig.appName)
             )
           )
+
         case _: InsufficientConfidenceLevel =>
           upliftConfidenceLevel(request)
         case NonFatal(e)                    =>
