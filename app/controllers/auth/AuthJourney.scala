@@ -24,10 +24,13 @@ import javax.inject.Inject
 @ImplementedBy(classOf[AuthJourneyImpl])
 trait AuthJourney {
   val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
+  val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
 }
 
-class AuthJourneyImpl @Inject() (authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction)
+class AuthJourneyImpl @Inject()(authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction, payeAuthAction: PayeAuthAction, pertaxAuthAction: PertaxAuthAction)
     extends AuthJourney {
   override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent] =
     authAction andThen selfAssessmentAction
+  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
+    payeAuthAction andThen pertaxAuthAction
 }

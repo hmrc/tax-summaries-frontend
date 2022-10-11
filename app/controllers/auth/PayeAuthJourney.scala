@@ -16,9 +16,18 @@
 
 package controllers.auth
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import com.google.inject.ImplementedBy
+import play.api.mvc.{ActionBuilder, AnyContent}
 
-case class PertaxAuthenticatedRequest[A](nino: Nino, request: Request[A])
-    extends WrappedRequest[A](request)
+import javax.inject.Inject
+
+@ImplementedBy(classOf[PayeAuthJourneyImpl])
+trait PayeAuthJourney {
+  val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+}
+
+class PayeAuthJourneyImpl @Inject() (payeAuthAction: PayeAuthAction, pertaxAuthAction: PertaxAuthAction)
+    extends PayeAuthJourney {
+  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
+    payeAuthAction andThen pertaxAuthAction
+}
