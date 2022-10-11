@@ -52,16 +52,15 @@ class PertaxAuthActionImpl @Inject() (
   override protected def refine[A](request: PayeAuthenticatedRequest[A]): Future[Either[Result, PayeAuthenticatedRequest[A]]] =  {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-        case enrolments ~ Some(nino) ~ Some(credentials) =>
-          val isSa = enrolments.getEnrolment("IR-SA").isDefined
+    authorised(AuthNino(hasNino = true))
+      .retrieve(Retrievals.nino) {
+        case Some(nino) =>
           pertaxConnector
             .pertaxAuth(nino)
             .transform {
-              case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
-                Right(PayeAuthenticatedRequest(Nino(nino), isSa, credentials, request))
-              case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
+              case Right(PertaxApiResponse("ACCESS_GRANTED", _, _))                    =>
+                Right(request.copy(nino = Nino(nino)))
+              case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect))) =>
                 Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
               case Right(error)                                                           =>
                 logger.error(s"Invalid code response from pertax with message: ${error.message}")

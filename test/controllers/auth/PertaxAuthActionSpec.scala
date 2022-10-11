@@ -48,7 +48,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   class Harness(authAction: PertaxAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
-      Ok(s"isSa: ${request.isSa} and Nino: ${request.nino.nino} and Credentials: ${request.credentials.providerType}")
+      Ok("Nino: ${request.nino.nino}")
     }
   }
 
@@ -67,7 +67,7 @@ class PertaxAuthActionSpec extends BaseSpec {
       when(mockPertaxConnector.pertaxAuth(any())(any()))
         .thenReturn(
           EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
-            Future.successful(Right(PertaxApiResponse("ACCESS_GRANTED", "", None, None)))
+            Future.successful(Right(PertaxApiResponse("ACCESS_GRANTED", "", None)))
           )
         )
 
@@ -97,7 +97,7 @@ class PertaxAuthActionSpec extends BaseSpec {
       when(mockPertaxConnector.pertaxAuth(any())(any()))
         .thenReturn(
           EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
-            Future.successful(Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "", None, Some("/redirect"))))
+            Future.successful(Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "", Some("/redirect"))))
           )
         )
 
@@ -128,7 +128,7 @@ class PertaxAuthActionSpec extends BaseSpec {
       when(mockPertaxConnector.pertaxAuth(any())(any()))
         .thenReturn(
           EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
-            Future.successful(Right(PertaxApiResponse("", "", None, None)))
+            Future.successful(Right(PertaxApiResponse("", "", None)))
           )
         )
 
