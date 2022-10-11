@@ -70,7 +70,7 @@ class PayeAuthActionImpl @Inject() (
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
-            singleGGAccountCheck(nino, isSa, credentials)(implicitly, request).semiflatMap { _ =>
+            singleGGAccountCheck(nino)(implicitly, request).semiflatMap { _ =>
               block {
                 PayeAuthenticatedRequest(
                   Nino(nino),
@@ -100,9 +100,7 @@ class PayeAuthActionImpl @Inject() (
     }
 
   private def singleGGAccountCheck(
-    nino: String,
-    isSa: Boolean,
-    credentials: Credentials
+    nino: String
   )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, Result, Unit] = {
     pertaxConnector
       .pertaxAuth(nino)
@@ -116,7 +114,6 @@ class PayeAuthActionImpl @Inject() (
         case _ => Left(InternalServerError(serviceUnavailableView()))
       }
   }
-
 
   private def upliftConfidenceLevel(request: Request[_]) =
     Redirect(

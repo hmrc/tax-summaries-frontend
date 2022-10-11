@@ -18,7 +18,7 @@ package controllers.paye
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest, PertaxAuthAction}
 import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -34,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PayeAtsMainController @Inject() (
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
+  pertaxAuthAction: PertaxAuthAction,
   mcc: MessagesControllerComponents,
   payeTaxsMainView: PayeTaxsMainView,
   payeGenericErrorView: PayeGenericErrorView
