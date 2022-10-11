@@ -49,36 +49,32 @@ class PertaxAuthActionImpl @Inject() (
 
   override def messagesApi: MessagesApi = cc.messagesApi
 
-  override protected def refine[A](request: PayeAuthenticatedRequest[A]): Future[Either[Result, PayeAuthenticatedRequest[A]]] =  {
+  override protected def refine[A](
+    request: PayeAuthenticatedRequest[A]
+  ): Future[Either[Result, PayeAuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    authorised(AuthNino(hasNino = true))
-      .retrieve(Retrievals.nino) {
-        case Some(nino) =>
-          pertaxConnector
-            .pertaxAuth(nino)
-            .transform {
-              case Right(PertaxApiResponse("ACCESS_GRANTED", _, _))                    =>
-                Right(request.copy(nino = Nino(nino)))
-              case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect))) =>
-                Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
-              case Right(error)                                                           =>
-                logger.error(s"Invalid code response from pertax with message: ${error.message}")
-                Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-              case _                                                                      =>
-                Left(
-                    InternalServerError(
-                      serviceUnavailableView()(request, request2Messages(request), implicitly, implicitly)
-                    )
-                  )
-            }.value
-        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+    pertaxConnector
+      .pertaxAuth(request.nino.nino)
+      .transform {
+        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _))                    =>
+          Right(request.copy(nino = request.nino))
+        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect))) =>
+          Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
+        case Right(error)                                                        =>
+          logger.error(s"Invalid code response from pertax with message: ${error.message}")
+          Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+        case _                                                                   =>
+          Left(
+            InternalServerError(
+              serviceUnavailableView()(request, request2Messages(request), implicitly, implicitly)
+            )
+          )
       }
+      .value
   }
 
   override protected def executionContext: ExecutionContext = ec
 }
 
 @ImplementedBy(classOf[PertaxAuthActionImpl])
-trait PertaxAuthAction
-    extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
+trait PertaxAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
