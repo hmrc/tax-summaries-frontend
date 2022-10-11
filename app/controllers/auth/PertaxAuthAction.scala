@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
@@ -9,7 +25,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{InternalServerError, Redirect}
 import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, BodyParser, ControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Nino => AuthNino}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -19,13 +36,13 @@ import views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PertaxAuthActionImpl @Inject()(
-                                       override val authConnector: DefaultAuthConnector,
-                                       cc: ControllerComponents,
-                                       pertaxConnector: PertaxConnector,
-                                       serviceUnavailableView: ServiceUnavailableView
-                                     )(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
-  extends PertaxAuthAction
+class PertaxAuthActionImpl @Inject() (
+  override val authConnector: DefaultAuthConnector,
+  cc: ControllerComponents,
+  pertaxConnector: PertaxConnector,
+  serviceUnavailableView: ServiceUnavailableView
+)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+    extends PertaxAuthAction
     with I18nSupport
     with AuthorisedFunctions
     with Logging {
@@ -34,26 +51,38 @@ class PertaxAuthActionImpl @Inject()(
   override protected val executionContext: ExecutionContext = cc.executionContext
 
   override def invokeBlock[A](
-                               request: Request[A],
-                               block: PertaxAuthenticatedRequest[A] => Future[Result]
-                             ): Future[Result] = {
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised(AuthNino(hasNino = true)).retrieve(Retrievals.nino) {
-      case Some(nino) =>
-        pertaxConnector
-          .pertaxAuth(nino)
-          .transform {
-            case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _)) => Right(block(PertaxAuthenticatedRequest(Nino(nino), request)))
-            case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
-              Left(Future.successful(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
-            case Right(error) =>
-              logger.error(s"Invalid code response from pertax with message: ${error.message}")
-              Left(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
-            case _ => Left(Future.successful(InternalServerError(serviceUnavailableView()(request, request2Messages(request), implicitly, implicitly))))
-          }.merge.flatten
-      case _ => throw new RuntimeException("Auth retrieval failed for user")
-    }
+    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
+      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+        case enrolments ~ Some(nino) ~ Some(credentials) =>
+          val isSa = enrolments.getEnrolment("IR-SA").isDefined
+          pertaxConnector
+            .pertaxAuth(nino)
+            .transform {
+              case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
+                Right(block(PayeAuthenticatedRequest(Nino(nino), isSa, credentials, request)))
+              case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
+                Left(Future.successful(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
+              case Right(error)                                                           =>
+                logger.error(s"Invalid code response from pertax with message: ${error.message}")
+                Left(Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)))
+              case _                                                                      =>
+                Left(
+                  Future.successful(
+                    InternalServerError(
+                      serviceUnavailableView()(request, request2Messages(request), implicitly, implicitly)
+                    )
+                  )
+                )
+            }
+            .merge
+            .flatten
+        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+      }
   }
 
   override def messagesApi: MessagesApi = cc.messagesApi
@@ -61,5 +90,5 @@ class PertaxAuthActionImpl @Inject()(
 
 @ImplementedBy(classOf[PertaxAuthActionImpl])
 trait PertaxAuthAction
-  extends ActionBuilder[PertaxAuthenticatedRequest, AnyContent]
-    with ActionFunction[Request, PertaxAuthenticatedRequest]
+    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, PayeAuthenticatedRequest]

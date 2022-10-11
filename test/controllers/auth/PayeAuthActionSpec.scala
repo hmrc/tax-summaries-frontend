@@ -17,20 +17,18 @@
 package controllers.auth
 
 import cats.data.EitherT
+import connectors.PertaxConnector
 import controllers.paye.routes
-import models.{ErrorView, PertaxErrorResponse}
+import models.{ErrorView, PertaxApiResponse}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps._
@@ -42,7 +40,7 @@ class PayeAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
-  val mockPertaxService: PertaxService = mock[PertaxService]
+  val mockPertaxConnector: PertaxConnector = mock[PertaxConnector]
 
   val unauthorisedRoute = routes.PayeErrorController.notAuthorised.url
 
@@ -65,10 +63,18 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(retrievalResult)
 
       when(
-        mockPertaxService.pertaxAuth(any())(any())
-      ).thenReturn(EitherT[Future, PertaxErrorResponse, HttpResponse](Future.successful(Right(HttpResponse(OK, "")))))
+        mockPertaxConnector.pertaxAuth(any())(any())
+      ).thenReturn(
+        EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
+          Future.successful(
+            Right(
+              PertaxApiResponse("ACCESS_GRANTED", "", None, None)
+            )
+          )
+        )
+      )
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxService)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -206,120 +212,6 @@ class PayeAuthActionSpec extends BaseSpec {
 //      verifyZeroInteractions(mockAuthConnector)
 //    }
 
-    "single gg account check fails" must {
-      "redirect to the provided redirect url if it exists" in {
-        val nino                                                                       = new Generator().nextNino.nino
-        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
-          Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
-
-        when(
-          mockAuthConnector
-            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
-        )
-          .thenReturn(retrievalResult)
-
-        when(
-          mockPertaxService.pertaxAuth(any())(any())
-        ).thenReturn(
-          EitherT[Future, PertaxErrorResponse, HttpResponse](
-            Future.successful(
-              Left(
-                PertaxErrorResponse(
-                  "NO_HMRC_PT_ENROLMENT",
-                  "",
-                  None,
-                  Some("/tax-enrolment-assignment-frontend/account"),
-                  OK
-                )
-              )
-            )
-          )
-        )
-
-        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxService)
-        val controller = new Harness(authAction)
-
-        val result = controller.onPageLoad()(FakeRequest())
-        status(result) mustBe UNAUTHORIZED
-        result.map(_.header.headers.get(LOCATION)).futureValue.get mustBe "/tax-enrolment-assignment-frontend/account"
-      }
-
-      "redirect to the provided errorView if it exists" in {
-        val nino                                                                       = new Generator().nextNino.nino
-        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
-          Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
-
-        when(
-          mockAuthConnector
-            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
-        )
-          .thenReturn(retrievalResult)
-
-        when(
-          mockPertaxService.pertaxAuth(any())(any())
-        ).thenReturn(
-          EitherT[Future, PertaxErrorResponse, HttpResponse](
-            Future.successful(
-              Left(
-                PertaxErrorResponse(
-                  "NO_HMRC_PT_ENROLMENT",
-                  "",
-                  Some(ErrorView("/partials/wrong-account", UNAUTHORIZED)),
-                  None,
-                  OK
-                )
-              )
-            )
-          )
-        )
-
-        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxService)
-        val controller = new Harness(authAction)
-
-        val result = controller.onPageLoad()(FakeRequest())
-        status(result) mustBe UNAUTHORIZED
-        result.map(_.header.headers.get(LOCATION)).futureValue.get mustBe "/partials/wrong-account"
-      }
-
-      "redirect to the notAuthorised page if neither redirectUrl or errorView is provided" in {
-        val nino                                                                       = new Generator().nextNino.nino
-        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
-          Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
-
-        when(
-          mockAuthConnector
-            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
-        )
-          .thenReturn(retrievalResult)
-
-        when(
-          mockPertaxService.pertaxAuth(any())(any())
-        ).thenReturn(
-          EitherT[Future, PertaxErrorResponse, HttpResponse](
-            Future.successful(
-              Left(
-                PertaxErrorResponse(
-                  "NO_HMRC_PT_ENROLMENT",
-                  "",
-                  None,
-                  None,
-                  OK
-                )
-              )
-            )
-          )
-        )
-
-        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxService)
-        val controller = new Harness(authAction)
-
-        val result = controller.onPageLoad()(FakeRequest())
-        status(result) mustBe UNAUTHORIZED
-        result
-          .map(_.header.headers.get(LOCATION))
-          .futureValue
-          .get mustBe controllers.paye.routes.PayeErrorController.notAuthorised.url
-      }
-    }
+    "single gg account check fails" must {}
   }
 }

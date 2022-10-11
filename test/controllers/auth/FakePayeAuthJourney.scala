@@ -16,21 +16,10 @@
 
 package controllers.auth
 
-import com.google.inject.ImplementedBy
-import play.api.mvc.{ActionBuilder, AnyContent}
+import play.api.mvc._
+import utils.ControllerBaseSpec
 
-import javax.inject.Inject
-
-@ImplementedBy(classOf[AuthJourneyImpl])
-trait AuthJourney {
-  val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
-}
-
-class AuthJourneyImpl @Inject()(authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction, payeAuthAction: PayeAuthAction, pertaxAuthAction: PertaxAuthAction)
-    extends AuthJourney {
-  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    authAction andThen selfAssessmentAction
+object FakePayeAuthJourney extends ControllerBaseSpec with PayeAuthJourney {
   override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    payeAuthAction andThen pertaxAuthAction
+    FakePertaxAuthAction andThen FakePertaxAuthAction
 }

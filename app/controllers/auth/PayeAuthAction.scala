@@ -16,38 +16,30 @@
 
 package controllers.auth
 
-import cats.data.EitherT
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import connectors.PertaxConnector
-import models.PertaxApiResponse
 import play.api.Logging
-import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
-import play.api.i18n.Messages.implicitMessagesProviderToMessages
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{InternalServerError, Redirect}
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class PayeAuthActionImpl @Inject() (
-                                     override val authConnector: DefaultAuthConnector,
-                                     cc: ControllerComponents,
-                                     serviceUnavailableView: ServiceUnavailableView
+  override val authConnector: DefaultAuthConnector,
+  cc: ControllerComponents
 )(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends PayeAuthAction
-      with AuthorisedFunctions
-      with Logging {
+    with AuthorisedFunctions
+    with Logging {
 
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -68,14 +60,14 @@ class PayeAuthActionImpl @Inject() (
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
-              block {
-                PayeAuthenticatedRequest(
-                  Nino(nino),
-                  isSa,
-                  credentials,
-                  request
-                )
-              }
+            block {
+              PayeAuthenticatedRequest(
+                Nino(nino),
+                isSa,
+                credentials,
+                request
+              )
+            }
           case _                                           =>
             throw new RuntimeException("Auth retrieval failed for user")
         } recover {

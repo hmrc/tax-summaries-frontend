@@ -16,7 +16,7 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{FakePayeAuthJourney, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
@@ -47,7 +47,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
   private def parseData[A](str: String)(implicit reads: Reads[A]): A = Json.parse(str).as[A]
 
   def sut: PayeAtsMainController =
-    new PayeAtsMainController(mockPayeAtsService, FakePayeAuthAction, mcc, mainView, payeGenericErrorView)
+    new PayeAtsMainController(mockPayeAtsService, FakePayeAuthJourney, mcc, mainView, payeGenericErrorView)
 
   "AtsMain controller" when {
 
