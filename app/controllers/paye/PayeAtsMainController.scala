@@ -18,7 +18,7 @@ package controllers.paye
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{PayeAuthJourney, PayeAuthenticatedRequest}
+import controllers.auth.{AuthJourney, PayeAuthenticatedRequest}
 import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAtsMainController @Inject() (
   payeAtsService: PayeAtsService,
-  payeAuthJourney: PayeAuthJourney,
+  AuthJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   payeTaxsMainView: PayeTaxsMainView,
   payeGenericErrorView: PayeGenericErrorView
@@ -42,7 +42,7 @@ class PayeAtsMainController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = payeAuthJourney.authWithSingleGGCheck.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = AuthJourney.authWithSingleGGCheck.async { implicit request =>
     getPayeAts(taxYear)
   }
 
