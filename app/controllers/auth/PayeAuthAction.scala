@@ -43,11 +43,9 @@ import scala.util.control.NonFatal
 class PayeAuthActionImpl @Inject() (
                                      override val authConnector: DefaultAuthConnector,
                                      cc: ControllerComponents,
-                                     pertaxConnector: PertaxConnector,
                                      serviceUnavailableView: ServiceUnavailableView
 )(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends PayeAuthAction
-      with I18nSupport
       with AuthorisedFunctions
       with Logging {
 
@@ -70,7 +68,6 @@ class PayeAuthActionImpl @Inject() (
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
-            singleGGAccountCheck(nino)(implicitly, request).semiflatMap { _ =>
               block {
                 PayeAuthenticatedRequest(
                   Nino(nino),
@@ -79,7 +76,6 @@ class PayeAuthActionImpl @Inject() (
                   request
                 )
               }
-            }.merge
           case _                                           =>
             throw new RuntimeException("Auth retrieval failed for user")
         } recover {
@@ -98,22 +94,6 @@ class PayeAuthActionImpl @Inject() (
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
       }
     }
-
-  private def singleGGAccountCheck(
-    nino: String
-  )(implicit hc: HeaderCarrier, request: Request[_]): EitherT[Future, Result, Unit] = {
-    pertaxConnector
-      .pertaxAuth(nino)
-      .transform {
-        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _)) => Right(())
-        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
-          Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
-        case Right(error) =>
-          logger.error(s"Invalid code response from pertax with message: ${error.message}")
-          Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-        case _ => Left(InternalServerError(serviceUnavailableView()))
-      }
-  }
 
   private def upliftConfidenceLevel(request: Request[_]) =
     Redirect(
