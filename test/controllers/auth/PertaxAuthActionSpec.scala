@@ -74,7 +74,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   "A user with a Nino" must {
     "create an authenticated request if PertaxConnector returns an ACCESS_GRANTED code" in {
-      val nino = new Generator().nextNino.nino
+      val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
@@ -96,7 +96,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     }
 
     "create an authenticated request if PertaxConnector returns an NO_HMRC_PT_ENROLMENT code" in {
-      val nino = new Generator().nextNino.nino
+      val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
@@ -119,7 +119,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     }
 
     "create an authenticated request if PertaxConnector returns an unrecognised code" in {
-      val nino = new Generator().nextNino.nino
+      val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
@@ -154,7 +154,7 @@ class PertaxAuthActionSpec extends BaseSpec {
       SERVICE_UNAVAILABLE
     ).foreach { errorResponse =>
       s"return INTERNAL_SERVER_ERROR if PertaxConnector returns a Left with a $errorResponse response status" in {
-        val nino = new Generator().nextNino.nino
+        val nino                                                                       = new Generator().nextNino.nino
         val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
           Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
