@@ -20,15 +20,16 @@ import cats.data.EitherT
 import config.ApplicationConfig
 import models.PertaxApiResponse
 import play.api.Logging
+import play.api.http.HeaderNames
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PertaxConnector @Inject() (
   httpClient: HttpClient,
-  httpHandler: HttpHandler,
+  httpClientResponse: HttpClientResponse,
   applicationConfig: ApplicationConfig
 )(implicit
   ec: ExecutionContext
@@ -37,10 +38,12 @@ class PertaxConnector @Inject() (
   private val baseUrl = applicationConfig.pertaxHost
 
   def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
-    EitherT(
-      httpClient.GET[Either[UpstreamErrorResponse, PertaxApiResponse]](s"$baseUrl/pertax/$nino/check-single-account")
-    ).leftMap { error =>
-      logger.error(error.message)
-      error
-    }
+    httpClientResponse
+      .read(
+        httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](
+          s"$baseUrl/pertax/$nino/check-single-account",
+          headers = Seq((HeaderNames.ACCEPT, "application/vnd.hmrc.1.0+json"))
+        )
+      )
+      .map(response => response.json.as[PertaxApiResponse])
 }
