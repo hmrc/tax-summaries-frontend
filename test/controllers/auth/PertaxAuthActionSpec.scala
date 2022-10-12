@@ -22,7 +22,7 @@ import controllers.paye.routes
 import models.PertaxApiResponse
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, REQUEST_TIMEOUT, SEE_OTHER, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, status}
@@ -74,7 +74,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   "A user with a Nino" must {
     "create an authenticated request if PertaxConnector returns an ACCESS_GRANTED code" in {
-      val nino                                                                       = new Generator().nextNino.nino
+      val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
@@ -96,7 +96,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     }
 
     "create an authenticated request if PertaxConnector returns an NO_HMRC_PT_ENROLMENT code" in {
-      val nino                                                                       = new Generator().nextNino.nino
+      val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
@@ -119,7 +119,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     }
 
     "create an authenticated request if PertaxConnector returns an unrecognised code" in {
-      val nino                                                                       = new Generator().nextNino.nino
+      val nino = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
@@ -143,26 +143,37 @@ class PertaxAuthActionSpec extends BaseSpec {
       ).get mustBe controllers.paye.routes.PayeErrorController.notAuthorised.url
     }
 
-    "create an authenticated request if PertaxConnector returns a Left" in {
-      val nino                                                                       = new Generator().nextNino.nino
-      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
-        Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+    List(
+      BAD_REQUEST,
+      NOT_FOUND,
+      IM_A_TEAPOT,
+      REQUEST_TIMEOUT,
+      UNPROCESSABLE_ENTITY,
+      INTERNAL_SERVER_ERROR,
+      BAD_GATEWAY,
+      SERVICE_UNAVAILABLE
+    ).foreach { errorResponse =>
+      s"return INTERNAL_SERVER_ERROR if PertaxConnector returns a Left with a $errorResponse response status" in {
+        val nino = new Generator().nextNino.nino
+        val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+          Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
-      when(
-        mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
-      )
-        .thenReturn(retrievalResult)
-
-      when(mockPertaxConnector.pertaxAuth(any())(any()))
-        .thenReturn(
-          EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
-            Future.successful(Left(UpstreamErrorResponse("", INTERNAL_SERVER_ERROR)))
-          )
+        when(
+          mockAuthConnector
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
         )
+          .thenReturn(retrievalResult)
 
-      val result = controller.onPageLoad()(FakeRequest())
-      status(result) mustBe INTERNAL_SERVER_ERROR
+        when(mockPertaxConnector.pertaxAuth(any())(any()))
+          .thenReturn(
+            EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
+              Future.successful(Left(UpstreamErrorResponse("", errorResponse)))
+            )
+          )
+
+        val result = controller.onPageLoad()(FakeRequest())
+        status(result) mustBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 }

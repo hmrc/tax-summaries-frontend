@@ -19,6 +19,7 @@ package connectors
 import cats.data.EitherT
 import config.ApplicationConfig
 import models.PertaxApiResponse
+import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
 
@@ -31,12 +32,15 @@ class PertaxConnector @Inject() (
   applicationConfig: ApplicationConfig
 )(implicit
   ec: ExecutionContext
-) {
+) extends Logging {
 
   private val baseUrl = applicationConfig.pertaxHost
 
   def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
     EitherT(
       httpClient.GET[Either[UpstreamErrorResponse, PertaxApiResponse]](s"$baseUrl/pertax/$nino/check-single-account")
-    )
+    ).leftMap { error =>
+      logger.error(error.message)
+      error
+    }
 }
