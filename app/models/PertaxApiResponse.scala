@@ -23,7 +23,7 @@ case class PertaxApiResponse(
   message: String,
   redirect: Option[String] = None
 )
-//
+
 object PertaxApiResponse {
   implicit val format: OFormat[PertaxApiResponse] = Json.format[PertaxApiResponse]
 }
