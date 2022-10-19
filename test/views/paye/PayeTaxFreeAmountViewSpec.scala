@@ -27,12 +27,13 @@ import views.html.paye.PayeTaxFreeAmountView
 
 class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
 
-  implicit val request =
+  implicit val request           =
     PayeAuthenticatedRequest(
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount"))
+      FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount")
+    )
   lazy val payeTaxFreeAmountView = inject[PayeTaxFreeAmountView]
 
   "PayeTaxFreeAmountView" must {
@@ -45,7 +46,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
         Amount.empty
       )
 
-      val view = payeTaxFreeAmountView(viewModel).body
+      val view     = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document
@@ -66,13 +67,13 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
         Amount.empty
       )
 
-      val view = payeTaxFreeAmountView(viewModel).body
+      val view     = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#adjustmentRows") must not be empty
-      document.select("#personal_allowance") must not be empty
+      document.select("#adjustmentRows")                        must not be empty
+      document.select("#personal_allowance")                    must not be empty
       document.select("#marriage_allowance_transferred_amount") must not be empty
-      document.select("#other_allowances_amount") must not be empty
+      document.select("#other_allowances_amount")               must not be empty
     }
 
     "display the table of adjustments without a total when there is just personal allowance" in {
@@ -86,7 +87,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
         Amount.empty
       )
 
-      val view = payeTaxFreeAmountView(viewModel).body
+      val view     = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document.select("#adjustmentRows") must not be empty
@@ -102,7 +103,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
         Amount.empty
       )
 
-      val view = payeTaxFreeAmountView(viewModel).body
+      val view     = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
       document.select("#adjustmentRows") mustBe empty
@@ -120,12 +121,12 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
         Amount.empty
       )
 
-      val view = payeTaxFreeAmountView(viewModel).body
+      val view     = payeTaxFreeAmountView(viewModel).body
       val document = Jsoup.parse(view)
 
-      document.select("#summaryRows") must not be empty
+      document.select("#summaryRows")       must not be empty
       document.select("#income_before_tax") must not be empty
-      document.select("#tax_free_amount") must not be empty
+      document.select("#tax_free_amount")   must not be empty
     }
   }
 }

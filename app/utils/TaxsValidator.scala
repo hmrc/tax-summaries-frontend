@@ -37,7 +37,7 @@ trait TaxsValidator {
 
   val telephoneRegex = """^[0-9]*+"""
 
-  val asciiChar32 = 32
+  val asciiChar32  = 32
   val asciiChar126 = 126
   val asciiChar160 = 160
   val asciiChar255 = 255

@@ -21,21 +21,22 @@ import controllers.auth.AuthenticatedRequest
 import models.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
-class AuthorityUtils @Inject()() {
+class AuthorityUtils @Inject() () {
 
   def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean =
     (AccountUtils.getAccount(request), agentToken) match {
-      case (agentAccount, None) if (AccountUtils.isAgent(request)) =>
+      case (agentAccount, None) if AccountUtils.isAgent(request)             =>
         true
-      case (agentAccount, Some(agentToken)) if (AccountUtils.isAgent(request)) =>
+      case (agentAccount, Some(agentToken)) if AccountUtils.isAgent(request) =>
         SaUtr(utr) == SaUtr(agentToken.clientUtr)
-      case (account: SaUtr, _) =>
+      case (account: SaUtr, _)                                               =>
         SaUtr(utr) == account
     }
 
-  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(
-    implicit request: AuthenticatedRequest[_]): Boolean =
-    utr.fold { false } { checkUtr(_, agentToken) }
+  def checkUtr(utr: Option[String], agentToken: Option[AgentToken])(implicit
+    request: AuthenticatedRequest[_]
+  ): Boolean =
+    utr.fold(false)(checkUtr(_, agentToken))
 
   def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr =
     //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
@@ -50,6 +51,6 @@ class AuthorityUtils @Inject()() {
             throw AgentTokenException(s"Incorrect agent UAR: ${taxsAgent.uar}, ${agentToken.agentUar}")
           }
         }
-      case sa: SaUtr => sa
+      case sa: SaUtr      => sa
     }
 }

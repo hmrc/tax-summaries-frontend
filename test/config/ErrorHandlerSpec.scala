@@ -31,7 +31,7 @@ class ErrorHandlerSpec extends ViewSpecBase with MockitoSugar {
     inject[Configuration],
     inject[Environment],
     inject[ErrorTemplateView],
-    inject[PageNotFoundTemplateView],
+    inject[PageNotFoundTemplateView]
   )
 
   implicit val request = FakeRequest()
@@ -42,17 +42,21 @@ class ErrorHandlerSpec extends ViewSpecBase with MockitoSugar {
     notFoundView.getElementsByTag("h1").toString must include(messages("global.page.not.found.error.heading"))
 
     notFoundView.getElementsByTag("p").get(0).toString must include(
-      messages("global.page.not.found.error.check.web.address.correct"))
+      messages("global.page.not.found.error.check.web.address.correct")
+    )
 
     notFoundView.getElementsByTag("p").get(1).toString must include(
-      messages("global.page.not.found.error.check.web.address.full"))
+      messages("global.page.not.found.error.check.web.address.full")
+    )
 
     notFoundView.getElementsByTag("p").get(2).toString must include(
       messages(
         "global.page.not.found.error.contact",
         "<a href=\"https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment\" class=\"govuk-link\" target=\"_blank\" rel=\"noopener noreferrer\">" + messages(
-          "global.page.not.found.error.contact.link.text") + "</a>"
-      ))
+          "global.page.not.found.error.contact.link.text"
+        ) + "</a>"
+      )
+    )
 
   }
 
@@ -65,15 +69,18 @@ class ErrorHandlerSpec extends ViewSpecBase with MockitoSugar {
             "Sorry, the service is unavailable",
             "You can use this service later or you can contact HMRC online, by phone or by post."
           )
-          .toString())
+          .toString()
+      )
 
     standardErrorTemplateView.getElementsByTag("h1").toString must include(
-      messages("global.error.InternalServerError500.title"))
+      messages("global.error.InternalServerError500.title")
+    )
 
     standardErrorTemplateView.getElementsByTag("p").get(0).toString must include(
       messages("global.error.InternalServerError500.message.you.can") + " " + messages(
-        "global.error.InternalServerError500.message.contact.hmrc") + " " + messages(
-        "global.error.InternalServerError500.message.by.phone.post"))
+        "global.error.InternalServerError500.message.contact.hmrc"
+      ) + " " + messages("global.error.InternalServerError500.message.by.phone.post")
+    )
 
   }
 }

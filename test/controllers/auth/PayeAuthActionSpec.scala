@@ -49,13 +49,14 @@ class PayeAuthActionSpec extends BaseSpec {
 
   "A user with a confidence level 200 and a Nino" must {
     "create an authenticated request with no IR-SA" in {
-      val nino = new Generator().nextNino.nino
+      val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -69,15 +70,16 @@ class PayeAuthActionSpec extends BaseSpec {
     }
 
     "create an authenticated request with IR-SA" in {
-      val nino = new Generator().nextNino.nino
-      val utr = new SaUtrGenerator().nextSaUtr.utr
-      val saEnrolment = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")))
+      val nino                                                                       = new Generator().nextNino.nino
+      val utr                                                                        = new SaUtrGenerator().nextSaUtr.utr
+      val saEnrolment                                                                = Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")))
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(saEnrolment ~ Some(nino) ~ Some(fakeCredentials))
 
       when(
         mockAuthConnector
-          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+      )
         .thenReturn(retrievalResult)
 
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -97,7 +99,8 @@ class PayeAuthActionSpec extends BaseSpec {
 
         when(
           mockAuthConnector
-            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+        )
           .thenReturn(retrievalResult)
 
         val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -114,7 +117,8 @@ class PayeAuthActionSpec extends BaseSpec {
 
         when(
           mockAuthConnector
-            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any()))
+            .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+        )
           .thenReturn(retrievalResult)
 
         val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
@@ -133,7 +137,7 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(Future.failed(new InternalError))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest())
+      val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get must endWith(unauthorisedRoute)
     }
@@ -145,7 +149,7 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(Future.failed(new SessionRecordNotFound))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest())
+      val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get must startWith(appConfig.payeLoginUrl)
@@ -158,7 +162,7 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(Future.failed(InsufficientConfidenceLevel()))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest())
+      val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get must startWith(appConfig.identityVerificationUpliftUrl)
@@ -171,7 +175,7 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(Future.failed(IncorrectCredentialStrength()))
       val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest())
+      val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get must endWith(unauthorisedRoute)
@@ -187,7 +191,7 @@ class PayeAuthActionSpec extends BaseSpec {
       }
 
       val controller = new Harness(authAction)
-      val result = controller.onPageLoad()(FakeRequest())
+      val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.PayeErrorController.serviceUnavailable.url
       verifyZeroInteractions(mockAuthConnector)

@@ -34,6 +34,6 @@ case class TaxYearEnd(year: Option[String]) extends GenericViewModel {
 }
 
 object TaxYearEnd {
-  implicit val formats = Json.format[TaxYearEnd]
+  implicit val formats       = Json.format[TaxYearEnd]
   implicit val optionFormats = Format.optionWithNull[TaxYearEnd]
 }

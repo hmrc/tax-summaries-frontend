@@ -33,7 +33,8 @@ object TextGenerator {
         "ats.summary.taxable_income.your_total_tax.description_total_income_tax",
         "ats.summary.taxable_income.your_total_tax.description_nics",
         "ats.summary.taxable_income.your_total_tax.description_cg"
-      ))
+      )
+    )
 
   private def createOnScreenTextBinary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
     if (hasTotalIncomeTax) {
@@ -42,34 +43,43 @@ object TextGenerator {
           "ats.summary.taxable_income.your_total_tax.msg_binary",
           List(
             "ats.summary.taxable_income.your_total_tax.description_total_income_tax",
-            "ats.summary.taxable_income.your_total_tax.description_cg"))
+            "ats.summary.taxable_income.your_total_tax.description_cg"
+          )
+        )
       } else {
         (
           "ats.summary.taxable_income.your_total_tax.msg_binary",
           List(
             "ats.summary.taxable_income.your_total_tax.description_total_income_tax",
-            "ats.summary.taxable_income.your_total_tax.description_nics"))
+            "ats.summary.taxable_income.your_total_tax.description_nics"
+          )
+        )
       }
     } else {
       (
         "ats.summary.taxable_income.your_total_tax.msg_binary",
         List(
           "ats.summary.taxable_income.your_total_tax.description_nics",
-          "ats.summary.taxable_income.your_total_tax.description_cg"))
+          "ats.summary.taxable_income.your_total_tax.description_cg"
+        )
+      )
     }
 
   private def createOnScreenTextUnary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
     if (hasTotalIncomeTax) {
       (
         "ats.summary.taxable_income.your_total_tax.msg_unary",
-        List("ats.summary.taxable_income.your_total_tax.description_total_income_tax"))
+        List("ats.summary.taxable_income.your_total_tax.description_total_income_tax")
+      )
     } else if (hasCapitalGainsTax) {
       (
         "ats.summary.taxable_income.your_total_tax.msg_unary",
-        List("ats.summary.taxable_income.your_total_tax.description_cg"))
+        List("ats.summary.taxable_income.your_total_tax.description_cg")
+      )
     } else {
       (
         "ats.summary.taxable_income.your_total_tax.msg_unary",
-        List("ats.summary.taxable_income.your_total_tax.description_nics"))
+        List("ats.summary.taxable_income.your_total_tax.description_nics")
+      )
     }
 }

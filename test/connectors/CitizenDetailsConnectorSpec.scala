@@ -34,8 +34,15 @@ import utils.{JsonUtil, WireMockHelper}
 import scala.concurrent.ExecutionContext
 
 class CitizenDetailsConnectorSpec
-    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
-    with IntegrationPatience with JsonUtil with Injecting with EitherValues {
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with ScalaFutures
+    with WireMockHelper
+    with IntegrationPatience
+    with JsonUtil
+    with Injecting
+    with EitherValues {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -44,12 +51,12 @@ class CitizenDetailsConnectorSpec
       )
       .build()
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc             = HeaderCarrier()
   implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit lazy val ec = inject[ExecutionContext]
-  lazy val connector = inject[CitizenDetailsConnector]
-  lazy val nino = new Generator().nextNino
-  lazy val url = s"/citizen-details/nino/$nino"
+  implicit lazy val ec        = inject[ExecutionContext]
+  lazy val connector          = inject[CitizenDetailsConnector]
+  lazy val nino               = new Generator().nextNino
+  lazy val url                = s"/citizen-details/nino/$nino"
 
   "connectToCid" must {
     "return an OK response when the CID API returns OK" in {

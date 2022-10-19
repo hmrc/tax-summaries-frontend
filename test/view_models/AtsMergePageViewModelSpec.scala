@@ -30,7 +30,7 @@ import utils.TestConstants.{testUar, testUtr}
 
 class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
   val fakeCredentials = new Credentials("provider ID", "provider type")
-  val mockAppConfig = mock[ApplicationConfig]
+  val mockAppConfig   = mock[ApplicationConfig]
 
   implicit val agentRequest = AuthenticatedRequest(
     "userId",
@@ -41,7 +41,8 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear"))
+    FakeRequest("Get", s"?taxYear=$taxYear")
+  )
 
   override def beforeEach() =
     reset(mockAppConfig)
@@ -62,7 +63,8 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
           AtsList("", "", "", List.empty),
           List(taxYear - 2, taxYear - 1, taxYear),
           mockAppConfig,
-          ConfidenceLevel.L200)
+          ConfidenceLevel.L200
+        )
       model.showNoAtsText mustBe false
     }
 

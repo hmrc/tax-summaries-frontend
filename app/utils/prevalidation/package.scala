@@ -50,20 +50,21 @@ package object prevalidation {
     "postcode"                  -> upper
   )
 
-  val trimAllFunc = (value: String) => value.replaceAll("[\\s]", "")
-  val trimBothFunc = (value: String) => value.trim
+  val trimAllFunc             = (value: String) => value.replaceAll("[\\s]", "")
+  val trimBothFunc            = (value: String) => value.trim
   val trimBothAndCompressFunc = (value: String) => value.trim.replaceAll("[\\s]{2,}", " ")
 
   def PreprocessedForm[T](
     validation: Form[T],
     trimRules: Map[String, TrimOption] = defaultTrims,
-    caseRules: Map[String, CaseOption] = defaultCases) = {
+    caseRules: Map[String, CaseOption] = defaultCases
+  ) = {
     val trules = trimRules
     val crules = caseRules
     new PrevalidationAPI[T] {
       override val formValidation = validation
-      override val trimRules = trules
-      override val caseRules = crules
+      override val trimRules      = trules
+      override val caseRules      = crules
     }
   }
 

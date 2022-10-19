@@ -35,9 +35,8 @@ trait JsonUtil {
 
   def loadAndReplace(path: String, replaceMap: Map[String, String]): String = {
     var jsonString = Source.fromURL(getClass.getResource(path)).mkString
-    for ((key, value) <- replaceMap) {
+    for ((key, value) <- replaceMap)
       jsonString = jsonString.replace(key, value)
-    }
     jsonString
   }
 

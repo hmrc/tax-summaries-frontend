@@ -24,8 +24,8 @@ import view_models.{Amount, Rate}
 
 class ViewUtilsSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
 
-  val zeroAmount = createAmount(0)
-  val zeroRate = Rate("0%")
+  val zeroAmount     = createAmount(0)
+  val zeroRate       = Rate("0%")
   lazy val viewUtils = new ViewUtils
 
   def createAmount(bd: BigDecimal) = Amount(bd, "gbp")
@@ -77,7 +77,7 @@ class ViewUtilsSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
     "return the given rate if the percentage is positive" in {
       forAll { dec: Double =>
         whenever(dec > 0) {
-          val percentage = dec.toString + '%'
+          val percentage   = dec.toString + '%'
           val positiveRate = Rate(percentage)
           viewUtils.positiveOrZero(positiveRate) mustBe positiveRate
         }
@@ -91,7 +91,7 @@ class ViewUtilsSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
     "return the zero rate if the percentage is negative" in {
       forAll { dec: Double =>
         whenever(dec < 0) {
-          val percentage = dec.toString + '%'
+          val percentage   = dec.toString + '%'
           val negativeRate = Rate(percentage)
           viewUtils.positiveOrZero(negativeRate) mustBe Rate.empty
         }

@@ -29,14 +29,16 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelfAssessmentActionImpl @Inject()(
+class SelfAssessmentActionImpl @Inject() (
   citizenDetailsService: CitizenDetailsService,
   ninoAuthAction: NinoAuthAction,
-  appConfig: ApplicationConfig)(implicit ec: ExecutionContext)
+  appConfig: ApplicationConfig
+)(implicit ec: ExecutionContext)
     extends SelfAssessmentAction {
 
   override protected def refine[A](
-    request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
+    request: AuthenticatedRequest[A]
+  ): Future[Either[Result, AuthenticatedRequest[A]]] = {
 
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
@@ -53,25 +55,25 @@ class SelfAssessmentActionImpl @Inject()(
 
   override protected def executionContext: ExecutionContext = ec
 
-  private def handleResponse[T](request: AuthenticatedRequest[T], atsNinoResponse: AtsNino)(
-    implicit hc: HeaderCarrier) =
+  private def handleResponse[T](request: AuthenticatedRequest[T], atsNinoResponse: AtsNino)(implicit
+    hc: HeaderCarrier
+  ) =
     atsNinoResponse match {
-      case SuccessAtsNino(nino) =>
+      case SuccessAtsNino(nino)  =>
         for {
           detailsResponse <- citizenDetailsService.getMatchingDetails(nino)
-        } yield {
-          detailsResponse match {
-            case SucccessMatchingDetailsResponse(value) =>
-              if (value.saUtr.isDefined) { Right(createAuthenticatedRequest(request, value.saUtr)) } else {
-                Left(Redirect(controllers.routes.ErrorController.notAuthorised))
-              }
-            case _ =>
-              Left(
-                Redirect(controllers.routes.ErrorController.notAuthorised)
-              )
-          }
+        } yield detailsResponse match {
+          case SucccessMatchingDetailsResponse(value) =>
+            if (value.saUtr.isDefined) { Right(createAuthenticatedRequest(request, value.saUtr)) }
+            else {
+              Left(Redirect(controllers.routes.ErrorController.notAuthorised))
+            }
+          case _                                      =>
+            Left(
+              Redirect(controllers.routes.ErrorController.notAuthorised)
+            )
         }
-      case NoAtsNinoFound =>
+      case NoAtsNinoFound        =>
         Future(
           Left(
             Redirect(controllers.routes.ErrorController.notAuthorised)
@@ -101,7 +103,8 @@ class SelfAssessmentActionImpl @Inject()(
 
   private def createAuthenticatedRequest[T](
     request: AuthenticatedRequest[T],
-    newSaUtr: Option[SaUtr]): AuthenticatedRequest[T] =
+    newSaUtr: Option[SaUtr]
+  ): AuthenticatedRequest[T] =
     AuthenticatedRequest(
       userId = request.userId,
       agentRef = request.agentRef,

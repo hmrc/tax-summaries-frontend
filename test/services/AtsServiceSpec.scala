@@ -41,11 +41,11 @@ class AtsServiceSpec extends BaseSpec {
     Json.fromJson[AtsData](json).get
   }
 
-  val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
+  val mockMiddleConnector: MiddleConnector       = mock[MiddleConnector]
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
-  val mockAuditService: AuditService = mock[AuditService]
-  val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
-  val mockAccountUtils: AccountUtils = mock[AccountUtils]
+  val mockAuditService: AuditService             = mock[AuditService]
+  val mockAuthUtils: AuthorityUtils              = mock[AuthorityUtils]
+  val mockAccountUtils: AccountUtils             = mock[AccountUtils]
 
   override def beforeEach() = {
     reset(mockMiddleConnector)
@@ -68,7 +68,8 @@ class AtsServiceSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest())
+      FakeRequest()
+    )
 
   val agentToken = AgentToken(
     agentUar = testUar,
@@ -105,7 +106,8 @@ class AtsServiceSpec extends BaseSpec {
                 Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Future.successful(
-                Some(data))
+                Some(data)
+              )
 
               when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
@@ -125,7 +127,8 @@ class AtsServiceSpec extends BaseSpec {
                 Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Future.successful(
-                Some(data))
+                Some(data)
+              )
 
               when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
@@ -167,13 +170,13 @@ class AtsServiceSpec extends BaseSpec {
               when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(Success)
 
               when(
-                mockMiddleConnector.connectToAtsOnBehalfOf(
-                  eqTo(Uar(testUar)),
-                  eqTo(SaUtr(testNonMatchingUtr)),
-                  eqTo(fakeTaxYear))(any())) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
+                mockMiddleConnector
+                  .connectToAtsOnBehalfOf(eqTo(Uar(testUar)), eqTo(SaUtr(testNonMatchingUtr)), eqTo(fakeTaxYear))(any())
+              ) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               when(mockDataCacheConnector.storeAtsForSession(eqTo(data))(any(), any())) thenReturn Future.successful(
-                Some(data))
+                Some(data)
+              )
 
               implicit val request =
                 AuthenticatedRequest(
@@ -185,7 +188,8 @@ class AtsServiceSpec extends BaseSpec {
                   false,
                   ConfidenceLevel.L50,
                   fakeCredentials,
-                  FakeRequest())
+                  FakeRequest()
+                )
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
@@ -200,7 +204,8 @@ class AtsServiceSpec extends BaseSpec {
         "the connector returns a NoATSViewModel" in {
 
           when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
-            Some(data))
+            Some(data)
+          )
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
@@ -217,12 +222,14 @@ class AtsServiceSpec extends BaseSpec {
           val dataWithError = data.copy(errors = Some(IncomingAtsError("NoAtsError")))
 
           when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
-            Some(dataWithError))
+            Some(dataWithError)
+          )
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
           when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn Future(
-            AtsSuccessResponseWithPayload(dataWithError))
+            AtsSuccessResponseWithPayload(dataWithError)
+          )
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
 
@@ -239,7 +246,8 @@ class AtsServiceSpec extends BaseSpec {
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
           when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), eqTo(fakeTaxYear))(any())) thenReturn Future(
-            AtsErrorResponse("Something went wrong"))
+            AtsErrorResponse("Something went wrong")
+          )
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
@@ -251,7 +259,8 @@ class AtsServiceSpec extends BaseSpec {
           val dataWithError = data.copy(errors = Some(IncomingAtsError("Random error")))
 
           when(mockDataCacheConnector.fetchAndGetAtsForSession(eqTo(fakeTaxYear))(any())) thenReturn Future.successful(
-            Some(dataWithError))
+            Some(dataWithError)
+          )
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 

@@ -31,14 +31,17 @@ import views.html.paye.PayeIncomeTaxAndNicsView
 
 import scala.concurrent.ExecutionContext
 
-class PayeIncomeTaxAndNicsController @Inject()(
+class PayeIncomeTaxAndNicsController @Inject() (
   payeAtsService: PayeAtsService,
   payeAuthAction: PayeAuthAction,
   mcc: MessagesControllerComponents,
   payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView,
   payeConfig: PayeConfig,
-  payeGenericErrorView: PayeGenericErrorView)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with Logging {
+  payeGenericErrorView: PayeGenericErrorView
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with Logging {
 
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
@@ -52,7 +55,8 @@ class PayeIncomeTaxAndNicsController @Inject()(
               adjustments = payeConfig.adjustmentsKeys.toSet
             ),
             successResponse.isWelshTaxPayer
-          ))
+          )
+        )
 
       case Left(response: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
       case _                                   => InternalServerError(payeGenericErrorView())

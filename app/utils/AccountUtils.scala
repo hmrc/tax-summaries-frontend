@@ -26,18 +26,19 @@ trait AccountUtils {
   def getAccount(request: AuthenticatedRequest[_]): TaxIdentifier =
     request.agentRef.getOrElse(request.saUtr.getOrElse(SaUtr("")))
   //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-  def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
+  def getAccountId(request: AuthenticatedRequest[_]): String      = (getAccount(request): @unchecked) match {
     case sa: SaUtr => sa.utr
     case ta: Uar   => ta.uar
   }
-  def isPortalUser(request: Request[_]): Boolean =
+  def isPortalUser(request: Request[_]): Boolean                  =
     request.session.get(utils.Globals.TAXS_USER_TYPE_KEY).contains(utils.Globals.TAXS_PORTAL_REFERENCE)
-  def isAgent(request: AuthenticatedRequest[_]): Boolean = request.agentRef.isDefined
+  def isAgent(request: AuthenticatedRequest[_]): Boolean          = request.agentRef.isDefined
 }
 
 trait AttorneyUtils {
-  def getActingAsAttorneyFor(request: AuthenticatedRequest[_], forename: String, surname: String, utr: String)(
-    implicit messages: Messages): Option[ActingAsAttorneyFor] =
+  def getActingAsAttorneyFor(request: AuthenticatedRequest[_], forename: String, surname: String, utr: String)(implicit
+    messages: Messages
+  ): Option[ActingAsAttorneyFor] =
     if (AccountUtils.isAgent(request))
       Some(ActingAsAttorneyFor(Some(s"$forename $surname (${messages("generic.utr_abbrev")}: $utr)"), Map()))
     else None

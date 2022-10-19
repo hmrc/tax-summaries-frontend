@@ -28,7 +28,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TaxsUnitTestTraits
-    extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with GuiceOneServerPerSuite
+    extends AnyWordSpec
+    with Matchers
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with GuiceOneServerPerSuite
     with Injecting {
 
   implicit lazy val hc = HeaderCarrier()

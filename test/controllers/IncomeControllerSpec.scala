@@ -51,7 +51,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   )
 
   val mockIncomeService = mock[IncomeService]
-  val mockAuditService = mock[AuditService]
+  val mockAuditService  = mock[AuditService]
 
   def sut =
     new IncomeController(
@@ -61,7 +61,8 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       mcc,
       incomeBeforeTaxView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach(): Unit =
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
@@ -70,15 +71,16 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   "Calling incomes" must {
 
     "return a successful response for a valid request" in {
-      val result = sut.show(request)
+      val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
-        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString))
+        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+      )
     }
 
     "display an error page for an invalid request" in {
-      val result = sut.show(badRequest)
+      val result   = sut.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -124,7 +126,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       document.getElementById("taxable-state-benefits").text() mustBe "£3,000"
       document.getElementById("other-income-amount").text() mustBe "£1,500"
 
-      document.toString must include("Your total income")
+      document.toString                           must include("Your total income")
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document
@@ -157,14 +159,14 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
       val document = Jsoup.parse(contentAsString(result))
 
-      document.toString must not include "self-employment-income"
-      document.toString must not include "benefits-from-employment"
-      document.toString must not include "other_pension_income"
-      document.toString must not include "state_pension"
-      document.toString must not include "taxable_state_benefits"
-      document.toString must not include "income_from_employment"
-      document.toString must not include "other_income"
-      document.toString must not include "total_income_before_tax"
+      document.toString                         must not include "self-employment-income"
+      document.toString                         must not include "benefits-from-employment"
+      document.toString                         must not include "other_pension_income"
+      document.toString                         must not include "state_pension"
+      document.toString                         must not include "taxable_state_benefits"
+      document.toString                         must not include "income_from_employment"
+      document.toString                         must not include "other_income"
+      document.toString                         must not include "total_income_before_tax"
       document.getElementById("user-info").text must include("forename surname")
       document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }

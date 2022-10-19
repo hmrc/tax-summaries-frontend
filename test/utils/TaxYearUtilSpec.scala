@@ -28,7 +28,6 @@ import utils.TestConstants._
 class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
   val authenticatedRequest =
-
     "TaxYearUtil" must {
       "extract tax year when a valid tax year is present" in {
 
@@ -43,7 +42,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
           false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          FakeRequest("GET", s"?taxYear=$taxYear"))
+          FakeRequest("GET", s"?taxYear=$taxYear")
+        )
 
         val result = TaxYearUtil.extractTaxYear
 
@@ -64,7 +64,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest("GET", "?taxYear=20192"))
+            FakeRequest("GET", "?taxYear=20192")
+          )
 
           val result = TaxYearUtil.extractTaxYear
 
@@ -82,7 +83,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest("GET", "?taxYear=201"))
+            FakeRequest("GET", "?taxYear=201")
+          )
 
           val result = TaxYearUtil.extractTaxYear
 
@@ -101,7 +103,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest("GET", "?"))
+              FakeRequest("GET", "?")
+            )
 
           val result = TaxYearUtil.extractTaxYear
 
@@ -120,7 +123,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest("GET", "?taxYear=ABCD"))
+            FakeRequest("GET", "?taxYear=ABCD")
+          )
 
           val result = TaxYearUtil.extractTaxYear
 

@@ -29,10 +29,10 @@ import scala.concurrent.Future
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
   val dataPath = "/no_ats_json_test.json"
-  val model = new NoATSViewModel
+  val model    = new NoATSViewModel
 
-  val mockIncomeService = mock[IncomeService]
-  val mockAuditService = mock[AuditService]
+  val mockIncomeService  = mock[IncomeService]
+  val mockAuditService   = mock[AuditService]
   val mockSummaryService = mock[SummaryService]
 
   def incomeController =
@@ -43,7 +43,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       mcc,
       incomeBeforeTaxView,
       genericErrorView,
-      tokenErrorView)
+      tokenErrorView
+    )
 
   override def beforeEach() =
     when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
@@ -63,7 +64,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
           mcc,
           totalIncomeTaxView,
           genericErrorView,
-          tokenErrorView)
+          tokenErrorView
+        )
       when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model))
 
@@ -102,7 +104,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         mcc,
         taxFreeAmountView,
         genericErrorView,
-        tokenErrorView)
+        tokenErrorView
+      )
 
     when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
       .thenReturn(Future.successful(model))
@@ -125,7 +128,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         mcc,
         capitalGainsView,
         genericErrorView,
-        tokenErrorView)
+        tokenErrorView
+      )
 
     when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
@@ -148,7 +152,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         mcc,
         governmentSpendingView,
         genericErrorView,
-        tokenErrorView)
+        tokenErrorView
+      )
 
     when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
@@ -169,7 +174,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         mcc,
         summaryView,
         genericErrorView,
-        tokenErrorView)
+        tokenErrorView
+      )
 
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
@@ -190,7 +196,8 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         mcc,
         nicsView,
         genericErrorView,
-        tokenErrorView)
+        tokenErrorView
+      )
 
     when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))

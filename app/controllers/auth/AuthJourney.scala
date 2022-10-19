@@ -26,8 +26,8 @@ trait AuthJourney {
   val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
 }
 
-class AuthJourneyImpl @Inject()(authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction)
+class AuthJourneyImpl @Inject() (authAction: AuthAction, selfAssessmentAction: SelfAssessmentAction)
     extends AuthJourney {
-  override val authWithSelfAssessment
-    : ActionBuilder[AuthenticatedRequest, AnyContent] = authAction andThen selfAssessmentAction
+  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent] =
+    authAction andThen selfAssessmentAction
 }

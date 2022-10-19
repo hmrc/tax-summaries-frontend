@@ -40,9 +40,9 @@ object AtsYearChoice {
           .getOrElse(
             throw new Exception(s"Could not parse json $value to AtsYearChoice")
           )
-      case _ => throw new Exception(s"Could not parse json $value to AtsYearChoice")
+      case _       => throw new Exception(s"Could not parse json $value to AtsYearChoice")
     }
 
   def toOptionString(choice: AtsYearChoice): Option[Option[String]] = Some(Some(Json.stringify(Json.toJson(choice))))
-  def toString(choice: AtsYearChoice): String = Json.stringify(Json.toJson(choice))
+  def toString(choice: AtsYearChoice): String                       = Json.stringify(Json.toJson(choice))
 }

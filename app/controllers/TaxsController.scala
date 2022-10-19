@@ -32,11 +32,16 @@ import views.html.errors.{GenericErrorView, TokenErrorView}
 import java.util.Date
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class TaxsController @Inject()(
+abstract class TaxsController @Inject() (
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends FrontendController(mcc) with AccountUtils with AttorneyUtils with I18nSupport with Logging {
+  tokenErrorView: TokenErrorView
+)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with AccountUtils
+    with AttorneyUtils
+    with I18nSupport
+    with Logging {
 
   def auditService: AuditService
 
@@ -55,26 +60,23 @@ abstract class TaxsController @Inject()(
     }
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    transformation recover {
-      case error =>
-        logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
-        error match {
-          case token_error: AgentTokenException => {
-            auditService.sendEvent(
-              AuditTypes.Tx_FAILED,
-              Map(
-                "userId"         -> getAccountId(request),
-                "error"          -> token_error.message,
-                "time"           -> new Date().toString,
-                "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")
-              )
+    transformation recover { case error =>
+      logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
+      error match {
+        case token_error: AgentTokenException =>
+          auditService.sendEvent(
+            AuditTypes.Tx_FAILED,
+            Map(
+              "userId"         -> getAccountId(request),
+              "error"          -> token_error.message,
+              "time"           -> new Date().toString,
+              "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")
             )
-            Ok(tokenErrorView())
-          }
-          case _ => {
-            Ok(genericErrorView())
-          }
-        }
+          )
+          Ok(tokenErrorView())
+        case _                                =>
+          Ok(genericErrorView())
+      }
     }
 
   def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]) = {

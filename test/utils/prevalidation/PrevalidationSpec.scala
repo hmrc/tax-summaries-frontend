@@ -48,7 +48,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultTrims = Map[String, TrimOption](
         "string1" -> both
       )
-      val form = DummyForm.preprocessedForm(defaultTrims)
+      val form         = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
       result.string1 mustBe "Vinnie and the \t    grenades"
@@ -58,7 +58,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultTrims = Map[String, TrimOption](
         "string1" -> TrimOption.all
       )
-      val form = DummyForm.preprocessedForm(defaultTrims)
+      val form         = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
       result.string1 mustBe "Vinnieandthegrenades"
@@ -69,7 +69,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultTrims = Map[String, TrimOption](
         "string1" -> bothAndCompress
       )
-      val form = DummyForm.preprocessedForm(defaultTrims)
+      val form         = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
       result.string1 mustBe "Vinnie and the grenades"
@@ -80,7 +80,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultTrims = Map[String, TrimOption](
         "string1" -> none
       )
-      val form = DummyForm.preprocessedForm(defaultTrims)
+      val form         = DummyForm.preprocessedForm(defaultTrims)
 
       val result = form.bind(testData(" Vinnie and the \t    grenades    \t")).get
       result.string1 mustBe " Vinnie and the \t    grenades    \t"
@@ -91,7 +91,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultCase = Map[String, CaseOption](
         "string1" -> upper
       )
-      val form = DummyForm.preprocessedForm(caseRules = defaultCase)
+      val form        = DummyForm.preprocessedForm(caseRules = defaultCase)
 
       val result = form.bind(testData("Vinnie and the grenades")).get
       result.string1 mustBe "VINNIE AND THE GRENADES"
@@ -102,7 +102,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultCase = Map[String, CaseOption](
         "string1" -> lower
       )
-      val form = DummyForm.preprocessedForm(caseRules = defaultCase)
+      val form        = DummyForm.preprocessedForm(caseRules = defaultCase)
 
       val result = form.bind(testData("Vinnie and the grenades")).get
       result.string1 mustBe "vinnie and the grenades"
@@ -113,7 +113,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
       val defaultCase = Map[String, CaseOption](
         "string1" -> none
       )
-      val form = DummyForm.preprocessedForm(caseRules = defaultCase)
+      val form        = DummyForm.preprocessedForm(caseRules = defaultCase)
 
       val result = form.bind(testData("Vinnie and the grenades")).get
       result.string1 mustBe "Vinnie and the grenades"

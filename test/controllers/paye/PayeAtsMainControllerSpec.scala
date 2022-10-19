@@ -36,7 +36,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
   implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
 
-  lazy val mainView = inject[PayeTaxsMainView]
+  lazy val mainView             = inject[PayeTaxsMainView]
   lazy val payeGenericErrorView = inject[PayeGenericErrorView]
 
   def getSingleYearData: PayeAtsData =
@@ -55,7 +55,8 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Right(mock[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -68,7 +69,8 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsNotFoundResponse("Not found"))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
@@ -80,7 +82,8 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]]))
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+      )
         .thenReturn(Future(Left(AtsErrorResponse("Error occurred"))))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)

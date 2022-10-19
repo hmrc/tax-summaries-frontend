@@ -34,8 +34,13 @@ import utils.WireMockHelper
 import scala.concurrent.ExecutionContext
 
 class HttpHandlerSpec
-    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with ScalaFutures with WireMockHelper
-    with IntegrationPatience with Injecting {
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with ScalaFutures
+    with WireMockHelper
+    with IntegrationPatience
+    with Injecting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -59,7 +64,7 @@ class HttpHandlerSpec
     implicit val reads: Reads[TestClass] = Json.reads[TestClass]
   }
 
-  def url = s"http://localhost:${server.port()}"
+  def url        = s"http://localhost:${server.port()}"
   def partialUrl = s"/foo/bar"
 
   "HttpHandler" when {
@@ -76,7 +81,8 @@ class HttpHandlerSpec
             get(anyUrl()).willReturn(
               aResponse()
                 .withStatus(OK)
-                .withBody(s"""{"str": "$expectedBody"}"""))
+                .withBody(s"""{"str": "$expectedBody"}""")
+            )
           )
 
           val result = sut.get[TestClass](url).futureValue
@@ -95,7 +101,8 @@ class HttpHandlerSpec
             get(anyUrl()).willReturn(
               aResponse()
                 .withStatus(NOT_FOUND)
-                .withBody(expectedBody))
+                .withBody(expectedBody)
+            )
           )
 
           val result = sut.get[TestClass](url).futureValue
@@ -112,7 +119,8 @@ class HttpHandlerSpec
             get(anyUrl()).willReturn(
               aResponse()
                 .withStatus(UNAUTHORIZED)
-                .withBody("Unauthorised"))
+                .withBody("Unauthorised")
+            )
           )
 
           val result = sut.get[TestClass](url).futureValue
@@ -126,7 +134,8 @@ class HttpHandlerSpec
             get(anyUrl()).willReturn(
               aResponse()
                 .withStatus(INTERNAL_SERVER_ERROR)
-                .withBody("Error"))
+                .withBody("Error")
+            )
           )
 
           val result = sut.get[TestClass](url).futureValue
@@ -140,7 +149,8 @@ class HttpHandlerSpec
               aResponse()
                 .withStatus(OK)
                 .withBody(s"""{"str": "some body"}""")
-                .withFixedDelay(2000))
+                .withFixedDelay(2000)
+            )
           )
 
           val result = sut.get[TestClass](url).futureValue
