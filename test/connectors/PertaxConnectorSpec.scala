@@ -48,7 +48,8 @@ class PertaxConnectorSpec
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "microservice.services.pertax.port" -> server.port()
+        "microservice.services.pertax.port"    -> server.port(),
+        "microservice.services.pertax.version" -> "1.0"
       )
       .build()
 
