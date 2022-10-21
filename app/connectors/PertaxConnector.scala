@@ -42,7 +42,7 @@ class PertaxConnector @Inject() (
       .read(
         httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](
           s"$baseUrl/pertax/$nino/check-single-account",
-          headers = Seq((HeaderNames.ACCEPT, "application/vnd.hmrc.1.0+json"))
+          headers = Seq((HeaderNames.ACCEPT, s"application/vnd.hmrc.${applicationConfig.pertaxApiVersion}+json"))
         )
       )
       .map(response => response.json.as[PertaxApiResponse])
