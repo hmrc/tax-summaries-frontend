@@ -56,14 +56,14 @@ class PertaxAuthActionImpl @Inject() (
     pertaxConnector
       .pertaxAuth(request.nino.nino)
       .transform {
-        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _))                    =>
+        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
           Right(request.copy(nino = request.nino))
-        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect))) =>
+        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect), _)) =>
           Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
-        case Right(error)                                                        =>
+        case Right(error)                                                           =>
           logger.error(s"Invalid code response from pertax with message: ${error.message}")
           Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-        case _                                                                   =>
+        case _                                                                      =>
           Left(
             InternalServerError(
               serviceUnavailableView()(request, request2Messages(request), implicitly, implicitly)
