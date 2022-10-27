@@ -198,6 +198,7 @@ ats.treasury_spending.table.Environment=Yr amgylchedd
 ats.treasury_spending.table.HousingAndUtilities=Tai a Gwasanaethau Cyhoeddus, megis goleuadau stryd
 ats.treasury_spending.table.BusinessAndIndustry=Busnes a Diwydiant
 ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at Gyllideb yr UE
+ats.treasury_spending.table.OutstandingPaymentsToTheEU=Taliadau sy'n ddyledus i'r UE
 ats.treasury_spending.table.OverseasAid=Cymorth Tramor
 ats.treasury_spending.table.PublicOrderAndSafety=Trefn a Diogelwch Cyhoeddus
 
@@ -317,6 +318,7 @@ paye.ats.treasury_spending.table.Environment=Yr amgylchedd
 paye.ats.treasury_spending.table.HousingAndUtilities=Tai a Gwasanaethau Cyhoeddus, megis goleuadau stryd
 paye.ats.treasury_spending.table.BusinessAndIndustry=Busnes a Diwydiant
 paye.ats.treasury_spending.table.UkContributionToEuBudget=Cyfraniad y DU at Gyllideb yr UE
+paye.ats.treasury_spending.table.OutstandingPaymentsToTheEU=Taliadau sy'n ddyledus i'r UE
 paye.ats.treasury_spending.table.OverseasAid=Cymorth Tramor
 paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a Diogelwch Cyhoeddus
 
