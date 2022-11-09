@@ -57,7 +57,6 @@ class CryptoServiceSpec extends BaseSpec {
   }
 
   "getAgentToken" must {
-
     "return an AgentToken when the input is valid" in {
 
       val result = sut.getAgentToken(encryptToken(timestamp = timestamp))

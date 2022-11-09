@@ -115,7 +115,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     s"show generic no ats message and radiobuttons if there are years missing from paye and sa data from ${taxYear - 2}" in {
 
-      when(mockAppConfig.taxYear).thenReturn(2021)
+      when(mockAppConfig.taxYear).thenReturn(2022)
 
       val result =
         view(

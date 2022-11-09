@@ -36,7 +36,6 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPe
     }
 
     "filteredDataWithHigherTransport" must {
-
       "sort transport above Public Order" when {
 
         "the tax year is 2019" in {

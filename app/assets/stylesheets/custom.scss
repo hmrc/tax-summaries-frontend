@@ -111,4 +111,10 @@
         .heading-medium {
             margin: 0;
         }
+
+        @media (min-width: 40.0625em) {
+            .govuk-summary-list__row--no-actions:after {
+                width: 0;
+            }
+        }
 }
