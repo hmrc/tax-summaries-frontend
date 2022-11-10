@@ -16,7 +16,8 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, getRequestedFor, ok, urlEqualTo, urlMatching}
+import org.mockito.Mockito.verify
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -26,8 +27,9 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   override def fakeApplication() = GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"          -> server.port(),
-      "microservice.services.tax-summaries.port" -> server.port()
+      "microservice.services.auth.port"                   -> server.port(),
+      "microservice.services.tax-summaries.port"          -> server.port(),
+      "microservice.services.cachable.session-cache.port" -> server.port()
     )
     .build()
 
