@@ -11,7 +11,6 @@ object AppDependencies {
     ws,
     "com.typesafe.play"          %% "anorm"                      % "2.5.3",
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.2",
-    "uk.gov.hmrc"                %% "url-builder"                % s"3.5.0-$playVersion",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"9.5.0-$playVersion",
     "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % "5.7.0",
     "uk.gov.hmrc"                %% "govuk-template"             % s"5.69.0-$playVersion",
