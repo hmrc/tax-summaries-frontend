@@ -16,8 +16,7 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, getRequestedFor, ok, urlEqualTo, urlMatching}
-import org.mockito.Mockito.verify
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
