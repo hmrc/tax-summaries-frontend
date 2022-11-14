@@ -16,15 +16,17 @@
 
 package utils
 
-import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, put, urlEqualTo, urlMatching}
 import config.ApplicationConfig
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
+import play.api.libs.json.Json
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.ExecutionContext
 
@@ -82,6 +84,11 @@ class IntegrationSpec
     server.stubFor(
       post(urlEqualTo("/auth/authorise"))
         .willReturn(ok(authResponse))
+    )
+
+    server.stubFor(
+      put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
+        .willReturn(ok(Json.toJson(CacheMap("id", Map.empty)).toString))
     )
   }
 }

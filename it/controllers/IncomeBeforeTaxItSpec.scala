@@ -26,8 +26,9 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   override def fakeApplication() = GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"          -> server.port(),
-      "microservice.services.tax-summaries.port" -> server.port()
+      "microservice.services.auth.port"                   -> server.port(),
+      "microservice.services.tax-summaries.port"          -> server.port(),
+      "microservice.services.cachable.session-cache.port" -> server.port()
     )
     .build()
 
