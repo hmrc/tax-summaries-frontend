@@ -18,7 +18,10 @@ package testUtils
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
-import models.{AgentToken, AtsListData}
+import connectors.DataCacheConnector
+import models.{AgentToken, AtsData, AtsListData}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -27,10 +30,13 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
+import utils.TestConstants.mock
 import utils.WireMockHelper
+
 import java.time.Instant
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IntegrationSpec
     extends AnyWordSpec
@@ -51,9 +57,13 @@ class IntegrationSpec
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val taxYear: Int = appConfig.taxYear
+  lazy val taxYear: Int = 2022
 
-  val atsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
+  val mockDataCacheConnector = mock[DataCacheConnector]
+
+  val atsListData: AtsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
+
+  val atsData: AtsData = Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))).get
 
   val agentTokenMock = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
@@ -126,5 +136,27 @@ class IntegrationSpec
         .willReturn(ok(Json.toJson(CacheMap("id", Map.empty)).toString))
     )
 
+    server.stubFor(
+      post(urlEqualTo("/auth/authorise"))
+        .willReturn(ok(authResponseNoSA))
+    )
+
+    when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful("token"))
+
+    when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Some(atsListData)))
+
+    when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any()))
+      .thenReturn(Future.successful(Some(agentTokenMock)))
+
+    when(mockDataCacheConnector.storeAtsListForSession(any())(any(), any()))
+      .thenReturn(Future.successful(Some(atsListData)))
+
+    when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any()))
+      .thenReturn(Future.successful(Some(atsData)))
+
+    when(mockDataCacheConnector.storeAtsForSession(any())(any(), any()))
+      .thenReturn(Future.successful(Some(atsData)))
   }
 }

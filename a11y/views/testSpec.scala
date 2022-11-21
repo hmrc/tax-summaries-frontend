@@ -11,12 +11,14 @@ import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty, status => getStatus}
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, redirectLocation, route, writeableOf_AnyContentAsEmpty, status => getStatus}
+import services.SummaryService
 import testUtils.{FileHelper, IntegrationSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
 import testUtils.FileHelper
+import utils.GenericViewModel
 import utils.TestConstants.mock
 
 import java.util.UUID
@@ -30,8 +32,6 @@ class testSpec extends IntegrationSpec with AccessibilityMatchers {
   lazy val backendUrlPaye =
     s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
 
-  val mockDataCacheConnector = mock[DataCacheConnector]
-
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"          -> server.port(),
@@ -42,7 +42,6 @@ class testSpec extends IntegrationSpec with AccessibilityMatchers {
   )
     .build()
 
-
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] = {
     val uuid = UUID.randomUUID().toString
     FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid)
@@ -52,28 +51,12 @@ class testSpec extends IntegrationSpec with AccessibilityMatchers {
     List(
       "/annual-tax-summary/",
       "/annual-tax-summary/paye/main"
-
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
-        server.stubFor(
-          post(urlEqualTo("/auth/authorise"))
-            .willReturn(ok(authResponseNoSA))
-        )
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
             .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
         )
-        when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful("token"))
-
-        when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Some(atsListData)))
-
-        when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any()))
-          .thenReturn(Future.successful(Some(agentTokenMock)))
-
-        when(mockDataCacheConnector.storeAtsListForSession(any())(any(), any()))
-          .thenReturn(Future.successful(Some(atsListData)))
 
         val result: Future[Result] = route(app, request(url)).get
         getStatus(result) mustBe OK
@@ -82,4 +65,32 @@ class testSpec extends IntegrationSpec with AccessibilityMatchers {
     }
   }
 
+  "annual-tax-summary data pages" must {
+    List(
+      s"/annual-tax-summary/main?taxYear=$taxYear",
+      s"/annual-tax-summary/summary?taxYear=$taxYear",
+      s"/annual-tax-summary/nics?taxYear=$taxYear",
+      s"/annual-tax-summary/treasury-spending?taxYear=$taxYear",
+      s"/annual-tax-summary/income-before-tax?taxYear=$taxYear",
+      s"/annual-tax-summary/tax-free-amount?taxYear=$taxYear",
+      s"/annual-tax-summary/total-income-tax?taxYear=$taxYear",
+      s"/annual-tax-summary/capital-gains-tax?taxYear=$taxYear",
+    ).foreach { url =>
+      s"pass accessibility validation at url $url" in {
+        server.stubFor(
+          get(urlEqualTo(backendUrlSa))
+            .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+        )
+
+        server.stubFor(
+          get(urlEqualTo(backendUrl))
+            .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+        )
+
+        val result: Future[Result] = route(app, request(url)).get
+        getStatus(result) mustBe OK
+        contentAsString(result) must passAccessibilityChecks(OutputFormat.Verbose)
+      }
+    }
+  }
 }
