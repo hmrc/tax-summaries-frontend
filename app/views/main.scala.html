@@ -71,9 +71,11 @@
             ).withUrlsFromConfig())
     }
     @hmrcLanguageSelectHelper()
-    @if(beforeContentHtml.isDefined){
-        @beforeContentHtml
-    }
+    <aside>
+        @if(beforeContentHtml.isDefined){
+            @beforeContentHtml
+        }
+    </aside>
 }
 
 @contentBlock = {
