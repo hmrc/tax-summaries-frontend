@@ -34,7 +34,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.TestConstants.mock
 import utils.WireMockHelper
-
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,13 +56,13 @@ class IntegrationSpec
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val taxYear: Int = 2022
+  lazy val fakeTaxYear: Int = 2022
 
   val mockDataCacheConnector = mock[DataCacheConnector]
 
   val atsListData: AtsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
 
-  val atsData: AtsData = Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))).get
+  val atsData: AtsData = Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json"))).get
 
   val agentTokenMock = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
