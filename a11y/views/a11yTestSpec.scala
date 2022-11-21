@@ -1,36 +1,27 @@
 package views
 
 
-import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo}
 import connectors.DataCacheConnector
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, redirectLocation, route, writeableOf_AnyContentAsEmpty, status => getStatus}
-import services.SummaryService
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty, status => getStatus}
 import testUtils.{FileHelper, IntegrationSpec}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
-import testUtils.FileHelper
-import utils.GenericViewModel
-import utils.TestConstants.mock
 
 import java.util.UUID
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class testSpec extends IntegrationSpec with AccessibilityMatchers {
+class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
-  lazy val backendUrl = s"/taxs/$generatedSaUtr/$taxYear/ats-data"
+  lazy val backendUrl = s"/taxs/$generatedSaUtr/$fakeTaxYear/ats-data"
   lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
-
-  lazy val backendUrlPaye =
-    s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
@@ -67,14 +58,14 @@ class testSpec extends IntegrationSpec with AccessibilityMatchers {
 
   "annual-tax-summary data pages" must {
     List(
-      s"/annual-tax-summary/main?taxYear=$taxYear",
-      s"/annual-tax-summary/summary?taxYear=$taxYear",
-      s"/annual-tax-summary/nics?taxYear=$taxYear",
-      s"/annual-tax-summary/treasury-spending?taxYear=$taxYear",
-      s"/annual-tax-summary/income-before-tax?taxYear=$taxYear",
-      s"/annual-tax-summary/tax-free-amount?taxYear=$taxYear",
-      s"/annual-tax-summary/total-income-tax?taxYear=$taxYear",
-      s"/annual-tax-summary/capital-gains-tax?taxYear=$taxYear",
+      s"/annual-tax-summary/main?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/summary?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/nics?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/treasury-spending?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/income-before-tax?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/tax-free-amount?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/total-income-tax?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/capital-gains-tax?taxYear=$fakeTaxYear",
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
         server.stubFor(
@@ -84,7 +75,7 @@ class testSpec extends IntegrationSpec with AccessibilityMatchers {
 
         server.stubFor(
           get(urlEqualTo(backendUrl))
-            .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+            .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json")))
         )
 
         val result: Future[Result] = route(app, request(url)).get
