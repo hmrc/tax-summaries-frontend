@@ -64,7 +64,7 @@ class CryptoService @Inject() ()(implicit val appConfig: ApplicationConfig) {
 
   protected def validateTimestamp(agentToken: AgentToken) = {
     val timeStamp = Instant.ofEpochMilli(agentToken.timestamp)
-    val maxAge    = timeStamp.plusMillis(tokenMaxAge)
+    val maxAge    = timeStamp.plusSeconds(tokenMaxAge)
     val timeNow   = Instant.now()
 
     if (timeNow.isAfter(maxAge) || timeNow.isBefore(timeStamp)) {
