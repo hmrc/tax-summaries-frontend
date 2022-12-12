@@ -62,8 +62,7 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
     }
 
   def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
-    hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]
+    hc: HeaderCarrier
   ): Future[Either[AtsResponse, List[Int]]] =
     for {
       response <- middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)

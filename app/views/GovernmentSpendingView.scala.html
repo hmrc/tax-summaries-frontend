@@ -16,10 +16,8 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
+@import helpers.{H1, HeaderSection, Link, P, PageHeading}
 @import views.html.includes.CurrencyAmountView
-@import views.html.helpers.HeaderSection
-@import scala.concurrent.ExecutionContext
-@import helpers.{H1, P, Link, PageHeading}
 
 @this(
     main: main,
@@ -36,8 +34,7 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    appConfig: ApplicationConfig,
-        ec: ExecutionContext
+    appConfig: ApplicationConfig
 )
 
 @beforeContent = {

@@ -32,7 +32,7 @@ class PayeErrorController @Inject() (
   mcc: MessagesControllerComponents,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView
-)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
+)(implicit appConfig: ApplicationConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with CurrentTaxYear

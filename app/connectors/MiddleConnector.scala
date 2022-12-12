@@ -21,7 +21,6 @@ import config.ApplicationConfig
 import models.{AtsData, AtsListData, AtsResponse}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import play.api.Logging
-import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 

@@ -29,27 +29,16 @@ import scala.concurrent.ExecutionContext
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
   val configuration: Configuration,
-  val environment: Environment,
   errorTemplateView: ErrorTemplateView,
   pageNotFoundTemplateView: PageNotFoundTemplateView
-)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
+)(implicit val appConfig: ApplicationConfig)
     extends FrontendErrorHandler {
-
-  private def lang(implicit request: Request[_]): Lang =
-    Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: Request[_]
-  ): Html = {
-    implicit val _: Lang = lang
+  ): Html =
     errorTemplateView(pageTitle, heading, message)
-  }
 
-  override def notFoundTemplate(implicit request: Request[_]): Html = {
-    implicit val _: Lang = lang
+  override def notFoundTemplate(implicit request: Request[_]): Html =
     pageNotFoundTemplateView()
-  }
-
-  def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
-    app.configuration.getOptional[Configuration](s"microservice.metrics")
 }

@@ -27,14 +27,14 @@ import scala.concurrent.ExecutionContext
 class AccountController @Inject() (
   mcc: MessagesControllerComponents,
   sessionExpiredView: session_expired
-)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
+)(implicit val appConfig: ApplicationConfig)
     extends FrontendController(mcc) {
 
   def signOut: Action[AnyContent] = Action {
     Redirect(appConfig.feedbackUrl).withNewSession
   }
 
-  def keepAlive: Action[AnyContent] = Action { implicit request =>
+  def keepAlive: Action[AnyContent] = Action {
     NoContent
   }
 

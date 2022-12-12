@@ -19,6 +19,8 @@ package utils.prevalidation
 import play.api.data.Form
 import utils.prevalidation.prevalidation._
 
+import scala.language.implicitConversions
+
 object TrimOption extends Enumeration {
   type TrimOption = Value
   val both, all, bothAndCompress, none = Value
@@ -106,7 +108,7 @@ trait PrevalidationAPI[T] {
           FormUtils.fromJson(js = body.asJson.get).mapValues(Seq(_))
         case body: Map[_, _]                                                     => body.asInstanceOf[Map[String, Seq[String]]]
         case body: play.api.mvc.MultipartFormData[_]                             => body.asFormUrlEncoded
-        case body: play.api.libs.json.JsValue                                    => FormUtils.fromJson(js = body).mapValues(Seq(_))
+        case body: play.api.libs.json.JsValue                                    => FormUtils.fromJson(js = body).view.mapValues(Seq(_))
         case _                                                                   => Map.empty[String, Seq[String]]
       }) ++ request.queryString
     }

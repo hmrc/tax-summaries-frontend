@@ -88,13 +88,15 @@ class AtsMergePageController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
-    atsForms.atsYearFormMapping.bindFromRequest.fold(
-      formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
-      value =>
-        Future.successful(
-          redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
-        )
-    )
+    atsForms.atsYearFormMapping
+      .bindFromRequest()
+      .fold(
+        formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
+        value =>
+          Future.successful(
+            redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
+          )
+      )
   }
 
   private def redirectWithYear(taxYearChoice: AtsYearChoice): Result =

@@ -67,11 +67,11 @@ class GovernmentSpendController @Inject() (
 
     govSpendList.foreach { case (key, value) =>
       if (key == "Environment") {
-        percentEnviron = value.percentage.doubleValue()
+        percentEnviron = value.percentage.doubleValue
       } else if (key == "Culture") {
-        percentCultural = value.percentage.doubleValue()
+        percentCultural = value.percentage.doubleValue
       } else if (key == "HousingAndUtilities") {
-        percentHousing = value.percentage.doubleValue()
+        percentHousing = value.percentage.doubleValue
       }
 
     }
