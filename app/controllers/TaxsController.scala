@@ -45,6 +45,7 @@ abstract class TaxsController @Inject() (
 
   def auditService: AuditService
 
+  //TODO - Fix commented
   type ViewModel <: GenericViewModel
 
   def obtainResult(data: ViewModel)(implicit request: AuthenticatedRequest[_]): Result
@@ -55,7 +56,7 @@ abstract class TaxsController @Inject() (
     extractViewModel() map {
       case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts(appConfig.taxYear))
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
-      case Right(result: ViewModel)          => obtainResult(result)
+//      case Right(result: ViewModel)          => obtainResult(result)
       case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
     }
 

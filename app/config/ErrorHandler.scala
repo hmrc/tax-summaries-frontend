@@ -17,14 +17,12 @@
 package config
 
 import com.google.inject.Inject
-import play.api.i18n.{Lang, MessagesApi}
+import play.api.Configuration
+import play.api.i18n.MessagesApi
 import play.api.mvc.Request
-import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
-
-import scala.concurrent.ExecutionContext
 
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,

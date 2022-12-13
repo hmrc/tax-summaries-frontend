@@ -20,8 +20,7 @@ import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
 import models.AtsErrorResponse
 import org.jsoup.Jsoup
-import org.mockito.Matchers._
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.FakeRequest

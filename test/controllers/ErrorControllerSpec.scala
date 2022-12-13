@@ -19,8 +19,7 @@ package controllers
 import cats.data.EitherT
 import controllers.auth._
 import models.AtsErrorResponse
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
@@ -269,7 +268,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val document = contentAsString(result)
 
           status(result) mustBe INTERNAL_SERVER_ERROR
-          document mustBe contentAsString(serviceUnavailableView()(implicitly, implicitly, appConfig, implicitly))
+          document mustBe contentAsString(serviceUnavailableView()(implicitly, implicitly))
         }
       }
     }

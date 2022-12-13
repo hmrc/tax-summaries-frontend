@@ -26,8 +26,8 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
@@ -53,7 +53,7 @@ class PayeAuthActionImpl @Inject() (override val authConnector: DefaultAuthConne
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
       implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {

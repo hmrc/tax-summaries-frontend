@@ -18,8 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.MiddleConnector
-import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
-import models.{PayeAtsData, _}
+import models._
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.domain.Nino
@@ -35,8 +34,7 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
 ) extends Logging {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(implicit
-    hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]
+    hc: HeaderCarrier
   ): Future[Either[AtsResponse, PayeAtsData]] =
     for {
       response <- middleConnector.connectToPayeATS(nino, taxYear)
@@ -82,8 +80,7 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
     }
 
   private def sendAuditEvent(nino: Nino, taxYear: Int, isSuccess: Boolean)(implicit
-    hc: HeaderCarrier,
-    request: PayeAuthenticatedRequest[_]
+    hc: HeaderCarrier
   ): Future[AuditResult] =
     auditService.sendEvent(
       auditType = if (isSuccess) AuditTypes.Tx_SUCCEEDED else AuditTypes.Tx_FAILED,

@@ -57,9 +57,7 @@ lazy val microservice = Project(appName, file("."))
       "-Wconf:cat=unused&src=.*Routes\\.scala:s",
       "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
       "-Wconf:cat=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
-      "-Wconf:cat=any&msg=\\.*Supply the empty argument list `()` explicitly to invoke method unary_-\\.*:s",
-      "-Wconf:cat=any&msg=\\.*unary prefix operator definition with empty parameter list is deprecated\\.*:s",
-      "-Wconf:cat=any&msg=\\.*@*\\.*:s"
+      "-Wconf:cat=other-match-analysis:s"
     )
   )
 

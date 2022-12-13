@@ -137,7 +137,7 @@ class MergePageAuthActionImpl @Inject() (
 
       if (agentRef.isDefined && !isAgentActive) {
         Future(Redirect(controllers.routes.ErrorController.notAuthorised))
-      } else if (isAgentActive && isAgentTokenMissing.equals(true)) {
+      } else if (isAgentActive && isAgentTokenMissing) {
         Future(Redirect(controllers.routes.ErrorController.notAuthorised))
       } else if (saUtr.isEmpty && agentRef.isEmpty) {
         nino
