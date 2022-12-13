@@ -73,7 +73,7 @@ class MiddleConnectorSpec
   val uar = Uar(testUar)
 
   val loadSAJson         = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-  val saResponse: String = loadAndReplace("/summary_json_test_2021.json", Map("$utr" -> utr.utr))
+  val saResponse: String = loadAndReplace("/summary_json_test_2021.json", Map(s"$utr" -> utr.utr))
   val expectedSAResponse = Json.fromJson[AtsData](loadSAJson).get
 
   val loadAtsListData = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
@@ -94,7 +94,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentYear).futureValue.right.value
+      val result = sut.connectToPayeATS(testNino, currentYear).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -404,7 +404,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.right.value
+      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -455,7 +455,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentYear).futureValue.right.value
+      val result = sut.connectToGovernmentSpend(currentYear).futureValue.value
 
       result.status mustBe OK
       result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)

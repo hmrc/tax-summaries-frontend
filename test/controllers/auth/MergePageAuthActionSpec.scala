@@ -19,7 +19,6 @@ package controllers.auth
 import connectors.DataCacheConnector
 import models.{AgentToken, MatchingDetails}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}

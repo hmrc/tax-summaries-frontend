@@ -18,10 +18,8 @@ package utils
 
 import com.typesafe.config.ConfigException
 import config.ApplicationConfig
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 
-class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
+class CategoriesUtilsSpec extends BaseSpec {
 
   val mockAppConfig = mock[ApplicationConfig]
 

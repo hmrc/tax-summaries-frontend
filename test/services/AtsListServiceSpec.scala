@@ -22,7 +22,6 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -191,7 +190,7 @@ class AtsListServiceSpec extends BaseSpec {
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(AtsTestData.atsListData)))
 
-      whenReady(sut.createModel) { result =>
+      whenReady(sut.createModel()) { result =>
         result mustBe Right(AtsList("1111111111", "John", "Smith", List(2018)))
       }
 
@@ -204,7 +203,7 @@ class AtsListServiceSpec extends BaseSpec {
       when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future
         .successful(AtsNotFoundResponse("Not found"))
 
-      whenReady(sut.createModel) { result =>
+      whenReady(sut.createModel()) { result =>
         result mustBe Right(AtsList.empty)
       }
 
@@ -217,7 +216,7 @@ class AtsListServiceSpec extends BaseSpec {
       when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future
         .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
 
-      val result = sut.createModel.futureValue.left.value
+      val result = sut.createModel().futureValue.left.value
       result mustBe an[AtsErrorResponse]
     }
   }
@@ -227,7 +226,7 @@ class AtsListServiceSpec extends BaseSpec {
     "Return a ats list with 2020 year data" in {
 
       whenReady(sut.getAtsYearList) { result =>
-        result.right.get.atsYearList.get.contains(2020) mustBe true
+        result.value.atsYearList.get.contains(2020) mustBe true
       }
 
     }
@@ -240,7 +239,7 @@ class AtsListServiceSpec extends BaseSpec {
         .thenReturn(Future.successful(Some(dataFor2019)))
 
       whenReady(sut.getAtsYearList) { result =>
-        result.right.get.atsYearList.get.contains(2020) mustBe false
+        result.value.atsYearList.get.contains(2020) mustBe false
       }
 
     }

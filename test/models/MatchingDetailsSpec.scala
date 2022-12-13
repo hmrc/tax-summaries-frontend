@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{JsResultException, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtrGenerator
 import utils.BaseSpec
 

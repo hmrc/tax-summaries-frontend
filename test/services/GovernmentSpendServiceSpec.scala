@@ -19,9 +19,8 @@ package services
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
-import org.mockito.Matchers.{any, eq => meq}
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -35,6 +34,7 @@ import view_models.{Amount, AtsList, GovernmentSpend}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 class GovernmentSpendServiceSpec extends BaseSpec {
 
@@ -69,7 +69,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
+      when(mockAtsService.createModel(any(), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
         .thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -116,7 +116,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val expectedBody = Seq(("Environment", 5.5))
 
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
+      when(mockMiddleConnector.connectToGovernmentSpend(any())(any())) thenReturn Future
         .successful(
           Right(
             HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> List("")))
@@ -125,14 +125,14 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
-      result.right.value mustBe expectedBody
+      result.value mustBe expectedBody
     }
 
     "sort data by percentage" in {
 
       val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 2.3))
 
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
+      when(mockMiddleConnector.connectToGovernmentSpend(any())(any())) thenReturn Future
         .successful(
           Right(
             HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq("")))
@@ -141,7 +141,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
-      result.right.value mustBe expectedBody
+      result.value mustBe expectedBody
     }
 
     "sort the categories in correct order for taxYear 18/19" in {
@@ -150,7 +150,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 5.5))
 
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
+      when(mockMiddleConnector.connectToGovernmentSpend(any())(any())) thenReturn Future
         .successful(
           Right(
             HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":5.5, "Welfare":23.4}"""), Map("" -> List("")))
@@ -159,7 +159,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
-      result.right.value mustBe expectedBody
+      result.value mustBe expectedBody
     }
   }
 }

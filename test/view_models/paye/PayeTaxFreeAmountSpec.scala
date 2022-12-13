@@ -20,7 +20,6 @@ import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import utils.JsonUtil
 import view_models.Amount
@@ -28,7 +27,6 @@ import view_models.Amount
 class PayeTaxFreeAmountSpec
     extends AnyWordSpec
     with Matchers
-    with MockitoSugar
     with JsonUtil
     with GuiceOneAppPerTest
     with ScalaFutures

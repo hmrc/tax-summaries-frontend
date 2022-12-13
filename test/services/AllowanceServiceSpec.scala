@@ -17,10 +17,8 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.AtsData
-import org.mockito.Matchers
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -30,8 +28,9 @@ import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
 import view_models._
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 class AllowanceServiceSpec extends BaseSpec {
 
@@ -61,18 +60,16 @@ class AllowanceServiceSpec extends BaseSpec {
   val mockAtsService: AtsService = mock[AtsService]
 
   def sut = new AllowanceService(mockAtsService) with MockitoSugar {
-    implicit val hc = new HeaderCarrier
-    val taxYear     = 2015
-
+    val taxYear = 2015
   }
 
   "AllowanceService.getAllowances" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
-        mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
-          Matchers.any(),
-          Matchers.any()
+        mockAtsService.createModel(any(), any())(
+          any(),
+          any()
         )
       ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)

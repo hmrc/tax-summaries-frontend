@@ -19,11 +19,9 @@ package services
 import connectors.DataCacheConnector
 import controllers.auth.AuthenticatedRequest
 import models._
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,12 +35,7 @@ import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageServiceSpec
-    extends BaseSpec
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with MockitoSugar
-    with BeforeAndAfterEach {
+class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
 
   val data = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
@@ -88,7 +81,10 @@ class AtsMergePageServiceSpec
     true,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+    FakeRequest(
+      "GET",
+      controllers.routes.AtsMergePageController.onPageLoad.toString + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg"
+    )
   )
 
   "AtsMergePageService" when {
@@ -113,7 +109,7 @@ class AtsMergePageServiceSpec
 
           when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful("token"))
-          when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
             mockPayeAtsService
               .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
@@ -144,7 +140,7 @@ class AtsMergePageServiceSpec
               FakeRequest()
             )
 
-          when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
             mockPayeAtsService
               .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
@@ -154,7 +150,7 @@ class AtsMergePageServiceSpec
           val result = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
 
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
 
@@ -171,13 +167,13 @@ class AtsMergePageServiceSpec
               fakeCredentials,
               FakeRequest()
             )
-          when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
 
           val result = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
 
-          verify(mockDataCacheConnector, never())
-            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockDataCacheConnector, never)
+            .storeAgentToken(any())(any(), any())
         }
       }
 
@@ -197,7 +193,7 @@ class AtsMergePageServiceSpec
               FakeRequest()
             )
 
-          when(mockAtsListService.createModel).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
+          when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(
             mockPayeAtsService
               .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
@@ -221,7 +217,7 @@ class AtsMergePageServiceSpec
               fakeCredentials,
               FakeRequest()
             )
-          when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
             mockPayeAtsService
               .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
@@ -229,7 +225,7 @@ class AtsMergePageServiceSpec
             .thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result.left.get mustBe an[AtsErrorResponse]
+          result.swap.value mustBe an[AtsErrorResponse]
         }
 
         "saData and paye both return error response" in {
@@ -245,7 +241,7 @@ class AtsMergePageServiceSpec
               fakeCredentials,
               FakeRequest()
             )
-          when(mockAtsListService.createModel).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
+          when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(
             mockPayeAtsService
               .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)

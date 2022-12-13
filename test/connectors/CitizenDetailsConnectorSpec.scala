@@ -62,7 +62,7 @@ class CitizenDetailsConnectorSpec
     "return an OK response when the CID API returns OK" in {
       server.stubFor(get(url).willReturn(ok("my cid response")))
 
-      val result = connector.connectToCid(nino.toString()).futureValue.right.get
+      val result = connector.connectToCid(nino.toString()).futureValue.value
 
       result.status mustBe OK
       result.body mustBe "my cid response"

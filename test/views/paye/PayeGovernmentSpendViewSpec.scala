@@ -19,11 +19,7 @@ package views.paye
 import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
-import org.mockito.Matchers
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
 import play.api.Configuration
-import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

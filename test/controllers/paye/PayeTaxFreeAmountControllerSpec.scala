@@ -17,16 +17,14 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakePayeAuthAction
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import utils.TestConstants.testNino
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeTaxFreeAmountView
 
