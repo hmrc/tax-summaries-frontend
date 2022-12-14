@@ -30,6 +30,7 @@ import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import java.util.Date
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class TaxsController @Inject() (
@@ -52,11 +53,12 @@ abstract class TaxsController @Inject() (
 
   def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
-  def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
+  @nowarn // TODO - Fix missing interpolar warning
+  private def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel() map {
       case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts(appConfig.taxYear))
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
-//      case Right(result: ViewModel)          => obtainResult(result)
+      case Right(result: ViewModel)          => obtainResult(result)
       case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
     }
 
