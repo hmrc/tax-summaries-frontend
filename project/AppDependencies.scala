@@ -31,7 +31,7 @@ object AppDependencies {
 //    "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion,
   "com.github.tomakehurst"   % "wiremock-jre8"                % "2.26.1",
     "org.pegdown"             %  "pegdown"                      % "1.6.0",
-    "com.vladsch.flexmark"    % "flexmark-all"                  % "0.35.10"
+    "com.vladsch.flexmark"    % "flexmark-all"                  % "0.62.2"
   ).map(_ % "test,it")
 
   val all: Seq[ModuleID] = compile ++ test

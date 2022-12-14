@@ -34,11 +34,13 @@ import scala.language.postfixOps
 
 class AllowanceServiceSpec extends BaseSpec {
 
+  override val taxYear = 2015
+
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(taxYear)
   )
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
@@ -54,14 +56,12 @@ class AllowanceServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=${sut.taxYear}")
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   val mockAtsService: AtsService = mock[AtsService]
 
-  def sut = new AllowanceService(mockAtsService) with MockitoSugar {
-    val taxYear = 2015
-  }
+  def sut = new AllowanceService(mockAtsService) with MockitoSugar
 
   "AllowanceService.getAllowances" must {
 
@@ -72,7 +72,7 @@ class AllowanceServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)
+      val result = Await.result(sut.getAllowances(taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
   }

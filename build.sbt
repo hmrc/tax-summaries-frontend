@@ -50,6 +50,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(integrationTestSettings())
   .settings(
     scalacOptions ++= Seq(
+      "-feature",
       "-Werror",
       "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
       "-Wconf:cat=unused-imports&site=<empty>:s",

@@ -21,6 +21,7 @@ import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -55,9 +56,9 @@ class AtsListServiceSpec extends BaseSpec {
     reset(mockAuditService)
     reset(mockAuthUtils)
 
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(any())(any(), any()))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
       .thenReturn(Future.successful(Some(2014)))
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(any())(any(), any()))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any(), any()))
       .thenReturn(Future.successful(Some(2015)))
     when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(data)))
@@ -131,7 +132,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when None is returned from the dataCache" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(any())(any(), any()))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
         .thenReturn(Future.successful(None))
 
       val result = sut.storeSelectedTaxYear(2014)
@@ -142,7 +143,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when the dataCache future has failed" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(any())(any(), any()))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
         .thenReturn(Future.failed(new Exception("failed")))
 
       val result = sut.storeSelectedTaxYear(2014)
@@ -254,7 +255,7 @@ class AtsListServiceSpec extends BaseSpec {
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(mockDataCacheConnector, never)
-          .storeAtsListForSession(any())
+          .storeAtsListForSession(any())(any(), any())
         verify(mockMiddleConnector, never).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }

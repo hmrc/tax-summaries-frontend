@@ -35,20 +35,20 @@ import scala.language.postfixOps
 
 class TotalIncomeTaxServiceSpec extends BaseSpec {
 
+  override val taxYear = 2015
+
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(taxYear)
   )
 
   implicit val hc = HeaderCarrier()
 
   val mockAtsService = mock[AtsService]
 
-  def sut = new TotalIncomeTaxService(mockAtsService) with MockitoSugar {
-    val taxYear = 2015
-  }
+  def sut: TotalIncomeTaxService = new TotalIncomeTaxService(mockAtsService) with MockitoSugar
 
   "TotalIncomeTaxService getIncomeData" must {
 
@@ -70,7 +70,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         fakeCredentials,
         FakeRequest("GET", "?taxYear=2015")
       )
-      val result       = Await.result(sut.getIncomeData(sut.taxYear)(hc, request), 1500 millis)
+      val result       = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }

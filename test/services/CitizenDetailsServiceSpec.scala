@@ -62,7 +62,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
       s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
         val response = HttpResponse.apply(httpStatus, "body")
 
-        when(citizenDetailsConnector.connectToCid(any()))(any())
+        when(citizenDetailsConnector.connectToCid(any())(any()))
           .thenReturn(Future.successful(Right(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
@@ -74,7 +74,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
       s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
         val response = UpstreamErrorResponse.apply("body", httpStatus)
 
-        when(citizenDetailsConnector.connectToCid(any()))(any())
+        when(citizenDetailsConnector.connectToCid(any())(any()))
           .thenReturn(Future.successful(Left(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue

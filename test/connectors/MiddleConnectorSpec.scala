@@ -73,7 +73,7 @@ class MiddleConnectorSpec
   val uar = Uar(testUar)
 
   val loadSAJson         = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-  val saResponse: String = loadAndReplace("/summary_json_test_2021.json", Map(s"$utr" -> utr.utr))
+  val saResponse: String = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
   val expectedSAResponse = Json.fromJson[AtsData](loadSAJson).get
 
   val loadAtsListData = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
