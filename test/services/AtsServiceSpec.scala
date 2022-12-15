@@ -177,6 +177,19 @@ class AtsServiceSpec extends BaseSpec {
                 Some(data)
               )
 
+              implicit val request =
+                AuthenticatedRequest(
+                  "userId",
+                  Some(Uar(testUar)),
+                  Some(SaUtr(testUtr)),
+                  None,
+                  true,
+                  false,
+                  ConfidenceLevel.L50,
+                  fakeCredentials,
+                  FakeRequest()
+                )
+
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any(), any())(any())
