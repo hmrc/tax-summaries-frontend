@@ -46,14 +46,14 @@ abstract class TaxsController @Inject() (
 
   def auditService: AuditService
 
-  //TODO - Fix commented
   type ViewModel <: GenericViewModel
 
   def obtainResult(data: ViewModel)(implicit request: AuthenticatedRequest[_]): Result
 
   def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
-  @nowarn // TODO - Fix missing interpolar warning
+  @nowarn("msg=abstract type pattern")
+  @nowarn("msg=The outer reference in this type test cannot be checked at run time")
   private def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel() map {
       case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts(appConfig.taxYear))

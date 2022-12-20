@@ -156,11 +156,6 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
-      println("*" * 100)
-      println(Map("year" -> "{\"atsType\":\"SA\",\"year\":2019}"))
-      println(Map("year" -> "{\"atsType\":\"SA\",\"year\":2019}").toSeq)
-      println("*" * 100)
-
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303

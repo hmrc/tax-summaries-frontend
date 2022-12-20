@@ -46,8 +46,6 @@ class AtsMergePageController @Inject() (
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
     if (appConfig.saShuttered && appConfig.payeShuttered) {
-      println("9" * 100)
-
       Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
     } else getSaAndPayeYearList()
   }
@@ -71,25 +69,21 @@ class AtsMergePageController @Inject() (
 
     atsMergePageService.getSaAndPayeYearList.map {
       case Right(atsMergePageViewModel) =>
-        {
-          println("3" * 100)
-          Ok(
-            atsMergePageView(
-              atsMergePageViewModel,
-              form,
-              getActingAsAttorneyFor(
-                request,
-                atsMergePageViewModel.saData.forename,
-                atsMergePageViewModel.saData.surname,
-                atsMergePageViewModel.saData.utr
-              )
+        Ok(
+          atsMergePageView(
+            atsMergePageViewModel,
+            form,
+            getActingAsAttorneyFor(
+              request,
+              atsMergePageViewModel.saData.forename,
+              atsMergePageViewModel.saData.surname,
+              atsMergePageViewModel.saData.utr
             )
           )
-        }
+        )
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
       case _                            =>
-        println("8" * 100)
         InternalServerError(genericErrorView())
     }
   }
@@ -98,19 +92,11 @@ class AtsMergePageController @Inject() (
     atsForms.atsYearFormMapping
       .bindFromRequest()
       .fold(
-        formWithErrors => {
-          println("2" * 100)
-          println(formWithErrors.errors)
-          println("2" * 100)
-
-          getSaAndPayeYearList(Some(formWithErrors))(request)
-        },
-        value => {
-          println("1" * 100)
+        formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
+        value =>
           Future.successful(
             redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
           )
-        }
       )
   }
 

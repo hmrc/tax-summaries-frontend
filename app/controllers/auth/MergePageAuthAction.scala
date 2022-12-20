@@ -85,7 +85,6 @@ class MergePageAuthActionImpl @Inject() (
     case _: NoActiveSession =>
       lazy val ggSignIn    = appConfig.loginUrl
       lazy val callbackUrl = appConfig.loginCallback
-      println("7" * 100)
 
       Redirect(
         ggSignIn,
