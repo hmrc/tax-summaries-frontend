@@ -153,7 +153,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       println("*" * 100)
@@ -182,7 +182,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -206,7 +206,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -230,7 +230,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -254,7 +254,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -278,7 +278,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
