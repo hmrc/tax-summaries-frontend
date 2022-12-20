@@ -45,9 +45,11 @@ class AtsMergePageController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
-    if (appConfig.saShuttered && appConfig.payeShuttered)
+    if (appConfig.saShuttered && appConfig.payeShuttered) {
+      println("9" * 100)
+
       Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
-    else getSaAndPayeYearList()
+    } else getSaAndPayeYearList()
   }
 
   private def getSaAndPayeYearList(
@@ -69,21 +71,26 @@ class AtsMergePageController @Inject() (
 
     atsMergePageService.getSaAndPayeYearList.map {
       case Right(atsMergePageViewModel) =>
-        Ok(
-          atsMergePageView(
-            atsMergePageViewModel,
-            form,
-            getActingAsAttorneyFor(
-              request,
-              atsMergePageViewModel.saData.forename,
-              atsMergePageViewModel.saData.surname,
-              atsMergePageViewModel.saData.utr
+        {
+          println("3" * 100)
+          Ok(
+            atsMergePageView(
+              atsMergePageViewModel,
+              form,
+              getActingAsAttorneyFor(
+                request,
+                atsMergePageViewModel.saData.forename,
+                atsMergePageViewModel.saData.surname,
+                atsMergePageViewModel.saData.utr
+              )
             )
           )
-        )
+        }
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-      case _                            => InternalServerError(genericErrorView())
+      case _                            =>
+        println("8" * 100)
+        InternalServerError(genericErrorView())
     }
   }
 
@@ -91,11 +98,19 @@ class AtsMergePageController @Inject() (
     atsForms.atsYearFormMapping
       .bindFromRequest()
       .fold(
-        formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
-        value =>
+        formWithErrors => {
+          println("2" * 100)
+          println(formWithErrors.errors)
+          println("2" * 100)
+
+          getSaAndPayeYearList(Some(formWithErrors))(request)
+        },
+        value => {
+          println("1" * 100)
           Future.successful(
             redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
           )
+        }
       )
   }
 

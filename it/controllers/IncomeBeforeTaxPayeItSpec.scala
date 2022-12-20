@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlE
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.SessionKeys
 import utils.{FileHelper, IntegrationSpec}
 
 class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
@@ -44,7 +45,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
           .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -58,7 +59,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -78,7 +79,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
             .willReturn(aResponse().withStatus(httpResponse))
         )
 
-        val request = FakeRequest(GET, url)
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
         val result = route(fakeApplication(), request)
 
