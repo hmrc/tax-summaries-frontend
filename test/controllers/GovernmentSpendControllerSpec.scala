@@ -34,6 +34,8 @@ import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite {
 
+  override val taxYear = 2014
+
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
 
