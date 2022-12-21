@@ -33,5 +33,25 @@ object AppDependencies {
     "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2"
   ).map(_ % "test,it")
 
-  val all: Seq[ModuleID] = compile ++ test
+  val jacksonVersion = "2.13.2"
+  val jacksonDatabindVersion = "2.13.2.2"
+
+  val jacksonOverrides = Seq(
+    "com.fasterxml.jackson.core" % "jackson-core",
+    "com.fasterxml.jackson.core" % "jackson-annotations",
+    "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8",
+    "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310"
+  ).map(_ % jacksonVersion)
+
+  val jacksonDatabindOverrides = Seq(
+    "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVersion
+  )
+
+  val akkaSerializationJacksonOverrides = Seq(
+    "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor",
+    "com.fasterxml.jackson.module" % "jackson-module-parameter-names",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala",
+  ).map(_ % jacksonVersion)
+
+  val all: Seq[ModuleID] = compile ++ jacksonDatabindOverrides ++ jacksonOverrides ++ akkaSerializationJacksonOverrides ++ test
 }
