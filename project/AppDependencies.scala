@@ -16,7 +16,7 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "play-partials"                    % s"8.3.0-$playVersion",
     "uk.gov.hmrc"                %% "domain"                           % s"8.1.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                         % "3.0.0",
-    "org.typelevel"              %% "cats-core"                        % "2.3.1",
+    "org.typelevel"              %% "cats-core"                        % "2.9.0",
     "uk.gov.hmrc"                %% "play-frontend-hmrc"               % s"3.17.0-play-28"
   )
 
@@ -27,10 +27,9 @@ object AppDependencies {
     "org.mockito"                %% "mockito-scala-scalatest" % "1.17.12",
     "com.typesafe.play"          %% "play-test"               % PlayVersion.current,
     "org.scalatestplus"          %% "scalacheck-1-16"         % "3.2.14.0",
-    "com.github.tomakehurst"      % "wiremock-jre8"           % "2.26.1",
+    "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.0",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
-    "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0",
-    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2"
+    "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0"
   ).map(_ % "test,it")
 
   val all: Seq[ModuleID] = compile ++ test
