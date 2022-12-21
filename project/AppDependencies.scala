@@ -29,7 +29,8 @@ object AppDependencies {
     "org.scalatestplus"          %% "scalacheck-1-16"         % "3.2.14.0",
     "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.0",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
-    "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0"
+    "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0",
+    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2"
   ).map(_ % "test,it")
 
   val all: Seq[ModuleID] = compile ++ test
