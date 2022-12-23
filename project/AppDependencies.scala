@@ -13,7 +13,6 @@ object AppDependencies {
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.2",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"9.5.0-$playVersion",
     "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % "5.7.0",
-    "uk.gov.hmrc"                %% "play-partials"              % s"8.1.0-$playVersion",
     "uk.gov.hmrc"                %% "domain"                     % s"8.1.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.0.0",
     "com.mohiva"                 %% "play-html-compressor"       % "0.7.1", // used to pretty print html by stripping out all the whitespaces added by the playframework
