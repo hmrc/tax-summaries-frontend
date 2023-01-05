@@ -29,7 +29,7 @@
     currencyAmountView: CurrencyAmountView
 )
 
-@(  viewModel: view_models.GovernmentSpend, percent: (Double, Double, Double),
+@(  viewModel: view_models.GovernmentSpend,
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit request: AuthenticatedRequest[_],
@@ -82,55 +82,19 @@
 
                 @viewModel.filteredDataWithHigherTransport(appConfig).map {
                     case (key, value) => {
-                        @if(key == "Environment" && percent._1 == percent._2 && percent._1 == percent._3) {
-                            <div class="govuk-summary-list__row--no-actions content">
-                                <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.HousingAndUtilities"))
-                                    <span>&nbsp;(@value.percentage%)</span>
-                                </dt>
-                                <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
-                            </div>
-                            <div aria-hidden="true">
-                                <dt class="graph-green-bar" style=width:@value.percentage%;></dt>
-                                <dd class="graph-grey-bar"></dd>
-                            </div>
-                        } else {
-                            @if(key == "Culture" && percent._2 == percent._1 && percent._2 == percent._3) {
-                                <div class="govuk-summary-list__row--no-actions content">
-                                    <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.Culture"))
-                                        <span>&nbsp;(@value.percentage%)</span>
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
-                                </div>
-                                <div aria-hidden="true">
-                                    <dt class="graph-green-bar" style=width:@value.percentage%;></dt>
-                                    <dd class="graph-grey-bar"></dd>
-                                </div>
-                            } else {
-                                @if(key == "HousingAndUtilities" && percent._3 == percent._1 && percent._3 == percent._2) {
-                                    <div class="govuk-summary-list__row--no-actions content">
-                                        <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.Environment"))
-                                            <span>&nbsp;(@value.percentage%)</span>
-                                        </dt>
-                                        <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
-                                    </div>
-                                    <div aria-hidden="true">
-                                        <dt class="graph-green-bar" style=width:@value.percentage%;></dt>
-                                        <dd class="graph-grey-bar"></dd>
-                                    </div>
-                                } else {
-                                    <div class="govuk-summary-list__row--no-actions content">
-                                        <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.$key"))
-                                            <span>&nbsp;(@value.percentage%)</span>
-                                        </dt>
-                                        <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
-                                    </div>
-                                    <div aria-hidden="true">
-                                        <dt class="graph-green-bar" style=width:@value.percentage%;></dt>
-                                        <dd class="graph-grey-bar"></dd>
-                                    </div>
-                                }
-                            }
-                        }
+
+                        <div class="govuk-summary-list__row--no-actions content">
+                            <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.$key"))
+                            <span>&nbsp;(@value.percentage%)</span>
+                            </dt>
+                            <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
+                        </div>
+                        <div aria-hidden="true">
+                            <dt class="graph-green-bar" style=width: @value.percentage%;
+                            </dt>
+                            <dd class="graph-grey-bar"></dd>
+                        </div>
+
                     }
                 }
 

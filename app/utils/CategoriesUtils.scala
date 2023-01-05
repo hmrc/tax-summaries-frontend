@@ -37,8 +37,11 @@ object CategoriesUtils {
         .spendCategories(taxYear)
       catch { case _: ConfigException.Missing => List.empty }
 
-    if (orderOfSpendCategories.isEmpty) sortedSpendDataList
-    else swapCategories(orderOfSpendCategories, sortedSpendDataList.toMap)
-
+    if (orderOfSpendCategories.isEmpty) {
+      println("1" * 100)
+      sortedSpendDataList
+    } else {
+      swapCategories(orderOfSpendCategories, sortedSpendDataList.toMap)
+    }
   }
 }
