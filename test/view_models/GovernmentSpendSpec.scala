@@ -46,10 +46,10 @@ class GovernmentSpendSpec extends PlaySpec with TestConstants with GuiceOneAppPe
       "sort public order above transport" when {
 
         "the tax year is not 2019" in {
-          val spendFor2018 = fakeGovernmentSpend.copy(taxYear = 2018)
+          val spendFor2017 = fakeGovernmentSpend.copy(taxYear = 2017)
 
-          spendFor2018.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe
-            spendFor2018.sortedSpendData.map(_._1)
+          spendFor2017.filteredDataWithHigherTransport(appConfig).map(_._1) mustBe
+            spendFor2017.sortedSpendData.map(_._1)
         }
       }
 

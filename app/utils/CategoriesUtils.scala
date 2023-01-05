@@ -38,7 +38,6 @@ object CategoriesUtils {
       catch { case _: ConfigException.Missing => List.empty }
 
     if (orderOfSpendCategories.isEmpty) {
-      println("1" * 100)
       sortedSpendDataList
     } else {
       swapCategories(orderOfSpendCategories, sortedSpendDataList.toMap)

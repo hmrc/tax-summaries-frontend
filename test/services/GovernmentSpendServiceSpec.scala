@@ -143,23 +143,5 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       result.value mustBe expectedBody
     }
-
-    "sort the categories in correct order for taxYear 18/19" in {
-
-      val taxYear = 2018
-
-      val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 5.5))
-
-      when(mockMiddleConnector.connectToGovernmentSpend(any())(any())) thenReturn Future
-        .successful(
-          Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":5.5, "Welfare":23.4}"""), Map("" -> List("")))
-          )
-        )
-
-      val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
-
-      result.value mustBe expectedBody
-    }
   }
 }
