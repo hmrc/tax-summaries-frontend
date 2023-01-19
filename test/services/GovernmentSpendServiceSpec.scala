@@ -21,13 +21,11 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
-import play.api.http.Status.OK
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
 import view_models.{Amount, AtsList, GovernmentSpend}
@@ -77,15 +75,30 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   }
 
   "GovernmentSpendService govSpend" must {
-
-    "return a complete GovernmentSpend when given complete AtsData" in {
+    "return a complete GovernmentSpend with sorted spending when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
       val result  = sut.govSpend(atsData)
 
       result mustBe GovernmentSpend(
-        2019,
+        2022,
         "1111111111",
-        List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
+        List(
+          ("Health", SpendData(Amount(100, "GBP"), 10)),
+          ("Welfare", SpendData(Amount(100, "GBP"), 10)),
+          ("StatePensions", SpendData(Amount(100, "GBP"), 10)),
+          ("Education", SpendData(Amount(100, "GBP"), 10)),
+          ("NationalDebtInterest", SpendData(Amount(100, "GBP"), 10)),
+          ("BusinessAndIndustry", SpendData(Amount(100, "GBP"), 10)),
+          ("Defence", SpendData(Amount(100, "GBP"), 10)),
+          ("Transport", SpendData(Amount(100, "GBP"), 10)),
+          ("PublicOrderAndSafety", SpendData(Amount(100, "GBP"), 10)),
+          ("GovernmentAdministration", SpendData(Amount(100, "GBP"), 10)),
+          ("HousingAndUtilities", SpendData(Amount(100, "GBP"), 10)),
+          ("Environment", SpendData(Amount(100, "GBP"), 10)),
+          ("Culture", SpendData(Amount(100, "GBP"), 10)),
+          ("OutstandingPaymentsToTheEU", SpendData(Amount(100, "GBP"), 10)),
+          ("OverseasAid", SpendData(Amount(100, "GBP"), 10))
+        ),
         "Mr",
         "John",
         "Smith",
@@ -107,41 +120,6 @@ class GovernmentSpendServiceSpec extends BaseSpec {
       val result  = sut.govSpend(atsData)
 
       result.isScottishTaxPayer mustBe false
-    }
-  }
-
-  "GovernmentSpendService getGovernmentSpendDataV2" must {
-
-    "return a government spend map" in {
-
-      val expectedBody = Seq(("Environment", 5.5))
-
-      when(mockMiddleConnector.connectToGovernmentSpend(any())(any())) thenReturn Future
-        .successful(
-          Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> List("")))
-          )
-        )
-
-      val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
-
-      result.value mustBe expectedBody
-    }
-
-    "sort data by percentage" in {
-
-      val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 2.3))
-
-      when(mockMiddleConnector.connectToGovernmentSpend(any())(any())) thenReturn Future
-        .successful(
-          Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq("")))
-          )
-        )
-
-      val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
-
-      result.value mustBe expectedBody
     }
   }
 }
