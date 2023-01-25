@@ -35,9 +35,13 @@ case class AtsMergePageViewModel(
 
   private val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
 
+  val showNoAtsText: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).exists(_ < 2019)
+
+  val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).exists(_ >= 2019)
+
   private val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
 
-  val showIvUpliftLink: Boolean   = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
+  val showIvUpliftLink: Boolean = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
   val completeYearList: List[AtsYearChoice] = {
     val saDataYearChoiceList  =
       saData.getDescendingYearList.filter(_ <= appConfig.taxYear).map(year => AtsYearChoice(SA, year))
@@ -51,8 +55,7 @@ case class AtsMergePageViewModel(
       (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
     }
   }
-  val showNoAtsText: Boolean      = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ < 2019).nonEmpty
-  val showNoAtsYearList: Boolean  = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).filter(_ >= 2019).nonEmpty
+
   val showContinueButton: Boolean = showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
   val name                        = s"${saData.forename} ${saData.surname}"
   val titleMsg                    = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }

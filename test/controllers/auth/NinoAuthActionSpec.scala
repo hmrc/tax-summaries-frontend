@@ -16,10 +16,8 @@
 
 package controllers.auth
 
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
 import uk.gov.hmrc.auth.core.{IncorrectCredentialStrength, InsufficientConfidenceLevel}
@@ -28,11 +26,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite with Injecting with ScalaFutures {
+class NinoAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Injecting with ScalaFutures {
 
-  implicit val hc                             = HeaderCarrier()
+  implicit val hc: HeaderCarrier              = HeaderCarrier()
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ninoAuthAction = new NinoAuthAction(mockAuthConnector)

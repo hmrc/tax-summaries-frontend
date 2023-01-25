@@ -45,9 +45,9 @@ class AtsMergePageController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
-    if (appConfig.saShuttered && appConfig.payeShuttered)
+    if (appConfig.saShuttered && appConfig.payeShuttered) {
       Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
-    else getSaAndPayeYearList()
+    } else getSaAndPayeYearList()
   }
 
   private def getSaAndPayeYearList(
@@ -83,18 +83,21 @@ class AtsMergePageController @Inject() (
         )
           .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-      case _                            => InternalServerError(genericErrorView())
+      case _                            =>
+        InternalServerError(genericErrorView())
     }
   }
 
   def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
-    atsForms.atsYearFormMapping.bindFromRequest.fold(
-      formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
-      value =>
-        Future.successful(
-          redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
-        )
-    )
+    atsForms.atsYearFormMapping
+      .bindFromRequest()
+      .fold(
+        formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
+        value =>
+          Future.successful(
+            redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
+          )
+      )
   }
 
   private def redirectWithYear(taxYearChoice: AtsYearChoice): Result =

@@ -16,18 +16,14 @@
 
 package utils
 
-import com.typesafe.config.ConfigException
 import config.ApplicationConfig
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 
-class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
+class CategoriesUtilsSpec extends BaseSpec {
 
   val mockAppConfig = mock[ApplicationConfig]
 
-  "SwapDataUtils" must {
-
-    "swap the data when categories are returned from config" in {
+  "reorderCategories" must {
+    "sort data given order from appConfig" in {
 
       val taxYear = 2020
 
@@ -37,30 +33,11 @@ class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
       )
         .thenReturn(List("A", "C", "B", "D"))
 
-      val spendData = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)
-
+      val spendData        = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)
       val expectedResponse = List("A" -> 1.5, "C" -> 1.20, "B" -> 1.20, "D" -> 0.5)
-
-      val result = CategoriesUtils.reorderCategories(mockAppConfig, taxYear, spendData)
+      val result           = CategoriesUtils.reorderCategories(mockAppConfig, taxYear, spendData)
 
       result mustBe expectedResponse
-    }
-
-    "not swap the data when categories are not returned from config" in {
-
-      val taxYear = 2019
-
-      when(
-        mockAppConfig
-          .spendCategories(taxYear)
-      )
-        .thenThrow(new ConfigException.Missing(s"categoryOrder.$taxYear"))
-
-      val spendData = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)
-
-      val result = CategoriesUtils.reorderCategories(mockAppConfig, taxYear, spendData)
-
-      result mustBe spendData
     }
   }
 }

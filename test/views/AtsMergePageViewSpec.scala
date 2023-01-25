@@ -20,7 +20,6 @@ import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.test.FakeRequest
@@ -72,17 +71,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
-  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
-    atsMergePageView(model, form)(implicitly, implicitly, mockAppConfig, implicitly).body
+  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
+    atsMergePageView(model, form)(implicitly, implicitly, mockAppConfig).body
 
-  def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit
-    request: AuthenticatedRequest[_]
-  ): String =
+  def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
     atsMergePageView(model, form, Some(ActingAsAttorneyFor(Some("Agent"), Map())))(
       implicitly,
       implicitly,
-      mockAppConfig,
-      implicitly
+      mockAppConfig
     ).body
 
   override def beforeEach() = {
@@ -189,7 +185,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           ConfidenceLevel.L200
         ),
         atsForms.atsYearFormMapping
-      )(request = requestWithCL200)
+      )
 
       result must include(s"${taxYear - 1} to $taxYear for PAYE")
       result must include(s"${taxYear - 2} to ${taxYear - 1} for PAYE")
@@ -203,7 +199,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         view(
           AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
           atsForms.atsYearFormMapping
-        )(request = requestWithCL200)
+        )
 
       result must not include "for PAYE"
     }
@@ -213,7 +209,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         view(
           AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear - 5), mockAppConfig, ConfidenceLevel.L50),
           atsForms.atsYearFormMapping
-        )(request = requestWithCL50)
+        )
 
       result must include(messages("merge.page.paye.ivuplift.text"))
     }
@@ -223,7 +219,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         view(
           AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L50),
           atsForms.atsYearFormMapping
-        )(request = requestWithCL50)
+        )
 
       result must not include (messages("merge.page.paye.ivuplift.text"))
     }
@@ -238,7 +234,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             ConfidenceLevel.L200
           ),
           atsForms.atsYearFormMapping
-        )(request = requestWithCL200)
+        )
 
       result must not include (messages("merge.page.paye.ivuplift.text"))
     }
@@ -247,7 +243,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = view(
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
         atsForms.atsYearFormMapping
-      )(request = requestWithCL200)
+      )
       result mustNot include(messages("merge.page.paye.unavailable"))
     }
 
@@ -256,7 +252,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = view(
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
         atsForms.atsYearFormMapping
-      )(request = requestWithCL200)
+      )
       result must include(messages("merge.page.paye.unavailable"))
     }
 

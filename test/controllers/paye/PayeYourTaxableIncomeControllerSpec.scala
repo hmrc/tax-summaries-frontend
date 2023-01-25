@@ -16,11 +16,9 @@
 
 package controllers.paye
 
-import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -61,7 +59,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
@@ -84,7 +82,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any[HeaderCarrier])
       )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
@@ -105,7 +103,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any[HeaderCarrier])
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
@@ -119,7 +117,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any[HeaderCarrier])
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 

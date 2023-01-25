@@ -85,6 +85,7 @@ class MergePageAuthActionImpl @Inject() (
     case _: NoActiveSession =>
       lazy val ggSignIn    = appConfig.loginUrl
       lazy val callbackUrl = appConfig.loginCallback
+
       Redirect(
         ggSignIn,
         Map(
@@ -137,7 +138,7 @@ class MergePageAuthActionImpl @Inject() (
 
       if (agentRef.isDefined && !isAgentActive) {
         Future(Redirect(controllers.routes.ErrorController.notAuthorised))
-      } else if (isAgentActive && isAgentTokenMissing.equals(true)) {
+      } else if (isAgentActive && isAgentTokenMissing) {
         Future(Redirect(controllers.routes.ErrorController.notAuthorised))
       } else if (saUtr.isEmpty && agentRef.isEmpty) {
         nino

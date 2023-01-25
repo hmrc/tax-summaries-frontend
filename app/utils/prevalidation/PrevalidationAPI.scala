@@ -19,6 +19,8 @@ package utils.prevalidation
 import play.api.data.Form
 import utils.prevalidation.prevalidation._
 
+import scala.language.implicitConversions
+
 object TrimOption extends Enumeration {
   type TrimOption = Value
   val both, all, bothAndCompress, none = Value
@@ -103,12 +105,12 @@ trait PrevalidationAPI[T] {
         case body: play.api.mvc.AnyContent if body.asMultipartFormData.isDefined =>
           body.asMultipartFormData.get.asFormUrlEncoded
         case body: play.api.mvc.AnyContent if body.asJson.isDefined              =>
-          FormUtils.fromJson(js = body.asJson.get).mapValues(Seq(_))
+          FormUtils.fromJson(js = body.asJson.get).view.mapValues(Seq(_))
         case body: Map[_, _]                                                     => body.asInstanceOf[Map[String, Seq[String]]]
         case body: play.api.mvc.MultipartFormData[_]                             => body.asFormUrlEncoded
-        case body: play.api.libs.json.JsValue                                    => FormUtils.fromJson(js = body).mapValues(Seq(_))
+        case body: play.api.libs.json.JsValue                                    => FormUtils.fromJson(js = body).view.mapValues(Seq(_))
         case _                                                                   => Map.empty[String, Seq[String]]
-      }) ++ request.queryString
+      }).toMap ++ request.queryString
     }
 
   // extracted from the source of play 2.4 ( def bindFromRequest(data: Map[String, Seq[String]]): Form[T] )
@@ -143,6 +145,6 @@ private object FormUtils {
     case JsUndefined()    => Map.empty
     case JsBoolean(value) => Map(prefix -> value.toString)
     case JsNumber(value)  => Map(prefix -> value.toString)
-    case JsString(value)  => Map(prefix -> value.toString)
+    case JsString(value)  => Map(prefix -> value)
   }
 }

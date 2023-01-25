@@ -17,15 +17,16 @@
 package utils
 
 import org.jsoup.nodes.Document
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 trait TaxsUnitTestTraits
     extends AnyWordSpec
