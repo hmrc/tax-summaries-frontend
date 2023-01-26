@@ -16,8 +16,9 @@
 
 package view_models
 
+import config.ApplicationConfig
 import models.SpendData
-import utils.GenericViewModel
+import utils.{CategoriesUtils, GenericViewModel}
 import view_models.paye.TaxYearFormatting
 
 case class GovernmentSpend(
@@ -34,4 +35,10 @@ case class GovernmentSpend(
     with TaxYearFormatting {
 
   val isScottishTaxPayer: Boolean = incomeTaxStatus == "0002"
+
+  def sortedSpendData: List[(String, SpendData)] =
+    govSpendAmountData.filter(_._1 != "GovSpendTotal").sortWith(_._2.percentage > _._2.percentage)
+
+  def filteredDataWithHigherTransport(appConfig: ApplicationConfig): List[(String, SpendData)] =
+    CategoriesUtils.reorderCategories(appConfig, taxYear, sortedSpendData)
 }

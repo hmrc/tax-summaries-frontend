@@ -84,7 +84,7 @@ object PayeIncomeTaxAndNics {
     (for {
       incomeTax <- payeAtsData.income_tax
       payload   <- incomeTax.payload
-    } yield payload.view
+    } yield payload
       .filterKeys(adjustments)
       .toList
       .map(adjustment => AdjustmentRow(adjustment._1, adjustment._2))

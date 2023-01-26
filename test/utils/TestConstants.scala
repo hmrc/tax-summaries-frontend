@@ -126,8 +126,8 @@ trait TestConstants extends BaseSpec {
         ("BusinessAndIndustry", SpendData(Amount(2898.13, "GBP"), 3.6)),
         ("GovernmentAdministration", SpendData(Amount(2898.13, "GBP"), 2.1)),
         ("HousingAndUtilities", SpendData(Amount(2898.13, "GBP"), 1.6)),
-        ("Culture", SpendData(Amount(2898.13, "GBP"), 1.5)),
         ("Environment", SpendData(Amount(2898.13, "GBP"), 1.5)),
+        ("Culture", SpendData(Amount(2898.13, "GBP"), 1.5)),
         ("OverseasAid", SpendData(Amount(2898.13, "GBP"), 1.2)),
         ("UkContributionToEuBudget", SpendData(Amount(2898.13, "GBP"), 1)),
         govSpendTotalTuple

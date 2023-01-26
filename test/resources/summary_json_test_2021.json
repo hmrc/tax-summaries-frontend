@@ -1,5 +1,5 @@
 {"taxYear":2021,
-"utr":"testUtr",
+"utr":"$utr",
     "summary_data":{
         "payload":{
           "employee_nic_amount":{"amount":1200.0,"currency":"GBP"},

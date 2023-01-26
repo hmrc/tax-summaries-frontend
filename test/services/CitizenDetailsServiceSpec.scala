@@ -18,8 +18,10 @@ package services
 
 import connectors.CitizenDetailsConnector
 import models.MatchingDetails
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.{any, eq => meq}
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
@@ -28,7 +30,7 @@ import utils.BaseSpec
 
 import scala.concurrent.Future
 
-class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
+class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures with MockitoSugar {
 
   implicit val hc             = HeaderCarrier()
   val citizenDetailsConnector = mock[CitizenDetailsConnector]
@@ -51,7 +53,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
         .toString
 
       val response = HttpResponse.apply(OK, json)
-      when(citizenDetailsConnector.connectToCid(any())(any()))
+      when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any()))
         .thenReturn(Future.successful(Right(response)))
 
       val result = service.getMatchingDetails(nino.toString()).futureValue
@@ -62,7 +64,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
       s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
         val response = HttpResponse.apply(httpStatus, "body")
 
-        when(citizenDetailsConnector.connectToCid(any())(any()))
+        when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any()))
           .thenReturn(Future.successful(Right(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
@@ -74,7 +76,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
       s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
         val response = UpstreamErrorResponse.apply("body", httpStatus)
 
-        when(citizenDetailsConnector.connectToCid(any())(any()))
+        when(citizenDetailsConnector.connectToCid(meq(nino.toString()))(any()))
           .thenReturn(Future.successful(Left(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue

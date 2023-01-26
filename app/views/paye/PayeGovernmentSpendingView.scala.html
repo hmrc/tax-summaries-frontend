@@ -18,6 +18,7 @@
 @import view_models.paye.PayeGovernmentSpend
 @import utils.HtmlFormatter
 @import helpers.{H1, P, Link, Button, PageHeading, backLink}
+@import scala.concurrent.ExecutionContext
 
 @this(
 	main: main,
@@ -32,8 +33,9 @@
 	isWelshTaxPayer: Boolean
 	)(
 	implicit messages: Messages,
-		request: Request[_],
-		appConfig: ApplicationConfig
+	request: Request[_],
+	appConfig: ApplicationConfig,
+	ec: ExecutionContext
 )
 
 @main(

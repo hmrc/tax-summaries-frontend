@@ -17,8 +17,10 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import models.AtsData
+import org.mockito.Matchers
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -28,19 +30,16 @@ import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
 import view_models._
 
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.language.postfixOps
 
 class AllowanceServiceSpec extends BaseSpec {
-
-  override val taxYear = 2015
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(taxYear)
+    yearList = List(2015)
   )
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
@@ -56,23 +55,27 @@ class AllowanceServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+    FakeRequest("GET", s"?taxYear=${sut.taxYear}")
   )
 
   val mockAtsService: AtsService = mock[AtsService]
 
-  def sut = new AllowanceService(mockAtsService) with MockitoSugar
+  def sut = new AllowanceService(mockAtsService) with MockitoSugar {
+    implicit val hc = new HeaderCarrier
+    val taxYear     = 2015
+
+  }
 
   "AllowanceService.getAllowances" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
-        mockAtsService.createModel(any(), any())(
-          any(),
-          any()
+        mockAtsService.createModel(Matchers.eq(sut.taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getAllowances(taxYear)(request, hc), 1500 millis)
+      val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
   }

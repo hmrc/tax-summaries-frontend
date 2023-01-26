@@ -29,7 +29,8 @@
     )(
     implicit request: Request[_],
     messages: Messages,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+    ec: ExecutionContext
 )
 
 @anchor(text: String, url: String) = {@link(link = url, messageKey = text, attrTarget=true, inParagraph=true)}

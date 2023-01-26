@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthJourney, AuthenticatedRequest}
-import models.ErrorResponse
+import models.{ErrorResponse, SpendData}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, GovernmentSpendService}
 import utils.GenericViewModel
@@ -55,7 +55,28 @@ class GovernmentSpendController @Inject() (
     Ok(
       governmentSpendingView(
         result,
+        assignPercentage(result.govSpendAmountData),
         getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)
       )
     )
+
+  def assignPercentage(govSpendList: List[(String, SpendData)]): (Double, Double, Double) = {
+    var percentEnviron  = 0.0
+    var percentCultural = 0.0
+    var percentHousing  = 0.0
+
+    govSpendList.foreach { case (key, value) =>
+      if (key == "Environment") {
+        percentEnviron = value.percentage.doubleValue()
+      } else if (key == "Culture") {
+        percentCultural = value.percentage.doubleValue()
+      } else if (key == "HousingAndUtilities") {
+        percentHousing = value.percentage.doubleValue()
+      }
+
+    }
+
+    (percentEnviron, percentCultural, percentHousing)
+  }
+
 }

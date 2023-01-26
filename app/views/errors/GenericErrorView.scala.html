@@ -30,7 +30,8 @@
   )(
   implicit request: AuthenticatedRequest[_],
   messages: Messages,
-        appConfig: ApplicationConfig
+  appConfig: ApplicationConfig,
+        ec: ExecutionContext
 )
 
 
