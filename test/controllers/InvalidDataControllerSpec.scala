@@ -66,7 +66,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
@@ -92,7 +92,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
@@ -118,7 +118,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
@@ -144,7 +144,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
@@ -170,7 +170,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
@@ -195,7 +195,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
@@ -221,7 +221,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
-      status(result) mustBe 200
+      status(result) mustBe 500
 
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }

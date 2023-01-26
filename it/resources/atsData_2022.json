@@ -508,6 +508,13 @@
           "currency": "GBP"
         },
         "percentage": 12.4
+      },
+      "OutstandingPaymentsToTheEU": {
+        "amount": {
+          "amount": 555.15,
+          "currency": "GBP"
+        },
+        "percentage": 12.4
       }
     },
     "totalAmount": {
