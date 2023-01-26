@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException, Upstream4xxResponse, Upstream5xxResponse, UpstreamErrorResponse}
 import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
@@ -62,7 +62,7 @@ class CitizenDetailsConnectorSpec
     "return an OK response when the CID API returns OK" in {
       server.stubFor(get(url).willReturn(ok("my cid response")))
 
-      val result = connector.connectToCid(nino.toString()).futureValue.value
+      val result = connector.connectToCid(nino.toString()).futureValue.right.get
 
       result.status mustBe OK
       result.body mustBe "my cid response"

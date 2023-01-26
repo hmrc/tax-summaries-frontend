@@ -27,7 +27,9 @@
 
 @()(
     implicit request: AuthenticatedRequest[_],
-    messages: Messages
+    messages: Messages,
+    appConfig: ApplicationConfig,
+    ec: ExecutionContext
 )
 
 

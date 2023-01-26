@@ -23,7 +23,7 @@ import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
 import utils.AgentTokenException
 
-import java.time.Instant
+import java.time.{Duration, Instant, LocalDateTime}
 import scala.util.matching.Regex
 
 class CryptoService @Inject() ()(implicit val appConfig: ApplicationConfig) {

@@ -22,17 +22,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.session_expired
 
+import scala.concurrent.ExecutionContext
+
 class AccountController @Inject() (
   mcc: MessagesControllerComponents,
   sessionExpiredView: session_expired
-)(implicit val appConfig: ApplicationConfig)
+)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc) {
 
   def signOut: Action[AnyContent] = Action {
     Redirect(appConfig.feedbackUrl).withNewSession
   }
 
-  def keepAlive: Action[AnyContent] = Action {
+  def keepAlive: Action[AnyContent] = Action { implicit request =>
     NoContent
   }
 
