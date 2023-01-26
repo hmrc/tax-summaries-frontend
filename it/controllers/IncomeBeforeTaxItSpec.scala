@@ -18,6 +18,7 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.SessionKeys
@@ -32,6 +33,10 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       "microservice.services.cachable.session-cache.port" -> server.port()
     )
     .build()
+
+  override lazy val keystoreData = Map(
+    s"TAXS_ATS_$taxYear" -> Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))
+  )
 
   "/income-before-tax" must {
 
