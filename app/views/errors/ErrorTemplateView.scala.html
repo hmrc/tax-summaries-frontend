@@ -30,7 +30,9 @@
     message: String
     )(
     implicit request: Request[_],
-    messages: Messages
+    messages: Messages,
+    appConfig: ApplicationConfig,
+        ec: ExecutionContext
  )
 
 @main(

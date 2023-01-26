@@ -207,21 +207,7 @@ object AtsTestData {
         2019,
         Some(
           Map(
-            "Welfare"                  -> SpendData(Amount(100, "GBP"), 10),
-            "Health"                   -> SpendData(Amount(100, "GBP"), 10),
-            "StatePensions"            -> SpendData(Amount(100, "GBP"), 10),
-            "Education"                -> SpendData(Amount(100, "GBP"), 10),
-            "Defence"                  -> SpendData(Amount(100, "GBP"), 10),
-            "NationalDebtInterest"     -> SpendData(Amount(100, "GBP"), 10),
-            "Transport"                -> SpendData(Amount(100, "GBP"), 10),
-            "PublicOrderAndSafety"     -> SpendData(Amount(100, "GBP"), 10),
-            "BusinessAndIndustry"      -> SpendData(Amount(100, "GBP"), 10),
-            "GovernmentAdministration" -> SpendData(Amount(100, "GBP"), 10),
-            "HousingAndUtilities"      -> SpendData(Amount(100, "GBP"), 10),
-            "Environment"              -> SpendData(Amount(100, "GBP"), 10),
-            "Culture"                  -> SpendData(Amount(100, "GBP"), 10),
-            "OverseasAid"              -> SpendData(Amount(100, "GBP"), 10),
-            "UkContributionToEuBudget" -> SpendData(Amount(100, "GBP"), 10)
+            "welfare" -> SpendData(Amount(100, "GBP"), 10)
           )
         ),
         Amount(200, "GBP"),
@@ -243,7 +229,7 @@ object AtsTestData {
   )
 
   val govSpendingData = AtsData(
-    2022,
+    2019,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -262,24 +248,10 @@ object AtsTestData {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2022,
+        2019,
         Some(
           Map(
-            "Health"                     -> SpendData(Amount(100, "GBP"), 10),
-            "Culture"                    -> SpendData(Amount(100, "GBP"), 10),
-            "NationalDebtInterest"       -> SpendData(Amount(100, "GBP"), 10),
-            "BusinessAndIndustry"        -> SpendData(Amount(100, "GBP"), 10),
-            "Welfare"                    -> SpendData(Amount(100, "GBP"), 10),
-            "Transport"                  -> SpendData(Amount(100, "GBP"), 10),
-            "PublicOrderAndSafety"       -> SpendData(Amount(100, "GBP"), 10),
-            "GovernmentAdministration"   -> SpendData(Amount(100, "GBP"), 10),
-            "StatePensions"              -> SpendData(Amount(100, "GBP"), 10),
-            "Education"                  -> SpendData(Amount(100, "GBP"), 10),
-            "HousingAndUtilities"        -> SpendData(Amount(100, "GBP"), 10),
-            "Environment"                -> SpendData(Amount(100, "GBP"), 10),
-            "Defence"                    -> SpendData(Amount(100, "GBP"), 10),
-            "OutstandingPaymentsToTheEU" -> SpendData(Amount(100, "GBP"), 10),
-            "OverseasAid"                -> SpendData(Amount(100, "GBP"), 10)
+            "welfare" -> SpendData(Amount(100, "GBP"), 10)
           )
         ),
         Amount(200, "GBP"),

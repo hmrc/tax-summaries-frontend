@@ -19,6 +19,7 @@ package view_models
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{AtsYearChoice, NoATS, PAYE, SA}
+import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel

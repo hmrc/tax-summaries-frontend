@@ -19,6 +19,7 @@ package view_models.paye
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
@@ -28,6 +29,7 @@ import view_models.Amount
 class PayeYourIncomeAndTaxesSpec
     extends AnyWordSpec
     with Matchers
+    with MockitoSugar
     with JsonUtil
     with GuiceOneAppPerTest
     with ScalaFutures

@@ -32,7 +32,9 @@
     actingAsAttorney: Option[ActingAsAttorneyFor] = None,
     showBackLink: Boolean = true
     )(
-    implicit messages: Messages
+    implicit messages: Messages,
+    request: AuthenticatedRequest[_],
+    appConfig: ApplicationConfig
 )
 
 @if(actingAsAttorney.isDefined) {

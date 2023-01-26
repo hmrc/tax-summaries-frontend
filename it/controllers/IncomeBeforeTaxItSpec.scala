@@ -21,7 +21,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.SessionKeys
 import utils.{FileHelper, IntegrationSpec}
 
 class IncomeBeforeTaxItSpec extends IntegrationSpec {
@@ -51,7 +50,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
           .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
       )
 
-      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+      val request = FakeRequest(GET, url)
 
       val result = route(fakeApplication(), request)
 
@@ -66,7 +65,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
           .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
       )
 
-      val request = FakeRequest(GET, failureUrl).withSession(SessionKeys.authToken -> "Bearer 1")
+      val request = FakeRequest(GET, failureUrl)
 
       val result = route(fakeApplication(), request)
 
@@ -80,7 +79,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
-      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+      val request = FakeRequest(GET, url)
 
       val result = route(fakeApplication(), request)
 
@@ -100,7 +99,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
             .willReturn(aResponse().withStatus(httpResponse))
         )
 
-        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+        val request = FakeRequest(GET, url)
 
         val result = route(fakeApplication(), request)
 

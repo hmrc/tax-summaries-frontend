@@ -16,9 +16,10 @@
 
 package controllers
 
-import controllers.auth.FakeAuthJourney
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
@@ -88,7 +89,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit =
     when(
-      mockTotalIncomeTaxService.getIncomeData(any())(any(), any())
+      mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
     ) thenReturn Future
       .successful(baseModel)
 
@@ -116,7 +117,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -127,7 +128,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
@@ -172,7 +173,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
       val result   = sut.show(request)
@@ -193,7 +194,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
       val result   = sut.show(request)
@@ -237,7 +238,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         additionalRate = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
       val result   = sut.show(request)
@@ -258,7 +259,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         additionalRate = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model5))
 
       val result   = sut.show(request)
@@ -292,7 +293,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         otherAdjustmentsIncreasing = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
       val result   = sut.show(request)
@@ -310,7 +311,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
       val result   = sut.show(request)
@@ -328,7 +329,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model8))
 
       val result   = sut.show(request)
@@ -349,7 +350,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         totalIncomeTax = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model9))
 
       val result   = sut.show(request)

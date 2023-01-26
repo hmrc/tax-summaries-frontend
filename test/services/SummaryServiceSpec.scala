@@ -17,7 +17,9 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import org.mockito.ArgumentMatchers.any
+import models.AtsData
+import org.mockito.Matchers
+import org.mockito.Mockito._
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -29,7 +31,6 @@ import view_models._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 class SummaryServiceSpec extends BaseSpec {
 
@@ -62,9 +63,9 @@ class SummaryServiceSpec extends BaseSpec {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
-        mockAtsService.createModel(any(), any())(
-          any(),
-          any()
+        mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any()
         )
       ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getSummaryData(taxYear)(hc, request), 1500 millis)

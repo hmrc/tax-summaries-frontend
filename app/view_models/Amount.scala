@@ -51,7 +51,7 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
 
   def toHundredthsString = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 
-  def unary_- : Amount = copy(amount = -this.amount)
+  def unary_-(): Amount = copy(amount = -this.amount)
 }
 
 object Amount {

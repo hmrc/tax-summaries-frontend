@@ -16,6 +16,7 @@
 
 package models
 
+import play.api.libs.json.{JsString, JsSuccess}
 import utils.BaseSpec
 
 class AtsYearChoiceSpec extends BaseSpec {

@@ -18,7 +18,9 @@ package controllers.auth
 
 import connectors.DataCacheConnector
 import models.{AgentToken, MatchingDetails}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers._
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
@@ -38,7 +40,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
+class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   class Harness(authAction: MergePageAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -139,7 +141,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
       val result = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include(utr)
-      verify(citizenDetailsService, never).getMatchingDetails(any())(any())
+      verify(citizenDetailsService, never()).getMatchingDetails(any())(any())
     }
   }
 
@@ -179,7 +181,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
       status(result) mustBe OK
       contentAsString(result) must include(utr)
       contentAsString(result) must include(testNino.nino)
-      verify(citizenDetailsService, never).getMatchingDetails(any())(any())
+      verify(citizenDetailsService, never()).getMatchingDetails(any())(any())
     }
   }
 

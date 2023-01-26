@@ -18,7 +18,8 @@ package services
 
 import com.google.inject.Inject
 import connectors.MiddleConnector
-import models._
+import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
+import models.{PayeAtsData, _}
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.domain.Nino
@@ -34,7 +35,8 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
 ) extends Logging {
 
   def getPayeATSData(nino: Nino, taxYear: Int)(implicit
-    hc: HeaderCarrier
+    hc: HeaderCarrier,
+    request: PayeAuthenticatedRequest[_]
   ): Future[Either[AtsResponse, PayeAtsData]] =
     for {
       response <- middleConnector.connectToPayeATS(nino, taxYear)
@@ -60,7 +62,8 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
     }
 
   def getPayeTaxYearData(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
-    hc: HeaderCarrier
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, List[Int]]] =
     for {
       response <- middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)
@@ -80,7 +83,8 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
     }
 
   private def sendAuditEvent(nino: Nino, taxYear: Int, isSuccess: Boolean)(implicit
-    hc: HeaderCarrier
+    hc: HeaderCarrier,
+    request: PayeAuthenticatedRequest[_]
   ): Future[AuditResult] =
     auditService.sendEvent(
       auditType = if (isSuccess) AuditTypes.Tx_SUCCEEDED else AuditTypes.Tx_FAILED,

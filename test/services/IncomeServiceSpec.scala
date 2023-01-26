@@ -18,8 +18,9 @@ package services
 
 import controllers.auth.AuthenticatedRequest
 import models.AtsData
-import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Matchers
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -31,7 +32,6 @@ import view_models.{Amount, AtsList, IncomeBeforeTax}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-import scala.language.postfixOps
 
 class IncomeServiceSpec extends BaseSpec {
 
@@ -64,9 +64,9 @@ class IncomeServiceSpec extends BaseSpec {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
       when(
-        mockAtsService.createModel(any(), any())(
-          any(),
-          any()
+        mockAtsService.createModel(Matchers.eq(taxYear), Matchers.any[Function1[AtsData, GenericViewModel]]())(
+          Matchers.any(),
+          Matchers.any()
         )
       ).thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
