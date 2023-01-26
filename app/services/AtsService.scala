@@ -57,7 +57,9 @@ class AtsService @Inject() (
       case Left(_)                                               => new ATSUnavailableViewModel
     }
 
-  def getAts(taxYear: Int)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsData]] =
+  def getAts(
+    taxYear: Int
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[Int, AtsData]] =
     dataCacheConnector.fetchAndGetAtsForSession(taxYear) flatMap {
       case Some(data) =>
         if (accountUtils.isAgent(request)) {

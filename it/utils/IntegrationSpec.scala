@@ -23,7 +23,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -50,6 +50,8 @@ class IntegrationSpec
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
   lazy val taxYear: Int = appConfig.taxYear
+
+  lazy val keystoreData: Map[String, JsValue] = Map.empty
 
   override def beforeEach() = {
 
@@ -88,7 +90,7 @@ class IntegrationSpec
 
     server.stubFor(
       put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
-        .willReturn(ok(Json.toJson(CacheMap("id", Map.empty)).toString))
+        .willReturn(ok(Json.toJson(CacheMap("id", keystoreData)).toString))
     )
   }
 }
