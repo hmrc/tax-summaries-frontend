@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import utils.ViewUtils
 @import views.html.includes.CurrencyAmountView
 @import helpers.{HeaderSection, PageHeading, P, Link}
+@import scala.concurrent.ExecutionContext
 
 @this(
     main: main,
@@ -33,7 +35,9 @@
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit request: AuthenticatedRequest[_],
-    messages: Messages
+    messages: Messages,
+    appConfig: ApplicationConfig,
+ec: ExecutionContext
 )
 
 @beforeContent = {

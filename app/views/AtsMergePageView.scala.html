@@ -18,6 +18,7 @@
 @import controllers.auth.AuthenticatedRequest
 @import view_models.AtsForms
 @import view_models.AtsMergePageViewModel
+@import scala.concurrent.ExecutionContext
 @import helpers.{H1, P, Link, Button, InputRadios, ErrorSummary, PageHeading, HeaderSection}
 
 @this(
@@ -40,7 +41,8 @@
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
+    ec : ExecutionContext
 )
 
 @pastAtsParagraph = {

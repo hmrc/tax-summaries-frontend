@@ -16,12 +16,14 @@
 
 package controllers.paye
 
-import controllers.auth.FakePayeAuthAction
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.libs.json.{Json, Reads}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.JsonUtil
 import utils.TestConstants.testNino
 import view_models.paye.PayeAtsMain
@@ -53,7 +55,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
       when(
         mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
       )
         .thenReturn(Future(Right(mock[PayeAtsData])))
 
@@ -67,7 +69,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
       when(
         mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
       )
         .thenReturn(Future(Left(AtsNotFoundResponse("Not found"))))
 
@@ -80,7 +82,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
       when(
         mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
+          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
       )
         .thenReturn(Future(Left(AtsErrorResponse("Error occurred"))))
 

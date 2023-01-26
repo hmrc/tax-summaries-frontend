@@ -37,7 +37,9 @@
 @(  viewModel:PayeYourIncomeAndTaxes
     )(
     implicit messages: Messages,
-    request: PayeAuthenticatedRequest[_]
+    request: PayeAuthenticatedRequest[_],
+    appConfig: ApplicationConfig,
+    ec: ExecutionContext
 )
 
 

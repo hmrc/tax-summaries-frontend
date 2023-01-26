@@ -16,11 +16,11 @@
 
 package controllers
 
-import controllers.auth.FakeAuthJourney
+import controllers.auth.{FakeAuthAction, FakeAuthJourney}
 import models.SpendData
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
@@ -36,8 +36,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
   override val taxYear = 2014
 
-  val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
-  val mockAuditService: AuditService                     = mock[AuditService]
+  val mockGovernmentSpendService = mock[GovernmentSpendService]
+  val mockAuditService           = mock[AuditService]
 
   def sut =
     new GovernmentSpendController(
@@ -86,7 +86,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
   )
 
   override def beforeEach() =
-    when(mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any()))
+    when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(model))
 
   "Calling government spend" must {
@@ -114,7 +114,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any())
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -127,7 +127,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any())
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
       )
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
@@ -209,7 +209,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any())
+        mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
       )
         .thenReturn(Future.successful(model2))
 
@@ -251,5 +251,64 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document.select("#gov-spend-total + dd").text() mustBe "£10,000.00"
     }
+
+    "return zero percentage for Housing, Cultural and Environment when they are not same" in {
+
+      val govSpendAmountData = List(
+        ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
+        ("health", SpendData(Amount(1990, "GBP"), 19.9)),
+        ("pension", SpendData(Amount(1280, "GBP"), 12.8)),
+        ("education", SpendData(Amount(1250, "GBP"), 12.5)),
+        ("defence", SpendData(Amount(540, "GBP"), 5.4)),
+        ("national_debt_interest", SpendData(Amount(500, "GBP"), 5.0)),
+        ("public_order_and_safety", SpendData(Amount(440, "GBP"), 4.4)),
+        ("transport", SpendData(Amount(300, "GBP"), 3.0)),
+        ("business_and_industry", SpendData(Amount(270, "GBP"), 2.7)),
+        ("government_administration", SpendData(Amount(200, "GBP"), 2.0)),
+        ("Culture", SpendData(Amount(180, "GBP"), 1.8)),
+        ("Environment", SpendData(Amount(170, "GBP"), 1.7)),
+        ("HousingAndUtilities", SpendData(Amount(160, "GBP"), 1.6)),
+        ("overseas_aid", SpendData(Amount(130, "GBP"), 1.3)),
+        ("uk_contribution_to_eu_budget", SpendData(Amount(600, "GBP"), 0.6))
+      )
+
+      val result = sut.assignPercentage(govSpendAmountData)
+
+      result._1 mustBe 1.7
+      result._2 mustBe 1.8
+      result._3 mustBe 1.6
+
+    }
+
+    "return equal percentage for Housing, Cultural and Environment when they are same" in {
+
+      val expected = 1.8
+
+      val govSpendAmountData = List(
+        ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
+        ("health", SpendData(Amount(1990, "GBP"), 19.9)),
+        ("pension", SpendData(Amount(1280, "GBP"), 12.8)),
+        ("education", SpendData(Amount(1250, "GBP"), 12.5)),
+        ("defence", SpendData(Amount(540, "GBP"), 5.4)),
+        ("national_debt_interest", SpendData(Amount(500, "GBP"), 5.0)),
+        ("public_order_and_safety", SpendData(Amount(440, "GBP"), 4.4)),
+        ("transport", SpendData(Amount(300, "GBP"), 3.0)),
+        ("business_and_industry", SpendData(Amount(270, "GBP"), 2.7)),
+        ("government_administration", SpendData(Amount(200, "GBP"), 2.0)),
+        ("Culture", SpendData(Amount(180, "GBP"), expected)),
+        ("Environment", SpendData(Amount(180, "GBP"), expected)),
+        ("HousingAndUtilities", SpendData(Amount(180, "GBP"), expected)),
+        ("overseas_aid", SpendData(Amount(130, "GBP"), 1.3)),
+        ("uk_contribution_to_eu_budget", SpendData(Amount(600, "GBP"), 0.6))
+      )
+
+      val result = sut.assignPercentage(govSpendAmountData)
+
+      result._1 mustBe expected
+      result._2 mustBe expected
+      result._3 mustBe expected
+
+    }
+
   }
 }

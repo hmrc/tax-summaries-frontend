@@ -16,7 +16,9 @@
 
 package controllers.auth
 
-import org.mockito.ArgumentMatchers.any
+import controllers.routes
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
@@ -31,7 +33,7 @@ import utils.RetrievalOps._
 import utils.TestConstants._
 
 import scala.concurrent.duration._
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {

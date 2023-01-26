@@ -19,17 +19,20 @@ package config
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.Lang
+import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.{AuditingConfigProvider, ServicesConfig}
 
 import javax.inject.Singleton
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.collection.JavaConverters._
 
 @Singleton
 class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Configuration) {
 
   def getConf(key: String): String        = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
   def getExternalUrl(key: String): String = config.getString(s"external-urls.$key")
+
+  val auditingConfig: AuditingConfig = new AuditingConfigProvider(configuration, appName).get()
 
   // Services url config
   val serviceUrl        = config.baseUrl("tax-summaries")

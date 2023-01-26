@@ -30,7 +30,6 @@ import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import java.util.Date
-import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class TaxsController @Inject() (
@@ -52,10 +51,8 @@ abstract class TaxsController @Inject() (
 
   def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
-  @nowarn("msg=abstract type pattern")
-  @nowarn("msg=The outer reference in this type test cannot be checked at run time")
-  private def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    extractViewModel() map {
+  def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
+    extractViewModel map {
       case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts(appConfig.taxYear))
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
       case Right(result: ViewModel)          => obtainResult(result)

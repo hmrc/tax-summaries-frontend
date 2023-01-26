@@ -65,7 +65,7 @@ class AtsMergePageService @Inject() (
         }
       }
     }
-    atsListService.createModel()
+    atsListService.createModel
   }
 
   private def getPayeAtsYearList(implicit

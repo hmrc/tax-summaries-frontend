@@ -18,7 +18,8 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers._
@@ -58,8 +59,8 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
   val baseModel = SummaryControllerSpec.baseModel
 
-  val mockSummaryService: SummaryService = mock[SummaryService]
-  val mockAuditService: AuditService     = mock[AuditService]
+  val mockSummaryService = mock[SummaryService]
+  val mockAuditService   = mock[AuditService]
 
   def sut =
     new SummaryController(
@@ -73,7 +74,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
     )
 
   override def beforeEach(): Unit =
-    when(mockSummaryService.getSummaryData(any())(any(), any()))
+    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
       .thenReturn(Future.successful(baseModel))
 
   "Calling Summary" must {
@@ -97,7 +98,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -108,7 +109,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
@@ -142,7 +143,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalTaxFreeAllowance = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model2))
 
       val result   = sut.show(request)
@@ -176,7 +177,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         taxableGains = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model3))
 
       val result   = sut.show(request)
@@ -210,7 +211,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model4))
 
       val result   = sut.show(request)
@@ -232,7 +233,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
               totalIncomeTaxAmount = Amount(bd, "GBP")
             )
 
-            when(mockSummaryService.getSummaryData(any())(any(), any()))
+            when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
               .thenReturn(Future.successful(model5))
 
             val result   = sut.show(request)
@@ -260,7 +261,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model6))
 
       val result   = sut.show(request)
@@ -276,7 +277,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model7))
 
       val result   = sut.show(request)
@@ -292,7 +293,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model8))
 
       val result   = sut.show(request)
@@ -307,7 +308,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model9))
 
       val result   = sut.show(request)
@@ -322,7 +323,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model10))
 
       val result   = sut.show(request)
@@ -341,7 +342,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show Your Total Tax description having (total income tax, capital gains, employee nics)" in {
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(baseModel))
 
       val result   = sut.show(request)
@@ -359,7 +360,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model11))
 
       val result   = sut.show(request)
@@ -375,7 +376,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model12))
 
       val result   = sut.show(request)
@@ -391,7 +392,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model13))
 
       val result   = sut.show(request)
@@ -406,7 +407,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         employeeNicAmount = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model14))
 
       val result   = sut.show(request)
@@ -421,7 +422,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalCapitalGainsTax = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model15))
 
       val result   = sut.show(request)
@@ -438,7 +439,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         totalIncomeTaxAmount = Amount(0, "GBP")
       )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model16))
 
       val result   = sut.show(request)
@@ -453,7 +454,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
       val model17 = new NoATSViewModel
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
         .thenReturn(Future.successful(model17))
 
       val result = sut.show(request)

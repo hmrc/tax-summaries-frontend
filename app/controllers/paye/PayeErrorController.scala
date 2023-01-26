@@ -26,12 +26,13 @@ import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.errors._
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext
 
 class PayeErrorController @Inject() (
   mcc: MessagesControllerComponents,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView
-)(implicit appConfig: ApplicationConfig)
+)(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with CurrentTaxYear

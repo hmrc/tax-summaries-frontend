@@ -35,7 +35,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] = {
     val uuid = UUID.randomUUID().toString
-    FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid).withSession(SessionKeys.authToken -> "Bearer 1")
+    FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid)
   }
 
   "annual-tax-summary" must {

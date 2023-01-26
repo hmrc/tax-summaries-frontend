@@ -33,7 +33,9 @@
 @(	viewModel:PayeTaxFreeAmount
 	)(
 	implicit messages: Messages,
-	request: Request[_]
+	request: Request[_],
+	appConfig: ApplicationConfig,
+		ec: ExecutionContext
 )
 
 @main(
