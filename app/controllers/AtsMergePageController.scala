@@ -88,7 +88,7 @@ class AtsMergePageController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
-    atsForms.atsYearFormMapping.bindFromRequest.fold(
+    atsForms.atsYearFormMapping.bindFromRequest().fold(
       formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
       value =>
         Future.successful(
