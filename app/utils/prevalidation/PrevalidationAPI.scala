@@ -108,7 +108,7 @@ trait PrevalidationAPI[T] {
         case body: play.api.mvc.MultipartFormData[_]                             => body.asFormUrlEncoded
         case body: play.api.libs.json.JsValue                                    => FormUtils.fromJson(js = body).mapValues(Seq(_))
         case _                                                                   => Map.empty[String, Seq[String]]
-      }) ++ request.queryString
+      }).toMap ++ request.queryString
     }
 
   // extracted from the source of play 2.4 ( def bindFromRequest(data: Map[String, Seq[String]]): Form[T] )

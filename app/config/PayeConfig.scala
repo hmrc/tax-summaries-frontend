@@ -18,8 +18,7 @@ package config
 
 import com.google.inject.Inject
 import com.typesafe.config.{Config, ConfigFactory}
-
-import scala.collection.JavaConversions._
+import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 
 class PayeConfig @Inject() ()(implicit val appConfig: ApplicationConfig) {
   val payeYear: Int        = appConfig.taxYear
