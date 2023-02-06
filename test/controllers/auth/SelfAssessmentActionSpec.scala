@@ -17,13 +17,12 @@
 package controllers.auth
 
 import models.MatchingDetails
-import org.scalatest.concurrent.ScalaFutures
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.{Action, AnyContent, BodyParser, InjectedController, Request, Result, Results}
+import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import services.{CitizenDetailsService, FailedMatchingDetailsResponse, SucccessMatchingDetailsResponse}
@@ -31,11 +30,12 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{Generator, SaUtr, SaUtrGenerator, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import utils.TestConstants.testUar
 import utils.{BaseSpec, ControllerBaseSpec}
-import utils.TestConstants.{fakeCredentials, testUar}
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
 class SelfAssessmentActionSpec
     extends BaseSpec

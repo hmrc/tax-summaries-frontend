@@ -18,17 +18,16 @@ package view_models.paye
 
 import config.ApplicationConfig
 import models.DataHolder
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Configuration
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import utils.{BaseSpec, JsonUtil, TestConstants}
+import utils.{JsonUtil, TestConstants}
 import view_models.Amount
 
 class PayeGovernmentSpendSpec

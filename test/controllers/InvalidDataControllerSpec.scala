@@ -16,16 +16,16 @@
 
 package controllers
 
-import controllers.auth.{FakeAuthAction, FakeAuthJourney}
+import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.Matchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{ControllerBaseSpec, GenericViewModel}
-import view_models.{AtsList, TaxYearEnd}
+import view_models.AtsList
 
 import scala.concurrent.Future
 
@@ -61,7 +61,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockAllowanceService.getAllowances(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAllowanceService.getAllowances(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failed")))
 
       val result   = sut.show(request)
@@ -87,7 +87,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockCapitalGainsService.getCapitalGains(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockCapitalGainsService.getCapitalGains(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)
@@ -113,7 +113,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)
@@ -139,7 +139,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockIncomeService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockIncomeService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)
@@ -165,7 +165,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockTotalIncomeTaxService.getIncomeData(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)
@@ -190,7 +190,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockSummaryService.getSummaryData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)
@@ -216,7 +216,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockSummaryService.getSummaryData(Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockSummaryService.getSummaryData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)

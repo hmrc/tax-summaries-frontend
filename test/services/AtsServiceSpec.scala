@@ -19,8 +19,8 @@ package services
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -214,7 +214,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
 
-          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+          verify(mockAuditService, never).sendEvent(any(), any(), any())(any(), any())
         }
 
         "there is a NoAtsError in the AtsData" in {
@@ -233,7 +233,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
 
-          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+          verify(mockAuditService, never).sendEvent(any(), any(), any())(any(), any())
         }
       }
 
@@ -251,7 +251,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
-          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+          verify(mockAuditService, never).sendEvent(any(), any(), any())(any(), any())
         }
 
         "there is any other error in the AtsData" in {
@@ -269,7 +269,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
-          verify(mockAuditService, never()).sendEvent(any(), any(), any())(any(), any())
+          verify(mockAuditService, never).sendEvent(any(), any(), any())(any(), any())
         }
       }
     }

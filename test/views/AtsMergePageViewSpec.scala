@@ -20,7 +20,6 @@ import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.test.FakeRequest

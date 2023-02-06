@@ -16,7 +16,7 @@
 
 package config
 
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import utils.BaseSpec
 
 class PayeConfigSpec extends BaseSpec with MockitoSugar {

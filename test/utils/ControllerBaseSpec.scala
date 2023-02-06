@@ -92,5 +92,4 @@ trait ControllerBaseSpec extends BaseSpec {
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145")
   )
-
 }

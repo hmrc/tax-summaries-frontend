@@ -19,11 +19,10 @@ package services
 import connectors.DataCacheConnector
 import controllers.auth.AuthenticatedRequest
 import models._
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -154,7 +153,7 @@ class AtsMergePageServiceSpec
           val result = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
 
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
 
@@ -176,7 +175,7 @@ class AtsMergePageServiceSpec
           val result = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
 
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
       }
@@ -256,7 +255,6 @@ class AtsMergePageServiceSpec
           result.left.value mustBe an[AtsErrorResponse]
         }
       }
-
     }
   }
 }

@@ -18,7 +18,7 @@ package config
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import views.ViewSpecBase

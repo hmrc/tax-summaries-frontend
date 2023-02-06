@@ -20,9 +20,8 @@ import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import play.api.http.Status.INTERNAL_SERVER_ERROR
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -256,9 +255,9 @@ class AtsListServiceSpec extends BaseSpec {
         exception mustBe an[Exception]
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
+        verify(mockDataCacheConnector, never)
           .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(mockMiddleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockMiddleConnector, never).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
@@ -287,7 +286,7 @@ class AtsListServiceSpec extends BaseSpec {
         exception mustBe an[Exception]
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
+        verify(mockDataCacheConnector, never)
           .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
         verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
@@ -314,14 +313,14 @@ class AtsListServiceSpec extends BaseSpec {
           result mustBe Right(data)
         }
 
-        verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+        verify(mockAuditService, never).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
           any[Request[AnyRef]],
           any[HeaderCarrier]
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
+        verify(mockDataCacheConnector, never)
           .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(mockMiddleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockMiddleConnector, never).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
@@ -385,9 +384,9 @@ class AtsListServiceSpec extends BaseSpec {
           result mustBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
 
@@ -440,7 +439,7 @@ class AtsListServiceSpec extends BaseSpec {
             any[HeaderCarrier]
           )
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
           verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
         }
@@ -463,7 +462,7 @@ class AtsListServiceSpec extends BaseSpec {
             any[HeaderCarrier]
           )
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
           verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
         }
@@ -481,9 +480,9 @@ class AtsListServiceSpec extends BaseSpec {
           exception.getMessage mustBe "Token is empty"
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
+          verify(mockDataCacheConnector, never)
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
     }

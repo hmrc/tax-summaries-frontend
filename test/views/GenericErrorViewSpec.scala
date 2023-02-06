@@ -18,7 +18,7 @@ package views
 
 import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

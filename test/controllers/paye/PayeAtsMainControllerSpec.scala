@@ -18,8 +18,8 @@ package controllers.paye
 
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import play.api.http.Status._
 import play.api.libs.json.{Json, Reads}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}

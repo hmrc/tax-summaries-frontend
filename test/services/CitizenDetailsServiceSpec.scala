@@ -18,10 +18,9 @@ package services
 
 import connectors.CitizenDetailsConnector
 import models.MatchingDetails
-import org.mockito.Matchers.{any, eq => meq}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}

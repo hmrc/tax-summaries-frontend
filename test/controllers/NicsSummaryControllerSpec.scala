@@ -16,10 +16,9 @@
 
 package controllers
 
-import controllers.auth.{FakeAuthAction, FakeAuthJourney}
+import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.Matchers
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
@@ -70,7 +69,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit =
     when(
-      mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request))
+      mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request))
     ) thenReturn Future
       .successful(model)
 
@@ -94,7 +93,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+      when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -106,7 +105,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
-      when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+      when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
         .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = sut.show(request)

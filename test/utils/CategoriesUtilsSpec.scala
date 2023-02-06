@@ -18,8 +18,7 @@ package utils
 
 import com.typesafe.config.ConfigException
 import config.ApplicationConfig
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 
 class CategoriesUtilsSpec extends BaseSpec with MockitoSugar {
 

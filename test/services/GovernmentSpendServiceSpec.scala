@@ -19,9 +19,8 @@ package services
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
-import org.mockito.Matchers.{any, eq => meq}
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.MockitoSugar
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -35,6 +34,7 @@ import view_models.{Amount, AtsList, GovernmentSpend}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 class GovernmentSpendServiceSpec extends BaseSpec {
 
@@ -159,7 +159,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
-      result.right.value mustBe expectedBody
+      result.value mustBe expectedBody
     }
   }
 }
