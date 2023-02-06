@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
@@ -135,7 +135,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
           .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -165,7 +165,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
           .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -188,7 +188,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -211,7 +211,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
           .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -234,7 +234,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
-      val request = FakeRequest(GET, url)
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
 
@@ -263,7 +263,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
             .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
         )
 
-        val request = FakeRequest(GET, url)
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
         val result = route(fakeApplication(), request)
 
@@ -289,7 +289,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
             .willReturn(aResponse().withStatus(httpResponse))
         )
 
-        val request = FakeRequest(GET, url)
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
         val result = route(fakeApplication(), request)
 
@@ -315,7 +315,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
             .willReturn(aResponse().withStatus(httpResponse))
         )
 
-        val request = FakeRequest(GET, url)
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
         val result = route(fakeApplication(), request)
 
