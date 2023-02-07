@@ -88,7 +88,8 @@ class AtsMergePageServiceSpec
     true,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg")
+    FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg"),
+    None
   )
 
   "AtsMergePageService" when {
@@ -108,7 +109,8 @@ class AtsMergePageServiceSpec
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
+              FakeRequest("GET", "http://test.com?ref=PORTAL&id=something"),
+              None
             )
 
           when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
@@ -141,7 +143,8 @@ class AtsMergePageServiceSpec
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
 
           when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
@@ -169,7 +172,8 @@ class AtsMergePageServiceSpec
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
           when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
 
@@ -194,7 +198,8 @@ class AtsMergePageServiceSpec
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
 
           when(mockAtsListService.createModel).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
@@ -219,7 +224,8 @@ class AtsMergePageServiceSpec
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
           when(mockAtsListService.createModel).thenReturn(Future(Right(saDataResponse)))
           when(
@@ -243,7 +249,8 @@ class AtsMergePageServiceSpec
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
           when(mockAtsListService.createModel).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(

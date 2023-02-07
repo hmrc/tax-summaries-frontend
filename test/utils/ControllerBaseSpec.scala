@@ -78,7 +78,8 @@ trait ControllerBaseSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+    FakeRequest("GET", s"?taxYear=$taxYear"),
+    None
   )
 
   lazy val badRequest = AuthenticatedRequest(
@@ -90,7 +91,8 @@ trait ControllerBaseSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", "?taxYear=20145")
+    FakeRequest("GET", "?taxYear=20145"),
+    None
   )
 
 }

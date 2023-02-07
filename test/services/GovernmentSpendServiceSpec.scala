@@ -61,7 +61,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", "?taxYear=2015")
+    FakeRequest("GET", "?taxYear=2015"),
+    None
   )
 
   def sut = new GovernmentSpendService(mockAtsService, mockMiddleConnector) with MockitoSugar

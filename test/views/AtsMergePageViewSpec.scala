@@ -30,6 +30,8 @@ import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
 
+import scala.util.Random
+
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
@@ -42,7 +44,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
   lazy val atsMergePageView = inject[AtsMergePageView]
@@ -57,7 +60,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
   val requestWithCL200 = AuthenticatedRequest(
@@ -69,7 +73,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     false,
     ConfidenceLevel.L200,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
   def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
@@ -422,6 +427,17 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
       )
       assert(result.getElementById(s"year-${taxYear - 3}-PAYE").hasAttr("checked"))
+    }
+
+    "show the number of unread messages in the nav menu" in {
+      val messageCount = Random.nextInt(100)
+
+      val result = view(
+        AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, mockAppConfig, ConfidenceLevel.L200),
+        atsForms.atsYearFormMapping
+      )(requestWithCL200.copy(unreadMessageCount = Some(messageCount)))
+
+      result must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
     }
   }
 }

@@ -67,7 +67,8 @@ class PayeAtsServiceSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest()
+      FakeRequest(),
+      None
     )
   val mockAuditService: AuditService = mock[AuditService]
 

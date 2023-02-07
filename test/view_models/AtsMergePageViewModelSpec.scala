@@ -41,7 +41,8 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
   override def beforeEach() =

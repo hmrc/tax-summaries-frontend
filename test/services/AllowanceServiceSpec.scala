@@ -55,7 +55,8 @@ class AllowanceServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=${sut.taxYear}")
+    FakeRequest("GET", s"?taxYear=${sut.taxYear}"),
+    None
   )
 
   val mockAtsService: AtsService = mock[AtsService]
