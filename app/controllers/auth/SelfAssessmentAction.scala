@@ -20,7 +20,7 @@ import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
+import services.{CitizenDetailsService, MessageFrontendService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class SelfAssessmentActionImpl @Inject() (
   citizenDetailsService: CitizenDetailsService,
   ninoAuthAction: NinoAuthAction,
-  appConfig: ApplicationConfig
+  appConfig: ApplicationConfig,
+  messageFrontendService: MessageFrontendService
 )(implicit ec: ExecutionContext)
     extends SelfAssessmentAction {
 
@@ -62,13 +63,14 @@ class SelfAssessmentActionImpl @Inject() (
       case SuccessAtsNino(nino)  =>
         for {
           detailsResponse <- citizenDetailsService.getMatchingDetails(nino)
-        } yield detailsResponse match {
-          case SucccessMatchingDetailsResponse(value) =>
-            if (value.saUtr.isDefined) { Right(createAuthenticatedRequest(request, value.saUtr)) }
+          messageCount    <- messageFrontendService.getUnreadMessageCount(request)
+        } yield (detailsResponse, messageCount) match {
+          case (SucccessMatchingDetailsResponse(value), _) =>
+            if (value.saUtr.isDefined) { Right(createAuthenticatedRequest(request, value.saUtr, messageCount)) }
             else {
               Left(Redirect(controllers.routes.ErrorController.notAuthorised))
             }
-          case _                                      =>
+          case _                                           =>
             Left(
               Redirect(controllers.routes.ErrorController.notAuthorised)
             )
@@ -103,7 +105,8 @@ class SelfAssessmentActionImpl @Inject() (
 
   private def createAuthenticatedRequest[T](
     request: AuthenticatedRequest[T],
-    newSaUtr: Option[SaUtr]
+    newSaUtr: Option[SaUtr],
+    messageCount: Option[Int]
   ): AuthenticatedRequest[T] =
     AuthenticatedRequest(
       userId = request.userId,
@@ -114,7 +117,8 @@ class SelfAssessmentActionImpl @Inject() (
       isAgentActive = request.isAgentActive,
       confidenceLevel = request.confidenceLevel,
       credentials = request.credentials,
-      request = request
+      request = request,
+      messageCount
     )
 }
 

@@ -58,7 +58,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+    FakeRequest("GET", s"?taxYear=$taxYear"),
+    None
   )
 
   val successViewModel =
@@ -96,7 +97,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         true,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "?ref=PORTAL")
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "?ref=PORTAL"),
+        None
       )
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
@@ -154,7 +156,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
+        None
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -178,7 +181,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
+        None
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -202,7 +206,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
+        None
       )
 
       val result = sut.onSubmit(requestWithQuery)

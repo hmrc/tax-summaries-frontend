@@ -30,6 +30,7 @@ case class AuthenticatedRequest[A](
   isAgentActive: Boolean,
   confidenceLevel: ConfidenceLevel,
   credentials: Credentials,
-  request: Request[A]
+  request: Request[A],
+  unreadMessageCount: Option[Int]
 ) extends WrappedRequest[A](request)
     with CommonRequest

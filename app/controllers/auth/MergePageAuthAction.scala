@@ -22,7 +22,7 @@ import connectors.DataCacheConnector
 import models.AgentToken
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
+import services.{CitizenDetailsService, MessageFrontendService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -38,7 +38,8 @@ class MergePageAuthActionImpl @Inject() (
   citizenDetailsService: CitizenDetailsService,
   dataCacheConnector: DataCacheConnector,
   override val authConnector: DefaultAuthConnector,
-  cc: MessagesControllerComponents
+  cc: MessagesControllerComponents,
+  messageFrontendService: MessageFrontendService
 )(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends MergePageAuthAction
     with AuthorisedFunctions {
@@ -65,6 +66,7 @@ class MergePageAuthActionImpl @Inject() (
 
           for {
             getAgentTokenCache <- dataCacheConnector.getAgentToken
+            messageCount       <- messageFrontendService.getUnreadMessageCount(request)
             blockData          <- executeAuthActions(
                                     request,
                                     block,
@@ -75,7 +77,8 @@ class MergePageAuthActionImpl @Inject() (
                                     confidenceLevel,
                                     agentRef,
                                     isAgentActive,
-                                    getAgentTokenCache
+                                    getAgentTokenCache,
+                                    messageCount
                                   )
           } yield blockData
 
@@ -107,7 +110,8 @@ class MergePageAuthActionImpl @Inject() (
     confidenceLevel: ConfidenceLevel,
     agentRef: Option[Uar],
     isAgentActive: Boolean,
-    agentToken: Option[AgentToken]
+    agentToken: Option[AgentToken],
+    messageCount: Option[Int]
   )(implicit hc: HeaderCarrier) =
     if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
       Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
@@ -122,7 +126,8 @@ class MergePageAuthActionImpl @Inject() (
         isAgentActive,
         confidenceLevel,
         credentials,
-        request
+        request,
+        messageCount
       )
 
       val isAgentTokenMissing = isAgentActive && (request
@@ -142,7 +147,7 @@ class MergePageAuthActionImpl @Inject() (
       } else if (saUtr.isEmpty && agentRef.isEmpty) {
         nino
           .map { n =>
-            handleResponse(authenticatedRequest, n).flatMap(response => block(response))
+            handleResponse(authenticatedRequest, n, messageCount).flatMap(response => block(response))
           }
           .getOrElse(block(authenticatedRequest))
       } else {
@@ -150,7 +155,7 @@ class MergePageAuthActionImpl @Inject() (
       }
     }
 
-  private def handleResponse[T](request: AuthenticatedRequest[T], nino: String)(implicit
+  private def handleResponse[T](request: AuthenticatedRequest[T], nino: String, messageCount: Option[Int])(implicit
     hc: HeaderCarrier
   ): Future[AuthenticatedRequest[T]] =
     for {
@@ -158,7 +163,7 @@ class MergePageAuthActionImpl @Inject() (
     } yield detailsResponse match {
       case SucccessMatchingDetailsResponse(value) =>
         if (value.saUtr.isDefined) {
-          createAuthenticatedRequest(request, value.saUtr)
+          createAuthenticatedRequest(request, value.saUtr, messageCount)
         } else {
           request
         }
@@ -167,7 +172,8 @@ class MergePageAuthActionImpl @Inject() (
 
   private def createAuthenticatedRequest[T](
     request: AuthenticatedRequest[T],
-    newSaUtr: Option[SaUtr]
+    newSaUtr: Option[SaUtr],
+    messageCount: Option[Int]
   ): AuthenticatedRequest[T] =
     AuthenticatedRequest(
       userId = request.userId,
@@ -178,7 +184,8 @@ class MergePageAuthActionImpl @Inject() (
       isAgentActive = request.isAgentActive,
       confidenceLevel = request.confidenceLevel,
       credentials = request.credentials,
-      request = request
+      request = request,
+      messageCount
     )
 }
 
