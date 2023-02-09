@@ -32,11 +32,13 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject() (override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
-  implicit
-  ec: ExecutionContext,
-  appConfig: ApplicationConfig,
+class AuthActionImpl @Inject() (
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
   messageFrontendService: MessageFrontendService
+)(implicit
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
 ) extends AuthAction
     with AuthorisedFunctions
     with Logging {

@@ -33,6 +33,7 @@ import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
@@ -50,8 +51,9 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"          -> server.port(),
-      "microservice.services.tax-summaries.port" -> server.port()
+      "microservice.services.auth.port"             -> server.port(),
+      "microservice.services.tax-summaries.port"    -> server.port(),
+      "microservice.services.message-frontend.port" -> server.port()
     )
     .overrides(
       api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
@@ -122,6 +124,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val backendUrlPaye =
       s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+
+    lazy val messageFrontendUrl = "/messages/count?read=No"
 
     "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
 
@@ -233,6 +237,32 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
+
+      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+
+      val result = route(fakeApplication(), request)
+
+      result.map(status) mustBe Some(OK)
+
+      request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe Some("PORTAL")
+
+      request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
+    }
+
+    "return an OK response with unread message count indicatior when message-frontend call is successful" in {
+
+      val messageCount = Random.nextInt(100) + 1
+      server.stubFor(
+        get(urlEqualTo(backendUrlSa))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+      )
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlPaye))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+      )
+
+      server.stubFor(get(urlEqualTo(messageFrontendUrl)).willReturn(ok(s"""{"count": $messageCount}""")))
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 

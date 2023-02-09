@@ -430,12 +430,17 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     "show the number of unread messages in the nav menu" in {
-      val messageCount = Random.nextInt(100)
+      val messageCount = Random.nextInt(100) + 1
 
-      val result = view(
+      val result = atsMergePageView(
         AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, mockAppConfig, ConfidenceLevel.L200),
         atsForms.atsYearFormMapping
-      )(requestWithCL200.copy(unreadMessageCount = Some(messageCount)))
+      )(
+        request = requestWithCL200.copy(unreadMessageCount = Some(messageCount)),
+        implicitly,
+        implicitly,
+        implicitly
+      ).body
 
       result must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
     }
