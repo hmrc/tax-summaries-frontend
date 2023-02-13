@@ -24,7 +24,7 @@ import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class SelfAssessmentActionImpl @Inject() (
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, AuthenticatedRequest[A]]] = {
 
-    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     if (request.agentRef.isDefined && !request.isAgentActive) {
       Future(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))

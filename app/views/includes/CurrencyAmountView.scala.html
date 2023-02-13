@@ -19,3 +19,4 @@
 implicit messages: Messages
 )
 @if(spokenMinus && amount.amount < 0 && twoDecimalPlaces) {@Html(Messages("generic.minus")) &pound;@((-amount).toTwoDecimalString)} else if(spokenMinus && amount.amount < 0) {@Html(Messages("generic.minus")) &pound;@{-amount}} else if(!spokenMinus && amount.amount < 0 && twoDecimalPlaces) {&minus;&nbsp;&pound;@((-amount).toTwoDecimalString)} else if(!spokenMinus && amount.amount < 0) {&minus;&nbsp;&pound;@{-amount}} else if(!spokenMinus && amount.amount >= 0 && twoDecimalPlaces) {&pound;@(amount.toTwoDecimalString)} else {&pound;@amount}
+

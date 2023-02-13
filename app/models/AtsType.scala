@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{JsResult, JsString, JsSuccess, JsValue, Reads, Writes}
+import play.api.libs.json._
 
 sealed abstract class AtsType
 object AtsType {

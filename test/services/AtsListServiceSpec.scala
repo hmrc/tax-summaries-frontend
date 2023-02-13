@@ -20,11 +20,9 @@ import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
 import models._
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import play.api.http.Status.INTERNAL_SERVER_ERROR
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import play.api.libs.json.Json
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -58,9 +56,9 @@ class AtsListServiceSpec extends BaseSpec {
     reset(mockAuditService)
     reset(mockAuthUtils)
 
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
       .thenReturn(Future.successful(Some(2014)))
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any[HeaderCarrier], any[ExecutionContext]))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any(), any()))
       .thenReturn(Future.successful(Some(2015)))
     when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(data)))
@@ -72,17 +70,17 @@ class AtsListServiceSpec extends BaseSpec {
       .thenReturn(Future.successful(Some(data)))
 
     // By default we don't want to be an agent
-    when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any[ExecutionContext]))
+    when(mockDataCacheConnector.getAgentToken(any(), any()))
       .thenReturn(Future.successful(None))
 
-    when(mockMiddleConnector.connectToAtsList(any[SaUtr])(any[HeaderCarrier])) thenReturn Future.successful(
+    when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future.successful(
       AtsSuccessResponseWithPayload[AtsListData](data)
     )
 
     when(mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])) thenReturn Future
       .successful(AtsSuccessResponseWithPayload[AtsListData](data))
 
-    when(mockAuditService.sendEvent(any(), any(), any())(any(), any())) thenReturn Future.successful(
+    when(mockAuditService.sendEvent(any(), any(), any())(any())) thenReturn Future.successful(
       AuditResult.Success
     )
 
@@ -134,7 +132,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when None is returned from the dataCache" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
         .thenReturn(Future.successful(None))
 
       val result = sut.storeSelectedTaxYear(2014)
@@ -145,7 +143,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when the dataCache future has failed" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
         .thenReturn(Future.failed(new Exception("failed")))
 
       val result = sut.storeSelectedTaxYear(2014)
@@ -193,7 +191,7 @@ class AtsListServiceSpec extends BaseSpec {
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(Some(AtsTestData.atsListData)))
 
-      whenReady(sut.createModel) { result =>
+      whenReady(sut.createModel()) { result =>
         result mustBe Right(AtsList("1111111111", "John", "Smith", List(2018)))
       }
 
@@ -203,10 +201,10 @@ class AtsListServiceSpec extends BaseSpec {
 
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
 
-      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+      when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future
         .successful(AtsNotFoundResponse("Not found"))
 
-      whenReady(sut.createModel) { result =>
+      whenReady(sut.createModel()) { result =>
         result mustBe Right(AtsList.empty)
       }
 
@@ -216,10 +214,10 @@ class AtsListServiceSpec extends BaseSpec {
 
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
 
-      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+      when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future
         .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
 
-      val result = sut.createModel.futureValue.left.value
+      val result = sut.createModel().futureValue.left.value
       result mustBe an[AtsErrorResponse]
     }
   }
@@ -229,7 +227,7 @@ class AtsListServiceSpec extends BaseSpec {
     "Return a ats list with 2020 year data" in {
 
       whenReady(sut.getAtsYearList) { result =>
-        result.right.get.atsYearList.get.contains(2020) mustBe true
+        result.value.atsYearList.get.contains(2020) mustBe true
       }
 
     }
@@ -242,7 +240,7 @@ class AtsListServiceSpec extends BaseSpec {
         .thenReturn(Future.successful(Some(dataFor2019)))
 
       whenReady(sut.getAtsYearList) { result =>
-        result.right.get.atsYearList.get.contains(2020) mustBe false
+        result.value.atsYearList.get.contains(2020) mustBe false
       }
 
     }
@@ -256,9 +254,9 @@ class AtsListServiceSpec extends BaseSpec {
         exception mustBe an[Exception]
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
-          .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(mockMiddleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockDataCacheConnector, never)
+          .storeAtsListForSession(any())(any(), any())
+        verify(mockMiddleConnector, never).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
@@ -273,7 +271,7 @@ class AtsListServiceSpec extends BaseSpec {
 
       verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
       verify(mockDataCacheConnector, times(1))
-        .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        .storeAtsListForSession(any())(any(), any())
       verify(mockMiddleConnector).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
     }
 
@@ -287,8 +285,8 @@ class AtsListServiceSpec extends BaseSpec {
         exception mustBe an[Exception]
 
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
-          .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+        verify(mockDataCacheConnector, never)
+          .storeAtsListForSession(any())(any(), any())
         verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
@@ -314,14 +312,13 @@ class AtsListServiceSpec extends BaseSpec {
           result mustBe Right(data)
         }
 
-        verify(mockAuditService, never()).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-          any[Request[AnyRef]],
-          any[HeaderCarrier]
+        verify(mockAuditService, never).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+          any()
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-        verify(mockDataCacheConnector, never())
-          .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-        verify(mockMiddleConnector, never()).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+        verify(mockDataCacheConnector, never)
+          .storeAtsListForSession(any())(any(), any())
+        verify(mockMiddleConnector, never).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
 
@@ -333,12 +330,11 @@ class AtsListServiceSpec extends BaseSpec {
         result mustBe Right(data)
 
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-          any[Request[AnyRef]],
-          any[HeaderCarrier]
+          any()
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(mockDataCacheConnector, times(1))
-          .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          .storeAtsListForSession(any())(any(), any())
         verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
@@ -354,12 +350,11 @@ class AtsListServiceSpec extends BaseSpec {
         result mustBe Right(data)
 
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-          any[Request[AnyRef]],
-          any[HeaderCarrier]
+          any()
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
         verify(mockDataCacheConnector, times(1))
-          .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          .storeAtsListForSession(any())(any(), any())
         verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
       }
     }
@@ -385,9 +380,9 @@ class AtsListServiceSpec extends BaseSpec {
           result mustBe Right(data)
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
-            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockDataCacheConnector, never)
+            .storeAtsListForSession(any())(any(), any())
+          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
 
@@ -401,7 +396,7 @@ class AtsListServiceSpec extends BaseSpec {
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
-            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+            .storeAtsListForSession(any())(any(), any())
           verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
@@ -416,7 +411,7 @@ class AtsListServiceSpec extends BaseSpec {
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
-            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+            .storeAtsListForSession(any())(any(), any())
           verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
@@ -429,19 +424,18 @@ class AtsListServiceSpec extends BaseSpec {
             None
           )
 
-          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+          when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
           val result = sut.getAtsYearList.futureValue.left.value
           result mustBe an[AtsNotFoundResponse]
 
           verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-            any[Request[AnyRef]],
-            any[HeaderCarrier]
+            any()
           )
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
-            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockDataCacheConnector, never)
+            .storeAtsListForSession(any())(any(), any())
           verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
         }
       }
@@ -452,19 +446,18 @@ class AtsListServiceSpec extends BaseSpec {
             None
           )
 
-          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+          when(mockMiddleConnector.connectToAtsList(any())(any())) thenReturn Future
             .successful(AtsErrorResponse("Something went wrong"))
 
           val result = sut.getAtsYearList.futureValue.left.value
           result mustBe an[AtsErrorResponse]
 
           verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
-            any[Request[AnyRef]],
-            any[HeaderCarrier]
+            any()
           )
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
-            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
+          verify(mockDataCacheConnector, never)
+            .storeAtsListForSession(any())(any(), any())
           verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
         }
       }
@@ -481,9 +474,9 @@ class AtsListServiceSpec extends BaseSpec {
           exception.getMessage mustBe "Token is empty"
 
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
-          verify(mockDataCacheConnector, never())
-            .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, never()).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
+          verify(mockDataCacheConnector, never)
+            .storeAtsListForSession(any())(any(), any())
+          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])
         }
       }
     }

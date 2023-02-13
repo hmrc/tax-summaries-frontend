@@ -17,10 +17,7 @@
 package controllers.auth
 
 import controllers.paye.routes
-import org.mockito.Matchers._
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest

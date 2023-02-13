@@ -15,10 +15,8 @@
  *@
 
 @import controllers.auth.AuthenticatedRequest
-@import config.ApplicationConfig
 @import utils.ViewUtils
 @import views.html.includes.CurrencyAmountView
-@import scala.concurrent.ExecutionContext
 @import helpers.{HeaderSection, PageHeading, P}
 
 @this(
@@ -34,9 +32,7 @@
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit request: AuthenticatedRequest[_],
-    messages: Messages,
-    appConfig: ApplicationConfig,
-    ec: ExecutionContext
+    messages: Messages
 )
 
 @beforeContent = {

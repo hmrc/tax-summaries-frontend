@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import models.{AgentToken, AtsData, AtsListData}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
