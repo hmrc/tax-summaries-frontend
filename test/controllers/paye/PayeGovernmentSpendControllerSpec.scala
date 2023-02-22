@@ -17,17 +17,14 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakePayeAuthAction
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import utils.TestConstants.testNino
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeGovernmentSpendingView
 
@@ -71,7 +68,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(fakeTaxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
@@ -94,7 +91,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
@@ -132,7 +129,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
@@ -145,7 +142,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
@@ -159,7 +156,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 

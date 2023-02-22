@@ -25,7 +25,7 @@ object JsonUtil extends JsonUtil
 
 trait JsonUtil {
 
-  lazy val dummyDataMap = Map("$utr" -> testUtr)
+  lazy val dummyDataMap = Map("testUtr" -> testUtr)
 
   def load(path: String): String =
     Source.fromURL(getClass.getResource(path)).mkString

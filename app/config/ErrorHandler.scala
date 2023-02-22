@@ -17,39 +17,26 @@
 package config
 
 import com.google.inject.Inject
-import play.api.i18n.{Lang, MessagesApi}
+import play.api.Configuration
+import play.api.i18n.MessagesApi
 import play.api.mvc.Request
-import play.api.{Application, Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
-import scala.concurrent.ExecutionContext
-
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
   val configuration: Configuration,
-  val environment: Environment,
   errorTemplateView: ErrorTemplateView,
   pageNotFoundTemplateView: PageNotFoundTemplateView
-)(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
+)(implicit val appConfig: ApplicationConfig)
     extends FrontendErrorHandler {
-
-  private def lang(implicit request: Request[_]): Lang =
-    Lang(request.cookies.get("PLAY_LANG").map(_.value).getOrElse("en"))
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: Request[_]
-  ): Html = {
-    implicit val _: Lang = lang
+  ): Html =
     errorTemplateView(pageTitle, heading, message)
-  }
 
-  override def notFoundTemplate(implicit request: Request[_]): Html = {
-    implicit val _: Lang = lang
+  override def notFoundTemplate(implicit request: Request[_]): Html =
     pageNotFoundTemplateView()
-  }
-
-  def microserviceMetricsConfig(implicit app: Application): Option[Configuration] =
-    app.configuration.getOptional[Configuration](s"microservice.metrics")
 }

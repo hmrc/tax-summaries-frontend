@@ -18,7 +18,7 @@ package views
 
 import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -59,7 +59,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     "show the correct contents of the generic error page in English" in {
 
       val resultEn   =
-        genericErrorView()(requestWithSession, messagesEn, appConfig, ec)
+        genericErrorView()(requestWithSession, messagesEn, appConfig)
       val documentEn = Jsoup.parse(contentAsString(resultEn))
       documentEn.toString must include(messagesEn("global.error.InternalServerError500.title"))
       documentEn.toString must include(
@@ -74,7 +74,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     "show the correct contents of the generic error page in Welsh" in {
 
       val resultCy   =
-        genericErrorView()(requestWithSession, messagesCy, appConfig, ec)
+        genericErrorView()(requestWithSession, messagesCy, appConfig)
       val documentCy = Jsoup.parse(contentAsString(resultCy))
       documentCy.toString must include(messagesCy("global.error.InternalServerError500.title"))
       documentCy.toString must include(

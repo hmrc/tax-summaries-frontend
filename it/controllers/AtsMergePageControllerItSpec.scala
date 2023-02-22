@@ -19,9 +19,7 @@ package controllers
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import connectors.DataCacheConnector
 import models.{AgentToken, AtsListData}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.scalatest.MockitoSugar
 import play.api
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -110,10 +108,10 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
   when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
     .thenReturn(Future.successful(Some(atsListData)))
 
-  when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any()))
+  when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any))
     .thenReturn(Future.successful(Some(agentTokenMock)))
 
-  when(mockDataCacheConnector.storeAtsListForSession(any())(any(), any()))
+  when(mockDataCacheConnector.storeAtsListForSession(any)(any, any))
     .thenReturn(Future.successful(Some(atsListData)))
 
   "/income-before-tax" must {
@@ -270,9 +268,9 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
       result.map(status) mustBe Some(OK)
 
-      request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe Some("PORTAL")
-
-      request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
+      result.map(x =>
+        contentAsString(x) must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
+      )
     }
 
     List(

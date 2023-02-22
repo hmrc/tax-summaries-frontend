@@ -16,9 +16,8 @@
 
 package controllers
 
-import controllers.auth.{FakeAuthAction, FakeAuthJourney}
-import org.mockito.Matchers
-import org.mockito.Mockito._
+import controllers.auth.FakeAuthJourney
+import org.mockito.ArgumentMatchers.any
 import play.api.test.Helpers._
 import services._
 import utils.ControllerBaseSpec
@@ -47,7 +46,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     )
 
   override def beforeEach() =
-    when(mockIncomeService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+    when(mockIncomeService.getIncomeData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
   "Opening link if user has no income tax or cg tax liability" must {
@@ -66,7 +65,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
           genericErrorView,
           tokenErrorView
         )
-      when(mockTotalIncomeTaxService.getIncomeData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model))
 
       val result = sut.show(request)
@@ -107,7 +106,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(allowanceService.getAllowances(Matchers.eq(taxYear))(Matchers.eq(request), Matchers.any()))
+    when(allowanceService.getAllowances(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -131,7 +130,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockCapitalGainsService.getCapitalGains(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+    when(mockCapitalGainsService.getCapitalGains(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -155,7 +154,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+    when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -177,7 +176,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+    when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -199,7 +198,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockSummaryService.getSummaryData(Matchers.eq(taxYear))(Matchers.any(), Matchers.eq(request)))
+    when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)

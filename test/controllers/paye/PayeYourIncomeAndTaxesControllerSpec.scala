@@ -16,17 +16,14 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakePayeAuthAction
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status._
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants.testNino
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeYourIncomeAndTaxesView
 
@@ -53,7 +50,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
@@ -72,7 +69,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(2019))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(payeAtsTestData.malformedYourIncomeAndTaxesData)))
 
@@ -85,7 +82,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(payeAtsTestData.missingYourIncomeAndTaxesData)))
 
@@ -100,7 +97,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
@@ -114,7 +111,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
@@ -128,7 +125,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
       when(
         mockPayeAtsService
-          .getPayeATSData(eqTo(testNino), eqTo(taxYear))(any[HeaderCarrier], any[PayeAuthenticatedRequest[_]])
+          .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
