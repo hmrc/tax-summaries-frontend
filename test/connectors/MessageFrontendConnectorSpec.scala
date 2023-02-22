@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.{FakeRequest, Injecting}
 import play.api.test.Helpers.{BAD_GATEWAY, BAD_REQUEST, GET, INTERNAL_SERVER_ERROR, NOT_FOUND, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
-import utils.{BaseSpec, JsonUtil, WireMockHelper}
+import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 import scala.util.Random

@@ -81,7 +81,10 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     true,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg"),
+    FakeRequest(
+      "GET",
+      controllers.routes.AtsMergePageController.onPageLoad.toString + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg"
+    ),
     None
   )
 

@@ -18,8 +18,7 @@ package services
 
 import cats.data.EitherT
 import connectors.MessageFrontendConnector
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{OK, UNAUTHORIZED}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.GET

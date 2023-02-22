@@ -96,7 +96,6 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         true,
         ConfidenceLevel.L50,
         fakeCredentials,
-        None
         FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad.toString + "?ref=PORTAL"),
         None
       )

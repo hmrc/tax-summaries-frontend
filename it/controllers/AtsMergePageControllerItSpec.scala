@@ -30,6 +30,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
@@ -247,9 +248,41 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
     }
 
-    "return an OK response with unread message count indicatior when message-frontend call is successful" in {
+    "return an OK response with unread message count indicator when message-frontend call is successful" in {
 
       val messageCount = Random.nextInt(100) + 1
+
+      val authResponseNoSA =
+        s"""
+           |{
+           |    "confidenceLevel": 200,
+           |    "nino": "$generatedNino",
+           |    "saUtr": "$generatedSaUtr",
+           |    "name": {
+           |        "name": "John",
+           |        "lastName": "Smith"
+           |    },
+           |    "loginTimes": {
+           |        "currentLogin": "2021-06-07T10:52:02.594Z",
+           |        "previousLogin": null
+           |    },
+           |    "optionalCredentials": {
+           |        "providerId": "4911434741952698",
+           |        "providerType": "GovernmentGateway"
+           |    },
+           |    "authProviderId": {
+           |        "ggCredId": "xyz"
+           |    },
+           |    "externalId": "testExternalId",
+           |    "allEnrolments": []
+           |}
+           |""".stripMargin
+
+      server.stubFor(
+        post(urlEqualTo("/auth/authorise"))
+          .willReturn(ok(authResponseNoSA))
+      )
+
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
           .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
@@ -262,15 +295,14 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
       server.stubFor(get(urlEqualTo(messageFrontendUrl)).willReturn(ok(s"""{"count": $messageCount}""")))
 
-      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+      val request = FakeRequest(GET, url)
+        .withSession(SessionKeys.sessionId -> UUID.randomUUID().toString, SessionKeys.authToken -> "Bearer 1")
 
-      val result = route(fakeApplication(), request)
+      val result  = route(fakeApplication(), request).get
 
-      result.map(status) mustBe Some(OK)
+      status(result) mustBe OK
 
-      result.map(x =>
-        contentAsString(x) must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
-      )
+      contentAsString(result) must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
     }
 
     List(
