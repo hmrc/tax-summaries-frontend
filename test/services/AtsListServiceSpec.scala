@@ -22,9 +22,8 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
-import play.api.mvc.Request
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -32,7 +31,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.TestConstants._
-import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
+import utils.{AgentTokenException, AtsTaxYearsUtils, AuthorityUtils, BaseSpec}
 import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +39,7 @@ import scala.io.Source
 
 class AtsListServiceSpec extends BaseSpec {
 
-  val data = {
+  val data: AtsListData = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr.json")).mkString
     val json   = Json.parse(source)
     Json.fromJson[AtsListData](json).get
@@ -51,12 +50,14 @@ class AtsListServiceSpec extends BaseSpec {
   val mockAuditService: AuditService             = mock[AuditService]
   val mockAuthUtils: AuthorityUtils              = mock[AuthorityUtils]
   val mockAppConfig: ApplicationConfig           = mock[ApplicationConfig]
+  val mockAtsTaxYearsUtils: AtsTaxYearsUtils     = mock[AtsTaxYearsUtils]
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
     reset(mockDataCacheConnector)
     reset(mockAuditService)
     reset(mockAuthUtils)
+    reset(mockAtsTaxYearsUtils)
 
     when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(2014)))
@@ -88,38 +89,46 @@ class AtsListServiceSpec extends BaseSpec {
 
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+    when(mockAtsTaxYearsUtils.getTaxYears) thenReturn List(2022, 2021)
 
     when(mockAppConfig.taxYear).thenReturn(2020)
   }
 
-  implicit val request =
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),
       None,
-      true,
-      false,
+      isSa = true,
+      isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest()
     )
-  implicit val hc      = new HeaderCarrier
+  implicit val hc: HeaderCarrier                                     = new HeaderCarrier
 
-  val agentToken = AgentToken(
+  val agentToken: AgentToken = AgentToken(
     agentUar = testUar,
     clientUtr = testUtr,
     timestamp = 0
   )
 
-  val dataFor2019 = {
+  val dataFor2019: AtsListData = {
     val source = Source.fromURL(getClass.getResource("/test_list_utr_year_2019.json")).mkString
     val json   = Json.parse(source)
     Json.fromJson[AtsListData](json).get
   }
 
   def sut: AtsListService =
-    new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
+    new AtsListService(
+      mockAuditService,
+      mockMiddleConnector,
+      mockDataCacheConnector,
+      mockAuthUtils,
+      mockAtsTaxYearsUtils,
+      appConfig
+    )
 
   "storeSelectedTaxYear" must {
 
@@ -297,14 +306,14 @@ class AtsListServiceSpec extends BaseSpec {
 
       "Return the ats year list data for a user from the cache" in {
 
-        implicit val agentRequest =
+        implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
           AuthenticatedRequest(
             "userId",
             Some(Uar(testUtr)),
             Some(SaUtr(testUtr)),
             None,
-            true,
-            false,
+            isSa = true,
+            isAgentActive = false,
             ConfidenceLevel.L50,
             fakeCredentials,
             FakeRequest()
@@ -372,8 +381,8 @@ class AtsListServiceSpec extends BaseSpec {
           Some(Uar(testUar)),
           Some(SaUtr(testUtr)),
           None,
-          true,
-          false,
+          isSa = true,
+          isAgentActive = false,
           ConfidenceLevel.L50,
           fakeCredentials,
           FakeRequest()

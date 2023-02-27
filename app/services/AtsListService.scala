@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.AuthenticatedRequest
-import models.{AtsListData, _}
+import models._
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
@@ -34,6 +34,7 @@ class AtsListService @Inject() (
   middleConnector: MiddleConnector,
   dataCache: DataCacheConnector,
   authUtils: AuthorityUtils,
+  atsTaxYearsUtils: AtsTaxYearsUtils,
   appConfig: ApplicationConfig
 )(implicit ec: ExecutionContext)
     extends AccountUtils {
@@ -101,14 +102,64 @@ class AtsListService @Inject() (
 
     val response = (account: @unchecked) match {
       case agent: Uar        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
-      case individual: SaUtr => middleConnector.connectToAtsList(individual)
+      case individual: SaUtr =>
+        val atsIndividualYearsCombinedList         = List[AtsData]()
+        val taxYearsAvailableInIndividualYearsList = List[Int]()
+        var taxPayerDataFromIndividualYearsService = None: Option[TaxpayerFrontTierData]
+        val taxYears                               = atsTaxYearsUtils.getTaxYears
+        var totalFailuresInIndividualYearsApiCalls = 0
+        var yearFailureOccuredFor                  = 0
+        for (taxYearValue <- taxYears) {
+          val taxYearAtsDataForSingleYear = middleConnector.connectToAts(individual, taxYearValue)
+          if (taxYearAtsDataForSingleYear.value.nonEmpty) {
+            taxYearAtsDataForSingleYear.value.get.get match {
+              case AtsSuccessResponseWithPayload(data: AtsData) =>
+                println("+data available+")
+                List(data.taxYear) ::: taxYearsAvailableInIndividualYearsList
+                List(data) ::: atsIndividualYearsCombinedList
+
+              case _ =>
+                yearFailureOccuredFor = taxYearValue
+                totalFailuresInIndividualYearsApiCalls = totalFailuresInIndividualYearsApiCalls + 1
+            }
+
+          }
+        }
+        if (totalFailuresInIndividualYearsApiCalls == 1) {
+          val taxYearAtsDataForFailedSingleYear = middleConnector.connectToAts(individual, yearFailureOccuredFor)
+          taxYearAtsDataForFailedSingleYear.value.get.get match {
+            case AtsSuccessResponseWithPayload(data: AtsData) if !hasNoAts(data) && data.errors.isEmpty =>
+              data.taxYear :: taxYearsAvailableInIndividualYearsList
+              data :: atsIndividualYearsCombinedList
+              taxPayerDataFromIndividualYearsService = Some(
+                new TaxpayerFrontTierData(data.taxPayerData.get.taxpayer_name, None)
+              )
+              totalFailuresInIndividualYearsApiCalls = 0
+            case _                                                                                      =>
+              totalFailuresInIndividualYearsApiCalls = totalFailuresInIndividualYearsApiCalls + 1
+          }
+        }
+        if (totalFailuresInIndividualYearsApiCalls == 0) {
+          val newAtsListDataCreatedFromIndividualYearsApiCombined: AtsListData = AtsListData(
+            requestedUTR.utr,
+            taxPayerDataFromIndividualYearsService,
+            Some(taxYearsAvailableInIndividualYearsList)
+          )
+          print("+for debug sandeep" + atsIndividualYearsCombinedList.size + "+")
+          middleConnector.connectToAtsList(individual)
+
+        } else {
+          Future.successful(AtsErrorResponse("Error with The Individual Year list API"))
+        }
     }
 
     val result = response flatMap {
       case AtsSuccessResponseWithPayload(payload: AtsListData) =>
         val atsListData = if (appConfig.taxYear < 2020 && payload.atsYearList.isDefined) {
           AtsListData(payload.utr, payload.taxPayer, Some(payload.atsYearList.get.filter(_ < 2020)))
-        } else payload
+        } else {
+          payload
+        }
 
         for {
           data: AtsListData <- storeAtsListData(atsListData)
@@ -120,6 +171,10 @@ class AtsListService @Inject() (
       sendAuditEvent(account, res)
       res
     }
+  }
+
+  private def hasNoAts(data: AtsData): Boolean = data.errors.fold(false) { errors =>
+    errors.error == "NoAtsError"
   }
 
   private def storeAtsListData(atsList: AtsListData)(implicit hc: HeaderCarrier): Future[AtsListData] =
