@@ -29,23 +29,23 @@ import view_models.AtsList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsListService @Inject() (
-  auditService: AuditService,
-  middleConnector: MiddleConnector,
-  dataCache: DataCacheConnector,
-  authUtils: AuthorityUtils,
-  atsTaxYearsUtils: AtsTaxYearsUtils,
-  atsTaxYearsComparisonUtils: AtsTaxYearsComparisonUtils,
-  appConfig: ApplicationConfig
-)(implicit ec: ExecutionContext)
-    extends AccountUtils {
+class AtsListService @Inject()(
+                                auditService: AuditService,
+                                middleConnector: MiddleConnector,
+                                dataCache: DataCacheConnector,
+                                authUtils: AuthorityUtils,
+                                atsTaxYearsUtils: AtsTaxYearsUtils,
+                                atsTaxYearsComparisonUtils: AtsTaxYearsComparisonUtils,
+                                appConfig: ApplicationConfig
+                              )(implicit ec: ExecutionContext)
+  extends AccountUtils {
 
   def createModel()(implicit
-    hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]
+                    hc: HeaderCarrier,
+                    request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsList]] =
     getAtsYearList map {
-      case Right(atsList)               =>
+      case Right(atsList) =>
         Right(
           AtsList(
             atsList.utr,
@@ -55,13 +55,13 @@ class AtsListService @Inject() (
           )
         )
       case Left(_: AtsNotFoundResponse) => Right(AtsList.empty)
-      case Left(status)                 => Left(status)
+      case Left(status) => Left(status)
     }
 
   def getAtsYearList(implicit
-    hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]
-  ): Future[Either[AtsResponse, AtsListData]] = {
+                     hc: HeaderCarrier,
+                     request: AuthenticatedRequest[_]
+                    ): Future[Either[AtsResponse, AtsListData]] = {
     for {
       data <- dataCache.fetchAndGetAtsListForSession
     } yield data match {
@@ -71,7 +71,7 @@ class AtsListService @Inject() (
         } else {
           getAtsListAndStore()
         }
-      case _          =>
+      case _ =>
         if (isAgent(request)) {
           dataCache.getAgentToken.flatMap { token =>
             getAtsListAndStore(token)
@@ -83,8 +83,8 @@ class AtsListService @Inject() (
   } flatMap identity
 
   private def fetchAgentInfo(
-    data: AtsListData
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
+                              data: AtsListData
+                            )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
     for {
       token <- dataCache.getAgentToken
     } yield
@@ -96,22 +96,23 @@ class AtsListService @Inject() (
   } flatMap identity
 
   private def getAtsListAndStore(
-    agentToken: Option[AgentToken] = None
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
-    val account      = getAccount(request)
+                                  agentToken: Option[AgentToken] = None
+                                )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
+    val account = getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val response = (account: @unchecked) match {
-      case agent: Uar        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
+      case agent: Uar => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
       case individual: SaUtr =>
-        var atsIndividualYearsCombinedList         = List[AtsData]()
+        var atsIndividualYearsCombinedList = List[AtsData]()
         var taxYearsAvailableInIndividualYearsList = List[Int]()
         var taxPayerDataFromIndividualYearsService = None: Option[TaxpayerFrontTierData]
-        val taxYears                               = atsTaxYearsUtils.getTaxYears
+        val taxYears = atsTaxYearsUtils.getTaxYears
         var totalFailuresInIndividualYearsApiCalls = 0
-        var yearFailureOccurredFor                 = 0
-        var dataNotFoundForAllYears                = true
+        var yearFailureOccurredFor = 0
+        var dataNotFoundForAllYears = true
         for (taxYearValue <- taxYears) {
+          print("sandeep" + taxYearValue)
           val taxYearAtsDataForSingleYear = middleConnector.connectToAts(individual, taxYearValue)
           if (taxYearAtsDataForSingleYear.value.nonEmpty) {
             taxYearAtsDataForSingleYear.value.get.get match {
@@ -123,8 +124,8 @@ class AtsListService @Inject() (
                 taxPayerDataFromIndividualYearsService = Some(
                   new TaxpayerFrontTierData(data.taxPayerData.get.taxpayer_name, None)
                 )
-              case AtsNotFoundResponse(_)                       =>
-              case _                                            =>
+              case AtsNotFoundResponse(_) =>
+              case _ =>
                 dataNotFoundForAllYears = false
                 yearFailureOccurredFor = taxYearValue
                 totalFailuresInIndividualYearsApiCalls = totalFailuresInIndividualYearsApiCalls + 1
@@ -142,7 +143,7 @@ class AtsListService @Inject() (
                 new TaxpayerFrontTierData(data.taxPayerData.get.taxpayer_name, None)
               )
               totalFailuresInIndividualYearsApiCalls = 0
-            case _                                                                                      =>
+            case _ =>
               totalFailuresInIndividualYearsApiCalls = totalFailuresInIndividualYearsApiCalls + 1
           }
         }
@@ -150,16 +151,16 @@ class AtsListService @Inject() (
           val newAtsListDataCreatedFromIndividualYearsApiCombined: AtsListData = AtsListData(
             requestedUTR.utr,
             taxPayerDataFromIndividualYearsService,
-            Some(taxYearsAvailableInIndividualYearsList)
+            Some(taxYearsAvailableInIndividualYearsList.sorted)
           )
 
-          val listAtsFuture                         = middleConnector.connectToAtsList(individual)
+          val listAtsFuture = middleConnector.connectToAtsList(individual)
           var yearsListInListAPI: Option[List[Int]] = None
 
           listAtsFuture.value.get.get match {
             case AtsSuccessResponseWithPayload(data: AtsListData) =>
               yearsListInListAPI = data.atsYearList
-            case _                                                =>
+            case _ =>
               yearsListInListAPI = None
           }
 
@@ -188,7 +189,7 @@ class AtsListService @Inject() (
         for {
           data: AtsListData <- storeAtsListData(atsListData)
         } yield Right(data)
-      case r                                                   => Future.successful(Left(r))
+      case r => Future.successful(Left(r))
     }
 
     result map { res =>
@@ -217,15 +218,15 @@ class AtsListService @Inject() (
     }
 
   private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[AtsResponse, AtsListData])(implicit
-    hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]
+                                                                                                hc: HeaderCarrier,
+                                                                                                request: AuthenticatedRequest[_]
   ): Future[AuditResult] =
     (dataOpt, account: @unchecked) match {
-      case (Right(data), _: Uar)   =>
+      case (Right(data), _: Uar) =>
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "agentId"   -> AccountUtils.getAccountId(request),
+            "agentId" -> AccountUtils.getAccountId(request),
             "clientUtr" -> data.utr
           )
         )
@@ -234,16 +235,16 @@ class AtsListService @Inject() (
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "userId"   -> request.userId,
-            "userUtr"  -> data.utr,
+            "userId" -> request.userId,
+            "userUtr" -> data.utr,
             "userType" -> userType
           )
         )
-      case (Left(_), identifier)   =>
+      case (Left(_), identifier) =>
         auditService.sendEvent(
           AuditTypes.Tx_FAILED,
           Map(
-            "userId"         -> request.userId,
+            "userId" -> request.userId,
             "userIdentifier" -> identifier.value
           )
         )

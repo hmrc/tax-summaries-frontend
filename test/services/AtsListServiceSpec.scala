@@ -42,25 +42,45 @@ class AtsListServiceSpec extends BaseSpec {
 
   val data: AtsListData = {
 
-    val source       = Source.fromURL(getClass.getResource("/test_list_utr.json"))
+    val source = Source.fromURL(getClass.getResource("/test_list_utr.json"))
     val sourceString = source.mkString
-    val json         = Json.parse(sourceString)
+    val json = Json.parse(sourceString)
     source.close()
     Json.fromJson[AtsListData](json).get
   }
 
-  val dataForIndividualYear: AtsData = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
+  val dataForIndividualYear2020: AtsData = {
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2020.json")
+    Json.fromJson[AtsData](json).get
+  }
+  val dataForIndividualYear2019: AtsData = {
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2019.json")
+    Json.fromJson[AtsData](json).get
+  }
+  val dataForIndividualYear2018: AtsData = {
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2018.json")
+    Json.fromJson[AtsData](json).get
+  }
+  val dataForIndividualYear2017: AtsData = {
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2017.json")
+    Json.fromJson[AtsData](json).get
+  }
+  val dataForIndividualYear2016: AtsData = {
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2016.json")
+    Json.fromJson[AtsData](json).get
+  }
+  val dataForIndividualYear2015: AtsData = {
+    val json = loadAndParseJsonWithDummyData("/summary_json_test_2015.json")
     Json.fromJson[AtsData](json).get
   }
 
-  val mockMiddleConnector: MiddleConnector       = mock[MiddleConnector]
+  val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
-  val mockAuditService: AuditService             = mock[AuditService]
-  val mockAuthUtils: AuthorityUtils              = mock[AuthorityUtils]
-  val mockAppConfig: ApplicationConfig           = mock[ApplicationConfig]
-  val mockAtsTaxYearsUtils: AtsTaxYearsUtils     = mock[AtsTaxYearsUtils]
-  val atsTaxYearsComparisonUtils                 = new AtsTaxYearsComparisonUtils
+  val mockAuditService: AuditService = mock[AuditService]
+  val mockAuthUtils: AuthorityUtils = mock[AuthorityUtils]
+  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
+  val mockAtsTaxYearsUtils: AtsTaxYearsUtils = mock[AtsTaxYearsUtils]
+  val atsTaxYearsComparisonUtils = new AtsTaxYearsComparisonUtils
 
   override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
@@ -90,8 +110,23 @@ class AtsListServiceSpec extends BaseSpec {
       AtsSuccessResponseWithPayload[AtsListData](data)
     )
 
-    when(mockMiddleConnector.connectToAts(any[SaUtr], any())(any())) thenReturn
-      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear))
+    when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2015))(any())) thenReturn
+      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear2015))
+
+    when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2016))(any())) thenReturn
+      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear2016))
+
+    when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2017))(any())) thenReturn
+      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear2017))
+
+    when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2018))(any())) thenReturn
+      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear2018))
+
+    when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2019))(any())) thenReturn
+      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear2019))
+
+    when(mockMiddleConnector.connectToAts(any[SaUtr], eqTo(2020))(any())) thenReturn
+      Future.successful(AtsSuccessResponseWithPayload[AtsData](dataForIndividualYear2020))
 
     when(mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr])(any[HeaderCarrier])) thenReturn Future
       .successful(AtsSuccessResponseWithPayload[AtsListData](data))
@@ -101,7 +136,7 @@ class AtsListServiceSpec extends BaseSpec {
     )
 
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
-    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr("$utr")
     when(mockAtsTaxYearsUtils.getTaxYears) thenReturn List(2015, 2016, 2017, 2018, 2019, 2020)
 
     when(mockAppConfig.taxYear).thenReturn(2020)
@@ -111,7 +146,7 @@ class AtsListServiceSpec extends BaseSpec {
     AuthenticatedRequest(
       "userId",
       None,
-      Some(SaUtr(testUtr)),
+      Some(SaUtr("$utr")),
       None,
       isSa = true,
       isAgentActive = false,
@@ -119,18 +154,18 @@ class AtsListServiceSpec extends BaseSpec {
       fakeCredentials,
       FakeRequest()
     )
-  implicit val hc: HeaderCarrier                                     = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val agentToken: AgentToken = AgentToken(
     agentUar = testUar,
-    clientUtr = testUtr,
+    clientUtr = "$utr",
     timestamp = 0
   )
 
   val dataFor2019: AtsListData = {
-    val source       = Source.fromURL(getClass.getResource("/test_list_utr_year_2019.json"))
+    val source = Source.fromURL(getClass.getResource("/test_list_utr_year_2019.json"))
     val sourceString = source.mkString
-    val json         = Json.parse(sourceString)
+    val json = Json.parse(sourceString)
     source.close()
     Json.fromJson[AtsListData](json).get
   }
@@ -228,10 +263,10 @@ class AtsListServiceSpec extends BaseSpec {
 
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
 
-      when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), any())(any[HeaderCarrier])) thenReturn Future
+      when(mockMiddleConnector.connectToAts(eqTo(SaUtr("$utr")), any())(any[HeaderCarrier])) thenReturn Future
         .successful(AtsNotFoundResponse("Not found"))
 
-      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr("$utr")))(any[HeaderCarrier])) thenReturn Future
         .successful(AtsNotFoundResponse("Not found"))
 
       whenReady(sut.createModel) { result =>
@@ -244,10 +279,10 @@ class AtsListServiceSpec extends BaseSpec {
 
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier])) thenReturn Future.successful(None)
 
-      when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), any())(any[HeaderCarrier])) thenReturn Future
+      when(mockMiddleConnector.connectToAts(eqTo(SaUtr("$utr")), any())(any[HeaderCarrier])) thenReturn Future
         .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
 
-      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+      when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr("$utr")))(any[HeaderCarrier])) thenReturn Future
         .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
 
       val result = sut.createModel.futureValue.left.value
@@ -331,8 +366,8 @@ class AtsListServiceSpec extends BaseSpec {
         implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
           AuthenticatedRequest(
             "userId",
-            Some(Uar(testUtr)),
-            Some(SaUtr(testUtr)),
+            Some(Uar("$utr")),
+            Some(SaUtr("$utr")),
             None,
             isSa = true,
             isAgentActive = false,
@@ -401,7 +436,7 @@ class AtsListServiceSpec extends BaseSpec {
         AuthenticatedRequest(
           "userId",
           Some(Uar(testUar)),
-          Some(SaUtr(testUtr)),
+          Some(SaUtr("$utr")),
           None,
           isSa = true,
           isAgentActive = false,
@@ -460,7 +495,9 @@ class AtsListServiceSpec extends BaseSpec {
             None
           )
 
-          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr("$utr")))(any[HeaderCarrier])) thenReturn Future
+            .successful(AtsNotFoundResponse("Not found"))
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr("$utr")), any())(any[HeaderCarrier])) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
           val result = sut.getAtsYearList.futureValue.left.value
@@ -473,7 +510,7 @@ class AtsListServiceSpec extends BaseSpec {
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never())
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr])(any[HeaderCarrier])
+          verify(mockMiddleConnector, times(6)).connectToAts(any[SaUtr], any())(any[HeaderCarrier])
         }
       }
 
@@ -483,10 +520,10 @@ class AtsListServiceSpec extends BaseSpec {
             None
           )
 
-          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr(testUtr)))(any[HeaderCarrier])) thenReturn Future
+          when(mockMiddleConnector.connectToAtsList(eqTo(SaUtr("$utr")))(any[HeaderCarrier])) thenReturn Future
             .successful(AtsErrorResponse("Something went wrong"))
 
-          when(mockMiddleConnector.connectToAts(eqTo(SaUtr(testUtr)), any())(any[HeaderCarrier])) thenReturn Future
+          when(mockMiddleConnector.connectToAts(eqTo(SaUtr("$utr")), any())(any[HeaderCarrier])) thenReturn Future
             .successful(AtsErrorResponse("Something went wrong"))
 
           val result = sut.getAtsYearList.futureValue.left.value
