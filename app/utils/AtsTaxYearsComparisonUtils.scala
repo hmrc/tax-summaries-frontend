@@ -17,12 +17,18 @@
 package utils
 
 import com.google.inject.Inject
-import models.AtsResponse
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class AtsTaxYearsComparisonUtils @Inject() () {
   def compareIndividualTaxYearsWithList(
-    atsListApiresponse: AtsResponse,
-    atsIndividualYearsCombinedApiResponseList: AtsResponse
-  ) = {}
+    atsListApiResponseYears: Option[List[Int]],
+    atsIndividualYearsCombinedApiResponseYears: Option[List[Int]]
+  ) = {
+    val setOfAtsListApiResponseYears             = atsListApiResponseYears.toSet
+    val differenceBetweenList: Option[List[Int]] =
+      atsIndividualYearsCombinedApiResponseYears.filter(setOfAtsListApiResponseYears)
+    if (differenceBetweenList.nonEmpty) {
+      print(differenceBetweenList)
+    }
+  }
+
 }

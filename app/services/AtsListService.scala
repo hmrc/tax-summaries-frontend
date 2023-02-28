@@ -35,6 +35,7 @@ class AtsListService @Inject() (
   dataCache: DataCacheConnector,
   authUtils: AuthorityUtils,
   atsTaxYearsUtils: AtsTaxYearsUtils,
+  atsTaxYearsComparisonUtils: AtsTaxYearsComparisonUtils,
   appConfig: ApplicationConfig
 )(implicit ec: ExecutionContext)
     extends AccountUtils {
@@ -103,34 +104,40 @@ class AtsListService @Inject() (
     val response = (account: @unchecked) match {
       case agent: Uar        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
       case individual: SaUtr =>
-        val atsIndividualYearsCombinedList         = List[AtsData]()
-        val taxYearsAvailableInIndividualYearsList = List[Int]()
+        var atsIndividualYearsCombinedList         = List[AtsData]()
+        var taxYearsAvailableInIndividualYearsList = List[Int]()
         var taxPayerDataFromIndividualYearsService = None: Option[TaxpayerFrontTierData]
         val taxYears                               = atsTaxYearsUtils.getTaxYears
         var totalFailuresInIndividualYearsApiCalls = 0
-        var yearFailureOccuredFor                  = 0
+        var yearFailureOccurredFor                 = 0
+        var dataNotFoundForAllYears                = true
         for (taxYearValue <- taxYears) {
           val taxYearAtsDataForSingleYear = middleConnector.connectToAts(individual, taxYearValue)
           if (taxYearAtsDataForSingleYear.value.nonEmpty) {
             taxYearAtsDataForSingleYear.value.get.get match {
-              case AtsSuccessResponseWithPayload(data: AtsData) =>
-                println("+data available+")
-                List(data.taxYear) ::: taxYearsAvailableInIndividualYearsList
-                List(data) ::: atsIndividualYearsCombinedList
 
-              case _ =>
-                yearFailureOccuredFor = taxYearValue
+              case AtsSuccessResponseWithPayload(data: AtsData) =>
+                dataNotFoundForAllYears = false
+                taxYearsAvailableInIndividualYearsList = data.taxYear :: taxYearsAvailableInIndividualYearsList
+                atsIndividualYearsCombinedList = data :: atsIndividualYearsCombinedList
+                taxPayerDataFromIndividualYearsService = Some(
+                  new TaxpayerFrontTierData(data.taxPayerData.get.taxpayer_name, None)
+                )
+              case AtsNotFoundResponse(_)                       =>
+              case _                                            =>
+                dataNotFoundForAllYears = false
+                yearFailureOccurredFor = taxYearValue
                 totalFailuresInIndividualYearsApiCalls = totalFailuresInIndividualYearsApiCalls + 1
             }
 
           }
         }
         if (totalFailuresInIndividualYearsApiCalls == 1) {
-          val taxYearAtsDataForFailedSingleYear = middleConnector.connectToAts(individual, yearFailureOccuredFor)
+          val taxYearAtsDataForFailedSingleYear = middleConnector.connectToAts(individual, yearFailureOccurredFor)
           taxYearAtsDataForFailedSingleYear.value.get.get match {
             case AtsSuccessResponseWithPayload(data: AtsData) if !hasNoAts(data) && data.errors.isEmpty =>
-              data.taxYear :: taxYearsAvailableInIndividualYearsList
-              data :: atsIndividualYearsCombinedList
+              taxYearsAvailableInIndividualYearsList = data.taxYear :: taxYearsAvailableInIndividualYearsList
+              atsIndividualYearsCombinedList = data :: atsIndividualYearsCombinedList
               taxPayerDataFromIndividualYearsService = Some(
                 new TaxpayerFrontTierData(data.taxPayerData.get.taxpayer_name, None)
               )
@@ -139,15 +146,32 @@ class AtsListService @Inject() (
               totalFailuresInIndividualYearsApiCalls = totalFailuresInIndividualYearsApiCalls + 1
           }
         }
-        if (totalFailuresInIndividualYearsApiCalls == 0) {
+        if (totalFailuresInIndividualYearsApiCalls == 0 && !dataNotFoundForAllYears) {
           val newAtsListDataCreatedFromIndividualYearsApiCombined: AtsListData = AtsListData(
             requestedUTR.utr,
             taxPayerDataFromIndividualYearsService,
             Some(taxYearsAvailableInIndividualYearsList)
           )
-          print("+for debug sandeep" + atsIndividualYearsCombinedList.size + "+")
-          middleConnector.connectToAtsList(individual)
 
+          val listAtsFuture                         = middleConnector.connectToAtsList(individual)
+          var yearsListInListAPI: Option[List[Int]] = None
+
+          listAtsFuture.value.get.get match {
+            case AtsSuccessResponseWithPayload(data: AtsListData) =>
+              yearsListInListAPI = data.atsYearList
+            case _                                                =>
+              yearsListInListAPI = None
+          }
+
+          atsTaxYearsComparisonUtils.compareIndividualTaxYearsWithList(
+            yearsListInListAPI,
+            Some(taxYearsAvailableInIndividualYearsList)
+          )
+
+          Future.successful(AtsSuccessResponseWithPayload.apply(newAtsListDataCreatedFromIndividualYearsApiCombined))
+
+        } else if (dataNotFoundForAllYears) {
+          Future.successful(AtsNotFoundResponse("Error with The Individual Year list API"))
         } else {
           Future.successful(AtsErrorResponse("Error with The Individual Year list API"))
         }
