@@ -27,7 +27,6 @@ class AtsTaxYearsComparisonUtils @Inject() () {
     val differenceBetweenList: Option[List[Int]] =
       atsIndividualYearsCombinedApiResponseYears.filter(setOfAtsListApiResponseYears)
     if (differenceBetweenList.nonEmpty) {
-      print(differenceBetweenList)
     }
   }
 

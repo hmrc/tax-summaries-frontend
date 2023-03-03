@@ -112,7 +112,6 @@ class AtsListService @Inject()(
         var yearFailureOccurredFor = 0
         var dataNotFoundForAllYears = true
         for (taxYearValue <- taxYears) {
-          print("sandeep" + taxYearValue)
           val taxYearAtsDataForSingleYear = middleConnector.connectToAts(individual, taxYearValue)
           if (taxYearAtsDataForSingleYear.value.nonEmpty) {
             taxYearAtsDataForSingleYear.value.get.get match {
