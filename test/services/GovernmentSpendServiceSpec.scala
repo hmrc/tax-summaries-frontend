@@ -21,13 +21,11 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.MockitoSugar
-import play.api.http.Status.OK
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
 import view_models.{Amount, AtsList, GovernmentSpend}
@@ -69,7 +67,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createModel(any(), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
+      when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
         .thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -122,59 +120,6 @@ class GovernmentSpendServiceSpec extends BaseSpec {
       val result  = sut.govSpend(atsData)
 
       result.isScottishTaxPayer mustBe false
-    }
-  }
-
-  "GovernmentSpendService getGovernmentSpendDataV2" must {
-
-    "return a government spend map" in {
-
-      val expectedBody = Seq(("Environment", 5.5))
-
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
-        .successful(
-          Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5}"""), Map("" -> List("")))
-          )
-        )
-
-      val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
-
-      result.value mustBe expectedBody
-    }
-
-    "sort data by percentage" in {
-
-      val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 2.3))
-
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
-        .successful(
-          Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":2.3, "Welfare":23.4}"""), Map("" -> Seq("")))
-          )
-        )
-
-      val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
-
-      result.value mustBe expectedBody
-    }
-
-    "sort the categories in correct order for taxYear 18/19" in {
-
-      val taxYear = 2018
-
-      val expectedBody = Seq(("Welfare", 23.4), ("Environment", 5.5), ("Culture", 5.5))
-
-      when(mockMiddleConnector.connectToGovernmentSpend(meq(taxYear))(any())) thenReturn Future
-        .successful(
-          Right(
-            HttpResponse(OK, Json.parse("""{"Environment":5.5, "Culture":5.5, "Welfare":23.4}"""), Map("" -> List("")))
-          )
-        )
-
-      val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
-
-      result.value mustBe expectedBody
     }
   }
 }
