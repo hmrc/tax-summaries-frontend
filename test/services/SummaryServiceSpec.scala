@@ -17,8 +17,7 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.AtsData
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -63,7 +62,7 @@ class SummaryServiceSpec extends BaseSpec {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
-        mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(
+        mockAtsService.createModel(any(), any())(
           any(),
           any()
         )

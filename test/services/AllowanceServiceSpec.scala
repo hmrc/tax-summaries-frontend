@@ -17,8 +17,7 @@
 package services
 
 import controllers.auth.AuthenticatedRequest
-import models.AtsData
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -35,11 +34,13 @@ import scala.language.postfixOps
 
 class AllowanceServiceSpec extends BaseSpec {
 
+  override val taxYear = 2015
+
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(taxYear)
   )
 
   val noAtsaViewModel: NoATSViewModel = new NoATSViewModel()
@@ -55,27 +56,23 @@ class AllowanceServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=${sut.taxYear}")
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   val mockAtsService: AtsService = mock[AtsService]
 
-  def sut = new AllowanceService(mockAtsService) with MockitoSugar {
-    implicit val hc = new HeaderCarrier
-    val taxYear     = 2015
-
-  }
+  def sut = new AllowanceService(mockAtsService) with MockitoSugar
 
   "AllowanceService.getAllowances" must {
 
     "return a GenericViewModel when TaxYearUtil.extractTaxYear returns a taxYear" in {
       when(
-        mockAtsService.createModel(meq(sut.taxYear), any[Function1[AtsData, GenericViewModel]]())(
+        mockAtsService.createModel(any(), any())(
           any(),
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getAllowances(sut.taxYear)(request, hc), 1500 millis)
+      val result = Await.result(sut.getAllowances(taxYear)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
   }

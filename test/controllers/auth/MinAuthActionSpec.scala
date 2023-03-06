@@ -17,7 +17,6 @@
 package controllers.auth
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest

@@ -17,7 +17,6 @@
 package view_models.paye
 
 import models.{DataHolder, PayeAtsData}
-import org.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -28,7 +27,6 @@ import view_models.Amount
 class PayeTaxFreeAmountSpec
     extends AnyWordSpec
     with Matchers
-    with MockitoSugar
     with JsonUtil
     with GuiceOneAppPerTest
     with ScalaFutures

@@ -49,8 +49,8 @@ class IncomeControllerSpec extends ControllerBaseSpec {
     surname = "surname"
   )
 
-  val mockIncomeService = mock[IncomeService]
-  val mockAuditService  = mock[AuditService]
+  val mockIncomeService: IncomeService = mock[IncomeService]
+  val mockAuditService: AuditService   = mock[AuditService]
 
   def sut =
     new IncomeController(

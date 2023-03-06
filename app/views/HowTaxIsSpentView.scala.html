@@ -14,10 +14,7 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-@import views.html.helpers.HeaderSection
-@import scala.concurrent.ExecutionContext
-@import helpers.{HeaderSection,backLink, H1, P}
+@import helpers.{H1, HeaderSection, P, backLink}
 
 @this(
     main: main,
@@ -31,9 +28,7 @@
     taxYear: Int
     )(
     implicit request: Request[_],
-    messages: Messages,
-    appConfig: ApplicationConfig,
-ec: ExecutionContext
+    messages: Messages
 )
 
 @main(

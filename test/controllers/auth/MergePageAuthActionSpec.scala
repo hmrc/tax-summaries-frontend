@@ -19,7 +19,6 @@ package controllers.auth
 import connectors.DataCacheConnector
 import models.{AgentToken, MatchingDetails}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
@@ -39,7 +38,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with MockitoSugar {
+class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
 
   class Harness(authAction: MergePageAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>

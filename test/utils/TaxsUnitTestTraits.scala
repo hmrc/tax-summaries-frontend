@@ -26,6 +26,7 @@ import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 trait TaxsUnitTestTraits
     extends AnyWordSpec

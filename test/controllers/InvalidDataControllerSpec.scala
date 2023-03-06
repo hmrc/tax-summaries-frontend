@@ -19,7 +19,6 @@ package controllers
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services._
@@ -47,8 +46,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
   "Calling a service with a JSON containing errors" must {
 
     "show ats error page for allowances" in {
-      val mockAllowanceService = mock[AllowanceService]
-      val mockAuditService     = mock[AuditService]
+      val mockAllowanceService: AllowanceService = mock[AllowanceService]
+      val mockAuditService: AuditService         = mock[AuditService]
 
       def sut =
         new AllowancesController(
@@ -73,8 +72,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
 
     "show ats error page for capital-gains" in {
 
-      val mockCapitalGainsService = mock[CapitalGainsService]
-      val mockAuditService        = mock[AuditService]
+      val mockCapitalGainsService: CapitalGainsService = mock[CapitalGainsService]
+      val mockAuditService: AuditService               = mock[AuditService]
 
       def sut =
         new CapitalGainsTaxController(
@@ -99,8 +98,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
 
     "show ats error page for government-spend" in {
 
-      val mockGovernmentSpendService = mock[GovernmentSpendService]
-      val mockAuditService           = mock[AuditService]
+      val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
+      val mockAuditService: AuditService                     = mock[AuditService]
 
       def sut =
         new GovernmentSpendController(

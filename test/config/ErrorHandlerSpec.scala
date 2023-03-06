@@ -18,18 +18,16 @@ package config
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.MockitoSugar
+import play.api.Configuration
 import play.api.test.FakeRequest
-import play.api.{Configuration, Environment}
 import views.ViewSpecBase
 import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
-class ErrorHandlerSpec extends ViewSpecBase with MockitoSugar {
+class ErrorHandlerSpec extends ViewSpecBase {
 
   lazy val errorHandler: ErrorHandler = new ErrorHandler(
     messagesApi,
     inject[Configuration],
-    inject[Environment],
     inject[ErrorTemplateView],
     inject[PageNotFoundTemplateView]
   )

@@ -16,7 +16,6 @@
 
 package view_models.paye
 
-import org.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -29,7 +28,6 @@ import view_models.Amount
 class PayeYourIncomeAndTaxesSpec
     extends AnyWordSpec
     with Matchers
-    with MockitoSugar
     with JsonUtil
     with GuiceOneAppPerTest
     with ScalaFutures

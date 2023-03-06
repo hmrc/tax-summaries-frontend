@@ -44,10 +44,24 @@ lazy val microservice = Project(appName, file("."))
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat, uglify),
     scalafmtOnCompile := true,
-    uglify / includeFilter := GlobFilter("ats-*.js")
+    uglify / includeFilter := GlobFilter("ats-*.js"),
+    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings())
+  .settings(
+    scalacOptions ++= Seq(
+      "-feature",
+      "-Werror",
+      "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
+      "-Wconf:cat=unused-imports&site=<empty>:s",
+      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
+      "-Wconf:cat=unused&src=.*Routes\\.scala:s",
+      "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
+      "-Wconf:cat=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
+      "-Wconf:cat=other-match-analysis:s"
+    )
+  )
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",

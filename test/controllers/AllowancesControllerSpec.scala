@@ -18,7 +18,7 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
@@ -75,7 +75,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit =
     when(
-      mockAllowanceService.getAllowances(meq(taxYear))(meq(request), any())
+      mockAllowanceService.getAllowances(any())(any(), any())
     ) thenReturn Future
       .successful(baseModel)
 
@@ -106,8 +106,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
         taxFreeAllowance = Amount(0, "GBP"),
         otherAllowances = Amount(0, "GBP")
       )
-
-      when(mockAllowanceService.getAllowances(meq(taxYear))(meq(request), any()))
+      when(mockAllowanceService.getAllowances(any())(any(), any()))
         .thenReturn(Future.successful(model))
 
       val result: Future[Result] = sut.show(request)
@@ -139,8 +138,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
-
-      when(mockAllowanceService.getAllowances(meq(taxYear))(meq(request), any()))
+      when(mockAllowanceService.getAllowances(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -151,7 +149,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockAllowanceService.getAllowances(meq(taxYear))(meq(request), any()))
+      when(mockAllowanceService.getAllowances(any())(any(), any()))
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER

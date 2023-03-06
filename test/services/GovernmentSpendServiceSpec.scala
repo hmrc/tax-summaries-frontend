@@ -69,7 +69,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
+      when(mockAtsService.createModel(any(), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
         .thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -77,15 +77,30 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   }
 
   "GovernmentSpendService govSpend" must {
-
-    "return a complete GovernmentSpend when given complete AtsData" in {
+    "return a complete GovernmentSpend with sorted spending when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
       val result  = sut.govSpend(atsData)
 
       result mustBe GovernmentSpend(
-        2019,
+        2022,
         "1111111111",
-        List("welfare" -> SpendData(Amount(100, "GBP"), 10)),
+        List(
+          ("Health", SpendData(Amount(100, "GBP"), 10)),
+          ("Welfare", SpendData(Amount(100, "GBP"), 10)),
+          ("StatePensions", SpendData(Amount(100, "GBP"), 10)),
+          ("Education", SpendData(Amount(100, "GBP"), 10)),
+          ("NationalDebtInterest", SpendData(Amount(100, "GBP"), 10)),
+          ("BusinessAndIndustry", SpendData(Amount(100, "GBP"), 10)),
+          ("Defence", SpendData(Amount(100, "GBP"), 10)),
+          ("Transport", SpendData(Amount(100, "GBP"), 10)),
+          ("PublicOrderAndSafety", SpendData(Amount(100, "GBP"), 10)),
+          ("GovernmentAdministration", SpendData(Amount(100, "GBP"), 10)),
+          ("HousingAndUtilities", SpendData(Amount(100, "GBP"), 10)),
+          ("Environment", SpendData(Amount(100, "GBP"), 10)),
+          ("Culture", SpendData(Amount(100, "GBP"), 10)),
+          ("OutstandingPaymentsToTheEU", SpendData(Amount(100, "GBP"), 10)),
+          ("OverseasAid", SpendData(Amount(100, "GBP"), 10))
+        ),
         "Mr",
         "John",
         "Smith",
@@ -125,7 +140,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
-      result.right.value mustBe expectedBody
+      result.value mustBe expectedBody
     }
 
     "sort data by percentage" in {
@@ -141,7 +156,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = sut.getGovernmentSpendFigures(taxYear).value.futureValue
 
-      result.right.value mustBe expectedBody
+      result.value mustBe expectedBody
     }
 
     "sort the categories in correct order for taxYear 18/19" in {

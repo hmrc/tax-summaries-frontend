@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
-import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper}
+import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
@@ -58,7 +58,8 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
     GovernmentSpend(
       atsData.taxYear,
       atsData.utr.get,
-      govSpendingData.govSpendAmountData.get.toList,
+      CategoriesUtils
+        .reorderCategories[SpendData](appConfig, atsData.taxYear, govSpendingData.govSpendAmountData.get.toList),
       atsData.taxPayerData.get.taxpayer_name.get("title"),
       atsData.taxPayerData.get.taxpayer_name.get("forename"),
       atsData.taxPayerData.get.taxpayer_name.get("surname"),

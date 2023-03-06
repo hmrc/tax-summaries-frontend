@@ -65,7 +65,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service returns the government spend data with utr" in {
 
-          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map { case (key, value) =>
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
           }
 
@@ -104,7 +104,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               howTaxIsSpentView,
               serviceUnavailableView
             )
-          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map { case (key, value) =>
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
           }
 
@@ -140,7 +140,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service tries to access a future year" in {
 
-          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map { case (key, value) =>
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
           }
 
@@ -171,7 +171,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
         "the service tries to access a year before the current year minus the max years to be displayed" in {
 
-          val response: Seq[(String, Double)] = fakeGovernmentSpend.sortedSpendData.map { case (key, value) =>
+          val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
           }
 
@@ -268,7 +268,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val document = contentAsString(result)
 
           status(result) mustBe INTERNAL_SERVER_ERROR
-          document mustBe contentAsString(serviceUnavailableView()(implicitly, implicitly, appConfig, implicitly))
+          document mustBe contentAsString(serviceUnavailableView()(implicitly, implicitly))
         }
       }
     }

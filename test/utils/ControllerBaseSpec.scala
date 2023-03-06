@@ -27,8 +27,8 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants.{testNino, testUtr}
-import views.html.errors.{GenericErrorView, ServiceUnavailableView, _}
-import views.html.{IncomeBeforeTaxView, NicsView, SummaryView, _}
+import views.html.errors._
+import views.html._
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +42,7 @@ trait ControllerBaseSpec extends BaseSpec {
     messagesActionBuilder,
     DefaultActionBuilder(stubBodyParser[AnyContent]()),
     cc.parsers,
-    fakeApplication.injector.instanceOf[MessagesApi],
+    fakeApplication().injector.instanceOf[MessagesApi],
     cc.langs,
     cc.fileMimeTypes,
     ExecutionContext.global

@@ -119,7 +119,6 @@ class SelfAssessmentActionSpec
   "refine with non empty utr and not an agent" must {
     "do nothing" in {
       val utr = new SaUtrGenerator().nextSaUtr.utr
-      val uar = testUar
 
       val authAction = new FakeSelfAssessmentAction(Some(SaUtr(utr)), None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
@@ -133,9 +132,6 @@ class SelfAssessmentActionSpec
 
   "refine with empty utr and not an agent" must {
     "redirect to unauthorized if nino is not present" in {
-      val utr = new SaUtrGenerator().nextSaUtr.utr
-      val uar = testUar
-
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(NoAtsNinoFound))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
@@ -148,8 +144,6 @@ class SelfAssessmentActionSpec
     }
 
     "redirect to uplift if nino is present but confidence level is too low" in {
-      val uar = testUar
-
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(UpliftRequiredAtsNino))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
@@ -162,8 +156,6 @@ class SelfAssessmentActionSpec
     }
 
     "redirect to unauthorized if matching details cant be found for nino" in {
-
-      val uar  = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
@@ -179,8 +171,6 @@ class SelfAssessmentActionSpec
     }
 
     "redirect to unauthorized if utr cant be found for nino" in {
-
-      val uar  = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
@@ -210,9 +200,7 @@ class SelfAssessmentActionSpec
     }
 
     "return OK if utr can be found for nino" in {
-
       val utr  = new SaUtrGenerator().nextSaUtr.utr
-      val uar  = testUar
       val nino = new Generator().nextNino
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
@@ -228,5 +216,4 @@ class SelfAssessmentActionSpec
       verify(citizenDetailsService, times(1)).getMatchingDetails(any())(any())
     }
   }
-
 }

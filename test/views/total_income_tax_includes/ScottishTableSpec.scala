@@ -20,8 +20,7 @@ import com.softwaremill.quicklens._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import utils.TestConstants
-import utils.ViewUtils
+import utils.{TestConstants, ViewUtils}
 import view_models.{Amount, Rate, ScottishRates, ScottishTax}
 import views.ViewSpecBase
 import views.html.total_income_tax_includes.ScottishTableView

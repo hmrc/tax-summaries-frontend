@@ -65,7 +65,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
           genericErrorView,
           tokenErrorView
         )
-      when(mockTotalIncomeTaxService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model))
 
       val result = sut.show(request)
@@ -106,7 +106,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(allowanceService.getAllowances(meq(taxYear))(meq(request), any()))
+    when(allowanceService.getAllowances(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -130,7 +130,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+    when(mockCapitalGainsService.getCapitalGains(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -176,7 +176,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+    when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -198,7 +198,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+    when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)

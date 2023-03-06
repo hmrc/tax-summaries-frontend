@@ -17,7 +17,6 @@
 package controllers.auth
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
@@ -29,9 +28,9 @@ import utils.BaseSpec
 
 import scala.concurrent.Future
 
-class NinoAuthActionSpec extends BaseSpec with MockitoSugar with GuiceOneAppPerSuite with Injecting with ScalaFutures {
+class NinoAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite with Injecting with ScalaFutures {
 
-  implicit val hc                             = HeaderCarrier()
+  implicit val hc: HeaderCarrier              = HeaderCarrier()
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ninoAuthAction = new NinoAuthAction(mockAuthConnector)
