@@ -426,7 +426,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     "show the number of unread messages in the nav menu" in {
-      val messageCount     = Random.nextInt(100) + 1
+      val messageCount     = Random.between(1, 100)
       implicit val request = requestWithCL200.copy(unreadMessageCount = Some(messageCount))
 
       val result = Jsoup

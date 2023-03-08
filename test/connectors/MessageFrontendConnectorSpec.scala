@@ -57,7 +57,7 @@ class MessageFrontendConnectorSpec
   "MessageFrontendConnector" must {
     "return a right HttpResponse" in {
 
-      val messageCount = Random.nextInt(100)
+      val messageCount = Random.between(1, 100)
 
       server.stubFor(
         get(urlEqualTo("/messages/count?read=No")).willReturn(ok(s"""{"count": $messageCount}"""))

@@ -37,7 +37,7 @@ class MessageFrontendServiceSpec extends BaseSpec {
   "MessageFrontendConnector getUnreadMessageCount" must {
     "return a future optional Int when returned a HttpResponse with valid json from MessageFrontendConnector" in {
 
-      val messageCount = Random.nextInt(100)
+      val messageCount = Random.between(1, 100)
 
       when(mockMessageFrontendConnector.getUnreadMessageCount()(any(), any()))
         .thenReturn(

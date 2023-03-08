@@ -34,7 +34,8 @@ class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"),
+      None
     )
 
   lazy val payeAtsTestData                                        = inject[PayeAtsTestData]

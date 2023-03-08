@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, AccountMessages, SignOut, _}
 @import views.html.helper.CSPNonce
-@import controllers.auth.AuthenticatedRequest
+@import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 
 @this(
     hmrcLayout: HmrcLayout,
@@ -84,6 +84,15 @@
                 messages = AccountMessages(messageCount = auth.unreadMessageCount),
                 language = if(messages.lang.code == "cy") Cy else En
             ).withUrlsFromConfig())
+
+        case payeAuth: PayeAuthenticatedRequest[_] =>
+            hmrcAccountMenu(AccountMenu(
+                businessTaxAccount = Some(BusinessTaxAccount()),
+                signOut = SignOut(href = routes.AccountController.signOut.url),
+                messages = AccountMessages(messageCount = payeAuth.unreadMessageCount),
+                language = if(messages.lang.code == "cy") Cy else En
+            ).withUrlsFromConfig())
+
         case _ => None
     }
 }

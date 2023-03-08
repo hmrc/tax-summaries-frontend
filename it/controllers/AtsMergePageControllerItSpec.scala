@@ -250,7 +250,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     "return an OK response with unread message count indicator when message-frontend call is successful" in {
 
-      val messageCount = Random.nextInt(100) + 1
+      val messageCount = Random.between(1, 100)
 
       val authResponseNoSA =
         s"""

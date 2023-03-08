@@ -37,7 +37,8 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"),
+      None
     )
 
   lazy val payeGenericErrorView = inject[PayeGenericErrorView]
