@@ -16,8 +16,7 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "domain"                     % s"8.1.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.0.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
-    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"6.7.0-play-28",
-    "uk.gov.hmrc"                %% "url-builder"                % "3.8.0-play-28"
+    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"6.7.0-play-28"
   )
 
   val test               = Seq(

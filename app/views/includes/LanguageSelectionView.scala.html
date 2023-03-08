@@ -14,26 +14,25 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.urls.Link
+@import views.html.helpers.Link
+
 @this()
 @(
     langMap: Map[String, Lang],
     langToCall: String => Call,
-    dataAttr: Option[Map[String, String]] = None
-)(implicit
-    messages: Messages
-)
+    dataAttr: Option[Map[String, String]] = None,
+        link: Link
+)(implicit messages: Messages)
 
 <p class="langToggle">
-
     @langMap.map { case (key: String, value: Lang) =>
         @if(messages.lang != value) {
-            @Link.toInternalPage(
-                id      = Some(s"$key-switch"),
-                url     = s"${langToCall(key)}",
-                dataAttributes = dataAttr,
-                value   = Some(messages(s"view.languageToggle.$key"))
-            ).toHtml
+            @link(link = s"${langToCall(key)}",
+            messageKey = messages(s"view.languageToggle.$key"),
+            id = Some(s"$key-switch"),
+            inParagraph = true,
+            attrs = dataAttr.getOrElse(Map.empty)
+            )
         } else {
             @messages(s"view.languageToggle.$key")
         }
