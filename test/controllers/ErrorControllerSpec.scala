@@ -84,7 +84,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
           val result                = sut.authorisedNoAts(fakeTaxYear)(request)
           val document              = contentAsString(result)
@@ -125,7 +126,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
           val result                = controller.authorisedNoAts(fakeTaxYear)(request)
           val document              = contentAsString(result)
@@ -159,7 +161,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
 
           val result   = sut.authorisedNoAts(appConfig.taxYear + 1)(request)
@@ -190,7 +193,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
 
           val result   = sut.authorisedNoAts(appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed - 1)(request)
@@ -221,7 +225,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
 
           val result   = sut.authorisedNoAts(appConfig.taxYear)(request)
@@ -261,7 +266,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest()
+              FakeRequest(),
+              None
             )
 
           val result   = sutWithMockAppConfig.authorisedNoAts(taxYear)(request)
@@ -287,7 +293,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest()
+            FakeRequest(),
+            None
           )
         val result                = sut.notAuthorised()(request)
         val document              = contentAsString(result)

@@ -19,8 +19,9 @@
 @import helpers.Link
 @import uk.gov.hmrc.hmrcfrontend.config.AccountMenuConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, SignOut, _}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, AccountMessages, SignOut, _}
 @import views.html.helper.CSPNonce
+@import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 
 @this(
     hmrcLayout: HmrcLayout,
@@ -64,11 +65,7 @@
 
 @beforeContent = {
     @if(!actingAttorney.isDefined && !disableSessionExpired) {
-        @hmrcAccountMenu(AccountMenu(
-                businessTaxAccount = Some(BusinessTaxAccount()),
-                signOut = SignOut(href = routes.AccountController.signOut.url),
-                language = if(messages.lang.code == "cy") Cy else En
-            ).withUrlsFromConfig())
+        @accountMenu
     }
     @hmrcLanguageSelectHelper()
     <aside>
@@ -76,6 +73,28 @@
             @beforeContentHtml
         }
     </aside>
+}
+
+@accountMenu = @{
+    request match {
+        case auth: AuthenticatedRequest[_] =>
+            hmrcAccountMenu(AccountMenu(
+                businessTaxAccount = Some(BusinessTaxAccount()),
+                signOut = SignOut(href = routes.AccountController.signOut.url),
+                messages = AccountMessages(messageCount = auth.unreadMessageCount),
+                language = if(messages.lang.code == "cy") Cy else En
+            ).withUrlsFromConfig())
+
+        case payeAuth: PayeAuthenticatedRequest[_] =>
+            hmrcAccountMenu(AccountMenu(
+                businessTaxAccount = Some(BusinessTaxAccount()),
+                signOut = SignOut(href = routes.AccountController.signOut.url),
+                messages = AccountMessages(messageCount = payeAuth.unreadMessageCount),
+                language = if(messages.lang.code == "cy") Cy else En
+            ).withUrlsFromConfig())
+
+        case _ => None
+    }
 }
 
 @contentBlock = {

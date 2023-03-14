@@ -53,7 +53,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
   val mockMiddleConnector      = mock[MiddleConnector]
   val payeAuthenticatedRequest =
-    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
+    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"), None)
 
   val authenticatedRequest           =
     AuthenticatedRequest(
@@ -65,7 +65,8 @@ class PayeAtsServiceSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest()
+      FakeRequest(),
+      None
     )
   val mockAuditService: AuditService = mock[AuditService]
 

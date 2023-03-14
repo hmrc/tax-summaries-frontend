@@ -115,4 +115,8 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   def spendCategories(taxYear: Int): List[String] =
     configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
+
+  lazy val messagesFrontendUrl: String       =
+    config.baseUrl("message-frontend")
+  lazy val messagesFrontendTimeoutInSec: Int = config.getInt("messages-frontend.timeout-in-seconds")
 }

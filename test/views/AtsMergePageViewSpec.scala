@@ -29,6 +29,8 @@ import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
 
+import scala.util.Random
+
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
@@ -41,7 +43,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
   lazy val atsMergePageView = inject[AtsMergePageView]
@@ -56,7 +59,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
   val requestWithCL200 = AuthenticatedRequest(
@@ -68,11 +72,12 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     false,
     ConfidenceLevel.L200,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$taxYear"),
+    None
   )
 
-  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
-    atsMergePageView(model, form)(implicitly, implicitly, mockAppConfig).body
+  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
+    atsMergePageView(model, form)(request, implicitly, mockAppConfig).body
 
   def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
     atsMergePageView(model, form, Some(ActingAsAttorneyFor(Some("Agent"), Map())))(
@@ -418,6 +423,27 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
       )
       assert(result.getElementById(s"year-${taxYear - 3}-PAYE").hasAttr("checked"))
+    }
+
+    "show the number of unread messages in the nav menu" in {
+      val messageCount     = Random.between(1, 100)
+      implicit val request = requestWithCL200.copy(unreadMessageCount = Some(messageCount))
+
+      val result = Jsoup
+        .parse(
+          view(
+            AtsMergePageViewModel(
+              AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 2, taxYear - 1)),
+              List(taxYear - 3, taxYear),
+              mockAppConfig,
+              ConfidenceLevel.L200
+            ),
+            atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear - 3))
+          )(request)
+        )
+        .body
+
+      result.html must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
     }
   }
 }

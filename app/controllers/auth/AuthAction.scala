@@ -21,6 +21,7 @@ import config.ApplicationConfig
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import services.MessageFrontendService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -31,8 +32,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject() (override val authConnector: DefaultAuthConnector, cc: MessagesControllerComponents)(
-  implicit
+class AuthActionImpl @Inject() (
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  messageFrontendService: MessageFrontendService
+)(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
 ) extends AuthAction
@@ -64,18 +68,21 @@ class AuthActionImpl @Inject() (override val authConnector: DefaultAuthConnector
 
             val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
-            block {
-              AuthenticatedRequest(
-                externalId,
-                agentRef,
-                saUtr.map(s => SaUtr(s)),
-                None,
-                saUtr.isDefined,
-                isAgentActive,
-                confidenceLevel,
-                credentials,
-                request
-              )
+            messageFrontendService.getUnreadMessageCount(request).flatMap { messageCount =>
+              block {
+                AuthenticatedRequest(
+                  externalId,
+                  agentRef,
+                  saUtr.map(s => SaUtr(s)),
+                  None,
+                  saUtr.isDefined,
+                  isAgentActive,
+                  confidenceLevel,
+                  credentials,
+                  request,
+                  messageCount
+                )
+              }
             }
 
           case _ => throw new RuntimeException("Can't find credentials for user")

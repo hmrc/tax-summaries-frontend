@@ -22,6 +22,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
+import services.MessageFrontendService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
@@ -35,6 +36,7 @@ import scala.concurrent.Future
 class PayeAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  val mockMessageFrontendService              = mock[MessageFrontendService]
 
   val unauthorisedRoute = routes.PayeErrorController.notAuthorised.url
 
@@ -56,7 +58,9 @@ class PayeAuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
+
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -79,7 +83,7 @@ class PayeAuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -100,7 +104,7 @@ class PayeAuthActionSpec extends BaseSpec {
         )
           .thenReturn(retrievalResult)
 
-        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest())
@@ -118,7 +122,7 @@ class PayeAuthActionSpec extends BaseSpec {
         )
           .thenReturn(retrievalResult)
 
-        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+        val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
         val controller = new Harness(authAction)
 
         val result = controller.onPageLoad()(FakeRequest())
@@ -132,7 +136,7 @@ class PayeAuthActionSpec extends BaseSpec {
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new InternalError))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
@@ -144,7 +148,7 @@ class PayeAuthActionSpec extends BaseSpec {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
@@ -157,7 +161,7 @@ class PayeAuthActionSpec extends BaseSpec {
     "return 303 and be redirected to Identity verification service" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientConfidenceLevel()))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
@@ -170,7 +174,7 @@ class PayeAuthActionSpec extends BaseSpec {
     "return 303 and be redirected to not authorised page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(IncorrectCredentialStrength()))
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService)
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
@@ -183,7 +187,7 @@ class PayeAuthActionSpec extends BaseSpec {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc) {
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockMessageFrontendService) {
         override val payeShuttered: Boolean = true
       }
 

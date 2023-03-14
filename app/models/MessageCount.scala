@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import play.api.libs.json.Json
 
-case class AuthenticatedRequest[A](
-  userId: String,
-  agentRef: Option[Uar],
-  saUtr: Option[SaUtr],
-  nino: Option[Nino],
-  isSa: Boolean,
-  isAgentActive: Boolean,
-  confidenceLevel: ConfidenceLevel,
-  credentials: Credentials,
-  request: Request[A],
-  unreadMessageCount: Option[Int]
-) extends WrappedRequest[A](request)
-    with CommonRequest
+case class MessageCount(count: Int)
+
+object MessageCount {
+  implicit val formats = Json.format[MessageCount]
+}

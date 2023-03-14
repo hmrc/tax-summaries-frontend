@@ -42,7 +42,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
           false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          FakeRequest("GET", s"?taxYear=$taxYear")
+          FakeRequest("GET", s"?taxYear=$taxYear"),
+          None
         )
 
         val result = TaxYearUtil.extractTaxYear
@@ -64,7 +65,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest("GET", "?taxYear=20192")
+            FakeRequest("GET", "?taxYear=20192"),
+            None
           )
 
           val result = TaxYearUtil.extractTaxYear
@@ -83,7 +85,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest("GET", "?taxYear=201")
+            FakeRequest("GET", "?taxYear=201"),
+            None
           )
 
           val result = TaxYearUtil.extractTaxYear
@@ -103,7 +106,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
               false,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest("GET", "?")
+              FakeRequest("GET", "?"),
+              None
             )
 
           val result = TaxYearUtil.extractTaxYear
@@ -123,7 +127,8 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
             false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest("GET", "?taxYear=ABCD")
+            FakeRequest("GET", "?taxYear=ABCD"),
+            None
           )
 
           val result = TaxYearUtil.extractTaxYear

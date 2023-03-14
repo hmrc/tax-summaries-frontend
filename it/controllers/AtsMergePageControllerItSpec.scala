@@ -30,7 +30,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
@@ -48,8 +50,9 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"          -> server.port(),
-      "microservice.services.tax-summaries.port" -> server.port()
+      "microservice.services.auth.port"             -> server.port(),
+      "microservice.services.tax-summaries.port"    -> server.port(),
+      "microservice.services.message-frontend.port" -> server.port()
     )
     .overrides(
       api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
@@ -120,6 +123,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val backendUrlPaye =
       s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+
+    lazy val messageFrontendUrl = "/messages/count?read=No"
 
     "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
 
@@ -241,6 +246,63 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER) mustBe Some("PORTAL")
 
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
+    }
+
+    "return an OK response with unread message count indicator when message-frontend call is successful" in {
+
+      val messageCount = Random.between(1, 100)
+
+      val authResponseNoSA =
+        s"""
+           |{
+           |    "confidenceLevel": 200,
+           |    "nino": "$generatedNino",
+           |    "saUtr": "$generatedSaUtr",
+           |    "name": {
+           |        "name": "John",
+           |        "lastName": "Smith"
+           |    },
+           |    "loginTimes": {
+           |        "currentLogin": "2021-06-07T10:52:02.594Z",
+           |        "previousLogin": null
+           |    },
+           |    "optionalCredentials": {
+           |        "providerId": "4911434741952698",
+           |        "providerType": "GovernmentGateway"
+           |    },
+           |    "authProviderId": {
+           |        "ggCredId": "xyz"
+           |    },
+           |    "externalId": "testExternalId",
+           |    "allEnrolments": []
+           |}
+           |""".stripMargin
+
+      server.stubFor(
+        post(urlEqualTo("/auth/authorise"))
+          .willReturn(ok(authResponseNoSA))
+      )
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlSa))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+      )
+
+      server.stubFor(
+        get(urlEqualTo(backendUrlPaye))
+          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+      )
+
+      server.stubFor(get(urlEqualTo(messageFrontendUrl)).willReturn(ok(s"""{"count": $messageCount}""")))
+
+      val request = FakeRequest(GET, url)
+        .withSession(SessionKeys.sessionId -> UUID.randomUUID().toString, SessionKeys.authToken -> "Bearer 1")
+
+      val result  = route(fakeApplication(), request).get
+
+      status(result) mustBe OK
+
+      contentAsString(result) must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
     }
 
     List(

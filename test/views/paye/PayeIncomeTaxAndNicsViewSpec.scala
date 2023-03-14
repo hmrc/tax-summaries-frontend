@@ -24,14 +24,19 @@ import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeIncomeTaxAndNicsView
 
+import scala.util.Random
+
 class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
+
+  val messageCount = Random.between(1, 100)
 
   implicit val request =
     PayeAuthenticatedRequest(
       testNino,
       false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax")
+      FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"),
+      Some(messageCount)
     )
 
   lazy val payeAtsTestData          = inject[PayeAtsTestData]
@@ -160,6 +165,15 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
         .getElementById("totalIncomeTaxAndNic")
         .text() mustBe "Total Income Tax and National Insurance contributions £0.00"
 
+    }
+
+    "show the number of unread messages" in {
+      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
+      val document = Jsoup.parse(view)
+
+      println(document.body().text())
+
+      document.body().text() must include(s"""Messages$messageCount""")
     }
   }
 }

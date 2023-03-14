@@ -40,7 +40,8 @@ object FakeAuthAction extends ControllerBaseSpec with AuthAction {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        request
+        request,
+        None
       )
     )
 }

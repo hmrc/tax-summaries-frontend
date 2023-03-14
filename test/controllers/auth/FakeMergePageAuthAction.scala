@@ -40,7 +40,8 @@ class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        request
+        request,
+        None
       )
     )
 }
