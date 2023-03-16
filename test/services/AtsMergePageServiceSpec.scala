@@ -259,7 +259,6 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           result.left.value mustBe an[AtsErrorResponse]
         }
       }
-
     }
   }
 }

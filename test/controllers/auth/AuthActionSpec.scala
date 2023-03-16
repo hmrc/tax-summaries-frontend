@@ -31,8 +31,8 @@ import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants._
 
-import scala.concurrent.duration._
 import scala.concurrent.Future
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {

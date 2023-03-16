@@ -92,7 +92,6 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
-
       when(mockSummaryService.getSummaryData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -104,7 +103,6 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-
       when(mockSummaryService.getSummaryData(any())(any(), any()))
         .thenReturn(Future.successful(new NoATSViewModel))
 
@@ -128,6 +126,5 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
       document.getElementById("user-info").text must include("forename surname")
       document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
     }
-
   }
 }
