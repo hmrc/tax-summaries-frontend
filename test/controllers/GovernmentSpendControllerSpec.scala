@@ -19,12 +19,13 @@ package controllers
 import controllers.auth.FakeAuthJourney
 import models.SpendData
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services._
+import services.{AuditService, _}
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
@@ -85,7 +86,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
   )
 
   override def beforeEach() =
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
+    when(mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any()))
       .thenReturn(Future.successful(model))
 
   "Calling government spend" must {
@@ -113,7 +114,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -126,7 +127,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any())
       )
         .thenReturn(Future.successful(new NoATSViewModel))
       val result = sut.show(request)
@@ -208,7 +209,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(eqTo(taxYear))(any(), any())
       )
         .thenReturn(Future.successful(model2))
 

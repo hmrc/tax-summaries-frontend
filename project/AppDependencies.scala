@@ -4,24 +4,25 @@ import play.sbt.PlayImport._
 
 object AppDependencies {
 
-  val playVersion = "play-28"
-  val bootstrapVersion = "7.14.0"
+  val playVersion      = "play-28"
+  val bootstrapVersion = "7.12.0"
 
   val compile = Seq(
     filters,
     ws,
-    "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
-    "uk.gov.hmrc"                %% "http-caching-client"        % s"10.0.0-$playVersion",
+    "com.typesafe.scala-logging" %% "scala-logging"                    % "3.9.5",
+    "uk.gov.hmrc"                %% "http-caching-client"              % s"10.0.0-$playVersion",
     "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % bootstrapVersion,
-    "uk.gov.hmrc"                %% "domain"                     % s"8.1.0-$playVersion",
-    "uk.gov.hmrc"                %% "tax-year"                   % "3.0.0",
-    "org.typelevel"              %% "cats-core"                  % "2.9.0",
-    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"6.7.0-play-28"
+    "uk.gov.hmrc"                %% "play-partials"                    % s"8.3.0-$playVersion",
+    "uk.gov.hmrc"                %% "domain"                           % s"8.1.0-$playVersion",
+    "uk.gov.hmrc"                %% "tax-year"                         % "3.0.0",
+    "org.typelevel"              %% "cats-core"                        % "2.9.0",
+    "uk.gov.hmrc"                %% "play-frontend-hmrc"               % s"3.17.0-play-28"
   )
 
   val test               = Seq(
-    "uk.gov.hmrc"                %% "play-language"           % s"6.1.0-$playVersion",
-    "org.jsoup"                   % "jsoup"                   % "1.15.4",
+    "uk.gov.hmrc"                %% "play-language"           % s"5.4.0-$playVersion",
+    "org.jsoup"                   % "jsoup"                   % "1.15.3",
     "uk.gov.hmrc"                %% s"bootstrap-test-play-28" % bootstrapVersion,
     "org.mockito"                %% "mockito-scala-scalatest" % "1.17.12",
     "com.typesafe.play"          %% "play-test"               % PlayVersion.current,

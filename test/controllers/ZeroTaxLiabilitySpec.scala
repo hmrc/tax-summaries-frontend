@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import play.api.test.Helpers._
 import services._
 import utils.ControllerBaseSpec
@@ -46,7 +46,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
     )
 
   override def beforeEach() =
-    when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+    when(mockIncomeService.getIncomeData(any())(any(), any()))
       .thenReturn(Future.successful(model))
 
   "Opening link if user has no income tax or cg tax liability" must {

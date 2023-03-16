@@ -16,7 +16,7 @@
 
 package controllers.auth
 
-import play.api.mvc._
+import play.api.mvc.{AnyContent, Request, _}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import utils.ControllerBaseSpec
 

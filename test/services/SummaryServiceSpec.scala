@@ -27,8 +27,8 @@ import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
 import view_models._
 
-import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class SummaryServiceSpec extends BaseSpec {

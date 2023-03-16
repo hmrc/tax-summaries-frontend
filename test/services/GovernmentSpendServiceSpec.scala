@@ -19,7 +19,7 @@ package services
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -68,7 +68,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
+      when(mockAtsService.createModel(any(), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
         .thenReturn(Future(genericViewModel))
       val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel

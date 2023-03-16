@@ -106,6 +106,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
         taxFreeAllowance = Amount(0, "GBP"),
         otherAllowances = Amount(0, "GBP")
       )
+
       when(mockAllowanceService.getAllowances(any())(any(), any()))
         .thenReturn(Future.successful(model))
 
@@ -138,6 +139,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
+
       when(mockAllowanceService.getAllowances(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -155,5 +157,6 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
+
   }
 }

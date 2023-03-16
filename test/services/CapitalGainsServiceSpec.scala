@@ -110,5 +110,6 @@ class CapitalGainsServiceSpec extends BaseSpec {
         "Smith"
       )
     }
+
   }
 }

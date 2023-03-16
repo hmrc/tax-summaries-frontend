@@ -18,7 +18,7 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -64,7 +64,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
     )
 
   override def beforeEach(): Unit =
-    when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+    when(mockIncomeService.getIncomeData(any())(any(), any()))
       .thenReturn(Future.successful(baseModel))
 
   "Calling incomes" must {
@@ -87,7 +87,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -99,7 +99,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(new NoATSViewModel))
 
       val result = sut.show(request)
@@ -149,7 +149,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model))
 
       val result = sut.show(request)

@@ -18,7 +18,7 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
@@ -115,6 +115,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
+
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -235,6 +236,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
+
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model4))
 
@@ -255,7 +257,8 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(meq(taxYear))(any(), meq(request)))
+
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model5))
 
       val result   = sut.show(request)
@@ -288,6 +291,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       val model6 = baseModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP")
       )
+
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model6))
 
@@ -305,6 +309,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       val model7 = baseModel.copy(
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
+
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model7))
 
@@ -322,6 +327,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         otherAdjustmentsIncreasing = Amount(0, "GBP"),
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
+
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model8))
 
@@ -342,6 +348,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
         marriageAllowanceReceivedAmount = Amount(0, "GBP"),
         totalIncomeTax = Amount(0, "GBP")
       )
+
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(model9))
 
@@ -350,5 +357,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
       document.getElementById("total-income-tax-amount-nics").text() must equal("£0")
     }
+
   }
+
 }
