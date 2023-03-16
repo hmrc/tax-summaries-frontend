@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package models
+package models.admin
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsResultException, JsString}
 
-case class ErrorView(url: String, statusCode: Int)
+class FeatureFlagSpec extends BaseSpec {
 
-object ErrorView {
-  implicit val format = Json.format[ErrorView]
+  "Valid string" must {
+    "build a FeatureFlagName" in {
+      val result = JsString("pertax-backend-toggle").as[FeatureFlagName]
+      result mustBe PertaxBackendToggle
+    }
+  }
+
+  "Invalid string" must {
+    "throw an exception" in {
+      val result = intercept[JsResultException] {
+        JsString("invalid").as[FeatureFlagName]
+      }
+      result.errors.toString() mustBe "List((,List(JsonValidationError(List(Unknown FeatureFlagName),ArraySeq()))))"
+    }
+  }
 }

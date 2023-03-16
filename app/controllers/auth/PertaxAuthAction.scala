@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,13 @@
 package controllers.auth
 
 import com.google.inject.{ImplementedBy, Inject}
-import config.ApplicationConfig
 import connectors.PertaxConnector
 import models.PertaxApiResponse
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{InternalServerError, Redirect}
-import play.api.mvc.{ActionBuilder, ActionFunction, ActionRefiner, AnyContent, BodyParser, ControllerComponents, Request, Result}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, Nino => AuthNino}
-import uk.gov.hmrc.domain.Nino
+import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
@@ -41,7 +37,7 @@ class PertaxAuthActionImpl @Inject() (
   cc: ControllerComponents,
   pertaxConnector: PertaxConnector,
   serviceUnavailableView: ServiceUnavailableView
-)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+)(implicit ec: ExecutionContext)
     extends PertaxAuthAction
     with I18nSupport
     with AuthorisedFunctions
@@ -66,7 +62,7 @@ class PertaxAuthActionImpl @Inject() (
         case _                                                                      =>
           Left(
             InternalServerError(
-              serviceUnavailableView()(request, request2Messages(request), implicitly, implicitly)
+              serviceUnavailableView()(request, request2Messages(request))
             )
           )
       }
