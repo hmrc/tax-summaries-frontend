@@ -16,8 +16,11 @@
 
 package controllers.admin
 
+import config.ApplicationConfig
+import controllers.auth.InternalAuthAction
 import models.admin.{FeatureFlag, PertaxBackendToggle}
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
+import play.api.Configuration
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsBoolean, Json}
@@ -26,7 +29,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
 import services.admin.FeatureFlagService
 import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.internalauth.client.Predicate.Permission
+import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
+import uk.gov.hmrc.internalauth.client.{IAAction, Resource, ResourceLocation, ResourceType, Retrieval}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.BaseSpec
 
 import scala.concurrent.Future
 
@@ -45,7 +52,7 @@ class FeatureFlagsAdminControllerSpec extends BaseSpec {
   lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
   lazy val fakeInternalAuthAction                     =
     new InternalAuthAction(
-      new ApplicationConfig(inject[ServicesConfig]),
+      new ApplicationConfig(inject[ServicesConfig], inject[Configuration]),
       BackendAuthComponentsStub(mockStubBehaviour)
     )
 

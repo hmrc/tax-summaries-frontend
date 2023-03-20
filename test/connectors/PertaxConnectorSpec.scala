@@ -68,7 +68,7 @@ class PertaxConnectorSpec
         )
       )
 
-      val result = connector.pertaxAuth(nino.toString()).value.futureValue.right.getOrElse(PertaxApiResponse("", ""))
+      val result = connector.pertaxAuth(nino.toString()).value.futureValue.getOrElse(PertaxApiResponse("", ""))
 
       result mustBe PertaxApiResponse("ACCESS_GRANTED", "Access granted")
     }
@@ -83,7 +83,7 @@ class PertaxConnectorSpec
         )
       )
 
-      val result = connector.pertaxAuth(nino.toString()).value.futureValue.right.getOrElse(PertaxApiResponse("", ""))
+      val result = connector.pertaxAuth(nino.toString()).value.futureValue.getOrElse(PertaxApiResponse("", ""))
 
       result mustBe PertaxApiResponse(
         "NO_HMRC_PT_ENROLMENT",
@@ -99,7 +99,6 @@ class PertaxConnectorSpec
         .pertaxAuth(nino.toString())
         .value
         .futureValue
-        .right
         .getOrElse(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "There is no valid HMRC PT enrolment"))
 
       result mustBe PertaxApiResponse("", "", None)
@@ -122,7 +121,7 @@ class PertaxConnectorSpec
           .pertaxAuth(nino.toString())
           .value
           .futureValue
-          .left
+          .swap
           .getOrElse(UpstreamErrorResponse("", OK))
           .statusCode
 

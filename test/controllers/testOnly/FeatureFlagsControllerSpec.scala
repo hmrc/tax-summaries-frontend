@@ -16,11 +16,13 @@
 
 package controllers.testOnly
 
-import org.mockito.Mockito.when
+import controllers.auth.FakeAuthAction.mcc
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.admin.FeatureFlagService
+import utils.BaseSpec
 
 import scala.concurrent.Future
 

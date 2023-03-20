@@ -20,11 +20,11 @@ import akka.Done
 import config.ApplicationConfig
 import models.admin.PertaxBackendToggle
 import org.mockito.ArgumentCaptor
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
+import org.mockito.ArgumentMatchers.any
 import repositories.admin.FeatureFlagRepository
 import utils.BaseSpec
 import play.api.cache.AsyncCacheApi
+
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 
@@ -34,21 +34,12 @@ class FeatureFlagServiceSpec extends BaseSpec {
   val mockFeatureFlagRepository = mock[FeatureFlagRepository]
   val mockCache                 = mock[AsyncCacheApi]
 
-  override implicit lazy val app = GuiceApplicationBuilder()
-    .overrides(
-      bind[ApplicationConfig].toInstance(mockAppConfig),
-      bind[FeatureFlagRepository].toInstance(mockFeatureFlagRepository),
-      bind[AsyncCacheApi].toInstance(mockCache)
-    )
-    .build()
-
   override def beforeEach(): Unit = {
-    reset(mockAppConfig)
     reset(mockFeatureFlagRepository)
     reset(mockCache)
   }
 
-  val featureFlagService = inject[FeatureFlagService]
+  val featureFlagService = new FeatureFlagService(appConfig, mockFeatureFlagRepository, mockCache)
 
   "set" must {
     "set a feature flag" in {

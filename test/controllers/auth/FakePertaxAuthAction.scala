@@ -16,7 +16,7 @@
 
 package controllers.auth
 
-import play.api.mvc._
+import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 
@@ -30,5 +30,5 @@ object FakePertaxAuthAction extends ControllerBaseSpec with PayeAuthAction {
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
   ): Future[Result] =
-    block(PayeAuthenticatedRequest(testNino, false, fakeCredentials, request))
+    block(PayeAuthenticatedRequest(testNino, false, fakeCredentials, request, None))
 }

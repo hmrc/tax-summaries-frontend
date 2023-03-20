@@ -17,6 +17,7 @@
 package models.admin
 
 import play.api.libs.json.{JsResultException, JsString}
+import utils.BaseSpec
 
 class FeatureFlagSpec extends BaseSpec {
 
