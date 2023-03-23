@@ -17,20 +17,18 @@
 package services.admin
 
 import akka.Done
-import config.ApplicationConfig
 import models.admin.PertaxBackendToggle
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import play.api.cache.AsyncCacheApi
 import repositories.admin.FeatureFlagRepository
 import utils.BaseSpec
-import play.api.cache.AsyncCacheApi
 
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 
 class FeatureFlagServiceSpec extends BaseSpec {
 
-  val mockAppConfig             = mock[ApplicationConfig]
   val mockFeatureFlagRepository = mock[FeatureFlagRepository]
   val mockCache                 = mock[AsyncCacheApi]
 
@@ -39,7 +37,8 @@ class FeatureFlagServiceSpec extends BaseSpec {
     reset(mockCache)
   }
 
-  val featureFlagService = new FeatureFlagService(appConfig, mockFeatureFlagRepository, mockCache)
+  val featureFlagService: FeatureFlagService =
+    new FeatureFlagService(appConfig = appConfig, featureFlagRepository = mockFeatureFlagRepository, cache = mockCache)
 
   "set" must {
     "set a feature flag" in {

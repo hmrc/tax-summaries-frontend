@@ -19,10 +19,12 @@ package controllers.auth
 import com.google.inject.{ImplementedBy, Inject}
 import connectors.PertaxConnector
 import models.PertaxApiResponse
+import models.admin.PertaxBackendToggle
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{InternalServerError, Redirect}
 import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
+import services.admin.FeatureFlagService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -36,6 +38,7 @@ class PertaxAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: ControllerComponents,
   pertaxConnector: PertaxConnector,
+  featureFlagService: FeatureFlagService,
   serviceUnavailableView: ServiceUnavailableView
 )(implicit ec: ExecutionContext)
     extends PertaxAuthAction
@@ -49,24 +52,27 @@ class PertaxAuthActionImpl @Inject() (
     request: PayeAuthenticatedRequest[A]
   ): Future[Either[Result, PayeAuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    pertaxConnector
-      .pertaxAuth(request.nino.nino)
-      .transform {
-        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
-          Right(request.copy(nino = request.nino))
-        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect), _)) =>
-          Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
-        case Right(error)                                                           =>
-          logger.error(s"Invalid code response from pertax with message: ${error.message}")
-          Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-        case _                                                                      =>
-          Left(
-            InternalServerError(
-              serviceUnavailableView()(request, request2Messages(request))
+
+    featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
+      pertaxConnector
+        .pertaxAuth(request.nino.nino)
+        .transform {
+          case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
+            Right(request.copy(nino = request.nino))
+          case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, Some(redirect), _)) =>
+            Left(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}"))
+          case Right(error)                                                           =>
+            logger.error(s"Invalid code response from pertax with message: ${error.message}")
+            Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+          case _                                                                      =>
+            Left(
+              InternalServerError(
+                serviceUnavailableView()(request, request2Messages(request))
+              )
             )
-          )
-      }
-      .value
+        }
+        .value
+    }
   }
 
   override protected def executionContext: ExecutionContext = ec

@@ -24,6 +24,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, EitherValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
 
@@ -37,7 +38,7 @@ trait BaseSpec
     with ScalaFutures
     with IntegrationPatience
     with EitherValues {
-
+  lazy val servicesConfig: ServicesConfig        = inject[ServicesConfig]
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
   val taxYear: Int = appConfig.taxYear

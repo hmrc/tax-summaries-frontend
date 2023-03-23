@@ -20,12 +20,14 @@ import cats.data.EitherT
 import connectors.PertaxConnector
 import controllers.paye.routes
 import models.PertaxApiResponse
+import models.admin.{FeatureFlag, PertaxBackendToggle}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, REQUEST_TIMEOUT, SEE_OTHER, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, status}
 import services.MessageFrontendService
+import services.admin.FeatureFlagService
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
@@ -45,6 +47,8 @@ class PertaxAuthActionSpec extends BaseSpec {
   val mockPertaxConnector: PertaxConnector = mock[PertaxConnector]
 
   val mockMessageFrontendService: MessageFrontendService = mock[MessageFrontendService]
+
+  val mockFeatureFlagService = mock[FeatureFlagService]
 
   val unauthorisedRoute = routes.PayeErrorController.notAuthorised.url
 
@@ -67,6 +71,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     mockAuthConnector,
     FakePertaxAuthAction.mcc,
     mockPertaxConnector,
+    mockFeatureFlagService,
     inject[ServiceUnavailableView]
   )
 
@@ -92,6 +97,11 @@ class PertaxAuthActionSpec extends BaseSpec {
           EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
             Future.successful(Right(PertaxApiResponse("ACCESS_GRANTED", "", None)))
           )
+        )
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(PertaxBackendToggle, true)
         )
 
       when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
