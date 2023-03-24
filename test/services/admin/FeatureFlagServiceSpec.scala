@@ -29,16 +29,15 @@ import scala.jdk.CollectionConverters._
 
 class FeatureFlagServiceSpec extends BaseSpec {
 
-  val mockFeatureFlagRepository = mock[FeatureFlagRepository]
-  val mockCache                 = mock[AsyncCacheApi]
+  val mockFeatureFlagRepository: FeatureFlagRepository = mock[FeatureFlagRepository]
+  val mockCache: AsyncCacheApi                         = mock[AsyncCacheApi]
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagRepository)
     reset(mockCache)
   }
 
-  val featureFlagService: FeatureFlagService =
-    new FeatureFlagService(appConfig = appConfig, featureFlagRepository = mockFeatureFlagRepository, cache = mockCache)
+  val featureFlagService: FeatureFlagService = new FeatureFlagService(appConfig, mockFeatureFlagRepository, mockCache)
 
   "set" must {
     "set a feature flag" in {
