@@ -88,6 +88,7 @@ class PertaxConnectorSpec
       result mustBe PertaxApiResponse(
         "NO_HMRC_PT_ENROLMENT",
         "There is no valid HMRC PT enrolment",
+        None,
         Some("/tax-enrolment-assignment-frontend/account")
       )
     }

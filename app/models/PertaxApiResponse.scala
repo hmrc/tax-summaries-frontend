@@ -21,8 +21,8 @@ import play.api.libs.json.{Json, OFormat}
 case class PertaxApiResponse(
   code: String,
   message: String,
-  redirect: Option[String] = None,
-  errorView: Option[ErrorView] = None
+  errorView: Option[ErrorView] = None,
+  redirect: Option[String] = None
 )
 
 object PertaxApiResponse {

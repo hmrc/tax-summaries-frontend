@@ -21,8 +21,10 @@ import config.ApplicationConfig
 import models.PertaxApiResponse
 import play.api.Logging
 import play.api.http.HeaderNames
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class PertaxConnector @Inject() (
   httpClient: HttpClient,
   httpClientResponse: HttpClientResponse,
-  applicationConfig: ApplicationConfig
+  applicationConfig: ApplicationConfig,
+  headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
 )(implicit
   ec: ExecutionContext
 ) extends Logging {
@@ -46,4 +49,24 @@ class PertaxConnector @Inject() (
         )
       )
       .map(response => response.json.as[PertaxApiResponse])
+
+  def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
+    implicit val hc = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
+
+    httpClient.GET[HtmlPartial](s"$baseUrl$url") map {
+      case partial: HtmlPartial.Success =>
+        partial
+      case partial: HtmlPartial.Failure =>
+        logger.error(s"Failed to load partial from $url, partial info: $partial")
+        partial
+    } recover { case e =>
+      logger.error(s"Failed to load partial from $url", e)
+      e match {
+        case ex: HttpException =>
+          HtmlPartial.Failure(Some(ex.responseCode))
+        case _                 =>
+          HtmlPartial.Failure(None)
+      }
+    }
+  }
 }

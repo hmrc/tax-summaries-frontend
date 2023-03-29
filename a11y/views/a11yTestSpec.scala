@@ -3,8 +3,10 @@ package views
 
 import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo}
 import connectors.DataCacheConnector
+import org.mockito.MockitoSugar
 import play.api
 import play.api.Application
+import play.api.cache.AsyncCacheApi
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -18,7 +20,7 @@ import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
 import java.util.UUID
 import scala.concurrent.Future
 
-class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
+class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers with MockitoSugar {
 
   lazy val backendUrl = s"/taxs/$generatedSaUtr/$fakeTaxYear/ats-data"
   lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
@@ -27,9 +29,11 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
     .configure(
       "microservice.services.auth.port"          -> server.port(),
       "microservice.services.tax-summaries.port" -> server.port(),
-      "microservice.services.cachable.session-cache.port" -> server.port()
+      "microservice.services.cachable.session-cache.port" -> server.port(),
+      "microservice.services.pertax.port" -> server.port()
     ).overrides(
-    api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
+    api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
+      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi])
   )
     .build()
 
@@ -48,6 +52,10 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
             .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+        )
+        server.stubFor(
+          get(urlEqualTo(s"/pertax/$generatedNino/authorise"))
+            .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
         )
 
         val result: Future[Result] = route(app, request(url)).get
@@ -79,7 +87,13 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
             .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json")))
         )
 
+        server.stubFor(
+          get(urlEqualTo(s"/pertax/$generatedNino/authorise"))
+            .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
+        )
+
         val result: Future[Result] = route(app, request(url)).get
+        println("aaaaaaa" + contentAsString(result))
         getStatus(result) mustBe OK
         contentAsString(result) must passAccessibilityChecks(OutputFormat.Verbose)
       }

@@ -18,6 +18,7 @@ package utils
 
 import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, put, urlEqualTo, urlMatching}
 import config.ApplicationConfig
+import org.mockito.scalatest.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -37,7 +38,8 @@ class IntegrationSpec
     with WireMockHelper
     with ScalaFutures
     with IntegrationPatience
-    with Injecting {
+    with Injecting
+    with MockitoSugar {
 
   val generatedNino = new Generator().nextNino
 

@@ -70,7 +70,7 @@ class FeatureFlagServiceSpec extends BaseSpec {
           )
         )
 
-      val result = featureFlagService
+      val result: Unit = featureFlagService
         .setAll(
           Map(PertaxBackendToggle -> true)
         )

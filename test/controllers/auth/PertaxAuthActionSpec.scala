@@ -37,6 +37,7 @@ import utils.BaseSpec
 import utils.RetrievalOps.Ops
 import utils.TestConstants.fakeCredentials
 import views.html.errors.ServiceUnavailableView
+import views.html.main
 
 import scala.concurrent.Future
 
@@ -72,7 +73,8 @@ class PertaxAuthActionSpec extends BaseSpec {
     FakePertaxAuthAction.mcc,
     mockPertaxConnector,
     mockFeatureFlagService,
-    inject[ServiceUnavailableView]
+    inject[ServiceUnavailableView],
+    inject[main]
   )
 
   val authJourney =
@@ -124,7 +126,7 @@ class PertaxAuthActionSpec extends BaseSpec {
       when(mockPertaxConnector.pertaxAuth(any())(any()))
         .thenReturn(
           EitherT[Future, UpstreamErrorResponse, PertaxApiResponse](
-            Future.successful(Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "", Some("/redirect"))))
+            Future.successful(Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "", None, Some("/redirect"))))
           )
         )
 
@@ -132,10 +134,10 @@ class PertaxAuthActionSpec extends BaseSpec {
 
       val result = controller.onPageLoad()(FakeRequest(GET, "/blahblah?redirectUrl=testRedirect"))
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe s"/redirect?redirectUrl=%2Fblahblah%3FredirectUrl%3DtestRedirect"
+      redirectLocation(result).get mustBe s"/redirect/?redirectUrl=%2Fblahblah%3FredirectUrl%3DtestRedirect"
     }
 
-    "create an authenticated request if PertaxConnector returns an unrecognised code" in {
+    "throw to an error page if PertaxConnector returns an unrecognised code" in {
       val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
@@ -156,10 +158,7 @@ class PertaxAuthActionSpec extends BaseSpec {
       when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
       val result = controller.onPageLoad()(FakeRequest())
-      status(result) mustBe SEE_OTHER
-      redirectLocation(
-        result
-      ).get mustBe controllers.paye.routes.PayeErrorController.notAuthorised.url
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
 
     List(
