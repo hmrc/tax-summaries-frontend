@@ -62,6 +62,8 @@ lazy val microservice = Project(appName, file("."))
       "-Wconf:cat=other-match-analysis:s"
     )
   )
+  .settings(routesImport ++= Seq("models.admin.FeatureFlagName"))
+
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",
