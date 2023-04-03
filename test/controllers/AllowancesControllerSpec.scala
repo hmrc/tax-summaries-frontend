@@ -55,7 +55,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   implicit val hc = new HeaderCarrier
 
-  val noATSViewModel: NoATSViewModel = new NoATSViewModel()
+  val noATSViewModel: NoATSViewModel = NoATSViewModel(taxYear)
 
   lazy val taxsController = mock[TaxsController]
 
@@ -150,7 +150,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockAllowanceService.getAllowances(any())(any(), any()))
-        .thenReturn(Future.successful(new NoATSViewModel))
+        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
