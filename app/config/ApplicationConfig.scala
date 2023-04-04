@@ -41,7 +41,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   lazy val authHost                     = config.baseUrl("auth")
   lazy val pertaxHost                   = config.baseUrl("pertax")
-  lazy val pertaxApiVersion             = config.getString("microservice.services.pertax.version")
   lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
