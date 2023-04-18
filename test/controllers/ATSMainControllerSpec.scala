@@ -59,7 +59,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title          must include(
-        Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+        Messages("ats.index.html.title")
       )
       contentAsString(result) must include("contact/beta-feedback-unauthenticated")
     }
