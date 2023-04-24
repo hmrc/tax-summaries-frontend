@@ -104,7 +104,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockSummaryService.getSummaryData(any())(any(), any()))
-        .thenReturn(Future.successful(new NoATSViewModel))
+        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
 
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER

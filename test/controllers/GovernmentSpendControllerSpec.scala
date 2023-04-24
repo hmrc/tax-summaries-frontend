@@ -128,7 +128,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
       when(
         mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
       )
-        .thenReturn(Future.successful(new NoATSViewModel))
+        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url

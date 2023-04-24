@@ -108,7 +108,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockSummaryService.getSummaryData(any())(any(), any()))
-        .thenReturn(Future.successful(new NoATSViewModel))
+        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
@@ -434,7 +434,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "Redirect to 'No ATS' page" in {
 
-      val model17 = new NoATSViewModel
+      val model17 = NoATSViewModel(taxYear)
 
       when(mockSummaryService.getSummaryData(any())(any(), any()))
         .thenReturn(Future.successful(model17))

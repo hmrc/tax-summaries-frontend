@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
   val dataPath = "/no_ats_json_test.json"
-  val model    = new NoATSViewModel
+  val model    = NoATSViewModel(taxYear)
 
   val mockIncomeService  = mock[IncomeService]
   val mockAuditService   = mock[AuditService]
