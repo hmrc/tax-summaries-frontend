@@ -128,6 +128,17 @@ class FeatureFlagRepositorySpec extends BaseSpec with DefaultPlayMongoRepository
     }
   }
 
+  "deleteFeatureFlag" must {
+    "return true when successfully deleted" in {
+      val deleteFlagResult: Boolean = (for {
+        _      <- insertRecord(PertaxBackendToggle, true)
+        result <- repository.deleteFeatureFlag(PertaxBackendToggle)
+      } yield result).futureValue
+
+      deleteFlagResult mustBe true
+    }
+  }
+
   "Collection" must {
     "not allow duplicates" in {
 

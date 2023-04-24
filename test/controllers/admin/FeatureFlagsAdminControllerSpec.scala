@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.http.Status
 import play.api.http.Status._
-import play.api.libs.json.{JsBoolean, Json}
+import play.api.libs.json.{JsBoolean, JsResultException, Json}
 import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
@@ -143,6 +143,21 @@ class FeatureFlagsAdminControllerSpec extends BaseSpec {
           )
         }
         result.getMessage mustBe "Random exception"
+      }
+
+      "Toggle in json body does not exist" in {
+        when(mockFeatureFlagService.setAll(any())).thenReturn(Future.successful(()))
+
+        val result = sut.putAll(
+          FakeRequest()
+            .withHeaders("Authorization" -> "Token some-token")
+            .withJsonBody(Json.parse("""[{"name":"non-existent-toggle","isEnabled":true}]"""))
+        )
+
+        whenReady(result.failed) { ex =>
+          ex mustBe a[JsResultException]
+          ex.getMessage must include("""Unknown FeatureFlagName `"non-existent-toggle"`""")
+        }
       }
     }
   }

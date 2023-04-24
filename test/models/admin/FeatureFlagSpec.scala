@@ -33,7 +33,13 @@ class FeatureFlagSpec extends BaseSpec {
       val result = intercept[JsResultException] {
         JsString("invalid").as[FeatureFlagName]
       }
-      result.errors.toString() mustBe "List((,List(JsonValidationError(List(Unknown FeatureFlagName),ArraySeq()))))"
+      result.errors
+        .toString() mustBe "List((,List(JsonValidationError(List(Unknown FeatureFlagName `\"invalid\"`),ArraySeq()))))"
+    }
+
+    "returns DeletedToggle when using FeatureFlagMongoFormats.formats" in {
+      val result = JsString("invalid").as[FeatureFlagName](FeatureFlagMongoFormats.featureFlagNameReads)
+      result mustBe DeletedToggle("invalid")
     }
   }
 }
