@@ -105,7 +105,4 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val messagesFrontendUrl: String       =
     config.baseUrl("message-frontend")
   lazy val messagesFrontendTimeoutInSec: Int = config.getInt("messages-frontend.timeout-in-seconds")
-
-  lazy val startTaxYear: Int       = config.getInt("taxYear")
-  lazy val totalNumberOfYears: Int = config.getInt("max.taxYears.to.display")
 }
