@@ -40,6 +40,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val cidHost          = config.baseUrl("citizen-details")
 
   lazy val authHost                     = config.baseUrl("auth")
+  lazy val pertaxHost                   = config.baseUrl("pertax")
   lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
@@ -119,4 +120,9 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val messagesFrontendUrl: String       =
     config.baseUrl("message-frontend")
   lazy val messagesFrontendTimeoutInSec: Int = config.getInt("messages-frontend.timeout-in-seconds")
+
+  lazy val internalAuthResourceType: String =
+    config.getConfString("internal-auth.resource-type", "ddcn-live-admin-frontend")
+
+  val ehCacheTtlInSeconds: Int = config.getInt("ehCache.ttlInSeconds")
 }

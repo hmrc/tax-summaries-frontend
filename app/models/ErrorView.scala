@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package models
 
-import play.api.mvc._
-import utils.ControllerBaseSpec
+import play.api.libs.json.Json
 
-object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
-  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]    =
-    FakeAuthAction andThen FakeSelfAssessmentAuthAction
-  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    FakePertaxAuthAction andThen FakePertaxAuthAction
+case class ErrorView(url: String, statusCode: Int)
+
+object ErrorView {
+  implicit val format = Json.format[ErrorView]
 }

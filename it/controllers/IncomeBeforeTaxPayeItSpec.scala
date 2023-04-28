@@ -16,7 +16,9 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo, urlMatching}
+import play.api
+import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -28,7 +30,11 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
   override def fakeApplication() = GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"          -> server.port(),
-      "microservice.services.tax-summaries.port" -> server.port()
+      "microservice.services.tax-summaries.port" -> server.port(),
+      "microservice.services.pertax.port"        -> server.port()
+    )
+    .overrides(
+      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi])
     )
     .build()
 
@@ -43,6 +49,12 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
       server.stubFor(
         get(urlEqualTo(backendUrl))
           .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+      )
+
+      server.stubFor(
+        get(urlMatching(s"/pertax/$generatedNino/authorise")).willReturn(
+          ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}")
+        )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")

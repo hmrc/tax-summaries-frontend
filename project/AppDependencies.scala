@@ -2,10 +2,12 @@ import sbt._
 import play.core.PlayVersion
 import play.sbt.PlayImport._
 
+
 object AppDependencies {
 
   val playVersion = "play-28"
   val bootstrapVersion = "7.14.0"
+  lazy val hmrcMongoVersion: String = "1.1.0"
 
   val compile = Seq(
     filters,
@@ -17,7 +19,11 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "tax-year"                   % "3.0.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
     "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"6.7.0-play-28",
-    "uk.gov.hmrc"                %% "play-partials"                    % s"8.3.0-$playVersion"
+    "uk.gov.hmrc"                %% "play-partials"                    % s"8.3.0-$playVersion",
+    "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-$playVersion"   % hmrcMongoVersion,
+    "uk.gov.hmrc"           %% s"internal-auth-client-$playVersion" % "1.2.0",
+    "uk.gov.hmrc"           %% "http-caching-client"              % s"10.0.0-$playVersion",
+  ehcache
   )
 
   val test               = Seq(
@@ -30,7 +36,8 @@ object AppDependencies {
     "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.0",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
     "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0",
-    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2"
+    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2",
+    "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion
   ).map(_ % "test,it")
 
   val jacksonVersion = "2.13.2"

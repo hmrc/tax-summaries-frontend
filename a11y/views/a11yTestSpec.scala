@@ -27,7 +27,8 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
     .configure(
       "microservice.services.auth.port"          -> server.port(),
       "microservice.services.tax-summaries.port" -> server.port(),
-      "microservice.services.cachable.session-cache.port" -> server.port()
+      "microservice.services.cachable.session-cache.port" -> server.port(),
+      "microservice.services.pertax.port" -> server.port()
     ).overrides(
     api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
   )
@@ -48,6 +49,10 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
             .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+        )
+        server.stubFor(
+          get(urlEqualTo(s"/pertax/$generatedNino/authorise"))
+            .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
         )
 
         val result: Future[Result] = route(app, request(url)).get
@@ -77,6 +82,11 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         server.stubFor(
           get(urlEqualTo(backendUrl))
             .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json")))
+        )
+
+        server.stubFor(
+          get(urlEqualTo(s"/pertax/$generatedNino/authorise"))
+            .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
         )
 
         val result: Future[Result] = route(app, request(url)).get

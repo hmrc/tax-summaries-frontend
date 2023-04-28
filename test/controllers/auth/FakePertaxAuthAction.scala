@@ -16,12 +16,19 @@
 
 package controllers.auth
 
-import play.api.mvc._
+import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import utils.ControllerBaseSpec
+import utils.TestConstants._
 
-object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
-  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]    =
-    FakeAuthAction andThen FakeSelfAssessmentAuthAction
-  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    FakePertaxAuthAction andThen FakePertaxAuthAction
+import scala.concurrent.{ExecutionContext, Future}
+
+object FakePertaxAuthAction extends ControllerBaseSpec with PayeAuthAction {
+  override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
+  override protected val executionContext: ExecutionContext = mcc.executionContext
+
+  override def invokeBlock[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] =
+    block(PayeAuthenticatedRequest(testNino, false, fakeCredentials, request, None))
 }
