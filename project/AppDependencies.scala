@@ -7,7 +7,7 @@ object AppDependencies {
 
   val playVersion = "play-28"
   val bootstrapVersion = "7.15.0"
-  lazy val hmrcMongoVersion: String = "1.2.0"
+  lazy val hmrcMongoVersion: String = "1.1.0"
 
   val compile = Seq(
     filters,
@@ -28,11 +28,11 @@ object AppDependencies {
 
   val test               = Seq(
     "uk.gov.hmrc"                %% "play-language"           % s"6.1.0-$playVersion",
-    "org.jsoup"                   % "jsoup"                   % "1.15.4",
+    "org.jsoup"                   % "jsoup"                   % "1.16.1",
     "uk.gov.hmrc"                %% s"bootstrap-test-play-28" % bootstrapVersion,
-    "org.mockito"                %% "mockito-scala-scalatest" % "1.17.12",
+    "org.mockito"                %% "mockito-scala-scalatest" % "1.17.14",
     "com.typesafe.play"          %% "play-test"               % PlayVersion.current,
-    "org.scalatestplus"          %% "scalacheck-1-16"         % "3.2.14.0",
+    "org.scalatestplus"          %% "scalacheck-1-17"         % "3.2.15.0",
     "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.0",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
     "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0",
