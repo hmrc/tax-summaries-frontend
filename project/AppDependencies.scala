@@ -6,8 +6,8 @@ import play.sbt.PlayImport._
 object AppDependencies {
 
   val playVersion = "play-28"
-  val bootstrapVersion = "7.14.0"
-  lazy val hmrcMongoVersion: String = "1.1.0"
+  val bootstrapVersion = "7.15.0"
+  lazy val hmrcMongoVersion: String = "1.2.0"
 
   val compile = Seq(
     filters,
@@ -15,13 +15,13 @@ object AppDependencies {
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"10.0.0-$playVersion",
     "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % bootstrapVersion,
-    "uk.gov.hmrc"                %% "domain"                     % s"8.1.0-$playVersion",
-    "uk.gov.hmrc"                %% "tax-year"                   % "3.0.0",
+    "uk.gov.hmrc"                %% "domain"                     % s"8.3.0-$playVersion",
+    "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
-    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"6.7.0-play-28",
-    "uk.gov.hmrc"                %% "play-partials"                    % s"8.3.0-$playVersion",
+    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"7.7.0-play-28",
+    "uk.gov.hmrc"                %% "play-partials"                    % s"8.4.0-$playVersion",
     "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-$playVersion"   % hmrcMongoVersion,
-    "uk.gov.hmrc"           %% s"internal-auth-client-$playVersion" % "1.2.0",
+    "uk.gov.hmrc"           %% s"internal-auth-client-$playVersion" % "1.4.0",
     "uk.gov.hmrc"           %% "http-caching-client"              % s"10.0.0-$playVersion",
   ehcache
   )
