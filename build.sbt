@@ -1,6 +1,5 @@
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import com.typesafe.sbt.web.Import._
 import net.ground5hark.sbt.concat.Import._
 import com.typesafe.sbt.uglify.Import._
@@ -33,7 +32,7 @@ lazy val microservice = Project(appName, file("."))
     scoverageSettings,
     scalaSettings,
     scalaVersion := "2.13.8",
-    publishingSettings,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     defaultSettings(),
     majorVersion := 1,
     libraryDependencies ++= AppDependencies.all,
