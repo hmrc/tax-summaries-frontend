@@ -38,7 +38,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
   lazy val cidHost          = config.baseUrl("citizen-details")
 
-  lazy val authHost                     = config.baseUrl("auth")
   lazy val pertaxHost                   = config.baseUrl("pertax")
   lazy val contactFormServiceIdentifier = "ATS"
 
