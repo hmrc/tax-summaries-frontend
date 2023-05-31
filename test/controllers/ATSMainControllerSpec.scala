@@ -59,7 +59,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title          must include(
-        Messages("ats.index.html.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+        Messages("ats.index.html.title")
       )
       contentAsString(result) must include("contact/beta-feedback-unauthenticated")
     }
@@ -86,7 +86,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
       when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
-        .thenReturn(Future.successful(new NoATSViewModel))
+        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
 
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER

@@ -29,7 +29,7 @@ import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorController @Inject() (
   governmentSpendService: GovernmentSpendService,
@@ -48,20 +48,19 @@ class ErrorController @Inject() (
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    governmentSpendService
-      .getGovernmentSpendFigures(taxYear)
-      .fold(
-        errorResponse => {
-          logger.error(errorResponse.message)
-          InternalServerError(serviceUnavailableView())
-        },
-        spendData =>
-          if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
-            Forbidden(serviceUnavailableView())
-          } else {
-            Ok(howTaxIsSpentView(spendData, taxYear))
-          }
-      )
+    if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
+      Future.successful(Forbidden(serviceUnavailableView()))
+    } else {
+      governmentSpendService
+        .getGovernmentSpendFigures(taxYear)
+        .fold(
+          errorResponse => {
+            logger.error(errorResponse.message)
+            InternalServerError(serviceUnavailableView())
+          },
+          spendData => Ok(howTaxIsSpentView(spendData, taxYear))
+        )
+    }
   }
 
   def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>

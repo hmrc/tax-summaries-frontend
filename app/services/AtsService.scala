@@ -45,15 +45,19 @@ class AtsService @Inject() (
     request: AuthenticatedRequest[_]
   ): Future[GenericViewModel] =
     getAts(taxYear) map {
-      checkCreateModel(_, converter)
+      checkCreateModel(taxYear, _, converter)
     }
 
-  def checkCreateModel(output: Either[Int, AtsData], converter: AtsData => GenericViewModel): GenericViewModel =
+  def checkCreateModel(
+    taxYear: Int,
+    output: Either[Int, AtsData],
+    converter: AtsData => GenericViewModel
+  ): GenericViewModel =
     output match {
       case Right(atsList) if atsList.taxYear > appConfig.taxYear =>
         new ATSUnavailableViewModel
       case Right(atsList)                                        => converter(atsList)
-      case Left(NOT_FOUND)                                       => new NoATSViewModel
+      case Left(NOT_FOUND)                                       => NoATSViewModel(taxYear)
       case Left(_)                                               => new ATSUnavailableViewModel
     }
 

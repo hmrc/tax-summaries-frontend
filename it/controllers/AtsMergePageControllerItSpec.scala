@@ -22,6 +22,7 @@ import models.{AgentToken, AtsListData}
 import org.mockito.scalatest.MockitoSugar
 import play.api
 import play.api.Application
+import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -56,7 +57,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       "microservice.services.message-frontend.port" -> server.port()
     )
     .overrides(
-      api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
+      api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
+      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi])
     )
     .build()
 

@@ -127,7 +127,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
-        .thenReturn(Future.successful(new NoATSViewModel))
+        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url

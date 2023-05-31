@@ -18,5 +18,5 @@ package view_models
 
 import utils.GenericViewModel
 
-final class NoATSViewModel extends GenericViewModel
+final case class NoATSViewModel(year: Int) extends GenericViewModel
 final class ATSUnavailableViewModel extends GenericViewModel

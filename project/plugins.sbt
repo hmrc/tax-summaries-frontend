@@ -21,4 +21,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-uglify" % "2.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.4")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-accessibility-linter" % "0.31.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-accessibility-linter" % "0.35.0")
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

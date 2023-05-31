@@ -56,7 +56,7 @@ abstract class TaxsController @Inject() (
   @nowarn("msg=The outer reference in this type test cannot be checked at run time")
   private def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel() map {
-      case Right(_: NoATSViewModel)          => Redirect(routes.ErrorController.authorisedNoAts(appConfig.taxYear))
+      case Right(NoATSViewModel(year))       => Redirect(routes.ErrorController.authorisedNoAts(year))
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
       case Right(result: ViewModel)          => obtainResult(result)
       case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
