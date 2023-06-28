@@ -37,17 +37,18 @@ import scala.util.Random
 
 class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
-  lazy override implicit val ec = inject[ExecutionContext]
+  lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 
-  lazy implicit val hc = inject[HeaderCarrier]
+  lazy implicit val hc: HeaderCarrier = inject[HeaderCarrier]
 
-  val atsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
+  val atsListData: AtsListData =
+    Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
 
-  val agentTokenMock = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
+  val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
-  val mockDataCacheConnector = mock[DataCacheConnector]
+  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
-  val agentToken = LoginPage.agentToken(generatedSaUtr.utr)
+  val agentToken: String = LoginPage.agentToken(generatedSaUtr.utr)
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
@@ -121,7 +122,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
 
-    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/2022/5/ats-list"
 
     lazy val backendUrlPaye =
       s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
@@ -155,7 +156,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
       lazy val url = s"/annual-tax-summary/paye/main"
 
-      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
+      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/2022/5/ats-list"
 
       lazy val backendUrlPaye =
         s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"

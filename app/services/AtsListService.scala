@@ -100,15 +100,24 @@ class AtsListService @Inject() (
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val response = (account: @unchecked) match {
-      case agent: Uar        => middleConnector.connectToAtsListOnBehalfOf(agent, requestedUTR)
-      case individual: SaUtr => middleConnector.connectToAtsList(individual)
+      case agent: Uar        =>
+        middleConnector.connectToAtsListOnBehalfOf(
+          agent,
+          requestedUTR,
+          appConfig.taxYear,
+          appConfig.maxTaxYearsTobeDisplayed
+        )
+      case individual: SaUtr =>
+        middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
     }
 
     val result = response flatMap {
       case AtsSuccessResponseWithPayload(payload: AtsListData) =>
         val atsListData = if (appConfig.taxYear < 2020 && payload.atsYearList.isDefined) {
           AtsListData(payload.utr, payload.taxPayer, Some(payload.atsYearList.get.filter(_ < 2020)))
-        } else payload
+        } else {
+          payload
+        }
 
         for {
           data: AtsListData <- storeAtsListData(atsListData)

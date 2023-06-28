@@ -31,7 +31,7 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
   ec: ExecutionContext
 ) extends Logging {
 
-  val serviceUrl = appConfig.serviceUrl
+  val serviceUrl: String = appConfig.serviceUrl
 
   private def url(path: String) = s"$serviceUrl$path"
 
@@ -43,11 +43,13 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
   ): Future[AtsResponse] =
     connectToAts(requestedUTR, taxYear)
 
-  def connectToAtsList(UTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsListData](url("/taxs/" + UTR + "/ats-list"))
+  def connectToAtsList(UTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+    httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
 
-  def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr)(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    connectToAtsList(requestedUTR)
+  def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
+    hc: HeaderCarrier
+  ): Future[AtsResponse] =
+    connectToAtsList(requestedUTR, endYear, numberOfYears)
 
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit
     hc: HeaderCarrier
