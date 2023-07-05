@@ -87,7 +87,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is false" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
       if (taxYear == 2022) { /// TODO - Delete this block besides the 2022 contents when uprating is complete
         AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
@@ -112,7 +112,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
       if (taxYear == 2022) { /// TODO - Delete this block besides the 2022 contents when uprating is complete
         val model =
@@ -137,7 +137,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showContinueButton to true when showNoAtsYearList is true" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(5)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
       val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L200)
       model.showContinueButton mustBe true
     }
