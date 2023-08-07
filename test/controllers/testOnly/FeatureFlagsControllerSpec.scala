@@ -21,14 +21,14 @@ import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.admin.FeatureFlagService
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.BaseSpec
 
 import scala.concurrent.Future
 
 class FeatureFlagsControllerSpec extends BaseSpec {
 
-  lazy val mockFeatureFlagService = mock[FeatureFlagService]
+  lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
 
   val controller = new FeatureFlagsController(mcc, mockFeatureFlagService)
 

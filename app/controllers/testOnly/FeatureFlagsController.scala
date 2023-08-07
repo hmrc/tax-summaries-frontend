@@ -16,9 +16,9 @@
 
 package controllers.testOnly
 
-import models.admin.{FeatureFlagName, PertaxBackendToggle}
+import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.admin.FeatureFlagService
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -31,15 +31,9 @@ class FeatureFlagsController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) {
 
-  def setFlag(featureFlagName: FeatureFlagName, isEnabled: Boolean): Action[AnyContent] = Action.async {
-    featureFlagService.set(featureFlagName, isEnabled).map {
-      case true  => Ok(s"Flag $featureFlagName set to $isEnabled")
-      case false => InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
-    }
-  }
-
-  def setDefaults: Action[AnyContent] = Action {
-    featureFlagService.setAll(Map(PertaxBackendToggle -> true))
-    Ok("Default flags set")
+  def setDefaults(): Action[AnyContent] = Action.async {
+    featureFlagService
+      .setAll(Map(PertaxBackendToggle -> true, SCAWrapperToggle -> false))
+      .map(_ => Ok("Default flags set"))
   }
 }
