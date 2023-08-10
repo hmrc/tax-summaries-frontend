@@ -14,16 +14,15 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
 
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
 @import helpers.{H1, H2, P}
-@import scala.concurrent.ExecutionContext
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     htmlFormatter: HtmlFormatter,
     h1: H1,
     h2: H2,

@@ -14,16 +14,14 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-
 @import utils.HtmlFormatter
 @import view_models.paye.PayeYourTaxableIncome
 @import views.html.helpers.{backLink, H1, H2, P}
 @import views.html.includes.CurrencyAmountView
-@import scala.concurrent.ExecutionContext
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     backLink: backLink,
     currencyAmountView: CurrencyAmountView,
     htmlFormatter: HtmlFormatter,
@@ -66,14 +64,14 @@
                     <td class="govuk-table__cell">
                         @Messages("paye.ats.income_before_tax." + row.messageKey)
                     </td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.value, true)</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.value, twoDecimalPlaces = true)</td>
                 </tr>
             }
             </tbody>
             <tfoot id="income-before-tax-foot">
                 <tr class="govuk-row">
                     <th scope="row" class="govuk-table__header">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
-                    <td id="income-before-tax" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalIncomeBeforeTax, true)</td>
+                    <td id="income-before-tax" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalIncomeBeforeTax, twoDecimalPlaces = true)</td>
                 </tr>
             </tfoot>
         </table>

@@ -37,8 +37,8 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps.Ops
 import utils.TestConstants.fakeCredentials
+import views.MainTemplate
 import views.html.errors.ServiceUnavailableView
-import views.html.main
 
 import scala.concurrent.Future
 
@@ -75,7 +75,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     mockPertaxConnector,
     mockFeatureFlagService,
     inject[ServiceUnavailableView],
-    inject[main]
+    inject[MainTemplate]
   )
 
   val authJourney =

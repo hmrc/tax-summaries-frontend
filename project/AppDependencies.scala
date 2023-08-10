@@ -21,9 +21,10 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"7.7.0-play-28",
     "uk.gov.hmrc"                %% "play-partials"                    % s"8.4.0-$playVersion",
     "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-$playVersion"   % hmrcMongoVersion,
-    "uk.gov.hmrc"           %% s"internal-auth-client-$playVersion" % "1.4.0",
+    "uk.gov.hmrc"                %% s"internal-auth-client-$playVersion" % "1.4.0",
     ehcache,
-    "uk.gov.hmrc"       %% "mongo-feature-toggles-client"     % "0.2.0"
+    "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.2.0",
+    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.41",
   )
 
   val test: Seq[ModuleID] = Seq(

@@ -31,8 +31,8 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.partials.HtmlPartial
+import views.MainTemplate
 import views.html.errors.ServiceUnavailableView
-import views.html.main
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +42,7 @@ class PertaxAuthActionImpl @Inject() (
   pertaxConnector: PertaxConnector,
   featureFlagService: FeatureFlagService,
   serviceUnavailableView: ServiceUnavailableView,
-  mainTemplate: main
+  mainTemplate: MainTemplate
 ) extends PertaxAuthAction
     with I18nSupport
     with AuthorisedFunctions

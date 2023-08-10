@@ -14,27 +14,12 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.{backLink, H1, P}
-@import views.MainTemplate
+@this()
 
-@this(
-   main: MainTemplate,
-   backLink: backLink,
-   h1: H1,
-   p: P
-)
+@(beforeContentHtml: Option[Html] = None)
 
-@()(
-   implicit request: Request[_],
-   messages: Messages
-)
-
-
-@main(
-       pageTitle = Messages("ats.service_unavailable.title")
-    ) {
-
-  @backLink(href="")
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
-}
+<aside>
+    @if(beforeContentHtml.isDefined){
+        @beforeContentHtml
+    }
+</aside>

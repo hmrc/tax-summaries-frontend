@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-@import scala.concurrent.ExecutionContext
 @import helpers.{H1, P}
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     h1: H1,
     p: P
 )
@@ -33,7 +32,7 @@
       pageTitle = Messages("paye.ats.service_unavailable.title")
     ) {
 
-   @h1("paye.ats.service_unavailable.heading")</h1>
+   @h1("paye.ats.service_unavailable.heading")
    @p(Text(Messages("paye.ats.service_unavailable.paragraph")))
 
 }

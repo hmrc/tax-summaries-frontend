@@ -33,35 +33,35 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   def getExternalUrl(key: String): String = config.getString(s"external-urls.$key")
 
   // Services url config
-  val serviceUrl = config.baseUrl("tax-summaries")
+  val serviceUrl: String = config.baseUrl("tax-summaries")
 
-  lazy val sessionCacheHost = config.baseUrl("cachable.session-cache")
-  lazy val cidHost          = config.baseUrl("citizen-details")
+  lazy val sessionCacheHost: String = config.baseUrl("cachable.session-cache")
+  lazy val cidHost: String          = config.baseUrl("citizen-details")
 
-  lazy val pertaxHost                   = config.baseUrl("pertax")
+  lazy val pertaxHost: String           = config.baseUrl("pertax")
   lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
-  lazy val sessionCacheDomain = getConf("cachable.session-cache.domain")
+  lazy val sessionCacheDomain: String = getConf("cachable.session-cache.domain")
 
-  lazy val homePageUrl            = "/annual-tax-summary/"
-  lazy val contactFrontendBaseUrl = getExternalUrl("contact-frontend.host")
-  lazy val betaFeedbackUrl        =
+  lazy val homePageUrl                    = "/annual-tax-summary/"
+  lazy val contactFrontendBaseUrl: String = getExternalUrl("contact-frontend.host")
+  lazy val betaFeedbackUrl                =
     s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   // Encryption config
-  lazy val encryptionKey         = config.getString("portal.clientagent.encryption.key")
-  lazy val encryptionTokenMaxAge = config.getConfInt("encryption.tokenMaxAge", 0)
+  lazy val encryptionKey: String      = config.getString("portal.clientagent.encryption.key")
+  lazy val encryptionTokenMaxAge: Int = config.getConfInt("encryption.tokenMaxAge", 0)
 
   // External urls
-  lazy val loginCallback                         = getConf(s"login-callback.url")
-  lazy val loginUrl                              = getConf("login.url")
-  lazy val portalUrl                             = getConf("portal.url")
+  lazy val loginCallback: String                 = getConf(s"login-callback.url")
+  lazy val loginUrl: String                      = getConf("login.url")
+  lazy val portalUrl: String                     = getConf("portal.url")
   lazy val feedbackUrl: String                   = getConf("feedback.url")
-  lazy val payeLoginUrl                          = getConf("paye.login.url")
-  lazy val payeLoginCallbackUrl                  = getConf("paye.login-callback.url")
+  lazy val payeLoginUrl: String                  = getConf("paye.login.url")
+  lazy val payeLoginCallbackUrl: String          = getConf("paye.login-callback.url")
   lazy val identityVerificationUpliftUrl: String = getConf("paye.iv-uplift-redirect.url")
-  lazy val iVUpliftFailureCallback               = getConf("paye.iv-uplift-failure.url")
+  lazy val iVUpliftFailureCallback: String       = getConf("paye.iv-uplift-failure.url")
   lazy val contactHmrcSAUrl                      = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
   lazy val contactHmrcPayeUrl                    =
     "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
@@ -74,7 +74,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
   //Application name
-  lazy val appName = config.getString("appName")
+  lazy val appName: String = config.getString("appName")
 
   val saShuttered: Boolean = config.getBoolean("shuttering.sa")
 
@@ -111,4 +111,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
     config.getConfString("internal-auth.resource-type", "ddcn-live-admin-frontend")
 
   val ehCacheTtlInSeconds: Int = config.getInt("ehCache.ttlInSeconds")
+
+  val SCAWrapperFutureTimeout: Int = config.getInt("sca-wrapper.future-timeout")
 }

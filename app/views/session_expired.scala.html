@@ -14,12 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-@import scala.concurrent.ExecutionContext
-@import config.ApplicationConfig
 @import helpers.{H1, P}
+@import views.MainTemplate
 
-@this(main: main, h1: H1, p: P)
+@this(main: MainTemplate, h1: H1, p: P)
 @()(implicit request: Request[_], messages: Messages)
 
 

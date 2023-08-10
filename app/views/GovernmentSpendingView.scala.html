@@ -18,9 +18,10 @@
 @import controllers.auth.AuthenticatedRequest
 @import helpers.{H1, HeaderSection, Link, P, PageHeading}
 @import views.html.includes.CurrencyAmountView
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     headerSection: HeaderSection,
     h1: H1,
     p: P,
@@ -80,14 +81,14 @@
                     <dd class="govuk-summary-list__value">@Html(Messages("generic.amount_pounds"))</dd>
                 </div>
 
-                @viewModel.govSpendAmountData.map {
+                @viewModel.govSpendAmountData.foreach {
                     case (key, value) => {
 
                         <div class="govuk-summary-list__row--no-actions content">
                             <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.$key"))
                             <span>&nbsp;(@value.percentage%)</span>
                             </dt>
-                            <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
+                            <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, twoDecimalPlaces = true)</dd>
                         </div>
                         <div aria-hidden="true">
                             <dt class="graph-green-bar" style="width: @value.percentage%;"></dt>

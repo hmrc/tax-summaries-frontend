@@ -17,9 +17,10 @@
 @import controllers.auth.AuthenticatedRequest
 @import views.html.includes.CurrencyAmountView
 @import views.html.helpers.{PageHeading, HeaderSection, H2, P}
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     headerSection: HeaderSection,
     currencyAmountView: CurrencyAmountView,
     pageHeading: PageHeading,
@@ -131,7 +132,7 @@
                 @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)
                 } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-                (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*)) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)}</span>
+                viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)}</span>
                 <span id="total-tax-amount" aria-hidden="true">@currencyAmountView(viewModel.yourTotalTax)</span>
             </p>
 
@@ -140,7 +141,7 @@
                 @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
                 } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-                (viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }):_*))
+                viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }:_*))
                 }
             </p>
 
