@@ -17,23 +17,25 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants._
-import view_models.{ATSUnavailableViewModel, NoATSViewModel}
+import view_models.{ATSUnavailableViewModel, NoATSViewModel, Summary}
 
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec {
 
-  val baseModel = SummaryControllerSpec.baseModel
+  val baseModel: Summary = SummaryControllerSpec.baseModel
 
-  val mockSummaryService = mock[SummaryService]
-  val mockAuditService   = mock[AuditService]
+  val mockSummaryService: SummaryService = mock[SummaryService]
+  val mockAuditService: AuditService     = mock[AuditService]
 
   def sut =
     new AtsMainController(
@@ -46,11 +48,17 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
     when(
       mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request))
     ) thenReturn Future
       .successful(baseModel)
+  }
 
   "Calling Index Page" must {
 

@@ -17,11 +17,13 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
@@ -32,7 +34,7 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
   val dataPath = "/summary_json_test_2021.json"
 
-  val model = Summary(
+  val model: Summary = Summary(
     year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
@@ -67,11 +69,17 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
     when(
       mockSummaryService.getSummaryData(any())(any(), any())
     ) thenReturn Future
       .successful(model)
+  }
 
   "Calling NICs" must {
 

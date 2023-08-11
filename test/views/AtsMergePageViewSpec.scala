@@ -18,58 +18,62 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
+import models.admin.SCAWrapperToggle
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
 
+import scala.concurrent.Future
 import scala.util.Random
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
-  implicit val agentRequest = AuthenticatedRequest(
+  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"),
     None
   )
 
-  lazy val atsMergePageView = inject[AtsMergePageView]
-  lazy val atsForms         = inject[AtsForms]
+  lazy val atsMergePageView: AtsMergePageView = inject[AtsMergePageView]
+  lazy val atsForms: AtsForms                 = inject[AtsForms]
 
-  val requestWithCL50 = AuthenticatedRequest(
+  val requestWithCL50: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"),
     None
   )
 
-  val requestWithCL200 = AuthenticatedRequest(
+  val requestWithCL200: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L200,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear"),
@@ -86,7 +90,12 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       mockAppConfig
     ).body
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
     when(mockAppConfig.payeShuttered).thenReturn(false)
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.taxYear).thenReturn(taxYear)
@@ -226,7 +235,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           atsForms.atsYearFormMapping
         )
 
-      result must not include (messages("merge.page.paye.ivuplift.text"))
+      result must not include messages("merge.page.paye.ivuplift.text")
     }
 
     "not show showIvUpliftLink if paye data is present and CL is 200" in {
@@ -241,7 +250,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           atsForms.atsYearFormMapping
         )
 
-      result must not include (messages("merge.page.paye.ivuplift.text"))
+      result must not include messages("merge.page.paye.ivuplift.text")
     }
 
     "not show paye shuttered message if service is shuttered" in {
@@ -426,8 +435,9 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     "show the number of unread messages in the nav menu" in {
-      val messageCount     = Random.between(1, 100)
-      implicit val request = requestWithCL200.copy(unreadMessageCount = Some(messageCount))
+      val messageCount                                                   = Random.between(1, 100)
+      implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+        requestWithCL200.copy(unreadMessageCount = Some(messageCount))
 
       val result = Jsoup
         .parse(

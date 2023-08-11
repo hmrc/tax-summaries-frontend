@@ -17,15 +17,21 @@
 package utils
 
 import config.ApplicationConfig
+import models.admin.SCAWrapperToggle
 import org.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, EitherValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseSpec
     extends AnyWordSpec
@@ -42,5 +48,23 @@ trait BaseSpec
 
   val taxYear: Int = appConfig.taxYear
 
-  implicit lazy val ec = inject[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
+
+  implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
+  }
+
+  override def fakeApplication(): Application = GuiceApplicationBuilder()
+    .overrides(
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
+    )
+    .build()
+
 }

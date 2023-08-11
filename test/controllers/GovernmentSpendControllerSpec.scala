@@ -18,20 +18,21 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import models.SpendData
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
 
-class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite {
+class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
@@ -84,9 +85,15 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     scottishIncomeTax = new Amount(2000.00, "GBP")
   )
 
-  override def beforeEach() =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
     when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(model))
+  }
 
   "Calling government spend" must {
 
@@ -138,6 +145,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
+      print(contentAsString(result))
       document.select("#welfare + dd").text() mustBe "£5,863.22"
       document.select("#welfare").text()                      must include("24.52%")
       document.select("#health + dd").text() mustBe "£4,512.19"

@@ -19,15 +19,18 @@ package controllers
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
 import models.AtsErrorResponse
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testNino, testUtr}
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
@@ -35,11 +38,11 @@ import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import scala.concurrent.Future
 
 class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
-  val mockAtsMergePageService = mock[AtsMergePageService]
-  val atsForms                = inject[AtsForms]
+  val mockAtsMergePageService: AtsMergePageService = mock[AtsMergePageService]
+  val atsForms: AtsForms                           = inject[AtsForms]
 
-  implicit lazy val mockAppConfig = mock[ApplicationConfig]
-  val sut                         = new AtsMergePageController(
+  implicit lazy val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
+  val sut                                            = new AtsMergePageController(
     mockAtsMergePageService,
     new FakeMergePageAuthAction(true),
     mcc,
@@ -48,24 +51,28 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     atsForms
   )
 
-  lazy implicit val authRequest = AuthenticatedRequest(
+  lazy implicit val authRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
     Some(testNino),
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"),
     None
   )
 
-  val successViewModel =
+  val successViewModel: AtsMergePageViewModel =
     AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), mockAppConfig, ConfidenceLevel.L50)
 
-  override def beforeEach() = {
-    reset(mockAppConfig)
+  override def beforeEach(): Unit = {
+    reset(mockAppConfig, mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.payeShuttered).thenReturn(false)
   }
@@ -92,8 +99,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         None,
-        true,
-        true,
+        isSa = true,
+        isAgentActive = true,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad.toString + "?ref=PORTAL"),
@@ -123,7 +130,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onPageLoad(authRequest)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe (controllers.routes.ErrorController.serviceUnavailable.url)
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.serviceUnavailable.url
     }
 
     "redirect to genericErrorView page if service returns an error" in {
@@ -151,8 +158,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         Some(testNino),
-        true,
-        false,
+        isSa = true,
+        isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
@@ -176,8 +183,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         Some(testNino),
-        true,
-        false,
+        isSa = true,
+        isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
@@ -187,7 +194,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe (paye.routes.PayeAtsMainController.show(2019)).toString
+      redirectLocation(result).get mustBe paye.routes.PayeAtsMainController.show(2019).toString
 
     }
 
@@ -201,8 +208,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         Some(testNino),
-        true,
-        false,
+        isSa = true,
+        isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
@@ -212,7 +219,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe (controllers.routes.ErrorController.authorisedNoAts(2019)).toString
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2019).toString
 
     }
 
@@ -226,8 +233,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         None,
         Some(testNino),
-        true,
-        false,
+        isSa = true,
+        isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
@@ -237,7 +244,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe (controllers.routes.ErrorController.authorisedNoAts(2019)).toString
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2019).toString
 
     }
 
@@ -251,8 +258,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         None,
-        true,
-        false,
+        isSa = true,
+        isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
@@ -262,7 +269,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe (controllers.routes.ErrorController.authorisedNoAts(2019)).toString
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2019).toString
 
     }
 
@@ -276,8 +283,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         None,
         Some(SaUtr(testUtr)),
         Some(testNino),
-        true,
-        false,
+        isSa = true,
+        isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
         FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
