@@ -39,6 +39,16 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
 
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+      )
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
+      .thenReturn(Future.successful(model))
+  }
+
   def sut =
     new GovernmentSpendController(
       mockGovernmentSpendService,
@@ -57,7 +67,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     yearList = List(2015)
   )
 
-  val model = new GovernmentSpend(
+  val model: GovernmentSpend = GovernmentSpend(
     taxYear = 2014,
     userUtr = testUtr,
     govSpendAmountData = List(
@@ -84,16 +94,6 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     incomeTaxStatus = "0002",
     scottishIncomeTax = new Amount(2000.00, "GBP")
   )
-
-  override def beforeEach(): Unit = {
-    reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
-      )
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
-      .thenReturn(Future.successful(model))
-  }
 
   "Calling government spend" must {
 
@@ -145,7 +145,6 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
-      print(contentAsString(result))
       document.select("#welfare + dd").text() mustBe "£5,863.22"
       document.select("#welfare").text()                      must include("24.52%")
       document.select("#health + dd").text() mustBe "£4,512.19"
@@ -187,7 +186,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     "have correct data for 2015" in {
 
-      val model2 = new GovernmentSpend(
+      val model2 = GovernmentSpend(
         taxYear = 2015,
         userUtr = testUtr,
         govSpendAmountData = List(

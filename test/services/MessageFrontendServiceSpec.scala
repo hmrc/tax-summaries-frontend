@@ -32,7 +32,7 @@ class MessageFrontendServiceSpec extends BaseSpec {
 
   val mockMessageFrontendConnector: MessageFrontendConnector = mock[MessageFrontendConnector]
 
-  val messageFrontendService = new MessageFrontendService(mockMessageFrontendConnector)
+  val messageFrontendService = new MessageFrontendService(mockMessageFrontendConnector, mockFeatureFlagService)
 
   "MessageFrontendConnector getUnreadMessageCount" must {
     "return a future optional Int when returned a HttpResponse with valid json from MessageFrontendConnector" in {

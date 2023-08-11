@@ -81,7 +81,7 @@
                     <dd class="govuk-summary-list__value">@Html(Messages("generic.amount_pounds"))</dd>
                 </div>
 
-                @viewModel.govSpendAmountData.foreach {
+                @viewModel.govSpendAmountData.map {
                     case (key, value) => {
 
                         <div class="govuk-summary-list__row--no-actions content">

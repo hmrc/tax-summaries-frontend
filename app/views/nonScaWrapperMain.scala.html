@@ -113,12 +113,8 @@
     }
 }
 
-@fullPageTitle = @{
-    s"$pageTitle - ${Messages("generic.ats")} - GOV.UK"
-}
-
 @hmrcLayout(
-    pageTitle = Some(fullPageTitle),
+    pageTitle = Some(pageTitle),
     serviceName = Some(messages("generic.ats")),
     serviceUrl = Some(appConfig.homePageUrl),
     isWelshTranslationAvailable = true,

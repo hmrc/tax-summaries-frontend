@@ -19,24 +19,33 @@ package services
 import com.google.inject.Inject
 import connectors.MessageFrontendConnector
 import models.MessageCount
+import models.admin.SCAWrapperToggle
 import play.api.Logging
 import play.api.mvc.Request
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MessageFrontendService @Inject() (
-  messageFrontendConnector: MessageFrontendConnector
+  messageFrontendConnector: MessageFrontendConnector,
+  featureFlagService: FeatureFlagService
 )(implicit executionContext: ExecutionContext)
     extends Logging {
 
   def getUnreadMessageCount(implicit request: Request[_]): Future[Option[Int]] =
-    messageFrontendConnector
-      .getUnreadMessageCount()
-      .fold(
-        _ => None,
-        response => response.json.asOpt[MessageCount].map(_.count)
-      ) recover { case ex: Exception =>
-      logger.error(ex.getMessage, ex)
-      None
+    featureFlagService.get(SCAWrapperToggle).flatMap { toggle =>
+      if (toggle.isEnabled) {
+        Future.successful(None)
+      } else {
+        messageFrontendConnector
+          .getUnreadMessageCount()
+          .fold(
+            _ => None,
+            response => response.json.asOpt[MessageCount].map(_.count)
+          ) recover { case ex: Exception =>
+          logger.error(ex.getMessage, ex)
+          None
+        }
+      }
     }
 }
