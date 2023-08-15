@@ -78,7 +78,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(baseModel))

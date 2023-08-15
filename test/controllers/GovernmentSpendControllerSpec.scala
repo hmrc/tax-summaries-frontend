@@ -43,7 +43,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(model))

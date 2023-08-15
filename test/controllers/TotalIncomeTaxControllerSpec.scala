@@ -92,7 +92,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(
       mockTotalIncomeTaxService.getIncomeData(any())(any(), any())

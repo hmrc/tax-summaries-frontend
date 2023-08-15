@@ -61,7 +61,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     reset(mockAuthConnector, mockPertaxConnector, mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
 
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future

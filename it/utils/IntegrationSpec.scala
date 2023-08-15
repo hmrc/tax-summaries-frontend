@@ -16,8 +16,10 @@
 
 package utils
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, put, urlEqualTo, urlMatching}
 import config.ApplicationConfig
+import models.admin.SCAWrapperToggle
 import org.mockito.scalatest.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -26,10 +28,12 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
-import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IntegrationSpec
     extends AnyWordSpec
@@ -41,13 +45,13 @@ class IntegrationSpec
     with Injecting
     with MockitoSugar {
 
-  val generatedNino = new Generator().nextNino
+  val generatedNino: Nino = new Generator().nextNino
 
-  val generatedSaUtr = new Generator().nextAtedUtr
+  val generatedSaUtr: AtedUtr = new Generator().nextAtedUtr
 
-  lazy val ec = inject[ExecutionContext]
+  lazy val ec: ExecutionContext = inject[ExecutionContext]
 
-  lazy val messages = inject[Messages]
+  lazy val messages: Messages = inject[Messages]
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
@@ -55,9 +59,16 @@ class IntegrationSpec
 
   lazy val keystoreData: Map[String, JsValue] = Map.empty
 
-  override def beforeEach() = {
+  implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
+
+  override def beforeEach(): Unit = {
 
     super.beforeEach()
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
 
     val authResponse =
       s"""
@@ -92,6 +103,12 @@ class IntegrationSpec
 
     server.stubFor(
       put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
+        .willReturn(ok(Json.toJson(CacheMap("id", keystoreData)).toString))
+    )
+
+    server.stubFor(
+      WireMock
+        .get(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
         .willReturn(ok(Json.toJson(CacheMap("id", keystoreData)).toString))
     )
   }

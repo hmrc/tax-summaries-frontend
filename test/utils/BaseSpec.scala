@@ -57,7 +57,7 @@ trait BaseSpec
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
   }
 

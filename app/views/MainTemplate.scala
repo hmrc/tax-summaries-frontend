@@ -20,7 +20,6 @@ import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.ActingAsAttorneyFor
-import models.admin.SCAWrapperToggle
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -34,8 +33,6 @@ import views.html.includes.sidebar
 import views.html.nonScaWrapperMain
 
 import javax.inject.Inject
-import scala.concurrent.Await
-import scala.concurrent.duration.{Duration, SECONDS}
 
 @ImplementedBy(classOf[MainTemplateImpl])
 trait MainTemplate {
@@ -72,12 +69,18 @@ class MainTemplateImpl @Inject() (
     actingAttorney: Option[ActingAsAttorneyFor] = None,
     beforeContentHtml: Option[Html] = None
   )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
-    val scaWrapperToggle =
-      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
-    val fullPageTitle    = s"$pageTitle - ${Messages("label.service_name")} - GOV.UK"
+    /*val scaWrapperToggle =
+      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))*/
+    val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
-    if (scaWrapperToggle.isEnabled) {
+    if (false) {
       logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
+
+      val showAccountMenu = if (actingAttorney.isEmpty && !disableSessionExpired) {
+        true
+      } else {
+        false
+      }
 
       val (signOutUrlString: String, showSignOut: Boolean) = request match {
         case _: AuthenticatedRequest[_]     =>
@@ -90,7 +93,7 @@ class MainTemplateImpl @Inject() (
       wrapperService.layout(
         content = contentBlock,
         pageTitle = Some(fullPageTitle),
-        serviceNameKey = Some(messages("label.service_name")),
+        serviceNameKey = Some(messages("generic.ats.browser.title")),
         serviceNameUrl = Some(appConfig.serviceUrl),
         sidebarContent = Some(sidebar(beforeContentHtml)),
         signoutUrl = signOutUrlString,
@@ -109,7 +112,7 @@ class MainTemplateImpl @Inject() (
         ),
         //optTrustedHelper = attorney,
         fullWidth = false,
-        //hideMenuBar: Boolean = false,
+        hideMenuBar = !showAccountMenu,
         disableSessionExpired = disableSessionExpired
       )(messages, HeaderCarrierConverter.fromRequest(request), request)
 

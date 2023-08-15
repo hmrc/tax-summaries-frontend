@@ -79,7 +79,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(
       mockAllowanceService.getAllowances(any())(any(), any())

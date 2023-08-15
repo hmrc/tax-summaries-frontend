@@ -94,7 +94,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(mockAppConfig.payeShuttered).thenReturn(false)
     when(mockAppConfig.saShuttered).thenReturn(false)
@@ -435,6 +435,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     "show the number of unread messages in the nav menu" in {
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        )
       val messageCount                                                   = Random.between(1, 100)
       implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
         requestWithCL200.copy(unreadMessageCount = Some(messageCount))

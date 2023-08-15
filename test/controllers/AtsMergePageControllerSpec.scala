@@ -71,7 +71,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     reset(mockAppConfig, mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.payeShuttered).thenReturn(false)

@@ -18,11 +18,13 @@ package services
 
 import cats.data.EitherT
 import connectors.MessageFrontendConnector
+import models.admin.SCAWrapperToggle
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{OK, UNAUTHORIZED}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.GET
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.BaseSpec
 
 import scala.concurrent.Future
@@ -38,6 +40,11 @@ class MessageFrontendServiceSpec extends BaseSpec {
     "return a future optional Int when returned a HttpResponse with valid json from MessageFrontendConnector" in {
 
       val messageCount = Random.between(1, 100)
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        )
 
       when(mockMessageFrontendConnector.getUnreadMessageCount()(any(), any()))
         .thenReturn(

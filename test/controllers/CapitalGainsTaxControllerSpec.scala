@@ -53,7 +53,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))

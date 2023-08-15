@@ -69,7 +69,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))

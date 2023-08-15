@@ -21,6 +21,7 @@ import models.ActingAsAttorneyFor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -31,22 +32,22 @@ import views.html.total_income_tax_includes._
 
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  implicit val request        =
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),
       None,
-      true,
-      false,
+      isSa = true,
+      isAgentActive = false,
       ConfidenceLevel.L200,
       fakeCredentials,
       FakeRequest(),
       None
     )
-  lazy val scottishTableView  = inject[ScottishTableView]
-  lazy val savingsTableView   = inject[SavingsTableView]
-  lazy val totalIncomeTaxView = inject[TotalIncomeTaxView]
+  lazy val scottishTableView: ScottishTableView                      = inject[ScottishTableView]
+  lazy val savingsTableView: SavingsTableView                        = inject[SavingsTableView]
+  lazy val totalIncomeTaxView: TotalIncomeTaxView                    = inject[TotalIncomeTaxView]
 
   def view(tax: TotalIncomeTax): String =
     totalIncomeTaxView(tax).body

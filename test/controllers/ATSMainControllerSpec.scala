@@ -52,7 +52,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
       )
     when(
       mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request))
@@ -63,6 +63,11 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
   "Calling Index Page" must {
 
     "return a successful response for a valid request" in {
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        )
       val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
