@@ -266,7 +266,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       reset(mockFeatureFlagService)
       when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
         .successful(
-          FeatureFlag(SCAWrapperToggle, isEnabled = true)
+          FeatureFlag(SCAWrapperToggle, isEnabled = false)
         )
 
       val messageCount = Random.between(1, 100)
