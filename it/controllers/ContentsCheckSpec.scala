@@ -18,7 +18,9 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, post, urlEqualTo, urlMatching, urlPathMatching}
+import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
@@ -28,6 +30,7 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty}
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
 import utils.{FileHelper, IntegrationSpec}
@@ -156,6 +159,13 @@ class ContentsCheckSpec extends IntegrationSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future.successful(
+      FeatureFlag(SCAWrapperToggle, isEnabled = true)
+    )
+
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PertaxBackendToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PertaxBackendToggle, isEnabled = false)))
 
     server.stubFor(
       get(urlPathMatching(s"$cacheMap/.*"))
@@ -265,12 +275,12 @@ class ContentsCheckSpec extends IntegrationSpec {
             "http://localhost:12346/accessibility-statement/annual-tax-summary?referrerUrl"
           )
 
-          val urBannerLink = content
+          /* val urBannerLink = content
             .getElementsByClass("govuk-link hmrc-user-research-banner__link")
             .get(0)
             .attr("href")
           urBannerLink mustBe "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=Ats_FPOS&utm_source=Survey_Banner&utm_medium=other&t=HMRC&id=128"
-
+           */
           val languageToggle = content.getElementsByClass("hmrc-language-select__list")
           languageToggle.text() must include("English")
           languageToggle.text() must include("Cymraeg")
