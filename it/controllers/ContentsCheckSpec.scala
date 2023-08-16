@@ -48,7 +48,7 @@ class ContentsCheckSpec extends IntegrationSpec {
     key match {
 
       case "not-authorised"           =>
-        ExpectedData("We could not confirm your identity - Annual Tax Summary - GOV.UK")
+        ExpectedData("Not authorised - Annual Tax Summary - GOV.UK")
       case "no-ats"                   =>
         ExpectedData("Bad request - 400 - Annual Tax Summary - GOV.UK")
       case "service-unavailable"      =>
@@ -71,14 +71,13 @@ class ContentsCheckSpec extends IntegrationSpec {
         ExpectedData("For your security, we signed you out - Annual Tax Summary - GOV.UK")
       case "/"                        =>
         ExpectedData(
-          "Account home - Personal tax account - GOV.UK"
+          "Annual Tax Summary - GOV.UK"
         )
 
       case key => throw new RuntimeException(s"Expected data are missing for `$key`")
     }
 
   val urls: Map[String, ExpectedData] = Map(
-    "/annual-tax-summary"                                             -> getExpectedData("/"),
     "/annual-tax-summary/not-authorised"                              -> getExpectedData("not-authorised"),
     "/annual-tax-summary/no-ats"                                      -> getExpectedData("no-ats"),
     "/annual-tax-summary/service-unavailable"                         -> getExpectedData("service-unavailable"),
@@ -261,7 +260,7 @@ class ContentsCheckSpec extends IntegrationSpec {
           val govUkBanner = content.getElementsByClass("govuk-phase-banner")
           govUkBanner.size() mustBe 1
           govUkBanner.get(0).getElementsByClass("govuk-link").get(0).attr("href") must include(
-            "http://localhost:9250/contact/beta-feedback-unauthenticated?service=ATS"
+            "http://localhost:9250/contact/beta-feedback?service=ATS&backUrl"
           )
 
           val accessibilityStatement = content
@@ -275,12 +274,12 @@ class ContentsCheckSpec extends IntegrationSpec {
             "http://localhost:12346/accessibility-statement/annual-tax-summary?referrerUrl"
           )
 
-          /* val urBannerLink = content
+          val urBannerLink = content
             .getElementsByClass("govuk-link hmrc-user-research-banner__link")
             .get(0)
             .attr("href")
           urBannerLink mustBe "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=Ats_FPOS&utm_source=Survey_Banner&utm_medium=other&t=HMRC&id=128"
-           */
+
           val languageToggle = content.getElementsByClass("hmrc-language-select__list")
           languageToggle.text() must include("English")
           languageToggle.text() must include("Cymraeg")
