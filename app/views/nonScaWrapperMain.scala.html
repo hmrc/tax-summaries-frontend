@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, AccountMessages, SignOut, _}
 @import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
+@import views.html.helper.CSPNonce
 
 @this(
     hmrcLayout: HmrcLayout,
@@ -34,6 +35,7 @@
     link: Link,
     hmrcAccountMenu: HmrcAccountMenu
 )(implicit accountMenuConfig: AccountMenuConfig)
+
 
 @(
     pageTitle: String,
