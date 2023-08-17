@@ -14,7 +14,6 @@ object AppDependencies {
     ws,
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"10.0.0-$playVersion",
-    "uk.gov.hmrc" %% s"bootstrap-frontend-$playVersion" % bootstrapVersion,
     "uk.gov.hmrc"                %% "domain"                     % s"8.3.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
@@ -22,9 +21,6 @@ object AppDependencies {
     "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.2.0",
     "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.41",
     "uk.gov.hmrc" %% "play-frontend-hmrc" % s"7.7.0-play-28",
-    "uk.gov.hmrc" %% "play-partials" % s"8.4.0-$playVersion",
-    "uk.gov.hmrc.mongo" %% s"hmrc-mongo-$playVersion" % hmrcMongoVersion,
-    "uk.gov.hmrc" %% s"internal-auth-client-$playVersion" % "1.4.0"
   )
 
   val test: Seq[ModuleID] = Seq(
