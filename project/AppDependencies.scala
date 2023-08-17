@@ -14,12 +14,17 @@ object AppDependencies {
     ws,
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"10.0.0-$playVersion",
+    "uk.gov.hmrc" %% s"bootstrap-frontend-$playVersion" % bootstrapVersion,
     "uk.gov.hmrc"                %% "domain"                     % s"8.3.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
     ehcache,
     "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.2.0",
     "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.41",
+    "uk.gov.hmrc" %% "play-frontend-hmrc" % s"7.7.0-play-28",
+    "uk.gov.hmrc" %% "play-partials" % s"8.4.0-$playVersion",
+    "uk.gov.hmrc.mongo" %% s"hmrc-mongo-$playVersion" % hmrcMongoVersion,
+    "uk.gov.hmrc" %% s"internal-auth-client-$playVersion" % "1.4.0"
   )
 
   val test: Seq[ModuleID] = Seq(
@@ -32,7 +37,7 @@ object AppDependencies {
     "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.0",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
     "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0",
-    "com.vladsch.flexmark"        % "flexmark-all"            % "0.64.6",
+    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2",
     "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion
   ).map(_ % "test,it")
 
