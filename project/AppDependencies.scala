@@ -14,7 +14,6 @@ object AppDependencies {
     ws,
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"10.0.0-$playVersion",
-    "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % bootstrapVersion,
     "uk.gov.hmrc"                %% "domain"                     % s"8.3.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
