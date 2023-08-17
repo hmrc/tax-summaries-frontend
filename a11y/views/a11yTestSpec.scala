@@ -44,8 +44,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
     .toJson(
       WrapperDataResponse(
         Seq(
-          MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None),
-          MenuItemConfig("signout", "Sign out", "link", leftAligned = false, 0, None, None)
+          MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None)
         ),
         PtaMinMenuConfig("MenuName", "BackName")
       )
