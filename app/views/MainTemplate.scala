@@ -81,12 +81,12 @@ class MainTemplateImpl @Inject() (
 
       val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
 
-      val (signOutUrlString: String, showSignOut: Boolean) = request match {
+      val signOutUrlString: String = request match {
         case _: AuthenticatedRequest[_]     =>
-          (controllers.routes.AccountController.signOut.url, true)
+          controllers.routes.AccountController.signOut.url
         case _: PayeAuthenticatedRequest[_] =>
-          (controllers.routes.AccountController.signOut.url, true)
-        case _                              => ("", false)
+          controllers.routes.AccountController.signOut.url
+        case _                              => ""
       }
 
       wrapperService.layout(
@@ -99,10 +99,8 @@ class MainTemplateImpl @Inject() (
         timeOutUrl = Some(controllers.routes.AccountController.sessionExpired.url),
         keepAliveUrl = controllers.routes.AccountController.keepAlive.url,
         showBackLinkJS = true,
-        showSignOutInHeader = showSignOut,
         styleSheets = Seq(headBlock()),
         bannerConfig = BannerConfig(
-          showChildBenefitBanner = false,
           showAlphaBanner = false,
           showBetaBanner = true,
           showHelpImproveBanner = true
