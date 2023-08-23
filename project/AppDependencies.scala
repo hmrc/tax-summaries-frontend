@@ -19,7 +19,7 @@ object AppDependencies {
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
     ehcache,
     "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.2.0",
-    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.41",
+    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.43",
     "uk.gov.hmrc" %% "play-frontend-hmrc" % s"7.7.0-play-28",
   )
 
