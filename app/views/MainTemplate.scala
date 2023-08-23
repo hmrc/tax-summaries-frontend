@@ -92,16 +92,14 @@ class MainTemplateImpl @Inject() (
       wrapperService.layout(
         content = contentBlock,
         pageTitle = Some(fullPageTitle),
-        serviceNameKey = Some(messages("generic.ats.browser.title")),
+        serviceNameKey = Some(messages("generic.ats")),
         serviceNameUrl = Some(appConfig.serviceUrl),
         sidebarContent = Some(sidebar(beforeContentHtml)),
         signoutUrl = signOutUrlString,
         timeOutUrl = Some(controllers.routes.AccountController.sessionExpired.url),
         keepAliveUrl = controllers.routes.AccountController.keepAlive.url,
         showBackLinkJS = true,
-        //backLinkUrl: Option[String] = None,
         showSignOutInHeader = showSignOut,
-        //scripts = Seq.empty,
         styleSheets = Seq(headBlock()),
         bannerConfig = BannerConfig(
           showChildBenefitBanner = false,
@@ -109,7 +107,6 @@ class MainTemplateImpl @Inject() (
           showBetaBanner = true,
           showHelpImproveBanner = true
         ),
-        //optTrustedHelper = attorney,
         fullWidth = false,
         hideMenuBar = !showAccountMenu,
         disableSessionExpired = disableSessionExpired
