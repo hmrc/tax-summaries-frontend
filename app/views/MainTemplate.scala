@@ -20,6 +20,7 @@ import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.ActingAsAttorneyFor
+import models.admin.SCAWrapperToggle
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -33,6 +34,8 @@ import views.html.includes.sidebar
 import views.html.nonScaWrapperMain
 
 import javax.inject.Inject
+import scala.concurrent.Await
+import scala.concurrent.duration.{Duration, SECONDS}
 
 @ImplementedBy(classOf[MainTemplateImpl])
 trait MainTemplate {
@@ -69,11 +72,11 @@ class MainTemplateImpl @Inject() (
     actingAttorney: Option[ActingAsAttorneyFor] = None,
     beforeContentHtml: Option[Html] = None
   )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
-    /*val scaWrapperToggle =
-      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))*/
+    val scaWrapperToggle =
+      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
     val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
-    if (true) {
+    if (scaWrapperToggle.isEnabled) {
       logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
 
       val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
