@@ -18,7 +18,6 @@ package views
 
 import com.google.inject.ImplementedBy
 import config.ApplicationConfig
-import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.ActingAsAttorneyFor
 import models.admin.SCAWrapperToggle
 import play.api.Logging
