@@ -49,6 +49,7 @@
 
 @main(
         pageTitle = Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        showBackLink = false,
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent),
         pageHeading = Messages("ats.treasury_spending.title"),

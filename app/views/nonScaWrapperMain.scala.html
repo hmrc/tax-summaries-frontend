@@ -18,6 +18,7 @@
 @import config.ApplicationConfig
 @import helpers.Link
 @import uk.gov.hmrc.hmrcfrontend.config.AccountMenuConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, AccountMessages, SignOut, _}
 @import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
@@ -33,6 +34,7 @@
     appConfig: ApplicationConfig,
     govukPhaseBanner : GovukPhaseBanner,
     link: Link,
+    govukBackLink: GovukBackLink,
     hmrcAccountMenu: HmrcAccountMenu
 )(implicit accountMenuConfig: AccountMenuConfig)
 
@@ -40,8 +42,8 @@
 @(
     pageTitle: String,
     disableSessionExpired: Boolean = false,
+    showBackLink: Boolean = false,
     additionalScripts: Option[Html] = None,
-    backLinkAttrs: Map[String, String] = Map.empty,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
     beforeContentHtml: Option[Html] = None,
     pageHeading: String = null,
@@ -69,8 +71,12 @@
 @beforeContent = {
     @if(!actingAttorney.isDefined && !disableSessionExpired) {
         @accountMenu
-    }
+            @if(showBackLink) {
+                @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+            }
+    } else {
     @hmrcLanguageSelectHelper()
+    }
     <aside>
         @if(headerSectionNeeded) {
             <div class="govuk-grid-row">
