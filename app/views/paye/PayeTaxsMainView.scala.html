@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
@@ -36,7 +37,8 @@
 )
 
 @main(
-    pageTitle = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+    pageTitle = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    showBackLink = true
     ) {
 
     @h1("paye.ats.index.html.title", elmId=Some("index-page-header"), payeHeading = Some(Messages("paye.generic.tax_year_heading",
