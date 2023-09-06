@@ -81,7 +81,9 @@
                     </div>
                 }
                 @if(beforeContentHtml.isDefined) {
-                    @beforeContentHtml
+                    <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
+                        @beforeContentHtml
+                    </div>
                 }
             </div>
         }else if(!headerSectionNeeded && showBackLink){

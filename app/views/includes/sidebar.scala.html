@@ -19,7 +19,9 @@
 @(beforeContentHtml: Option[Html] = None)
 
 <aside>
-    @if(beforeContentHtml.isDefined){
-        @beforeContentHtml
+    @if(beforeContentHtml.isDefined) {
+        <div class="govuk-grid-column-full govuk-!-text-align-right">
+         @beforeContentHtml
+        </div>
     }
 </aside>
