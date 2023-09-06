@@ -81,7 +81,7 @@ class MainTemplateImpl @Inject() (
       Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
     val fullPageTitle    = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
-    if (false) {
+    if (scaWrapperToggle) {
       logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
 
       val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
