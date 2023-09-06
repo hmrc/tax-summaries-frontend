@@ -35,7 +35,6 @@
 
 @beforeContent = {
     @headerSection(
-        pageHeading = Messages("ats.index.html.title"),
         name = viewModel.forename + ' ' + viewModel.surname,
         utr = viewModel.utr,
         taxYear = viewModel.year,
@@ -46,8 +45,11 @@
 @main(
         pageTitle = Messages("ats.index.html.title"),
         actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent)
-    ) {
+        beforeContentHtml = Some(beforeContent),
+        backLinkHref = Some("#"),
+        pageHeading = Messages("ats.index.html.title"),
+        headerSectionNeeded = true
+) {
 
         @pageHeading(
             text = "ats.index.html.title",

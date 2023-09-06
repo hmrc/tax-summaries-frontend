@@ -16,13 +16,12 @@
 
 @import utils.HtmlFormatter
 @import view_models.paye.PayeYourTaxableIncome
-@import views.html.helpers.{backLink, H1, H2, P}
+@import views.html.helpers.{H1, H2, P}
 @import views.html.includes.CurrencyAmountView
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
-    backLink: backLink,
     currencyAmountView: CurrencyAmountView,
     htmlFormatter: HtmlFormatter,
     h1: H1,
@@ -38,10 +37,9 @@
 
 
 @main(
-        pageTitle = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+        pageTitle = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        backLinkHref = Some("")
     ) {
-
-	@backLink("")
 
 
 	@h1("paye.ats.income_before_tax.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",

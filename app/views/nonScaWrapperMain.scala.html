@@ -44,7 +44,10 @@
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
-    beforeContentHtml: Option[Html] = None
+    beforeContentHtml: Option[Html] = None,
+    pageHeading: String = null,
+    showBackLink: Boolean = true,
+    headerSectionNeeded: Boolean = false
 )(content: Html)(implicit request: Request[_], messages: Messages)
 
 @headBlock = {
@@ -70,9 +73,21 @@
     }
     @hmrcLanguageSelectHelper()
     <aside>
-        @if(beforeContentHtml.isDefined){
-            @beforeContentHtml
+        @if(headerSectionNeeded) {
+            <div class="govuk-grid-row">
+                @if(showBackLink) {
+                    <div class="govuk-grid-column-one-half">
+                        <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
+                    </div>
+                }
+                @if(beforeContentHtml.isDefined) {
+                    @beforeContentHtml
+                }
+            </div>
+        }else if(!headerSectionNeeded && showBackLink){
+            <a id="back-link" href="@backLinkHref" class="govuk-back-link print-hidden">@messages("site.back")</a>
         }
+
     </aside>
 }
 

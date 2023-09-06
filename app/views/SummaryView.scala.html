@@ -42,7 +42,6 @@
     </div>
 
     @headerSection(
-        pageHeading = Messages("ats.summary.title"),
         name = viewModel.forename + ' ' + viewModel.surname,
         utr = viewModel.utr,
         taxYear = viewModel.year,
@@ -59,7 +58,10 @@
 @main(
     pageTitle = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
     actingAttorney = actingAsAttorney,
-    beforeContentHtml = Some(beforeContent)
+    beforeContentHtml = Some(beforeContent),
+    backLinkHref = Some("#"),
+    pageHeading = Messages("ats.summary.title"),
+    headerSectionNeeded = true
 ) {
 
     @pageHeading(

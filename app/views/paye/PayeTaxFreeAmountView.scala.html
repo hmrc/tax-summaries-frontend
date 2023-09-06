@@ -22,7 +22,6 @@
 
 @this(
     main: MainTemplate,
-	backLink: backLink,
 	currencyAmountView: CurrencyAmountView,
 	htmlFormatter: HtmlFormatter,
 	h1: H1,
@@ -36,10 +35,9 @@
 )
 
 @main(
-	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
+	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+	backLinkHref = Some("#")
 ) {
-
-	@backLink(href = "")
 
 	@h1("paye.ats.tax_free_amount.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
 		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),

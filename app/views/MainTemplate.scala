@@ -19,7 +19,6 @@ package views
 import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import models.ActingAsAttorneyFor
-import models.admin.SCAWrapperToggle
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -33,8 +32,6 @@ import views.html.includes.sidebar
 import views.html.nonScaWrapperMain
 
 import javax.inject.Inject
-import scala.concurrent.Await
-import scala.concurrent.duration.{Duration, SECONDS}
 
 @ImplementedBy(classOf[MainTemplateImpl])
 trait MainTemplate {
@@ -46,7 +43,10 @@ trait MainTemplate {
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
-    beforeContentHtml: Option[Html] = None
+    beforeContentHtml: Option[Html] = None,
+    pageHeading: String = null,
+    showBackLink: Boolean = true,
+    headerSectionNeeded: Boolean = false
   )(contentBlock: Html)(implicit
     request: Request[_],
     messages: Messages
@@ -69,13 +69,16 @@ class MainTemplateImpl @Inject() (
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
-    beforeContentHtml: Option[Html] = None
+    beforeContentHtml: Option[Html] = None,
+    pageHeading: String = null,
+    showBackLink: Boolean = true,
+    headerSectionNeeded: Boolean = false
   )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
-    val scaWrapperToggle =
-      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
-    val fullPageTitle    = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
+    /*val scaWrapperToggle =
+      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))*/
+    val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
-    if (scaWrapperToggle.isEnabled) {
+    if (false) {
       logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
 
       val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
@@ -97,7 +100,13 @@ class MainTemplateImpl @Inject() (
         ),
         fullWidth = false,
         hideMenuBar = !showAccountMenu,
-        disableSessionExpired = disableSessionExpired
+        disableSessionExpired = disableSessionExpired,
+        backLinkUrl = backLinkHref,
+        showBackLinkJS = if (backLinkHref.isDefined) {
+          true
+        } else {
+          false
+        }
       )(messages, HeaderCarrierConverter.fromRequest(request), request)
 
     } else {
@@ -109,7 +118,10 @@ class MainTemplateImpl @Inject() (
         additionalScripts,
         backLinkAttrs,
         actingAttorney,
-        beforeContentHtml
+        beforeContentHtml,
+        pageHeading,
+        showBackLink,
+        headerSectionNeeded
       )(
         contentBlock
       )

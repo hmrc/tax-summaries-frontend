@@ -34,7 +34,8 @@
 
 
 @main(
-     pageTitle = Messages("global.error.InternalServerError500.title")
+     pageTitle = Messages("global.error.InternalServerError500.title"),
+     showBackLink = false
    ) {
 
     @h1("global.error.InternalServerError500.title", elmId=Some("generic-error-page-heading"))

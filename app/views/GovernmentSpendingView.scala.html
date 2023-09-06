@@ -40,7 +40,6 @@
 
 @beforeContent = {
     @headerSection(
-        pageHeading = Messages("ats.treasury_spending.title"),
         name = viewModel.userForename + ' ' + viewModel.userSurname,
         utr = viewModel.userUtr,
         taxYear = viewModel.taxYear,
@@ -51,8 +50,10 @@
 @main(
         pageTitle = Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent)
-    ) {
+        beforeContentHtml = Some(beforeContent),
+        backLinkHref = Some("#"),
+        pageHeading = Messages("ats.treasury_spending.title"),
+) {
 
 
 

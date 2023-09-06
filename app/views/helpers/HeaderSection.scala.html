@@ -23,8 +23,7 @@
     attorneyBanner: AttorneyBannerView
 )
 
-@(  pageHeading: String=null,
-    name: String,
+@(  name: String,
     utr: String,
     taxYear: Int,
     actingAsAttorney: Option[ActingAsAttorneyFor] = None,
@@ -37,10 +36,8 @@
     @attorneyBanner(actingAsAttorney)
 }
 
-<div class="govuk-grid-row">
-    @if(!actingAsAttorney.isDefined && utr.nonEmpty){
-        <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
-            @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
-        </div>
-    }
-</div>
+@if(!actingAsAttorney.isDefined && utr.nonEmpty){
+    <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
+        @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
+    </div>
+}

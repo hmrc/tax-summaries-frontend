@@ -17,13 +17,12 @@
 @import view_models.paye.PayeYourIncomeAndTaxes
 @import controllers.auth.PayeAuthenticatedRequest
 @import utils.HtmlFormatter
-@import views.html.helpers.{backLink, H1, H2, P, Link}
+@import views.html.helpers.{H1, H2, P, Link}
 @import views.html.includes.CurrencyAmountView
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
-    backLink: backLink,
     currencyAmountView: CurrencyAmountView,
     htmlFormatter: HtmlFormatter,
     h1: H1,
@@ -42,7 +41,7 @@
 
 @main(
         pageTitle = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        beforeContentHtml = Some(backLink(""))
+        backLinkHref = Some("")
     ) {
 
     <div class="print-this">
