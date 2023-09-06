@@ -34,7 +34,7 @@ class MessageFrontendService @Inject() (
 
   def getUnreadMessageCount(implicit request: Request[_]): Future[Option[Int]] =
     featureFlagService.get(SCAWrapperToggle).flatMap { toggle =>
-      if (false) {
+      if (toggle.isEnabled) {
         Future.successful(None)
       } else {
         messageFrontendConnector
