@@ -36,9 +36,11 @@
         beforeContentHtml = Some(backLink(href=""))
     ) {
 
-    <div class="print-this">
-        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
-        <a class="print-this__link" href="#" id="printLink">@Messages("ats.treasury_spending.print.this.page")</a>
+    <div class="govuk-!-margin-bottom-5">
+        <div class="print-this">
+            <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
+            <a class="print-this__link" href="#" id="printLink">@Messages("ats.treasury_spending.print.this.page")</a>
+        </div>
     </div>
 
     @h1("ats.howYourTaxWasSpent.heading")

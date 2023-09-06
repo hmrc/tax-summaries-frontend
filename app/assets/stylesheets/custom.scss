@@ -118,3 +118,7 @@
             }
         }
 }
+
+body:not(.js-enabled) .print-this {
+  display: none;
+}
