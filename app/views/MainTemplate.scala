@@ -28,7 +28,7 @@ import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.sca.models.BannerConfig
 import uk.gov.hmrc.sca.services.WrapperService
-import views.html.components.HeadBlock
+import views.html.components.{AdditionalJavascript, HeadBlock}
 import views.html.includes.sidebar
 import views.html.nonScaWrapperMain
 
@@ -62,7 +62,8 @@ class MainTemplateImpl @Inject()(
                                   wrapperService: WrapperService,
                                   oldLayout: nonScaWrapperMain,
                                   headBlock: HeadBlock,
-                                  sidebar: sidebar
+                                  sidebar: sidebar,
+                                  scripts: AdditionalJavascript,
                                 ) extends MainTemplate
   with Logging {
   override def apply(
@@ -78,7 +79,8 @@ class MainTemplateImpl @Inject()(
                       headerSectionNeeded: Boolean = false
                     )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
 
-    val scaWrapperToggle = Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
+    val scaWrapperToggle =
+      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
     val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
     if (scaWrapperToggle.isEnabled) {
@@ -109,7 +111,8 @@ class MainTemplateImpl @Inject()(
           true
         } else {
           false
-        }
+        },
+        scripts = Seq(scripts()),
       )(messages, HeaderCarrierConverter.fromRequest(request), request)
 
     } else {

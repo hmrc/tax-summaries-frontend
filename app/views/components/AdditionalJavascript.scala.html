@@ -13,14 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *@
+@import views.html.helper.CSPNonce
+
 @this()
-
-@(beforeContentHtml: Option[Html] = None)
-
-<aside>
-    @if(beforeContentHtml.isDefined) {
-        <div class="govuk-grid-column-full govuk-!-text-align-right">
-        @beforeContentHtml
-        </div>
-    }
-</aside>
+@()(implicit request: Request[_])
+<script @CSPNonce.attr src='@controllers.routes.Assets.versioned("javascripts/taxs.js")'></script>
