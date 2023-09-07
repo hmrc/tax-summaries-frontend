@@ -12,5 +12,5 @@
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
 
-->         /annual-tax-summary/test-only/  mongoFeatureTogglesTestOnly.Routes
 PUT         /annual-tax-summary/test-only/setDefaultFlags  controllers.testOnly.FeatureFlagsController.setDefaults()
+->         /annual-tax-summary/test-only/  mongoFeatureTogglesTestOnly.Routes

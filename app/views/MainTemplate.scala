@@ -40,48 +40,48 @@ import scala.concurrent.duration.{Duration, SECONDS}
 trait MainTemplate {
 
   def apply(
-             pageTitle: String,
-             backLinkHref: Option[String] = None,
-             disableSessionExpired: Boolean = false,
-             additionalScripts: Option[Html] = None,
-             backLinkAttrs: Map[String, String] = Map.empty,
-             actingAttorney: Option[ActingAsAttorneyFor] = None,
-             beforeContentHtml: Option[Html] = None,
-             pageHeading: String = null,
-             showBackLink: Boolean = true,
-             headerSectionNeeded: Boolean = false
-           )(contentBlock: Html)(implicit
-                                 request: Request[_],
-                                 messages: Messages
-           ): HtmlFormat.Appendable
+    pageTitle: String,
+    backLinkHref: Option[String] = None,
+    disableSessionExpired: Boolean = false,
+    additionalScripts: Option[Html] = None,
+    backLinkAttrs: Map[String, String] = Map.empty,
+    actingAttorney: Option[ActingAsAttorneyFor] = None,
+    beforeContentHtml: Option[Html] = None,
+    pageHeading: String = null,
+    showBackLink: Boolean = true,
+    headerSectionNeeded: Boolean = false
+  )(contentBlock: Html)(implicit
+    request: Request[_],
+    messages: Messages
+  ): HtmlFormat.Appendable
 }
 
-class MainTemplateImpl @Inject()(
-                                  appConfig: ApplicationConfig,
-                                  featureFlagService: FeatureFlagService,
-                                  wrapperService: WrapperService,
-                                  oldLayout: nonScaWrapperMain,
-                                  headBlock: HeadBlock,
-                                  sidebar: sidebar,
-                                  scripts: AdditionalJavascript,
-                                ) extends MainTemplate
-  with Logging {
+class MainTemplateImpl @Inject() (
+  appConfig: ApplicationConfig,
+  featureFlagService: FeatureFlagService,
+  wrapperService: WrapperService,
+  oldLayout: nonScaWrapperMain,
+  headBlock: HeadBlock,
+  sidebar: sidebar,
+  scripts: AdditionalJavascript
+) extends MainTemplate
+    with Logging {
   override def apply(
-                      pageTitle: String,
-                      backLinkHref: Option[String] = None,
-                      disableSessionExpired: Boolean = false,
-                      additionalScripts: Option[Html] = None,
-                      backLinkAttrs: Map[String, String] = Map.empty,
-                      actingAttorney: Option[ActingAsAttorneyFor] = None,
-                      beforeContentHtml: Option[Html] = None,
-                      pageHeading: String = null,
-                      showBackLink: Boolean = true,
-                      headerSectionNeeded: Boolean = false
-                    )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
+    pageTitle: String,
+    backLinkHref: Option[String] = None,
+    disableSessionExpired: Boolean = false,
+    additionalScripts: Option[Html] = None,
+    backLinkAttrs: Map[String, String] = Map.empty,
+    actingAttorney: Option[ActingAsAttorneyFor] = None,
+    beforeContentHtml: Option[Html] = None,
+    pageHeading: String = null,
+    showBackLink: Boolean = true,
+    headerSectionNeeded: Boolean = false
+  )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
 
     val scaWrapperToggle =
       Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
-    val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
+    val fullPageTitle    = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
     if (scaWrapperToggle.isEnabled) {
       logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
@@ -112,7 +112,7 @@ class MainTemplateImpl @Inject()(
         } else {
           false
         },
-        scripts = Seq(scripts()),
+        scripts = Seq(scripts())
       )(messages, HeaderCarrierConverter.fromRequest(request), request)
 
     } else {
