@@ -26,11 +26,11 @@ import views.html.total_income_tax_includes.SavingsTableView
 
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  lazy val savingsTableView = inject[SavingsTableView]
-  lazy val viewUtils        = inject[ViewUtils]
+  lazy val savingsTableView: SavingsTableView = inject[SavingsTableView]
+  lazy val viewUtils: ViewUtils               = inject[ViewUtils]
 
-  val savingsTaxData  = SavingsTax.empty
-  val savingsRateData = SavingsRates.empty
+  val savingsTaxData: SavingsTax    = SavingsTax.empty
+  val savingsRateData: SavingsRates = SavingsRates.empty
 
   def view(tax: SavingsTax, rates: SavingsRates): String =
     savingsTableView(tax, rates).body

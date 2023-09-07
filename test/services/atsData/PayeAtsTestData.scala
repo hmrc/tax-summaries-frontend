@@ -23,7 +23,7 @@ import view_models.{Amount, Rate}
 
 class PayeAtsTestData extends BaseSpec {
 
-  val govSpendingData = PayeAtsData(
+  val govSpendingData: PayeAtsData = PayeAtsData(
     2021,
     None,
     None,
@@ -57,7 +57,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val yourIncomeAndTaxesData = PayeAtsData(
+  val yourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     Some(
@@ -113,7 +113,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val malformedYourIncomeAndTaxesData = PayeAtsData(
+  val malformedYourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     Some(
@@ -168,7 +168,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val missingYourIncomeAndTaxesData = PayeAtsData(
+  val missingYourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     None,
@@ -196,7 +196,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount = PayeAtsData(
+  val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     Some(
@@ -251,7 +251,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount = PayeAtsData(
+  val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     Some(
@@ -305,7 +305,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val totalIncomeTaxAndSummaryData = PayeAtsData(
+  val totalIncomeTaxAndSummaryData: PayeAtsData = PayeAtsData(
     taxYear,
     Some(
       DataHolder(
@@ -369,7 +369,7 @@ class PayeAtsTestData extends BaseSpec {
     None
   )
 
-  val payeYourIncomeAndTaxesViewModel =
+  val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes =
     PayeYourIncomeAndTaxes(
       taxYear,
       Amount(1000, "GBP"),
@@ -379,7 +379,7 @@ class PayeAtsTestData extends BaseSpec {
       "20"
     )
 
-  val payeGovernmentSpendViewModel = PayeGovernmentSpend(
+  val payeGovernmentSpendViewModel: PayeGovernmentSpend = PayeGovernmentSpend(
     taxYear,
     List(
       SpendRow("Welfare", SpendData(Amount(451, "GBP"), 23.5)),
@@ -402,7 +402,7 @@ class PayeAtsTestData extends BaseSpec {
     isScottish = false
   )
 
-  val payeGovernmentSpendViewModel2020 = PayeGovernmentSpend(
+  val payeGovernmentSpendViewModel2020: PayeGovernmentSpend = PayeGovernmentSpend(
     2020,
     List(
       SpendRow("Welfare", SpendData(Amount(451, "GBP"), 22.1)),
@@ -425,7 +425,7 @@ class PayeAtsTestData extends BaseSpec {
     isScottish = false
   )
 
-  val payeGovernmentSpendViewModel2021 = PayeGovernmentSpend(
+  val payeGovernmentSpendViewModel2021: PayeGovernmentSpend = PayeGovernmentSpend(
     2021,
     List(
       SpendRow("Health", SpendData(Amount(219, "GBP"), 21.9)),
@@ -448,7 +448,7 @@ class PayeAtsTestData extends BaseSpec {
     isScottish = false
   )
 
-  val payeIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
+  val payeIncomeTaxAndNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
     taxYear,
     List(
       TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
@@ -477,7 +477,7 @@ class PayeAtsTestData extends BaseSpec {
     Amount(2550, "GBP")
   )
 
-  val payeUKIncomeTaxAndNicsViewModel = PayeIncomeTaxAndNics(
+  val payeUKIncomeTaxAndNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
     taxYear,
     List.empty,
     List(
@@ -501,7 +501,7 @@ class PayeAtsTestData extends BaseSpec {
     Amount(2550, "GBP")
   )
 
-  val payeEmployeeContributionNicsViewModel = PayeIncomeTaxAndNics(
+  val payeEmployeeContributionNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
     taxYear,
     List.empty,
     List.empty,
@@ -515,7 +515,7 @@ class PayeAtsTestData extends BaseSpec {
     Amount(2550, "GBP")
   )
 
-  val payeEmptyNicsViewModel = PayeIncomeTaxAndNics(
+  val payeEmptyNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
     taxYear,
     List.empty,
     List.empty,
@@ -529,7 +529,7 @@ class PayeAtsTestData extends BaseSpec {
     Amount.empty
   )
 
-  val payeYourTaxableIncomeViewModel = PayeYourTaxableIncome(
+  val payeYourTaxableIncomeViewModel: PayeYourTaxableIncome = PayeYourTaxableIncome(
     taxYear,
     List(
       IncomeTaxRow("self_employment_income", Amount(450, "GBP")),
@@ -543,7 +543,7 @@ class PayeAtsTestData extends BaseSpec {
     Amount(1000, "GBP")
   )
 
-  val incomeData = PayeAtsData(
+  val incomeData: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     None,
@@ -566,7 +566,7 @@ class PayeAtsTestData extends BaseSpec {
     None
   )
 
-  val incomeDataWithoutScottishIncomeTax = PayeAtsData(
+  val incomeDataWithoutScottishIncomeTax: PayeAtsData = PayeAtsData(
     taxYear,
     None,
     None,
@@ -588,7 +588,7 @@ class PayeAtsTestData extends BaseSpec {
     None
   )
 
-  val govSpendingDataFor2019 = PayeAtsData(
+  val govSpendingDataFor2019: PayeAtsData = PayeAtsData(
     2019,
     None,
     None,
@@ -622,7 +622,7 @@ class PayeAtsTestData extends BaseSpec {
     )
   )
 
-  val govSpendingDataFor2020 = PayeAtsData(
+  val govSpendingDataFor2020: PayeAtsData = PayeAtsData(
     2020,
     None,
     None,

@@ -18,24 +18,42 @@ package views.paye
 
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import utils.TestConstants
 import view_models.Amount
 import view_models.paye.{AmountRow, PayeTaxFreeAmount}
 import views.ViewSpecBase
+import views.behaviours.ViewBehaviours
 import views.html.paye.PayeTaxFreeAmountView
 
-class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants {
+class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
-  implicit val request           =
+  implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     PayeAuthenticatedRequest(
       testNino,
-      false,
+      isSa = false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount"),
       None
     )
-  lazy val payeTaxFreeAmountView = inject[PayeTaxFreeAmountView]
+  lazy val payeTaxFreeAmountView: PayeTaxFreeAmountView                  = inject[PayeTaxFreeAmountView]
+
+  val payeTaxFreeAmountViewModel: PayeTaxFreeAmount = PayeTaxFreeAmount(
+    2019,
+    List.empty,
+    Amount.empty,
+    List.empty,
+    Amount.empty
+  )
+
+  def createView: () => Html =
+    () => payeTaxFreeAmountView(payeTaxFreeAmountViewModel)(messages, request)
+
+  "PayeTaxFreeAmountView when rendered" must {
+    behave like pageWithBackLink(createView)
+  }
 
   "PayeTaxFreeAmountView" must {
     "display correct heading for given taxYear" in {

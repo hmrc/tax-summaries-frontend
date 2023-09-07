@@ -16,13 +16,41 @@
 
 package views
 
+import controllers.auth.AuthenticatedRequest
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.scalatest.Assertion
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
+import play.api.test.FakeRequest
+import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L250
+import uk.gov.hmrc.http.HeaderNames
 import utils.BaseSpec
+import utils.TestConstants.fakeCredentials
 
 trait ViewSpecBase extends BaseSpec {
 
   implicit val messagesApi: MessagesApi = inject[MessagesApi]
   implicit val messages: Messages       = MessagesImpl(Lang("en"), messagesApi)
   implicit val lang: Lang               = messages.lang
+
+  def asDocument(html: Html): Document = Jsoup.parse(html.toString())
+
+  def assertRenderedByClass(doc: Document, className: String): Assertion =
+    assert(doc.getElementsByClass(className) != null, "Element " + className + " was not rendered on the page.")
+
+  lazy val fakeRequest              = FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
+  lazy val authenticatedFakeRequest = AuthenticatedRequest(
+    "",
+    None,
+    None,
+    None,
+    isSa = true,
+    isAgentActive = true,
+    L250,
+    fakeCredentials,
+    fakeRequest,
+    None
+  )
 
 }
