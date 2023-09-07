@@ -92,7 +92,7 @@ class MainTemplateImpl @Inject() (
         content = contentBlock,
         pageTitle = Some(fullPageTitle),
         serviceNameKey = Some(messages("generic.ats")),
-        serviceNameUrl = Some(appConfig.serviceUrl),
+        serviceNameUrl = Some(appConfig.homePageUrl),
         sidebarContent = Some(sidebar(beforeContentHtml)),
         signoutUrl = controllers.routes.AccountController.signOut.url,
         timeOutUrl = Some(controllers.routes.AccountController.sessionExpired.url),
