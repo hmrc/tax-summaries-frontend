@@ -77,11 +77,11 @@ class MainTemplateImpl @Inject() (
     showBackLink: Boolean = true,
     headerSectionNeeded: Boolean = false
   )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
-    val scaWrapperToggle =
-      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
-    val fullPageTitle    = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
-    if (scaWrapperToggle.isEnabled) {
+    Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
+    val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
+
+    if (true) {
       logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
 
       val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired

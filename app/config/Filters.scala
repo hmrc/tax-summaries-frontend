@@ -35,7 +35,7 @@ class SCAWrapperDataFilter @Inject() (
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
     featureFlagService.get(SCAWrapperToggle).flatMap { toggle =>
-      if (toggle.isEnabled) {
+      if (true) {
         super.apply(f)(rh)
       } else {
         f(rh)
