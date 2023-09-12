@@ -13,4 +13,4 @@
 ->         /                          prod.Routes
 
 PUT         /annual-tax-summary/test-only/setDefaultFlags  controllers.testOnly.FeatureFlagsController.setDefaults()
-->         /annual-tax-summary/test-only/  mongoFeatureTogglesTestOnly.Routes
+->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes
