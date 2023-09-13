@@ -36,8 +36,7 @@
 )
 
 @main(
-    pageTitle = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-    backLinkHref = Some("#")
+    pageTitle = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
     ) {
 
     @h1("paye.ats.index.html.title", elmId=Some("index-page-header"), payeHeading = Some(Messages("paye.generic.tax_year_heading",

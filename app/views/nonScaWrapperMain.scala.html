@@ -39,7 +39,6 @@
 
 @(
     pageTitle: String,
-    backLinkHref: Option[String] = None,
     disableSessionExpired: Boolean = false,
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
@@ -87,7 +86,7 @@
                 }
             </div>
         }else if(!headerSectionNeeded && showBackLink){
-            <a id="back-link" href="@backLinkHref" class="govuk-back-link print-hidden">@messages("site.back")</a>
+            <a id="back-link" href="#" class="govuk-back-link print-hidden">@messages("site.back")</a>
         }
 
     </aside>

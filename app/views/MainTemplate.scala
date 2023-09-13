@@ -41,7 +41,6 @@ trait MainTemplate {
 
   def apply(
     pageTitle: String,
-    backLinkHref: Option[String] = None,
     disableSessionExpired: Boolean = false,
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
@@ -68,7 +67,6 @@ class MainTemplateImpl @Inject() (
     with Logging {
   override def apply(
     pageTitle: String,
-    backLinkHref: Option[String] = None,
     disableSessionExpired: Boolean = false,
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
@@ -106,8 +104,7 @@ class MainTemplateImpl @Inject() (
         fullWidth = false,
         hideMenuBar = !showAccountMenu,
         disableSessionExpired = disableSessionExpired,
-        backLinkUrl = backLinkHref,
-        showBackLinkJS = backLinkHref.isDefined,
+        showBackLinkJS = showBackLink,
         scripts = Seq(scripts())
       )(messages, HeaderCarrierConverter.fromRequest(request), request)
 
@@ -115,7 +112,6 @@ class MainTemplateImpl @Inject() (
       logger.debug(s"Old layout used for request `${request.uri}``")
       oldLayout(
         fullPageTitle,
-        backLinkHref,
         disableSessionExpired,
         additionalScripts,
         backLinkAttrs,

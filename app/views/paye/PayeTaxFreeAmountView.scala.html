@@ -16,7 +16,7 @@
 
 @import view_models.paye.PayeTaxFreeAmount
 @import utils.HtmlFormatter
-@import views.html.helpers.{H1, H2, backLink}
+@import views.html.helpers.{H1, H2}
 @import views.html.includes.CurrencyAmountView
 @import views.MainTemplate
 
@@ -35,8 +35,7 @@
 )
 
 @main(
-	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-	backLinkHref = Some("#")
+	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 ) {
 
 	@h1("paye.ats.tax_free_amount.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",

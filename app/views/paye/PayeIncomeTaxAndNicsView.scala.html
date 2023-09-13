@@ -38,8 +38,7 @@
 )
 
 @main(
-    pageTitle = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-    backLinkHref = Some("#")
+    pageTitle = Messages("paye.ats.total_income_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 ) {
 
 	@h1("paye.ats.total_income_tax.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
