@@ -107,11 +107,7 @@ class MainTemplateImpl @Inject() (
         hideMenuBar = !showAccountMenu,
         disableSessionExpired = disableSessionExpired,
         backLinkUrl = backLinkHref,
-        showBackLinkJS = if (backLinkHref.isDefined) {
-          true
-        } else {
-          false
-        },
+        showBackLinkJS = backLinkHref.isDefined,
         scripts = Seq(scripts())
       )(messages, HeaderCarrierConverter.fromRequest(request), request)
 
