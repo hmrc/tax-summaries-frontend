@@ -15,11 +15,11 @@
  *@
 
 @import config.ApplicationConfig
-@import scala.concurrent.ExecutionContext
 @import helpers.{H1, P, Link}
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     h1: H1,
     p: P,
     link: Link
@@ -36,7 +36,8 @@
 
 
 @main(
-        pageTitle = Messages("global.page.not.found.error.title")
+        pageTitle = Messages("global.page.not.found.error.title"),
+        showBackLink = false
     ) {
 
     @h1("global.page.not.found.error.heading")

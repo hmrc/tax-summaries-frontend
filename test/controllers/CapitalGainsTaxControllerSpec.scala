@@ -17,26 +17,28 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, CapitalGainsService}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants.{capitalGains, testUtr}
-import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
+import view_models.{ATSUnavailableViewModel, Amount, CapitalGains, NoATSViewModel}
 
 import scala.concurrent.Future
 
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
-  val baseModel = capitalGains
+  val baseModel: CapitalGains = capitalGains
 
-  val mockCapitalGainsService = mock[CapitalGainsService]
-  val mockAuditService        = mock[AuditService]
+  val mockCapitalGainsService: CapitalGainsService = mock[CapitalGainsService]
+  val mockAuditService: AuditService               = mock[AuditService]
 
-  def sut =
+  def sut: CapitalGainsTaxController =
     new CapitalGainsTaxController(
       mockCapitalGainsService,
       mockAuditService,
@@ -47,9 +49,15 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
     when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
+  }
 
   "Calling Capital Gains" must {
 

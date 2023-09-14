@@ -17,12 +17,14 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, IncomeService}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
@@ -33,7 +35,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
-  val baseModel = IncomeBeforeTax(
+  val baseModel: IncomeBeforeTax = IncomeBeforeTax(
     taxYear = 2014,
     utr = testUtr,
     getSelfEmployTotal = Amount(1100, "GBP"),
@@ -63,9 +65,15 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
     when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
+  }
 
   "Calling incomes" must {
 

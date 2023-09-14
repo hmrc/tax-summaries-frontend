@@ -20,8 +20,8 @@
 @import uk.gov.hmrc.hmrcfrontend.config.AccountMenuConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.{AccountMenu, AccountMessages, SignOut, _}
-@import views.html.helper.CSPNonce
 @import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
+@import views.html.helper.CSPNonce
 
 @this(
     hmrcLayout: HmrcLayout,
@@ -36,14 +36,17 @@
     hmrcAccountMenu: HmrcAccountMenu
 )(implicit accountMenuConfig: AccountMenuConfig)
 
+
 @(
     pageTitle: String,
-    backLinkHref: Option[String] = None,
     disableSessionExpired: Boolean = false,
     additionalScripts: Option[Html] = None,
     backLinkAttrs: Map[String, String] = Map.empty,
     actingAttorney: Option[ActingAsAttorneyFor] = None,
-    beforeContentHtml: Option[Html] = None
+    beforeContentHtml: Option[Html] = None,
+    pageHeading: String = null,
+    showBackLink: Boolean = true,
+    headerSectionNeeded: Boolean = false
 )(content: Html)(implicit request: Request[_], messages: Messages)
 
 @headBlock = {
@@ -69,9 +72,23 @@
     }
     @hmrcLanguageSelectHelper()
     <aside>
-        @if(beforeContentHtml.isDefined){
-            @beforeContentHtml
+        @if(headerSectionNeeded) {
+            <div class="govuk-grid-row">
+                @if(showBackLink) {
+                    <div class="govuk-grid-column-one-half">
+                        <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
+                    </div>
+                }
+                @if(beforeContentHtml.isDefined) {
+                    <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
+                        @beforeContentHtml
+                    </div>
+                }
+            </div>
+        }else if(!headerSectionNeeded && showBackLink){
+            <a id="back-link" href="#" class="govuk-back-link print-hidden">@messages("site.back")</a>
         }
+
     </aside>
 }
 
@@ -114,12 +131,8 @@
     }
 }
 
-@fullPageTitle = @{
-    s"$pageTitle - ${Messages("generic.ats")} - GOV.UK"
-}
-
 @hmrcLayout(
-    pageTitle = Some(fullPageTitle),
+    pageTitle = Some(pageTitle),
     serviceName = Some(messages("generic.ats")),
     serviceUrl = Some(appConfig.homePageUrl),
     isWelshTranslationAvailable = true,

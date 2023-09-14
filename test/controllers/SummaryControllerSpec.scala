@@ -17,12 +17,14 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{BaseSpec, ControllerBaseSpec}
 import view_models._
@@ -32,7 +34,7 @@ import scala.math.BigDecimal.double2bigDecimal
 
 object SummaryControllerSpec extends BaseSpec {
 
-  val baseModel = Summary(
+  val baseModel: Summary = Summary(
     year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
@@ -56,7 +58,7 @@ object SummaryControllerSpec extends BaseSpec {
 
 class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenPropertyChecks {
 
-  val baseModel = SummaryControllerSpec.baseModel
+  val baseModel: Summary = SummaryControllerSpec.baseModel
 
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
@@ -72,9 +74,15 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
     when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(baseModel))
+  }
 
   "Calling Summary" must {
 

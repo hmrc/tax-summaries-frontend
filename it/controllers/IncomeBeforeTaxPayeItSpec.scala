@@ -18,23 +18,26 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo, urlMatching}
 import play.api
+import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, IntegrationSpec}
 
 class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
-  override def fakeApplication() = GuiceApplicationBuilder()
+  override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"          -> server.port(),
       "microservice.services.tax-summaries.port" -> server.port(),
       "microservice.services.pertax.port"        -> server.port()
     )
     .overrides(
-      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi])
+      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
     .build()
 

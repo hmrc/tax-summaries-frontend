@@ -14,16 +14,14 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
 @import view_models.paye.PayeTaxFreeAmount
 @import utils.HtmlFormatter
-@import views.html.helpers.{H1, H2, backLink}
+@import views.html.helpers.{H1, H2}
 @import views.html.includes.CurrencyAmountView
-@import scala.concurrent.ExecutionContext
+@import views.MainTemplate
 
 @this(
-    main: main,
-	backLink: backLink,
+    main: MainTemplate,
 	currencyAmountView: CurrencyAmountView,
 	htmlFormatter: HtmlFormatter,
 	h1: H1,
@@ -39,8 +37,6 @@
 @main(
 	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
 ) {
-
-	@backLink(href = "")
 
 	@h1("paye.ats.tax_free_amount.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
 		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
@@ -61,7 +57,7 @@
 			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
 			</td>
-			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, true)</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, twoDecimalPlaces = true)</td>
 		</tr>
 		}
 		</tbody>
@@ -69,7 +65,7 @@
 			<tfoot>
 			<tr id="totalTaxFreeAmount" class="govuk-table__row">
 				<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
-				<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalTaxFreeAmount, true)</td>
+				<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalTaxFreeAmount, twoDecimalPlaces = true)</td>
 			</tr>
 			</tfoot>
 		}
@@ -90,14 +86,14 @@
 			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
 			</td>
-			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, true)</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.amount, twoDecimalPlaces = true)</td>
 		</tr>
 		}
 		</tbody>
 		<tfoot>
 		<tr id="taxLiableAmount" class="govuk-table__row">
 			<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
-			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.liableTaxAmount, true)</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.liableTaxAmount, twoDecimalPlaces = true)</td>
 		</tr>
 		</tfoot>
 	</table>

@@ -15,16 +15,14 @@
  *@
 
 @import controllers.auth.AuthenticatedRequest
-@import config.ApplicationConfig
 @import utils.ViewUtils
 @import total_income_tax_includes._
 @import views.html.includes.CurrencyAmountView
-@import views.html.total_income_tax_includes._
 @import views.html.helpers.{HeaderSection, PageHeading}
-@import scala.concurrent.ExecutionContext
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     headerSection: HeaderSection,
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
@@ -42,7 +40,6 @@
 
 @beforeContent = {
     @headerSection(
-        pageHeading = Messages("ats.summary.title"),
         name = viewModel.forename + ' ' + viewModel.surname,
         utr = viewModel.utr,
         taxYear = viewModel.year,
@@ -53,8 +50,10 @@
 @main(
         pageTitle = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear),
         actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent)
-    ) {
+        beforeContentHtml = Some(beforeContent),
+        pageHeading = Messages("ats.summary.title"),
+        headerSectionNeeded = true
+) {
 
         @pageHeading(
           text = "ats.total_income_tax.income_tax",
@@ -195,7 +194,7 @@
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
               <td id="other-adjustments-reducing-amount" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="reducing-amount" class="govuk-visually-hidden">@currencyAmountView(viewModel.otherAdjustmentsReducing, false, true)</span>
+                  <span id="reducing-amount" class="govuk-visually-hidden">@currencyAmountView(viewModel.otherAdjustmentsReducing, twoDecimalPlaces = false, spokenMinus = true)</span>
                   <span aria-hidden="true">@currencyAmountView(viewModel.otherAdjustmentsReducing)</span>
               </td>
             </tr>

@@ -20,24 +20,24 @@ import cats.data.EitherT
 import connectors.PertaxConnector
 import controllers.paye.routes
 import models.PertaxApiResponse
-import models.admin.{FeatureFlag, PertaxBackendToggle}
+import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, REQUEST_TIMEOUT, SEE_OTHER, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, status}
 import services.MessageFrontendService
-import services.admin.FeatureFlagService
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps.Ops
 import utils.TestConstants.fakeCredentials
+import views.MainTemplate
 import views.html.errors.ServiceUnavailableView
-import views.html.main
 
 import scala.concurrent.Future
 
@@ -49,9 +49,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   val mockMessageFrontendService: MessageFrontendService = mock[MessageFrontendService]
 
-  val mockFeatureFlagService = mock[FeatureFlagService]
-
-  val unauthorisedRoute = routes.PayeErrorController.notAuthorised.url
+  val unauthorisedRoute: String = routes.PayeErrorController.notAuthorised.url
 
   class Harness(authJourney: AuthJourney) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authJourney.authWithSingleGGCheck { request =>
@@ -59,8 +57,19 @@ class PertaxAuthActionSpec extends BaseSpec {
     }
   }
 
-  override def beforeEach(): Unit =
-    reset(mockAuthConnector, mockPertaxConnector)
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector, mockPertaxConnector, mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
+
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(PertaxBackendToggle, isEnabled = false)
+      )
+
+  }
 
   val payeAuthAction = new PayeAuthActionImpl(
     mockAuthConnector,
@@ -74,7 +83,7 @@ class PertaxAuthActionSpec extends BaseSpec {
     mockPertaxConnector,
     mockFeatureFlagService,
     inject[ServiceUnavailableView],
-    inject[main]
+    inject[MainTemplate]
   )
 
   val authJourney =
@@ -103,7 +112,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
       when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
         .successful(
-          FeatureFlag(PertaxBackendToggle, true)
+          FeatureFlag(PertaxBackendToggle, isEnabled = true)
         )
 
       when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
@@ -116,6 +125,11 @@ class PertaxAuthActionSpec extends BaseSpec {
       val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(PertaxBackendToggle, isEnabled = true)
+        )
 
       when(
         mockAuthConnector
@@ -141,6 +155,11 @@ class PertaxAuthActionSpec extends BaseSpec {
       val nino                                                                       = new Generator().nextNino.nino
       val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
         Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(PertaxBackendToggle, isEnabled = true)
+        )
 
       when(
         mockAuthConnector
@@ -175,6 +194,11 @@ class PertaxAuthActionSpec extends BaseSpec {
         val nino                                                                       = new Generator().nextNino.nino
         val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
           Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+
+        when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
+          .successful(
+            FeatureFlag(PertaxBackendToggle, isEnabled = true)
+          )
 
         when(
           mockAuthConnector

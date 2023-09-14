@@ -18,6 +18,7 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import connectors.DataCacheConnector
+import models.admin.SCAWrapperToggle
 import models.{AgentToken, AtsListData}
 import org.mockito.scalatest.MockitoSugar
 import play.api
@@ -28,6 +29,8 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
@@ -58,7 +61,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
     )
     .overrides(
       api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
-      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi])
+      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
     .build()
 
@@ -104,6 +108,12 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       post(urlEqualTo("/auth/authorise"))
         .willReturn(ok(authResponse))
     )
+
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
   }
 
   when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
@@ -252,6 +262,12 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
     }
 
     "return an OK response with unread message count indicator when message-frontend call is successful" in {
+
+      reset(mockFeatureFlagService)
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        )
 
       val messageCount = Random.between(1, 100)
 

@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
 @import controllers.auth.AuthenticatedRequest
 @import views.html.helpers.{HeaderSection, PageHeading, P, Link}
-@import scala.concurrent.ExecutionContext
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     headerSection: HeaderSection,
     pageHeading: PageHeading,
     p: P,
@@ -36,7 +35,6 @@
 
 @beforeContent = {
     @headerSection(
-        pageHeading = Messages("ats.index.html.title"),
         name = viewModel.forename + ' ' + viewModel.surname,
         utr = viewModel.utr,
         taxYear = viewModel.year,
@@ -47,8 +45,10 @@
 @main(
         pageTitle = Messages("ats.index.html.title"),
         actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent)
-    ) {
+        beforeContentHtml = Some(beforeContent),
+        pageHeading = Messages("ats.index.html.title"),
+        headerSectionNeeded = true
+) {
 
         @pageHeading(
             text = "ats.index.html.title",

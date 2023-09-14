@@ -14,14 +14,13 @@
  * limitations under the License.
  *@
 
-@import helpers.{H1, HeaderSection, P, backLink}
+@import helpers.{H1, P}
+@import views.MainTemplate
 
 @this(
-    main: main,
-    headerSection: HeaderSection,
+    main: MainTemplate,
     h1: H1,
-    p: P,
-    backLink: backLink
+    p: P
 )
 
 @(  spendData: Seq[(String, Double)],
@@ -32,8 +31,7 @@
 )
 
 @main(
-        pageTitle = Messages("ats.howYourTaxWasSpent.heading"),
-        beforeContentHtml = Some(backLink(href=""))
+        pageTitle = Messages("ats.howYourTaxWasSpent.heading")
     ) {
 
     <div class="govuk-!-margin-bottom-5">

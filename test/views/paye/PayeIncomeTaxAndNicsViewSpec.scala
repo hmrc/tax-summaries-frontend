@@ -17,30 +17,34 @@
 package views.paye
 
 import controllers.auth.PayeAuthenticatedRequest
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.PayeAtsTestData
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants
 import views.ViewSpecBase
 import views.html.paye.PayeIncomeTaxAndNicsView
 
+import scala.concurrent.Future
 import scala.util.Random
 
 class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
-  val messageCount = Random.between(1, 100)
+  val messageCount: Int = Random.between(1, 100)
 
-  implicit val request =
+  implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     PayeAuthenticatedRequest(
       testNino,
-      false,
+      isSa = false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax"),
       Some(messageCount)
     )
 
-  lazy val payeAtsTestData          = inject[PayeAtsTestData]
-  lazy val payeIncomeTaxAndNicsView = inject[PayeIncomeTaxAndNicsView]
+  lazy val payeAtsTestData: PayeAtsTestData                   = inject[PayeAtsTestData]
+  lazy val payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView = inject[PayeIncomeTaxAndNicsView]
 
   "PayeIncomeTaxAndNicsView" must {
 
@@ -168,10 +172,13 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
     }
 
     "show the number of unread messages" in {
+
+      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+        .successful(
+          FeatureFlag(SCAWrapperToggle, isEnabled = false)
+        )
       val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
-
-      println(document.body().text())
 
       document.body().text() must include(s"""Messages$messageCount""")
     }

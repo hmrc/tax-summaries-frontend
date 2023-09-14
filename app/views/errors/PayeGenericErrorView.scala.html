@@ -16,11 +16,11 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
-@import scala.concurrent.ExecutionContext
 @import helpers.{H1, P, Link}
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     h1: H1,
     p: P,
     link: Link
@@ -29,12 +29,13 @@
 @()(
    implicit request: PayeAuthenticatedRequest[_],
    messages: Messages,
-        appConfig: ApplicationConfig,
+        appConfig: ApplicationConfig
 )
 
 
 @main(
-     pageTitle = Messages("global.error.InternalServerError500.title")
+     pageTitle = Messages("global.error.InternalServerError500.title"),
+     showBackLink = false
    ) {
 
     @h1("global.error.InternalServerError500.title", elmId=Some("generic-error-page-heading"))

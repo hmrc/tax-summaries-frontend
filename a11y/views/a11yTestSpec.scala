@@ -1,22 +1,27 @@
 package views
 
 
-import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo, urlMatching}
 import connectors.DataCacheConnector
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty, status => getStatus}
 import testUtils.{FileHelper, IntegrationSpec}
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
+import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import uk.gov.hmrc.scalatestaccessibilitylinter.domain.OutputFormat
 
 import java.util.UUID
 import scala.concurrent.Future
+import scala.util.Random
 
 class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
@@ -28,12 +33,34 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
       "microservice.services.auth.port"          -> server.port(),
       "microservice.services.tax-summaries.port" -> server.port(),
       "microservice.services.cachable.session-cache.port" -> server.port(),
-      "microservice.services.pertax.port" -> server.port()
-    ).overrides(
-    api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector)
-  )
-    .build()
+      "microservice.services.pertax.port" -> server.port(),
+      "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}"
+    ).overrides(api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)).build()
 
+  val messageCount: Int = Random.between(1, 100)
+
+  val wrapperDataResponse: String = Json
+    .toJson(
+      WrapperDataResponse(
+        Seq(
+          MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None)
+        ),
+        PtaMinMenuConfig("MenuName", "BackName")
+      )
+    )
+    .toString
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    server.stubFor(
+      WireMock.get(urlMatching("/single-customer-account-wrapper-data/wrapper-data.*"))
+        .willReturn(ok(wrapperDataResponse)))
+
+    server.stubFor(
+      WireMock.get(urlMatching("/single-customer-account-wrapper-data/message-data.*"))
+        .willReturn(ok(s"$messageCount")))
+  }
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] = {
     val uuid = UUID.randomUUID().toString
     FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid, SessionKeys.authToken -> "Bearer 1")

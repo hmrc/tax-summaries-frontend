@@ -18,25 +18,36 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import models.SpendData
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
 
-class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite {
+class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
+      .thenReturn(Future.successful(model))
+  }
 
   def sut =
     new GovernmentSpendController(
@@ -56,7 +67,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     yearList = List(2015)
   )
 
-  val model = new GovernmentSpend(
+  val model: GovernmentSpend = GovernmentSpend(
     taxYear = 2014,
     userUtr = testUtr,
     govSpendAmountData = List(
@@ -83,10 +94,6 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
     incomeTaxStatus = "0002",
     scottishIncomeTax = new Amount(2000.00, "GBP")
   )
-
-  override def beforeEach() =
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
-      .thenReturn(Future.successful(model))
 
   "Calling government spend" must {
 
@@ -179,7 +186,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec with GuiceOneAppP
 
     "have correct data for 2015" in {
 
-      val model2 = new GovernmentSpend(
+      val model2 = GovernmentSpend(
         taxYear = 2015,
         userUtr = testUtr,
         govSpendAmountData = List(

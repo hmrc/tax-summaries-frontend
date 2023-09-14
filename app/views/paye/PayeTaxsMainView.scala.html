@@ -14,16 +14,14 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
 @import controllers.auth.PayeAuthenticatedRequest
 @import view_models.paye.PayeAtsMain
 @import utils.HtmlFormatter
-@import helpers.{backLink, H1, H2, P, Link}
-@import scala.concurrent.ExecutionContext
+@import helpers.{H1, H2, P, Link}
+@import views.MainTemplate
 
 @this(
-    main: main,
-    backLink: backLink,
+    main: MainTemplate,
     htmlFormatter: HtmlFormatter,
     h1: H1,
     h2: H2,
@@ -40,8 +38,6 @@
 @main(
     pageTitle = Messages("paye.ats.index.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
     ) {
-
-    @backLink("#")
 
     @h1("paye.ats.index.html.title", elmId=Some("index-page-header"), payeHeading = Some(Messages("paye.generic.tax_year_heading",
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),

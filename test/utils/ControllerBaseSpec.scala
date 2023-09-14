@@ -74,21 +74,21 @@ trait ControllerBaseSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     Some(testNino),
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear"),
     None
   )
 
-  lazy val badRequest = AuthenticatedRequest(
+  lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
     None,
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20145"),

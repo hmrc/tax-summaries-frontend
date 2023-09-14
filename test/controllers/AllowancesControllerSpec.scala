@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.i18n.Messages
@@ -24,6 +25,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
@@ -34,7 +36,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
-  val baseModel = Allowances(
+  val baseModel: Allowances = Allowances(
     taxYear = 2014,
     utr = testUtr,
     taxFreeAllowance = Amount(9440, "GBP"),
@@ -53,14 +55,14 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     yearList = List(2015)
   )
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val noATSViewModel: NoATSViewModel = NoATSViewModel(taxYear)
 
-  lazy val taxsController = mock[TaxsController]
+  lazy val taxsController: TaxsController = mock[TaxsController]
 
-  val mockAllowanceService = mock[AllowanceService]
-  val mockAuditService     = mock[AuditService]
+  val mockAllowanceService: AllowanceService = mock[AllowanceService]
+  val mockAuditService: AuditService         = mock[AuditService]
 
   def sut =
     new AllowancesController(
@@ -73,11 +75,17 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
     when(
       mockAllowanceService.getAllowances(any())(any(), any())
     ) thenReturn Future
       .successful(baseModel)
+  }
 
   "Calling allowances" must {
 

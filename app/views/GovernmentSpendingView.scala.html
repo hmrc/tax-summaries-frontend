@@ -18,9 +18,10 @@
 @import controllers.auth.AuthenticatedRequest
 @import helpers.{H1, HeaderSection, Link, P, PageHeading}
 @import views.html.includes.CurrencyAmountView
+@import views.MainTemplate
 
 @this(
-    main: main,
+    main: MainTemplate,
     headerSection: HeaderSection,
     h1: H1,
     p: P,
@@ -39,7 +40,6 @@
 
 @beforeContent = {
     @headerSection(
-        pageHeading = Messages("ats.treasury_spending.title"),
         name = viewModel.userForename + ' ' + viewModel.userSurname,
         utr = viewModel.userUtr,
         taxYear = viewModel.taxYear,
@@ -50,8 +50,10 @@
 @main(
         pageTitle = Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent)
-    ) {
+        beforeContentHtml = Some(beforeContent),
+        pageHeading = Messages("ats.treasury_spending.title"),
+        headerSectionNeeded = true
+) {
 
 
         <div class="print-this">
@@ -86,7 +88,7 @@
                             <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.$key"))
                             <span>&nbsp;(@value.percentage%)</span>
                             </dt>
-                            <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, true)</dd>
+                            <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, twoDecimalPlaces = true)</dd>
                         </div>
                         <div aria-hidden="true">
                             <dt class="graph-green-bar" style="width: @value.percentage%;"></dt>

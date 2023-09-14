@@ -1,6 +1,6 @@
-import sbt._
 import play.core.PlayVersion
 import play.sbt.PlayImport._
+import sbt._
 
 
 object AppDependencies {
@@ -9,23 +9,20 @@ object AppDependencies {
   val bootstrapVersion = "7.15.0"
   lazy val hmrcMongoVersion: String = "1.1.0"
 
-  val compile = Seq(
+  val compile: Seq[ModuleID] = Seq(
     filters,
     ws,
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
     "uk.gov.hmrc"                %% "http-caching-client"        % s"10.0.0-$playVersion",
-    "uk.gov.hmrc"                %% s"bootstrap-frontend-$playVersion" % bootstrapVersion,
     "uk.gov.hmrc"                %% "domain"                     % s"8.3.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
-    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % s"7.7.0-play-28",
-    "uk.gov.hmrc"                %% "play-partials"                    % s"8.4.0-$playVersion",
-    "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-$playVersion"   % hmrcMongoVersion,
-    "uk.gov.hmrc"           %% s"internal-auth-client-$playVersion" % "1.4.0",
-    ehcache
+    ehcache,
+    "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.2.0",
+    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.44",
   )
 
-  val test               = Seq(
+  val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                %% "play-language"           % s"6.1.0-$playVersion",
     "org.jsoup"                   % "jsoup"                   % "1.16.1",
     "uk.gov.hmrc"                %% s"bootstrap-test-play-28" % bootstrapVersion,
@@ -42,18 +39,18 @@ object AppDependencies {
   val jacksonVersion = "2.13.2"
   val jacksonDatabindVersion = "2.13.2.2"
 
-  val jacksonOverrides = Seq(
+  val jacksonOverrides: Seq[ModuleID] = Seq(
     "com.fasterxml.jackson.core" % "jackson-core",
     "com.fasterxml.jackson.core" % "jackson-annotations",
     "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8",
     "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310"
   ).map(_ % jacksonVersion)
 
-  val jacksonDatabindOverrides = Seq(
+  val jacksonDatabindOverrides: Seq[ModuleID] = Seq(
     "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVersion
   )
 
-  val akkaSerializationJacksonOverrides = Seq(
+  val akkaSerializationJacksonOverrides: Seq[ModuleID] = Seq(
     "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor",
     "com.fasterxml.jackson.module" % "jackson-module-parameter-names",
     "com.fasterxml.jackson.module" %% "jackson-module-scala",

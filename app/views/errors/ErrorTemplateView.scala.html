@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.ApplicationConfig
-@import scala.concurrent.ExecutionContext
 @import helpers.{H1, P}
+@import views.MainTemplate
+
 
 @this(
-    main: main,
+    main: MainTemplate,
     h1: H1,
     p: P
 )
@@ -34,7 +34,8 @@
  )
 
 @main(
-        pageTitle = title
+        pageTitle = title,
+        showBackLink = false
     ) {
 
     @h1(header)

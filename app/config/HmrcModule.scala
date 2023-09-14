@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.helpers.{H1, P}
-@import views.MainTemplate
+package config
 
-@this(
-   main: MainTemplate,
-   h1: H1,
-   p: P
-)
+import play.api.inject.{Binding, Module}
+import play.api.{Configuration, Environment}
 
-@()(
-   implicit request: Request[_],
-   messages: Messages
-)
-
-
-@main(
-    pageTitle = Messages("ats.service_unavailable.title")
-    ) {
-
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
+class HmrcModule extends Module {
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
+    val defaultBindings: Seq[Binding[_]] = Seq(
+      bind[ApplicationStartUp].toSelf.eagerly()
+    )
+    defaultBindings
+  }
 }

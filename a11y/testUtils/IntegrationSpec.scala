@@ -19,6 +19,7 @@ package testUtils
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
 import connectors.DataCacheConnector
+import models.admin.SCAWrapperToggle
 import models.{AgentToken, AtsData, AtsListData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,11 +30,14 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Injecting
-import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.TestConstants.mock
 import utils.WireMockHelper
+
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,27 +50,29 @@ class IntegrationSpec
     with IntegrationPatience
     with Injecting {
 
-  val generatedNino = new Generator().nextNino
+  val generatedNino: Nino = new Generator().nextNino
 
-  val generatedSaUtr = new Generator().nextAtedUtr
+  val generatedSaUtr: AtedUtr = new Generator().nextAtedUtr
 
-  lazy val ec = inject[ExecutionContext]
+  lazy val ec: ExecutionContext = inject[ExecutionContext]
 
-  lazy val messages = inject[Messages]
+  lazy val messages: Messages = inject[Messages]
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
   lazy val fakeTaxYear: Int = 2022
 
-  val mockDataCacheConnector = mock[DataCacheConnector]
+  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
   val atsListData: AtsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
 
   val atsData: AtsData = Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json"))).get
 
-  val agentTokenMock = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
+  val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
-  val authResponseNoSA =
+  implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
+
+  val authResponseNoSA: String =
     s"""
        |{
        |    "confidenceLevel": 200,
@@ -92,7 +98,7 @@ class IntegrationSpec
        |}
        |""".stripMargin
 
-  val authResponseSA =
+  val authResponseSA: String =
     s"""
        |{
        |    "confidenceLevel": 200,
@@ -127,8 +133,13 @@ class IntegrationSpec
        |""".stripMargin
 
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
+
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
 
     server.stubFor(
       put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))

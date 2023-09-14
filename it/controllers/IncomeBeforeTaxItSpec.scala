@@ -18,28 +18,31 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
 import play.api
+import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, IntegrationSpec}
 
 class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
-  override def fakeApplication() = GuiceApplicationBuilder()
+  override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"                   -> server.port(),
       "microservice.services.tax-summaries.port"          -> server.port(),
       "microservice.services.cachable.session-cache.port" -> server.port()
     )
     .overrides(
-      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi])
+      api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
     .build()
 
-  override lazy val keystoreData = Map(
+  override lazy val keystoreData: Map[String, JsValue] = Map(
     s"TAXS_ATS_$taxYear" -> Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))
   )
 

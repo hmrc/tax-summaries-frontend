@@ -17,11 +17,13 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
@@ -32,7 +34,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
   override val taxYear = 2014
 
-  val baseModel = TotalIncomeTax(
+  val baseModel: TotalIncomeTax = TotalIncomeTax(
     year = 2014,
     utr = testUtr,
     startingRateForSavings = Amount(110, "GBP"),
@@ -72,8 +74,8 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     "surname"
   )
 
-  val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
-  val mockAuditService          = mock[AuditService]
+  val mockTotalIncomeTaxService: TotalIncomeTaxService = mock[TotalIncomeTaxService]
+  val mockAuditService: AuditService                   = mock[AuditService]
 
   def sut =
     new TotalIncomeTaxController(
@@ -86,11 +88,17 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach(): Unit =
+  override def beforeEach(): Unit = {
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
+      .successful(
+        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+      )
     when(
       mockTotalIncomeTaxService.getIncomeData(any())(any(), any())
     ) thenReturn Future
       .successful(baseModel)
+  }
 
   "Calling Total Income Tax" must {
 

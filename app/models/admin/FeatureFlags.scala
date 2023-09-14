@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.helpers.{H1, P}
-@import views.MainTemplate
+package models.admin
 
-@this(
-   main: MainTemplate,
-   h1: H1,
-   p: P
-)
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlagName
 
-@()(
-   implicit request: Request[_],
-   messages: Messages
-)
+case object PertaxBackendToggle extends FeatureFlagName {
+  override val name: String                = "pertax-backend-toggle"
+  override val description: Option[String] = Some(
+    "Enable/disable pertax backend during auth"
+  )
+}
 
-
-@main(
-    pageTitle = Messages("ats.service_unavailable.title")
-    ) {
-
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
+case object SCAWrapperToggle extends FeatureFlagName {
+  override val name: String                = "sca-wrapper-toggle"
+  override val description: Option[String] = Some(
+    "Enable/disable the SCA Wrapper layout"
+  )
 }

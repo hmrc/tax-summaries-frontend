@@ -17,15 +17,15 @@
 @import config.ApplicationConfig
 @import view_models.paye.PayeGovernmentSpend
 @import utils.HtmlFormatter
-@import helpers.{H1, P, Link, Button, PageHeading, backLink}
+@import helpers.{H1, P, Link}
+@import views.MainTemplate
 
 @this(
-	main: main,
+	main: MainTemplate,
 	h1: H1,
 	p: P,
 	link: Link,
-	htmlFormatter: HtmlFormatter,
-	backLink: backLink
+	htmlFormatter: HtmlFormatter
 )
 
 @(	viewModel:PayeGovernmentSpend,
@@ -38,9 +38,7 @@
 
 @main(
 		pageTitle = Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
-	) {
-
-		@backLink("#")
+) {
 
 		@h1(msg = "paye.ats.treasury_spending.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
 			htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),

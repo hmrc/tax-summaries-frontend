@@ -14,25 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.{H1, P}
-@import views.MainTemplate
+@this()
 
-@this(
-   main: MainTemplate,
-   h1: H1,
-   p: P
-)
+@(beforeContentHtml: Option[Html] = None)
 
-@()(
-   implicit request: Request[_],
-   messages: Messages
-)
-
-
-@main(
-    pageTitle = Messages("ats.service_unavailable.title")
-    ) {
-
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
-}
+<aside>
+    @if(beforeContentHtml.isDefined) {
+        <div class="govuk-grid-column-full govuk-!-text-align-right">
+        @beforeContentHtml
+        </div>
+    }
+</aside>
