@@ -114,7 +114,6 @@ class MainTemplateImpl @Inject() (
         fullPageTitle,
         disableSessionExpired,
         additionalScripts,
-        backLinkAttrs,
         actingAttorney,
         beforeContentHtml,
         pageHeading,
