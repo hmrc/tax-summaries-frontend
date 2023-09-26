@@ -81,7 +81,7 @@
             <div class="govuk-grid-row">
                 @if(showBackLink) {
                     <div class="govuk-grid-column-one-half">
-                        <a id="back-link" class="govuk-back-link print-hidden" href="#" data-journey-click="link - click:@pageHeading:@messages("site.back")">@messages("site.back")</a>
+                        @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
                     </div>
                 }
                 @if(beforeContentHtml.isDefined) {
@@ -90,7 +90,7 @@
                     </div>
                 }
             </div>
-        }else if(!headerSectionNeeded && showBackLink){
+        }else if(!headerSectionNeeded && !showBackLink){
             <a id="back-link" href="#" class="govuk-back-link print-hidden">@messages("site.back")</a>
         }
 
