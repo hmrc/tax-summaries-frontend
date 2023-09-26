@@ -70,28 +70,24 @@
 @beforeContent = {
     @if(!actingAttorney.isDefined && !disableSessionExpired) {
         @accountMenu
-            @if(showBackLink) {
-                @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
-            }
-    } else {
-    @hmrcLanguageSelectHelper()
     }
+    @hmrcLanguageSelectHelper()
     <aside>
         @if(headerSectionNeeded) {
-            <div class="govuk-grid-row">
-                @if(showBackLink) {
-                    <div class="govuk-grid-column-one-half">
-                        @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
-                    </div>
-                }
-                @if(beforeContentHtml.isDefined) {
-                    <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
-                        @beforeContentHtml
-                    </div>
-                }
+        <div class="govuk-grid-row">
+            @if(showBackLink) {
+            <div class="govuk-grid-column-one-half">
+                @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
             </div>
-        }else if(!headerSectionNeeded && !showBackLink){
-            <a id="back-link" href="#" class="govuk-back-link print-hidden">@messages("site.back")</a>
+            }
+            @if(beforeContentHtml.isDefined) {
+                <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
+                    @beforeContentHtml
+                </div>
+            }
+        </div>
+        }else if(!headerSectionNeeded && showBackLink){
+            @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
         }
 
     </aside>

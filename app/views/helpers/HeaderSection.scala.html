@@ -40,11 +40,6 @@
 }
 
 <div class="govuk-grid-row">
-    @if(showBackLink) {
-        <div class="govuk-grid-column-one-half">
-            @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
-        </div>
-    }
     @if(!actingAsAttorney.isDefined && utr.nonEmpty){
         <div class="@if(showBackLink) {govuk-grid-column-one-half} else {govuk-grid-column-full} govuk-!-text-align-right">
             @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
