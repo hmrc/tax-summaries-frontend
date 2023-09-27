@@ -14,11 +14,15 @@
  * limitations under the License.
  *@
 
+@import controllers.auth.AuthenticatedRequest
+@import config.ApplicationConfig
 @import helpers.P
 @import includes.AttorneyBannerView
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
     p: P,
+    govukBackLink: GovukBackLink,
     attorneyBanner: AttorneyBannerView
 )
 
@@ -36,5 +40,5 @@
 }
 
 @if(!actingAsAttorney.isDefined && utr.nonEmpty){
-        @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
+    @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
 }

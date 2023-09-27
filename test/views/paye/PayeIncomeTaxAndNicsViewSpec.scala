@@ -21,16 +21,18 @@ import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants
 import views.ViewSpecBase
+import views.behaviours.ViewBehaviours
 import views.html.paye.PayeIncomeTaxAndNicsView
 
 import scala.concurrent.Future
 import scala.util.Random
 
-class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
+class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
   val messageCount: Int = Random.between(1, 100)
 
@@ -45,6 +47,17 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants {
 
   lazy val payeAtsTestData: PayeAtsTestData                   = inject[PayeAtsTestData]
   lazy val payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView = inject[PayeIncomeTaxAndNicsView]
+
+  def createView: () => Html =
+    () =>
+      payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false
+      )(messages, request)
+
+  "PayeIncomeTaxAndNicsView when rendered" must {
+    behave like pageWithBackLink(createView)
+  }
 
   "PayeIncomeTaxAndNicsView" must {
 

@@ -18,32 +18,43 @@ package views.paye
 
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import services.atsData.PayeAtsTestData
 import utils.TestConstants
 import view_models.paye.PayeYourIncomeAndTaxes
 import views.ViewSpecBase
+import views.behaviours.ViewBehaviours
 import views.html.paye.PayeYourIncomeAndTaxesView
 
-class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants {
+class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
-  implicit val request =
+  implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     PayeAuthenticatedRequest(
       testNino,
-      false,
+      isSa = false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"),
       None
     )
 
-  val payeAtsTestData = inject[PayeAtsTestData]
+  val payeAtsTestData: PayeAtsTestData                            = inject[PayeAtsTestData]
+  lazy val payeYourIncomeAndTaxesView: PayeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
+  val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes     = payeAtsTestData.payeYourIncomeAndTaxesViewModel
 
-  val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes = payeAtsTestData.payeYourIncomeAndTaxesViewModel
-
-  lazy val payeYourIncomeAndTaxesView = inject[PayeYourIncomeAndTaxesView]
+  def createView: () => Html =
+    () =>
+      payeYourIncomeAndTaxesView(
+        payeYourIncomeAndTaxesViewModel
+      )(messages, request)
 
   def view(viewModel: PayeYourIncomeAndTaxes): String =
     payeYourIncomeAndTaxesView(payeYourIncomeAndTaxesViewModel).body
+
+  "PayeYourIncomeAndTaxesView when rendered" must {
+    behave like pageWithBackLink(createView)
+  }
 
   "PayeYourIncomeAndTaxesView" must {
     "return correct content for Taxable income section" in {

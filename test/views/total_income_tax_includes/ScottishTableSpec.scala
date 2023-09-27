@@ -27,10 +27,10 @@ import views.html.total_income_tax_includes.ScottishTableView
 
 class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
-  val scottishTaxData        = ScottishTax.empty
-  val scottishRateData       = ScottishRates.empty
-  lazy val scottishTableView = inject[ScottishTableView]
-  lazy val viewUtils         = inject[ViewUtils]
+  val scottishTaxData: ScottishTax              = ScottishTax.empty
+  val scottishRateData: ScottishRates           = ScottishRates.empty
+  lazy val scottishTableView: ScottishTableView = inject[ScottishTableView]
+  lazy val viewUtils: ViewUtils                 = inject[ViewUtils]
 
   def view(tax: ScottishTax, rates: ScottishRates): String =
     scottishTableView(tax, rates).body

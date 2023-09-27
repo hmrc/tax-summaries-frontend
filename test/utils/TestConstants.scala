@@ -18,7 +18,7 @@ package utils
 
 import models.SpendData
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
+import uk.gov.hmrc.domain.{Generator, Nino, SaUtrGenerator}
 import view_models._
 
 import scala.util.Random
@@ -26,17 +26,17 @@ import scala.util.Random
 trait TestConstants extends BaseSpec {
 
   // We only want one test nino and utr throughout, therefore assign a value in the object declaration
-  lazy val testUtr                  = new SaUtrGenerator().nextSaUtr.utr
-  lazy val testUar                  = "V" + genRandNumString(4) + "H"
-  lazy val testInvalidUtr           = genRandNumString(4)
-  lazy val testKey                  = genRandNumString(22)
-  lazy val testOid                  = genRandNumString(12)
-  lazy val testNonMatchingUtr       = new SaUtrGenerator().nextSaUtr.utr
-  lazy val testNino                 = new Generator().nextNino
-  val fakeCredentials               = new Credentials("provider ID", "provider type")
-  def genRandNumString(length: Int) = Random.nextInt(9).toString * length
+  lazy val testUtr: String                  = new SaUtrGenerator().nextSaUtr.utr
+  lazy val testUar: String                  = "V" + genRandNumString(4) + "H"
+  lazy val testInvalidUtr: String           = genRandNumString(4)
+  lazy val testKey: String                  = genRandNumString(22)
+  lazy val testOid: String                  = genRandNumString(12)
+  lazy val testNonMatchingUtr: String       = new SaUtrGenerator().nextSaUtr.utr
+  lazy val testNino: Nino                   = new Generator().nextNino
+  val fakeCredentials                       = new Credentials("provider ID", "provider type")
+  def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
-  val testTotalIncomeTax = TotalIncomeTax(
+  val testTotalIncomeTax: TotalIncomeTax = TotalIncomeTax(
     year = taxYear,
     utr = "",
     Amount.empty,
@@ -76,7 +76,7 @@ trait TestConstants extends BaseSpec {
     "surname"
   )
 
-  val capitalGains = CapitalGains(
+  val capitalGains: CapitalGains = CapitalGains(
     taxYear = taxYear,
     utr = testUtr,
     taxableGains = Amount(20000, "GBP"),

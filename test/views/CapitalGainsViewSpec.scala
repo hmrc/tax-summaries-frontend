@@ -18,6 +18,7 @@ package views
 
 import controllers.auth.AuthenticatedRequest
 import models.ActingAsAttorneyFor
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -27,20 +28,20 @@ import views.html.CapitalGainsView
 
 class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
-  implicit val request      =
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),
       None,
-      true,
-      false,
+      isSa = true,
+      isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,
       FakeRequest(),
       None
     )
-  lazy val capitalGainsView = inject[CapitalGainsView]
+  lazy val capitalGainsView: CapitalGainsView                        = inject[CapitalGainsView]
 
   def view(cg: CapitalGains): String =
     capitalGainsView(cg).body

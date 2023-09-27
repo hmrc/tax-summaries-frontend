@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.helpers.{H1, P}
-@import views.MainTemplate
+package views.behaviours
 
-@this(
-   main: MainTemplate,
-   h1: H1,
-   p: P
-)
+import play.twirl.api.HtmlFormat
+import views.ViewSpecBase
 
-@()(
-   implicit request: Request[_],
-   messages: Messages
-)
+trait ViewBehaviours extends ViewSpecBase {
 
-
-@main(
-       pageTitle = Messages("ats.service_unavailable.title"),
-       showBackLink = false
-    ) {
-
-  @h1("ats.service_unavailable.heading")
-  @p(Text(Messages("ats.service_unavailable.paragraph")))
+  def pageWithBackLink(view: () => HtmlFormat.Appendable): Unit =
+    "behave like a page with a back link" must {
+      "have a back link" in {
+        val doc = asDocument(view())
+        assertRenderedByClass(doc, "govuk-back-link")
+      }
+    }
 }

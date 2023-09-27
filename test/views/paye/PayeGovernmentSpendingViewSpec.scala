@@ -20,26 +20,40 @@ import config.ApplicationConfig
 import controllers.auth.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import play.api.Configuration
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.twirl.api.Html
 import services.atsData.PayeAtsTestData
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.TestConstants
 import views.ViewSpecBase
+import views.behaviours.ViewBehaviours
 import views.html.paye.PayeGovernmentSpendingView
 
-class PayeGovernmentSpendViewSpec extends ViewSpecBase with TestConstants {
+class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
-  implicit val request =
+  implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     PayeAuthenticatedRequest(
       testNino,
-      false,
+      isSa = false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"),
       None
     )
 
-  lazy val payeAtsTestData                                        = inject[PayeAtsTestData]
+  lazy val payeAtsTestData: PayeAtsTestData                       = inject[PayeAtsTestData]
   lazy val payeGovernmentSpendingView: PayeGovernmentSpendingView = inject[PayeGovernmentSpendingView]
+
+  def createView: () => Html =
+    () =>
+      payeGovernmentSpendingView(
+        payeAtsTestData.payeGovernmentSpendViewModel,
+        isWelshTaxPayer = false
+      )(messages, request, appConfig)
+
+  "PayeIncomeTaxAndNicsView when rendered" must {
+    behave like pageWithBackLink(createView)
+  }
 
   "view" must {
     "have correct data and heading for given taxYear" in {

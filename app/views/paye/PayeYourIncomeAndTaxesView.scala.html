@@ -40,8 +40,9 @@
 
 
 @main(
-        pageTitle = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)
-) {
+        pageTitle = Messages("paye.ats.summary.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        showBackLink = true
+    ) {
 
 
     <div class="govuk-!-margin-bottom-5">

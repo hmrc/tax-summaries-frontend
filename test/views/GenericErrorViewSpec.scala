@@ -20,6 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.mockito.MockitoSugar
 import play.api.i18n.{Lang, MessagesImpl}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -30,29 +31,29 @@ import views.html.errors.GenericErrorView
 
 class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConstants {
 
-  lazy val requestWithSession = AuthenticatedRequest(
+  lazy val requestWithSession: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
     None,
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"),
     None
   )
 
-  val languageEn = Lang("en")
-  val languageCy = Lang("cy")
-  val utr        = testUtr
-  val amount     = new Amount(0.00, "GBP")
-  val rate       = new Rate("5")
+  val languageEn: Lang = Lang("en")
+  val languageCy: Lang = Lang("cy")
+  val utr: String      = testUtr
+  val amount           = new Amount(0.00, "GBP")
+  val rate             = new Rate("5")
 
-  implicit val messagesEn = MessagesImpl(languageEn, messagesApi)
-  implicit val messagesCy = MessagesImpl(languageCy, messagesApi)
+  implicit val messagesEn: MessagesImpl = MessagesImpl(languageEn, messagesApi)
+  implicit val messagesCy: MessagesImpl = MessagesImpl(languageCy, messagesApi)
 
-  lazy val genericErrorView = inject[GenericErrorView]
+  lazy val genericErrorView: GenericErrorView = inject[GenericErrorView]
 
   "Logging in as a portal user" must {
 
