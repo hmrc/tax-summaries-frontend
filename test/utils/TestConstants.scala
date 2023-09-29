@@ -33,7 +33,7 @@ trait TestConstants extends BaseSpec {
   lazy val testOid: String                  = genRandNumString(12)
   lazy val testNonMatchingUtr: String       = new SaUtrGenerator().nextSaUtr.utr
   lazy val testNino: Nino                   = new Generator().nextNino
-  val fakeCredentials                       = new Credentials("provider ID", "provider type")
+  val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
   def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax: TotalIncomeTax = TotalIncomeTax(
