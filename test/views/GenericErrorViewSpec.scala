@@ -47,8 +47,8 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
   val languageEn: Lang = Lang("en")
   val languageCy: Lang = Lang("cy")
   val utr: String      = testUtr
-  val amount           = new Amount(0.00, "GBP")
-  val rate             = new Rate("5")
+  val amount: Amount   = new Amount(0.00, "GBP")
+  val rate: Rate       = new Rate("5")
 
   implicit val messagesEn: MessagesImpl = MessagesImpl(languageEn, messagesApi)
   implicit val messagesCy: MessagesImpl = MessagesImpl(languageCy, messagesApi)
