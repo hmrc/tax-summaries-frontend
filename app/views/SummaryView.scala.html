@@ -16,7 +16,7 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import views.html.includes.CurrencyAmountView
-@import views.html.helpers.{PageHeading, HeaderSection, H2, P}
+@import views.html.helpers.{PageHeading, HeaderSection, H2, H1, P}
 @import views.MainTemplate
 
 @this(
@@ -25,7 +25,8 @@
     currencyAmountView: CurrencyAmountView,
     pageHeading: PageHeading,
     p: P,
-    h2: H2
+    h2: H2,
+    h1: H1
 )
 
 @(  viewModel: view_models.Summary,
@@ -65,9 +66,10 @@
     headerSectionNeeded = true
 ) {
 
-    @pageHeading(
-        text = Messages("ats.summary.title", viewModel.taxYearFrom, viewModel.taxYearTo),
-    )
+    <div class = "govuk-heading-l">
+        @h1(messages("ats.summary.title", viewModel.taxYearFrom, viewModel.taxYearTo))
+    </div>
+
     <div class = "govuk-inset-text">
         @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
     </div>
