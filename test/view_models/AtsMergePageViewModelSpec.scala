@@ -89,15 +89,15 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
-      if (taxYear == 2022) { /// TODO - Delete this block besides the 2022 contents when uprating is complete
-        AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
+      if (taxYear == 2023) { /// TODO - Delete this block besides the 2023 contents when uprating is complete
         val model =
           AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
         model.completeYearList mustBe List(
           AtsYearChoice(PAYE, taxYear),
           AtsYearChoice(NoATS, taxYear - 1),
           AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3)
+          AtsYearChoice(NoATS, taxYear - 3),
+          AtsYearChoice(NoATS, taxYear - 4)
         )
       } else {
         val model =
@@ -114,13 +114,14 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
-      if (taxYear == 2022) { /// TODO - Delete this block besides the 2022 contents when uprating is complete
+      if (taxYear == 2023) { /// TODO - Delete this block besides the 2023 contents when uprating is complete
         val model =
           AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L50)
         model.completeYearList mustBe List(
           AtsYearChoice(NoATS, taxYear - 1),
           AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3)
+          AtsYearChoice(NoATS, taxYear - 3),
+          AtsYearChoice(NoATS, taxYear - 4)
         )
       } else {
         val model =
