@@ -66,11 +66,11 @@
 ) {
 
     @pageHeading(
-        text = "ats.summary.title",
-        section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+        text = Messages("ats.summary.title", viewModel.taxYearFrom, viewModel.taxYearTo),
     )
-
-    @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
+    <div class = "govuk-inset-text">
+        @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
+    </div>
 
     <div id="taxable-income" class="incomeTaxesSection">
 

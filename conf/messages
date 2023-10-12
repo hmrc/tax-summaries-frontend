@@ -66,9 +66,9 @@ paye.ats.index.html.view.sa.link=View Self Assessment Annual Tax Summary
 
 # View ATS - Summary
 #============================================================
-ats.summary.html.title=Your income and taxes
-ats.summary.title=Your income and taxes
-ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
+ats.summary.html.title=Your income and taxes for the tax year 6 April {0} to 5 April {1}
+ats.summary.title=Your income and taxes for the tax year 6 April {0} to 5 April {1}
+ats.summary.lede=This is not a bill or a demand for payment. The figures on this page are for your information only.
 ats.summary.total_income.title=Total income
 ats.summary.total_income.link=Your total income
 ats.summary.total_income.description=This is your total income for the year.
