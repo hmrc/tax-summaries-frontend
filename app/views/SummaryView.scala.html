@@ -16,7 +16,7 @@
 
 @import controllers.auth.AuthenticatedRequest
 @import views.html.includes.CurrencyAmountView
-@import views.html.helpers.{PageHeading, HeaderSection, H2, H1, P}
+@import views.html.helpers.{PageHeading, HeaderSection, H2, H1, P, Link}
 @import views.MainTemplate
 
 @this(
@@ -24,6 +24,7 @@
     headerSection: HeaderSection,
     currencyAmountView: CurrencyAmountView,
     pageHeading: PageHeading,
+    link: Link,
     p: P,
     h2: H2,
     h1: H1
@@ -66,24 +67,26 @@
     headerSectionNeeded = true
 ) {
 
-    <div class = "govuk-heading-l">
+    <h1 id="pageHeading" class = "govuk-!-margin-bottom-3">
         @h1(messages("ats.summary.title", viewModel.taxYearFrom, viewModel.taxYearTo))
-    </div>
+    </h1>
 
     <div class = "govuk-inset-text">
         @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
     </div>
 
     <div id="taxable-income" class="incomeTaxesSection">
+        @h2("ats.summary.taxable_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8"))
 
-        @h2("ats.summary.total_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
-
-        <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo" class="data-link">
-            @linkSectionContents(Messages("screen.reader.total_income"), currencyAmountView(viewModel.yourIncomeBeforeTax), xLargeID="income-before-tax-amount", Messages("ats.summary.total_income.link"))
-        </a>
+        <p class = "govuk-body govuk-!-font-size-36">
+            @currencyAmountView(viewModel.yourIncomeBeforeTax)
+        </p>
 
         @p(HtmlContent(Messages("ats.summary.total_income.description")))
 
+        <a class="govuk-link" href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo">
+            @(Messages("ats.summary.find_out_about_your_taxable_income.link"))
+        </a>
     </div>
 
     <div id="tax-free-amount" class="incomeTaxesSection">
