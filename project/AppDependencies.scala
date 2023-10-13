@@ -19,7 +19,7 @@ object AppDependencies {
     "org.typelevel"              %% "cats-core"                  % "2.9.0",
     ehcache,
     "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.2.0",
-    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.44",
+    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.45",
   )
 
   val test: Seq[ModuleID] = Seq(
@@ -31,13 +31,13 @@ object AppDependencies {
     "org.scalatestplus"          %% "scalacheck-1-17"         % "3.2.15.0",
     "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.0",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
-    "com.softwaremill.quicklens" %% "quicklens"               % "1.6.0",
-    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2",
+    "com.softwaremill.quicklens" %% "quicklens"               % "1.6.1",
+    "com.vladsch.flexmark"        % "flexmark-all"            % "0.64.6",
     "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion
   ).map(_ % "test,it")
 
   val jacksonVersion = "2.13.2"
-  val jacksonDatabindVersion = "2.13.2.2"
+  val jacksonDatabindVersion = "2.13.5"
 
   val jacksonOverrides: Seq[ModuleID] = Seq(
     "com.fasterxml.jackson.core" % "jackson-core",
