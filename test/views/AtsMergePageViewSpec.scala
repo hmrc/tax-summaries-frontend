@@ -162,6 +162,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     s"show no ats before ${taxYear - 2} message if there are years missing from paye and sa data before ${taxYear - 2}" in {
 
+      // TODO: Check after DDCNL-7995
       when(mockAppConfig.taxYear).thenReturn(2022)
 
       val result =
