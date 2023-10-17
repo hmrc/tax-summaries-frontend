@@ -32,7 +32,7 @@ object AppDependencies {
     "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.1",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
     "com.softwaremill.quicklens" %% "quicklens"               % "1.6.1",
-    "com.vladsch.flexmark"        % "flexmark-all"            % "0.64.6",
+    "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2",
     "uk.gov.hmrc.mongo"          %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion
   ).map(_ % "test,it")
 
