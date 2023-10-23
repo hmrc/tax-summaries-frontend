@@ -288,6 +288,10 @@ class ContentsCheckSpec extends IntegrationSpec {
           val reportIssueLink = content.getElementsByClass("hmrc-report-technical-issue").get(0).attr("href")
           reportIssueText must include("Is this page not working properly? (opens in new tab)")
           reportIssueLink must include("/contact/report-technical-problem")
+
+          val ptaCss =
+            content.getElementsByTag("link").asScala.toList.filter(_.attr("href").contains("pta.css")).head.attr("href")
+          ptaCss mustBe "/annual-tax-summary/pta-frontend/assets/pta.css"
         }
       }
     }
