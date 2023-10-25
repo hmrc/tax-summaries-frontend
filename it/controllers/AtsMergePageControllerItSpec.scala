@@ -132,7 +132,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
 
-    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/2022/4/ats-list"
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
 
     lazy val backendUrlPaye =
       s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
@@ -166,7 +166,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
       lazy val url = s"/annual-tax-summary/paye/main"
 
-      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/2022/4/ats-list"
+      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
 
       lazy val backendUrlPaye =
         s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
