@@ -293,7 +293,7 @@ class ContentsCheckSpec extends IntegrationSpec {
             content.getElementsByTag("link").asScala.toList.filter(_.attr("href").contains("pta.css")).head.attr("href")
           ptaCss mustBe "/annual-tax-summary/pta-frontend/assets/pta.css"
           val ptaJs =
-            content.getElementsByTag("link").asScala.toList.filter(_.attr("href").contains("pta.js")).head.attr("href")
+            content.getElementsByTag("link").asScala.toList.filter(_.attr("src").contains("pta.js")).head.attr("src")
           ptaJs mustBe "/annual-tax-summary/pta-frontend/assets/pta.js"
         }
       }
