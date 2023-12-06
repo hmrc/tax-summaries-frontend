@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class IncomingAtsError(error: String)
 
 object IncomingAtsError {
-  implicit val formats = Json.format[IncomingAtsError]
+  implicit val formats: OFormat[IncomingAtsError] = Json.format[IncomingAtsError]
 }

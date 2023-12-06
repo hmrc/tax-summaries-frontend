@@ -48,7 +48,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   val mockAtsService                       = mock[AtsService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val request = AuthenticatedRequest(
     "userId",

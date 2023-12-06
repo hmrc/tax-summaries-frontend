@@ -17,7 +17,7 @@
 package models
 
 import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class AtsYearChoice(atsType: AtsType, year: Int) {
   def getLabel(implicit messages: Messages) = atsType match {
@@ -29,7 +29,7 @@ case class AtsYearChoice(atsType: AtsType, year: Int) {
 
 object AtsYearChoice {
 
-  implicit val formats = Json.format[AtsYearChoice]
+  implicit val formats: OFormat[AtsYearChoice] = Json.format[AtsYearChoice]
 
   def fromString(value: Option[String]): AtsYearChoice =
     value match {

@@ -46,7 +46,7 @@ class SelfAssessmentActionSpec
     with BeforeAndAfterEach {
 
   implicit val timeout: FiniteDuration = 5 seconds
-  implicit val hc                      = HeaderCarrier()
+  implicit val hc: HeaderCarrier       = HeaderCarrier()
 
   val unauthorizedRoute = controllers.routes.ErrorController.notAuthorised.url
 

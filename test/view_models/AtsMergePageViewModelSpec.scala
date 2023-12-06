@@ -20,6 +20,7 @@ import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
 import models.{AtsYearChoice, NoATS, PAYE, SA}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -28,10 +29,10 @@ import utils.BaseSpec
 import utils.TestConstants.{testUar, testUtr}
 
 class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
-  val fakeCredentials = new Credentials("provider ID", "provider type")
-  val mockAppConfig   = mock[ApplicationConfig]
+  val fakeCredentials                  = new Credentials("provider ID", "provider type")
+  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
-  implicit val agentRequest = AuthenticatedRequest(
+  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),

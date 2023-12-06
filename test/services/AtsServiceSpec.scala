@@ -21,6 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
@@ -55,9 +56,9 @@ class AtsServiceSpec extends BaseSpec {
 
   }
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  implicit val request =
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
@@ -178,7 +179,7 @@ class AtsServiceSpec extends BaseSpec {
                 Some(data)
               )
 
-              implicit val request =
+              implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
                 AuthenticatedRequest(
                   "userId",
                   Some(Uar(testUar)),

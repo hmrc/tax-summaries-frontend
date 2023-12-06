@@ -45,7 +45,7 @@ class AllowanceServiceSpec extends BaseSpec {
 
   val noAtsaViewModel: NoATSViewModel = NoATSViewModel(taxYear)
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val request = AuthenticatedRequest(
     "userId",

@@ -16,12 +16,13 @@
 
 package controllers.paye
 
-import controllers.auth.FakePayeAuthAction
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status._
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.atsData.PayeAtsTestData
 import views.html.errors.PayeGenericErrorView
@@ -31,7 +32,9 @@ import scala.concurrent.Future
 
 class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
-  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
+    "/annual-tax-summary/paye/treasury-spending"
+  )
 
   lazy val payeAtsTestData      = inject[PayeAtsTestData]
   lazy val payeGenericErrorView = inject[PayeGenericErrorView]

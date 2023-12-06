@@ -6,7 +6,7 @@ import sbt._
 object AppDependencies {
 
   val playVersion = "play-28"
-  val bootstrapVersion = "7.15.0"
+  val bootstrapVersion = "7.23.0"
   lazy val hmrcMongoVersion: String = "1.1.0"
 
   val compile: Seq[ModuleID] = Seq(
@@ -17,8 +17,7 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "domain"                     % s"8.3.0-$playVersion",
     "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.10.0",
-    ehcache,
-    "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.3.0",
+    "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.5.0",
     "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.45",
   )
 

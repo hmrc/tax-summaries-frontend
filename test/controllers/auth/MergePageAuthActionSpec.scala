@@ -62,7 +62,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
   val unauthorisedRoute                = controllers.routes.ErrorController.notAuthorised.url
-  implicit val hc                      = new HeaderCarrier
+  implicit val hc: HeaderCarrier       = new HeaderCarrier
 
   override def beforeEach() = {
     reset(mockAuthConnector)

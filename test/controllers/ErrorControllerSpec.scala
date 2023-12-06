@@ -22,6 +22,7 @@ import models.AtsErrorResponse
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.GovernmentSpendService
@@ -45,7 +46,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
     reset(mockGovernmentSpendService)
   }
 
-  def sut: ErrorController     =
+  def sut: ErrorController                  =
     new ErrorController(
       mockGovernmentSpendService,
       new FakeMergePageAuthAction(true),
@@ -55,7 +56,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       howTaxIsSpentView,
       serviceUnavailableView
     )
-  implicit lazy val messageApi = inject[MessagesApi]
+  implicit lazy val messageApi: MessagesApi = inject[MessagesApi]
 
   "ErrorController" when {
 
@@ -309,9 +310,9 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
       "show the service unavailable view" in {
 
-        implicit val request = FakeRequest()
-        val result           = sut.serviceUnavailable()(request)
-        val document         = contentAsString(result)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+        val result                                                = sut.serviceUnavailable()(request)
+        val document                                              = contentAsString(result)
 
         status(result) mustBe OK
         document mustBe contentAsString(serviceUnavailableView())

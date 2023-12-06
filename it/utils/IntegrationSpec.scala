@@ -67,7 +67,7 @@ class IntegrationSpec
     reset(mockFeatureFlagService)
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
       .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
+        FeatureFlag(SCAWrapperToggle, isEnabled = false)
       )
 
     val authResponse =

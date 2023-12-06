@@ -53,12 +53,12 @@ class PertaxConnectorSpec
       )
       .build()
 
-  implicit val hc             = HeaderCarrier()
-  implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit lazy val ec        = inject[ExecutionContext]
-  lazy val connector          = inject[PertaxConnector]
-  lazy val nino               = new Generator().nextNino
-  lazy val url                = s"/pertax/$nino/check-single-account"
+  implicit val hc: HeaderCarrier                 = HeaderCarrier()
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
+  lazy val connector                             = inject[PertaxConnector]
+  lazy val nino                                  = new Generator().nextNino
+  lazy val url                                   = s"/pertax/$nino/check-single-account"
 
   "pertaxAuth" must {
     "return a PertaxApiResponse with an ACCESS_GRANTED code" in {

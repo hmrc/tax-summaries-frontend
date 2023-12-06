@@ -52,9 +52,9 @@ class HttpHandlerSpec
       )
       .build()
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec = inject[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   def sut: HttpHandler = new HttpHandler(inject[DefaultHttpClient])
 

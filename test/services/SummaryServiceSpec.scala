@@ -42,9 +42,9 @@ class SummaryServiceSpec extends BaseSpec {
 
   val mockAtsService = mock[AtsService]
 
-  implicit val hc      = new HeaderCarrier
-  override val taxYear = 2015
-  val request          = AuthenticatedRequest(
+  implicit val hc: HeaderCarrier = new HeaderCarrier
+  override val taxYear           = 2015
+  val request                    = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),

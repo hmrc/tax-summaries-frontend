@@ -34,7 +34,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
   val dataPathNoAts    = "/no_ats_json_test.json"
   override val taxYear = 2014
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",

@@ -52,7 +52,7 @@ class MessageFrontendConnectorSpec
       .build()
 
   private lazy val testMessageFrontendConnector = inject[MessageFrontendConnector]
-  implicit lazy val ec                          = inject[ExecutionContext]
+  implicit lazy val ec: ExecutionContext        = inject[ExecutionContext]
 
   "MessageFrontendConnector" must {
     "return a right HttpResponse" in {

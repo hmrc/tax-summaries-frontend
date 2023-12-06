@@ -36,9 +36,9 @@ trait TaxsUnitTestTraits
     with GuiceOneServerPerSuite
     with Injecting {
 
-  implicit lazy val hc = HeaderCarrier()
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec = inject[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   implicit def convertToOption[T](value: T): Option[T] = Some(value)
 

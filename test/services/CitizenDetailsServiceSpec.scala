@@ -30,9 +30,9 @@ import scala.concurrent.Future
 
 class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
 
-  implicit val hc             = HeaderCarrier()
-  val citizenDetailsConnector = mock[CitizenDetailsConnector]
-  val service                 = new CitizenDetailsService(citizenDetailsConnector)
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  val citizenDetailsConnector    = mock[CitizenDetailsConnector]
+  val service                    = new CitizenDetailsService(citizenDetailsConnector)
 
   val nino = new Generator().nextNino
   val utr  = new SaUtrGenerator().nextSaUtr

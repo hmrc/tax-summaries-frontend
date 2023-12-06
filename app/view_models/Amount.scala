@@ -18,8 +18,7 @@ package view_models
 
 import java.text.NumberFormat
 import java.util.Locale
-
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import utils.BigDecimalUtils
 
 case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils {
@@ -55,7 +54,7 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
 }
 
 object Amount {
-  implicit val formats = Json.format[Amount]
+  implicit val formats: OFormat[Amount] = Json.format[Amount]
 
   val empty: Amount                  = gbp(0)
   def gbp(value: BigDecimal): Amount = Amount(value, "GBP")

@@ -28,12 +28,12 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.partials.HtmlPartial
 import views.MainTemplate
 import views.html.errors.ServiceUnavailableView
 
+import java.net.URLEncoder
 import scala.concurrent.{ExecutionContext, Future}
 
 class PertaxAuthActionImpl @Inject() (
@@ -63,7 +63,7 @@ class PertaxAuthActionImpl @Inject() (
             case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
               Future.successful(Right(request))
             case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
-              Future.successful(Left(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
+              Future.successful(Left(Redirect(s"$redirect/?redirectUrl=${URLEncoder.encode(request.uri, "UTF-8")}")))
             case Right(PertaxApiResponse(_, _, Some(errorView), _))                     =>
               pertaxConnector.loadPartial(errorView.url)(request, executionContext).map {
                 case partial: HtmlPartial.Success =>

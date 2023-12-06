@@ -19,9 +19,9 @@ package config
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.Lang
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.net.URLEncoder
 import javax.inject.Singleton
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
@@ -87,7 +87,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
   def accessibilityStatementUrl(referrer: String) =
-    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(accessibilityBaseUrl + referrer).encodedUrl}"
+    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${URLEncoder.encode(accessibilityBaseUrl + referrer, "UTF-8")}"
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
