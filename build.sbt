@@ -40,7 +40,8 @@ lazy val microservice = Project(appName, file("."))
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat, uglify),
     scalafmtOnCompile := true,
-    uglify / includeFilter := GlobFilter("ats-*.js")
+    uglify / includeFilter := GlobFilter("ats-*.js"),
+    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings())
