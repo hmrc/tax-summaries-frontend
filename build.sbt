@@ -40,8 +40,7 @@ lazy val microservice = Project(appName, file("."))
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat, uglify),
     scalafmtOnCompile := true,
-    uglify / includeFilter := GlobFilter("ats-*.js"),
-    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+    uglify / includeFilter := GlobFilter("ats-*.js")
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings())
@@ -59,18 +58,6 @@ lazy val microservice = Project(appName, file("."))
     )
   )
   .settings(routesImport ++= Seq("models.admin._"))
-  .settings(
-    // Configures eviction reports
-    evicted / evictionWarningOptions := EvictionWarningOptions.default
-      .withWarnDirectEvictions(true)
-      .withWarnEvictionSummary(true)
-      .withWarnScalaVersionEviction(true)
-      .withWarnTransitiveEvictions(true)
-      .withShowCallers(true),
-    // Checks evictions on resolving dependencies
-    update := update.dependsOn(evicted).value
-  )
-
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",
