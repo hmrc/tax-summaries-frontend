@@ -1,5 +1,7 @@
 # TAXS routes
 ->      /hmrc-frontend                                          hmrcfrontend.Routes
+->      /sca                                                    sca.Routes
+
 GET     /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
 
 GET     /                                                      controllers.AtsMergePageController.onPageLoad
