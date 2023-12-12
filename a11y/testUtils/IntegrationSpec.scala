@@ -19,7 +19,6 @@ package testUtils
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
 import connectors.DataCacheConnector
-import models.admin.SCAWrapperToggle
 import models.{AgentToken, AtsData, AtsListData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +32,6 @@ import play.api.test.Injecting
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.TestConstants.mock
 import utils.WireMockHelper
@@ -135,11 +133,6 @@ class IntegrationSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
 
     server.stubFor(
       put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))

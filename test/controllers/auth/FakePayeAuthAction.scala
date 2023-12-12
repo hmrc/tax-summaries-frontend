@@ -30,5 +30,5 @@ object FakePayeAuthAction extends ControllerBaseSpec with PayeAuthAction {
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
   ): Future[Result] =
-    block(PayeAuthenticatedRequest(testNino, false, fakeCredentials, request, None))
+    block(PayeAuthenticatedRequest(testNino, false, fakeCredentials, request))
 }

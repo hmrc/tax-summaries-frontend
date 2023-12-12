@@ -16,7 +16,7 @@
 
 package controllers.testOnly
 
-import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
+import models.admin.PertaxBackendToggle
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -33,7 +33,7 @@ class FeatureFlagsController @Inject() (
 
   def setDefaults(): Action[AnyContent] = Action.async {
     featureFlagService
-      .setAll(Map(PertaxBackendToggle -> true, SCAWrapperToggle -> false))
+      .setAll(Map(PertaxBackendToggle -> true))
       .map(_ => Ok("Default flags set"))
   }
 }

@@ -21,7 +21,6 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
-import services.MessageFrontendService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -35,8 +34,7 @@ import scala.language.postfixOps
 
 class MinAuthActionSpec extends BaseSpec {
 
-  val mockAuthConnector: DefaultAuthConnector            = mock[DefaultAuthConnector]
-  val mockMessageFrontendService: MessageFrontendService = mock[MessageFrontendService]
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   class Harness(minAuthAction: MinAuthActionImpl) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = minAuthAction { _ =>
@@ -52,7 +50,7 @@ class MinAuthActionSpec extends BaseSpec {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc, mockMessageFrontendService)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
       val controller    = new Harness(minAuthAction)
       val result        = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
@@ -64,7 +62,7 @@ class MinAuthActionSpec extends BaseSpec {
     "be redirected to the Sorry there is a problem page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc, mockMessageFrontendService)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
       val controller    = new Harness(minAuthAction)
       val result        = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -84,9 +82,8 @@ class MinAuthActionSpec extends BaseSpec {
           .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ ConfidenceLevel](any(), any())(any(), any())
       )
         .thenReturn(retrievalResult)
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc, mockMessageFrontendService)
+      val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
       val controller    = new Harness(minAuthAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -105,7 +102,7 @@ class MinAuthActionSpec extends BaseSpec {
     )
       .thenReturn(retrievalResult)
 
-    val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc, mockMessageFrontendService)
+    val minAuthAction = new MinAuthActionImpl(mockAuthConnector, FakeMinAuthAction.mcc)
     val controller    = new Harness(minAuthAction)
 
     val ex = intercept[RuntimeException] {

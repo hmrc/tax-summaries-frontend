@@ -44,5 +44,3 @@ GET     /paye/service-unavailable                              controllers.paye.
 
 GET     /keepalive                                             controllers.AccountController.keepAlive
 GET     /session-expired                                       controllers.AccountController.sessionExpired
-
-->      /pta-frontend                                             ptafrontend.Routes

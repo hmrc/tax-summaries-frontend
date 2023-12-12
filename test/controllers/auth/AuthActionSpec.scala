@@ -21,7 +21,6 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
-import services.MessageFrontendService
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -47,9 +46,8 @@ class AuthActionSpec extends BaseSpec {
       )
     }
   }
-  val fakeCredentials                                    = Credentials("foo", "bar")
-  val mockAuthConnector: DefaultAuthConnector            = mock[DefaultAuthConnector]
-  val mockMessageFrontendService: MessageFrontendService = mock[MessageFrontendService]
+  val fakeCredentials                         = Credentials("foo", "bar")
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ggSignInUrl                      =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
@@ -59,9 +57,8 @@ class AuthActionSpec extends BaseSpec {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
@@ -73,9 +70,8 @@ class AuthActionSpec extends BaseSpec {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest("", ""))
 
@@ -106,9 +102,8 @@ class AuthActionSpec extends BaseSpec {
             any()
           )(any(), any())
       ).thenReturn(retrievalResult)
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -139,9 +134,8 @@ class AuthActionSpec extends BaseSpec {
           )(any(), any())
       )
         .thenReturn(retrievalResult)
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -170,9 +164,8 @@ class AuthActionSpec extends BaseSpec {
           )(any(), any())
       )
         .thenReturn(retrievalResult)
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -202,9 +195,8 @@ class AuthActionSpec extends BaseSpec {
           )(any(), any())
       )
         .thenReturn(retrievalResult)
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -232,9 +224,8 @@ class AuthActionSpec extends BaseSpec {
           )(any(), any())
       )
         .thenReturn(retrievalResult)
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest("", ""))
@@ -261,9 +252,8 @@ class AuthActionSpec extends BaseSpec {
         )
     )
       .thenReturn(retrievalResult)
-    when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
-    val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService)
+    val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
     val controller = new Harness(authAction)
 
     val ex = intercept[RuntimeException] {
@@ -278,7 +268,7 @@ class AuthActionSpec extends BaseSpec {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc, mockMessageFrontendService) {
+      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc) {
         override val saShuttered: Boolean = true
       }
       val controller = new Harness(authAction)

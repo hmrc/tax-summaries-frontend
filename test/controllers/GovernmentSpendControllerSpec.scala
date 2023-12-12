@@ -18,14 +18,12 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import models.SpendData
-import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
@@ -41,10 +39,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
+
     when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(model))
   }

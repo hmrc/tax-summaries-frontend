@@ -67,8 +67,7 @@ class AtsServiceSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest(),
-      None
+      FakeRequest()
     )
 
   val agentToken = AgentToken(
@@ -188,8 +187,7 @@ class AtsServiceSpec extends BaseSpec {
                   false,
                   ConfidenceLevel.L50,
                   fakeCredentials,
-                  FakeRequest(),
-                  None
+                  FakeRequest()
                 )
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)

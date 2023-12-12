@@ -49,8 +49,7 @@ trait ViewSpecBase extends BaseSpec {
     isAgentActive = true,
     L250,
     fakeCredentials,
-    fakeRequest,
-    None
+    fakeRequest
   )
 
 }

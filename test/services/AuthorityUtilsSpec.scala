@@ -41,8 +41,7 @@ class AuthorityUtilsSpec extends BaseSpec {
       false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest(),
-      None
+      FakeRequest()
     )
     val agentRequest =
       AuthenticatedRequest(
@@ -54,8 +53,7 @@ class AuthorityUtilsSpec extends BaseSpec {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest(),
-        None
+        FakeRequest()
       )
 
     val account      = AccountUtils.getAccount(request)

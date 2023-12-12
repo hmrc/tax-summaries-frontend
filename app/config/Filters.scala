@@ -16,37 +16,16 @@
 
 package config
 
-import akka.stream.Materializer
-import models.admin.SCAWrapperToggle
 import play.api.http.{EnabledFilters, HttpFilters}
-import play.api.mvc.{EssentialFilter, RequestHeader, Result}
-import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import uk.gov.hmrc.sca.connectors.ScaWrapperDataConnector
+import play.api.mvc.EssentialFilter
 import uk.gov.hmrc.sca.filters.WrapperDataFilter
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-
-class SCAWrapperDataFilter @Inject() (
-  scaWrapperDataConnector: ScaWrapperDataConnector,
-  featureFlagService: FeatureFlagService
-)(implicit val ec: ExecutionContext, override val mat: Materializer)
-    extends WrapperDataFilter(scaWrapperDataConnector)(ec, mat) {
-
-  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
-    featureFlagService.get(SCAWrapperToggle).flatMap { toggle =>
-      if (toggle.isEnabled) {
-        super.apply(f)(rh)
-      } else {
-        f(rh)
-      }
-    }
-}
 
 @Singleton
 class Filters @Inject() (
   defaultFilters: EnabledFilters,
-  wrapperDataFilter: SCAWrapperDataFilter
+  wrapperDataFilter: WrapperDataFilter
 ) extends HttpFilters {
 
   override val filters: Seq[EssentialFilter] = {

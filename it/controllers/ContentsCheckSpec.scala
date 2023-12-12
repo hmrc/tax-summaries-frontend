@@ -18,7 +18,7 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, post, urlEqualTo, urlMatching, urlPathMatching}
-import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
+import models.admin.PertaxBackendToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import play.api
@@ -159,9 +159,6 @@ class ContentsCheckSpec extends IntegrationSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future.successful(
-      FeatureFlag(SCAWrapperToggle, isEnabled = true)
-    )
 
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PertaxBackendToggle)))
       .thenReturn(Future.successful(FeatureFlag(PertaxBackendToggle, isEnabled = false)))
@@ -289,12 +286,6 @@ class ContentsCheckSpec extends IntegrationSpec {
           reportIssueText must include("Is this page not working properly? (opens in new tab)")
           reportIssueLink must include("/contact/report-technical-problem")
 
-          val ptaCss =
-            content.getElementsByTag("link").asScala.toList.filter(_.attr("href").contains("pta.css")).head.attr("href")
-          ptaCss mustBe "/annual-tax-summary/pta-frontend/assets/pta.css"
-          val ptaJs =
-            content.getElementsByTag("script").asScala.toList.filter(_.attr("src").contains("pta.js")).head.attr("src")
-          ptaJs mustBe "/annual-tax-summary/pta-frontend/assets/pta.js"
         }
       }
     }

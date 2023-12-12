@@ -53,8 +53,7 @@ class SummaryServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   def sut = new SummaryService(mockAtsService)

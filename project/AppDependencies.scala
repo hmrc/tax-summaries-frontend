@@ -18,8 +18,8 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "tax-year"                   % "3.2.0",
     "org.typelevel"              %% "cats-core"                  % "2.10.0",
     ehcache,
-    "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.3.0",
-    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.45",
+    "uk.gov.hmrc"               %% "mongo-feature-toggles-client"     % "0.4.0",
+    "uk.gov.hmrc"               %% "sca-wrapper"                      % "1.0.48",
   )
 
   val test: Seq[ModuleID] = Seq(
@@ -29,7 +29,6 @@ object AppDependencies {
     "org.mockito"                %% "mockito-scala-scalatest" % "1.17.27",
     "com.typesafe.play"          %% "play-test"               % PlayVersion.current,
     "org.scalatestplus"          %% "scalacheck-1-17"         % "3.2.17.0",
-    "com.github.tomakehurst"      % "wiremock-jre8"           % "2.35.1",
     "org.pegdown"                 % "pegdown"                 % "1.6.0",
     "com.softwaremill.quicklens" %% "quicklens"               % "1.6.1",
     "com.vladsch.flexmark"        % "flexmark-all"            % "0.62.2",

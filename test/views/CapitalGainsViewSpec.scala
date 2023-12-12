@@ -38,8 +38,7 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
       isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest(),
-      None
+      FakeRequest()
     )
   lazy val capitalGainsView: CapitalGainsView                        = inject[CapitalGainsView]
 

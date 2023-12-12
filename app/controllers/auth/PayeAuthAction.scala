@@ -21,7 +21,6 @@ import config.ApplicationConfig
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import services.MessageFrontendService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
@@ -35,8 +34,7 @@ import scala.util.control.NonFatal
 
 class PayeAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
-  cc: MessagesControllerComponents,
-  messageFrontendService: MessageFrontendService
+  cc: MessagesControllerComponents
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
@@ -63,16 +61,13 @@ class PayeAuthActionImpl @Inject() (
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
-            messageFrontendService.getUnreadMessageCount(request).flatMap { messageCount =>
-              block {
-                PayeAuthenticatedRequest(
-                  Nino(nino),
-                  isSa,
-                  credentials,
-                  request,
-                  messageCount
-                )
-              }
+            block {
+              PayeAuthenticatedRequest(
+                Nino(nino),
+                isSa,
+                credentials,
+                request
+              )
             }
           case _                                           => throw new RuntimeException("Auth retrieval failed for user")
         } recover {

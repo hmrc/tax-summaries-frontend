@@ -19,22 +19,18 @@ package views
 import com.google.inject.ImplementedBy
 import config.ApplicationConfig
 import models.ActingAsAttorneyFor
-import models.admin.SCAWrapperToggle
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.ServiceURLs
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.sca.models.BannerConfig
 import uk.gov.hmrc.sca.services.WrapperService
 import views.html.components.{AdditionalJavascript, HeadBlock}
 import views.html.includes.sidebar
-import views.html.nonScaWrapperMain
-
 import javax.inject.Inject
-import scala.concurrent.Await
-import scala.concurrent.duration.{Duration, SECONDS}
 
 @ImplementedBy(classOf[MainTemplateImpl])
 trait MainTemplate {
@@ -59,7 +55,6 @@ class MainTemplateImpl @Inject() (
   appConfig: ApplicationConfig,
   featureFlagService: FeatureFlagService,
   wrapperService: WrapperService,
-  oldLayout: nonScaWrapperMain,
   headBlock: HeadBlock,
   sidebar: sidebar,
   scripts: AdditionalJavascript
@@ -77,51 +72,33 @@ class MainTemplateImpl @Inject() (
     headerSectionNeeded: Boolean = false
   )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
 
-    val scaWrapperToggle =
-      Await.result(featureFlagService.get(SCAWrapperToggle), Duration(appConfig.SCAWrapperFutureTimeout, SECONDS))
-    val fullPageTitle    = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
+    val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
-    if (scaWrapperToggle.isEnabled) {
-      logger.debug(s"SCA Wrapper layout used for request `${request.uri}``")
+    val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
 
-      val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
-
-      wrapperService.layout(
-        content = contentBlock,
-        pageTitle = Some(fullPageTitle),
-        serviceNameKey = Some(messages("generic.ats")),
-        serviceNameUrl = Some(appConfig.homePageUrl),
-        sidebarContent = Some(sidebar(beforeContentHtml)),
-        signoutUrl = controllers.routes.AccountController.signOut.url,
-        timeOutUrl = Some(controllers.routes.AccountController.sessionExpired.url),
-        keepAliveUrl = controllers.routes.AccountController.keepAlive.url,
-        styleSheets = Seq(headBlock()),
-        bannerConfig = BannerConfig(
-          showAlphaBanner = false,
-          showBetaBanner = true,
-          showHelpImproveBanner = true
-        ),
-        fullWidth = false,
-        hideMenuBar = !showAccountMenu,
-        disableSessionExpired = disableSessionExpired,
-        showBackLinkJS = showBackLink,
-        scripts = Seq(scripts())
-      )(messages, HeaderCarrierConverter.fromRequest(request), request)
-
-    } else {
-      logger.debug(s"Old layout used for request `${request.uri}``")
-      oldLayout(
-        fullPageTitle,
-        disableSessionExpired,
-        additionalScripts,
-        actingAttorney,
-        beforeContentHtml,
-        pageHeading,
-        showBackLink,
-        headerSectionNeeded
-      )(
-        contentBlock
-      )
-    }
+    wrapperService.standardScaLayout(
+      content = contentBlock,
+      pageTitle = Some(fullPageTitle),
+      serviceNameKey = Some(messages("generic.ats")),
+      serviceURLs = ServiceURLs(
+        serviceUrl = Some(appConfig.homePageUrl),
+        signOutUrl = Some(controllers.routes.AccountController.signOut.url),
+        accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(request.uri))
+      ),
+      sidebarContent = Some(sidebar(beforeContentHtml)),
+      timeOutUrl = Some(controllers.routes.AccountController.sessionExpired.url),
+      keepAliveUrl = controllers.routes.AccountController.keepAlive.url,
+      styleSheets = Seq(headBlock()),
+      bannerConfig = BannerConfig(
+        showAlphaBanner = false,
+        showBetaBanner = true,
+        showHelpImproveBanner = true
+      ),
+      fullWidth = false,
+      hideMenuBar = !showAccountMenu,
+      disableSessionExpired = disableSessionExpired,
+      showBackLinkJS = showBackLink,
+      scripts = Seq(scripts())
+    )(messages, HeaderCarrierConverter.fromRequest(request), request)
   }
 }

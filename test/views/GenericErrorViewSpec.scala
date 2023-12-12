@@ -40,8 +40,7 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL"),
-    None
+    FakeRequest().withSession("TAXS_USER_TYPE" -> "PORTAL")
   )
 
   val languageEn: Lang = Lang("en")
