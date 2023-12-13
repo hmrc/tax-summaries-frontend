@@ -42,8 +42,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       isAgentActive = false,
       ConfidenceLevel.L200,
       fakeCredentials,
-      FakeRequest(),
-      None
+      FakeRequest()
     )
   lazy val scottishTableView: ScottishTableView                      = inject[ScottishTableView]
   lazy val savingsTableView: SavingsTableView                        = inject[SavingsTableView]

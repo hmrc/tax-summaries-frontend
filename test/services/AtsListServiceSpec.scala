@@ -105,8 +105,7 @@ class AtsListServiceSpec extends BaseSpec {
       isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,
-      FakeRequest(),
-      None
+      FakeRequest()
     )
   implicit val hc: HeaderCarrier                                     = new HeaderCarrier
 
@@ -313,8 +312,7 @@ class AtsListServiceSpec extends BaseSpec {
             isAgentActive = false,
             ConfidenceLevel.L50,
             fakeCredentials,
-            FakeRequest(),
-            None
+            FakeRequest()
           )
 
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
@@ -380,8 +378,7 @@ class AtsListServiceSpec extends BaseSpec {
           isAgentActive = false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          FakeRequest(),
-          None
+          FakeRequest()
         )
 
       "Return the ats year list data for a user from the cache" in {

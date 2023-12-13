@@ -17,13 +17,11 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
-import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel, Summary}
@@ -50,10 +48,6 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
     when(
       mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request))
     ) thenReturn Future
@@ -64,17 +58,13 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
     "return a successful response for a valid request" in {
 
-      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-        .successful(
-          FeatureFlag(SCAWrapperToggle, isEnabled = false)
-        )
       val result   = sut.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title          must include(
         Messages("ats.index.html.title")
       )
-      contentAsString(result) must include("contact/beta-feedback-unauthenticated")
+      contentAsString(result) must include("contact/beta-feedback")
     }
 
     "display an error page for an invalid request" in {

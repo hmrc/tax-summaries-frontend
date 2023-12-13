@@ -18,7 +18,6 @@ package views
 
 import config.ApplicationConfig
 import controllers.auth.AuthenticatedRequest
-import models.admin.SCAWrapperToggle
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
@@ -27,13 +26,9 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
-
-import scala.concurrent.Future
-import scala.util.Random
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
@@ -47,8 +42,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
   lazy val atsMergePageView: AtsMergePageView = inject[AtsMergePageView]
@@ -63,8 +57,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
   val requestWithCL200: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
@@ -76,8 +69,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     isAgentActive = false,
     ConfidenceLevel.L200,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
   def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
@@ -92,10 +84,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
+
     when(mockAppConfig.payeShuttered).thenReturn(false)
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.taxYear).thenReturn(taxYear)
@@ -436,33 +425,6 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
       )
       assert(result.getElementById(s"year-${taxYear - 3}-PAYE").hasAttr("checked"))
-    }
-
-    "show the number of unread messages in the nav menu" in {
-
-      when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-        .successful(
-          FeatureFlag(SCAWrapperToggle, isEnabled = false)
-        )
-      val messageCount                                                   = Random.between(1, 100)
-      implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
-        requestWithCL200.copy(unreadMessageCount = Some(messageCount))
-
-      val result = Jsoup
-        .parse(
-          view(
-            AtsMergePageViewModel(
-              AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 2, taxYear - 1)),
-              List(taxYear - 3, taxYear),
-              mockAppConfig,
-              ConfidenceLevel.L200
-            ),
-            atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear - 3))
-          )(request)
-        )
-        .body
-
-      result.html must include(s"""<span class="hmrc-notification-badge">$messageCount</span>""")
     }
   }
 }

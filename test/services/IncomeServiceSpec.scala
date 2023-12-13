@@ -55,8 +55,7 @@ class IncomeServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   def sut = new IncomeService(mockAtsService) with MockitoSugar

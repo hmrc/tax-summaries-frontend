@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
-import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.i18n.Messages
@@ -25,7 +24,6 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
@@ -77,10 +75,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
+
     when(
       mockAllowanceService.getAllowances(any())(any(), any())
     ) thenReturn Future

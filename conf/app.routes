@@ -1,5 +1,7 @@
 # TAXS routes
 ->      /hmrc-frontend                                          hmrcfrontend.Routes
+->      /sca                                                    sca.Routes
+
 GET     /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
 
 GET     /                                                      controllers.AtsMergePageController.onPageLoad
@@ -44,5 +46,3 @@ GET     /paye/service-unavailable                              controllers.paye.
 
 GET     /keepalive                                             controllers.AccountController.keepAlive
 GET     /session-expired                                       controllers.AccountController.sessionExpired
-
-->      /pta-frontend                                             ptafrontend.Routes

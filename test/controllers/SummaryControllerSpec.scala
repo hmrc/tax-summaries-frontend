@@ -17,14 +17,12 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
-import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants._
 import utils.{BaseSpec, ControllerBaseSpec}
 import view_models._
@@ -76,10 +74,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
+
     when(mockSummaryService.getSummaryData(any())(any(), any()))
       .thenReturn(Future.successful(baseModel))
   }

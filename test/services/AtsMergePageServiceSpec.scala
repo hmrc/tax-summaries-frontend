@@ -84,8 +84,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     FakeRequest(
       "GET",
       controllers.routes.AtsMergePageController.onPageLoad.toString + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg"
-    ),
-    None
+    )
   )
 
   "AtsMergePageService" when {
@@ -105,8 +104,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest("GET", "http://test.com?ref=PORTAL&id=something"),
-              None
+              FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
             )
 
           when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
@@ -139,8 +137,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest(),
-              None
+              FakeRequest()
             )
 
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
@@ -168,8 +165,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest(),
-              None
+              FakeRequest()
             )
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
 
@@ -194,8 +190,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest(),
-              None
+              FakeRequest()
             )
 
           when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
@@ -220,8 +215,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest(),
-              None
+              FakeRequest()
             )
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
@@ -245,8 +239,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               true,
               ConfidenceLevel.L50,
               fakeCredentials,
-              FakeRequest(),
-              None
+              FakeRequest()
             )
           when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(

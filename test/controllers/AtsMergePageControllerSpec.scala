@@ -19,7 +19,6 @@ package controllers
 import config.ApplicationConfig
 import controllers.auth.{AuthenticatedRequest, FakeMergePageAuthAction}
 import models.AtsErrorResponse
-import models.admin.SCAWrapperToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
@@ -30,7 +29,6 @@ import play.api.test.Helpers.{contentAsString, _}
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testNino, testUtr}
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
@@ -60,8 +58,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   val successViewModel: AtsMergePageViewModel =
@@ -69,10 +66,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
   override def beforeEach(): Unit = {
     reset(mockAppConfig, mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
+
     when(mockAppConfig.saShuttered).thenReturn(false)
     when(mockAppConfig.payeShuttered).thenReturn(false)
   }
@@ -103,8 +97,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = true,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad.toString + "?ref=PORTAL"),
-        None
+        FakeRequest("GET", controllers.routes.AtsMergePageController.onPageLoad.toString + "?ref=PORTAL")
       )
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
@@ -162,8 +155,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
-        None
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -187,8 +179,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
-        None
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -212,8 +203,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
-        None
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -237,8 +227,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
-        None
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -262,8 +251,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
-        None
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)
@@ -287,8 +275,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*),
-        None
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
       )
 
       val result = sut.onSubmit(requestWithQuery)

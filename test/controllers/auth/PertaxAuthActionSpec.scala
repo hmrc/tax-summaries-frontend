@@ -20,13 +20,12 @@ import cats.data.EitherT
 import connectors.PertaxConnector
 import controllers.paye.routes
 import models.PertaxApiResponse
-import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
+import models.admin.PertaxBackendToggle
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, REQUEST_TIMEOUT, SEE_OTHER, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, status}
-import services.MessageFrontendService
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
@@ -47,8 +46,6 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   val mockPertaxConnector: PertaxConnector = mock[PertaxConnector]
 
-  val mockMessageFrontendService: MessageFrontendService = mock[MessageFrontendService]
-
   val unauthorisedRoute: String = routes.PayeErrorController.notAuthorised.url
 
   class Harness(authJourney: AuthJourney) extends InjectedController {
@@ -59,10 +56,6 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockAuthConnector, mockPertaxConnector, mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
 
     when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(PertaxBackendToggle))) thenReturn Future
       .successful(
@@ -73,8 +66,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   val payeAuthAction = new PayeAuthActionImpl(
     mockAuthConnector,
-    FakePayeAuthAction.mcc,
-    mockMessageFrontendService
+    FakePayeAuthAction.mcc
   )
 
   val pertaxAuthAction = new PertaxAuthActionImpl(
@@ -115,8 +107,6 @@ class PertaxAuthActionSpec extends BaseSpec {
           FeatureFlag(PertaxBackendToggle, isEnabled = true)
         )
 
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
-
       val result = controller.onPageLoad()(FakeRequest())
       status(result) mustBe OK
     }
@@ -143,8 +133,6 @@ class PertaxAuthActionSpec extends BaseSpec {
             Future.successful(Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "", None, Some("/redirect"))))
           )
         )
-
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
       val result = controller.onPageLoad()(FakeRequest(GET, "/blahblah?redirectUrl=testRedirect"))
       status(result) mustBe SEE_OTHER
@@ -173,8 +161,6 @@ class PertaxAuthActionSpec extends BaseSpec {
             Future.successful(Right(PertaxApiResponse("", "", None)))
           )
         )
-
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) mustBe INTERNAL_SERVER_ERROR
@@ -212,8 +198,6 @@ class PertaxAuthActionSpec extends BaseSpec {
               Future.successful(Left(UpstreamErrorResponse("", errorResponse)))
             )
           )
-
-        when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
         val result = controller.onPageLoad()(FakeRequest())
         status(result) mustBe INTERNAL_SERVER_ERROR

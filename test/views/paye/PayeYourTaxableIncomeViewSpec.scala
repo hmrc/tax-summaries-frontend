@@ -35,8 +35,7 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants with
       testNino,
       isSa = false,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending"),
-      None
+      FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
     )
 
   val payeAtsTestData: PayeAtsTestData                          = inject[PayeAtsTestData]

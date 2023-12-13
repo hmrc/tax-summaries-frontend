@@ -16,14 +16,13 @@
 
 package config
 
-import models.admin.{PertaxBackendToggle, SCAWrapperToggle}
+import models.admin.PertaxBackendToggle
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlagNamesLibrary
 
 class ApplicationStartUp {
   FeatureFlagNamesLibrary.addFlags(
     List(
-      PertaxBackendToggle,
-      SCAWrapperToggle
+      PertaxBackendToggle
     )
   )
 }

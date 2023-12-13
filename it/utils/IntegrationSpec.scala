@@ -19,7 +19,6 @@ package utils
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, put, urlEqualTo, urlMatching}
 import config.ApplicationConfig
-import models.admin.SCAWrapperToggle
 import org.mockito.scalatest.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -30,10 +29,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.http.cache.client.CacheMap
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class IntegrationSpec
     extends AnyWordSpec
@@ -65,10 +63,6 @@ class IntegrationSpec
 
     super.beforeEach()
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
 
     val authResponse =
       s"""

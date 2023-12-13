@@ -17,7 +17,6 @@
 package utils
 
 import config.ApplicationConfig
-import models.admin.SCAWrapperToggle
 import org.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -28,10 +27,9 @@ import play.api
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 trait BaseSpec
     extends AnyWordSpec
@@ -51,15 +49,6 @@ trait BaseSpec
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(org.mockito.ArgumentMatchers.eq(SCAWrapperToggle))) thenReturn Future
-      .successful(
-        FeatureFlag(SCAWrapperToggle, isEnabled = true)
-      )
-  }
 
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .overrides(

@@ -54,8 +54,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
     false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear"),
-    None
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   val sut = new CapitalGainsService(mockAtsService) with MockitoSugar

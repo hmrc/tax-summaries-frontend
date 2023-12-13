@@ -25,7 +25,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
-import services.{CitizenDetailsService, FailedMatchingDetailsResponse, MessageFrontendService, SucccessMatchingDetailsResponse}
+import services.{CitizenDetailsService, FailedMatchingDetailsResponse, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{Generator, SaUtr, SaUtrGenerator, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -50,13 +50,12 @@ class SelfAssessmentActionSpec
 
   val unauthorizedRoute = controllers.routes.ErrorController.notAuthorised.url
 
-  val mockAuthConnector: DefaultAuthConnector            = mock[DefaultAuthConnector]
-  val citizenDetailsService                              = mock[CitizenDetailsService]
-  val ninoAuthAction                                     = mock[NinoAuthAction]
-  val mockMessageFrontendService: MessageFrontendService = mock[MessageFrontendService]
+  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  val citizenDetailsService                   = mock[CitizenDetailsService]
+  val ninoAuthAction                          = mock[NinoAuthAction]
 
   val action =
-    new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig, mockMessageFrontendService)
+    new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig)
 
   class FakeSelfAssessmentAction(utr: Option[SaUtr], uar: Option[Uar]) extends ControllerBaseSpec with AuthAction {
 
@@ -74,8 +73,7 @@ class SelfAssessmentActionSpec
           uar.isDefined,
           ConfidenceLevel.L50,
           fakeCredentials,
-          request,
-          None
+          request
         )
       )
   }
@@ -163,7 +161,6 @@ class SelfAssessmentActionSpec
 
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
       when(citizenDetailsService.getMatchingDetails(any())(any())).thenReturn(Future(FailedMatchingDetailsResponse))
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
@@ -180,7 +177,6 @@ class SelfAssessmentActionSpec
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
       when(citizenDetailsService.getMatchingDetails(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
@@ -211,7 +207,6 @@ class SelfAssessmentActionSpec
       when(ninoAuthAction.getNino()(any())).thenReturn(Future(SuccessAtsNino(nino.toString())))
       when(citizenDetailsService.getMatchingDetails(any())(any()))
         .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
-      when(mockMessageFrontendService.getUnreadMessageCount(any())).thenReturn(Future.successful(None))
 
       val authAction = new FakeSelfAssessmentAction(None, None)
       val controller = new Harness(selfAssessmentAction = action, minAuthAction = authAction)
