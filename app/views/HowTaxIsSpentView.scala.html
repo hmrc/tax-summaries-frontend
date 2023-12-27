@@ -16,11 +16,13 @@
 
 @import helpers.{H1, P}
 @import views.MainTemplate
+@import utils.HtmlFormatter
 
 @this(
     main: MainTemplate,
     h1: H1,
-    p: P
+    p: P,
+    htmlFormatter: HtmlFormatter
 )
 
 @(  spendData: Seq[(String, Double)],
@@ -42,35 +44,35 @@
         </div>
     </div>
 
-    @h1("ats.howYourTaxWasSpent.heading")
+    @h1(msg = "paye.ats.treasury_spending.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + (taxYear-1).toString),
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + taxYear.toString))))
 
-    @p(HtmlContent(messages("ats.howYourTaxWasSpent.subheading", (taxYear-1).toString, taxYear.toString)))
-    @p(Text(messages("ats.howYourTaxWasSpent.caveat")))
+    @p(Text(messages("paye.ats.treasury_spending.introParagraph")), elmId=Some("intro-paragraph"))
 
-
-    <table id="howTaxIsSpentTable" class="govuk-table">
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">@messages("generic.description")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("ats.howYourTaxWasSpent.table.percentage.title")</th>
-        </tr>
-        </thead>
-        <tbody class="govuk-table__body">
+    <dl id="tax-spent" class="govuk-summary-list">
+        <div id="tax-spent-header" class="govuk-summary-list__row--no-actions govuk-heading-m">
+            <dt class="govuk-summary-list__key">@messages("generic.description")</dt>
+            <dd class="govuk-summary-list__value">@messages("ats.howYourTaxWasSpent.table.percentage.title")</dd>
+        </div>
 
         @{
             spendData.map { case (name, percentage) =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                        {messages(s"ats.treasury_spending.table.$name")}
-                    </td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">
-                        {percentage}%
-                    </td>
-                </tr>
+                <div class="govuk-summary-list__row--no-actions content">
+                    <dt id="@rowModel.category" class="govuk-summary-list__key">{messages(s"ats.treasury_spending.table.$name")}
+                    </dt>
+                    <dd class="govuk-summary-list__value">{percentage}%</dd>
+                </div>
+                <div aria-hidden="true">
+                    <dt class="graph-green-bar" style={s"width: $percentage%"}></dt>
+                    <dd class="graph-grey-bar"></dd>
+                </div>
             }
 
         }
+    </dl>
 
-        </tbody>
-    </table>
+    @p(Text(messages("paye.ats.treasury_spending.para1")), elmId=Some("paragraph-1"))
+
+    @p(Text(messages("paye.ats.treasury_spending.para4")), elmId=Some("paragraph-4"))
 }
