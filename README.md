@@ -19,12 +19,12 @@ This service is written in [Scala] and [Play], so needs the latest [JRE] to run.
 Authentication
 ------------
 
+This user logs into this service using [Government Gateway]
+
 Testing
 ------------
 Please run Unit tests by running `sbt test` and `sbt it:test`
 
-
-This user logs into this service using [Government Gateway]
 
 
 ### License
