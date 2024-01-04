@@ -1,17 +1,12 @@
-import sbt._
-import uk.gov.hmrc.DefaultBuildSettings._
-import com.typesafe.sbt.web.Import._
-import net.ground5hark.sbt.concat.Import._
-import com.typesafe.sbt.uglify.Import._
-import com.typesafe.sbt.digest.Import._
+import sbt.*
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.*
 
 val appName = "tax-summaries-frontend"
 
-lazy val plugins: Seq[Plugins] = Seq(
-  play.sbt.PlayScala,
-  SbtDistributablesPlugin,
-  PlayNettyServer
-)
+ThisBuild / majorVersion := 2
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalafmtOnCompile := true
 
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
@@ -19,35 +14,17 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;views.html.*;app.Routes.*;prod.*;uk.gov.hmrc.*;testOnlyDoNotUseInAppConf.*;config.*;models.*;connectors.*;awrs.app.*;view_models.*;views.helpers.*;utils.validation.*;utils.prevalidation.*;",
     ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := false,
-    ScoverageKeys.coverageHighlighting := true,
-    Test / parallelExecution := false
+    ScoverageKeys.coverageHighlighting := true
   )
 }
-
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(plugins: _*)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
     PlayKeys.playDefaultPort := 9217,
-    PlayKeys.devSettings += "play.server.provider" -> "play.core.server.NettyServerProvider",
     scoverageSettings,
     scalaSettings,
-    scalaVersion := "2.13.8",
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
-    defaultSettings(),
-    majorVersion := 1,
-    libraryDependencies ++= AppDependencies.all,
-    retrieveManaged := true,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    resolvers ++= Seq(Resolver.jcenterRepo),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
-    pipelineStages := Seq(digest),
-    Assets / pipelineStages := Seq(concat, uglify),
-    scalafmtOnCompile := true,
-    uglify / includeFilter := GlobFilter("ats-*.js"),
-    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+    libraryDependencies ++= AppDependencies.all
   )
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings())
   .settings(
     scalacOptions ++= Seq(
       "-feature",
@@ -63,6 +40,24 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(routesImport ++= Seq("models.admin._"))
 
+Test / Keys.fork := true
+Test / parallelExecution := true
+
+lazy val it = project
+  .enablePlugins(play.sbt.PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(
+    libraryDependencies ++= AppDependencies.test,
+    DefaultBuildSettings.itSettings()
+  )
+
+lazy val a11y = project
+  .enablePlugins(play.sbt.PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(
+    libraryDependencies ++= AppDependencies.test,
+    DefaultBuildSettings.itSettings()
+  )
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",

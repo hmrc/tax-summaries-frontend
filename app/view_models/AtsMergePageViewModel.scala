@@ -57,12 +57,12 @@ case class AtsMergePageViewModel(
   }
 
   val showContinueButton: Boolean = showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
-  val name                        = s"${saData.forename} ${saData.surname}"
-  val titleMsg                    = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
+  val name: String                = s"${saData.forename} ${saData.surname}"
+  val titleMsg: String            = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
   else {
     "merge.page.ats.select_tax_year.title"
   }
-  val subtitleMsg                 = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
+  val subtitleMsg: String         = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
   else {
     "merge.page.ats.select_tax_year.title"
   }

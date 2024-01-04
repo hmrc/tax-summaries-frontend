@@ -19,6 +19,7 @@ package services
 import controllers.auth.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -45,9 +46,9 @@ class AllowanceServiceSpec extends BaseSpec {
 
   val noAtsaViewModel: NoATSViewModel = NoATSViewModel(taxYear)
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val request = AuthenticatedRequest(
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -61,7 +62,7 @@ class AllowanceServiceSpec extends BaseSpec {
 
   val mockAtsService: AtsService = mock[AtsService]
 
-  def sut = new AllowanceService(mockAtsService) with MockitoSugar
+  def sut: AllowanceService with MockitoSugar = new AllowanceService(mockAtsService) with MockitoSugar
 
   "AllowanceService.getAllowances" must {
 

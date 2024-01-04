@@ -17,12 +17,13 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.FakePayeAuthAction
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.errors.PayeGenericErrorView
@@ -32,9 +33,11 @@ import scala.concurrent.Future
 
 class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
-  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
+    "/annual-tax-summary/paye/treasury-spending"
+  )
 
-  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+  lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
   val sut =
     new PayeGovernmentSpendController(

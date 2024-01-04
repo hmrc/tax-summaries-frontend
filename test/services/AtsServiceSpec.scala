@@ -21,6 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
@@ -35,7 +36,7 @@ import scala.concurrent.Future
 
 class AtsServiceSpec extends BaseSpec {
 
-  val data = {
+  val data: AtsData = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
     Json.fromJson[AtsData](json).get
   }
@@ -46,7 +47,7 @@ class AtsServiceSpec extends BaseSpec {
   val mockAuthUtils: AuthorityUtils              = mock[AuthorityUtils]
   val mockAccountUtils: AccountUtils             = mock[AccountUtils]
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
     reset(mockDataCacheConnector)
     reset(mockAuditService)
@@ -55,9 +56,9 @@ class AtsServiceSpec extends BaseSpec {
 
   }
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  implicit val request =
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
@@ -70,15 +71,16 @@ class AtsServiceSpec extends BaseSpec {
       FakeRequest()
     )
 
-  val agentToken = AgentToken(
+  val agentToken: AgentToken = AgentToken(
     agentUar = testUar,
     clientUtr = testUtr,
     timestamp = 0
   )
 
-  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
-    override val accountUtils: AccountUtils = mockAccountUtils
-  }
+  def sut: AtsService =
+    new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
+      override val accountUtils: AccountUtils = mockAccountUtils
+    }
 
   case class FakeViewModel(str: String) extends GenericViewModel
 

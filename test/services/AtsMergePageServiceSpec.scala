@@ -24,6 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
 
-  val data = {
+  val data: AtsData = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
     Json.fromJson[AtsData](json).get
   }
@@ -46,12 +47,12 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
   val mockAtsListService: AtsListService         = mock[AtsListService]
 
-  override def beforeEach() =
+  override def beforeEach(): Unit =
     reset(mockDataCacheConnector)
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val agentToken = AgentToken(
+  val agentToken: AgentToken = AgentToken(
     agentUar = testUar,
     clientUtr = testUtr,
     timestamp = 0
@@ -70,9 +71,9 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     )
   )
 
-  val payeDataResponse = List(2018, 2019)
+  val payeDataResponse: List[Int] = List(2018, 2019)
 
-  val agentRequestWithQuery = AuthenticatedRequest(
+  val agentRequestWithQuery: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),

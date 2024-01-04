@@ -19,6 +19,7 @@ package config
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.Configuration
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import views.ViewSpecBase
 import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
@@ -32,7 +33,7 @@ class ErrorHandlerSpec extends ViewSpecBase {
     inject[PageNotFoundTemplateView]
   )
 
-  implicit val request = FakeRequest()
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   "notFoundTemplate" in {
     def notFoundView: Document = Jsoup.parse(errorHandler.notFoundTemplate(request).toString())
