@@ -102,7 +102,6 @@ class AtsListService @Inject() (
     val response = (account: @unchecked) match {
       case agent: Uar        =>
         middleConnector.connectToAtsListOnBehalfOf(
-          agent,
           requestedUTR,
           appConfig.taxYear,
           appConfig.maxTaxYearsTobeDisplayed

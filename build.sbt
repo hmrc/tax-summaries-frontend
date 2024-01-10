@@ -28,6 +28,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     scalacOptions ++= Seq(
       "-feature",
+      "-Ywarn-dead-code",
+      "-Wunused:params",
       "-Werror",
       "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
       "-Wconf:cat=unused-imports&site=<empty>:s",
@@ -42,6 +44,9 @@ lazy val microservice = Project(appName, file("."))
 
 Test / Keys.fork := true
 Test / parallelExecution := true
+Test / scalacOptions --= Seq("-Ywarn-dead-code")
+
+
 
 lazy val it = project
   .enablePlugins(play.sbt.PlayScala)
@@ -56,7 +61,8 @@ lazy val a11y = project
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(
     libraryDependencies ++= AppDependencies.test,
-    DefaultBuildSettings.itSettings()
+    DefaultBuildSettings.itSettings(),
+    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test")
   )
 
 TwirlKeys.templateImports ++= Seq(
@@ -65,6 +71,6 @@ TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
 )
 
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
-addCommandAlias("testAll", ";coverage ;test ;it:test ;coverageReport")
-addCommandAlias("testAllWithScalafmt", ";scalafmtAll ;testAll")
+//addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
+//addCommandAlias("testAll", ";coverage ;test ;it:test ;coverageReport")
+//addCommandAlias("testAllWithScalafmt", ";scalafmtAll ;testAll")

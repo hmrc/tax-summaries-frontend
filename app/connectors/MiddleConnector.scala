@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import models.{AtsData, AtsListData, AtsResponse}
 import play.api.Logging
-import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
+import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
@@ -38,7 +38,7 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
-  def connectToAtsOnBehalfOf(uar: Uar, requestedUTR: SaUtr, taxYear: Int)(implicit
+  def connectToAtsOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
     hc: HeaderCarrier
   ): Future[AtsResponse] =
     connectToAts(requestedUTR, taxYear)
@@ -46,7 +46,7 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
   def connectToAtsList(UTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
 
-  def connectToAtsListOnBehalfOf(uar: Uar, requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
+  def connectToAtsListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
     hc: HeaderCarrier
   ): Future[AtsResponse] =
     connectToAtsList(requestedUTR, endYear, numberOfYears)

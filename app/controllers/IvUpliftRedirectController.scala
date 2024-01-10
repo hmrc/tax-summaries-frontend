@@ -22,11 +22,10 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class IvUpliftRedirectController @Inject() (mcc: MessagesControllerComponents)(
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext
+  appConfig: ApplicationConfig
 ) extends FrontendController(mcc) {
 
   def upliftConfidenceLevel: Action[AnyContent] = Action.async {

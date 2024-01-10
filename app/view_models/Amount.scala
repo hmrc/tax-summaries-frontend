@@ -26,7 +26,6 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
   private def format(
     decimalNumber: Int,
     roundingMode: BigDecimal.RoundingMode.Value,
-    setMinFractionDigits: Int = 0,
     amount: BigDecimal = this.amount
   ) = {
     val formatter = NumberFormat.getNumberInstance(Locale.UK)
@@ -46,7 +45,7 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
 
   def toCreditString: String = format(0, BigDecimal.RoundingMode.UP)
 
-  def toTwoDecimalString: String = format(2, BigDecimal.RoundingMode.DOWN, 2)
+  def toTwoDecimalString: String = format(2, BigDecimal.RoundingMode.DOWN)
 
   def toHundredthsString: String = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 

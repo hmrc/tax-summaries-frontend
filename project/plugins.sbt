@@ -8,4 +8,4 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0" exclude("org.
 addSbtPlugin("org.scoverage"       % "sbt-scoverage"            % "2.0.9")
 addSbtPlugin("org.scalameta"       % "sbt-scalafmt"             % "2.5.0")
 addSbtPlugin("com.typesafe.sbt"    % "sbt-digest"               % "1.1.4")
-addSbtPlugin("uk.gov.hmrc"         % "sbt-accessibility-linter" % "0.38.0")
+addSbtPlugin("uk.gov.hmrc"         % "sbt-accessibility-linter" % "1.0.0-SNAPSHOT")

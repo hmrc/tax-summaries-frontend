@@ -136,8 +136,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       verify(mockAuditService, times(1)).sendEvent(
         eqTo("TxSuccessful"),
-        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYearMinus1.toString)),
-        any()
+        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYearMinus1.toString))
       )(any())
     }
   }
