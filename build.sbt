@@ -56,6 +56,7 @@ lazy val it = project
     DefaultBuildSettings.itSettings()
   )
 
+/*
 lazy val a11y = project
   .enablePlugins(play.sbt.PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
@@ -64,13 +65,10 @@ lazy val a11y = project
     DefaultBuildSettings.itSettings(),
     A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test")
   )
+*/
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",
   "uk.gov.hmrc.hmrcfrontend.views.html.components._",
   "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
 )
-
-//addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
-//addCommandAlias("testAll", ";coverage ;test ;it:test ;coverageReport")
-//addCommandAlias("testAllWithScalafmt", ";scalafmtAll ;testAll")
