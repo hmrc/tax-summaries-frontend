@@ -100,7 +100,7 @@ class AtsListService @Inject() (
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
     val response = (account: @unchecked) match {
-      case agent: Uar        =>
+      case _: Uar            =>
         middleConnector.connectToAtsListOnBehalfOf(
           requestedUTR,
           appConfig.taxYear,

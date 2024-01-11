@@ -27,9 +27,13 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(
     scalacOptions ++= Seq(
+      "-unchecked",
       "-feature",
-      "-Ywarn-dead-code",
-      "-Wunused:params",
+      "-Xlint:_",
+      "-Wdead-code",
+      "-Wunused:_",
+      "-Wextra-implicit",
+      "-Wvalue-discard",
       "-Werror",
       "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
       "-Wconf:cat=unused-imports&site=<empty>:s",
@@ -44,7 +48,7 @@ lazy val microservice = Project(appName, file("."))
 
 Test / Keys.fork := true
 Test / parallelExecution := true
-Test / scalacOptions --= Seq("-Ywarn-dead-code")
+Test / scalacOptions --= Seq("-Wdead-code", "-Wvalue-discard")
 
 
 

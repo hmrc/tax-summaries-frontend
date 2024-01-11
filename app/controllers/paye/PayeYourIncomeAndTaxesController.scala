@@ -56,7 +56,7 @@ class PayeYourIncomeAndTaxesController @Inject() (
             logger.error(s"Internal server error ${exception.getMessage}", exception)
             InternalServerError(exception.getMessage)
         }
-      case Left(response: AtsNotFoundResponse) =>
+      case Left(_: AtsNotFoundResponse)        =>
         Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
       case _                                   => InternalServerError(payeGenericErrorView())
     }
