@@ -21,7 +21,7 @@ import play.api.libs.json._
 sealed abstract class AtsType
 object AtsType {
 
-  implicit val writes = new Writes[AtsType] {
+  implicit val writes: Writes[AtsType] = new Writes[AtsType] {
     override def writes(o: AtsType): JsValue =
       o match {
         case SA   => JsString("SA")
@@ -30,7 +30,7 @@ object AtsType {
       }
   }
 
-  implicit val reads = new Reads[AtsType] {
+  implicit val reads: Reads[AtsType] = new Reads[AtsType] {
     override def reads(json: JsValue): JsResult[AtsType] =
       json match {
         case JsString("SA")   => JsSuccess(SA)

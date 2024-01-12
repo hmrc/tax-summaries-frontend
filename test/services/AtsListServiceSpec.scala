@@ -81,11 +81,11 @@ class AtsListServiceSpec extends BaseSpec {
     )
 
     when(
-      mockMiddleConnector.connectToAtsListOnBehalfOf(any[Uar], any[SaUtr], any(), any())(any[HeaderCarrier])
+      mockMiddleConnector.connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(any[HeaderCarrier])
     ) thenReturn Future
       .successful(AtsSuccessResponseWithPayload[AtsListData](data))
 
-    when(mockAuditService.sendEvent(any(), any(), any())(any())) thenReturn Future.successful(
+    when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(
       AuditResult.Success
     )
 
@@ -319,7 +319,7 @@ class AtsListServiceSpec extends BaseSpec {
           result mustBe Right(data)
         }
 
-        verify(mockAuditService, never).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+        verify(mockAuditService, never).sendEvent(any[String], any[Map[String, String]])(
           any()
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -336,7 +336,7 @@ class AtsListServiceSpec extends BaseSpec {
       whenReady(sut.getAtsYearList) { result =>
         result mustBe Right(data)
 
-        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]])(
           any()
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -356,7 +356,7 @@ class AtsListServiceSpec extends BaseSpec {
       whenReady(sut.getAtsYearList) { result =>
         result mustBe Right(data)
 
-        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]])(
           any()
         )
         verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -389,7 +389,7 @@ class AtsListServiceSpec extends BaseSpec {
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never)
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr], any(), any())(
+          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -406,7 +406,7 @@ class AtsListServiceSpec extends BaseSpec {
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
             .storeAtsListForSession(any())(any(), any())
-          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr], any(), any())(
+          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -423,7 +423,7 @@ class AtsListServiceSpec extends BaseSpec {
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, times(1))
             .storeAtsListForSession(any())(any(), any())
-          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr], any(), any())(
+          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -443,7 +443,7 @@ class AtsListServiceSpec extends BaseSpec {
           val result = sut.getAtsYearList.futureValue.left.value
           result mustBe an[AtsNotFoundResponse]
 
-          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]])(
             any()
           )
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -465,7 +465,7 @@ class AtsListServiceSpec extends BaseSpec {
           val result = sut.getAtsYearList.futureValue.left.value
           result mustBe an[AtsErrorResponse]
 
-          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]], any[Option[String]])(
+          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]])(
             any()
           )
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
@@ -489,7 +489,7 @@ class AtsListServiceSpec extends BaseSpec {
           verify(mockDataCacheConnector, times(1)).fetchAndGetAtsListForSession(any[HeaderCarrier])
           verify(mockDataCacheConnector, never)
             .storeAtsListForSession(eqTo(data))(any[HeaderCarrier], any[ExecutionContext])
-          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[Uar], any[SaUtr], any(), any())(
+          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }

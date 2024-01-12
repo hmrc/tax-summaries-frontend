@@ -52,9 +52,9 @@ class HttpHandlerSpec
       )
       .build()
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec = inject[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   def sut: HttpHandler = new HttpHandler(inject[DefaultHttpClient])
 
@@ -64,8 +64,8 @@ class HttpHandlerSpec
     implicit val reads: Reads[TestClass] = Json.reads[TestClass]
   }
 
-  def url        = s"http://localhost:${server.port()}"
-  def partialUrl = s"/foo/bar"
+  def url: String        = s"http://localhost:${server.port()}"
+  def partialUrl: String = s"/foo/bar"
 
   "HttpHandler" when {
 

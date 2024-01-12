@@ -16,11 +16,12 @@
 
 package controllers.paye
 
-import controllers.auth.FakeAuthJourney
+import controllers.auth.{FakeAuthJourney, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status._
 import play.api.libs.json.{Json, Reads}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import utils.JsonUtil
 import utils.TestConstants.testNino
@@ -32,10 +33,12 @@ import scala.concurrent.Future
 
 class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil {
 
-  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/treasury-spending")
+  implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
+    "/annual-tax-summary/paye/treasury-spending"
+  )
 
-  lazy val mainView             = inject[PayeTaxsMainView]
-  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+  lazy val mainView: PayeTaxsMainView                 = inject[PayeTaxsMainView]
+  lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
   def getSingleYearData: PayeAtsData =
     parseData[PayeAtsData](

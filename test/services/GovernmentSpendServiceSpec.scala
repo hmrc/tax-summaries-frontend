@@ -21,6 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.MockitoSugar
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -45,12 +46,12 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
   override val taxYear = 2015
 
-  val mockAtsService                       = mock[AtsService]
+  val mockAtsService: AtsService           = mock[AtsService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val request = AuthenticatedRequest(
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -62,7 +63,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     FakeRequest("GET", "?taxYear=2015")
   )
 
-  def sut = new GovernmentSpendService(mockAtsService, mockMiddleConnector) with MockitoSugar
+  def sut: GovernmentSpendService with MockitoSugar = new GovernmentSpendService(mockAtsService, mockMiddleConnector)
+    with MockitoSugar
 
   "GovernmentSpendService getGovernmentSpendData" must {
 

@@ -50,7 +50,7 @@ case class CapitalGains(
 ) extends GenericViewModel
     with TaxYearFormatting {
 
-  def entrepreneursReliefRate = entrepreneursReliefRateRate.percent
-  def ordinaryRate            = ordinaryRateRate.percent
-  def upperRate               = upperRateRate.percent
+  def entrepreneursReliefRate: String = entrepreneursReliefRateRate.percent
+  def ordinaryRate: String            = ordinaryRateRate.percent
+  def upperRate: String               = upperRateRate.percent
 }

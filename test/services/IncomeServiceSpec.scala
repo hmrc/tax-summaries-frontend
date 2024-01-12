@@ -20,6 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -42,11 +43,11 @@ class IncomeServiceSpec extends BaseSpec {
     yearList = List(2015)
   )
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val mockAtsService   = mock[AtsService]
-  override val taxYear = 2015
-  val request          = AuthenticatedRequest(
+  val mockAtsService: AtsService                            = mock[AtsService]
+  override val taxYear                                      = 2015
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -58,7 +59,7 @@ class IncomeServiceSpec extends BaseSpec {
     FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
-  def sut = new IncomeService(mockAtsService) with MockitoSugar
+  def sut: IncomeService with MockitoSugar = new IncomeService(mockAtsService) with MockitoSugar
 
   "IncomeService getIncomeData" must {
 

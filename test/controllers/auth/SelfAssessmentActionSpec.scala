@@ -46,13 +46,13 @@ class SelfAssessmentActionSpec
     with BeforeAndAfterEach {
 
   implicit val timeout: FiniteDuration = 5 seconds
-  implicit val hc                      = HeaderCarrier()
+  implicit val hc: HeaderCarrier       = HeaderCarrier()
 
-  val unauthorizedRoute = controllers.routes.ErrorController.notAuthorised.url
+  val unauthorizedRoute: String = controllers.routes.ErrorController.notAuthorised.url
 
-  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
-  val citizenDetailsService                   = mock[CitizenDetailsService]
-  val ninoAuthAction                          = mock[NinoAuthAction]
+  val mockAuthConnector: DefaultAuthConnector      = mock[DefaultAuthConnector]
+  val citizenDetailsService: CitizenDetailsService = mock[CitizenDetailsService]
+  val ninoAuthAction: NinoAuthAction               = mock[NinoAuthAction]
 
   val action =
     new SelfAssessmentActionImpl(citizenDetailsService, ninoAuthAction, appConfig)

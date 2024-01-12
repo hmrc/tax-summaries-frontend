@@ -38,7 +38,6 @@ class FormatValidationsSpec extends AnyWordSpec with Matchers {
   }
 
   private def testStringValidationFunction(
-    function: (String) => Boolean,
     validData: Seq[String],
     invalidData: Seq[String]
   ): Unit = {
@@ -68,7 +67,7 @@ class FormatValidationsSpec extends AnyWordSpec with Matchers {
     "satisfy the following valid and invalid cases" in {
       val validData   = Seq("0", "9", "a", "A", "z", "Z")
       val invalidData = Seq("α")
-      testStringValidationFunction(validText, validData, invalidData)
+      testStringValidationFunction(validData, invalidData)
     }
   }
 }

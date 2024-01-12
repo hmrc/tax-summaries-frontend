@@ -29,13 +29,16 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
 
   object DummyForm {
 
-    val dummyForm = Form[DummyData](
+    val dummyForm: Form[DummyData] = Form[DummyData](
       mapping(
         "string1" -> text
       )(DummyData.apply)(DummyData.unapply)
     )
 
-    def preprocessedForm(trims: Map[String, TrimOption] = Map(), caseRules: Map[String, CaseOption] = Map()) =
+    def preprocessedForm(
+      trims: Map[String, TrimOption] = Map(),
+      caseRules: Map[String, CaseOption] = Map()
+    ): PrevalidationAPI[DummyData] =
       PreprocessedForm(dummyForm, trims, caseRules)
 
   }

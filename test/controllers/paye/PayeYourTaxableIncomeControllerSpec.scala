@@ -21,6 +21,7 @@ import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +33,7 @@ import scala.concurrent.Future
 
 class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
-  implicit val fakeAuthenticatedRequest =
+  implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     PayeAuthenticatedRequest(
       testNino,
       false,
@@ -40,7 +41,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
     )
 
-  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+  lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
   val sut =
     new PayeYourTaxableIncomeController(

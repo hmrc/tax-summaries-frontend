@@ -27,14 +27,14 @@ import scala.concurrent.Future
 
 class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
-  val dataPath = "/no_ats_json_test.json"
-  val model    = NoATSViewModel(taxYear)
+  val dataPath              = "/no_ats_json_test.json"
+  val model: NoATSViewModel = NoATSViewModel(taxYear)
 
-  val mockIncomeService  = mock[IncomeService]
-  val mockAuditService   = mock[AuditService]
-  val mockSummaryService = mock[SummaryService]
+  val mockIncomeService: IncomeService   = mock[IncomeService]
+  val mockAuditService: AuditService     = mock[AuditService]
+  val mockSummaryService: SummaryService = mock[SummaryService]
 
-  def incomeController =
+  def incomeController: IncomeController =
     new IncomeController(
       mockIncomeService,
       mockAuditService,
@@ -45,7 +45,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  override def beforeEach() =
+  override def beforeEach(): Unit =
     when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(model))
 
@@ -55,7 +55,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
       val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
 
-      def sut =
+      def sut: TotalIncomeTaxController =
         new TotalIncomeTaxController(
           mockTotalIncomeTaxService,
           mockAuditService,

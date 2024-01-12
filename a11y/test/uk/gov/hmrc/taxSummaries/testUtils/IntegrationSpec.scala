@@ -62,9 +62,11 @@ class IntegrationSpec
 
   val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
-  val atsListData: AtsListData = Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
+  val atsListData: AtsListData =
+    Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
 
-  val atsData: AtsData = Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json"))).get
+  val atsData: AtsData =
+    Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json"))).get
 
   val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
@@ -129,7 +131,6 @@ class IntegrationSpec
        |     }]
        |}
        |""".stripMargin
-
 
   override def beforeEach(): Unit = {
     super.beforeEach()

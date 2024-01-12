@@ -44,9 +44,9 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
     yearList = List(taxYear)
   )
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val mockAtsService = mock[AtsService]
+  val mockAtsService: AtsService = mock[AtsService]
 
   def sut: TotalIncomeTaxService = new TotalIncomeTaxService(mockAtsService) with MockitoSugar
 

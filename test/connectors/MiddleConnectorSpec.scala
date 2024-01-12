@@ -221,7 +221,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
+      val result = sut.connectToAtsOnBehalfOf(utr, currentYear).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
@@ -239,7 +239,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
+      val result = sut.connectToAtsOnBehalfOf(utr, currentYear).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
@@ -257,7 +257,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(uar, utr, currentYear).futureValue
+      val result = sut.connectToAtsOnBehalfOf(utr, currentYear).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
@@ -348,7 +348,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(uar, utr, 2018, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, 2018, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
@@ -366,7 +366,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(uar, utr, 2018, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, 2018, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
@@ -384,7 +384,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(uar, utr, 2018, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, 2018, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }

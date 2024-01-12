@@ -54,7 +54,7 @@ case class Summary(
     Amount(total, totalIncomeTaxAndNics.currency)
   }
 
-  def yourTotalTaxTextKey =
+  def yourTotalTaxTextKey: String =
     if (hasTotalIncomeTaxAmount && hasEmployeeNicAmount) {
       "ats.summary.tax_and_nics.title"
     } else if (!hasTotalIncomeTaxAmount && hasEmployeeNicAmount) {
@@ -67,6 +67,6 @@ case class Summary(
     TextGenerator.createOnScreenText(hasTotalIncomeTaxAmount, hasTotalCapitalGains, hasEmployeeNicAmount)
 
   def hasTaxableGains: Boolean = !taxableGains.isZero
-  def taxYearTo                = year.toString
-  def taxYearFrom              = (year - 1).toString
+  def taxYearTo: String        = year.toString
+  def taxYearFrom: String      = (year - 1).toString
 }

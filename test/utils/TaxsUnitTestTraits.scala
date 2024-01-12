@@ -18,7 +18,7 @@ package utils
 
 import org.jsoup.nodes.Document
 import org.mockito.MockitoSugar
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{Assertion, BeforeAndAfterEach}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -36,9 +36,9 @@ trait TaxsUnitTestTraits
     with GuiceOneServerPerSuite
     with Injecting {
 
-  implicit lazy val hc = HeaderCarrier()
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-  implicit lazy val ec = inject[ExecutionContext]
+  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   implicit def convertToOption[T](value: T): Option[T] = Some(value)
 
@@ -85,7 +85,7 @@ trait TaxsUnitTestTraits
 
   implicit class VerificationUtil(someCount: Option[Int]) {
     // util function designed for aiding verify functions
-    def ifDefinedThen(action: (Int) => Unit) = someCount match {
+    def ifDefinedThen(action: (Int) => Unit): Unit = someCount match {
       case Some(count) => action(count)
       case _           =>
     }
@@ -93,12 +93,12 @@ trait TaxsUnitTestTraits
 
   case class Ids(utr: Boolean, nino: Boolean, crn: Boolean, vrn: Boolean)
 
-  def testId(mustExist: Boolean)(targetFieldId: String)(implicit doc: Document) = mustExist match {
+  def testId(mustExist: Boolean)(targetFieldId: String)(implicit doc: Document): Assertion = mustExist match {
     case false => doc.getElementById(targetFieldId) mustBe null
     case true  => doc.getElementById(targetFieldId) must not be null
   }
 
-  def testText(expectedText: String)(targetFieldId: String)(implicit doc: Document) =
+  def testText(expectedText: String)(targetFieldId: String)(implicit doc: Document): Assertion =
     doc.getElementById(targetFieldId).text mustBe expectedText
 
 }

@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import view_models.{Amount, Rate}
 
 case class DataHolder(
@@ -26,5 +26,5 @@ case class DataHolder(
 )
 
 object DataHolder {
-  implicit val formats = Json.format[DataHolder]
+  implicit val formats: OFormat[DataHolder] = Json.format[DataHolder]
 }

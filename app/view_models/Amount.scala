@@ -18,8 +18,7 @@ package view_models
 
 import java.text.NumberFormat
 import java.util.Locale
-
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import utils.BigDecimalUtils
 
 case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils {
@@ -27,7 +26,6 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
   private def format(
     decimalNumber: Int,
     roundingMode: BigDecimal.RoundingMode.Value,
-    setMinFractionDigits: Int = 0,
     amount: BigDecimal = this.amount
   ) = {
     val formatter = NumberFormat.getNumberInstance(Locale.UK)
@@ -35,27 +33,27 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
     formatter.format(amount.setScale(decimalNumber, roundingMode))
   }
 
-  override def toString = format(0, BigDecimal.RoundingMode.DOWN)
+  override def toString: String = format(0, BigDecimal.RoundingMode.DOWN)
 
-  def toHalfRoundedUpAmount = format(0, BigDecimal.RoundingMode.HALF_UP)
+  def toHalfRoundedUpAmount: String = format(0, BigDecimal.RoundingMode.HALF_UP)
 
-  def isZero = amount.compareTo(BigDecimal(0)) == 0
+  def isZero: Boolean = amount.compareTo(BigDecimal(0)) == 0
 
-  def isZeroOrLess = isZero || amount < BigDecimal(0)
+  def isZeroOrLess: Boolean = isZero || amount < BigDecimal(0)
 
   val nonZero: Boolean = !isZero
 
-  def toCreditString = format(0, BigDecimal.RoundingMode.UP)
+  def toCreditString: String = format(0, BigDecimal.RoundingMode.UP)
 
-  def toTwoDecimalString = format(2, BigDecimal.RoundingMode.DOWN, 2)
+  def toTwoDecimalString: String = format(2, BigDecimal.RoundingMode.DOWN)
 
-  def toHundredthsString = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
+  def toHundredthsString: String = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 
   def unary_- : Amount = copy(amount = -this.amount)
 }
 
 object Amount {
-  implicit val formats = Json.format[Amount]
+  implicit val formats: OFormat[Amount] = Json.format[Amount]
 
   val empty: Amount                  = gbp(0)
   def gbp(value: BigDecimal): Amount = Amount(value, "GBP")

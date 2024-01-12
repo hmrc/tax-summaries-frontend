@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
 
 case class PayeAtsData(
   taxYear: Int,
@@ -35,5 +35,5 @@ case class PayeAtsData(
 }
 
 object PayeAtsData {
-  implicit val reads = Json.reads[PayeAtsData]
+  implicit val reads: Reads[PayeAtsData] = Json.reads[PayeAtsData]
 }

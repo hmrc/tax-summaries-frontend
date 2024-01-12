@@ -17,13 +17,14 @@
 package controllers.paye
 
 import config.{ApplicationConfig, PayeConfig}
-import controllers.auth.FakePayeAuthAction
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -34,9 +35,11 @@ import scala.concurrent.Future
 
 class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
-  implicit val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
+  implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
+    "/annual-tax-summary/paye/total-income-tax"
+  )
 
-  lazy val payeGenericErrorView = inject[PayeGenericErrorView]
+  lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
   val sut =
     new PayeIncomeTaxAndNicsController(
