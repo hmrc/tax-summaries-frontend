@@ -28,7 +28,7 @@ import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.{JsonUtil, WireMockHelper}
 
@@ -53,12 +53,12 @@ class PertaxConnectorSpec
       )
       .build()
 
-  implicit val hc             = HeaderCarrier()
-  implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit lazy val ec        = inject[ExecutionContext]
-  lazy val connector          = inject[PertaxConnector]
-  lazy val nino               = new Generator().nextNino
-  lazy val url                = s"/pertax/$nino/check-single-account"
+  implicit val hc: HeaderCarrier                 = HeaderCarrier()
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
+  lazy val connector: PertaxConnector            = inject[PertaxConnector]
+  lazy val nino: Nino                            = new Generator().nextNino
+  lazy val url                                   = s"/pertax/$nino/check-single-account"
 
   "pertaxAuth" must {
     "return a PertaxApiResponse with an ACCESS_GRANTED code" in {

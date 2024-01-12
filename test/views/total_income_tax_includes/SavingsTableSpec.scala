@@ -15,7 +15,7 @@
  */
 
 package views.total_income_tax_includes
-import com.softwaremill.quicklens.modify
+import com.softwaremill.quicklens.modifyLens
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -61,21 +61,21 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
     val rowData = List(
       (
         "lower",
-        modify[SavingsTax](_.savingsLowerRateTax),
-        modify[SavingsTax](_.savingsLowerRateTaxAmount),
-        modify[SavingsRates](_.savingsLowerRate)
+        modifyLens[SavingsTax](_.savingsLowerRateTax),
+        modifyLens[SavingsTax](_.savingsLowerRateTaxAmount),
+        modifyLens[SavingsRates](_.savingsLowerRate)
       ),
       (
         "higher",
-        modify[SavingsTax](_.savingsHigherRateTax),
-        modify[SavingsTax](_.savingsHigherRateTaxAmount),
-        modify[SavingsRates](_.savingsHigherRate)
+        modifyLens[SavingsTax](_.savingsHigherRateTax),
+        modifyLens[SavingsTax](_.savingsHigherRateTaxAmount),
+        modifyLens[SavingsRates](_.savingsHigherRate)
       ),
       (
         "additional",
-        modify[SavingsTax](_.savingsAdditionalRateTax),
-        modify[SavingsTax](_.savingsAdditionalRateTaxAmount),
-        modify[SavingsRates](_.savingsAdditionalRate)
+        modifyLens[SavingsTax](_.savingsAdditionalRateTax),
+        modifyLens[SavingsTax](_.savingsAdditionalRateTaxAmount),
+        modifyLens[SavingsRates](_.savingsAdditionalRate)
       )
     )
 

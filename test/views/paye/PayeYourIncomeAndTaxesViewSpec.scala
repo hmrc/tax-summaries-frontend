@@ -48,7 +48,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants wit
         payeYourIncomeAndTaxesViewModel
       )(messages, request)
 
-  def view(viewModel: PayeYourIncomeAndTaxes): String =
+  def view: String =
     payeYourIncomeAndTaxesView(payeYourIncomeAndTaxesViewModel).body
 
   "PayeYourIncomeAndTaxesView when rendered" must {
@@ -58,7 +58,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants wit
   "PayeYourIncomeAndTaxesView" must {
     "return correct content for Taxable income section" in {
 
-      val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
+      val document = Jsoup.parse(view)
 
       document
         .getElementById("taxable-income")
@@ -68,7 +68,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants wit
 
     "return correct content for Tax-free amount section" in {
 
-      val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
+      val document = Jsoup.parse(view)
 
       document
         .getElementById("tax-free-amount")
@@ -78,7 +78,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants wit
 
     "return correct content for Income Tax and National Insurance contributions section" in {
 
-      val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
+      val document = Jsoup.parse(view)
 
       document
         .getElementById("tax-calculated-as")
@@ -88,7 +88,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants wit
 
     "return correct content for Income after Tax and National Insurance contributions section" in {
 
-      val document = Jsoup.parse(view(payeYourIncomeAndTaxesViewModel))
+      val document = Jsoup.parse(view)
 
       document
         .getElementById("income_after_tax_and_nics")

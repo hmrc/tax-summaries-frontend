@@ -19,6 +19,7 @@ package services
 import controllers.auth.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -41,11 +42,11 @@ class CapitalGainsServiceSpec extends BaseSpec {
     yearList = List(2015)
   )
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val mockAtsService   = mock[AtsService]
-  override val taxYear = 2015
-  val request          = AuthenticatedRequest(
+  val mockAtsService: AtsService                            = mock[AtsService]
+  override val taxYear                                      = 2015
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),

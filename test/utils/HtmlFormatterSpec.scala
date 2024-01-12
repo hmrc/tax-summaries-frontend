@@ -18,7 +18,7 @@ package utils
 
 class HtmlFormatterSpec extends BaseSpec {
 
-  lazy val htmlFormatter = inject[HtmlFormatter]
+  lazy val htmlFormatter: HtmlFormatter = inject[HtmlFormatter]
 
   "toHtmlNonBroken" must {
     "replace spaces with non breaking spaces" in {

@@ -58,8 +58,8 @@ class PayeIncomeTaxAndNicsController @Inject() (
           )
         )
 
-      case Left(response: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-      case _                                   => InternalServerError(payeGenericErrorView())
+      case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+      case _                            => InternalServerError(payeGenericErrorView())
     }
   }
 }

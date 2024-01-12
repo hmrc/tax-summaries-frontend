@@ -20,7 +20,7 @@ import config.ApplicationConfig
 
 class CategoriesUtilsSpec extends BaseSpec {
 
-  val mockAppConfig = mock[ApplicationConfig]
+  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   "reorderCategories" must {
     "sort data given order from appConfig" in {

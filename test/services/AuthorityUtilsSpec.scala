@@ -18,9 +18,10 @@ package services
 
 import controllers.auth.AuthenticatedRequest
 import models.AgentToken
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import utils.TestConstants._
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 
@@ -28,11 +29,11 @@ class AuthorityUtilsSpec extends BaseSpec {
 
   class TestService extends AuthorityUtils {
 
-    val utr            = testUtr
-    val uar            = testUar
-    val nonMatchingUtr = testNonMatchingUtr
+    val utr: String            = testUtr
+    val uar: String            = testUar
+    val nonMatchingUtr: String = testNonMatchingUtr
 
-    val request      = AuthenticatedRequest(
+    protected val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(utr)),
@@ -43,7 +44,7 @@ class AuthorityUtilsSpec extends BaseSpec {
       fakeCredentials,
       FakeRequest()
     )
-    val agentRequest =
+    val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type]      =
       AuthenticatedRequest(
         "userId",
         Some(Uar(uar)),
@@ -56,10 +57,10 @@ class AuthorityUtilsSpec extends BaseSpec {
         FakeRequest()
       )
 
-    val account      = AccountUtils.getAccount(request)
-    val agentAccount = AccountUtils.getAccount(agentRequest)
+    val account: TaxIdentifier      = AccountUtils.getAccount(request)
+    val agentAccount: TaxIdentifier = AccountUtils.getAccount(agentRequest)
 
-    val agentToken = AgentToken(
+    val agentToken: AgentToken = AgentToken(
       agentUar = uar,
       clientUtr = utr,
       timestamp = 0
@@ -69,47 +70,47 @@ class AuthorityUtilsSpec extends BaseSpec {
   "checkUtr" must {
 
     "return true when an SA User has a matching utr and no agent token is passed" in new TestService {
-      val result = checkUtr(utr, None)(request)
+      val result: Boolean = checkUtr(utr, None)(request)
       result mustBe true
     }
 
     "return true when an SA User has a matching utr and an agent token is passed" in new TestService {
-      val result = checkUtr(utr, Some(agentToken))(request)
+      val result: Boolean = checkUtr(utr, Some(agentToken))(request)
       result mustBe true
     }
 
     "return false when an SA User has a non-matching utr and no agent token is passed" in new TestService {
-      val result = checkUtr(nonMatchingUtr, None)(request)
+      val result: Boolean = checkUtr(nonMatchingUtr, None)(request)
       result mustBe false
     }
 
     "return false when an SA User has a non-matching utr and an agent token is passed" in new TestService {
-      val result = checkUtr(nonMatchingUtr, Some(agentToken))(request)
+      val result: Boolean = checkUtr(nonMatchingUtr, Some(agentToken))(request)
       result mustBe false
     }
 
     "return true when the user is an Agent user and the agentToken.clientUtr matches" in new TestService {
-      val result = checkUtr(utr, Some(agentToken))(agentRequest)
+      val result: Boolean = checkUtr(utr, Some(agentToken))(agentRequest)
       result mustBe true
     }
 
     "return true when the user is an Agent user and there is no agentToken" in new TestService {
-      val result = checkUtr(utr, None)(agentRequest)
+      val result: Boolean = checkUtr(utr, None)(agentRequest)
       result mustBe true
     }
 
     "return false when the user is an Agent and the agentToken.clientUtr does not match" in new TestService {
-      val result = checkUtr(nonMatchingUtr, Some(agentToken))(agentRequest)
+      val result: Boolean = checkUtr(nonMatchingUtr, Some(agentToken))(agentRequest)
       result mustBe false
     }
 
     "return false when the utr is None" in new TestService {
-      val result = checkUtr(None, None)(request)
+      val result: Boolean = checkUtr(None, None)(request)
       result mustBe false
     }
 
     "return true when the utr is Some(_) and the criteria must match" in new TestService {
-      val result = checkUtr(Some(utr), None)(request)
+      val result: Boolean = checkUtr(Some(utr), None)(request)
       result mustBe true
     }
   }
@@ -117,36 +118,36 @@ class AuthorityUtilsSpec extends BaseSpec {
   "getRequestedUtr" must {
 
     "return the utr when user account with no agent token" in new TestService {
-      val result = getRequestedUtr(account, None)
+      val result: SaUtr = getRequestedUtr(account, None)
       result mustBe SaUtr(utr)
     }
 
     "return the utr when user account with agent token" in new TestService {
-      val result = getRequestedUtr(account, Some(agentToken))
+      val result: SaUtr = getRequestedUtr(account, Some(agentToken))
       result mustBe SaUtr(utr)
     }
 
     "throw AgentTokenException when agent account with no agent token" in new TestService {
-      val exception = intercept[AgentTokenException] {
+      val exception: AgentTokenException = intercept[AgentTokenException] {
         getRequestedUtr(agentAccount, None)
       }
       exception.message mustBe "Token is empty"
     }
 
     "return the client utr when agent account with valid agent token" in new TestService {
-      val result = getRequestedUtr(agentAccount, Some(agentToken))
+      val result: SaUtr = getRequestedUtr(agentAccount, Some(agentToken))
       result mustBe SaUtr(utr)
     }
 
     "return the client utr when agent account with invalid agent token" in new TestService {
 
-      override val agentToken = AgentToken(
+      override val agentToken: AgentToken = AgentToken(
         agentUar = nonMatchingUtr,
         clientUtr = utr,
         timestamp = 0
       )
 
-      val exception = intercept[AgentTokenException] {
+      val exception: AgentTokenException = intercept[AgentTokenException] {
         getRequestedUtr(agentAccount, Some(agentToken))
       }
 

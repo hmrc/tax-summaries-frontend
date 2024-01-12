@@ -26,8 +26,7 @@
     currencyAmountView: CurrencyAmountView,
     viewUtils: ViewUtils,
     pageHeading: PageHeading,
-    p: P,
-    link: Link
+    p: P
 )
 
 @(  viewModel: view_models.Summary,
@@ -41,7 +40,6 @@
     @headerSection(
         name = viewModel.forename + ' ' + viewModel.surname,
         utr = viewModel.utr,
-        taxYear = viewModel.year,
         actingAsAttorney = actingAsAttorney
     )
 }

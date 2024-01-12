@@ -27,7 +27,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.test.Injecting
-import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{JsonUtil, WireMockHelper}
 
@@ -51,12 +51,12 @@ class CitizenDetailsConnectorSpec
       )
       .build()
 
-  implicit val hc             = HeaderCarrier()
-  implicit lazy val appConfig = inject[ApplicationConfig]
-  implicit lazy val ec        = inject[ExecutionContext]
-  lazy val connector          = inject[CitizenDetailsConnector]
-  lazy val nino               = new Generator().nextNino
-  lazy val url                = s"/citizen-details/nino/$nino"
+  implicit val hc: HeaderCarrier                 = HeaderCarrier()
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
+  lazy val connector: CitizenDetailsConnector    = inject[CitizenDetailsConnector]
+  lazy val nino: Nino                            = new Generator().nextNino
+  lazy val url                                   = s"/citizen-details/nino/$nino"
 
   "connectToCid" must {
     "return an OK response when the CID API returns OK" in {

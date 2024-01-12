@@ -25,6 +25,7 @@ import org.mockito.Mockito
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsResultException, JsValue, Json}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -38,24 +39,24 @@ import scala.io.Source
 
 class PayeAtsServiceSpec extends BaseSpec {
 
-  implicit val hc                           = HeaderCarrier()
+  implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
   val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
-  private val currentYearMinus1             = 2018
-  private val currentYear                   = 2019
-  val fakeCredentials                       = new Credentials("provider ID", "provider type")
+  private val currentYearMinus1: Int        = 2018
+  private val currentYear: Int              = 2019
+  val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
 
   private def readJson(path: String) = {
     val resource = getClass.getResourceAsStream(path)
     Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
 
-  val mockMiddleConnector      = mock[MiddleConnector]
-  val payeAuthenticatedRequest =
+  val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
+  val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
-  val authenticatedRequest           =
+  val authenticatedRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
@@ -67,7 +68,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       fakeCredentials,
       FakeRequest()
     )
-  val mockAuditService: AuditService = mock[AuditService]
+  val mockAuditService: AuditService                                     = mock[AuditService]
 
   val sut = new PayeAtsService(mockMiddleConnector, mockAuditService)
 
@@ -135,8 +136,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       verify(mockAuditService, times(1)).sendEvent(
         eqTo("TxSuccessful"),
-        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYearMinus1.toString)),
-        any()
+        eqTo(Map("userNino" -> testNino.nino, "taxYear" -> currentYearMinus1.toString))
       )(any())
     }
   }

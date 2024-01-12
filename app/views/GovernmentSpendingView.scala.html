@@ -23,9 +23,7 @@
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
-    h1: H1,
     p: P,
-    link: Link,
     pageHeading: PageHeading,
     currencyAmountView: CurrencyAmountView
 )
@@ -42,7 +40,6 @@
     @headerSection(
         name = viewModel.userForename + ' ' + viewModel.userSurname,
         utr = viewModel.userUtr,
-        taxYear = viewModel.taxYear,
         actingAsAttorney = actingAsAttorney
     )
 }

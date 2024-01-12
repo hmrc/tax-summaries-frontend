@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class AtsListData(utr: String, taxPayer: Option[TaxpayerFrontTierData], atsYearList: Option[List[Int]])
 
 object AtsListData {
-  implicit val formats = Json.format[AtsListData]
+  implicit val formats: OFormat[AtsListData] = Json.format[AtsListData]
 }

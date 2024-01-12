@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import view_models.Amount
 
 case class GovernmentSpendingOutputWrapper(
@@ -27,5 +27,5 @@ case class GovernmentSpendingOutputWrapper(
 )
 
 object GovernmentSpendingOutputWrapper {
-  implicit val formats = Json.format[GovernmentSpendingOutputWrapper]
+  implicit val formats: OFormat[GovernmentSpendingOutputWrapper] = Json.format[GovernmentSpendingOutputWrapper]
 }

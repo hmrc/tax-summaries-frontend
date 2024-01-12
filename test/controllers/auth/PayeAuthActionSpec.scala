@@ -36,7 +36,7 @@ class PayeAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
-  val unauthorisedRoute = routes.PayeErrorController.notAuthorised.url
+  val unauthorisedRoute: String = routes.PayeErrorController.notAuthorised.url
 
   class Harness(authAction: PayeAuthAction) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>

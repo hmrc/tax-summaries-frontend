@@ -51,7 +51,7 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
       )
     }
   }
-  val fakeCredentials                              = Credentials("foo", "bar")
+  val fakeCredentials: Credentials                 = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector      = mock[DefaultAuthConnector]
   val citizenDetailsService: CitizenDetailsService = mock[CitizenDetailsService]
   val dataCacheConnector: DataCacheConnector       = mock[DataCacheConnector]
@@ -59,10 +59,10 @@ class MergePageAuthActionSpec extends BaseSpec with GuiceOneAppPerSuite {
   val ggSignInUrl                      =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
-  val unauthorisedRoute                = controllers.routes.ErrorController.notAuthorised.url
-  implicit val hc                      = new HeaderCarrier
+  val unauthorisedRoute: String        = controllers.routes.ErrorController.notAuthorised.url
+  implicit val hc: HeaderCarrier       = new HeaderCarrier
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     reset(mockAuthConnector)
     reset(citizenDetailsService)
     reset(dataCacheConnector)

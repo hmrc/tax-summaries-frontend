@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.domain.{Generator, SaUtrGenerator}
+import uk.gov.hmrc.domain.{Generator, Nino, SaUtr, SaUtrGenerator}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
 import utils.BaseSpec
 
@@ -30,12 +30,12 @@ import scala.concurrent.Future
 
 class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
 
-  implicit val hc             = HeaderCarrier()
-  val citizenDetailsConnector = mock[CitizenDetailsConnector]
-  val service                 = new CitizenDetailsService(citizenDetailsConnector)
+  implicit val hc: HeaderCarrier                       = HeaderCarrier()
+  val citizenDetailsConnector: CitizenDetailsConnector = mock[CitizenDetailsConnector]
+  val service: CitizenDetailsService                   = new CitizenDetailsService(citizenDetailsConnector)
 
-  val nino = new Generator().nextNino
-  val utr  = new SaUtrGenerator().nextSaUtr
+  val nino: Nino = new Generator().nextNino
+  val utr: SaUtr = new SaUtrGenerator().nextSaUtr
 
   "getUtr" must {
     "return the utr from CID for an OK response" in {
