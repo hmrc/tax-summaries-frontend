@@ -40,12 +40,12 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockGovernmentSpendService)
   }
 
-  def sut: ErrorController     =
+  def sut: ErrorController                  =
     new ErrorController(
       mockGovernmentSpendService,
       new FakeMergePageAuthAction(true),
@@ -55,7 +55,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       howTaxIsSpentView,
       serviceUnavailableView
     )
-  implicit lazy val messageApi = inject[MessagesApi]
+  implicit lazy val messageApi: MessagesApi = inject[MessagesApi]
 
   "ErrorController" when {
 

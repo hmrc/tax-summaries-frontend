@@ -46,7 +46,7 @@ class AuthActionSpec extends BaseSpec {
       )
     }
   }
-  val fakeCredentials                         = Credentials("foo", "bar")
+  val fakeCredentials: Credentials            = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
   val ggSignInUrl                      =

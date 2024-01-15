@@ -32,10 +32,10 @@ object PayeYourTaxableIncome {
     PayeYourTaxableIncome(payeAtsData.taxYear, taxRows, getTotalIncomeBeforeTax(payeAtsData.income_data))
   }
 
-  def getTotalIncomeBeforeTax(incomeData: Option[DataHolder]) =
+  private def getTotalIncomeBeforeTax(incomeData: Option[DataHolder]): Amount =
     incomeData.flatMap(_.payload).flatMap(_.get("total_income_before_tax")).getOrElse(Amount.empty)
 
-  def getIncomeTaxRows(incomeData: Option[DataHolder]): List[IncomeTaxRow] = {
+  private def getIncomeTaxRows(incomeData: Option[DataHolder]): List[IncomeTaxRow] = {
     val selfEmploymentIncome   = Amount(incomeData.flatMap(_.payload).flatMap(_.get("self_employment_income")))
     val incomeFromEmployment   = Amount(incomeData.flatMap(_.payload).flatMap(_.get("income_from_employment")))
     val statePension           = Amount(incomeData.flatMap(_.payload).flatMap(_.get("state_pension")))

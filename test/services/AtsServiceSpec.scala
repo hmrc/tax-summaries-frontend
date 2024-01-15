@@ -21,6 +21,7 @@ import controllers.auth.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
@@ -35,7 +36,7 @@ import scala.concurrent.Future
 
 class AtsServiceSpec extends BaseSpec {
 
-  val data = {
+  val data: AtsData = {
     val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
     Json.fromJson[AtsData](json).get
   }
@@ -46,7 +47,7 @@ class AtsServiceSpec extends BaseSpec {
   val mockAuthUtils: AuthorityUtils              = mock[AuthorityUtils]
   val mockAccountUtils: AccountUtils             = mock[AccountUtils]
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
     reset(mockDataCacheConnector)
     reset(mockAuditService)
@@ -55,9 +56,9 @@ class AtsServiceSpec extends BaseSpec {
 
   }
 
-  implicit val hc = new HeaderCarrier
+  implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  implicit val request =
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     AuthenticatedRequest(
       "userId",
       None,
@@ -70,15 +71,16 @@ class AtsServiceSpec extends BaseSpec {
       FakeRequest()
     )
 
-  val agentToken = AgentToken(
+  val agentToken: AgentToken = AgentToken(
     agentUar = testUar,
     clientUtr = testUtr,
     timestamp = 0
   )
 
-  def sut = new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
-    override val accountUtils: AccountUtils = mockAccountUtils
-  }
+  def sut: AtsService =
+    new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
+      override val accountUtils: AccountUtils = mockAccountUtils
+    }
 
   case class FakeViewModel(str: String) extends GenericViewModel
 
@@ -108,11 +110,11 @@ class AtsServiceSpec extends BaseSpec {
                 Some(data)
               )
 
-              when(mockAuditService.sendEvent(any(), any(), any())(any())) thenReturn Future.successful(Success)
+              when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
-              verify(mockAuditService).sendEvent(any(), any(), any())(any())
+              verify(mockAuditService).sendEvent(any(), any())(any())
             }
 
             "has no data in the cache" in {
@@ -129,11 +131,11 @@ class AtsServiceSpec extends BaseSpec {
                 Some(data)
               )
 
-              when(mockAuditService.sendEvent(any(), any(), any())(any())) thenReturn Future.successful(Success)
+              when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
-              verify(mockAuditService).sendEvent(any(), any(), any())(any())
+              verify(mockAuditService).sendEvent(any(), any())(any())
             }
           }
 
@@ -166,11 +168,11 @@ class AtsServiceSpec extends BaseSpec {
 
               when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
 
-              when(mockAuditService.sendEvent(any(), any(), any())(any())) thenReturn Future.successful(Success)
+              when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
               when(
                 mockMiddleConnector
-                  .connectToAtsOnBehalfOf(any(), any(), any())(any())
+                  .connectToAtsOnBehalfOf(any(), any())(any())
               ) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               when(mockDataCacheConnector.storeAtsForSession(any())(any(), any())) thenReturn Future.successful(
@@ -192,7 +194,7 @@ class AtsServiceSpec extends BaseSpec {
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
-              verify(mockAuditService).sendEvent(any(), any(), any())(any())
+              verify(mockAuditService).sendEvent(any(), any())(any())
             }
           }
         }
@@ -213,7 +215,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
 
-          verify(mockAuditService, never).sendEvent(any(), any(), any())(any())
+          verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
 
         "there is a NoAtsError in the AtsData" in {
@@ -232,7 +234,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
 
-          verify(mockAuditService, never).sendEvent(any(), any(), any())(any())
+          verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
       }
 
@@ -250,7 +252,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
-          verify(mockAuditService, never).sendEvent(any(), any(), any())(any())
+          verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
 
         "there is any other error in the AtsData" in {
@@ -268,7 +270,7 @@ class AtsServiceSpec extends BaseSpec {
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
-          verify(mockAuditService, never).sendEvent(any(), any(), any())(any())
+          verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
       }
     }

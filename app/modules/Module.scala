@@ -20,7 +20,10 @@ import com.google.inject.AbstractModule
 import uk.gov.hmrc.play.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
+import scala.annotation.nowarn
+
 class Module extends AbstractModule {
+  @nowarn("msg=discarded non-Unit value")
   override def configure(): Unit =
     bind(classOf[AuditConnector]).to(classOf[DefaultAuditConnector])
 }

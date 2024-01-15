@@ -61,33 +61,33 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
     val rowData = List(
       (
         "starter",
-        modify[ScottishTax](_.scottishStarterIncomeTax),
-        modify[ScottishTax](_.scottishStarterIncomeTaxAmount),
-        modify[ScottishRates](_.scottishStarterRate)
+        modifyLens[ScottishTax](_.scottishStarterIncomeTax),
+        modifyLens[ScottishTax](_.scottishStarterIncomeTaxAmount),
+        modifyLens[ScottishRates](_.scottishStarterRate)
       ),
       (
         "basic",
-        modify[ScottishTax](_.scottishBasicIncomeTax),
-        modify[ScottishTax](_.scottishBasicIncomeTaxAmount),
-        modify[ScottishRates](_.scottishBasicRate)
+        modifyLens[ScottishTax](_.scottishBasicIncomeTax),
+        modifyLens[ScottishTax](_.scottishBasicIncomeTaxAmount),
+        modifyLens[ScottishRates](_.scottishBasicRate)
       ),
       (
         "intermediate",
-        modify[ScottishTax](_.scottishIntermediateIncomeTax),
-        modify[ScottishTax](_.scottishIntermediateIncomeTaxAmount),
-        modify[ScottishRates](_.scottishIntermediateRate)
+        modifyLens[ScottishTax](_.scottishIntermediateIncomeTax),
+        modifyLens[ScottishTax](_.scottishIntermediateIncomeTaxAmount),
+        modifyLens[ScottishRates](_.scottishIntermediateRate)
       ),
       (
         "higher",
-        modify[ScottishTax](_.scottishHigherIncomeTax),
-        modify[ScottishTax](_.scottishHigherIncomeTaxAmount),
-        modify[ScottishRates](_.scottishHigherRate)
+        modifyLens[ScottishTax](_.scottishHigherIncomeTax),
+        modifyLens[ScottishTax](_.scottishHigherIncomeTaxAmount),
+        modifyLens[ScottishRates](_.scottishHigherRate)
       ),
       (
         "additional",
-        modify[ScottishTax](_.scottishAdditionalIncomeTax),
-        modify[ScottishTax](_.scottishAdditionalIncomeTaxAmount),
-        modify[ScottishRates](_.scottishAdditionalRate)
+        modifyLens[ScottishTax](_.scottishAdditionalIncomeTax),
+        modifyLens[ScottishTax](_.scottishAdditionalIncomeTaxAmount),
+        modifyLens[ScottishRates](_.scottishAdditionalRate)
       )
     )
 

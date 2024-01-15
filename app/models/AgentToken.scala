@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class AgentToken(agentUar: String, clientUtr: String, timestamp: Long)
 
 object AgentToken {
-  implicit val formats = Json.format[AgentToken]
+  implicit val formats: OFormat[AgentToken] = Json.format[AgentToken]
 }

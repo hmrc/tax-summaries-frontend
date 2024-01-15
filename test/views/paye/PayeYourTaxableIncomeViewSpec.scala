@@ -48,7 +48,7 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants with
         payeYourTaxableIncomeViewModel
       )(messages, request)
 
-  def view(viewModel: PayeYourTaxableIncome): String =
+  def view: String =
     payeYourTaxableIncomeView(payeYourTaxableIncomeViewModel).body
 
   "PayeYourTaxableIncomeView when rendered" must {
@@ -58,7 +58,7 @@ class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants with
   "PayeYourTaxableIncomeView" must {
     "return correct content for Taxable income section" in {
 
-      val document = Jsoup.parse(view(payeYourTaxableIncomeViewModel))
+      val document = Jsoup.parse(view)
 
       document.getElementById("self_employment_income").text() mustBe "Self-employment £450.00"
 

@@ -27,12 +27,12 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(implicit ec
 
   val taxsAuditSource = "tax-summaries-frontend"
 
-  def sendEvent(auditType: String, details: Map[String, String], sessionId: Option[String] = None)(implicit
+  def sendEvent(auditType: String, details: Map[String, String])(implicit
     hc: HeaderCarrier
   ) =
-    auditConnector.sendEvent(eventFor(auditType, details, sessionId))
+    auditConnector.sendEvent(eventFor(auditType, details))
 
-  def eventFor(auditType: String, details: Map[String, String], sessionId: Option[String])(implicit hc: HeaderCarrier) =
+  def eventFor(auditType: String, details: Map[String, String])(implicit hc: HeaderCarrier) =
     DataEvent(
       auditSource = taxsAuditSource,
       auditType = auditType,

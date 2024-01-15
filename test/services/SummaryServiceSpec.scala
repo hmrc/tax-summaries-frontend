@@ -18,6 +18,7 @@ package services
 
 import controllers.auth.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -40,11 +41,11 @@ class SummaryServiceSpec extends BaseSpec {
     yearList = List(2015)
   )
 
-  val mockAtsService = mock[AtsService]
+  val mockAtsService: AtsService = mock[AtsService]
 
-  implicit val hc      = new HeaderCarrier
-  override val taxYear = 2015
-  val request          = AuthenticatedRequest(
+  implicit val hc: HeaderCarrier                            = new HeaderCarrier
+  override val taxYear: Int                                 = 2015
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -56,7 +57,7 @@ class SummaryServiceSpec extends BaseSpec {
     FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
-  def sut = new SummaryService(mockAtsService)
+  def sut: SummaryService = new SummaryService(mockAtsService)
 
   "SummaryService getSummaryData" must {
 

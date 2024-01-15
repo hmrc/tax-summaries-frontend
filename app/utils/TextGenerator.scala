@@ -21,9 +21,9 @@ object TextGenerator {
     if (hasTotalIncomeTax && hasCapitalGainsTax && hasNics) {
       createOnScreenTextTernary
     } else if (hasTotalIncomeTax ^ hasCapitalGainsTax ^ hasNics) {
-      createOnScreenTextUnary(hasTotalIncomeTax, hasCapitalGainsTax, hasNics)
+      createOnScreenTextUnary(hasTotalIncomeTax, hasCapitalGainsTax)
     } else {
-      createOnScreenTextBinary(hasTotalIncomeTax, hasCapitalGainsTax, hasNics)
+      createOnScreenTextBinary(hasTotalIncomeTax, hasCapitalGainsTax)
     }
 
   private def createOnScreenTextTernary =
@@ -36,7 +36,7 @@ object TextGenerator {
       )
     )
 
-  private def createOnScreenTextBinary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
+  private def createOnScreenTextBinary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean) =
     if (hasTotalIncomeTax) {
       if (hasCapitalGainsTax) {
         (
@@ -65,7 +65,7 @@ object TextGenerator {
       )
     }
 
-  private def createOnScreenTextUnary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean, hasNics: Boolean) =
+  private def createOnScreenTextUnary(hasTotalIncomeTax: Boolean, hasCapitalGainsTax: Boolean) =
     if (hasTotalIncomeTax) {
       (
         "ats.summary.taxable_income.your_total_tax.msg_unary",

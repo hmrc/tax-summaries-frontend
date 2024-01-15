@@ -81,14 +81,14 @@ class PayeAuthActionImpl @Inject() (
           )
 
         case _: InsufficientConfidenceLevel =>
-          upliftConfidenceLevel(request)
+          upliftConfidenceLevel
         case NonFatal(e)                    =>
           logger.error(s"Exception in PayeAuthAction: $e", e)
           Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
       }
     }
 
-  private def upliftConfidenceLevel(request: Request[_]) =
+  private def upliftConfidenceLevel =
     Redirect(
       appConfig.identityVerificationUpliftUrl,
       Map(

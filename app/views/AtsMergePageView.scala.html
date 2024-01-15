@@ -26,7 +26,6 @@
     headerSection: HeaderSection,
     atsForms: AtsForms,
     formWithCSRF: FormWithCSRF,
-    h1: H1,
     p: P,
     errorSummary: ErrorSummary,
     link: Link,
@@ -55,9 +54,7 @@
     @headerSection(
         name = atsMergePageViewModel.name,
         utr = atsMergePageViewModel.saData.utr,
-        taxYear = 0,
-        actingAsAttorney = actingAsAttorney,
-        showBackLink = false
+        actingAsAttorney = actingAsAttorney
     )
 }
 

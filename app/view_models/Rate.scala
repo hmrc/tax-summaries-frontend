@@ -16,12 +16,12 @@
 
 package view_models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class Rate(percent: String)
 
 object Rate {
-  implicit val formats = Json.format[Rate]
+  implicit val formats: OFormat[Rate] = Json.format[Rate]
 
   val empty: Rate = Rate("0%")
 }

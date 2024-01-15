@@ -17,12 +17,13 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.FakePayeAuthAction
+import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.Configuration
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.errors.PayeGenericErrorView
@@ -32,8 +33,10 @@ import scala.concurrent.Future
 
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
-  implicit val fakeAuthenticatedRequest = buildPayeRequest(routes.PayeTaxFreeAmountController.show(taxYear).url)
-  lazy val payeGenericErrorView         = inject[PayeGenericErrorView]
+  implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
+    routes.PayeTaxFreeAmountController.show(taxYear).url
+  )
+  lazy val payeGenericErrorView: PayeGenericErrorView                                     = inject[PayeGenericErrorView]
 
   val sut = new PayeTaxFreeAmountController(
     mockPayeAtsService,

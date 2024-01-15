@@ -21,6 +21,6 @@ import utils.{BaseSpec, WireMockHelper}
 
 trait ConnectorSpec extends BaseSpec with WireMockHelper {
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
 }

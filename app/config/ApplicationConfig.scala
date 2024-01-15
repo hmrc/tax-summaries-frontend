@@ -19,7 +19,8 @@ package config
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.Lang
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
+import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative, RedirectUrl}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
@@ -91,8 +92,15 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
-  def accessibilityStatementUrl(referrer: String) =
-    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(accessibilityBaseUrl + referrer).encodedUrl}"
+  def accessibilityStatementUrl(referrer: String) = {
+    val redirectUrl = RedirectUrl(accessibilityBaseUrl + referrer).getEither(
+      OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
+    ) match {
+      case Right(safeRedirectUrl) => safeRedirectUrl.url
+      case Left(error)            => throw new IllegalArgumentException(error)
+    }
+    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=$redirectUrl"
+  }
 
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))

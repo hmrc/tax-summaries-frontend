@@ -20,6 +20,7 @@ import controllers.auth.AuthenticatedRequest
 import models.InvalidTaxYear
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -27,13 +28,13 @@ import utils.TestConstants._
 
 class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
-  val authenticatedRequest =
+  val authenticatedRequest: Unit =
     "TaxYearUtil" must {
       "extract tax year when a valid tax year is present" in {
 
         val taxYear = 2019
 
-        implicit val request = AuthenticatedRequest(
+        implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
           "userId",
           None,
           Some(SaUtr(testUtr)),
@@ -55,7 +56,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
         " taxYear is more than 4 digits long " in {
 
-          implicit val request = AuthenticatedRequest(
+          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
             "userId",
             None,
             Some(SaUtr(testUtr)),
@@ -74,7 +75,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
         " taxYear is less than 4 digits long " in {
 
-          implicit val request = AuthenticatedRequest(
+          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
             "userId",
             None,
             Some(SaUtr(testUtr)),
@@ -93,7 +94,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
         "request has no taxYear field " in {
 
-          implicit val request =
+          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
             AuthenticatedRequest(
               "userId",
               None,
@@ -114,7 +115,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
 
         "taxYear is not numeric " in {
 
-          implicit val request = AuthenticatedRequest(
+          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
             "userId",
             None,
             Some(SaUtr(testUtr)),

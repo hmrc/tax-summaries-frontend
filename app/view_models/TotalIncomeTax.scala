@@ -61,26 +61,26 @@ case class TotalIncomeTax(
   val isScottishTaxPayer: Boolean = incomeTaxStatus == "0002"
   val isWelshTaxPayer: Boolean    = incomeTaxStatus == "0003"
 
-  def taxYear = year.toString
+  def taxYear: String = year.toString
 
-  def startingRateForSavingsRate  = startingRateForSavingsRateRate.percent
-  def basicRateIncomeTaxRate      = basicRateIncomeTaxRateRate.percent
-  def higherRateIncomeTaxRate     = higherRateIncomeTaxRateRate.percent
-  def additionalRateIncomeTaxRate = additionalRateIncomeTaxRateRate.percent
-  def ordinaryRateTaxRate         = ordinaryRateTaxRateRate.percent
-  def upperRateRate               = upperRateRateRate.percent
-  def additionalRateRate          = additionalRateRateRate.percent
-  def taxYearFrom                 = (year - 1).toString
+  def startingRateForSavingsRate: String  = startingRateForSavingsRateRate.percent
+  def basicRateIncomeTaxRate: String      = basicRateIncomeTaxRateRate.percent
+  def higherRateIncomeTaxRate: String     = higherRateIncomeTaxRateRate.percent
+  def additionalRateIncomeTaxRate: String = additionalRateIncomeTaxRateRate.percent
+  def ordinaryRateTaxRate: String         = ordinaryRateTaxRateRate.percent
+  def upperRateRate: String               = upperRateRateRate.percent
+  def additionalRateRate: String          = additionalRateRateRate.percent
+  def taxYearFrom: String                 = (year - 1).toString
 
-  def showIncomeTaxTable =
+  def showIncomeTaxTable: Boolean =
     startingRateForSavings.nonZero ||
       basicRateIncomeTaxAmount.nonZero ||
       higherRateIncomeTaxAmount.nonZero ||
       additionalRateIncomeTaxAmount.nonZero
 
-  def showDividendsTable = ordinaryRate.nonZero || upperRate.nonZero || additionalRate.nonZero
+  def showDividendsTable: Boolean = ordinaryRate.nonZero || upperRate.nonZero || additionalRate.nonZero
 
-  def showAdjustmentsTable =
+  def showAdjustmentsTable: Boolean =
     otherAdjustmentsIncreasing.nonZero || otherAdjustmentsReducing.nonZero || marriageAllowanceReceivedAmount.nonZero
 
   def scottishAndRestOfUkTotal: Amount =
