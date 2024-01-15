@@ -1,3 +1,5 @@
+$govuk-include-default-font-face: false;
+
 /*= Tax summary index page ----------------------------------------------*/
  #taxable-income a, #tax-calculated-as a, #tax-free-amount a, #capital-gains a {
      display: inline-block;
@@ -107,7 +109,7 @@
         #tax-spent-footer {
             margin-bottom: 2em;
         }
-        
+
         .heading-medium {
             margin: 0;
         }
