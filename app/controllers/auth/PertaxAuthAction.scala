@@ -64,7 +64,8 @@ class PertaxAuthActionImpl @Inject() (
               Future.successful(Right(request))
             case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
               Future.successful(Left(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
-            case Right(PertaxApiResponse(_, _, Some(errorView), _))                     =>
+            case Right(PertaxApiResponse(code, message, Some(errorView), _))            =>
+              logger.warn(s"Error response during authentication: $code $message")(implicitly)
               pertaxConnector.loadPartial(errorView.url)(request, executionContext).map {
                 case partial: HtmlPartial.Success =>
                   Left(
