@@ -59,7 +59,7 @@
         @{
             spendData.map { case (name, percentage) =>
                 <div class="govuk-summary-list__row--no-actions content">
-                    <dt id="@rowModel.category" class="govuk-summary-list__key">{messages(s"ats.treasury_spending.table.$name")}
+                    <dt id={s"$name"} class="govuk-summary-list__key">{messages(s"ats.treasury_spending.table.$name")}
                     </dt>
                     <dd class="govuk-summary-list__value">{percentage}%</dd>
                 </div>
