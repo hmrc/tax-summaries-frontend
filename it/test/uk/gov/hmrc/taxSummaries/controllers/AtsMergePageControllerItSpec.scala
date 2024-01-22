@@ -124,10 +124,10 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
     lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
 
-    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/3/ats-list"
 
     lazy val backendUrlPaye =
-      s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+      s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
 
     "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
 
@@ -159,7 +159,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
 
       lazy val backendUrlPaye =
-        s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+        s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))

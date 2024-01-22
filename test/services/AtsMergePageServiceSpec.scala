@@ -113,7 +113,11 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
             mockPayeAtsService
-              .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+              .getPayeTaxYearData(
+                testNino,
+                appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed,
+                appConfig.taxYear
+              )
           )
             .thenReturn(Future(Right(payeDataResponse)))
 
@@ -144,7 +148,11 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
             mockPayeAtsService
-              .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+              .getPayeTaxYearData(
+                testNino,
+                appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed,
+                appConfig.taxYear
+              )
           )
             .thenReturn(Future(Right(payeDataResponse)))
 
@@ -197,7 +205,11 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(
             mockPayeAtsService
-              .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+              .getPayeTaxYearData(
+                testNino,
+                appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed,
+                appConfig.taxYear
+              )
           )
             .thenReturn(Future(Right(payeDataResponse)))
 
@@ -221,7 +233,11 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
             mockPayeAtsService
-              .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+              .getPayeTaxYearData(
+                testNino,
+                appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed,
+                appConfig.taxYear
+              )
           )
             .thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
 
@@ -245,7 +261,11 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(
             mockPayeAtsService
-              .getPayeTaxYearData(testNino, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+              .getPayeTaxYearData(
+                testNino,
+                appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed,
+                appConfig.taxYear
+              )
           )
             .thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
 

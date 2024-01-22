@@ -212,7 +212,7 @@ class ContentsCheckSpec extends IntegrationSpec {
     server.stubFor(
       get(
         urlEqualTo(
-          s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+          s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
         )
       )
         .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))

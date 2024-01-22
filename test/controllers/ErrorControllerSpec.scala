@@ -193,7 +193,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               FakeRequest()
             )
 
-          val result   = sut.authorisedNoAts(appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed - 1)(request)
+          val result   = sut.authorisedNoAts(appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed - 1)(request)
           val document = contentAsString(result)
 
           status(result) mustBe FORBIDDEN

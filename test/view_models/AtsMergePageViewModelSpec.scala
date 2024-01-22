@@ -57,7 +57,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showNoAts to false if all years from 2018 are present in sa or paye data" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(2)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(2)
       val model =
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
@@ -87,7 +87,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is false" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(3)
 
       if (taxYear == 2023) { /// TODO - Delete this block besides the 2023 contents when uprating is complete
         val model =
@@ -96,8 +96,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
           AtsYearChoice(PAYE, taxYear),
           AtsYearChoice(NoATS, taxYear - 1),
           AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3),
-          AtsYearChoice(NoATS, taxYear - 4)
+          AtsYearChoice(NoATS, taxYear - 3)
         )
       } else {
         val model =
@@ -112,7 +111,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(3)
 
       if (taxYear == 2023) { /// TODO - Delete this block besides the 2023 contents when uprating is complete
         val model =
@@ -120,8 +119,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
         model.completeYearList mustBe List(
           AtsYearChoice(NoATS, taxYear - 1),
           AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3),
-          AtsYearChoice(NoATS, taxYear - 4)
+          AtsYearChoice(NoATS, taxYear - 3)
         )
       } else {
         val model =
@@ -138,14 +136,14 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showContinueButton to true when showNoAtsYearList is true" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(3)
       val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L200)
       model.showContinueButton mustBe true
     }
 
     "set showContinueButton to true when paye data is present and show IV uplift is false" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(0)
       val model =
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear - 1), mockAppConfig, ConfidenceLevel.L200)
       model.showContinueButton mustBe true
@@ -153,7 +151,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showContinueButton to false when there is no paye, sa or no ats data" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear - 10)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(0)
       val model =
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200)
       model.showContinueButton mustBe false
@@ -161,7 +159,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showContinueButton to false when there is no sa or no ats data, there is paye data but the user needs iv uplift" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear - 10)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
+      when(mockAppConfig.maxPreviousTaxYearsTobeDisplayed).thenReturn(0)
       val model =
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear), mockAppConfig, ConfidenceLevel.L50)
       model.showContinueButton mustBe false

@@ -29,7 +29,8 @@ case class AtsMergePageViewModel(
 
   private val saAndPayeTaxYearList = saData.yearList ::: payeTaxYearList
 
-  private val totalTaxYearList = ((appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) to appConfig.taxYear).toList
+  private val totalTaxYearList =
+    ((appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed) to appConfig.taxYear).toList
 
   private val showSaYearList: Boolean = saData.yearList.nonEmpty
 

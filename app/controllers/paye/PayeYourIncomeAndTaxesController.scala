@@ -46,7 +46,7 @@ class PayeYourIncomeAndTaxesController @Inject() (
   def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(_: PayeAtsData)
-          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
+          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed =>
         Forbidden(payeGenericErrorView())
       case Right(successResponse: PayeAtsData) =>
         PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {

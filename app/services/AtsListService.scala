@@ -104,10 +104,10 @@ class AtsListService @Inject() (
         middleConnector.connectToAtsListOnBehalfOf(
           requestedUTR,
           appConfig.taxYear,
-          appConfig.maxTaxYearsTobeDisplayed
+          appConfig.maxPreviousTaxYearsTobeDisplayed
         )
       case individual: SaUtr =>
-        middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
+        middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxPreviousTaxYearsTobeDisplayed)
     }
 
     val result = response flatMap {

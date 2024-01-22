@@ -49,7 +49,7 @@ class PayeAtsMainController @Inject() (
   private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
       case Right(_: PayeAtsData)
-          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
+          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed =>
         Forbidden(payeGenericErrorView())
       case Right(_: PayeAtsData)        => Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))

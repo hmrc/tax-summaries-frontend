@@ -74,7 +74,8 @@ class AtsMergePageService @Inject() (
   ): Future[Either[AtsResponse, List[Int]]] =
     request.nino
       .map(
-        payeAtsService.getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, appConfig.taxYear)
+        payeAtsService
+          .getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed, appConfig.taxYear)
       )
       .getOrElse(Future(Right(List.empty)))
 }

@@ -106,7 +106,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   lazy val taxYear: Int = config.getInt("taxYear")
 
-  val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
+  val maxPreviousTaxYearsTobeDisplayed: Int = config.getInt("max.previousTaxYears.to.display")
 
   def spendCategories(taxYear: Int): List[String] =
     configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList

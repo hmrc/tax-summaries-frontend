@@ -48,7 +48,7 @@ class ErrorController @Inject() (
   override def now: () => LocalDate = () => LocalDate.now()
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
+    if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxPreviousTaxYearsTobeDisplayed) {
       Future.successful(Forbidden(serviceUnavailableView()))
     } else {
       governmentSpendService
