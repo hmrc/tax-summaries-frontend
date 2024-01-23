@@ -49,25 +49,6 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
   "AtsMergePageViewModel" must {
 
-    "set showNoAts to true if not all years from 2018 are present in sa or paye data" in {
-      val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200)
-      model.showNoAtsText mustBe true
-    }
-
-    "set showNoAts to false if all years from 2018 are present in sa or paye data" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(2)
-      val model =
-        AtsMergePageViewModel(
-          AtsList("", "", "", List.empty),
-          List(taxYear - 2, taxYear - 1, taxYear),
-          mockAppConfig,
-          ConfidenceLevel.L200
-        )
-      model.showNoAtsText mustBe false
-    }
-
     "set showIvUpliftLink to true if paye data is present and confidence level is below 200" in {
       val model =
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear), mockAppConfig, ConfidenceLevel.L50)
@@ -96,8 +77,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
           AtsYearChoice(PAYE, taxYear),
           AtsYearChoice(NoATS, taxYear - 1),
           AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3),
-          AtsYearChoice(NoATS, taxYear - 4)
+          AtsYearChoice(NoATS, taxYear - 3)
         )
       } else {
         val model =
@@ -120,8 +100,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
         model.completeYearList mustBe List(
           AtsYearChoice(NoATS, taxYear - 1),
           AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3),
-          AtsYearChoice(NoATS, taxYear - 4)
+          AtsYearChoice(NoATS, taxYear - 3)
         )
       } else {
         val model =
