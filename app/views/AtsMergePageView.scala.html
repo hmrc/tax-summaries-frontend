@@ -43,13 +43,6 @@
     appConfig: ApplicationConfig
 )
 
-@pastAtsParagraph = {
-    @if(atsMergePageViewModel.showNoAtsText) {
-        @p(Text(messages("merge.page.no.ats.summary.unavailable.text")), classes=Some("govuk-hint"), elmId=Some("no-ats-before-2019"))
-    }
-    @p(Text(messages("merge.page.no.ats.summary.text")), classes=Some("govuk-hint"), elmId=Some("generic-no-ats"))
-}
-
 @beforeContent = {
     @headerSection(
         name = atsMergePageViewModel.name,
@@ -87,7 +80,9 @@
             text = atsMergePageViewModel.subtitleMsg
         )
 
-        @if(atsMergePageViewModel.showNoAtsYearList){@pastAtsParagraph}
+        @if(atsMergePageViewModel.showNoAtsYearList){
+            @p(Text(messages("merge.page.no.ats.summary.text")), classes=Some("govuk-hint"), elmId=Some("generic-no-ats"))
+        }
 
         @inputRadios(
             form = atsYearForm,
