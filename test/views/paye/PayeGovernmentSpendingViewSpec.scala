@@ -111,7 +111,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
       document
         .select("h1")
-        .text mustBe s"How your tax was spent 6 April ${taxYear - 1} to 5 April $taxYear"
+        .text mustBe s"How your tax was spent for the tax year 6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {
@@ -168,34 +168,30 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
     "have text relevant to non welsh users on government spending page for non welsh tax payer" in {
       val view     = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = false).body
       val document = Jsoup.parse(view)
-
       document
         .getElementById("paragraph-1")
-        .text() mustBe "These figures show how government spent money across the whole of the UK, including spending by the devolved administrations."
-      document.getElementById("paragraph-2").text() mustBe "All figures are rounded to the nearest pound."
+        .text() mustBe "These figures include spending by devolved administrations, such as the Scottish or Welsh Governments. They do not include indirect taxes, such as VAT and other duties."
       document
-        .getElementById("paragraph-3")
-        .text() mustBe "The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure."
-      document.getElementById("paragraph-4").text() mustBe "Spending information is published by HM Treasury."
+        .getElementById("generic-spending-link")
+        .text() mustBe "You can find out more about how public spending was calculated in your tax summary on GOV.UK."
+      document
+        .getElementById("paragraph-4")
+        .text() mustBe "Spending information is published by HM Treasury. All figures are rounded to the nearest pound."
 
     }
 
     "have text relevant to welsh users on government spending page for welsh tax payer" in {
       val view     = payeGovernmentSpendingView(payeAtsTestData.payeGovernmentSpendViewModel, isWelshTaxPayer = true).body
       val document = Jsoup.parse(view)
-
       document
-        .getElementById("welsh-tax-payer-paragraph-1")
-        .text() mustBe "The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure."
+        .getElementById("paragraph-1")
+        .text() mustBe "These figures include spending by devolved administrations, such as the Scottish or Welsh Governments. They do not include indirect taxes, such as VAT and other duties."
       document
-        .getElementById("welsh-tax-payer-paragraph-2")
-        .text() mustBe "All figures are rounded to the nearest pound."
+        .getElementById("welsh-spending-link")
+        .text() mustBe "You can find out more about how public spending was calculated in your tax summary on the Welsh Government website."
       document
-        .getElementById("welsh-tax-payer-paragraph-3")
-        .text() mustBe "Spending information is published by HM Treasury."
-      document
-        .getElementById("welsh-tax-payer-paragraph-4")
-        .text() mustBe "The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit https://www.gov.wales/calculate-welsh-income-tax-spend"
+        .getElementById("paragraph-4")
+        .text() mustBe "Spending information is published by HM Treasury. All figures are rounded to the nearest pound."
 
     }
   }

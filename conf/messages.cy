@@ -302,8 +302,8 @@ paye.ats.summary.lede=Mae hyn er eich gwybodaeth yn unig. Nid oes rhaid i chi gy
 
 # Paye ATS - government spending page
 #===========================================================
-paye.ats.treasury_spending.title=Sut y gwariwyd eich treth
-paye.ats.treasury_spending.introParagraph=Mae’r wybodaeth ar y dudalen hon yn dangos i chi sut y gwariwyd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol. Nid yw hyn yn cynnwys trethi anuniongyrchol megis TAW a thollau eraill.
+paye.ats.treasury_spending.title=Sut y gwariwyd eich treth am y flwyddyn dreth
+paye.ats.treasury_spending.introParagraph=Diben y ffigurau hyn yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
 
 paye.ats.treasury_spending.table.Welfare=Lles
 paye.ats.treasury_spending.table.Health=Iechyd
@@ -323,16 +323,21 @@ paye.ats.treasury_spending.table.OverseasAid=Cymorth Tramor
 paye.ats.treasury_spending.table.PublicOrderAndSafety=Trefn a Diogelwch Cyhoeddus
 
 paye.ats.treasury_spending.para2=Mae’r holl ffigurau wedi’u talgrynnu i’r bunt agosaf.
-paye.ats.treasury_spending.para1=Mae’r ffigurau hyn yn dangos sut mae’r llywodraeth wedi gwario arian ar draws y DU gyfan, gan gynnwys gwariant gan y gweinyddiaethau datganoledig.
+paye.ats.treasury_spending.para1=Mae’r ffigurau hyn yn cynnwys gwariant gan weinyddiaethau datganoledig, megis Llywodraethau Cymru a’r Alban. Nid ydynt yn cynnwys trethi anuniongyrchol, megis TAW a thollau eraill.
 paye.ats.treasury_spending.scottish.spending.1=Mae rhagor o wybodaeth ar
 paye.ats.treasury_spending.scottish.spending.2=gael am eich treth a’ch gwariant cyhoeddus yn yr Alban
 paye.ats.treasury_spending.scottish.spending.3=ar wefan Llywodraeth yr Alban.
 paye.ats.treasury_spending.para3=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
-paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
+paye.ats.treasury_spending.para4=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EF. Mae’r holl ffigurau wedi’u talgrynnu i’r bunt agosaf.
 paye.ats.treasury_spending.total=Cyfanswm
 paye.ats.treasury_spending.welsh.tax.payer.para1=Diben y ffigurau yn y tabl uchod yw dangos i chi sut y caiff trethi eu gwario. Nid ydynt yn gysylltiad uniongyrchol rhwng eich Treth Incwm, cyfraniadau Yswiriant Gwladol ac unrhyw wariant penodol.
 paye.ats.treasury_spending.welsh.tax.payer.para3=Caiff gwybodaeth am wariant ei chyhoeddi gan Drysorlys EM.
 paye.ats.treasury_spending.welsh.tax.payer.para4=Cyfrifoldeb Llywodraeth Cymru yw’r polisi a’r cyllid ar gyfer y rhan fwyaf o’r gwasanaethau cyhoeddus allweddol a ddarperir yng Nghymru. I gael rhagor o wybodaeth am wariant Llywodraeth Cymru, ewch i
+
+paye.ats.treasury_spending.link.you.can = Gallwch
+paye.ats.treasury_spending.link.find.out.more.england = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar GOV.UK.
+paye.ats.treasury_spending.link.find.out.more.scotland = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar wefan Llywodraeth yr Alban.
+paye.ats.treasury_spending.link.find.out.more.wales = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar wefan Llywodraeth Cymru.
 
 
 # Paye ATS - no ats page

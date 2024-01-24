@@ -21,6 +21,11 @@ Authentication
 
 This user logs into this service using [Government Gateway]
 
+Testing
+------------
+Please run Unit tests by running `sbt test` and `sbt it:test`
+
+
 
 ### License
 

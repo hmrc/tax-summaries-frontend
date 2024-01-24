@@ -24,7 +24,6 @@
 	main: MainTemplate,
 	h1: H1,
 	p: P,
-	link: Link,
 	htmlFormatter: HtmlFormatter
 )
 
@@ -71,32 +70,24 @@
 			</div>
 		</dl>
 
+		@p(Text(messages("paye.ats.treasury_spending.para1")), elmId=Some("paragraph-1"))
 
-		@if(isWelshTaxPayer){
-
-			@p(Text(messages("paye.ats.treasury_spending.para2")), elmId=Some("welsh-tax-payer-paragraph-2"))
-			@p(Text(messages("paye.ats.treasury_spending.welsh.tax.payer.para1")), elmId=Some("welsh-tax-payer-paragraph-1"))
-			@p(Text(messages("paye.ats.treasury_spending.welsh.tax.payer.para3")), elmId=Some("welsh-tax-payer-paragraph-3"))
-
-			@p(HtmlContent(messages("paye.ats.treasury_spending.welsh.tax.payer.para4") +
-				link(link = appConfig.calculateWelshIncomeTaxSpend,
-				messageKey = appConfig.calculateWelshIncomeTaxSpend,
-				inParagraph = true,
-				attrTarget = true)
-				), elmId = Some("welsh-tax-payer-paragraph-4"))
-
-		} else {
-			@p(Text(messages("paye.ats.treasury_spending.para2")), elmId=Some("paragraph-2"))
-			@p(Text(messages("paye.ats.treasury_spending.para1")), elmId=Some("paragraph-1"))
-
+		@if(viewModel.isScottish || isWelshTaxPayer) {
 			@if(viewModel.isScottish) {
-				<p id="scottish-spending-link" class="govuk-body">@Messages("paye.ats.treasury_spending.scottish.spending.1")
-					<a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" class="govuk-link" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.scottish.spending.2")</a>
-					@Messages("paye.ats.treasury_spending.scottish.spending.3")
+				<p id="scottish-spending-link" class="govuk-body">@Messages("paye.ats.treasury_spending.link.you.can")
+					<a href="@appConfig.scottishIncomeTaxLink(viewModel.taxYear)" class="govuk-link" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.link.find.out.more.scotland")</a>
+				</p>
+			} else {
+				<p id="welsh-spending-link" class="govuk-body">@Messages("paye.ats.treasury_spending.link.you.can")
+					<a href="@appConfig.walesIncomeTaxLink" class="govuk-link" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.link.find.out.more.wales")</a>
 				</p>
 			}
-			@p(Text(messages("paye.ats.treasury_spending.para3")), elmId=Some("paragraph-3"))
-			@p(Text(messages("paye.ats.treasury_spending.para4")), elmId=Some("paragraph-4"))
-
+		} else {
+			<p id="generic-spending-link" class="govuk-body">@Messages("paye.ats.treasury_spending.link.you.can")
+				<a href="@appConfig.englandIncomeTaxLink" class="govuk-link" target="blank" rel="noopener noreferrer">@Messages("paye.ats.treasury_spending.link.find.out.more.england")</a>
+			</p>
 		}
+
+		@p(Text(messages("paye.ats.treasury_spending.para4")), elmId=Some("paragraph-4"))
+
 }

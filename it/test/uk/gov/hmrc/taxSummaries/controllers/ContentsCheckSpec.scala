@@ -54,7 +54,7 @@ class ContentsCheckSpec extends IntegrationSpec {
       case "service-unavailable"      =>
         ExpectedData("Sorry there is a problem with the service - Annual Tax Summary - GOV.UK")
       case "paye-year"                =>
-        ExpectedData("How your tax was spent: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData("How your tax was spent for the tax year: 2021 to 2022 - Annual Tax Summary - GOV.UK")
       case "paye-summary-year"        =>
         ExpectedData("Your income and taxes: 2021 to 2022 - Annual Tax Summary - GOV.UK")
       case "income-insurance-year"    =>
