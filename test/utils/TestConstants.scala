@@ -108,7 +108,7 @@ trait TestConstants extends BaseSpec {
 
   val govSpendTotalTuple: (String, SpendData) = ("GovSpendTotal", SpendData(Amount(2898.13, "GBP"), 100.0))
 
-  val fakeTaxYear = 2019
+  val fakeTaxYear = taxYear - 3
 
   val fakeGovernmentSpend: GovernmentSpend =
     GovernmentSpend(
