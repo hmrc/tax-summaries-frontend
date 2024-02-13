@@ -17,7 +17,7 @@ object AppDependencies {
     "uk.gov.hmrc"                %% "tax-year"                   % "4.0.0",
     "org.typelevel"              %% "cats-core"                  % "2.10.0",
     "uk.gov.hmrc"               %% s"mongo-feature-toggles-client-$playVersion"     % "1.1.0",
-    "uk.gov.hmrc" %% s"sca-wrapper-$playVersion" % "1.1.0"
+    "uk.gov.hmrc" %% s"sca-wrapper-$playVersion" % "1.3.0"
   )
 
   val test: Seq[ModuleID] = Seq(
