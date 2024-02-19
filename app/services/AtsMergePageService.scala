@@ -20,7 +20,7 @@ import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.AtsResponse
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier

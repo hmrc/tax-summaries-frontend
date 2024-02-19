@@ -17,7 +17,8 @@
 package views.paye
 
 import config.ApplicationConfig
-import controllers.auth.PayeAuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
@@ -33,7 +34,7 @@ import views.html.paye.PayeGovernmentSpendingView
 class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
   implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(
+    requests.PayeAuthenticatedRequest(
       testNino,
       isSa = false,
       fakeCredentials,

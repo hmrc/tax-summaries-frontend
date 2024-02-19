@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -59,7 +60,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      lazy val request = AuthenticatedRequest(
+      lazy val request = requests.AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),

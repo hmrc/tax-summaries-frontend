@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import controllers.auth.actions.{InsufficientCredsNino, NinoAuthAction, NoAtsNinoFound, SuccessAtsNino, UpliftRequiredAtsNino}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

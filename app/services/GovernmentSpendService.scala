@@ -20,7 +20,7 @@ import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{CategoriesUtils, GenericViewModel}

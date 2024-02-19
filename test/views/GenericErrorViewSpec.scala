@@ -16,7 +16,8 @@
 
 package views
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.mockito.MockitoSugar
 import play.api.i18n.{Lang, MessagesImpl}
@@ -31,7 +32,7 @@ import views.html.errors.GenericErrorView
 
 class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConstants {
 
-  lazy val requestWithSession: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  lazy val requestWithSession: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),

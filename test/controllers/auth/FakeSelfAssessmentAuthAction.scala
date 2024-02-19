@@ -16,6 +16,8 @@
 
 package controllers.auth
 
+import controllers.auth.actions.SelfAssessmentAction
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -31,7 +33,7 @@ object FakeSelfAssessmentAuthAction extends ControllerBaseSpec with SelfAssessme
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] =
     Future(
       Right(
-        AuthenticatedRequest(
+        requests.AuthenticatedRequest(
           "userId",
           None,
           Some(SaUtr(testUtr)),

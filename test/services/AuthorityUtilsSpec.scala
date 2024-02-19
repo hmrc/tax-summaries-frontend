@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -33,7 +34,7 @@ class AuthorityUtilsSpec extends BaseSpec {
     val uar: String            = testUar
     val nonMatchingUtr: String = testNonMatchingUtr
 
-    protected val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+    protected val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(utr)),
@@ -45,7 +46,7 @@ class AuthorityUtilsSpec extends BaseSpec {
       FakeRequest()
     )
     val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type]      =
-      AuthenticatedRequest(
+      requests.AuthenticatedRequest(
         "userId",
         Some(Uar(uar)),
         Some(SaUtr(utr)),

@@ -18,6 +18,7 @@ package controllers.auth
 
 import cats.data.EitherT
 import connectors.PertaxConnector
+import controllers.auth.actions.{AuthAction, PayeAuthActionImpl, PertaxAuthActionImpl, SelfAssessmentAction}
 import controllers.paye.routes
 import models.PertaxApiResponse
 import models.admin.PertaxBackendToggle

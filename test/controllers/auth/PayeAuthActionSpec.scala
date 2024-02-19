@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import controllers.auth.actions.{PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER

@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -31,7 +32,7 @@ class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(
-      AuthenticatedRequest(
+      requests.AuthenticatedRequest(
         "userId",
         None,
         if (isSa) Some(SaUtr(testUtr)) else None,

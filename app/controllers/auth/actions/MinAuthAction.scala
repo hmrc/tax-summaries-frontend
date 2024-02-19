@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -55,7 +57,7 @@ class MinAuthActionImpl @Inject() (
           val isAgentActive: Boolean = enrolments.getEnrolment("IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
           block(
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               externalId,
               None,
               None,

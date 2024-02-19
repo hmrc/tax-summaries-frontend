@@ -17,7 +17,8 @@
 package controllers
 
 import cats.data.EitherT
-import controllers.auth._
+import controllers.auth.{requests, _}
+import controllers.auth.requests.AuthenticatedRequest
 import models.AtsErrorResponse
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.OK
@@ -75,7 +76,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
 
           implicit lazy val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -116,7 +117,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
 
           implicit lazy val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               None,
@@ -150,7 +151,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
 
           implicit lazy val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -181,7 +182,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
 
           implicit lazy val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -212,7 +213,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)
 
           implicit lazy val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -278,7 +279,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       "show the not authorised view" in {
 
         implicit lazy val request =
-          AuthenticatedRequest(
+          requests.AuthenticatedRequest(
             "userId",
             None,
             None,

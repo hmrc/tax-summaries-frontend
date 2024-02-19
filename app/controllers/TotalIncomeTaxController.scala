@@ -18,7 +18,8 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthJourney, AuthenticatedRequest}
+import controllers.auth.AuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, TotalIncomeTaxService}

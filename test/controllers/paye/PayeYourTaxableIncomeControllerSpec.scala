@@ -16,7 +16,8 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.{FakePayeAuthAction, requests}
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -34,7 +35,7 @@ import scala.concurrent.Future
 class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
   implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(
+    requests.PayeAuthenticatedRequest(
       testNino,
       false,
       fakeCredentials,

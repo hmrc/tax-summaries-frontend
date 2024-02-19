@@ -17,7 +17,8 @@
 package view_models
 
 import config.ApplicationConfig
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.{AtsYearChoice, NoATS, PAYE, SA}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.AnyContentAsEmpty
@@ -32,7 +33,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
   val fakeCredentials: Credentials     = new Credentials("provider ID", "provider type")
   val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
-  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),

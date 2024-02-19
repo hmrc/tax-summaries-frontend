@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.actions
 
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals

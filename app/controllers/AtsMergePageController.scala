@@ -18,7 +18,8 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthJourney, AuthenticatedRequest}
+import controllers.auth.AuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import models.{AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport

@@ -16,6 +16,8 @@
 
 package controllers.auth
 
+import controllers.auth.actions.{AuthAction, InsufficientCredsNino, NinoAuthAction, NoAtsNinoFound, SelfAssessmentAction, SelfAssessmentActionImpl, SuccessAtsNino, UpliftRequiredAtsNino}
+import controllers.auth.requests.AuthenticatedRequest
 import models.MatchingDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar

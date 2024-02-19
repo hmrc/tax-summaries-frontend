@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import play.api.mvc._
 import utils.ControllerBaseSpec
 

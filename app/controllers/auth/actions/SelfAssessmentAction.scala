@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.actions
 
 import com.google.inject.ImplementedBy
 import config.ApplicationConfig
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
@@ -103,7 +105,7 @@ class SelfAssessmentActionImpl @Inject() (
     request: AuthenticatedRequest[T],
     newSaUtr: Option[SaUtr]
   ): AuthenticatedRequest[T] =
-    AuthenticatedRequest(
+    requests.AuthenticatedRequest(
       userId = request.userId,
       agentRef = request.agentRef,
       saUtr = newSaUtr,

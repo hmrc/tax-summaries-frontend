@@ -16,6 +16,8 @@
 
 package controllers.auth
 
+import controllers.auth.actions.AuthAction
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -31,7 +33,7 @@ object FakeAuthAction extends ControllerBaseSpec with AuthAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(
-      AuthenticatedRequest(
+      requests.AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),

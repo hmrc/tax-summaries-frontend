@@ -17,7 +17,8 @@
 package services
 
 import connectors.DataCacheConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
@@ -31,7 +32,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.BaseSpec
 import utils.JsonUtil._
-import utils.TestConstants.{testNino, _}
+import utils.TestConstants._
 import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,7 +74,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
   val payeDataResponse: List[Int] = List(2018, 2019)
 
-  val agentRequestWithQuery: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  val agentRequestWithQuery: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
@@ -96,7 +97,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "user is an agent" in {
           implicit val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               Some(Uar("ref")),
               Some(SaUtr(testUtr)),
@@ -133,7 +134,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData and payeData is successfully received" in {
           implicit val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -165,7 +166,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData is successfully received and nino is not present" in {
           implicit val requestNoNino =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -190,7 +191,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData returns error and paye returns success response" in {
           implicit val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -219,7 +220,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData returns success and paye returns error response" in {
           implicit val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),
@@ -247,7 +248,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData and paye both return error response" in {
           implicit val request =
-            AuthenticatedRequest(
+            requests.AuthenticatedRequest(
               "userId",
               None,
               Some(SaUtr(testUtr)),

@@ -17,7 +17,8 @@
 package services
 
 import connectors.MiddleConnector
-import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
+import controllers.auth.requests
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -54,10 +55,10 @@ class PayeAtsServiceSpec extends BaseSpec {
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
+    requests.PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
   val authenticatedRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
+    requests.AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),

@@ -16,7 +16,8 @@
 
 package views
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.ActingAsAttorneyFor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -33,7 +34,7 @@ import views.html.total_income_tax_includes._
 class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
+    requests.AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),

@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import play.api.mvc.AnyContentAsEmpty
@@ -46,7 +47,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
 
   val mockAtsService: AtsService                            = mock[AtsService]
   override val taxYear                                      = 2015
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),

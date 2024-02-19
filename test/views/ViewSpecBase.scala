@@ -16,7 +16,8 @@
 
 package views
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
@@ -40,7 +41,7 @@ trait ViewSpecBase extends BaseSpec {
     assert(doc.getElementsByClass(className) != null, "Element " + className + " was not rendered on the page.")
 
   lazy val fakeRequest              = FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
-  lazy val authenticatedFakeRequest = AuthenticatedRequest(
+  lazy val authenticatedFakeRequest = requests.AuthenticatedRequest(
     "",
     None,
     None,

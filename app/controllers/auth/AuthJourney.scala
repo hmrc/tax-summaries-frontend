@@ -17,6 +17,8 @@
 package controllers.auth
 
 import com.google.inject.ImplementedBy
+import controllers.auth.actions.{AuthAction, MinAuthAction, PayeAuthAction, PertaxAuthAction, SelfAssessmentAction}
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import play.api.mvc.{ActionBuilder, AnyContent}
 
 import javax.inject.Inject
@@ -41,4 +43,5 @@ class AuthJourneyImpl @Inject() (
     payeAuthAction andThen pertaxAuthAction
   override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
     authAction andThen selfAssessmentAction
+    //selfAssessmentAction andThen pertaxAuthAction
 }

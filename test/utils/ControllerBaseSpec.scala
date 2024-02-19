@@ -16,7 +16,8 @@
 
 package utils
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.i18n
 import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.mvc._
@@ -69,7 +70,7 @@ trait ControllerBaseSpec extends BaseSpec {
 
   val fakeCredentials = new Credentials("provider ID", "provider type")
 
-  lazy val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  lazy val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -81,7 +82,7 @@ trait ControllerBaseSpec extends BaseSpec {
     FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
-  lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),

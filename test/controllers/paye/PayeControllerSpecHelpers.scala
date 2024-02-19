@@ -16,7 +16,8 @@
 
 package controllers.paye
 
-import controllers.auth.PayeAuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.PayeAuthenticatedRequest
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -35,7 +36,7 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec {
   val expectedResponse2021: JsValue = readJson("/paye_ats_2021.json")
 
   def buildPayeRequest(endpoint: String): PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", endpoint))
+    requests.PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", endpoint))
 
   def readJson(path: String): JsValue = {
     val resource = getClass.getResourceAsStream(path)

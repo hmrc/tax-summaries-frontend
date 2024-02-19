@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import controllers.auth.requests
+import controllers.auth.requests.PayeAuthenticatedRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -62,7 +64,7 @@ class PayeAuthActionImpl @Inject() (
           case enrolments ~ Some(nino) ~ Some(credentials) =>
             val isSa = enrolments.getEnrolment("IR-SA").isDefined
             block {
-              PayeAuthenticatedRequest(
+              requests.PayeAuthenticatedRequest(
                 Nino(nino),
                 isSa,
                 credentials,

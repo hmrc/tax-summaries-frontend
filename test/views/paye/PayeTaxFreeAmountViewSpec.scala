@@ -16,7 +16,8 @@
 
 package views.paye
 
-import controllers.auth.PayeAuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -31,7 +32,7 @@ import views.html.paye.PayeTaxFreeAmountView
 class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
   implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(
+    requests.PayeAuthenticatedRequest(
       testNino,
       isSa = false,
       fakeCredentials,

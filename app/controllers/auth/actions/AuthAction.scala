@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -67,7 +69,7 @@ class AuthActionImpl @Inject() (
             val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").map(_.isActivated).getOrElse(false)
 
             block {
-              AuthenticatedRequest(
+              requests.AuthenticatedRequest(
                 externalId,
                 agentRef,
                 saUtr.map(s => SaUtr(s)),

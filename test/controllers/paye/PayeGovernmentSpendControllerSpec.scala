@@ -17,7 +17,8 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakePayeAuthAction
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import play.api.Configuration

@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -45,7 +46,7 @@ class SummaryServiceSpec extends BaseSpec {
 
   implicit val hc: HeaderCarrier                            = new HeaderCarrier
   override val taxYear: Int                                 = 2015
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),

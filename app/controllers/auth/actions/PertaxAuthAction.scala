@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors.PertaxConnector
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.PertaxApiResponse
 import models.admin.PertaxBackendToggle
 import play.api.Logging

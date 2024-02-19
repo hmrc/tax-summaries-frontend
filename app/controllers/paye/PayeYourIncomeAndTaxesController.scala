@@ -17,7 +17,8 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{AuthJourney, PayeAuthenticatedRequest}
+import controllers.auth.AuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
