@@ -36,12 +36,12 @@ import utils.Globals
 import scala.concurrent.{ExecutionContext, Future}
 
 class MergePageAuthActionImpl @Inject() (
-                                          citizenDetailsService: CitizenDetailsService,
-                                          dataCacheConnector: DataCacheConnector,
-                                          override val authConnector: DefaultAuthConnector,
-                                          cc: MessagesControllerComponents
-                                        )(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
-  extends MergePageAuthAction
+  citizenDetailsService: CitizenDetailsService,
+  dataCacheConnector: DataCacheConnector,
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents
+)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
+    extends MergePageAuthAction
     with AuthorisedFunctions {
 
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
@@ -67,17 +67,17 @@ class MergePageAuthActionImpl @Inject() (
           for {
             getAgentTokenCache <- dataCacheConnector.getAgentToken
             blockData          <- executeAuthActions(
-              request,
-              block,
-              externalId,
-              credentials,
-              saUtr,
-              nino,
-              confidenceLevel,
-              agentRef,
-              isAgentActive,
-              getAgentTokenCache
-            )
+                                    request,
+                                    block,
+                                    externalId,
+                                    credentials,
+                                    saUtr,
+                                    nino,
+                                    confidenceLevel,
+                                    agentRef,
+                                    isAgentActive,
+                                    getAgentTokenCache
+                                  )
           } yield blockData
 
         case _ => throw new RuntimeException("Can't find credentials for user")
@@ -100,17 +100,17 @@ class MergePageAuthActionImpl @Inject() (
   }
 
   private def executeAuthActions[A](
-                                     request: Request[A],
-                                     block: AuthenticatedRequest[A] => Future[Result],
-                                     externalId: String,
-                                     credentials: Credentials,
-                                     saUtr: Option[String],
-                                     nino: Option[String],
-                                     confidenceLevel: ConfidenceLevel,
-                                     agentRef: Option[Uar],
-                                     isAgentActive: Boolean,
-                                     agentToken: Option[AgentToken]
-                                   )(implicit hc: HeaderCarrier) =
+    request: Request[A],
+    block: AuthenticatedRequest[A] => Future[Result],
+    externalId: String,
+    credentials: Credentials,
+    saUtr: Option[String],
+    nino: Option[String],
+    confidenceLevel: ConfidenceLevel,
+    agentRef: Option[Uar],
+    isAgentActive: Boolean,
+    agentToken: Option[AgentToken]
+  )(implicit hc: HeaderCarrier) =
     if (saUtr.isEmpty && nino.isEmpty && agentRef.isEmpty) {
       Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
     } else {
@@ -153,7 +153,7 @@ class MergePageAuthActionImpl @Inject() (
     }
 
   private def handleResponse[T](request: AuthenticatedRequest[T], nino: String)(implicit
-                                                                                hc: HeaderCarrier
+    hc: HeaderCarrier
   ): Future[AuthenticatedRequest[T]] =
     for {
       detailsResponse <- citizenDetailsService.getMatchingDetails(nino)
@@ -168,9 +168,9 @@ class MergePageAuthActionImpl @Inject() (
     }
 
   private def createAuthenticatedRequest[T](
-                                             request: AuthenticatedRequest[T],
-                                             newSaUtr: Option[SaUtr]
-                                           ): AuthenticatedRequest[T] =
+    request: AuthenticatedRequest[T],
+    newSaUtr: Option[SaUtr]
+  ): AuthenticatedRequest[T] =
     AuthenticatedRequest(
       userId = request.userId,
       agentRef = request.agentRef,
@@ -186,5 +186,5 @@ class MergePageAuthActionImpl @Inject() (
 
 @ImplementedBy(classOf[MergePageAuthActionImpl])
 trait MergePageAuthAction
-  extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]
