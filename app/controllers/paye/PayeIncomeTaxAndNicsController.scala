@@ -44,23 +44,24 @@ class PayeIncomeTaxAndNicsController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOnly.async { implicit request: PayeAuthenticatedRequest[_] =>
-    payeAtsService.getPayeATSData(request.nino, taxYear).map {
-      case Right(successResponse: PayeAtsData) =>
-        Ok(
-          payeIncomeTaxAndNicsView(
-            PayeIncomeTaxAndNics(
-              payeAtsData = successResponse,
-              scottishRates = payeConfig.scottishTaxBandKeys,
-              uKRates = payeConfig.ukTaxBandKeys,
-              adjustments = payeConfig.adjustmentsKeys.toSet
-            ),
-            successResponse.isWelshTaxPayer
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividualsOnly.async {
+    implicit request: PayeAuthenticatedRequest[_] =>
+      payeAtsService.getPayeATSData(request.nino, taxYear).map {
+        case Right(successResponse: PayeAtsData) =>
+          Ok(
+            payeIncomeTaxAndNicsView(
+              PayeIncomeTaxAndNics(
+                payeAtsData = successResponse,
+                scottishRates = payeConfig.scottishTaxBandKeys,
+                uKRates = payeConfig.ukTaxBandKeys,
+                adjustments = payeConfig.adjustmentsKeys.toSet
+              ),
+              successResponse.isWelshTaxPayer
+            )
           )
-        )
 
-      case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-      case _                            => InternalServerError(payeGenericErrorView())
-    }
+        case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        case _                            => InternalServerError(payeGenericErrorView())
+      }
   }
 }

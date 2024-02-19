@@ -41,7 +41,7 @@ class AllowancesController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedAllowance: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { request =>
+  def authorisedAllowance: Action[AnyContent] = authJourney.authForSAIndividualsAndAgentsOnly.async { request =>
     show(request)
   }
 

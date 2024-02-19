@@ -43,13 +43,14 @@ class PayeYourTaxableIncomeController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOnly.async { implicit request: PayeAuthenticatedRequest[_] =>
-    payeAtsService.getPayeATSData(request.nino, taxYear).map {
-      case Right(successResponse: PayeAtsData) =>
-        val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
-        Ok(payeYourTaxableIncomeView(viewModel))
-      case Left(_: AtsNotFoundResponse)        => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-      case _                                   => InternalServerError(payeGenericErrorView())
-    }
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividualsOnly.async {
+    implicit request: PayeAuthenticatedRequest[_] =>
+      payeAtsService.getPayeATSData(request.nino, taxYear).map {
+        case Right(successResponse: PayeAtsData) =>
+          val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
+          Ok(payeYourTaxableIncomeView(viewModel))
+        case Left(_: AtsNotFoundResponse)        => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        case _                                   => InternalServerError(payeGenericErrorView())
+      }
   }
 }

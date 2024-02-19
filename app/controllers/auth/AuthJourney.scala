@@ -17,7 +17,7 @@
 package controllers.auth
 
 import com.google.inject.ImplementedBy
-import controllers.auth.actions.{AuthAction, MinAuthAction, PayeAuthAction, PertaxAuthAction, SelfAssessmentAction}
+import controllers.auth.actions._
 import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import play.api.mvc.{ActionBuilder, AnyContent}
 
@@ -26,13 +26,12 @@ import javax.inject.Inject
 @ImplementedBy(classOf[AuthJourneyImpl])
 trait AuthJourney {
   val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authForIndividualsAndAgentsSA: ActionBuilder[AuthenticatedRequest, AnyContent] // sa summaries agents + individs
-  val authForIndividualsOnlyPaye: ActionBuilder[PayeAuthenticatedRequest, AnyContent] // paye pages individs only
-  /*
-  Merge page: accessible by individuals AND agents
-    agents see only sa summaries (not paye)
-   */
-//  val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] // 
+  val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] // Merge page
+  val authForSAIndividualsAndAgentsOnly: ActionBuilder[
+    AuthenticatedRequest,
+    AnyContent
+  ] // sa summaries agents + individs BUT ONLY SA else error page displayed
+  val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] // paye pages individs only
 }
 
 class AuthJourneyImpl @Inject() (
@@ -40,13 +39,15 @@ class AuthJourneyImpl @Inject() (
   selfAssessmentAction: SelfAssessmentAction,
   payeAuthAction: PayeAuthAction,
   pertaxAuthAction: PertaxAuthAction,
-  minAuthAction: MinAuthAction
+  minAuthAction: MinAuthAction,
+  mergePageAuthAction: MergePageAuthAction
 ) extends AuthJourney {
-  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] =
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                       =
     minAuthAction
-  override val authForIndividualsOnlyPaye: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    payeAuthAction andThen pertaxAuthAction
-  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
+  override val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]   =
+    mergePageAuthAction
+  override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
     authAction andThen selfAssessmentAction
-    //selfAssessmentAction andThen pertaxAuthAction
+  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
+    payeAuthAction andThen pertaxAuthAction
 }

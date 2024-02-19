@@ -44,22 +44,23 @@ class PayeYourIncomeAndTaxesController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOnly.async { implicit request: PayeAuthenticatedRequest[_] =>
-    payeAtsService.getPayeATSData(request.nino, taxYear).map {
-      case Right(_: PayeAtsData)
-          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
-        Forbidden(payeGenericErrorView())
-      case Right(successResponse: PayeAtsData) =>
-        PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
-          case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
-          case _               =>
-            val exception = new InternalServerException("Missing Paye ATS data")
-            logger.error(s"Internal server error ${exception.getMessage}", exception)
-            InternalServerError(exception.getMessage)
-        }
-      case Left(_: AtsNotFoundResponse)        =>
-        Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-      case _                                   => InternalServerError(payeGenericErrorView())
-    }
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividualsOnly.async {
+    implicit request: PayeAuthenticatedRequest[_] =>
+      payeAtsService.getPayeATSData(request.nino, taxYear).map {
+        case Right(_: PayeAtsData)
+            if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
+          Forbidden(payeGenericErrorView())
+        case Right(successResponse: PayeAtsData) =>
+          PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
+            case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
+            case _               =>
+              val exception = new InternalServerException("Missing Paye ATS data")
+              logger.error(s"Internal server error ${exception.getMessage}", exception)
+              InternalServerError(exception.getMessage)
+          }
+        case Left(_: AtsNotFoundResponse)        =>
+          Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        case _                                   => InternalServerError(payeGenericErrorView())
+      }
   }
 }

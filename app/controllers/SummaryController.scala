@@ -42,7 +42,7 @@ class SummaryController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedSummaries: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { request =>
+  def authorisedSummaries: Action[AnyContent] = authJourney.authForSAIndividualsAndAgentsOnly.async { request =>
     show(request)
   }
 

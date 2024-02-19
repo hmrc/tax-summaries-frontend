@@ -45,10 +45,11 @@ class AtsMergePageController @Inject() (
     with AttorneyUtils
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { implicit request: AuthenticatedRequest[_] =>
-    if (appConfig.saShuttered && appConfig.payeShuttered) {
-      Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
-    } else getSaAndPayeYearList()
+  def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsAndAgentsOnly.async {
+    implicit request: AuthenticatedRequest[_] =>
+      if (appConfig.saShuttered && appConfig.payeShuttered) {
+        Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
+      } else getSaAndPayeYearList()
   }
 
   private def getSaAndPayeYearList(
@@ -89,7 +90,7 @@ class AtsMergePageController @Inject() (
     }
   }
 
-  def onSubmit: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { implicit request =>
+  def onSubmit: Action[AnyContent] = authJourney.authForIndividualsAndAgentsOnly.async { implicit request =>
     atsForms.atsYearFormMapping
       .bindFromRequest()
       .fold(

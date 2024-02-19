@@ -22,7 +22,7 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{MessagesControllerComponents, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils._

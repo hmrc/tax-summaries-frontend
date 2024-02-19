@@ -41,7 +41,7 @@ class NicsController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedNics: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { request =>
+  def authorisedNics: Action[AnyContent] = authJourney.authForSAIndividualsAndAgentsOnly.async { request =>
     show(request)
   }
 
