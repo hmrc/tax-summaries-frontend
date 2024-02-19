@@ -26,12 +26,12 @@ import javax.inject.Inject
 @ImplementedBy(classOf[AuthJourneyImpl])
 trait AuthJourney {
   val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] // Merge page
-  val authForSAIndividualsAndAgentsOnly: ActionBuilder[
-    AuthenticatedRequest,
-    AnyContent
-  ] // sa summaries agents + individs BUT ONLY SA else error page displayed
-  val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] // paye pages individs only
+  // Merge page:-
+  val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]
+  // sa summaries agents + individs BUT ONLY SA else error page displayed:-
+  val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]
+  // paye pages individs only:-
+  val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
 }
 
 class AuthJourneyImpl @Inject() (
