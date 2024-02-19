@@ -18,7 +18,7 @@ package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors.PertaxConnector
-import controllers.auth.requests.PayeAuthenticatedRequest
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.PertaxApiResponse
 import models.admin.PertaxBackendToggle
 import play.api.Logging
@@ -58,7 +58,7 @@ class PertaxAuthActionImpl @Inject() (
     featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
       if (toggle.isEnabled) {
         pertaxConnector
-          .pertaxAuth(request.nino.nino)
+          .pertaxPostAuthorise()
           .value
           .flatMap {
             case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
@@ -105,5 +105,11 @@ class PertaxAuthActionImpl @Inject() (
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
 
+
+
+
+
+
 @ImplementedBy(classOf[PertaxAuthActionImpl])
 trait PertaxAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
+

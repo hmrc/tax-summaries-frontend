@@ -57,6 +57,29 @@ class SelfAssessmentActionImpl @Inject() (
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
+// Below is what is in pertax backend authorise:-
+//def authorise(): Action[AnyContent] = authenticate.async { implicit request =>
+//  implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request.request)
+//  request.version match {
+//    case "2.0" =>
+//      val responseF = (for {
+//        _ <- authorisationUtils.checkAffinity(request)
+//        _ <- authorisationUtils.checkConfidenceLevel(request)
+//        _ <- authorisationUtils.checkCredentialStrength(request)
+//        _ <- authorisationUtils.checkDesignatoryDetails(request)
+//        _ <- enrolmentChecks.checkSingleAccountEnrolment(request)
+//      } yield ApiResponse("ACCESS_GRANTED", "Access granted", reportAs = OK)).merge
+//
+//      responseF.map(response => Status(response.reportAs)(response))
+//
+//    case _ =>
+//      Future.successful(
+//        ApiResponse("INVALID_API_VERSION", "Invalid version of the API", reportAs = NOT_IMPLEMENTED).toResult
+//      )
+//  }
+//}
+
+// Below is the original auth action:-
       authorised(ConfidenceLevel.L50)
         .retrieve(
           Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel
@@ -83,7 +106,7 @@ class SelfAssessmentActionImpl @Inject() (
             )
 
             implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
+// Below is the original selfassessmentaction
             if (agentRef.isDefined && !isAgentActive) {
               Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
             } else if (saUtr.isEmpty && agentRef.isEmpty) {

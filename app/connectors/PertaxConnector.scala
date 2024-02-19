@@ -23,7 +23,8 @@ import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
 
 import javax.inject.Inject
@@ -31,27 +32,32 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PertaxConnector @Inject() (
   httpClient: HttpClient,
+  http: HttpClientV2,
   httpClientResponse: HttpClientResponse,
   applicationConfig: ApplicationConfig,
   headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-)(implicit
-  ec: ExecutionContext
 ) extends Logging {
 
   private val baseUrl = applicationConfig.pertaxHost
 
-  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
+  def pertaxPostAuthorise()(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
     httpClientResponse
       .read(
-        httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](
-          s"$baseUrl/pertax/$nino/check-single-account",
-          headers = Seq((HeaderNames.ACCEPT, s"application/vnd.hmrc.1.0+json"))
-        )
+        http
+          .post(url"$baseUrl/pertax/authorise")
+          .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
+          .withBody("""
+              |"isBackendService": false
+              |""".stripMargin)
+          .execute[Either[UpstreamErrorResponse, HttpResponse]]
       )
-      .map(response => response.json.as[PertaxApiResponse])
+      .map(_.json.as[PertaxApiResponse])
 
   def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
-    implicit val hc = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
+    implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
 
     httpClient.GET[HtmlPartial](s"$baseUrl$url") map {
       case partial: HtmlPartial.Success =>
@@ -69,4 +75,34 @@ class PertaxConnector @Inject() (
       }
     }
   }
+
+//  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
+//    httpClientResponse
+//      .read(
+//        httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](
+//          s"$baseUrl/pertax/$nino/check-single-account",
+//          headers = Seq((HeaderNames.ACCEPT, s"application/vnd.hmrc.1.0+json"))
+//        )
+//      )
+//      .map(response => response.json.as[PertaxApiResponse])
+
+//  def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
+//    implicit val hc = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
+//
+//    http.get[HtmlPartial](s"$baseUrl$url") map {
+//      case partial: HtmlPartial.Success =>
+//        partial
+//      case partial: HtmlPartial.Failure =>
+//        logger.error(s"Failed to load partial from $url, partial info: $partial")
+//        partial
+//    } recover { case e =>
+//      logger.error(s"Failed to load partial from $url", e)
+//      e match {
+//        case ex: HttpException =>
+//          HtmlPartial.Failure(Some(ex.responseCode))
+//        case _                 =>
+//          HtmlPartial.Failure(None)
+//      }
+//    }
+//  }
 }
