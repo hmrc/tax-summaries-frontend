@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{AuthenticatedRequest, MergePageAuthAction}
+import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.{AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageController @Inject() (
   atsMergePageService: AtsMergePageService,
-  authAction: MergePageAuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   atsMergePageView: AtsMergePageView,
   genericErrorView: GenericErrorView,
@@ -44,7 +44,7 @@ class AtsMergePageController @Inject() (
     with AttorneyUtils
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authAction.async { implicit request: AuthenticatedRequest[_] =>
+  def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { implicit request: AuthenticatedRequest[_] =>
     if (appConfig.saShuttered && appConfig.payeShuttered) {
       Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
     } else getSaAndPayeYearList()
@@ -88,7 +88,7 @@ class AtsMergePageController @Inject() (
     }
   }
 
-  def onSubmit: Action[AnyContent] = authAction.async { implicit request =>
+  def onSubmit: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { implicit request =>
     atsForms.atsYearFormMapping
       .bindFromRequest()
       .fold(

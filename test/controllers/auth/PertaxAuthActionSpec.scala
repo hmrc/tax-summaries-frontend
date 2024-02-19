@@ -22,7 +22,7 @@ import controllers.paye.routes
 import models.PertaxApiResponse
 import models.admin.PertaxBackendToggle
 import org.mockito.ArgumentMatchers.any
-import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, REQUEST_TIMEOUT, SEE_OTHER, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
+import play.api.http.Status._
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, defaultAwaitTimeout, redirectLocation, status}
@@ -49,7 +49,7 @@ class PertaxAuthActionSpec extends BaseSpec {
   val unauthorisedRoute: String = routes.PayeErrorController.notAuthorised.url
 
   class Harness(authJourney: AuthJourney) extends InjectedController {
-    def onPageLoad(): Action[AnyContent] = authJourney.authWithSingleGGCheck { request =>
+    def onPageLoad(): Action[AnyContent] = authJourney.authForIndividualsOnly { request =>
       Ok(s"Nino: ${request.nino.nino}")
     }
   }

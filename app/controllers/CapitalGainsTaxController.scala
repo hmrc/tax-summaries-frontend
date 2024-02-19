@@ -40,7 +40,7 @@ class CapitalGainsTaxController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedCapitalGains: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
+  def authorisedCapitalGains: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { request =>
     show(request)
   }
 

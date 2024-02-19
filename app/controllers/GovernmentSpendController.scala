@@ -40,7 +40,7 @@ class GovernmentSpendController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authWithSelfAssessment.async { request =>
+  def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { request =>
     show(request)
   }
 

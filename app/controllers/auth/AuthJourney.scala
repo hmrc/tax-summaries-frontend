@@ -23,9 +23,7 @@ import javax.inject.Inject
 
 @ImplementedBy(classOf[AuthJourneyImpl])
 trait AuthJourney {
-  val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
-  
+  val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
   val authForIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
   val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
 }
@@ -34,17 +32,13 @@ class AuthJourneyImpl @Inject() (
   authAction: AuthAction,
   selfAssessmentAction: SelfAssessmentAction,
   payeAuthAction: PayeAuthAction,
-  pertaxAuthAction: PertaxAuthAction
+  pertaxAuthAction: PertaxAuthAction,
+  minAuthAction: MinAuthAction
 ) extends AuthJourney {
-  // OLD ONES TO BE REMOVED:-
-  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]    =
-    authAction andThen selfAssessmentAction
-  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    payeAuthAction andThen pertaxAuthAction
-    
-  // NEW ONES:-
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] =
+    minAuthAction
   override val authForIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
     payeAuthAction andThen pertaxAuthAction
-  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]    =
+  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
     authAction andThen selfAssessmentAction
 }
