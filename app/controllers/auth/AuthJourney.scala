@@ -26,8 +26,13 @@ import javax.inject.Inject
 @ImplementedBy(classOf[AuthJourneyImpl])
 trait AuthJourney {
   val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authForIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
-  val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
+  val authForIndividualsAndAgentsSA: ActionBuilder[AuthenticatedRequest, AnyContent] // sa summaries agents + individs
+  val authForIndividualsOnlyPaye: ActionBuilder[PayeAuthenticatedRequest, AnyContent] // paye pages individs only
+  /*
+  Merge page: accessible by individuals AND agents
+    agents see only sa summaries (not paye)
+   */
+//  val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] // 
 }
 
 class AuthJourneyImpl @Inject() (
@@ -39,7 +44,7 @@ class AuthJourneyImpl @Inject() (
 ) extends AuthJourney {
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] =
     minAuthAction
-  override val authForIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
+  override val authForIndividualsOnlyPaye: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
     payeAuthAction andThen pertaxAuthAction
   override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
     authAction andThen selfAssessmentAction
