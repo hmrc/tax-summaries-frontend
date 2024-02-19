@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.{AuthJourney, AuthenticatedRequest}
 import models.ErrorResponse
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AllowanceService, AuditService}
 import utils.GenericViewModel
 import view_models.Allowances
@@ -40,7 +40,7 @@ class AllowancesController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedAllowance = authJourney.authWithSelfAssessment.async { request =>
+  def authorisedAllowance: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async { request =>
     show(request)
   }
 

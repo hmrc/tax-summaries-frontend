@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayeAtsMainController @Inject() (
   payeAtsService: PayeAtsService,
-  AuthJourney: AuthJourney,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   payeTaxsMainView: PayeTaxsMainView,
   payeGenericErrorView: PayeGenericErrorView
@@ -42,7 +42,7 @@ class PayeAtsMainController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = AuthJourney.authWithSingleGGCheck.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOnly.async { implicit request =>
     getPayeAts(taxYear)
   }
 
