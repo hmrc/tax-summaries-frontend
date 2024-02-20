@@ -37,7 +37,8 @@ trait AuthJourney {
 class AuthJourneyImpl @Inject() (
   selfAssessmentAction: SelfAssessmentAction,
   payeAuthAction: PayeAuthAction,
-  pertaxAuthAction: PertaxAuthAction,
+  pertaxPAYEAuthAction: PertaxPAYEAuthAction,
+  pertaxSAAuthAction: PertaxSAAuthAction,
   minAuthAction: MinAuthAction,
   mergePageAuthAction: MergePageAuthAction
 ) extends AuthJourney {
@@ -47,7 +48,7 @@ class AuthJourneyImpl @Inject() (
     mergePageAuthAction
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
     //authAction andThen selfAssessmentAction
-    selfAssessmentAction
+    selfAssessmentAction andThen pertaxSAAuthAction
   override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
-    payeAuthAction andThen pertaxAuthAction
+    payeAuthAction andThen pertaxPAYEAuthAction
 }

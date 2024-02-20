@@ -41,7 +41,7 @@ import views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.Future
 
-class PertaxAuthActionSpec extends BaseSpec {
+class PertaxPAYEAuthActionSpec extends BaseSpec {
 
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
@@ -72,7 +72,7 @@ class PertaxAuthActionSpec extends BaseSpec {
 
   val pertaxAuthAction = new PertaxAuthActionImpl(
     mockAuthConnector,
-    FakePertaxAuthAction.mcc,
+    FakePertaxPAYEAuthAction.mcc,
     mockPertaxConnector,
     mockFeatureFlagService,
     inject[ServiceUnavailableView],

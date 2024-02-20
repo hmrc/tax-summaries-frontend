@@ -24,5 +24,5 @@ object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
   override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]    =
     FakeAuthAction andThen FakeSelfAssessmentAuthAction
   override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    FakePertaxAuthAction andThen FakePertaxAuthAction
+    FakePertaxPAYEAuthAction andThen FakePertaxPAYEAuthAction
 }

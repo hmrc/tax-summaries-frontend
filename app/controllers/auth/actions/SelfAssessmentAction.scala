@@ -80,11 +80,13 @@ class SelfAssessmentActionImpl @Inject() (
 //}
 
 // Below is the original auth action:-
+      println("\nAA1")
       authorised(ConfidenceLevel.L50)
         .retrieve(
           Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel
         ) {
           case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel =>
+            println("\nAA2")
             val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
               enrolment.identifiers
                 .find(id => id.key == "IRAgentReference")
@@ -107,18 +109,50 @@ class SelfAssessmentActionImpl @Inject() (
 
             implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 // Below is the original selfassessmentaction
-            if (agentRef.isDefined && !isAgentActive) {
-              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
-            } else if (saUtr.isEmpty && agentRef.isEmpty) {
-              ninoAuthAction.getNino().flatMap { atsNinoResponse =>
-                handleResponse(rq, atsNinoResponse).flatMap {
-                  case Left(r)  => Future.successful(r)
-                  case Right(r) => block(r)
+
+            (agentRef, isAgentActive, saUtr) match {
+              case (Some(_), false, _) => Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
+              case (None, _, _) => // Not an agent: get the nino:-
+                ninoAuthAction.getNino().flatMap { atsNinoResponse =>
+                  println("\natsNinoResponse=" + atsNinoResponse)
+                  handleResponse(rq, atsNinoResponse).flatMap {
+                    case Left(r)  => Future.successful(r)
+                    case Right(r) => block(r)
+                  }
                 }
-              }
-            } else {
-              block(rq)
+
+
+//
+//                val x = authorised(ConfidenceLevel.L200 and CredentialStrength(CredentialStrength.strong)).retrieve(Retrievals.nino) {
+//                  case Some(nino) => Future(SuccessAtsNino(nino))
+//                  case _          => Future(NoAtsNinoFound)
+//                } recover {
+//                  case _: InsufficientConfidenceLevel => UpliftRequiredAtsNino
+//                  case _: IncorrectCredentialStrength => InsufficientCredsNino
+//                }
+              
+              
+              
+              case _ => block(rq)
             }
+            
+            
+//            if (agentRef.isDefined && !isAgentActive) {
+//              println("\n**** IS AGENT")
+//              Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
+//            } else if (saUtr.isEmpty && agentRef.isEmpty) {
+//              println("\n**** IS NOT AGENT 1")
+//              ninoAuthAction.getNino().flatMap { atsNinoResponse =>
+//                println("\natsNinoResponse=" + atsNinoResponse)
+//                handleResponse(rq, atsNinoResponse).flatMap {
+//                  case Left(r)  => Future.successful(r)
+//                  case Right(r) => block(r)
+//                }
+//              }
+//            } else {
+//              println("\n**** IS NOT AGENT - 2" + saUtr + "/" + agentRef)
+//              block(rq)
+//            }
           case _                                                                                       => throw new RuntimeException("Can't find credentials for user")
         }
     } recover {
@@ -153,6 +187,7 @@ class SelfAssessmentActionImpl @Inject() (
             )
         }
       case NoAtsNinoFound        =>
+        println("\nNO NINO FOUND REDIRECT")
         Future(
           Left(
             Redirect(controllers.routes.ErrorController.notAuthorised)

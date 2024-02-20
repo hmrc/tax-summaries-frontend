@@ -44,7 +44,7 @@ class PertaxAuthActionImpl @Inject() (
   featureFlagService: FeatureFlagService,
   serviceUnavailableView: ServiceUnavailableView,
   mainTemplate: MainTemplate
-) extends PertaxAuthAction
+) extends PertaxPAYEAuthAction
     with I18nSupport
     with AuthorisedFunctions
     with Logging {
@@ -105,11 +105,75 @@ class PertaxAuthActionImpl @Inject() (
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
 
+class PertaxAuthActionSAImpl @Inject() (
+  override val authConnector: DefaultAuthConnector,
+  cc: ControllerComponents,
+  pertaxConnector: PertaxConnector,
+  featureFlagService: FeatureFlagService,
+  serviceUnavailableView: ServiceUnavailableView,
+  mainTemplate: MainTemplate
+) extends PertaxSAAuthAction
+    with I18nSupport
+    with AuthorisedFunctions
+    with Logging {
 
+  override def messagesApi: MessagesApi = cc.messagesApi
 
+  override protected def refine[A](
+    request: AuthenticatedRequest[A]
+  ): Future[Either[Result, AuthenticatedRequest[A]]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
+      if (toggle.isEnabled) {
+        pertaxConnector
+          .pertaxPostAuthorise()
+          .value
+          .flatMap {
+            case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
+              Future.successful(Right(request))
+            case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
+              Future.successful(Left(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
+            case Right(PertaxApiResponse(code, message, Some(errorView), _))            =>
+              logger.warn(s"Error response during authentication: $code $message")(implicitly)
+              pertaxConnector.loadPartial(errorView.url)(request, executionContext).map {
+                case partial: HtmlPartial.Success =>
+                  Left(
+                    Status(errorView.statusCode)(
+                      mainTemplate(partial.title.getOrElse(""))(partial.content)(
+                        request,
+                        messagesApi.preferred(request)
+                      )
+                    )
+                  )
+                case _: HtmlPartial.Failure       =>
+                  logger.error(s"The partial ${errorView.url} failed to be retrieved")
+                  Left(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+              }
+            case Right(response)                                                        =>
+              val ex =
+                new RuntimeException(
+                  s"Pertax response `${response.code}` with message ${response.message} is not handled"
+                )
+              logger.error(ex.getMessage, ex)
+              Future.successful(
+                Left(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+              )
 
+            case _ =>
+              Future.successful(
+                Left(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+              )
+          }
+      } else {
+        Future.successful(Right(request))
+      }
+    }
+  }
 
+  override protected implicit val executionContext: ExecutionContext = cc.executionContext
+}
 
 @ImplementedBy(classOf[PertaxAuthActionImpl])
-trait PertaxAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
-
+trait PertaxPAYEAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
+@ImplementedBy(classOf[PertaxAuthActionSAImpl])
+trait PertaxSAAuthAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]

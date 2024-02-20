@@ -24,7 +24,7 @@ import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakePertaxAuthAction extends ControllerBaseSpec with PayeAuthAction {
+object FakePertaxPAYEAuthAction$ extends ControllerBaseSpec with PayeAuthAction {
   override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
