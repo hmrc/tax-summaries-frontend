@@ -60,12 +60,12 @@ class SelfAssessmentActionImpl @Inject() (
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel =>
           val (agentRef, isAgentActive) = agentInfo(enrolments)
-          processAuth(agentRef, isAgentActive, saUtr) { newSaUtr =>
+          processAuth(agentRef, isAgentActive, saUtr) { saUtr =>
             block(
               requests.AuthenticatedRequest(
                 userId = externalId,
                 agentRef = agentRef,
-                saUtr = newSaUtr,
+                saUtr = saUtr,
                 nino = None,
                 isSa = saUtr.isDefined,
                 isAgentActive = isAgentActive,
@@ -85,7 +85,7 @@ class SelfAssessmentActionImpl @Inject() (
               "origin"       -> Seq(appConfig.appName)
             )
           )
-        case _: InsufficientEnrolments => Redirect(controllers.routes.ErrorController.notAuthorised)
+        case _: InsufficientEnrolments => notAuthorisedPage
       }
     }
 
@@ -93,24 +93,13 @@ class SelfAssessmentActionImpl @Inject() (
     block: Option[SaUtr] => Future[Result]
   )(implicit hc: HeaderCarrier): Future[Result] =
     (agentRef, isAgentActive, saUtr) match {
-      case (Some(_), false, _) => Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
-      case (None, _, _)        =>
-        authorised(ConfidenceLevel.L200 and CredentialStrength(CredentialStrength.strong))
-          .retrieve(Retrievals.nino) {
-            case Some(nino) =>
-              citizenDetailsService.getMatchingDetails(nino).flatMap {
-                case SucccessMatchingDetailsResponse(value) =>
-                  if (value.saUtr.isDefined) {
-                    //              saUtr.map(s => SaUtr(s)),
-                    block(value.saUtr)
-                  } else {
-                    Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
-                  }
-                case _                                      =>
-                  Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
-              }
-            case _          => Future(Redirect(controllers.routes.ErrorController.notAuthorised))
-          } recover {
+      case (Some(_), true, _)  => block(saUtr.map(SaUtr)) // Active agent
+      case (Some(_), false, _) => Future.successful(notAuthorisedPage) // Inactive agent
+      case (None, _, _)        => // Not an agent
+        getSAUTRFromCitizenDetails.flatMap {
+          case optUTR @ Some(_) => block(optUTR)
+          case None             => Future.successful(notAuthorisedPage)
+        } recover {
           case _: InsufficientConfidenceLevel =>
             Redirect(
               appConfig.identityVerificationUpliftUrl,
@@ -121,10 +110,24 @@ class SelfAssessmentActionImpl @Inject() (
                 "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
               )
             )
-
-          case _: IncorrectCredentialStrength =>
-            Redirect(controllers.routes.ErrorController.notAuthorised)
+          case _: IncorrectCredentialStrength => notAuthorisedPage
         }
+    }
+
+  private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
+
+  private def getSAUTRFromCitizenDetails(implicit hc: HeaderCarrier): Future[Option[SaUtr]] =
+    authorised(ConfidenceLevel.L200 and CredentialStrength(CredentialStrength.strong)).retrieve(Retrievals.nino) {
+      case Some(nino) =>
+        citizenDetailsService.getMatchingDetails(nino).map {
+          case SucccessMatchingDetailsResponse(matchingDetails) =>
+            matchingDetails.saUtr match {
+              case Some(_) => matchingDetails.saUtr
+              case _       => None
+            }
+          case _                                                => None
+        }
+      case _          => Future.successful(None)
     }
 
   private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
@@ -136,7 +139,7 @@ class SelfAssessmentActionImpl @Inject() (
           .map(key => Uar(key.value))
         Tuple2(d, enrolment.isActivated)
       }
-      .getOrElse(None, false)
+      .getOrElse(Tuple2(None, false))
   //
   //            val agentRef: Option[Uar] = enrolments.find(_.key == "IR-SA-AGENT").flatMap { enrolment =>
   //              enrolment.identifiers
