@@ -37,19 +37,19 @@ import views.html.errors.ServiceUnavailableView
 import scala.concurrent.{ExecutionContext, Future}
 
 class PertaxAuthService @Inject() (
-                                    val authConnector: DefaultAuthConnector,
-                                    val messagesApi: MessagesApi,
-                                    pertaxConnector: PertaxConnector,
-                                    featureFlagService: FeatureFlagService,
-                                    serviceUnavailableView: ServiceUnavailableView,
-                                    mainTemplate: MainTemplate
-                                  )(implicit
-                                    ec: ExecutionContext
-                                  ) 
-extends AuthorisedFunctions
-  with I18nSupport
-with Logging{
+  val authConnector: DefaultAuthConnector,
+  val messagesApi: MessagesApi,
+  pertaxConnector: PertaxConnector,
+  featureFlagService: FeatureFlagService,
+  serviceUnavailableView: ServiceUnavailableView,
+  mainTemplate: MainTemplate
+)(implicit
+  ec: ExecutionContext
+) extends AuthorisedFunctions
+    with I18nSupport
+    with Logging {
   def authorise[T, M <: WrappedRequest[T]](request: M): Future[Either[Result, M]] = {
+    println("\nAUTHORISING IN BACKEND:" + request)
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
       if (toggle.isEnabled) {

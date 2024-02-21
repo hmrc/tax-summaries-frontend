@@ -49,23 +49,23 @@ class AuthJourneyImpl @Inject() (
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
     //authAction andThen selfAssessmentAction
     selfAssessmentAction andThen pertaxSAAuthAction
-    
+
   /*
   SA:-
    active agent then so long as has basic creds let thru
    if not agent then do full frontend or backend auth depending on pertax auth toggle
-   
+
   PAYE:-
   If paye shuttered then say service unavailable
   Do full frontend or backend auth depending on pertax auth toggle
-  
+
   SO pattern to use:-
-  
+
   SA: initial sa shuttered check then agent check then fe/ be auth depending on toggle then citizen details utr bit
   PAYE: initial paye shuttered check then fe/be auth depending on toggle
-  
+
    */
-  
-  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
+
+  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
     payeAuthAction andThen pertaxPAYEAuthAction
 }

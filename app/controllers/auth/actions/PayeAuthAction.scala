@@ -49,7 +49,10 @@ class PayeAuthActionImpl @Inject() (
 
   val payeShuttered: Boolean = appConfig.payeShuttered
 
-  private def authorisePAYEPertaxBackendToggleOff[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]) = {
+  private def authorisePAYEPertaxBackendToggleOff[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
@@ -57,6 +60,7 @@ class PayeAuthActionImpl @Inject() (
       .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
         case enrolments ~ Some(nino) ~ Some(credentials) =>
           val isSa = enrolments.getEnrolment("IR-SA").isDefined
+          println("\nPAYEAUTHACTION")
           block {
             requests.PayeAuthenticatedRequest(
               Nino(nino),
@@ -83,7 +87,7 @@ class PayeAuthActionImpl @Inject() (
         Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
     }
   }
-  
+
   override def invokeBlock[A](
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
@@ -91,8 +95,7 @@ class PayeAuthActionImpl @Inject() (
     if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
-      
-      
+      authorisePAYEPertaxBackendToggleOff(request, block)
     }
 
   private def upliftConfidenceLevel =
