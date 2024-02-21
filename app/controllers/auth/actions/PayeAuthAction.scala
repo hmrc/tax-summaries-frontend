@@ -73,7 +73,7 @@ class PayeAuthActionImpl @Inject() (
             }
           case _                                           => throw new RuntimeException("Auth retrieval failed for user")
         } recover {
-        case _: NoActiveSession =>
+        case _: NoActiveSession => // Unathorised response from backend pertax auth
           Redirect(
             appConfig.payeLoginUrl,
             Map(
