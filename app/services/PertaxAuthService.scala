@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.auth.services
+package services
 
 import com.google.inject.Inject
 import connectors.PertaxConnector

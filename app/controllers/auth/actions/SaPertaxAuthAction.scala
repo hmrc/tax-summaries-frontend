@@ -18,10 +18,10 @@ package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import controllers.auth.requests.AuthenticatedRequest
-import controllers.auth.services.PertaxAuthService
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
+import services.PertaxAuthService
 
 import scala.concurrent.{ExecutionContext, Future}
 

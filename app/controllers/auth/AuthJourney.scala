@@ -51,16 +51,6 @@ class AuthJourneyImpl @Inject() (
   override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
     payeBasicAuthAction andThen payePertaxAuthAction
   /*
-  SA:-
-   active agent then so long as has basic creds let thru
-   if not agent then do full frontend or backend auth depending on pertax auth toggle
-
-  PAYE:-
-  If paye shuttered then say service unavailable
-  Do full frontend or backend auth depending on pertax auth toggle
-
-  SO pattern to use:-
-
   SA:
    1) basic auth (sa shuttered check/ agent check + create request object with required fields) + iv uplift if etc toggle off then
    2) be auth if toggle then REFINER
@@ -68,7 +58,5 @@ class AuthJourneyImpl @Inject() (
   PAYE:
    1) basic auth (paye shuttered check + populate request object with required fields (get isSA from enrolments)) + iv uplift etc if toggle off then
    2) be auth depending on toggle REFINER
-
    */
-
 }
