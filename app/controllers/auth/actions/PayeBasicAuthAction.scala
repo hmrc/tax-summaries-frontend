@@ -62,11 +62,10 @@ class PayeBasicAuthActionImpl @Inject() (
       authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
         .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
           case enrolments ~ Some(nino) ~ Some(credentials) =>
-            val isSa = enrolments.getEnrolment("IR-SA").isDefined
             block {
               requests.PayeAuthenticatedRequest(
                 Nino(nino),
-                isSa,
+                enrolments.getEnrolment("IR-SA").isDefined,
                 credentials,
                 request
               )
