@@ -61,7 +61,7 @@ class AuthJourneyImpl @Inject() (
   
   SO pattern to use:-
   
-  SA: initial agent check then fe/ be auth depending on toggle
+  SA: initial sa shuttered check then agent check then fe/ be auth depending on toggle then citizen details utr bit
   PAYE: initial paye shuttered check then fe/be auth depending on toggle
   
    */

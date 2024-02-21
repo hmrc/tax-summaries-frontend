@@ -50,6 +50,10 @@ class SelfAssessmentActionImpl @Inject() (
 
   private val saShuttered: Boolean = appConfig.saShuttered
 
+  private def authoriseSAPertaxBackendToggleOff = {
+    
+  }
+  
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     if (saShuttered) {
       Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable))

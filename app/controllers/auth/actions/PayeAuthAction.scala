@@ -49,6 +49,41 @@ class PayeAuthActionImpl @Inject() (
 
   val payeShuttered: Boolean = appConfig.payeShuttered
 
+  private def authorisePAYEPertaxBackendToggleOff[A](request: Request[A], block: PayeAuthenticatedRequest[A] => Future[Result]) = {
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
+      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+        case enrolments ~ Some(nino) ~ Some(credentials) =>
+          val isSa = enrolments.getEnrolment("IR-SA").isDefined
+          block {
+            requests.PayeAuthenticatedRequest(
+              Nino(nino),
+              isSa,
+              credentials,
+              request
+            )
+          }
+        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+      } recover {
+      case _: NoActiveSession => // Unathorised response from backend pertax auth
+        Redirect(
+          appConfig.payeLoginUrl,
+          Map(
+            "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
+            "origin"       -> Seq(appConfig.appName)
+          )
+        )
+
+      case _: InsufficientConfidenceLevel =>
+        upliftConfidenceLevel
+      case NonFatal(e)                    =>
+        logger.error(s"Exception in PayeAuthAction: $e", e)
+        Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+    }
+  }
+  
   override def invokeBlock[A](
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
@@ -56,38 +91,8 @@ class PayeAuthActionImpl @Inject() (
     if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
-      implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-      authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-        .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-          case enrolments ~ Some(nino) ~ Some(credentials) =>
-            val isSa = enrolments.getEnrolment("IR-SA").isDefined
-            block {
-              requests.PayeAuthenticatedRequest(
-                Nino(nino),
-                isSa,
-                credentials,
-                request
-              )
-            }
-          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
-        } recover {
-        case _: NoActiveSession => // Unathorised response from backend pertax auth
-          Redirect(
-            appConfig.payeLoginUrl,
-            Map(
-              "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
-              "origin"       -> Seq(appConfig.appName)
-            )
-          )
-
-        case _: InsufficientConfidenceLevel =>
-          upliftConfidenceLevel
-        case NonFatal(e)                    =>
-          logger.error(s"Exception in PayeAuthAction: $e", e)
-          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
-      }
+      
+      
     }
 
   private def upliftConfidenceLevel =
