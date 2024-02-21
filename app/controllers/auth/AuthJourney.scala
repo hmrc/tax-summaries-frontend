@@ -35,10 +35,10 @@ trait AuthJourney {
 }
 
 class AuthJourneyImpl @Inject() (
-  selfAssessmentAction: SelfAssessmentAction,
-  payeAuthAction: PayeAuthAction,
-  pertaxPAYEAuthAction: PertaxPAYEAuthAction,
-  pertaxSAAuthAction: PertaxSAAuthAction,
+  saBasicAuthAction: SaBasicAuthAction,
+  saPertaxAuthAction: SaPertaxAuthAction,
+  payeBasicAuthAction: PayeBasicAuthAction,
+  payePertaxAuthAction: PayePertaxAuthAction,
   minAuthAction: MinAuthAction,
   mergePageAuthAction: MergePageAuthAction
 ) extends AuthJourney {
@@ -47,9 +47,9 @@ class AuthJourneyImpl @Inject() (
   override val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]   =
     mergePageAuthAction
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    //authAction andThen selfAssessmentAction
-    selfAssessmentAction andThen pertaxSAAuthAction
-
+    saBasicAuthAction andThen saPertaxAuthAction
+  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
+    payeBasicAuthAction andThen payePertaxAuthAction
   /*
   SA:-
    active agent then so long as has basic creds let thru
@@ -61,11 +61,14 @@ class AuthJourneyImpl @Inject() (
 
   SO pattern to use:-
 
-  SA: initial sa shuttered check then agent check then fe/ be auth depending on toggle then citizen details utr bit
-  PAYE: initial paye shuttered check then fe/be auth depending on toggle
+  SA:
+   1) basic auth (sa shuttered check/ agent check + create request object with required fields) + iv uplift if etc toggle off then
+   2) be auth if toggle then REFINER
+   3) citizen details utr bit
+  PAYE:
+   1) basic auth (paye shuttered check + populate request object with required fields (get isSA from enrolments)) + iv uplift etc if toggle off then
+   2) be auth depending on toggle REFINER
 
    */
 
-  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    payeAuthAction andThen pertaxPAYEAuthAction
 }

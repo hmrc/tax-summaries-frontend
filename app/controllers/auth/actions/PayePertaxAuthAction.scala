@@ -17,7 +17,7 @@
 package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
+import controllers.auth.requests.PayeAuthenticatedRequest
 import controllers.auth.services.PertaxAuthService
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -25,10 +25,10 @@ import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PertaxAuthActionImpl @Inject() (
+class PayePertaxAuthActionImpl @Inject() (
   cc: ControllerComponents,
   pertaxAuthService: PertaxAuthService
-) extends PertaxPAYEAuthAction
+) extends PayePertaxAuthAction
     with I18nSupport
     with Logging {
 
@@ -42,24 +42,5 @@ class PertaxAuthActionImpl @Inject() (
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
 
-class PertaxAuthActionSAImpl @Inject() (
-  cc: ControllerComponents,
-  pertaxAuthService: PertaxAuthService
-) extends PertaxSAAuthAction
-    with I18nSupport
-    with Logging {
-
-  override def messagesApi: MessagesApi = cc.messagesApi
-
-  override protected def refine[A](
-    request: AuthenticatedRequest[A]
-  ): Future[Either[Result, AuthenticatedRequest[A]]] =
-    pertaxAuthService.authorise[A, AuthenticatedRequest[A]](request)
-
-  override protected implicit val executionContext: ExecutionContext = cc.executionContext
-}
-
-@ImplementedBy(classOf[PertaxAuthActionImpl])
-trait PertaxPAYEAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
-@ImplementedBy(classOf[PertaxAuthActionSAImpl])
-trait PertaxSAAuthAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]
+@ImplementedBy(classOf[PayePertaxAuthActionImpl])
+trait PayePertaxAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]

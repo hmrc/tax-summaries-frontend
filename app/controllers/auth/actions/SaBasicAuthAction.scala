@@ -35,13 +35,13 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelfAssessmentActionImpl @Inject() (
+class SaBasicAuthActionImpl @Inject() (
   citizenDetailsService: CitizenDetailsService,
   appConfig: ApplicationConfig,
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
-    extends SelfAssessmentAction
+    extends SaBasicAuthAction
     with AuthorisedFunctions
     with Logging {
 
@@ -151,7 +151,7 @@ class SelfAssessmentActionImpl @Inject() (
   //            val isAgentActive: Boolean = enrolments.find(_.key == "IR-SA-AGENT").exists(_.isActivated)
 }
 
-@ImplementedBy(classOf[SelfAssessmentActionImpl])
-trait SelfAssessmentAction
+@ImplementedBy(classOf[SaBasicAuthActionImpl])
+trait SaBasicAuthAction
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]

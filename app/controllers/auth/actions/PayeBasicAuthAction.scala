@@ -34,59 +34,20 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class PayeAuthActionImpl @Inject() (
+class PayeBasicAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
-) extends PayeAuthAction
+) extends PayeBasicAuthAction
     with AuthorisedFunctions
     with Logging {
 
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
-  val payeShuttered: Boolean = appConfig.payeShuttered
-
-  private def authorisePAYEPertaxBackendToggleOff[A](
-    request: Request[A],
-    block: PayeAuthenticatedRequest[A] => Future[Result]
-  ): Future[Result] = {
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-        case enrolments ~ Some(nino) ~ Some(credentials) =>
-          val isSa = enrolments.getEnrolment("IR-SA").isDefined
-          println("\nPAYEAUTHACTION")
-          block {
-            requests.PayeAuthenticatedRequest(
-              Nino(nino),
-              isSa,
-              credentials,
-              request
-            )
-          }
-        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
-      } recover {
-      case _: NoActiveSession => // Unathorised response from backend pertax auth
-        Redirect(
-          appConfig.payeLoginUrl,
-          Map(
-            "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
-            "origin"       -> Seq(appConfig.appName)
-          )
-        )
-
-      case _: InsufficientConfidenceLevel =>
-        upliftConfidenceLevel
-      case NonFatal(e)                    =>
-        logger.error(s"Exception in PayeAuthAction: $e", e)
-        Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
-    }
-  }
+  private val payeShuttered: Boolean = appConfig.payeShuttered
 
   override def invokeBlock[A](
     request: Request[A],
@@ -95,7 +56,38 @@ class PayeAuthActionImpl @Inject() (
     if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
-      authorisePAYEPertaxBackendToggleOff(request, block)
+      implicit val hc: HeaderCarrier =
+        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+      authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
+        .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+          case enrolments ~ Some(nino) ~ Some(credentials) =>
+            val isSa = enrolments.getEnrolment("IR-SA").isDefined
+            block {
+              requests.PayeAuthenticatedRequest(
+                Nino(nino),
+                isSa,
+                credentials,
+                request
+              )
+            }
+          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+        } recover {
+        case _: NoActiveSession => // Done also by backend pertax auth
+          Redirect(
+            appConfig.payeLoginUrl,
+            Map(
+              "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
+              "origin"       -> Seq(appConfig.appName)
+            )
+          )
+
+        case _: InsufficientConfidenceLevel =>
+          upliftConfidenceLevel
+        case NonFatal(e)                    =>
+          logger.error(s"Exception in PayeAuthAction: $e", e)
+          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+      }
     }
 
   private def upliftConfidenceLevel =
@@ -110,7 +102,7 @@ class PayeAuthActionImpl @Inject() (
     )
 }
 
-@ImplementedBy(classOf[PayeAuthActionImpl])
-trait PayeAuthAction
+@ImplementedBy(classOf[PayeBasicAuthActionImpl])
+trait PayeBasicAuthAction
     extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
     with ActionFunction[Request, PayeAuthenticatedRequest]
