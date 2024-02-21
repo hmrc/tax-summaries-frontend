@@ -25,6 +25,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.domain.Uar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -50,23 +51,22 @@ class MinAuthActionImpl @Inject() (
 
     authorised(ConfidenceLevel.L50)
       .retrieve(
-        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.confidenceLevel
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel
       ) {
-        case enrolments ~ Some(externalId) ~ Some(credentials) ~ confidenceLevel =>
-          val isSa                   = enrolments.getEnrolment("IR-SA").isDefined
-          val isAgentActive: Boolean = enrolments.getEnrolment("IR-SA-AGENT").map(_.isActivated).getOrElse(false)
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel =>
+          val (agentRef, isAgentActive) = agentInfo(enrolments)
 
           block(
             requests.AuthenticatedRequest(
-              externalId,
-              None,
-              None,
-              None,
-              isSa,
-              isAgentActive,
-              confidenceLevel,
-              credentials,
-              request
+              userId = externalId,
+              agentRef = agentRef,
+              saUtr = None,
+              nino = None,
+              isSa = saUtr.isDefined,
+              isAgentActive = isAgentActive,
+              confidenceLevel = confidenceLevel,
+              credentials = credentials,
+              request = request
             )
           )
 
@@ -86,6 +86,17 @@ class MinAuthActionImpl @Inject() (
 
     case _: InsufficientEnrolments => throw InsufficientEnrolments("")
   }
+
+  private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
+    enrolments
+      .find(_.key == "IR-SA-AGENT")
+      .map { enrolment =>
+        val d = enrolment.identifiers
+          .find(id => id.key == "IRAgentReference")
+          .map(key => Uar(key.value))
+        Tuple2(d, enrolment.isActivated)
+      }
+      .getOrElse(Tuple2(None, false))
 }
 
 @ImplementedBy(classOf[MinAuthActionImpl])

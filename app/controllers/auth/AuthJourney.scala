@@ -27,7 +27,7 @@ import javax.inject.Inject
 trait AuthJourney {
   val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
   // Merge page:-
-  val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]
+  val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
   // sa summaries agents + individs BUT ONLY SA else error page displayed:-
   val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]
   // paye pages individs only:-
@@ -35,19 +35,24 @@ trait AuthJourney {
 }
 
 class AuthJourneyImpl @Inject() (
-  saBasicAuthAction: SaBasicAuthAction,
   saPertaxAuthAction: SaPertaxAuthAction,
   payeBasicAuthAction: PayeBasicAuthAction,
   payePertaxAuthAction: PayePertaxAuthAction,
   minAuthAction: MinAuthAction,
-  mergePageAuthAction: MergePageAuthAction
+  agentTokenAuthAction: AgentTokenAuthAction,
+  citizenDetailsAuthAction: CitizenDetailsAuthAction,
+  saCheckAuthAction:SaCheckAuthAction
 ) extends AuthJourney {
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                       =
     minAuthAction
-  override val authForIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent]   =
-    mergePageAuthAction
+  
+  // Should not use saBasicAuthAction below: maybe MinAuthAction???
+  // SO: next compare saBasicAuthAction and MinAuthAction: any differences apart from toggle check????
+  //   ==> saBasicAuthAction same as MinAuthAction except for: sa toggle check, inactive agent check
+  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]       =
+    minAuthAction andThen agentTokenAuthAction andThen saPertaxAuthAction andThen citizenDetailsAuthAction
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    saBasicAuthAction andThen saPertaxAuthAction
+    minAuthAction andThen saCheckAuthAction andThen saPertaxAuthAction andThen citizenDetailsAuthAction
   override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
     payeBasicAuthAction andThen payePertaxAuthAction
   /*
@@ -58,5 +63,12 @@ class AuthJourneyImpl @Inject() (
   PAYE:
    1) basic auth (paye shuttered check + populate request object with required fields (get isSA from enrolments)) + iv uplift etc if toggle off then
    2) be auth depending on toggle REFINER
+
+  MERGE PAGE:
+   1) basic auth (same as sa)
+   2) agent token auth
+   3) be auth if toggle REFINER
+   4) citizen details utr bit
+   Same as SA basicAuthAction but also checks for agent token
    */
 }

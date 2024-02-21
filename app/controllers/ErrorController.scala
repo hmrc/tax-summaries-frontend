@@ -46,7 +46,7 @@ class ErrorController @Inject() (
 
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def authorisedNoAts(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsAndAgentsOnly.async {
+  def authorisedNoAts(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsAndAgents.async {
     implicit request =>
       if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
         Future.successful(Forbidden(serviceUnavailableView()))
