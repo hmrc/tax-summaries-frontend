@@ -44,13 +44,13 @@ class AgentTokenAuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     dataCacheConnector.getAgentToken.map { agentToken =>
-      val isAgentActiveButTokenMissing = request.isAgentActive && (request
+      val isActiveAgentButTokenMissing = request.isAgentActive && (request
         .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
         .isEmpty || request
         .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
         .isEmpty) &&
         agentToken.isDefined
-      if (isAgentActiveButTokenMissing) {
+      if (isActiveAgentButTokenMissing) {
         Left(Redirect(controllers.routes.ErrorController.notAuthorised))
       } else {
         Right(request)
