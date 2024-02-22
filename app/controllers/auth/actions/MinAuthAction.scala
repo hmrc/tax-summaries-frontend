@@ -55,7 +55,6 @@ class MinAuthActionImpl @Inject() (
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
           val (agentRef, isAgentActive) = agentInfo(enrolments)
-
           block(
             requests.AuthenticatedRequest(
               userId = externalId,
