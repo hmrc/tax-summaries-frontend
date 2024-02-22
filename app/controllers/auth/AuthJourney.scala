@@ -35,17 +35,17 @@ trait AuthJourney {
 }
 
 class AuthJourneyImpl @Inject() (
-  saPertaxAuthAction: SaPertaxAuthAction,
-  payeBasicAuthAction: PayeBasicAuthAction,
-  payePertaxAuthAction: PayePertaxAuthAction,
   minAuthAction: MinAuthAction,
+  payeBasicAuthAction: PayeBasicAuthAction,
+  saPertaxAuthAction: SaPertaxAuthAction,
+  saCheckAuthAction: SaCheckAuthAction,
+  payePertaxAuthAction: PayePertaxAuthAction,
   agentTokenAuthAction: AgentTokenAuthAction,
-  citizenDetailsAuthAction: CitizenDetailsAuthAction,
-  saCheckAuthAction:SaCheckAuthAction
+  citizenDetailsAuthAction: CitizenDetailsAuthAction
 ) extends AuthJourney {
-  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                       =
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] =
     minAuthAction
-  
+
   // Should not use saBasicAuthAction below: maybe MinAuthAction???
   // SO: next compare saBasicAuthAction and MinAuthAction: any differences apart from toggle check????
   //   ==> saBasicAuthAction same as MinAuthAction except for: sa toggle check, inactive agent check

@@ -23,9 +23,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
 import services.{CitizenDetailsService, SucccessMatchingDetailsResponse}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -46,28 +45,27 @@ class CitizenDetailsAuthActionImpl @Inject() (
   override protected def refine[A](
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, AuthenticatedRequest[A]]] = {
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    getSAUTRFromCitizenDetails.map {
-      case optUTR @ Some(_) => Right(request)
-      case None             => Left(notAuthorisedPage)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    request.nino match {
+      case Some(nino) =>
+        getSAUTRFromCitizenDetails(nino).map {
+          case retrievedSAUtr @ Some(_) => Right(request.copy(saUtr = retrievedSAUtr))
+          case None                     => Left(notAuthorisedPage)
+        }
+      case _          => Future.successful(Left(notAuthorisedPage))
     }
   }
 
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 
-  private def getSAUTRFromCitizenDetails(implicit hc: HeaderCarrier): Future[Option[SaUtr]] =
-    authorised(ConfidenceLevel.L50).retrieve(Retrievals.nino) {
-      case Some(nino) =>
-        citizenDetailsService.getMatchingDetails(nino).map {
-          case SucccessMatchingDetailsResponse(matchingDetails) =>
-            matchingDetails.saUtr match {
-              case Some(_) => matchingDetails.saUtr
-              case _       => None
-            }
-          case _                                                => None
+  private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] =
+    citizenDetailsService.getMatchingDetails(nino.nino).map {
+      case SucccessMatchingDetailsResponse(matchingDetails) =>
+        matchingDetails.saUtr match {
+          case Some(_) => matchingDetails.saUtr
+          case _       => None
         }
-      case _          => Future.successful(None)
+      case _                                                => None
     }
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext

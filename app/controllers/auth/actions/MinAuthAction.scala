@@ -25,7 +25,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain.Uar
+import uk.gov.hmrc.domain.{Nino, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -51,9 +51,9 @@ class MinAuthActionImpl @Inject() (
 
     authorised(ConfidenceLevel.L50)
       .retrieve(
-        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.confidenceLevel
+        Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
       ) {
-        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ confidenceLevel =>
+        case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
           val (agentRef, isAgentActive) = agentInfo(enrolments)
 
           block(
@@ -61,7 +61,7 @@ class MinAuthActionImpl @Inject() (
               userId = externalId,
               agentRef = agentRef,
               saUtr = None,
-              nino = None,
+              nino = nino.map(Nino(_)),
               isSa = saUtr.isDefined,
               isAgentActive = isAgentActive,
               confidenceLevel = confidenceLevel,

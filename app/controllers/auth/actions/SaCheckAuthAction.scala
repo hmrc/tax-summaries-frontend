@@ -41,7 +41,7 @@ class SaCheckActionImpl @Inject() (
 
   override protected def refine[A](
     request: AuthenticatedRequest[A]
-  ): Future[Either[Result, AuthenticatedRequest[A]]] = {
+  ): Future[Either[Result, AuthenticatedRequest[A]]] =
     Future.successful(
       if (saShuttered) {
         Left(Redirect(controllers.routes.ErrorController.serviceUnavailable))
@@ -52,7 +52,6 @@ class SaCheckActionImpl @Inject() (
         }
       }
     )
-  }
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
