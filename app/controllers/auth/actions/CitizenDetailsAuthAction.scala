@@ -48,9 +48,12 @@ class CitizenDetailsAuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.nino match {
       case Some(nino) =>
+        println("\na1:" + request.saUtr)
         getSAUTRFromCitizenDetails(nino).map {
           case retrievedSAUtr @ Some(_) => Right(request.copy(saUtr = retrievedSAUtr))
-          case None                     => Left(notAuthorisedPage)
+          case None                     =>
+            println("\na2")
+            Left(notAuthorisedPage)
         }
       case _          => Future.successful(Left(notAuthorisedPage))
     }
@@ -58,15 +61,23 @@ class CitizenDetailsAuthActionImpl @Inject() (
 
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 
-  private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] =
+  private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] = {
+    println("\nGETTING MATCHING DEETS:" + nino.nino)
     citizenDetailsService.getMatchingDetails(nino.nino).map {
       case SucccessMatchingDetailsResponse(matchingDetails) =>
         matchingDetails.saUtr match {
-          case Some(_) => matchingDetails.saUtr
-          case _       => None
+          case Some(_) =>
+            println("\nRETURNED SAUTR")
+            matchingDetails.saUtr
+          case _       =>
+            println("\nRETURNED NONE(2)")
+            None
         }
-      case _                                                => None
+      case _                                                =>
+        println("\nRETURNED NONE")
+        None
     }
+  }
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
