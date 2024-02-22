@@ -42,8 +42,11 @@ class SaPertaxAuthActionImpl @Inject() (
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
     (request.agentRef, request.isAgentActive, request.saUtr) match {
       case (Some(_), false, _) => Future.successful(Left(notAuthorisedPage))
-      case _                   => 
-        pertaxAuthService.authorise[A, AuthenticatedRequest[A]](request)
+      case _                   =>
+        pertaxAuthService.authorise[A, AuthenticatedRequest[A]](request).map{
+          case None => Right(request)
+          case Some(r) => Left(r)
+        }
     }
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext

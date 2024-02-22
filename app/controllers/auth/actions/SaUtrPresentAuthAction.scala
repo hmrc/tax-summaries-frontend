@@ -17,30 +17,35 @@
 package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import controllers.auth.requests.PayeAuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
-import services.PertaxAuthService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayePertaxAuthActionImpl @Inject() (
-  cc: ControllerComponents,
-  pertaxAuthService: PertaxAuthService
-) extends PayePertaxAuthAction
+class SaUtrPresentAuthActionImpl @Inject() (
+  cc: ControllerComponents
+) extends SaUtrPresentAuthAction
     with I18nSupport
     with Logging {
 
   override def messagesApi: MessagesApi = cc.messagesApi
 
+  private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
+
   override protected def refine[A](
-    request: PayeAuthenticatedRequest[A]
-  ): Future[Either[Result, PayeAuthenticatedRequest[A]]] =
-    pertaxAuthService.authorise[A, PayeAuthenticatedRequest[A]](request)
+    request: AuthenticatedRequest[A]
+  ): Future[Either[Result, AuthenticatedRequest[A]]] =
+    (request.agentRef, request.saUtr) match {
+      case (None, None) => Future.successful(Left(notAuthorisedPage))
+      case _            =>
+        Future.successful(Right(request))
+    }
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
 
-@ImplementedBy(classOf[PayePertaxAuthActionImpl])
-trait PayePertaxAuthAction extends ActionRefiner[PayeAuthenticatedRequest, PayeAuthenticatedRequest]
+@ImplementedBy(classOf[SaUtrPresentAuthActionImpl])
+trait SaUtrPresentAuthAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]

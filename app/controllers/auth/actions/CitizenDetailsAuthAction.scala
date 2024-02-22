@@ -46,8 +46,8 @@ class CitizenDetailsAuthActionImpl @Inject() (
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.nino match {
-      case Some(nino) =>
+    (request.nino, request.saUtr, request.agentRef) match {
+      case (Some(nino), None, None) =>
         println("\na1:" + request.saUtr)
         getSAUTRFromCitizenDetails(nino).map {
           case retrievedSAUtr @ Some(_) => Right(request.copy(saUtr = retrievedSAUtr))

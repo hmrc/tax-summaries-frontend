@@ -20,14 +20,17 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
+import models.admin.PertaxBackendToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import services.PertaxAuthService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -36,7 +39,9 @@ import scala.util.control.NonFatal
 
 class PayeBasicAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
-  cc: MessagesControllerComponents
+  cc: MessagesControllerComponents,
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
@@ -49,6 +54,42 @@ class PayeBasicAuthActionImpl @Inject() (
 
   private val payeShuttered: Boolean = appConfig.payeShuttered
 
+  private def authToggleOff[A](
+                             request: Request[A],
+                             block: PayeAuthenticatedRequest[A] => Future[Result]
+                           ) = {
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
+      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+        case enrolments ~ Some(nino) ~ Some(credentials) =>
+          block {
+            requests.PayeAuthenticatedRequest(
+              Nino(nino),
+              enrolments.getEnrolment("IR-SA").isDefined,
+              credentials,
+              request
+            )
+          }
+        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+      } recover {
+      case _: NoActiveSession => // Done also by backend pertax auth
+        Redirect(
+          appConfig.payeLoginUrl,
+          Map(
+            "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
+            "origin"       -> Seq(appConfig.appName)
+          )
+        )
+
+      case _: InsufficientConfidenceLevel =>
+        upliftConfidenceLevel
+      case NonFatal(e)                    =>
+        logger.error(s"Exception in PayeAuthAction: $e", e)
+        Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+    }
+  }
+  
   override def invokeBlock[A](
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
@@ -56,36 +97,34 @@ class PayeBasicAuthActionImpl @Inject() (
     if (payeShuttered) {
       Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
     } else {
-      implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-      authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-        .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-          case enrolments ~ Some(nino) ~ Some(credentials) =>
-            block {
-              requests.PayeAuthenticatedRequest(
-                Nino(nino),
-                enrolments.getEnrolment("IR-SA").isDefined,
-                credentials,
-                request
-              )
-            }
-          case _                                           => throw new RuntimeException("Auth retrieval failed for user")
-        } recover {
-        case _: NoActiveSession => // Done also by backend pertax auth
-          Redirect(
-            appConfig.payeLoginUrl,
-            Map(
-              "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
-              "origin"       -> Seq(appConfig.appName)
-            )
-          )
-
-        case _: InsufficientConfidenceLevel =>
-          upliftConfidenceLevel
-        case NonFatal(e)                    =>
-          logger.error(s"Exception in PayeAuthAction: $e", e)
-          Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+      featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
+        if (toggle.isEnabled) {
+          implicit val hc: HeaderCarrier =
+            HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+          pertaxAuthService.authorise[A, Request[A]](request).flatMap {
+            case None =>
+              authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
+                .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+                  case enrolments ~ Some(nino) ~ Some(credentials) =>
+                    block {
+                      requests.PayeAuthenticatedRequest(
+                        Nino(nino),
+                        enrolments.getEnrolment("IR-SA").isDefined,
+                        credentials,
+                        request
+                      )
+                    }
+                  case _ => throw new RuntimeException("Auth retrieval failed for user")
+                } recover {
+                case NonFatal(e) =>
+                  logger.error(s"Exception in PayeAuthAction: $e", e)
+                  Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+              }
+            case Some(r) => Future.successful(r)
+          }
+        } else { // backend auth toggle off 
+          authToggleOff(request, block)
+        }
       }
     }
 

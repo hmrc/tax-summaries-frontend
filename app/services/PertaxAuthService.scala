@@ -23,7 +23,7 @@ import models.admin.PertaxBackendToggle
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{InternalServerError, Redirect, Status}
-import play.api.mvc.{Result, WrappedRequest}
+import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -48,7 +48,7 @@ class PertaxAuthService @Inject() (
 ) extends AuthorisedFunctions
     with I18nSupport
     with Logging {
-  def authorise[T, M <: WrappedRequest[T]](request: M): Future[Either[Result, M]] = {
+  def authorise[T, M <: Request[T]](request: M): Future[Option[Result]] = {
     println("\nAUTHORISING IN BACKEND:" + request)
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
@@ -58,14 +58,14 @@ class PertaxAuthService @Inject() (
           .value
           .flatMap {
             case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
-              Future.successful(Right(request))
+              Future.successful(None)
             case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
-              Future.successful(Left(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
+              Future.successful(Some(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
             case Right(PertaxApiResponse(code, message, Some(errorView), _))            =>
               logger.warn(s"Error response during authentication: $code $message")(implicitly)
               pertaxConnector.loadPartial(errorView.url)(request, implicitly).map {
                 case partial: HtmlPartial.Success =>
-                  Left(
+                  Some(
                     Status(errorView.statusCode)(
                       mainTemplate(partial.title.getOrElse(""))(partial.content)(
                         request,
@@ -75,7 +75,7 @@ class PertaxAuthService @Inject() (
                   )
                 case _: HtmlPartial.Failure       =>
                   logger.error(s"The partial ${errorView.url} failed to be retrieved")
-                  Left(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+                  Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
               }
             case Right(response)                                                        =>
               val ex =
@@ -84,16 +84,16 @@ class PertaxAuthService @Inject() (
                 )
               logger.error(ex.getMessage, ex)
               Future.successful(
-                Left(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+                Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
               )
 
             case _ =>
               Future.successful(
-                Left(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+                Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
               )
           }
       } else {
-        Future.successful(Right(request))
+        Future.successful(None)
       }
     }
   }
