@@ -53,9 +53,9 @@ class CitizenDetailsAuthActionImpl @Inject() (
           case retrievedSAUtr @ Some(_) => Right(request.copy(saUtr = retrievedSAUtr))
           case None                     =>
             println("\na2")
-            Left(notAuthorisedPage)
+            Right(request)
         }
-      case _          => Future.successful(Left(notAuthorisedPage))
+      case _          => Future.successful(Right(request))
     }
   }
 

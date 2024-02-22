@@ -26,18 +26,16 @@ import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SaCheckActionImpl @Inject() (
+class SaShutteredCheckActionImpl @Inject() (
   cc: ControllerComponents,
   appConfig: ApplicationConfig
-) extends SaCheckAuthAction
+) extends SaShutteredCheckAuthAction
     with I18nSupport
     with Logging {
 
   override def messagesApi: MessagesApi = cc.messagesApi
 
   private val saShuttered: Boolean = appConfig.saShuttered
-
-  private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 
   override protected def refine[A](
     request: AuthenticatedRequest[A]
@@ -46,15 +44,12 @@ class SaCheckActionImpl @Inject() (
       if (saShuttered) {
         Left(Redirect(controllers.routes.ErrorController.serviceUnavailable))
       } else {
-        (request.agentRef, request.isAgentActive, request.saUtr) match {
-          case (Some(_), false, _) => Left(notAuthorisedPage) // Inactive agent
-          case _                   => Right(request)
-        }
+        Right(request)
       }
     )
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }
 
-@ImplementedBy(classOf[SaCheckActionImpl])
-trait SaCheckAuthAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]
+@ImplementedBy(classOf[SaShutteredCheckActionImpl])
+trait SaShutteredCheckAuthAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]

@@ -20,6 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import controllers.auth.requests.AuthenticatedRequest
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, ControllerComponents, Result}
 import services.PertaxAuthService
 
@@ -34,10 +35,16 @@ class SaPertaxAuthActionImpl @Inject() (
 
   override def messagesApi: MessagesApi = cc.messagesApi
 
+  private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
+
   override protected def refine[A](
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
-    pertaxAuthService.authorise[A, AuthenticatedRequest[A]](request)
+    (request.agentRef, request.isAgentActive, request.saUtr) match {
+      case (Some(_), false, _) => Future.successful(Left(notAuthorisedPage))
+      case _                   => 
+        pertaxAuthService.authorise[A, AuthenticatedRequest[A]](request)
+    }
 
   override protected implicit val executionContext: ExecutionContext = cc.executionContext
 }

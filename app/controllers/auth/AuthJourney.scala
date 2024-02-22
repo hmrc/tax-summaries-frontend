@@ -38,21 +38,23 @@ class AuthJourneyImpl @Inject() (
   minAuthAction: MinAuthAction,
   payeBasicAuthAction: PayeBasicAuthAction,
   saPertaxAuthAction: SaPertaxAuthAction,
-  saCheckAuthAction: SaCheckAuthAction,
+  saShutteredCheckAuthAction: SaShutteredCheckAuthAction,
   payePertaxAuthAction: PayePertaxAuthAction,
   agentTokenAuthAction: AgentTokenAuthAction,
   citizenDetailsAuthAction: CitizenDetailsAuthAction
 ) extends AuthJourney {
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] =
     minAuthAction
+  
+  // TODO: If saUtr is empty and not an agent then call citizen details to get utr. If can't find utr then just pass on request
+  // TODO: Merge page doesn't currently do an uplift in main - it should do (for non-agents).
+  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
+    minAuthAction andThen agentTokenAuthAction andThen citizenDetailsAuthAction andThen saPertaxAuthAction
 
-  // Should not use saBasicAuthAction below: maybe MinAuthAction???
-  // SO: next compare saBasicAuthAction and MinAuthAction: any differences apart from toggle check????
-  //   ==> saBasicAuthAction same as MinAuthAction except for: sa toggle check, inactive agent check
-  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]       =
-    minAuthAction andThen agentTokenAuthAction andThen saPertaxAuthAction andThen citizenDetailsAuthAction
+  // TODO: 1) If backend auth toggle if OFF then do IV uplift.
+  // TODO: 2) If saUtr is empty and not an agent then call citizen details to get utr. If can't find utr then not authorised.
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    minAuthAction andThen saCheckAuthAction andThen saPertaxAuthAction andThen citizenDetailsAuthAction
+    minAuthAction andThen saShutteredCheckAuthAction andThen citizenDetailsAuthAction andThen saPertaxAuthAction
   override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    =
     payeBasicAuthAction andThen payePertaxAuthAction
   /*
