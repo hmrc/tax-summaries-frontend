@@ -21,12 +21,14 @@ import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
+import models.admin.PertaxBackendToggle
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.{CitizenDetailsService, PertaxAuthService, SucccessMatchingDetailsResponse}
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino, _}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -35,6 +37,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 class SaAndAgentAuthImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
@@ -50,7 +53,8 @@ class SaAndAgentAuthImpl @Inject() (
   ec: ExecutionContext,
   appConfig: ApplicationConfig
 ) extends SaAndAgentAuth
-    with AuthorisedFunctions {
+    with AuthorisedFunctions
+    with Logging {
 
   private val saShuttered: Boolean = appConfig.saShuttered
 
@@ -66,43 +70,81 @@ class SaAndAgentAuthImpl @Inject() (
     } else {
       createAuthenticatedRequest(request).flatMap {
         case Right(authenticatedRequest) =>
-          isActiveAgentButTokenMissing(agentTokenCheck, authenticatedRequest).flatMap {
-            case true  => Future.successful(Redirect(controllers.routes.ErrorController.notAuthorised))
-            case false =>
-              citizenDetailsCheck(authenticatedRequest).flatMap { authReq =>
-                pertaxAuthService.authorise[A, AuthenticatedRequest[A]](authReq).flatMap {
-                  case None =>
-                    (utrCheck, authReq.agentRef, authReq.saUtr) match {
-                      case (true, None, None) => Future.successful(notAuthorisedPage)
-                      case _            =>
-                        block(authReq)
-                    }
-
-                  case Some(r) => Future.successful(r)
-                }
-              }
+          citizenDetailsCheck(authenticatedRequest).flatMap { authReq =>
+            (utrCheck, authReq.isAgent, authReq.saUtr) match {
+              case (true, false, None) => Future.successful(notAuthorisedPage)
+              case _                   => block(authReq)
+            }
           }
-        case Left(r)                     => Future.successful(r)
+        case Left(r) => Future.successful(r)
       }
     }
   }
 
-  private def isActiveAgentButTokenMissing[A](agentTokenCheck: Boolean, authenticatedRequest: AuthenticatedRequest[A])(
-    implicit hc: HeaderCarrier
-  ): Future[Boolean] =
-    if (agentTokenCheck) {
-      dataCacheConnector.getAgentToken.map { agentToken =>
-        authenticatedRequest.isAgentActive && (authenticatedRequest
-          .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
-          .isEmpty || authenticatedRequest
-          .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
-          .isEmpty) &&
-        agentToken.isDefined
+  private def saAuthentication[A](request: Request[A])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Option[Result]] =
+    featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
+      if (toggle.isEnabled) {
+        pertaxAuthService.authorise[A, Request[A]](request)
+      } else {
+        authorised(
+          ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
+        )(Future.successful(None)) recover {
+          case _: NoActiveSession             => // Done also by backend pertax auth
+            Some(
+              Redirect(
+                appConfig.payeLoginUrl,
+                Map(
+                  "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
+                  "origin"       -> Seq(appConfig.appName)
+                )
+              )
+            )
+          case _: InsufficientConfidenceLevel =>
+            Some(upliftConfidenceLevel)
+          case NonFatal(e)                    =>
+            logger.error(s"Exception in PayeAuthAction: $e", e)
+            Some(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+        }
       }
-    } else {
-      Future.successful(true)
     }
 
+  private def upliftConfidenceLevel =
+    Redirect(
+      appConfig.identityVerificationUpliftUrl,
+      Map(
+        "origin"          -> Seq(appConfig.appName),
+        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
+        "completionURL"   -> Seq(appConfig.loginCallback),
+        "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
+      )
+    )
+
+  private def agentTokenCheck[A](request: Request[A])(implicit
+    hc: HeaderCarrier
+  ): Future[Option[Result]] =
+    if (agentTokenCheck) {
+      dataCacheConnector.getAgentToken.map { agentToken =>
+        if (
+          (request
+            .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+            .isEmpty || request
+            .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
+            .isEmpty) &&
+          agentToken.isEmpty
+        ) {
+          Some(notAuthorisedPage)
+        } else {
+          None
+        }
+      }
+    } else {
+      Future.successful(None)
+    }
+
+  //scalastyle:off method.length
   private def createAuthenticatedRequest[A](request: Request[A])(implicit
     hc: HeaderCarrier
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
@@ -111,83 +153,46 @@ class SaAndAgentAuthImpl @Inject() (
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
-          val (agentRef, isAgentActive) = agentInfo(enrolments)
-
-          //          featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
-          //            if (toggle.isEnabled) {
-          //
-          //            }
-          //          }
-
-          // TODO: If agent L50 is enough, if non-agent need to get L200 and uplift if need to
-
-          // If toggle off:-
-          //    authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-          //      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-          //        case enrolments ~ Some(nino) ~ Some(credentials) =>
-          //          block {
-          //            requests.PayeAuthenticatedRequest(
-          //              Nino(nino),
-          //              enrolments.getEnrolment("IR-SA").isDefined,
-          //              credentials,
-          //              request
-          //            )
-          //          }
-          //        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
-          //      } recover {
-          //      case _: NoActiveSession => // Done also by backend pertax auth
-          //        Redirect(
-          //          appConfig.payeLoginUrl,
-          //          Map(
-          //            "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
-          //            "origin"       -> Seq(appConfig.appName)
-          //          )
-          //        )
-          //
-          //      case _: InsufficientConfidenceLevel =>
-          //        upliftConfidenceLevel
-          //      case NonFatal(e)                    =>
-          //        logger.error(s"Exception in PayeAuthAction: $e", e)
-          //        Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
-          //    }
-
-          // If toggle on AND NOT agent:-
-          //    pertaxAuthService.authorise[A, AuthenticatedRequest[A]](request).map{
-          //      case None => Right(request)
-          //      case Some(r) => Left(r)
-          //    }
-
-          val authenticatedRequest: AuthenticatedRequest[A] = requests.AuthenticatedRequest(
-            userId = externalId,
-            agentRef = agentRef,
-            saUtr = None,
-            nino = nino.map(Nino(_)),
-            isSa = saUtr.isDefined,
-            isAgentActive = isAgentActive,
-            confidenceLevel = confidenceLevel,
-            credentials = credentials,
-            request = request
-          )
-
-          Future.successful(Right(authenticatedRequest))
-
-        case _ => throw new RuntimeException("Can't find credentials for user")
-
-      } recover {
-      case _: NoActiveSession =>
-        lazy val ggSignIn    = appConfig.loginUrl
-        lazy val callbackUrl = appConfig.loginCallback
-        Left(
-          Redirect(
-            ggSignIn,
-            Map(
-              "continue_url" -> Seq(callbackUrl),
-              "origin"       -> Seq(appConfig.appName)
+          val (agentRef, isAgentActive)                              = agentInfo(enrolments)
+          def createRequest: Either[Result, AuthenticatedRequest[A]] =
+            Right(
+              requests.AuthenticatedRequest(
+                userId = externalId,
+                agentRef = agentRef,
+                saUtr = saUtr.map(SaUtr),
+                nino = nino.map(Nino(_)),
+                isAgentActive = isAgentActive,
+                confidenceLevel = confidenceLevel,
+                credentials = credentials,
+                request = request
+              )
             )
+          (agentRef.isDefined, isAgentActive) match {
+            case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
+            case (true, true)  =>
+              agentTokenCheck(request).map {
+                case None    => createRequest
+                case Some(r) => Left(r)
+              }
+            case _             =>
+              saAuthentication(request).map {
+                case None    => createRequest
+                case Some(r) => Left(r)
+              }
+          }
+        case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
+      } recover { case _: NoActiveSession =>
+      lazy val ggSignIn    = appConfig.loginUrl
+      lazy val callbackUrl = appConfig.loginCallback
+      Left(
+        Redirect(
+          ggSignIn,
+          Map(
+            "continue_url" -> Seq(callbackUrl),
+            "origin"       -> Seq(appConfig.appName)
           )
         )
-
-      case _: InsufficientEnrolments => throw InsufficientEnrolments("")
+      )
     }
 
   private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
@@ -204,16 +209,14 @@ class SaAndAgentAuthImpl @Inject() (
   private def citizenDetailsCheck[A](request: AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier
   ): Future[AuthenticatedRequest[A]] =
-    (request.nino, request.saUtr, request.agentRef) match {
-      case (Some(nino), None, None) =>
-        println("\na1:" + request.saUtr)
+    (request.nino, request.saUtr, request.isAgent) match {
+      case (Some(nino), None, false) =>
+        println("\ncitizen details call:" + request.saUtr)
         getSAUTRFromCitizenDetails(nino).map {
           case retrievedSAUtr @ Some(_) => request.copy(saUtr = retrievedSAUtr)
-          case None                     =>
-            println("\na2")
-            request
+          case None                     => request
         }
-      case _                        => Future.successful(request)
+      case _                         => Future.successful(request)
     }
 
   private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] = {
@@ -238,7 +241,9 @@ class SaAndAgentAuthImpl @Inject() (
 }
 
 @ImplementedBy(classOf[SaAndAgentAuthImpl])
-trait SaAndAgentAuth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+trait SaAndAgentAuth
+    extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, AuthenticatedRequest]
 
 class SaAndAgentAuthAction @Inject() (
   authConnector: DefaultAuthConnector,

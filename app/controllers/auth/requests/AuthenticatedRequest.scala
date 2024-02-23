@@ -26,10 +26,12 @@ case class AuthenticatedRequest[A](
   agentRef: Option[Uar],
   saUtr: Option[SaUtr],
   nino: Option[Nino],
-  isSa: Boolean,
   isAgentActive: Boolean,
   confidenceLevel: ConfidenceLevel,
   credentials: Credentials,
   request: Request[A]
 ) extends WrappedRequest[A](request)
-    with CommonRequest
+    with CommonRequest {
+  def isSa: Boolean = saUtr.isDefined
+  def isAgent: Boolean = agentRef.isDefined
+}
