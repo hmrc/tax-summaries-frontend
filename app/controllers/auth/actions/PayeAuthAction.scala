@@ -37,7 +37,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class PayeBasicAuthActionImpl @Inject() (
+class PayeAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   pertaxAuthService: PertaxAuthService,
@@ -45,7 +45,7 @@ class PayeBasicAuthActionImpl @Inject() (
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
-) extends PayeBasicAuthAction
+) extends PayeAuthAction
     with AuthorisedFunctions
     with Logging {
 
@@ -140,7 +140,7 @@ class PayeBasicAuthActionImpl @Inject() (
     )
 }
 
-@ImplementedBy(classOf[PayeBasicAuthActionImpl])
-trait PayeBasicAuthAction
+@ImplementedBy(classOf[PayeAuthActionImpl])
+trait PayeAuthAction
     extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
     with ActionFunction[Request, PayeAuthenticatedRequest]

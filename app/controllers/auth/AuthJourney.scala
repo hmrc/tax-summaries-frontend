@@ -36,28 +36,23 @@ trait AuthJourney {
 
 class AuthJourneyImpl @Inject() (
   minAuthAction: MinAuthAction,
-  payeBasicAuthAction: PayeBasicAuthAction,
-  saPertaxAuthAction: SaPertaxAuthAction,
-  saShutteredCheckAuthAction: SaShutteredCheckAuthAction,
-  agentTokenAuthAction: AgentTokenAuthAction,
-  citizenDetailsAuthAction: CitizenDetailsAuthAction,
-  saUtrPresentAuthAction: SaUtrPresentAuthAction
+  saAndAgentAuthAction: SaAndAgentAuthAction,
+  payeAuthAction: PayeAuthAction
 ) extends AuthJourney {
-  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    minAuthAction
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] = minAuthAction
 
   // TODO: If saUtr is empty and not an agent then call citizen details to get utr. If can't find utr then just pass on request DONE
   // TODO: Merge page doesn't currently do an uplift in main - it should do (for non-agents).
   override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    minAuthAction andThen agentTokenAuthAction andThen citizenDetailsAuthAction andThen saPertaxAuthAction
+    saAndAgentAuthAction(shutterCheck = false, agentTokenCheck = true, utrCheck = false)
 
   // TODO: 1) If backend auth toggle if OFF then do IV uplift.
   // TODO: 2) If saUtr is empty and not an agent then call citizen details to get utr. If can't find utr then not authorised. DONE
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    minAuthAction andThen saShutteredCheckAuthAction andThen citizenDetailsAuthAction andThen saPertaxAuthAction andThen saUtrPresentAuthAction
+    saAndAgentAuthAction(shutterCheck = true, agentTokenCheck = false, utrCheck = true)
 
   // TODO: Merge payePertaxAuthAction into payeBasicAuthAction and then only do uplift etc if toggle off:-
-  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] = payeBasicAuthAction
+  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] = payeAuthAction
   /*
   SA:
    1) basic auth (sa shuttered check/ agent check + create request object with required fields) + iv uplift if etc toggle off then
