@@ -52,20 +52,18 @@ class MinAuthActionImpl @Inject() (
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.confidenceLevel
       ) {
         case enrolments ~ Some(externalId) ~ Some(credentials) ~ confidenceLevel =>
-          val isSa                   = enrolments.getEnrolment("IR-SA").isDefined
           val isAgentActive: Boolean = enrolments.getEnrolment("IR-SA-AGENT").exists(_.isActivated)
 
           block(
             AuthenticatedRequest(
-              externalId,
-              None,
-              None,
-              None,
-              isSa,
-              isAgentActive,
-              confidenceLevel,
-              credentials,
-              request
+              userId = externalId,
+              agentRef = None,
+              saUtr = None,
+              nino = None,
+              isAgentActive = isAgentActive,
+              confidenceLevel = confidenceLevel,
+              credentials = credentials,
+              request = request
             )
           )
 

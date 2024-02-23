@@ -76,24 +76,29 @@ class SaAndAgentAuthImpl @Inject() (
               case _                   => block(authReq)
             }
           }
-        case Left(r) => Future.successful(r)
+        case Left(r)                     => Future.successful(r)
       }
     }
   }
 
-  private def saAuthentication[A](request: Request[A])(implicit
+  private def saAuthentication[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Option[Result]] =
+  ): Future[Either[Result, AuthenticatedRequest[A]]] =
     featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
+      println("\nsa auth")
       if (toggle.isEnabled) {
-        pertaxAuthService.authorise[A, Request[A]](request)
+        pertaxAuthService.authorise[A, Request[A]](request).map {
+          case Some(r) => Left(r)
+          case _       => Right(rq)
+        }
       } else {
+        println("\nHEREERERE")
         authorised(
           ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
-        )(Future.successful(None)) recover {
+        ).apply(Future.successful(Right(rq))) recover {
           case _: NoActiveSession             => // Done also by backend pertax auth
-            Some(
+            Left(
               Redirect(
                 appConfig.payeLoginUrl,
                 Map(
@@ -103,10 +108,11 @@ class SaAndAgentAuthImpl @Inject() (
               )
             )
           case _: InsufficientConfidenceLevel =>
-            Some(upliftConfidenceLevel)
+            println("\nUPLIFT")
+            Left(upliftConfidenceLevel)
           case NonFatal(e)                    =>
             logger.error(s"Exception in PayeAuthAction: $e", e)
-            Some(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+            Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
         }
       }
     }
@@ -122,9 +128,9 @@ class SaAndAgentAuthImpl @Inject() (
       )
     )
 
-  private def agentTokenCheck[A](request: Request[A])(implicit
+  private def agentTokenCheck[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier
-  ): Future[Option[Result]] =
+  ): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
       dataCacheConnector.getAgentToken.map { agentToken =>
         if (
@@ -135,16 +141,15 @@ class SaAndAgentAuthImpl @Inject() (
             .isEmpty) &&
           agentToken.isEmpty
         ) {
-          Some(notAuthorisedPage)
+          Left(notAuthorisedPage)
         } else {
-          None
+          Right(rq)
         }
       }
     } else {
-      Future.successful(None)
+      Future.successful(Right(rq))
     }
 
-  //scalastyle:off method.length
   private def createAuthenticatedRequest[A](request: Request[A])(implicit
     hc: HeaderCarrier
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
@@ -153,32 +158,22 @@ class SaAndAgentAuthImpl @Inject() (
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
-          val (agentRef, isAgentActive)                              = agentInfo(enrolments)
-          def createRequest: Either[Result, AuthenticatedRequest[A]] =
-            Right(
-              requests.AuthenticatedRequest(
-                userId = externalId,
-                agentRef = agentRef,
-                saUtr = saUtr.map(SaUtr),
-                nino = nino.map(Nino(_)),
-                isAgentActive = isAgentActive,
-                confidenceLevel = confidenceLevel,
-                credentials = credentials,
-                request = request
-              )
+          val (agentRef, isAgentActive)           = agentInfo(enrolments)
+          def newRequest: AuthenticatedRequest[A] =
+            requests.AuthenticatedRequest(
+              userId = externalId,
+              agentRef = agentRef,
+              saUtr = saUtr.map(SaUtr),
+              nino = nino.map(Nino(_)),
+              isAgentActive = isAgentActive,
+              confidenceLevel = confidenceLevel,
+              credentials = credentials,
+              request = request
             )
           (agentRef.isDefined, isAgentActive) match {
             case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
-            case (true, true)  =>
-              agentTokenCheck(request).map {
-                case None    => createRequest
-                case Some(r) => Left(r)
-              }
-            case _             =>
-              saAuthentication(request).map {
-                case None    => createRequest
-                case Some(r) => Left(r)
-              }
+            case (true, true)  => agentTokenCheck(request, newRequest)
+            case _             => saAuthentication(request, newRequest)
           }
         case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
       } recover { case _: NoActiveSession =>

@@ -54,10 +54,49 @@ class PayeAuthActionImpl @Inject() (
 
   private val payeShuttered: Boolean = appConfig.payeShuttered
 
+  override def invokeBlock[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] =
+    if (payeShuttered) {
+      Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
+    } else {
+      featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
+        if (toggle.isEnabled) {
+          implicit val hc: HeaderCarrier =
+            HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+          pertaxAuthService.authorise[A, Request[A]](request).flatMap {
+            case None    =>
+              authorised(
+                ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
+              )
+                .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+                  case enrolments ~ Some(nino) ~ Some(credentials) =>
+                    block {
+                      requests.PayeAuthenticatedRequest(
+                        Nino(nino),
+                        enrolments.getEnrolment("IR-SA").isDefined,
+                        credentials,
+                        request
+                      )
+                    }
+                  case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+                } recover { case NonFatal(e) =>
+                logger.error(s"Exception in PayeAuthAction: $e", e)
+                Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+              }
+            case Some(r) => Future.successful(r)
+          }
+        } else { // backend auth toggle off
+          authToggleOff(request, block)
+        }
+      }
+    }
+
   private def authToggleOff[A](
-                             request: Request[A],
-                             block: PayeAuthenticatedRequest[A] => Future[Result]
-                           ) = {
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ) = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
@@ -89,44 +128,6 @@ class PayeAuthActionImpl @Inject() (
         Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
     }
   }
-  
-  override def invokeBlock[A](
-    request: Request[A],
-    block: PayeAuthenticatedRequest[A] => Future[Result]
-  ): Future[Result] =
-    if (payeShuttered) {
-      Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
-    } else {
-      featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
-        if (toggle.isEnabled) {
-          implicit val hc: HeaderCarrier =
-            HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-          pertaxAuthService.authorise[A, Request[A]](request).flatMap {
-            case None =>
-              authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-                .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-                  case enrolments ~ Some(nino) ~ Some(credentials) =>
-                    block {
-                      requests.PayeAuthenticatedRequest(
-                        Nino(nino),
-                        enrolments.getEnrolment("IR-SA").isDefined,
-                        credentials,
-                        request
-                      )
-                    }
-                  case _ => throw new RuntimeException("Auth retrieval failed for user")
-                } recover {
-                case NonFatal(e) =>
-                  logger.error(s"Exception in PayeAuthAction: $e", e)
-                  Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
-              }
-            case Some(r) => Future.successful(r)
-          }
-        } else { // backend auth toggle off 
-          authToggleOff(request, block)
-        }
-      }
-    }
 
   private def upliftConfidenceLevel =
     Redirect(

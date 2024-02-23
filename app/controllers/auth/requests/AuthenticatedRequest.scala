@@ -32,6 +32,6 @@ case class AuthenticatedRequest[A](
   request: Request[A]
 ) extends WrappedRequest[A](request)
     with CommonRequest {
-  def isSa: Boolean = saUtr.isDefined
+  def isSa: Boolean    = saUtr.isDefined
   def isAgent: Boolean = agentRef.isDefined
 }
