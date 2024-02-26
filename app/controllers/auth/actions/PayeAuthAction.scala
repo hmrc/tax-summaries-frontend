@@ -96,17 +96,6 @@ class PayeAuthActionImpl @Inject() (
         case Some(r) => Future.successful(r)
       }
     }
-
-  private def upliftConfidenceLevel =
-    Redirect(
-      appConfig.identityVerificationUpliftUrl,
-      Map(
-        "origin"          -> Seq(appConfig.appName),
-        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL"   -> Seq(appConfig.loginCallback),
-        "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
-      )
-    )
 }
 
 @ImplementedBy(classOf[PayeAuthActionImpl])

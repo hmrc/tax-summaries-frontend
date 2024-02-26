@@ -17,13 +17,14 @@
 package services
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import connectors.PertaxConnector
 import models.PertaxApiResponse
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{InternalServerError, Redirect, Status}
 import play.api.mvc.{Request, Result}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
@@ -39,12 +40,24 @@ class PertaxAuthService @Inject() (
   val messagesApi: MessagesApi,
   pertaxConnector: PertaxConnector,
   serviceUnavailableView: ServiceUnavailableView,
-  mainTemplate: MainTemplate
+  mainTemplate: MainTemplate,
+  appConfig: ApplicationConfig
 )(implicit
   ec: ExecutionContext
 ) extends AuthorisedFunctions
     with I18nSupport
     with Logging {
+
+  private def upliftConfidenceLevel(redirect: String): Result =
+    Redirect(
+      redirect,
+      Map(
+        "origin"          -> Seq(appConfig.appName),
+        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
+        "completionURL"   -> Seq(appConfig.loginCallback),
+        "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
+      )
+    )
   def authorise[T, M <: Request[T]](request: M): Future[Option[Result]] = {
     println("\nAUTHORISING IN BACKEND:" + request)
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -52,11 +65,22 @@ class PertaxAuthService @Inject() (
       .pertaxPostAuthorise()
       .value
       .flatMap {
-        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                    =>
+        case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                                =>
           Future.successful(None)
-        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect))) =>
+        case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect)))             =>
           Future.successful(Some(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
-        case Right(PertaxApiResponse(code, message, Some(errorView), _))            =>
+        case Right(PertaxApiResponse("CONFIDENCE_LEVEL_UPLIFT_REQUIRED", _, _, Some(redirect))) =>
+          Future.successful(Some(upliftConfidenceLevel(redirect)))
+        case Right(PertaxApiResponse("CREDENTIAL_STRENGTH_UPLIFT_REQUIRED", _, _, Some(_)))     =>
+          val ex =
+            new RuntimeException(
+              s"Weak credentials should be dealt before the service"
+            )
+          logger.error(ex.getMessage, ex)
+          Future.successful(
+            Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
+          )
+        case Right(PertaxApiResponse(code, message, Some(errorView), _))                        =>
           logger.warn(s"Error response during authentication: $code $message")(implicitly)
           pertaxConnector.loadPartial(errorView.url)(request, implicitly).map {
             case partial: HtmlPartial.Success =>
@@ -72,7 +96,7 @@ class PertaxAuthService @Inject() (
               logger.error(s"The partial ${errorView.url} failed to be retrieved")
               Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
           }
-        case Right(response)                                                        =>
+        case Right(response)                                                                    =>
           val ex =
             new RuntimeException(
               s"Pertax response `${response.code}` with message ${response.message} is not handled"
@@ -81,50 +105,16 @@ class PertaxAuthService @Inject() (
           Future.successful(
             Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
           )
+//        case Left(UpstreamErrorResponse(_, status, _, _)) if status == UNAUTHORIZED          =>
+//          Future.successful(Some(signInJourney))
+
+        //        case Left(_)                                                                     =>
+//          Future.successful(Some(InternalServerError(internalServerErrorView())))
 
         case _ =>
           Future.successful(
             Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
           )
       }
-
-    /* Code below from Pascal's benefits fe pertax auth code. I need to add parameters to uplift url passed back and check other cases too
-        pertaxConnector.pertaxPostAuthorise.value.flatMap {
-      case Left(UpstreamErrorResponse(_, status, _, _)) if status == UNAUTHORIZED          =>
-        Future.successful(Some(signInJourney))
-      case Left(_)                                                                     =>
-        Future.successful(Some(InternalServerError(internalServerErrorView())))
-      case Right(PertaxResponse("ACCESS_GRANTED", _, _, _))                                =>
-        Future.successful(None)
-      case Right(PertaxResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect)))             =>
-        Future.successful(Some(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
-      case Right(PertaxResponse("CONFIDENCE_LEVEL_UPLIFT_REQUIRED", _, _, Some(redirect))) =>
-        Future.successful(Some(upliftJourney(redirect)))
-      case Right(PertaxResponse("CREDENTIAL_STRENGTH_UPLIFT_REQUIRED", _, _, Some(_)))     =>
-        val ex =
-          new RuntimeException(
-            s"Weak credentials should be dealt before the service"
-          )
-        logger.error(ex.getMessage, ex)
-        Future.successful(Some(InternalServerError(internalServerErrorView())))
-
-      case Right(PertaxResponse(_, _, Some(errorView), _)) =>
-        pertaxConnector.loadPartial(errorView.url).map {
-          case partial: HtmlPartial.Success =>
-            Some(Status(errorView.statusCode)(mainTemplate(partial.title.getOrElse(""))(partial.content)))
-          case _: HtmlPartial.Failure       =>
-            logger.error(s"The partial ${errorView.url} failed to be retrieved")
-            Some(InternalServerError(internalServerErrorView()))
-        }
-      case Right(response)                                 =>
-        val ex =
-          new RuntimeException(
-            s"Pertax response `${response.code}` with message ${response.message} is not handled"
-          )
-        logger.error(ex.getMessage, ex)
-        Future.successful(Some(InternalServerError(internalServerErrorView())))
-    }
-     */
-
   }
 }

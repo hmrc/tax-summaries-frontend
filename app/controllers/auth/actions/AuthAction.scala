@@ -30,7 +30,6 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
@@ -77,17 +76,6 @@ class AuthImpl @Inject() (
       }
     }
   }
-
-  private def upliftConfidenceLevel =
-    Redirect(
-      appConfig.identityVerificationUpliftUrl,
-      Map(
-        "origin"          -> Seq(appConfig.appName),
-        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL"   -> Seq(appConfig.loginCallback),
-        "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
-      )
-    )
 
   private def agentTokenCheck[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier
@@ -218,7 +206,6 @@ trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFu
 class AuthAction @Inject() (
   authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
-  featureFlagService: FeatureFlagService,
   dataCacheConnector: DataCacheConnector,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService
@@ -230,7 +217,6 @@ class AuthAction @Inject() (
     new AuthImpl(
       authConnector,
       cc,
-      featureFlagService,
       dataCacheConnector,
       citizenDetailsService,
       pertaxAuthService,
