@@ -88,5 +88,43 @@ class PertaxAuthService @Inject() (
           )
       }
 
+    /* Code below from Pascal's benefits fe pertax auth code. I need to add parameters to uplift url passed back and check other cases too
+        pertaxConnector.pertaxPostAuthorise.value.flatMap {
+      case Left(UpstreamErrorResponse(_, status, _, _)) if status == UNAUTHORIZED          =>
+        Future.successful(Some(signInJourney))
+      case Left(_)                                                                     =>
+        Future.successful(Some(InternalServerError(internalServerErrorView())))
+      case Right(PertaxResponse("ACCESS_GRANTED", _, _, _))                                =>
+        Future.successful(None)
+      case Right(PertaxResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect)))             =>
+        Future.successful(Some(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
+      case Right(PertaxResponse("CONFIDENCE_LEVEL_UPLIFT_REQUIRED", _, _, Some(redirect))) =>
+        Future.successful(Some(upliftJourney(redirect)))
+      case Right(PertaxResponse("CREDENTIAL_STRENGTH_UPLIFT_REQUIRED", _, _, Some(_)))     =>
+        val ex =
+          new RuntimeException(
+            s"Weak credentials should be dealt before the service"
+          )
+        logger.error(ex.getMessage, ex)
+        Future.successful(Some(InternalServerError(internalServerErrorView())))
+
+      case Right(PertaxResponse(_, _, Some(errorView), _)) =>
+        pertaxConnector.loadPartial(errorView.url).map {
+          case partial: HtmlPartial.Success =>
+            Some(Status(errorView.statusCode)(mainTemplate(partial.title.getOrElse(""))(partial.content)))
+          case _: HtmlPartial.Failure       =>
+            logger.error(s"The partial ${errorView.url} failed to be retrieved")
+            Some(InternalServerError(internalServerErrorView()))
+        }
+      case Right(response)                                 =>
+        val ex =
+          new RuntimeException(
+            s"Pertax response `${response.code}` with message ${response.message} is not handled"
+          )
+        logger.error(ex.getMessage, ex)
+        Future.successful(Some(InternalServerError(internalServerErrorView())))
+    }
+     */
+
   }
 }

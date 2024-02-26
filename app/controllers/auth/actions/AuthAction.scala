@@ -21,14 +21,13 @@ import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models.admin.PertaxBackendToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.{CitizenDetailsService, PertaxAuthService, SucccessMatchingDetailsResponse}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino, _}
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -37,12 +36,10 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 
 class AuthImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
-  featureFlagService: FeatureFlagService,
   dataCacheConnector: DataCacheConnector,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService,
@@ -81,42 +78,6 @@ class AuthImpl @Inject() (
     }
   }
 
-  private def nonAgentAuthentication[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[Either[Result, AuthenticatedRequest[A]]] =
-    featureFlagService.get(PertaxBackendToggle).flatMap { toggle =>
-      println("\nsa auth")
-      if (toggle.isEnabled) {
-        pertaxAuthService.authorise[A, Request[A]](request).map {
-          case Some(r) => Left(r)
-          case _       => Right(rq)
-        }
-      } else {
-        println("\nHEREERERE")
-        authorised(
-          ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
-        ).apply(Future.successful(Right(rq))) recover {
-          case _: NoActiveSession             => // Done also by backend pertax auth
-            Left(
-              Redirect(
-                appConfig.payeLoginUrl,
-                Map(
-                  "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
-                  "origin"       -> Seq(appConfig.appName)
-                )
-              )
-            )
-          case _: InsufficientConfidenceLevel =>
-            println("\nUPLIFT")
-            Left(upliftConfidenceLevel)
-          case NonFatal(e)                    =>
-            logger.error(s"Exception in PayeAuthAction: $e", e)
-            Left(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-        }
-      }
-    }
-
   private def upliftConfidenceLevel =
     Redirect(
       appConfig.identityVerificationUpliftUrl,
@@ -132,7 +93,17 @@ class AuthImpl @Inject() (
     hc: HeaderCarrier
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
+      println("\nDOING AGENT TOKEN CHECK")
+
       dataCacheConnector.getAgentToken.map { agentToken =>
+        println("\nDOING AGENT TOKEN CHECK2:" + agentToken)
+        println(
+          "\nDOING AGENT TOKEN CHECK3:" + (request
+            .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+            .isEmpty || request
+            .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
+            .isEmpty)
+        )
         if (
           (request
             .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
@@ -175,7 +146,11 @@ class AuthImpl @Inject() (
           (agentRef.isDefined, isAgentActive) match {
             case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
             case (true, true)  => agentTokenCheck(request, newRequest)
-            case _             => nonAgentAuthentication(request, newRequest)
+            case _             =>
+              pertaxAuthService.authorise[A, Request[A]](request).map {
+                case Some(r) => Left(r)
+                case _       => Right(newRequest)
+              }
           }
         case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
       } recover { case _: NoActiveSession =>

@@ -39,6 +39,9 @@ class AuthJourneyImpl @Inject() (
   authAction: AuthAction,
   payeAuthAction: PayeAuthAction
 ) extends AuthJourney {
+  
+  // TODO: Remove pertax backend toggle and just use pertax backend now, as per Pascal's benefits fe branch
+  
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] = minAuthAction
 
   override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
