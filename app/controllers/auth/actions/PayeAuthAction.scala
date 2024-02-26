@@ -27,8 +27,8 @@ import play.api.mvc._
 import services.PertaxAuthService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, Enrolment, Enrolments, InsufficientConfidenceLevel, NoActiveSession, Nino => AuthNino}
+import uk.gov.hmrc.domain.{Nino, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -54,6 +54,16 @@ class PayeAuthActionImpl @Inject() (
 
   private val payeShuttered: Boolean = appConfig.payeShuttered
 
+  private def isAgent(enrolments: Set[Enrolment]) =
+    enrolments
+      .find(_.key == "IR-SA-AGENT")
+      .flatMap { enrolment =>
+        enrolment.identifiers
+          .find(id => id.key == "IRAgentReference")
+          .map(key => Uar(key.value))
+      }
+      .isDefined
+
   override def invokeBlock[A](
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
@@ -69,9 +79,12 @@ class PayeAuthActionImpl @Inject() (
             case None    =>
               authorised(
                 ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
-              )
-                .retrieve(Retrievals.nino and Retrievals.credentials) {
-                  case Some(nino) ~ Some(credentials) =>
+              ).retrieve(Retrievals.nino and Retrievals.credentials and Retrievals.allEnrolments) {
+                case Some(nino) ~ Some(credentials) ~ Enrolments(enrolments) =>
+                  println("\n>>IS AGENT>>>" + isAgent(enrolments))
+                  if (isAgent(enrolments)) { // TODO: This is done in toggle off code and here? Combine??
+                    Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+                  } else {
                     block {
                       requests.PayeAuthenticatedRequest(
                         nino = Nino(nino),
@@ -79,8 +92,9 @@ class PayeAuthActionImpl @Inject() (
                         request = request
                       )
                     }
-                  case _                              => throw new RuntimeException("Auth retrieval failed for user")
-                } recover { case NonFatal(e) =>
+                  }
+                case _                                                       => throw new RuntimeException("Auth retrieval failed for user")
+              } recover { case NonFatal(e) =>
                 logger.error(s"Exception in PayeAuthAction: $e", e)
                 Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
               }
@@ -99,18 +113,22 @@ class PayeAuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-      .retrieve(Retrievals.nino and Retrievals.credentials) {
-        case Some(nino) ~ Some(credentials) =>
-          block {
-            requests.PayeAuthenticatedRequest(
-              nino = Nino(nino),
-              credentials = credentials,
-              request = request
-            )
+      .retrieve(Retrievals.nino and Retrievals.credentials and Retrievals.allEnrolments) {
+        case Some(nino) ~ Some(credentials) ~ Enrolments(enrolments) =>
+          if (isAgent(enrolments)) {
+            Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+          } else {
+            block {
+              requests.PayeAuthenticatedRequest(
+                nino = Nino(nino),
+                credentials = credentials,
+                request = request
+              )
+            }
           }
-        case _                              => throw new RuntimeException("Auth retrieval failed for user")
+        case _                                                       => throw new RuntimeException("Auth retrieval failed for user")
       } recover {
-      case _: NoActiveSession => // Done also by backend pertax auth
+      case _: NoActiveSession =>
         Redirect(
           appConfig.payeLoginUrl,
           Map(
