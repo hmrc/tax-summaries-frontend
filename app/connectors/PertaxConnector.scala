@@ -55,6 +55,10 @@ class PertaxConnector @Inject() (
           .execute[Either[UpstreamErrorResponse, HttpResponse]]
       )
       .map(_.json.as[PertaxApiResponse])
+      .map { x =>
+        println("\n>>>>>>>>>>>>BACKEND AUTH RESPOND:" + x)
+        x
+      }
 
   def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
     implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)

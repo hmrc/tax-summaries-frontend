@@ -135,6 +135,7 @@ class AuthImpl @Inject() (
             case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
             case (true, true)  => agentTokenCheck(request, newRequest)
             case _             =>
+              println("\nBACKBACKENDAUTH")
               pertaxAuthService.authorise[A, Request[A]](request).map {
                 case Some(r) => Left(r)
                 case _       => Right(newRequest)
