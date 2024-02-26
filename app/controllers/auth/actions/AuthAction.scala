@@ -52,7 +52,7 @@ class AuthImpl @Inject() (
     with AuthorisedFunctions
     with Logging {
 
-  private val saShuttered: Boolean = appConfig.saShuttered
+  protected val saShuttered: Boolean = appConfig.saShuttered
 
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext

@@ -16,12 +16,14 @@
 
 package controllers.auth
 
-import controllers.auth.actions.{AuthAction, AuthActionImpl}
+import connectors.DataCacheConnector
+import controllers.auth.actions.AuthAction
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
+import services.{CitizenDetailsService, PertaxAuthService}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -37,16 +39,37 @@ import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {
 
-  class Harness(authAction: AuthAction) extends InjectedController {
-    def onPageLoad(): Action[AnyContent] = authAction { request =>
-      Ok(
-        s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
-          s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
-          s"isSa: ${request.isSa}" +
-          s"credentials: ${request.credentials.providerType}"
-      )
-    }
+  private val mockDataCacheConnector    = mock[DataCacheConnector]
+  private val mockCitizenDetailsService = mock[CitizenDetailsService]
+  private val mockPertaxAuthService     = mock[PertaxAuthService]
+
+  private class Harness(authAction: AuthAction) extends InjectedController {
+    def onPageLoad(
+      shutterCheck: Boolean = false,
+      agentTokenCheck: Boolean = false,
+      utrCheck: Boolean = false
+    ): Action[AnyContent] =
+      authAction(shutterCheck = shutterCheck, agentTokenCheck = agentTokenCheck, utrCheck = utrCheck) { request =>
+        Ok(
+          s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
+            s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
+            s"isSa: ${request.isSa}" +
+            s"credentials: ${request.credentials.providerType}"
+        )
+      }
   }
+
+  private def createHarness: Harness = {
+    val authAction: AuthAction = new AuthAction(
+      authConnector = mockAuthConnector,
+      cc = FakeAuthAction.mcc,
+      dataCacheConnector = mockDataCacheConnector,
+      citizenDetailsService = mockCitizenDetailsService,
+      pertaxAuthService = mockPertaxAuthService
+    )
+    new Harness(authAction)
+  }
+
   val fakeCredentials: Credentials            = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
@@ -54,14 +77,21 @@ class AuthActionSpec extends BaseSpec {
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
+  override def beforeEach(): Unit = {
+    reset(appConfig)
+    reset(mockAuthConnector)
+    reset(mockDataCacheConnector)
+    reset(mockCitizenDetailsService)
+    reset(mockPertaxAuthService)
+    when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
+  }
+
   "A user with no active session" must {
     "return 303 and be redirected to GG sign in page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(new SessionRecordNotFound))
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-      val result     = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get must endWith(ggSignInUrl)
     }
@@ -71,10 +101,7 @@ class AuthActionSpec extends BaseSpec {
     "be redirected to the Insufficient Enrolments Page" in {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(InsufficientEnrolments()))
-
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-      val result     = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
 
       redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
     }
@@ -104,10 +131,7 @@ class AuthActionSpec extends BaseSpec {
           )(any(), any())
       ).thenReturn(retrievalResult)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include(utr)
       contentAsString(result) must include(uar)
@@ -136,10 +160,7 @@ class AuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include(utr)
       contentAsString(result) must include("true")
@@ -166,10 +187,7 @@ class AuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include(uar)
       contentAsString(result) must include("false")
@@ -197,10 +215,7 @@ class AuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include(uar)
       contentAsString(result) must include("false")
@@ -225,11 +240,7 @@ class AuthActionSpec extends BaseSpec {
           )(any(), any())
       )
         .thenReturn(retrievalResult)
-
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-      val controller = new Harness(authAction)
-
-      val result = controller.onPageLoad()(FakeRequest("", ""))
+      val result = createHarness.onPageLoad()(FakeRequest("", ""))
       status(result) mustBe OK
       contentAsString(result) must include("false")
       contentAsString(result) must include("bar")
@@ -254,11 +265,8 @@ class AuthActionSpec extends BaseSpec {
     )
       .thenReturn(retrievalResult)
 
-    val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc)
-    val controller = new Harness(authAction)
-
     val ex = intercept[RuntimeException] {
-      await(controller.onPageLoad()(FakeRequest("", "")))
+      await(createHarness.onPageLoad()(FakeRequest("", "")))
     }
 
     ex.getMessage must include("Can't find credentials for user")
@@ -269,11 +277,15 @@ class AuthActionSpec extends BaseSpec {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc) {
+      /*
+            val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc) {
         override val saShuttered: Boolean = true
       }
-      val controller = new Harness(authAction)
-      val result     = controller.onPageLoad()(FakeRequest())
+       */
+
+      when(appConfig.saShuttered).thenReturn(true)
+
+      val result = createHarness.onPageLoad(shutterCheck = true)(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe (controllers.routes.ErrorController.serviceUnavailable.url)
       verifyZeroInteractions(mockAuthConnector)
