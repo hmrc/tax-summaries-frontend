@@ -81,17 +81,7 @@ class AuthImpl @Inject() (
     hc: HeaderCarrier
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
-      println("\nDOING AGENT TOKEN CHECK")
-
       dataCacheConnector.getAgentToken.map { agentToken =>
-        println("\nDOING AGENT TOKEN CHECK2:" + agentToken)
-        println(
-          "\nDOING AGENT TOKEN CHECK3:" + (request
-            .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
-            .isEmpty || request
-            .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
-            .isEmpty)
-        )
         if (
           (request
             .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
@@ -117,8 +107,6 @@ class AuthImpl @Inject() (
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
-          println("\nCONF LEVL:" + confidenceLevel)
-          println("\nSA UTR:" + saUtr)
           val (agentRef, isAgentActive)           = agentInfo(enrolments)
           def newRequest: AuthenticatedRequest[A] =
             requests.AuthenticatedRequest(
@@ -135,7 +123,6 @@ class AuthImpl @Inject() (
             case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
             case (true, true)  => agentTokenCheck(request, newRequest)
             case _             =>
-              println("\nBACKBACKENDAUTH")
               pertaxAuthService.authorise[A, Request[A]](request).map {
                 case Some(r) => Left(r)
                 case _       => Right(newRequest)
@@ -172,7 +159,6 @@ class AuthImpl @Inject() (
   ): Future[AuthenticatedRequest[A]] =
     (request.nino, request.saUtr, request.isAgent) match {
       case (Some(nino), None, false) =>
-        println("\ncitizen details call:" + request.saUtr)
         getSAUTRFromCitizenDetails(nino).map {
           case retrievedSAUtr @ Some(_) => request.copy(saUtr = retrievedSAUtr)
           case None                     => request
@@ -180,23 +166,15 @@ class AuthImpl @Inject() (
       case _                         => Future.successful(request)
     }
 
-  private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] = {
-    println("\nGETTING MATCHING DEETS:" + nino.nino)
+  private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] =
     citizenDetailsService.getMatchingDetails(nino.nino).map {
       case SucccessMatchingDetailsResponse(matchingDetails) =>
         matchingDetails.saUtr match {
-          case Some(_) =>
-            println("\nRETURNED SAUTR")
-            matchingDetails.saUtr
-          case _       =>
-            println("\nRETURNED NONE(2)")
-            None
+          case Some(_) => matchingDetails.saUtr
+          case _       => None
         }
-      case _                                                =>
-        println("\nRETURNED NONE")
-        None
+      case _                                                => None
     }
-  }
 
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 }

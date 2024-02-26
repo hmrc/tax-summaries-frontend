@@ -58,8 +58,8 @@ class PertaxAuthService @Inject() (
         "failureURL"      -> Seq(appConfig.iVUpliftFailureCallback)
       )
     )
+
   def authorise[T, M <: Request[T]](request: M): Future[Option[Result]] = {
-    println("\nAUTHORISING IN BACKEND:" + request)
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     pertaxConnector
       .pertaxPostAuthorise()
@@ -70,7 +70,6 @@ class PertaxAuthService @Inject() (
         case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect)))             =>
           Future.successful(Some(Redirect(s"$redirect/?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
         case Right(PertaxApiResponse("CONFIDENCE_LEVEL_UPLIFT_REQUIRED", _, _, Some(redirect))) =>
-          println("\n\n**********************YPLIFT REQD" + upliftConfidenceLevel(redirect))
           Future.successful(Some(upliftConfidenceLevel(redirect)))
         case Right(PertaxApiResponse("CREDENTIAL_STRENGTH_UPLIFT_REQUIRED", _, _, Some(_)))     =>
           val ex =
@@ -106,13 +105,7 @@ class PertaxAuthService @Inject() (
           Future.successful(
             Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
           )
-//        case Left(UpstreamErrorResponse(_, status, _, _)) if status == UNAUTHORIZED          =>
-//          Future.successful(Some(signInJourney))
-
-        //        case Left(_)                                                                     =>
-//          Future.successful(Some(InternalServerError(internalServerErrorView())))
-
-        case _ =>
+        case _                                                                                  =>
           Future.successful(
             Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
           )

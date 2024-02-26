@@ -55,10 +55,6 @@ class PertaxConnector @Inject() (
           .execute[Either[UpstreamErrorResponse, HttpResponse]]
       )
       .map(_.json.as[PertaxApiResponse])
-      .map { x =>
-        println("\n>>>>>>>>>>>>BACKEND AUTH RESPOND:" + x)
-        x
-      }
 
   def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
     implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
@@ -79,34 +75,4 @@ class PertaxConnector @Inject() (
       }
     }
   }
-
-//  def pertaxAuth(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
-//    httpClientResponse
-//      .read(
-//        httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](
-//          s"$baseUrl/pertax/$nino/check-single-account",
-//          headers = Seq((HeaderNames.ACCEPT, s"application/vnd.hmrc.1.0+json"))
-//        )
-//      )
-//      .map(response => response.json.as[PertaxApiResponse])
-
-//  def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
-//    implicit val hc = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
-//
-//    http.get[HtmlPartial](s"$baseUrl$url") map {
-//      case partial: HtmlPartial.Success =>
-//        partial
-//      case partial: HtmlPartial.Failure =>
-//        logger.error(s"Failed to load partial from $url, partial info: $partial")
-//        partial
-//    } recover { case e =>
-//      logger.error(s"Failed to load partial from $url", e)
-//      e match {
-//        case ex: HttpException =>
-//          HtmlPartial.Failure(Some(ex.responseCode))
-//        case _                 =>
-//          HtmlPartial.Failure(None)
-//      }
-//    }
-//  }
 }

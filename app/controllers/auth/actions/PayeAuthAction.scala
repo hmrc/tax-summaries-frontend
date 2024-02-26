@@ -76,7 +76,6 @@ class PayeAuthActionImpl @Inject() (
             ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
           ).retrieve(Retrievals.nino and Retrievals.credentials and Retrievals.allEnrolments) {
             case Some(nino) ~ Some(credentials) ~ Enrolments(enrolments) =>
-              println("\n>>IS AGENT>>>" + isAgent(enrolments))
               if (isAgent(enrolments)) {
                 Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
               } else {
