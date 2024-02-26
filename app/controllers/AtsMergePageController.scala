@@ -47,6 +47,7 @@ class AtsMergePageController @Inject() (
 
   def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsAndAgents.async {
     implicit request: AuthenticatedRequest[_] =>
+      println("\nAGENT:" + request.isAgent)
       if (appConfig.saShuttered && appConfig.payeShuttered) {
         Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
       } else getSaAndPayeYearList()

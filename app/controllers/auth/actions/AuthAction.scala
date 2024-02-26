@@ -159,6 +159,7 @@ class AuthImpl @Inject() (
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
           println("\nCONF LEVL:" + confidenceLevel)
+          println("\nSA UTR:" + saUtr)
           val (agentRef, isAgentActive)           = agentInfo(enrolments)
           def newRequest: AuthenticatedRequest[A] =
             requests.AuthenticatedRequest(
