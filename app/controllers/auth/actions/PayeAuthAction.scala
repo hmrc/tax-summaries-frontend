@@ -70,17 +70,16 @@ class PayeAuthActionImpl @Inject() (
               authorised(
                 ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
               )
-                .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-                  case enrolments ~ Some(nino) ~ Some(credentials) =>
+                .retrieve(Retrievals.nino and Retrievals.credentials) {
+                  case Some(nino) ~ Some(credentials) =>
                     block {
                       requests.PayeAuthenticatedRequest(
-                        Nino(nino),
-                        enrolments.getEnrolment("IR-SA").isDefined,
-                        credentials,
-                        request
+                        nino = Nino(nino),
+                        credentials = credentials,
+                        request = request
                       )
                     }
-                  case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+                  case _                              => throw new RuntimeException("Auth retrieval failed for user")
                 } recover { case NonFatal(e) =>
                 logger.error(s"Exception in PayeAuthAction: $e", e)
                 Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
@@ -100,17 +99,16 @@ class PayeAuthActionImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     authorised(ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong))
-      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-        case enrolments ~ Some(nino) ~ Some(credentials) =>
+      .retrieve(Retrievals.nino and Retrievals.credentials) {
+        case Some(nino) ~ Some(credentials) =>
           block {
             requests.PayeAuthenticatedRequest(
-              Nino(nino),
-              enrolments.getEnrolment("IR-SA").isDefined,
-              credentials,
-              request
+              nino = Nino(nino),
+              credentials = credentials,
+              request = request
             )
           }
-        case _                                           => throw new RuntimeException("Auth retrieval failed for user")
+        case _                              => throw new RuntimeException("Auth retrieval failed for user")
       } recover {
       case _: NoActiveSession => // Done also by backend pertax auth
         Redirect(

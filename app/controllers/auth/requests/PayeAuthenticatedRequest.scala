@@ -22,7 +22,6 @@ import uk.gov.hmrc.domain.Nino
 
 case class PayeAuthenticatedRequest[A](
   nino: Nino,
-  isSa: Boolean,
   credentials: Credentials,
   request: Request[A]
 ) extends WrappedRequest[A](request)
