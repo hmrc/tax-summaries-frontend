@@ -25,4 +25,3 @@ case class PayeAuthenticatedRequest[A](
   credentials: Credentials,
   request: Request[A]
 ) extends WrappedRequest[A](request)
-    with CommonRequest

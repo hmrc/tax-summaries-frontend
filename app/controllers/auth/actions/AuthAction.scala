@@ -39,7 +39,7 @@ import utils.Globals
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class SaAndAgentAuthImpl @Inject() (
+class AuthImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   featureFlagService: FeatureFlagService,
@@ -52,7 +52,7 @@ class SaAndAgentAuthImpl @Inject() (
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
-) extends SaAndAgentAuth
+) extends Auth
     with AuthorisedFunctions
     with Logging {
 
@@ -81,7 +81,7 @@ class SaAndAgentAuthImpl @Inject() (
     }
   }
 
-  private def saAuthentication[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
+  private def nonAgentAuthentication[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
@@ -174,7 +174,7 @@ class SaAndAgentAuthImpl @Inject() (
           (agentRef.isDefined, isAgentActive) match {
             case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
             case (true, true)  => agentTokenCheck(request, newRequest)
-            case _             => saAuthentication(request, newRequest)
+            case _             => nonAgentAuthentication(request, newRequest)
           }
         case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
       } recover { case _: NoActiveSession =>
@@ -236,12 +236,10 @@ class SaAndAgentAuthImpl @Inject() (
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 }
 
-@ImplementedBy(classOf[SaAndAgentAuthImpl])
-trait SaAndAgentAuth
-    extends ActionBuilder[AuthenticatedRequest, AnyContent]
-    with ActionFunction[Request, AuthenticatedRequest]
+@ImplementedBy(classOf[AuthImpl])
+trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
 
-class SaAndAgentAuthAction @Inject() (
+class AuthAction @Inject() (
   authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   featureFlagService: FeatureFlagService,
@@ -252,8 +250,8 @@ class SaAndAgentAuthAction @Inject() (
   ec: ExecutionContext,
   appConfig: ApplicationConfig
 ) {
-  def apply(shutterCheck: Boolean, agentTokenCheck: Boolean, utrCheck: Boolean): SaAndAgentAuth =
-    new SaAndAgentAuthImpl(
+  def apply(shutterCheck: Boolean, agentTokenCheck: Boolean, utrCheck: Boolean): Auth =
+    new AuthImpl(
       authConnector,
       cc,
       featureFlagService,

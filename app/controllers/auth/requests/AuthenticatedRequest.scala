@@ -30,8 +30,7 @@ case class AuthenticatedRequest[A](
   confidenceLevel: ConfidenceLevel,
   credentials: Credentials,
   request: Request[A]
-) extends WrappedRequest[A](request)
-    with CommonRequest {
+) extends WrappedRequest[A](request) {
   def isSa: Boolean    = saUtr.isDefined
   def isAgent: Boolean = agentRef.isDefined
 }

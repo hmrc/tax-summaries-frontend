@@ -44,7 +44,7 @@ class AtsMergePageService @Inject() (
     (for {
       saData   <- EitherT(if (!appConfig.saShuttered) { getSaYearList }
                   else { Future(Right(AtsList.empty)) })
-      payeData <- EitherT(if (!appConfig.payeShuttered) { getPayeAtsYearList }
+      payeData <- EitherT(if (!appConfig.payeShuttered && !request.isAgent) { getPayeAtsYearList }
                   else { Future(Right(List.empty[Int])) })
     } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
 

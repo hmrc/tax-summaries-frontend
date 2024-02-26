@@ -36,16 +36,16 @@ trait AuthJourney {
 
 class AuthJourneyImpl @Inject() (
   minAuthAction: MinAuthAction,
-  saAndAgentAuthAction: SaAndAgentAuthAction,
+  authAction: AuthAction,
   payeAuthAction: PayeAuthAction
 ) extends AuthJourney {
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] = minAuthAction
 
   override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    saAndAgentAuthAction(shutterCheck = false, agentTokenCheck = true, utrCheck = false)
+    authAction(shutterCheck = false, agentTokenCheck = true, utrCheck = false)
 
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    saAndAgentAuthAction(shutterCheck = true, agentTokenCheck = false, utrCheck = true)
+    authAction(shutterCheck = true, agentTokenCheck = false, utrCheck = true)
 
   override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] = payeAuthAction
 }
