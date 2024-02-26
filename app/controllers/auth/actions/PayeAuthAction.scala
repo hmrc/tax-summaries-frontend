@@ -82,7 +82,7 @@ class PayeAuthActionImpl @Inject() (
               ).retrieve(Retrievals.nino and Retrievals.credentials and Retrievals.allEnrolments) {
                 case Some(nino) ~ Some(credentials) ~ Enrolments(enrolments) =>
                   println("\n>>IS AGENT>>>" + isAgent(enrolments))
-                  if (isAgent(enrolments)) { // TODO: This is done in toggle off code and here? Combine??
+                  if (isAgent(enrolments)) {
                     Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
                   } else {
                     block {
