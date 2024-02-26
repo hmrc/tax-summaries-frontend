@@ -33,7 +33,6 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
   implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.PayeAuthenticatedRequest(
       testNino,
-      isSa = false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/total-income-tax")
     )

@@ -16,35 +16,25 @@
 
 package controllers.auth
 
-import controllers.auth.actions.SelfAssessmentAction
-import controllers.auth.requests.AuthenticatedRequest
-import play.api.mvc._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.SaUtr
-import utils.ControllerBaseSpec
-import utils.TestConstants._
-
-import scala.concurrent.{ExecutionContext, Future}
-
-object FakeSelfAssessmentAuthAction extends ControllerBaseSpec with SelfAssessmentAction {
-
-  override protected def executionContext: ExecutionContext = mcc.executionContext
-
-  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] =
-    Future(
-      Right(
-        requests.AuthenticatedRequest(
-          "userId",
-          None,
-          Some(SaUtr(testUtr)),
-          None,
-          true,
-          false,
-          ConfidenceLevel.L50,
-          fakeCredentials,
-          request
-        )
-      )
-    )
-
-}
+//object FakeSelfAssessmentAuthAction extends ControllerBaseSpec with SelfAssessmentAction {
+//
+//  override protected def executionContext: ExecutionContext = mcc.executionContext
+//
+//  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] =
+//    Future(
+//      Right(
+//        requests.AuthenticatedRequest(
+//          "userId",
+//          None,
+//          Some(SaUtr(testUtr)),
+//          None,
+//          true,
+//          false,
+//          ConfidenceLevel.L50,
+//          fakeCredentials,
+//          request
+//        )
+//      )
+//    )
+//
+//}

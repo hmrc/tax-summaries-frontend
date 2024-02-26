@@ -55,19 +55,18 @@ class PayeAtsServiceSpec extends BaseSpec {
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    requests.PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
+    requests.PayeAuthenticatedRequest(testNino, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
   val authenticatedRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      Some(testNino),
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(testUtr)),
+      nino = Some(testNino),
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
   val mockAuditService: AuditService                                     = mock[AuditService]
 

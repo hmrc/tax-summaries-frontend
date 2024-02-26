@@ -34,15 +34,14 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
   val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
-    "userId",
-    Some(Uar(testUar)),
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    userId = "userId",
+    agentRef = Some(Uar(testUar)),
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
   override def beforeEach(): Unit =

@@ -35,27 +35,25 @@ class AuthorityUtilsSpec extends BaseSpec {
     val nonMatchingUtr: String = testNonMatchingUtr
 
     protected val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(utr)),
-      None,
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(utr)),
+      nino = None,
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
     val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type]      =
       requests.AuthenticatedRequest(
-        "userId",
-        Some(Uar(uar)),
-        Some(SaUtr(utr)),
-        None,
-        true,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        FakeRequest()
+        userId = "userId",
+        agentRef = Some(Uar(uar)),
+        saUtr = Some(SaUtr(utr)),
+        nino = None,
+        isAgentActive = false,
+        confidenceLevel = ConfidenceLevel.L50,
+        credentials = fakeCredentials,
+        request = FakeRequest()
       )
 
     val account: TaxIdentifier      = AccountUtils.getAccount(request)

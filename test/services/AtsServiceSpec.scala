@@ -61,15 +61,14 @@ class AtsServiceSpec extends BaseSpec {
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      None,
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(testUtr)),
+      nino = None,
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
 
   val agentToken: AgentToken = AgentToken(
@@ -182,15 +181,14 @@ class AtsServiceSpec extends BaseSpec {
 
               implicit val request =
                 requests.AuthenticatedRequest(
-                  "userId",
-                  Some(Uar(testUar)),
-                  Some(SaUtr(testUtr)),
-                  None,
-                  true,
-                  false,
-                  ConfidenceLevel.L50,
-                  fakeCredentials,
-                  FakeRequest()
+                  userId = "userId",
+                  agentRef = Some(Uar(testUar)),
+                  saUtr = Some(SaUtr(testUtr)),
+                  nino = None,
+                  isAgentActive = false,
+                  confidenceLevel = ConfidenceLevel.L50,
+                  credentials = fakeCredentials,
+                  request = FakeRequest()
                 )
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)

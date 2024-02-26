@@ -17,7 +17,6 @@
 package views
 
 import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
@@ -46,7 +45,6 @@ trait ViewSpecBase extends BaseSpec {
     None,
     None,
     None,
-    isSa = true,
     isAgentActive = true,
     L250,
     fakeCredentials,

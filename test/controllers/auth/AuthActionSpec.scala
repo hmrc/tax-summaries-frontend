@@ -277,12 +277,6 @@ class AuthActionSpec extends BaseSpec {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
 
-      /*
-            val authAction = new AuthActionImpl(mockAuthConnector, FakeAuthAction.mcc) {
-        override val saShuttered: Boolean = true
-      }
-       */
-
       when(appConfig.saShuttered).thenReturn(true)
 
       val result = createHarness.onPageLoad(shutterCheck = true)(FakeRequest())

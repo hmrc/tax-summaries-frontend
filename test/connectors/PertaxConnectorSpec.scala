@@ -16,75 +16,57 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get}
-import config.ApplicationConfig
-import models.PertaxApiResponse
-import org.scalatest.EitherValues
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, ok, post, urlEqualTo}
+import models.{ErrorView, PertaxApiResponse}
+import org.scalatest.concurrent.IntegrationPatience
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
-import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
-import utils.{JsonUtil, WireMockHelper}
+import utils.{BaseSpec, WireMockHelper}
 
-import scala.concurrent.ExecutionContext
+class PertaxConnectorSpec extends BaseSpec with WireMockHelper with IntegrationPatience {
 
-class PertaxConnectorSpec
-    extends AnyWordSpec
-    with Matchers
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with WireMockHelper
-    with IntegrationPatience
-    with JsonUtil
-    with Injecting
-    with EitherValues {
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  override def fakeApplication(): Application =
-    new GuiceApplicationBuilder()
-      .configure(
-        "microservice.services.pertax.port"    -> server.port(),
-        "microservice.services.pertax.version" -> "1.0"
-      )
-      .build()
+  override lazy val app: Application = GuiceApplicationBuilder()
+    .configure("microservice.services.pertax.port" -> server.port())
+    .build()
 
-  implicit val hc: HeaderCarrier                 = HeaderCarrier()
-  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
-  lazy val connector: PertaxConnector            = inject[PertaxConnector]
-  lazy val nino: Nino                            = new Generator().nextNino
-  lazy val url                                   = s"/pertax/$nino/check-single-account"
+  lazy val pertaxConnector: PertaxConnector = inject[PertaxConnector]
 
-  "pertaxAuth" must {
-    "return a PertaxApiResponse with an ACCESS_GRANTED code" in {
+  def authoriseUrl() = s"/pertax/authorise"
+
+  "PertaxConnector" must {
+    "return a PertaxApiResponse with ACCESS_GRANTED code" in {
       server.stubFor(
-        get(url).willReturn(
-          aResponse().withStatus(OK).withBody("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}")
-        )
+        post(urlEqualTo(authoriseUrl()))
+          .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
       )
 
-      val result = connector.pertaxAuth(nino.toString()).value.futureValue.getOrElse(PertaxApiResponse("", ""))
-
-      result mustBe PertaxApiResponse("ACCESS_GRANTED", "Access granted")
+      val result = pertaxConnector
+        .pertaxPostAuthorise()
+        .value
+        .futureValue
+        .getOrElse(PertaxApiResponse("INCORRECT RESPONSE", "INCORRECT", None, None))
+      result mustBe PertaxApiResponse("ACCESS_GRANTED", "Access granted", None, None)
     }
-    "return a PertaxApiResponse with a NO_HMRC_PT_ENROLMENT code" in {
+
+    "return a PertaxApiResponse with NO_HMRC_PT_ENROLMENT code with a redirect link" in {
       server.stubFor(
-        get(url).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(
+        post(urlEqualTo(authoriseUrl()))
+          .willReturn(
+            ok(
               "{\"code\": \"NO_HMRC_PT_ENROLMENT\", \"message\": \"There is no valid HMRC PT enrolment\", \"redirect\": \"/tax-enrolment-assignment-frontend/account\"}"
             )
-        )
+          )
       )
 
-      val result = connector.pertaxAuth(nino.toString()).value.futureValue.getOrElse(PertaxApiResponse("", ""))
-
+      val result = pertaxConnector
+        .pertaxPostAuthorise()
+        .value
+        .futureValue
+        .getOrElse(PertaxApiResponse("INCORRECT RESPONSE", "INCORRECT", None, None))
       result mustBe PertaxApiResponse(
         "NO_HMRC_PT_ENROLMENT",
         "There is no valid HMRC PT enrolment",
@@ -93,40 +75,77 @@ class PertaxConnectorSpec
       )
     }
 
-    "return a PertaxApiResponse with no code" in {
-      server.stubFor(get(url).willReturn(aResponse().withStatus(OK).withBody("{\"code\": \"\", \"message\": \"\"}")))
+    "return a PertaxApiResponse with INVALID_AFFINITY code and an errorView" in {
+      server.stubFor(
+        post(urlEqualTo(authoriseUrl()))
+          .willReturn(
+            ok(
+              "{\"code\": \"INVALID_AFFINITY\", \"message\": \"The user is neither an individual or an organisation\", \"errorView\": {\"url\": \"/path/for/partial\", \"statusCode\": 401}}"
+            )
+          )
+      )
 
-      val result = connector
-        .pertaxAuth(nino.toString())
+      val result = pertaxConnector
+        .pertaxPostAuthorise()
         .value
         .futureValue
-        .getOrElse(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", "There is no valid HMRC PT enrolment"))
-
-      result mustBe PertaxApiResponse("", "", None)
+        .getOrElse(PertaxApiResponse("INCORRECT RESPONSE", "INCORRECT", None, None))
+      result mustBe PertaxApiResponse(
+        "INVALID_AFFINITY",
+        "The user is neither an individual or an organisation",
+        Some(ErrorView("/path/for/partial", UNAUTHORIZED)),
+        None
+      )
     }
 
-    List(
-      BAD_REQUEST,
-      NOT_FOUND,
-      IM_A_TEAPOT,
-      REQUEST_TIMEOUT,
-      UNPROCESSABLE_ENTITY,
-      INTERNAL_SERVER_ERROR,
-      BAD_GATEWAY,
-      SERVICE_UNAVAILABLE
-    ).foreach { errorResponse =>
-      s"return an UpstreamErrorResponse on Left with $errorResponse response" in {
-        server.stubFor(get(url).willReturn(aResponse().withStatus(errorResponse)))
+    "return a PertaxApiResponse with MCI_RECORD code and an errorView" in {
+      server.stubFor(
+        post(urlEqualTo(authoriseUrl()))
+          .willReturn(
+            ok(
+              "{\"code\": \"MCI_RECORD\", \"message\": \"Manual correspondence indicator is set\", \"errorView\": {\"url\": \"/path/for/partial\", \"statusCode\": 423}}"
+            )
+          )
+      )
 
-        val result = connector
-          .pertaxAuth(nino.toString())
-          .value
-          .futureValue
-          .swap
-          .getOrElse(UpstreamErrorResponse("", OK))
-          .statusCode
+      val result = pertaxConnector
+        .pertaxPostAuthorise()
+        .value
+        .futureValue
+        .getOrElse(PertaxApiResponse("INCORRECT RESPONSE", "INCORRECT", None, None))
+      result mustBe PertaxApiResponse(
+        "MCI_RECORD",
+        "Manual correspondence indicator is set",
+        Some(ErrorView("/path/for/partial", 423)),
+        None
+      )
+    }
 
-        result mustBe errorResponse
+    "return a UpstreamErrorResponse with the correct error code" when {
+
+      List(
+        BAD_REQUEST,
+        NOT_FOUND,
+        FORBIDDEN,
+        INTERNAL_SERVER_ERROR
+      ).foreach { error =>
+        s"an $error is returned from the backend" in {
+
+          server.stubFor(
+            post(urlEqualTo(authoriseUrl())).willReturn(
+              aResponse()
+                .withStatus(error)
+            )
+          )
+
+          val result = pertaxConnector
+            .pertaxPostAuthorise()
+            .value
+            .futureValue
+            .swap
+            .getOrElse(UpstreamErrorResponse("INCORRECT RESPONSE", IM_A_TEAPOT))
+          result.statusCode mustBe error
+        }
       }
     }
   }

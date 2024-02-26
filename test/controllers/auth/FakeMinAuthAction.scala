@@ -32,6 +32,15 @@ object FakeMinAuthAction extends ControllerBaseSpec with MinAuthAction {
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(
       requests
-        .AuthenticatedRequest("userId", None, None, None, true, false, ConfidenceLevel.L50, fakeCredentials, request)
+        .AuthenticatedRequest(
+          userId = "userId",
+          agentRef = None,
+          saUtr = None,
+          nino = None,
+          isAgentActive = false,
+          confidenceLevel = ConfidenceLevel.L50,
+          credentials = fakeCredentials,
+          request = request
+        )
     )
 }

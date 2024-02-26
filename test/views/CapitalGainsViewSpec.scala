@@ -35,7 +35,6 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
       None,
       Some(SaUtr(testUtr)),
       None,
-      isSa = true,
       isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,

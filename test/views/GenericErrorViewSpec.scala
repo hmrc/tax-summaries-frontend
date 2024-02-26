@@ -37,7 +37,6 @@ class GenericErrorViewSpec extends ViewSpecBase with MockitoSugar with TestConst
     None,
     Some(SaUtr(testUtr)),
     None,
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,

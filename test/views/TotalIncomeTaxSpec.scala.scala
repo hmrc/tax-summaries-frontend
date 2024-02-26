@@ -39,7 +39,6 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       None,
       Some(SaUtr(testUtr)),
       None,
-      isSa = true,
       isAgentActive = false,
       ConfidenceLevel.L200,
       fakeCredentials,

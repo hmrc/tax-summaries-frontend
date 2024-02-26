@@ -28,8 +28,8 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants.{testNino, testUtr}
-import views.html.errors._
 import views.html._
+import views.html.errors._
 
 import scala.concurrent.ExecutionContext
 
@@ -75,7 +75,6 @@ trait ControllerBaseSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     Some(testNino),
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
@@ -87,7 +86,6 @@ trait ControllerBaseSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     None,
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,

@@ -49,15 +49,14 @@ class IncomeServiceSpec extends BaseSpec {
   val mockAtsService: AtsService                            = mock[AtsService]
   override val taxYear                                      = 2015
   val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+    userId = "userId",
+    agentRef = None,
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   def sut: IncomeService with MockitoSugar = new IncomeService(mockAtsService) with MockitoSugar

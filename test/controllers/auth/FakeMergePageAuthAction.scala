@@ -16,32 +16,23 @@
 
 package controllers.auth
 
-import controllers.auth.requests.AuthenticatedRequest
-import play.api.mvc._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.SaUtr
-import utils.ControllerBaseSpec
-import utils.TestConstants._
-
-import scala.concurrent.{ExecutionContext, Future}
-
-class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with MergePageAuthAction {
-
-  override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
-  override protected val executionContext: ExecutionContext = mcc.executionContext
-
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(
-      requests.AuthenticatedRequest(
-        "userId",
-        None,
-        if (isSa) Some(SaUtr(testUtr)) else None,
-        if (isSa) None else Some(testNino),
-        isSa,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        request
-      )
-    )
-}
+//class FakeMergePageAuthAction(val isSa: Boolean) extends ControllerBaseSpec with MergePageAuthAction {
+//
+//  override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
+//  override protected val executionContext: ExecutionContext = mcc.executionContext
+//
+//  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
+//    block(
+//      requests.AuthenticatedRequest(
+//        "userId",
+//        None,
+//        if (isSa) Some(SaUtr(testUtr)) else None,
+//        if (isSa) None else Some(testNino),
+//        isSa,
+//        false,
+//        ConfidenceLevel.L50,
+//        fakeCredentials,
+//        request
+//      )
+//    )
+//}
