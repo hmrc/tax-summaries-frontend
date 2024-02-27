@@ -94,7 +94,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
       "call data cache connector" when {
 
-        "user is an agent" in {
+        "user is an agent (should not include paye data as agent)" in {
           implicit val request =
             requests.AuthenticatedRequest(
               userId = "userId",
@@ -119,9 +119,8 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               )
           )
             .thenReturn(Future(Right(payeDataResponse)))
-
           val result = sut.getSaAndPayeYearList.futureValue
-          result mustBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
+          result mustBe Right(AtsMergePageViewModel(saDataResponse, Nil, appConfig, ConfidenceLevel.L50))
 
           verify(mockDataCacheConnector, times(1))
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])

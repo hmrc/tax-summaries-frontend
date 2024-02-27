@@ -120,8 +120,10 @@ class AuthImpl @Inject() (
               request = request
             )
           (agentRef.isDefined, isAgentActive) match {
-            case (true, false) => Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
-            case (true, true)  => agentTokenCheck(request, newRequest)
+            case (true, false) =>
+              Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
+            case (true, true)  =>
+              agentTokenCheck(request, newRequest)
             case _             =>
               pertaxAuthService.authorise[A, Request[A]](request).map {
                 case Some(r) => Left(r)

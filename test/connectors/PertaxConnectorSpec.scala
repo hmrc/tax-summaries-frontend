@@ -18,20 +18,37 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, ok, post, urlEqualTo}
 import models.{ErrorView, PertaxApiResponse}
-import org.scalatest.concurrent.IntegrationPatience
+import org.scalatest.EitherValues
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Injecting
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
-import utils.{BaseSpec, WireMockHelper}
+import utils.{JsonUtil, WireMockHelper}
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class PertaxConnectorSpec extends BaseSpec with WireMockHelper with IntegrationPatience {
+class PertaxConnectorSpec
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with ScalaFutures
+    with WireMockHelper
+    with IntegrationPatience
+    with JsonUtil
+    with Injecting
+    with EitherValues {
+//class PertaxConnectorSpec extends BaseSpec with WireMockHelper with IntegrationPatience {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  override lazy val app: Application = GuiceApplicationBuilder()
-    .configure("microservice.services.pertax.port" -> server.port())
-    .build()
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder()
+      .configure("microservice.services.pertax.port" -> server.port())
+      .build()
 
   lazy val pertaxConnector: PertaxConnector = inject[PertaxConnector]
 
