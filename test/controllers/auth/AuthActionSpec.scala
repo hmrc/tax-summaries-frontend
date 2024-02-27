@@ -205,7 +205,7 @@ class AuthActionSpec extends BaseSpec {
         ex.getMessage must include("Can't find credentials for user")
       }
     }
-    
+
     "utr check is true" must {
 
       "Return OK when citizen details returns a utr" in {

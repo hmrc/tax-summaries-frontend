@@ -29,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.{JsonUtil, WireMockHelper}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class PertaxConnectorSpec
@@ -41,7 +42,6 @@ class PertaxConnectorSpec
     with JsonUtil
     with Injecting
     with EitherValues {
-//class PertaxConnectorSpec extends BaseSpec with WireMockHelper with IntegrationPatience {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
