@@ -91,15 +91,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
          |        "ggCredId": "xyz"
          |    },
          |    "externalId": "testExternalId",
-         |    "allEnrolments": [{
-         |        "key": "IR-SA-AGENT",
-         |        "identifiers": [
-         |          {
-         |            "key": "IRAgentReference",
-         |            "value": "uar"
-         |          }],
-         |        "state": "Activated"
-         |     }]
+         |    "allEnrolments": []
          |}
          |""".stripMargin
 

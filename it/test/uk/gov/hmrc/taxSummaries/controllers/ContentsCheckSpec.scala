@@ -133,15 +133,7 @@ class ContentsCheckSpec extends IntegrationSpec {
        |        "ggCredId": "xyz"
        |    },
        |    "externalId": "testExternalId",
-       |    "allEnrolments": [{
-       |        "key": "IR-SA-AGENT",
-       |        "identifiers": [
-       |          {
-       |            "key": "IRAgentReference",
-       |            "value": "uar"
-       |          }],
-       |        "state": "Activated"
-       |     }]
+       |    "allEnrolments": []
        |}
        |""".stripMargin
 
