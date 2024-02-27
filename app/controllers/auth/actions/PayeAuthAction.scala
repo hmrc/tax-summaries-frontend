@@ -26,7 +26,7 @@ import play.api.mvc._
 import services.PertaxAuthService
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, Enrolment, Enrolments, Nino => AuthNino}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, Enrolment, Enrolments, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.{Nino, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
@@ -74,8 +74,8 @@ class PayeAuthActionImpl @Inject() (
         case None    =>
           authorised(
             ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
-          ).retrieve(Retrievals.nino and Retrievals.credentials and Retrievals.allEnrolments) {
-            case Some(nino) ~ Some(credentials) ~ Enrolments(enrolments) =>
+          ).retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+            case Enrolments(enrolments) ~ Some(nino) ~ Some(credentials) =>
               if (isAgent(enrolments)) {
                 Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
               } else {
@@ -88,9 +88,19 @@ class PayeAuthActionImpl @Inject() (
                 }
               }
             case _                                                       => throw new RuntimeException("Auth retrieval failed for user")
-          } recover { case NonFatal(e) =>
-            logger.error(s"Exception in PayeAuthAction: $e", e)
-            Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+          } recover {
+            case _: NoActiveSession =>
+              Redirect(
+                appConfig.payeLoginUrl,
+                Map(
+                  "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
+                  "origin"       -> Seq(appConfig.appName)
+                )
+              )
+            case NonFatal(e)        =>
+              println("\n PIE" + e)
+              logger.error(s"Exception in PayeAuthAction: $e", e)
+              Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
           }
         case Some(r) => Future.successful(r)
       }
