@@ -16,10 +16,12 @@
 
 package controllers.auth
 
+import config.ApplicationConfig
 import controllers.auth.actions.{PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
@@ -35,8 +37,8 @@ import utils.TestConstants.fakeCredentials
 import scala.concurrent.Future
 
 class PayeAuthActionSpec extends BaseSpec {
-
-  val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
+  override implicit lazy val appConfig: ApplicationConfig = mock[ApplicationConfig]
+  val mockAuthConnector: DefaultAuthConnector             = mock[DefaultAuthConnector]
 
   val unauthorisedRoute: String = routes.PayeErrorController.notAuthorised.url
 
@@ -51,6 +53,8 @@ class PayeAuthActionSpec extends BaseSpec {
   override def beforeEach(): Unit = {
     reset(mockAuthConnector)
     reset(mockPertaxAuthService)
+    reset(appConfig)
+    when(appConfig.payeShuttered).thenReturn(false)
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
   }
 
@@ -73,6 +77,29 @@ class PayeAuthActionSpec extends BaseSpec {
       status(result) mustBe OK
       contentAsString(result) must include(nino)
       contentAsString(result) must include("provider type")
+    }
+
+    "redirect to failure url when authorisation fails" in {
+
+      when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(Some(Redirect("/dummy"))))
+
+      val nino                                                                       = new Generator().nextNino.nino
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+        Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
+
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+      )
+        .thenReturn(retrievalResult)
+
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService)
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest())
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some("/dummy")
     }
 
     "A user will be redirected to the not authorised page" when {
@@ -153,16 +180,17 @@ class PayeAuthActionSpec extends BaseSpec {
   }
 
   "A user visiting the service when it is shuttered" must {
-//    "be directed to the service unavailable page without calling auth" in {
-//      reset(mockAuthConnector)
-//      when(appConfig.payeShuttered).thenReturn(true)
-//      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService)
-//
-//      val controller = new Harness(authAction)
-//      val result     = controller.onPageLoad()(FakeRequest())
-//      status(result) mustBe SEE_OTHER
-//      redirectLocation(result).get mustBe routes.PayeErrorController.serviceUnavailable.url
-//      verifyZeroInteractions(mockAuthConnector)
-//    }
+    "be directed to the service unavailable page without calling auth" in {
+      reset(mockAuthConnector)
+      when(appConfig.payeShuttered).thenReturn(true)
+      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService)
+
+      val controller = new Harness(authAction)
+      val result     = controller.onPageLoad()(FakeRequest())
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).get mustBe routes.PayeErrorController.serviceUnavailable.url
+      verifyZeroInteractions(mockAuthConnector)
+    }
   }
+
 }

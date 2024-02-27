@@ -22,6 +22,7 @@ import controllers.auth.actions.AuthAction
 import models.{AgentToken, MatchingDetails}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
@@ -164,6 +165,16 @@ class AuthActionSpec extends BaseSpec {
         contentAsString(result) must include(s"SaUtr: $utr")
       }
 
+      "redirect to failure url when authorisation fails" in {
+        whenRetrieval(nino = Some(nino))
+        when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(Some(Redirect("/dummy"))))
+        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
+          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+        val result = createHarness.onPageLoad()(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some("/dummy")
+      }
+
       "when no active session return 303 and be redirected to GG sign in page" in {
         when(mockAuthConnector.authorise(any(), any())(any(), any()))
           .thenReturn(Future.failed(new SessionRecordNotFound))
@@ -194,8 +205,9 @@ class AuthActionSpec extends BaseSpec {
         ex.getMessage must include("Can't find credentials for user")
       }
     }
-
+    
     "utr check is true" must {
+
       "Return OK when citizen details returns a utr" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
