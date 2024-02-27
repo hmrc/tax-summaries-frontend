@@ -98,7 +98,6 @@ class PayeAuthActionImpl @Inject() (
                 )
               )
             case NonFatal(e)        =>
-              println("\n PIE" + e)
               logger.error(s"Exception in PayeAuthAction: $e", e)
               Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
           }
