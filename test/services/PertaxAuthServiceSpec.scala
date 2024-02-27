@@ -36,7 +36,6 @@ import views.MainTemplate
 import views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.Future
-import scala.language.postfixOps
 
 class PertaxAuthServiceSpec extends BaseSpec {
 

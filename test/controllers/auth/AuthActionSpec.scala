@@ -91,7 +91,7 @@ class AuthActionSpec extends BaseSpec {
     when(appConfig.saShuttered).thenReturn(false)
   }
 
-  private val externalId: String     = "123"
+  private val extId: String          = "123"
   private val nino: String           = "CS121212C"
   private val utr: String            = "123"
   private val agentRef: String       = "123"
@@ -101,7 +101,7 @@ class AuthActionSpec extends BaseSpec {
 
   private def whenRetrieval(
     enrolments: Set[Enrolment] = Set.empty,
-    externalId: Option[String] = Some(""),
+    externalId: Option[String] = Some(extId),
     creds: Option[Credentials] = Some(fakeCredentials),
     utr: Option[String] = None,
     nino: Option[String] = None,

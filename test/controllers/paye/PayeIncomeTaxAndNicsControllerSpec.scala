@@ -33,8 +33,8 @@
 package controllers.paye
 
 import config.{ApplicationConfig, PayeConfig}
+import controllers.auth.FakeAuthJourney
 import controllers.auth.requests.PayeAuthenticatedRequest
-import controllers.auth.{FakeAuthJourney, FakePayeAuthAction}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
