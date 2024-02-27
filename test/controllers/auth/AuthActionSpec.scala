@@ -27,8 +27,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
 import services.{CitizenDetailsService, PertaxAuthService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
@@ -177,7 +177,7 @@ class AuthActionSpec extends BaseSpec {
         redirectLocation(result) mustBe Some("/loginUrl?continue_url=%2FloginCallback&origin=appname")
       }
 
-      "when insufficient enrolments redirect to the Insufficient Enrolments Page" in {
+      "when insufficient enrolments redirect to the not authorised Page" in {
         when(mockAuthConnector.authorise(any(), any())(any(), any()))
           .thenReturn(Future.failed(InsufficientEnrolments()))
         val result = createHarness.onPageLoad()(fakeRequest)
@@ -185,6 +185,14 @@ class AuthActionSpec extends BaseSpec {
         redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
       }
 
+      "Throw exception when no credentials" in {
+        whenRetrieval(creds = None)
+        val result = createHarness.onPageLoad()(fakeRequest)
+        val ex     = intercept[RuntimeException] {
+          await(result)
+        }
+        ex.getMessage must include("Can't find credentials for user")
+      }
     }
 
     "utr check is true" must {
@@ -270,194 +278,4 @@ class AuthActionSpec extends BaseSpec {
       }
     }
   }
-
-//
-//  "A user with insufficient enrolments" must {
-//    "be redirected to the Insufficient Enrolments Page" in {
-//      when(mockAuthConnector.authorise(any(), any())(any(), any()))
-//        .thenReturn(Future.failed(InsufficientEnrolments()))
-//      val result = createHarness.onPageLoad()(FakeRequest("", ""))
-//
-//      redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
-//    }
-//  }
-//
-//  "A user with a confidence level 50 and an SA enrolment and an IR-SA-AGENT enrolment" must {
-//    "create an authenticated request" in {
-//      val utr = new SaUtrGenerator().nextSaUtr.utr
-//      val uar = testUar
-//
-//      val retrievalResult
-//        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
-//        Future.successful(
-//          Enrolments(
-//            Set(
-//              Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""),
-//              Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "")
-//            )
-//          ) ~ Some("") ~ Some(fakeCredentials) ~ Some(utr) ~ L50
-//        )
-//
-//      when(
-//        mockAuthConnector
-//          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
-//            any(),
-//            any()
-//          )(any(), any())
-//      ).thenReturn(retrievalResult)
-//
-//      val result = createHarness.onPageLoad()(FakeRequest("", ""))
-//      status(result) mustBe OK
-//      contentAsString(result) must include(utr)
-//      contentAsString(result) must include(uar)
-//      contentAsString(result) must include("true")
-//      contentAsString(result) must include("bar")
-//    }
-//  }
-//
-//  "A user with a confidence level 50 and an SA enrolment" must {
-//    "create an authenticated request" in {
-//      val utr                                                                                          = new SaUtrGenerator().nextSaUtr.utr
-//      val retrievalResult
-//        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
-//        Future.successful(
-//          Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))) ~ Some("") ~ Some(
-//            fakeCredentials
-//          ) ~ Some(utr) ~ ConfidenceLevel.L50
-//        )
-//
-//      when(
-//        mockAuthConnector
-//          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
-//            any(),
-//            any()
-//          )(any(), any())
-//      )
-//        .thenReturn(retrievalResult)
-//
-//      val result = createHarness.onPageLoad()(FakeRequest("", ""))
-//      status(result) mustBe OK
-//      contentAsString(result) must include(utr)
-//      contentAsString(result) must include("true")
-//    }
-//  }
-//
-//  "A user with a confidence level 50 and an active IR-SA-AGENT enrolment" must {
-//    "create an authenticated request" in {
-//      val uar = testUar
-//
-//      val retrievalResult
-//        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
-//        Future.successful(
-//          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), "Activated"))) ~
-//            Some("") ~ Some(fakeCredentials) ~ None ~ ConfidenceLevel.L50
-//        )
-//
-//      when(
-//        mockAuthConnector
-//          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
-//            any(),
-//            any()
-//          )(any(), any())
-//      )
-//        .thenReturn(retrievalResult)
-//
-//      val result = createHarness.onPageLoad()(FakeRequest("", ""))
-//      status(result) mustBe OK
-//      contentAsString(result) must include(uar)
-//      contentAsString(result) must include("false")
-//      contentAsString(result) must include("bar")
-//    }
-//  }
-//
-//  "A user with a confidence level 50 and an inactive IR-SA-AGENT enrolment" must {
-//    "create an authenticated request" in {
-//      val uar = testUar
-//
-//      val retrievalResult
-//        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
-//        Future.successful(
-//          Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-//            Some("") ~ Some(fakeCredentials) ~ None ~ L50
-//        )
-//
-//      when(
-//        mockAuthConnector
-//          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
-//            any(),
-//            any()
-//          )(any(), any())
-//      )
-//        .thenReturn(retrievalResult)
-//
-//      val result = createHarness.onPageLoad()(FakeRequest("", ""))
-//      status(result) mustBe OK
-//      contentAsString(result) must include(uar)
-//      contentAsString(result) must include("false")
-//      contentAsString(result) must include("bar")
-//    }
-//  }
-//
-//  "A user with a confidence level 50 and neither SA enrolment" must {
-//    "create an authenticated request" in {
-//      val retrievalResult
-//        : Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
-//        Future.successful(
-//          Enrolments(Set.empty) ~
-//            Some("") ~ Some(fakeCredentials) ~ None ~ L50
-//        )
-//
-//      when(
-//        mockAuthConnector
-//          .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](
-//            any(),
-//            any()
-//          )(any(), any())
-//      )
-//        .thenReturn(retrievalResult)
-//      val result = createHarness.onPageLoad()(FakeRequest("", ""))
-//      status(result) mustBe OK
-//      contentAsString(result) must include("false")
-//      contentAsString(result) must include("bar")
-//    }
-//  }
-//
-//  "A user with no credentials will fail to auth" in {
-//    val uar = testUar
-//
-//    val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel] =
-//      Future.successful(
-//        Enrolments(Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", uar)), ""))) ~
-//          Some("") ~ None ~ Some(uar) ~ ConfidenceLevel.L50
-//      )
-//
-//    when(
-//      mockAuthConnector
-//        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ ConfidenceLevel](any(), any())(
-//          any(),
-//          any()
-//        )
-//    )
-//      .thenReturn(retrievalResult)
-//
-//    val ex = intercept[RuntimeException] {
-//      await(createHarness.onPageLoad()(FakeRequest("", "")))
-//    }
-//
-//    ex.getMessage must include("Can't find credentials for user")
-//
-//  }
-//
-//  "A user visiting the service when it is shuttered" must {
-//    "be directed to the service unavailable page without calling auth" in {
-//      reset(mockAuthConnector)
-//
-//      when(appConfig.saShuttered).thenReturn(true)
-//
-//      val result = createHarness.onPageLoad(shutterCheck = true)(FakeRequest())
-//      status(result) mustBe SEE_OTHER
-//      redirectLocation(result).get mustBe (controllers.routes.ErrorController.serviceUnavailable.url)
-//      verifyZeroInteractions(mockAuthConnector)
-//    }
-//  }
 }

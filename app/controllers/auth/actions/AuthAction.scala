@@ -131,18 +131,20 @@ class AuthImpl @Inject() (
               }
           }
         case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
-      } recover { case _: NoActiveSession =>
-      lazy val ggSignIn    = appConfig.loginUrl
-      lazy val callbackUrl = appConfig.loginCallback
-      Left(
-        Redirect(
-          ggSignIn,
-          Map(
-            "continue_url" -> Seq(callbackUrl),
-            "origin"       -> Seq(appConfig.appName)
+      } recover {
+      case _: NoActiveSession        =>
+        lazy val ggSignIn    = appConfig.loginUrl
+        lazy val callbackUrl = appConfig.loginCallback
+        Left(
+          Redirect(
+            ggSignIn,
+            Map(
+              "continue_url" -> Seq(callbackUrl),
+              "origin"       -> Seq(appConfig.appName)
+            )
           )
         )
-      )
+      case _: InsufficientEnrolments => Left(Redirect(controllers.routes.ErrorController.notAuthorised))
     }
 
   private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
