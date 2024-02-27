@@ -82,10 +82,4 @@ abstract class TaxsController @Inject() (
           InternalServerError(genericErrorView())
       }
     }
-
-//  def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]): Future[GenericViewModel] = {
-//    val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)
-//    block(intParam)
-//  }
-
 }
