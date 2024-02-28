@@ -236,6 +236,15 @@ class AuthActionSpec extends BaseSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
       }
+      "return OK when SA is NOT shuttered" in {
+        when(appConfig.saShuttered).thenReturn(false)
+        whenRetrieval(nino = Some(nino))
+        when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
+        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
+          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+        val result = createHarness.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+      }
     }
 
     "agent token check is true" must {
