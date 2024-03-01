@@ -47,11 +47,11 @@ class AuthActionSpec extends BaseSpec {
 
   private class Harness(authAction: AuthAction) extends InjectedController {
     def onPageLoad(
-      shutterCheck: Boolean = false,
+      saShutterCheck: Boolean = false,
       agentTokenCheck: Boolean = false,
       utrCheck: Boolean = false
     ): Action[AnyContent] =
-      authAction(shutterCheck = shutterCheck, agentTokenCheck = agentTokenCheck, utrCheck = utrCheck) { request =>
+      authAction(saShutterCheck = saShutterCheck, agentTokenCheck = agentTokenCheck, utrCheck = utrCheck) { request =>
         Ok(
           s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
             s"AgentRef: ${request.agentRef.map(_.uar).getOrElse("fail")}" +
@@ -232,7 +232,7 @@ class AuthActionSpec extends BaseSpec {
     "shutter check is true" must {
       "redirect to service unavailable page when SA is shuttered" in {
         when(appConfig.saShuttered).thenReturn(true)
-        val result = createHarness.onPageLoad(shutterCheck = true)(fakeRequest)
+        val result = createHarness.onPageLoad(saShutterCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
       }

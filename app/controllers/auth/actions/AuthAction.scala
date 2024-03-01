@@ -36,13 +36,13 @@ import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthImpl @Inject() (
+class AuthImpl(
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   dataCacheConnector: DataCacheConnector,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService,
-  shutterCheck: Boolean,
+  saShutterCheck: Boolean,
   agentTokenCheck: Boolean,
   utrCheck: Boolean
 )(implicit
@@ -61,7 +61,7 @@ class AuthImpl @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    if (shutterCheck && saShuttered) {
+    if (saShutterCheck && saShuttered) {
       Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable))
     } else {
       createAuthenticatedRequest(request).flatMap {
@@ -196,14 +196,14 @@ class AuthAction @Inject() (
   ec: ExecutionContext,
   appConfig: ApplicationConfig
 ) {
-  def apply(shutterCheck: Boolean, agentTokenCheck: Boolean, utrCheck: Boolean): Auth =
+  def apply(saShutterCheck: Boolean, agentTokenCheck: Boolean, utrCheck: Boolean): Auth =
     new AuthImpl(
       authConnector,
       cc,
       dataCacheConnector,
       citizenDetailsService,
       pertaxAuthService,
-      shutterCheck,
+      saShutterCheck,
       agentTokenCheck,
       utrCheck
     )

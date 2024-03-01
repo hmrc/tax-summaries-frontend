@@ -39,10 +39,10 @@ class AuthJourneyImpl @Inject() (
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] = minAuthAction
 
   override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    authAction(shutterCheck = false, agentTokenCheck = true, utrCheck = false)
+    authAction(saShutterCheck = false, agentTokenCheck = true, utrCheck = false)
 
   override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] =
-    authAction(shutterCheck = true, agentTokenCheck = false, utrCheck = true)
+    authAction(saShutterCheck = true, agentTokenCheck = false, utrCheck = true)
 
   override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent] = payeAuthAction
 }
