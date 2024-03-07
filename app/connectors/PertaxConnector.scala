@@ -49,9 +49,6 @@ class PertaxConnector @Inject() (
         http
           .post(url"$baseUrl/pertax/authorise")
           .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
-          .withBody("""
-              |"isBackendService": false
-              |""".stripMargin)
           .execute[Either[UpstreamErrorResponse, HttpResponse]]
       )
       .map(_.json.as[PertaxApiResponse])

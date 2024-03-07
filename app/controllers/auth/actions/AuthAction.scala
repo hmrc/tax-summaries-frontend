@@ -24,7 +24,7 @@ import controllers.auth.requests.AuthenticatedRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import services.{CitizenDetailsService, PertaxAuthService, SucccessMatchingDetailsResponse}
+import services.{CitizenDetailsService, FailedMatchingDetailsResponse, PertaxAuthService, SucccessMatchingDetailsResponse}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -144,7 +144,6 @@ class AuthImpl(
             )
           )
         )
-      case _: InsufficientEnrolments => Left(Redirect(controllers.routes.ErrorController.notAuthorised))
     }
 
   private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
@@ -177,7 +176,7 @@ class AuthImpl(
           case Some(_) => matchingDetails.saUtr
           case _       => None
         }
-      case _                                                => None
+      case FailedMatchingDetailsResponse                                                => None
     }
 
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
