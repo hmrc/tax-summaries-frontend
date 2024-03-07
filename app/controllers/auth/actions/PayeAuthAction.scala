@@ -24,16 +24,15 @@ import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PertaxAuthService
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel, CredentialStrength, Enrolment, Enrolments, NoActiveSession, Nino => AuthNino}
 import uk.gov.hmrc.domain.{Nino, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 
 class PayeAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
@@ -73,7 +72,7 @@ class PayeAuthActionImpl @Inject() (
       pertaxAuthService.authorise[A, Request[A]](request).flatMap {
         case None    =>
           authorised(
-            ConfidenceLevel.L200 and AuthNino(hasNino = true) and CredentialStrength(CredentialStrength.strong)
+            ConfidenceLevel.L200
           ).retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
             case Enrolments(enrolments) ~ Some(nino) ~ Some(credentials) =>
               if (isAgent(enrolments)) {
@@ -87,19 +86,7 @@ class PayeAuthActionImpl @Inject() (
                   )
                 }
               }
-            case _                                                       => throw new RuntimeException("Auth retrieval failed for user")
-          } recover {
-            case _: NoActiveSession =>
-              Redirect(
-                appConfig.payeLoginUrl,
-                Map(
-                  "continue_url" -> Seq(appConfig.payeLoginCallbackUrl),
-                  "origin"       -> Seq(appConfig.appName)
-                )
-              )
-            case NonFatal(e)        =>
-              logger.error(s"Exception in PayeAuthAction: $e", e)
-              Redirect(controllers.paye.routes.PayeErrorController.notAuthorised)
+            case _                                                       => throw new RuntimeException("Retrieval succeeded but did not match expectation")
           }
         case Some(r) => Future.successful(r)
       }
