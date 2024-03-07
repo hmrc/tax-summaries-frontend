@@ -90,7 +90,7 @@ class AuthImpl(
             .isEmpty) &&
           agentToken.isEmpty
         ) {
-          Left(notAuthorisedPage)
+          Left(serviceUnavailablePage)
         } else {
           Right(rq)
         }
@@ -131,19 +131,18 @@ class AuthImpl(
               }
           }
         case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
-      } recover {
-      case _: NoActiveSession        =>
-        lazy val ggSignIn    = appConfig.loginUrl
-        lazy val callbackUrl = appConfig.loginCallback
-        Left(
-          Redirect(
-            ggSignIn,
-            Map(
-              "continue_url" -> Seq(callbackUrl),
-              "origin"       -> Seq(appConfig.appName)
-            )
+      } recover { case _: NoActiveSession =>
+      lazy val ggSignIn    = appConfig.loginUrl
+      lazy val callbackUrl = appConfig.loginCallback
+      Left(
+        Redirect(
+          ggSignIn,
+          Map(
+            "continue_url" -> Seq(callbackUrl),
+            "origin"       -> Seq(appConfig.appName)
           )
         )
+      )
     }
 
   private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
@@ -176,10 +175,11 @@ class AuthImpl(
           case Some(_) => matchingDetails.saUtr
           case _       => None
         }
-      case FailedMatchingDetailsResponse                                                => None
+      case FailedMatchingDetailsResponse                    => None
     }
 
-  private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
+  private def notAuthorisedPage: Result      = Redirect(controllers.routes.ErrorController.notAuthorised)
+  private def serviceUnavailablePage: Result = Redirect(controllers.routes.ErrorController.serviceUnavailable)
 }
 
 @ImplementedBy(classOf[AuthImpl])

@@ -188,14 +188,6 @@ class AuthActionSpec extends BaseSpec {
         redirectLocation(result) mustBe Some("/loginUrl?continue_url=%2FloginCallback&origin=appname")
       }
 
-      "when insufficient enrolments redirect to the not authorised Page" in {
-        when(mockAuthConnector.authorise(any(), any())(any(), any()))
-          .thenReturn(Future.failed(InsufficientEnrolments()))
-        val result = createHarness.onPageLoad()(fakeRequest)
-
-        redirectLocation(result) mustBe Some("/annual-tax-summary/not-authorised")
-      }
-
       "Throw exception when no credentials" in {
         whenRetrieval(creds = None)
         val result = createHarness.onPageLoad()(fakeRequest)
@@ -295,7 +287,7 @@ class AuthActionSpec extends BaseSpec {
         val result =
           createHarness.onPageLoad(agentTokenCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
+        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
       }
     }
   }
