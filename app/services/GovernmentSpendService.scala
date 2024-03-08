@@ -17,6 +17,7 @@
 package services
 
 import cats.data.EitherT
+import cats.implicits._
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
@@ -40,6 +41,9 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
   def getGovernmentSpendFigures(
     taxYear: Int
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] = {
+
+    //implicit val nameReads: Reads[ListMap[String, Double]] = Json.reads[ListMap[String, Double]]
+
     val governmentSpend = EitherT(middleConnector.connectToGovernmentSpend(taxYear)).leftMap(upStreamErrorResponse =>
       AtsErrorResponse(upStreamErrorResponse.message)
     )
@@ -47,8 +51,8 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
     for {
       response <- governmentSpend
     } yield {
-      val sortedGovSpendingData = response.json.as[Map[String, Double]].toList.sortWith(_._2 > _._2)
-      CategoriesUtils.reorderCategories(appConfig, taxYear, sortedGovSpendingData)
+      val sortedGovSpendingData = response.json.as[Map[String, Double]].toList
+      sortedGovSpendingData
     }
   }
 
