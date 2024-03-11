@@ -44,7 +44,7 @@ class PayeYourIncomeAndTaxesController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividualsOnly.async {
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async {
     implicit request: PayeAuthenticatedRequest[_] =>
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
         case Right(_: PayeAtsData)

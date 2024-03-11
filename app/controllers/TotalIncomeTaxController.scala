@@ -41,7 +41,7 @@ class TotalIncomeTaxController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedTotalIncomeTax: Action[AnyContent] = authJourney.authForSAIndividualsAndAgentsOnly.async { request =>
+  def authorisedTotalIncomeTax: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)
   }
 

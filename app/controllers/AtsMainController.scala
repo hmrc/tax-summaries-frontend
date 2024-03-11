@@ -41,7 +41,7 @@ class AtsMainController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedAtsMain: Action[AnyContent] = authJourney.authForSAIndividualsAndAgentsOnly.async { request =>
+  def authorisedAtsMain: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)
   }
 

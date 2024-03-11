@@ -43,7 +43,7 @@ class PayeAtsMainController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividualsOnly.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async { implicit request =>
     getPayeAts(taxYear)
   }
 

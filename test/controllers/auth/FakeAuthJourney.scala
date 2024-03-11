@@ -22,7 +22,7 @@ import utils.ControllerBaseSpec
 
 object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                       = FakeAuthAction
-  override val authForIndividualsAndAgents: ActionBuilder[AuthenticatedRequest, AnyContent]       = FakeAuthAction
-  override val authForSAIndividualsAndAgentsOnly: ActionBuilder[AuthenticatedRequest, AnyContent] = FakeAuthAction
-  override val authForPayeIndividualsOnly: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    = FakePayeAuthAction
+  override val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]       = FakeAuthAction
+  override val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent] = FakeAuthAction
+  override val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    = FakePayeAuthAction
 }
