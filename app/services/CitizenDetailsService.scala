@@ -40,14 +40,4 @@ class CitizenDetailsService @Inject() (citizenDetailsConnector: CitizenDetailsCo
         SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
       case Right(_)                                         => FailedErrorMatchingDetailsResponse
     }
-
-//    EitherT(citizenDetailsConnector.connectToCid(nino)).fold(
-//      errorResponse =>
-//        FailedMatchingDetailsResponse,
-//      httpResponse =>
-//        httpResponse.status match {
-//          case OK => SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
-//          case _  => FailedMatchingDetailsResponse
-//        }
-//    )
 }

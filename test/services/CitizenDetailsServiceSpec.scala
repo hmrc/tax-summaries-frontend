@@ -66,11 +66,11 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
           .thenReturn(Future.successful(Right(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
-        result mustBe FailedNotFoundMatchingDetailsResponse
+        result mustBe FailedErrorMatchingDetailsResponse
       }
     }
 
-    List(BAD_REQUEST, NOT_FOUND, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
+    List(BAD_REQUEST, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
       s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
         val response = UpstreamErrorResponse.apply("body", httpStatus)
 
@@ -78,8 +78,18 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
           .thenReturn(Future.successful(Left(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
-        result mustBe FailedNotFoundMatchingDetailsResponse
+        result mustBe FailedErrorMatchingDetailsResponse
       }
+    }
+
+    "when cid sends a NOT_FOUND, return a FailedNotFoundMatchingDetailsResponse" in {
+      val response = UpstreamErrorResponse.apply("body", NOT_FOUND)
+
+      when(citizenDetailsConnector.connectToCid(any())(any()))
+        .thenReturn(Future.successful(Left(response)))
+
+      val result = service.getMatchingDetails(nino.toString()).futureValue
+      result mustBe FailedNotFoundMatchingDetailsResponse
     }
   }
 }
