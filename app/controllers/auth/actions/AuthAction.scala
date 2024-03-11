@@ -24,7 +24,7 @@ import controllers.auth.requests.AuthenticatedRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import services.{CitizenDetailsService, FailedMatchingDetailsResponse, PertaxAuthService, SucccessMatchingDetailsResponse}
+import services._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -66,11 +66,13 @@ class AuthImpl(
     } else {
       createAuthenticatedRequest(request).flatMap {
         case Right(authenticatedRequest) =>
-          citizenDetailsCheck(authenticatedRequest).flatMap { authReq =>
-            (utrCheck, authReq.isAgent, authReq.saUtr) match {
-              case (true, false, None) => Future.successful(notAuthorisedPage)
-              case _                   => block(authReq)
-            }
+          citizenDetailsCheck(authenticatedRequest).flatMap {
+            case Left(r)        => Future.successful(r)
+            case Right(authReq) =>
+              (utrCheck, authReq.isAgent, authReq.saUtr) match {
+                case (true, false, None) => Future.successful(notAuthorisedPage)
+                case _                   => block(authReq)
+              }
           }
         case Left(r)                     => Future.successful(r)
       }
@@ -90,7 +92,7 @@ class AuthImpl(
             .isEmpty) &&
           agentToken.isEmpty
         ) {
-          Left(serviceUnavailablePage)
+          Left(notAuthorisedPage)
         } else {
           Right(rq)
         }
@@ -158,24 +160,19 @@ class AuthImpl(
 
   private def citizenDetailsCheck[A](request: AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier
-  ): Future[AuthenticatedRequest[A]] =
+  ): Future[Either[Result, AuthenticatedRequest[A]]] =
     (request.nino, request.saUtr, request.isAgent) match {
       case (Some(nino), None, false) =>
-        getSAUTRFromCitizenDetails(nino).map {
-          case retrievedSAUtr @ Some(_) => request.copy(saUtr = retrievedSAUtr)
-          case None                     => request
+        citizenDetailsService.getMatchingDetails(nino.nino).map {
+          case SucccessMatchingDetailsResponse(matchingDetails) =>
+            matchingDetails.saUtr match {
+              case Some(_) => Right(request.copy(saUtr = matchingDetails.saUtr))
+              case _       => Right(request)
+            }
+          case FailedNotFoundMatchingDetailsResponse            => Right(request)
+          case FailedErrorMatchingDetailsResponse               => Left(serviceUnavailablePage)
         }
-      case _                         => Future.successful(request)
-    }
-
-  private def getSAUTRFromCitizenDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] =
-    citizenDetailsService.getMatchingDetails(nino.nino).map {
-      case SucccessMatchingDetailsResponse(matchingDetails) =>
-        matchingDetails.saUtr match {
-          case Some(_) => matchingDetails.saUtr
-          case _       => None
-        }
-      case FailedMatchingDetailsResponse                    => None
+      case _                         => Future.successful(Right(request))
     }
 
   private def notAuthorisedPage: Result      = Redirect(controllers.routes.ErrorController.notAuthorised)

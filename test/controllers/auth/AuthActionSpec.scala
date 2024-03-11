@@ -287,7 +287,7 @@ class AuthActionSpec extends BaseSpec {
         val result =
           createHarness.onPageLoad(agentTokenCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
+        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
       }
     }
   }

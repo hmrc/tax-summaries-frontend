@@ -66,7 +66,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
           .thenReturn(Future.successful(Right(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
-        result mustBe FailedMatchingDetailsResponse
+        result mustBe FailedNotFoundMatchingDetailsResponse
       }
     }
 
@@ -78,7 +78,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
           .thenReturn(Future.successful(Left(response)))
 
         val result = service.getMatchingDetails(nino.toString()).futureValue
-        result mustBe FailedMatchingDetailsResponse
+        result mustBe FailedNotFoundMatchingDetailsResponse
       }
     }
   }

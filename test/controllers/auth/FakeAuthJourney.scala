@@ -21,8 +21,8 @@ import play.api.mvc._
 import utils.ControllerBaseSpec
 
 object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
-  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                       = FakeAuthAction
-  override val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]       = FakeAuthAction
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                  = FakeAuthAction
+  override val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]   = FakeAuthAction
   override val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent] = FakeAuthAction
-  override val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent]    = FakePayeAuthAction
+  override val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent]   = FakePayeAuthAction
 }

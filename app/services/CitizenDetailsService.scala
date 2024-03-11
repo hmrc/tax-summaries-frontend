@@ -16,7 +16,6 @@
 
 package services
 
-import cats.data.EitherT
 import connectors.CitizenDetailsConnector
 import models.MatchingDetails
 import play.api.http.Status._
@@ -27,18 +26,28 @@ import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait MatchingDetailsResponse
 case class SucccessMatchingDetailsResponse(matchingDetails: MatchingDetails) extends MatchingDetailsResponse
-object FailedMatchingDetailsResponse extends MatchingDetailsResponse
+object FailedNotFoundMatchingDetailsResponse extends MatchingDetailsResponse
+object FailedErrorMatchingDetailsResponse extends MatchingDetailsResponse
 
 class CitizenDetailsService @Inject() (citizenDetailsConnector: CitizenDetailsConnector)(implicit
   ec: ExecutionContext
 ) {
   def getMatchingDetails(nino: String)(implicit hc: HeaderCarrier): Future[MatchingDetailsResponse] =
-    EitherT(citizenDetailsConnector.connectToCid(nino)).fold(
-      _ => FailedMatchingDetailsResponse,
-      httpResponse =>
-        httpResponse.status match {
-          case OK => SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
-          case _  => FailedMatchingDetailsResponse
-        }
-    )
+    citizenDetailsConnector.connectToCid(nino).map {
+      case Left(e) if e.statusCode == NOT_FOUND             => FailedNotFoundMatchingDetailsResponse
+      case Left(_)                                          => FailedErrorMatchingDetailsResponse
+      case Right(httpResponse) if httpResponse.status == OK =>
+        SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
+      case Right(_)                                         => FailedErrorMatchingDetailsResponse
+    }
+
+//    EitherT(citizenDetailsConnector.connectToCid(nino)).fold(
+//      errorResponse =>
+//        FailedMatchingDetailsResponse,
+//      httpResponse =>
+//        httpResponse.status match {
+//          case OK => SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
+//          case _  => FailedMatchingDetailsResponse
+//        }
+//    )
 }

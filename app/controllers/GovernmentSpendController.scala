@@ -41,9 +41,8 @@ class GovernmentSpendController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
-  def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async {
-    request =>
-      show(request)
+  def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
+    show(request)
   }
 
   type ViewModel = GovernmentSpend
