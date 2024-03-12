@@ -21,12 +21,13 @@ import controllers.auth.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.MockitoSugar
+import play.api.http.Status.OK
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.TestConstants._
 import utils.{BaseSpec, GenericViewModel}
 import view_models.{Amount, AtsList, GovernmentSpend}
@@ -56,8 +57,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     None,
     Some(SaUtr(testUtr)),
     None,
-    true,
-    false,
+    isSa = true,
+    isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=2015")
@@ -69,9 +70,9 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createModel(meq(taxYear), any[Function1[AtsData, GenericViewModel]]())(any(), any()))
+      when(mockAtsService.createFutureModel(meq(taxYear), any[AtsData => Future[GenericViewModel]]())(any(), any()))
         .thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request, ec), 1500 millis)
       result mustEqual genericViewModel
     }
   }
@@ -79,8 +80,21 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService govSpend" must {
     "return a complete GovernmentSpend with sorted spending when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
-      val result  = sut.govSpend(atsData)
+      when(mockMiddleConnector.connectToGovernmentSpend(any())(any[HeaderCarrier]))
+        .thenReturn(
+          Future.successful(
+            Right(
+              HttpResponse(
+                OK,
+                """{"Health":21.9,"Welfare":19.6,"StatePensions":10.1,"Education":9.6,"NationalDebtInterest":4.1,
+                  |"BusinessAndIndustry":14.4,"Defence":4.5,"Transport":4.5,"PublicOrderAndSafety":3.9,"GovernmentAdministration":2,"HousingAndUtilities":1.4,"Environment":1.3,"Culture":1.2,"OutstandingPaymentsToTheEU":0.6,"OverseasAid":0.9}""".stripMargin,
+                Map[String, Seq[String]]()
+              )
+            )
+          )
+        )
 
+      val result = Await.result(sut.govSpend(atsData), 1500 millis)
       result mustBe GovernmentSpend(
         2022,
         "1111111111",
@@ -112,14 +126,20 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
     "return a isScottishTaxPayer as true when incomeTaxStatus is 0002" in {
       val atsData = AtsTestData.govSpendingData
-      val result  = sut.govSpend(atsData)
+      when(mockMiddleConnector.connectToGovernmentSpend(any())(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(HttpResponse(OK, """{"Environment" : 5.5}""", Map[String, Seq[String]]()))))
+
+      val result = Await.result(sut.govSpend(atsData), 1500 millis)
 
       result.isScottishTaxPayer mustBe true
     }
 
     "return a isScottishTaxPayer as false when incomeTaxStatus is not 0002" in {
       val atsData = AtsTestData.govSpendingDataForWelshUser
-      val result  = sut.govSpend(atsData)
+
+      when(mockMiddleConnector.connectToGovernmentSpend(any())(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Right(HttpResponse(OK, """{"Environment" : 5.5}""", Map[String, Seq[String]]()))))
+      val result = Await.result(sut.govSpend(atsData), 1500 millis)
 
       result.isScottishTaxPayer mustBe false
     }

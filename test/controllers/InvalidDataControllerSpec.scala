@@ -112,7 +112,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           tokenErrorView
         )
 
-      when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any()))
+      when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)

@@ -22,7 +22,9 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.AuthenticatedRequest
+import io.jsonwebtoken.io.DeserializationException
 import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
+import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{CategoriesUtils, GenericViewModel}
 import view_models.GovernmentSpend
@@ -35,41 +37,71 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
 
   def getGovernmentSpendData(
     taxYear: Int
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
-    atsService.createModel(taxYear, govSpend)
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_], ec: ExecutionContext): Future[GenericViewModel] =
+    atsService.createFutureModel(taxYear, govSpend)
 
   def getGovernmentSpendFigures(
     taxYear: Int
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] = {
 
-    //implicit val nameReads: Reads[ListMap[String, Double]] = Json.reads[ListMap[String, Double]]
-
     val governmentSpend = EitherT(middleConnector.connectToGovernmentSpend(taxYear)).leftMap(upStreamErrorResponse =>
       AtsErrorResponse(upStreamErrorResponse.message)
     )
 
+    def read(value: JsValue): List[(String, Double)] = value match {
+      case x: JsObject =>
+        val values = x.fields.map { field =>
+          (field._1, field._2.toString().toDouble)
+        }
+        values.toList
+      case _           => throw new DeserializationException("Expected Map as JsObject, but got different")
+    }
+
     for {
       response <- governmentSpend
-    } yield {
-      val sortedGovSpendingData = response.json.as[Map[String, Double]].toList
-      sortedGovSpendingData
-    }
+    } yield read(response.json)
   }
 
-  private[services] def govSpend(atsData: AtsData): GovernmentSpend = {
+  private[services] def govSpend(
+    atsData: AtsData
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GovernmentSpend] = {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
 
-    GovernmentSpend(
-      atsData.taxYear,
-      atsData.utr.get,
-      CategoriesUtils
-        .reorderCategories[SpendData](appConfig, atsData.taxYear, govSpendingData.govSpendAmountData.get.toList),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname"),
-      govSpendingData.totalAmount,
-      atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
-      atsData.income_tax.get.payload.get("scottish_income_tax")
-    )
+    getGovernmentSpendFigures(atsData.taxYear)
+      .map { governmentSpendFiguredMapList =>
+        val governmentSpendCategoryOrder = governmentSpendFiguredMapList.map(_._1)
+        GovernmentSpend(
+          atsData.taxYear,
+          atsData.utr.get,
+          CategoriesUtils
+            .reorderCategories[SpendData](
+              governmentSpendCategoryOrder.toList,
+              govSpendingData.govSpendAmountData.get.toList
+            ),
+          atsData.taxPayerData.get.taxpayer_name.get("title"),
+          atsData.taxPayerData.get.taxpayer_name.get("forename"),
+          atsData.taxPayerData.get.taxpayer_name.get("surname"),
+          govSpendingData.totalAmount,
+          atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
+          atsData.income_tax.get.payload.get("scottish_income_tax")
+        )
+      }
+      .value
+      .map(
+        _.getOrElse(
+          GovernmentSpend(
+            atsData.taxYear,
+            atsData.utr.get,
+            govSpendingData.govSpendAmountData.get.toList,
+            atsData.taxPayerData.get.taxpayer_name.get("title"),
+            atsData.taxPayerData.get.taxpayer_name.get("forename"),
+            atsData.taxPayerData.get.taxpayer_name.get("surname"),
+            govSpendingData.totalAmount,
+            atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
+            atsData.income_tax.get.payload.get("scottish_income_tax")
+          )
+        )
+      )
   }
+
 }

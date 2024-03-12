@@ -48,6 +48,14 @@ class AtsService @Inject() (
       checkCreateModel(taxYear, _, converter)
     }
 
+  def createFutureModel(taxYear: Int, converter: AtsData => Future[GenericViewModel])(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[GenericViewModel] =
+    getAts(taxYear) flatMap {
+      checkCreateFutureModel(taxYear, _, converter)
+    }
+
   def checkCreateModel(
     taxYear: Int,
     output: Either[Int, AtsData],
@@ -60,6 +68,20 @@ class AtsService @Inject() (
       case Left(NOT_FOUND)                                       => NoATSViewModel(taxYear)
       case Left(_)                                               => new ATSUnavailableViewModel
     }
+
+  def checkCreateFutureModel(
+    taxYear: Int,
+    output: Either[Int, AtsData],
+    converter: AtsData => Future[GenericViewModel]
+  ): Future[GenericViewModel] = {
+    val finalOutput = output match {
+      case Right(atsList) if atsList.taxYear > appConfig.taxYear => Future.successful(new ATSUnavailableViewModel)
+      case Right(atsList)                                        => converter(atsList)
+      case Left(NOT_FOUND)                                       => Future.successful(NoATSViewModel(taxYear))
+      case Left(_)                                               => Future.successful(new ATSUnavailableViewModel)
+    }
+    finalOutput
+  }
 
   def getAts(
     taxYear: Int
