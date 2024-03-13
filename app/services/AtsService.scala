@@ -69,7 +69,7 @@ class AtsService @Inject() (
       case Left(_)                                               => new ATSUnavailableViewModel
     }
 
-  def checkCreateFutureModel(
+  private def checkCreateFutureModel(
     taxYear: Int,
     output: Either[Int, AtsData],
     converter: AtsData => Future[GenericViewModel]
