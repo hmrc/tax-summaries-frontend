@@ -16,28 +16,25 @@
 
 package services
 
+import cats.data.EitherT
 import connectors.CitizenDetailsConnector
-import models.MatchingDetails
-import play.api.http.Status._
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.http.Status.NOT_FOUND
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-sealed trait MatchingDetailsResponse
-case class SucccessMatchingDetailsResponse(matchingDetails: MatchingDetails) extends MatchingDetailsResponse
-object FailedNotFoundMatchingDetailsResponse extends MatchingDetailsResponse
-object FailedErrorMatchingDetailsResponse extends MatchingDetailsResponse
-
 class CitizenDetailsService @Inject() (citizenDetailsConnector: CitizenDetailsConnector)(implicit
   ec: ExecutionContext
 ) {
-  def getMatchingDetails(nino: String)(implicit hc: HeaderCarrier): Future[MatchingDetailsResponse] =
-    citizenDetailsConnector.connectToCid(nino).map {
-      case Left(e) if e.statusCode == NOT_FOUND             => FailedNotFoundMatchingDetailsResponse
-      case Left(_)                                          => FailedErrorMatchingDetailsResponse
-      case Right(httpResponse) if httpResponse.status == OK =>
-        SucccessMatchingDetailsResponse(MatchingDetails.fromJsonMatchingDetails(httpResponse.json))
-      case Right(_)                                         => FailedErrorMatchingDetailsResponse
+  def getMatchingSaUtr(
+    nino: String
+  )(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, Option[SaUtr]] =
+    citizenDetailsConnector.connectToCid(nino).transform {
+      case Right(httpResponse)                          =>
+        Right((httpResponse.json \ "ids" \ "sautr").asOpt[String].map(SaUtr.apply))
+      case Left(error) if error.statusCode == NOT_FOUND => Right(None)
+      case Left(error)                                  => Left(error)
     }
 }

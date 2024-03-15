@@ -16,6 +16,7 @@
 
 package controllers.auth.actions
 
+import cats.data.EitherT
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
 import connectors.DataCacheConnector
@@ -66,7 +67,7 @@ class AuthImpl(
     } else {
       createAuthenticatedRequest(request).flatMap {
         case Right(authenticatedRequest) =>
-          citizenDetailsCheck(authenticatedRequest).flatMap {
+          citizenDetailsCheck(authenticatedRequest).value.flatMap {
             case Left(r)        => Future.successful(r)
             case Right(authReq) =>
               (utrCheck, authReq.isAgent, authReq.saUtr) match {
@@ -160,19 +161,16 @@ class AuthImpl(
 
   private def citizenDetailsCheck[A](request: AuthenticatedRequest[A])(implicit
     hc: HeaderCarrier
-  ): Future[Either[Result, AuthenticatedRequest[A]]] =
+  ): EitherT[Future, Result, AuthenticatedRequest[A]] =
     (request.nino, request.saUtr, request.isAgent) match {
       case (Some(nino), None, false) =>
-        citizenDetailsService.getMatchingDetails(nino.nino).map {
-          case SucccessMatchingDetailsResponse(matchingDetails) =>
-            matchingDetails.saUtr match {
-              case Some(_) => Right(request.copy(saUtr = matchingDetails.saUtr))
-              case _       => Right(request)
-            }
-          case FailedNotFoundMatchingDetailsResponse            => Right(request)
-          case FailedErrorMatchingDetailsResponse               => Left(serviceUnavailablePage)
-        }
-      case _                         => Future.successful(Right(request))
+        citizenDetailsService
+          .getMatchingSaUtr(nino.nino)
+          .bimap(
+            _ => serviceUnavailablePage,
+            maybeSaUtr => request.copy(saUtr = maybeSaUtr)
+          )
+      case _                         => EitherT.rightT(request)
     }
 
   private def notAuthorisedPage: Result      = Redirect(controllers.routes.ErrorController.notAuthorised)

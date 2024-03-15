@@ -16,17 +16,18 @@
 
 package controllers.auth
 
+import cats.data.EitherT
 import config.ApplicationConfig
 import connectors.DataCacheConnector
 import controllers.auth.actions.AuthAction
-import models.{AgentToken, MatchingDetails}
+import models.AgentToken
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
-import services.{CitizenDetailsService, PertaxAuthService, SucccessMatchingDetailsResponse}
+import services.{CitizenDetailsService, PertaxAuthService}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -149,8 +150,8 @@ class AuthActionSpec extends BaseSpec {
       "Call citizen details & find no utr and return OK when a non-agent with nino but no utr and authorised successfully" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
-          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(None))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
       }
@@ -158,8 +159,8 @@ class AuthActionSpec extends BaseSpec {
       "Call citizen details and find a utr and return OK when a non-agent with nino but no utr and authorised successfully" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
-          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) must include(s"SaUtr: $utr")
@@ -168,8 +169,8 @@ class AuthActionSpec extends BaseSpec {
       "redirect to failure url when authorisation fails" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(Some(Redirect("/dummy"))))
-        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
-          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/dummy")
@@ -203,8 +204,8 @@ class AuthActionSpec extends BaseSpec {
       "Return OK when citizen details returns a utr" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
-          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(Some(SaUtr(utr))))))
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
         val result = createHarness.onPageLoad(utrCheck = true)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) must include(s"SaUtr: $utr")
@@ -213,8 +214,8 @@ class AuthActionSpec extends BaseSpec {
       "Redirect to not authorised when citizen details returns no utr" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
-          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(None))
         val result = createHarness.onPageLoad(utrCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
@@ -232,8 +233,8 @@ class AuthActionSpec extends BaseSpec {
         when(appConfig.saShuttered).thenReturn(false)
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingDetails(any())(any()))
-          .thenReturn(Future(SucccessMatchingDetailsResponse(MatchingDetails(None))))
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(None))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
       }
