@@ -17,21 +17,17 @@
 package config
 
 import com.google.inject.Inject
-import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
 import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative, RedirectUrl}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
-import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 @Singleton
-class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Configuration) {
+class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
-
-  def getExternalUrl(key: String): String = config.getString(s"external-urls.$key")
 
   // Services url config
   val serviceUrl: String = config.baseUrl("tax-summaries")
@@ -39,16 +35,12 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val sessionCacheHost: String = config.baseUrl("cachable.session-cache")
   lazy val cidHost: String          = config.baseUrl("citizen-details")
 
-  lazy val pertaxHost: String           = config.baseUrl("pertax")
-  lazy val contactFormServiceIdentifier = "ATS"
+  lazy val pertaxHost: String = config.baseUrl("pertax")
 
   // Caching config
   lazy val sessionCacheDomain: String = getConf("cachable.session-cache.domain")
 
-  lazy val homePageUrl                    = "/annual-tax-summary/"
-  lazy val contactFrontendBaseUrl: String = getExternalUrl("contact-frontend.host")
-  lazy val betaFeedbackUrl                =
-    s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  lazy val homePageUrl = "/annual-tax-summary/"
 
   // Encryption config
   lazy val encryptionKey: String      = config.getString("portal.clientagent.encryption.key")
@@ -77,8 +69,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   lazy val walesIncomeTaxLink = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
-  lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
-
   //Application name
   lazy val appName: String = config.getString("appName")
 
@@ -92,7 +82,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
-  def accessibilityStatementUrl(referrer: String) = {
+  def accessibilityStatementUrl(referrer: String): String = {
     val redirectUrl = RedirectUrl(accessibilityBaseUrl + referrer).getEither(
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
     ) match {
@@ -113,13 +103,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
-  def spendCategories(taxYear: Int): List[String] =
-    configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
-
   lazy val internalAuthResourceType: String =
     config.getConfString("internal-auth.resource-type", "ddcn-live-admin-frontend")
-
-  val ehCacheTtlInSeconds: Int = config.getInt("ehCache.ttlInSeconds")
-
-  val SCAWrapperFutureTimeout: Int = config.getInt("sca-wrapper.future-timeout")
 }

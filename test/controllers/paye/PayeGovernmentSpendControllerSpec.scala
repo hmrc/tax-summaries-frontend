@@ -16,20 +16,23 @@
 
 package controllers.paye
 
+import cats.data.EitherT
 import config.ApplicationConfig
 import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
-import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.GovernmentSpendService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.TestConstants.governmentSpendFromBackend
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeGovernmentSpendingView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
@@ -39,13 +42,16 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
 
+  val govSpendService: GovernmentSpendService = mock[GovernmentSpendService]
+
   val sut =
     new PayeGovernmentSpendController(
       mockPayeAtsService,
       FakePayeAuthAction,
       mcc,
       inject[PayeGovernmentSpendingView],
-      payeGenericErrorView
+      payeGenericErrorView,
+      govSpendService
     )
 
   "Government spend controller" must {
@@ -54,7 +60,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       val fakeTaxYear: Int = 2021
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear: Int = fakeTaxYear
       }
 
@@ -66,7 +72,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           FakePayeAuthAction,
           mcc,
           inject[PayeGovernmentSpendingView],
-          payeGenericErrorView
+          payeGenericErrorView,
+          govSpendService
         )
 
       when(
@@ -74,6 +81,16 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           .getPayeATSData(any(), any())(any())
       )
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+
+      val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
+        key -> value.percentage.toDouble
+      }
+
+      val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+        EitherT.rightT(response)
+
+      when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(serviceResponse)
 
       val result = sut.show(fakeTaxYear)(fakeAuthenticatedRequest)
 
@@ -98,6 +115,16 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
 
+      val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
+        key -> value.percentage.toDouble
+      }
+
+      val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+        EitherT.rightT(response)
+
+      when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(serviceResponse)
+
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
@@ -105,7 +132,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          ((taxYear - 1).toString),
+          (taxYear - 1).toString,
           taxYear.toString
         )
       )
@@ -115,7 +142,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
       val taxYear: Int = 2021
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear: Int = 2020
       }
 
@@ -127,7 +154,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           FakePayeAuthAction,
           mcc,
           inject[PayeGovernmentSpendingView],
-          payeGenericErrorView
+          payeGenericErrorView,
+          govSpendService
         )
 
       when(

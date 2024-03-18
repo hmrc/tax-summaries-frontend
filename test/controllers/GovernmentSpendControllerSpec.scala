@@ -40,11 +40,11 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
       .thenReturn(Future.successful(model))
   }
 
-  def sut =
+  def sut: GovernmentSpendController =
     new GovernmentSpendController(
       mockGovernmentSpendService,
       mockAuditService,
@@ -115,7 +115,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -128,7 +128,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
       val result = sut.show(request)
@@ -210,7 +210,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(model2))
 
