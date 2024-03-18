@@ -57,7 +57,7 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
     }
 
     List(BAD_REQUEST, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
-      s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
+      s"when cid sends a $httpStatus, return a Left[UpstreamErrorResponse]" in {
         val response = UpstreamErrorResponse.apply("body", httpStatus)
 
         when(citizenDetailsConnector.connectToCid(any())(any()))

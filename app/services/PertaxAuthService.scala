@@ -61,7 +61,6 @@ class PertaxAuthService @Inject() (
 
   def authorise[T, M <: Request[T]](request: M): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
     pertaxConnector
       .pertaxPostAuthorise()
       .value
@@ -73,10 +72,7 @@ class PertaxAuthService @Inject() (
         case Right(PertaxApiResponse("CONFIDENCE_LEVEL_UPLIFT_REQUIRED", _, _, Some(redirect))) =>
           Future.successful(Some(upliftConfidenceLevel(redirect)))
         case Right(PertaxApiResponse("CREDENTIAL_STRENGTH_UPLIFT_REQUIRED", _, _, Some(_)))     =>
-          val ex =
-            new RuntimeException(
-              s"Weak credentials should be dealt before the service"
-            )
+          val ex = new RuntimeException("Weak credentials should be dealt before the service")
           logger.error(ex.getMessage, ex)
           Future.successful(
             Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
@@ -99,9 +95,7 @@ class PertaxAuthService @Inject() (
           }
         case Right(response)                                                                    =>
           val ex =
-            new RuntimeException(
-              s"Pertax response `${response.code}` with message ${response.message} is not handled"
-            )
+            new RuntimeException(s"Pertax response `${response.code}` with message ${response.message} is not handled")
           logger.error(ex.getMessage, ex)
           Future.successful(
             Some(InternalServerError(serviceUnavailableView()(request, messagesApi.preferred(request))))
