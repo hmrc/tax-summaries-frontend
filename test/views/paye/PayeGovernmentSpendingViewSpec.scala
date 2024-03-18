@@ -20,7 +20,6 @@ import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
-import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -116,7 +115,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear: Int = 2021
       }
 
@@ -136,7 +135,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
     "link to Scottish government spending page for Scottish users for tax year 2020" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear: Int = 2020
       }
 

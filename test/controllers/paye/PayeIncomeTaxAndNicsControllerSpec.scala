@@ -22,7 +22,6 @@ import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import play.api.Configuration
 import play.api.http.Status._
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
@@ -56,7 +55,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear = 2021
       }
 
@@ -104,7 +103,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response when tax year is set to 2020" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear = 2020
       }
 

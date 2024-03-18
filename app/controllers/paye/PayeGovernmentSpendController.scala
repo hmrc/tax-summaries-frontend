@@ -24,20 +24,21 @@ import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PayeAtsService
+import services.{GovernmentSpendService, PayeAtsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import view_models.paye.PayeGovernmentSpend
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeGovernmentSpendingView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class PayeGovernmentSpendController @Inject() (
   payeAtsService: PayeAtsService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   payeGovernmentSpendingView: PayeGovernmentSpendingView,
-  payeGenericErrorView: PayeGenericErrorView
+  payeGenericErrorView: PayeGenericErrorView,
+  governmentSpendService: GovernmentSpendService
 )(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -45,16 +46,35 @@ class PayeGovernmentSpendController @Inject() (
 
   def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async {
     implicit request: PayeAuthenticatedRequest[_] =>
-      payeAtsService.getPayeATSData(request.nino, taxYear).map {
+      val response = payeAtsService.getPayeATSData(request.nino, taxYear).flatMap {
         case Right(_: PayeAtsData)
             if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
-          Forbidden(payeGenericErrorView())
+          Future(Forbidden(payeGenericErrorView()))
         case Right(successResponse: PayeAtsData) =>
-          Ok(
-            payeGovernmentSpendingView(PayeGovernmentSpend(successResponse, appConfig), successResponse.isWelshTaxPayer)
+          val payeGovernmentSpendingViewFuture =
+            governmentSpendService.getGovernmentSpendFigures(taxYear).map { governmentSpendFiguredMapList =>
+              val governmentSpendCategoryOrder = governmentSpendFiguredMapList.map(_._1)
+              Ok(
+                payeGovernmentSpendingView(
+                  PayeGovernmentSpend(successResponse, governmentSpendCategoryOrder),
+                  successResponse.isWelshTaxPayer
+                )
+              )
+            }
+          payeGovernmentSpendingViewFuture.value.map(
+            _.getOrElse(
+              Ok(
+                payeGovernmentSpendingView(
+                  PayeGovernmentSpend(successResponse, List.empty),
+                  successResponse.isWelshTaxPayer
+                )
+              )
+            )
           )
-        case Left(_: AtsNotFoundResponse)        => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-        case _                                   => InternalServerError(payeGenericErrorView())
+        case Left(_: AtsNotFoundResponse)        =>
+          Future(Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear)))
+        case _                                   => Future(InternalServerError(payeGenericErrorView()))
       }
+      response
   }
 }
