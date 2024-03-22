@@ -17,24 +17,32 @@
 package controllers.auth
 
 import com.google.inject.ImplementedBy
+import controllers.auth.actions._
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import play.api.mvc.{ActionBuilder, AnyContent}
 
 import javax.inject.Inject
 
 @ImplementedBy(classOf[AuthJourneyImpl])
 trait AuthJourney {
-  val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+  val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
+  val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
+  val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
+  val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
 }
 
 class AuthJourneyImpl @Inject() (
+  minAuthAction: MinAuthAction,
   authAction: AuthAction,
-  selfAssessmentAction: SelfAssessmentAction,
-  payeAuthAction: PayeAuthAction,
-  pertaxAuthAction: PertaxAuthAction
+  payeAuthAction: PayeAuthAction
 ) extends AuthJourney {
-  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]    =
-    authAction andThen selfAssessmentAction
-  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    payeAuthAction andThen pertaxAuthAction
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent] = minAuthAction
+
+  override val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
+    authAction(saShutterCheck = false, agentTokenCheck = true, utrCheck = false)
+
+  override val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
+    authAction(saShutterCheck = true, agentTokenCheck = false, utrCheck = true)
+
+  override val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent] = payeAuthAction
 }

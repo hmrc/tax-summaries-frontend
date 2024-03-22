@@ -17,7 +17,8 @@
 package services
 
 import connectors.{DataCacheConnector, MiddleConnector}
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
@@ -59,16 +60,15 @@ class AtsServiceSpec extends BaseSpec {
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      None,
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+    requests.AuthenticatedRequest(
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(testUtr)),
+      nino = None,
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
 
   val agentToken: AgentToken = AgentToken(
@@ -180,16 +180,15 @@ class AtsServiceSpec extends BaseSpec {
               )
 
               implicit val request =
-                AuthenticatedRequest(
-                  "userId",
-                  Some(Uar(testUar)),
-                  Some(SaUtr(testUtr)),
-                  None,
-                  true,
-                  false,
-                  ConfidenceLevel.L50,
-                  fakeCredentials,
-                  FakeRequest()
+                requests.AuthenticatedRequest(
+                  userId = "userId",
+                  agentRef = Some(Uar(testUar)),
+                  saUtr = Some(SaUtr(testUtr)),
+                  nino = None,
+                  isAgentActive = false,
+                  confidenceLevel = ConfidenceLevel.L50,
+                  credentials = fakeCredentials,
+                  request = FakeRequest()
                 )
 
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)

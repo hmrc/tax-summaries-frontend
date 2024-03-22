@@ -18,7 +18,8 @@ package controllers.paye
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.AuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -33,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayeGovernmentSpendController @Inject() (
   payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   payeGovernmentSpendingView: PayeGovernmentSpendingView,
   payeGenericErrorView: PayeGenericErrorView,
@@ -43,36 +44,37 @@ class PayeGovernmentSpendController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    val response = payeAtsService.getPayeATSData(request.nino, taxYear).flatMap {
-      case Right(_: PayeAtsData)
-          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
-        Future(Forbidden(payeGenericErrorView()))
-      case Right(successResponse: PayeAtsData) =>
-        val payeGovernmentSpendingViewFuture =
-          governmentSpendService.getGovernmentSpendFigures(taxYear).map { governmentSpendFiguredMapList =>
-            val governmentSpendCategoryOrder = governmentSpendFiguredMapList.map(_._1)
-            Ok(
-              payeGovernmentSpendingView(
-                PayeGovernmentSpend(successResponse, governmentSpendCategoryOrder),
-                successResponse.isWelshTaxPayer
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async {
+    implicit request: PayeAuthenticatedRequest[_] =>
+      val response = payeAtsService.getPayeATSData(request.nino, taxYear).flatMap {
+        case Right(_: PayeAtsData)
+            if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
+          Future(Forbidden(payeGenericErrorView()))
+        case Right(successResponse: PayeAtsData) =>
+          val payeGovernmentSpendingViewFuture =
+            governmentSpendService.getGovernmentSpendFigures(taxYear).map { governmentSpendFiguredMapList =>
+              val governmentSpendCategoryOrder = governmentSpendFiguredMapList.map(_._1)
+              Ok(
+                payeGovernmentSpendingView(
+                  PayeGovernmentSpend(successResponse, governmentSpendCategoryOrder),
+                  successResponse.isWelshTaxPayer
+                )
               )
-            )
-          }
-        payeGovernmentSpendingViewFuture.value.map(
-          _.getOrElse(
-            Ok(
-              payeGovernmentSpendingView(
-                PayeGovernmentSpend(successResponse, List.empty),
-                successResponse.isWelshTaxPayer
+            }
+          payeGovernmentSpendingViewFuture.value.map(
+            _.getOrElse(
+              Ok(
+                payeGovernmentSpendingView(
+                  PayeGovernmentSpend(successResponse, List.empty),
+                  successResponse.isWelshTaxPayer
+                )
               )
             )
           )
-        )
-      case Left(_: AtsNotFoundResponse)        =>
-        Future(Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear)))
-      case _                                   => Future(InternalServerError(payeGenericErrorView()))
-    }
-    response
+        case Left(_: AtsNotFoundResponse)        =>
+          Future(Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear)))
+        case _                                   => Future(InternalServerError(payeGenericErrorView()))
+      }
+      response
   }
 }

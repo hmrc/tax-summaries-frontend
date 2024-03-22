@@ -18,7 +18,8 @@ package controllers.paye
 
 import com.google.inject.Inject
 import config.{ApplicationConfig, PayeConfig}
-import controllers.auth.{PayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.AuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -33,7 +34,7 @@ import scala.concurrent.ExecutionContext
 
 class PayeIncomeTaxAndNicsController @Inject() (
   payeAtsService: PayeAtsService,
-  payeAuthAction: PayeAuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   payeIncomeTaxAndNicsView: PayeIncomeTaxAndNicsView,
   payeConfig: PayeConfig,
@@ -43,23 +44,24 @@ class PayeIncomeTaxAndNicsController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = payeAuthAction.async { implicit request: PayeAuthenticatedRequest[_] =>
-    payeAtsService.getPayeATSData(request.nino, taxYear).map {
-      case Right(successResponse: PayeAtsData) =>
-        Ok(
-          payeIncomeTaxAndNicsView(
-            PayeIncomeTaxAndNics(
-              payeAtsData = successResponse,
-              scottishRates = payeConfig.scottishTaxBandKeys,
-              uKRates = payeConfig.ukTaxBandKeys,
-              adjustments = payeConfig.adjustmentsKeys.toSet
-            ),
-            successResponse.isWelshTaxPayer
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async {
+    implicit request: PayeAuthenticatedRequest[_] =>
+      payeAtsService.getPayeATSData(request.nino, taxYear).map {
+        case Right(successResponse: PayeAtsData) =>
+          Ok(
+            payeIncomeTaxAndNicsView(
+              PayeIncomeTaxAndNics(
+                payeAtsData = successResponse,
+                scottishRates = payeConfig.scottishTaxBandKeys,
+                uKRates = payeConfig.ukTaxBandKeys,
+                adjustments = payeConfig.adjustmentsKeys.toSet
+              ),
+              successResponse.isWelshTaxPayer
+            )
           )
-        )
 
-      case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
-      case _                            => InternalServerError(payeGenericErrorView())
-    }
+        case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        case _                            => InternalServerError(payeGenericErrorView())
+      }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.requests
 
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 
-trait CommonRequest {
-  def isSa: Boolean
-  def credentials: Credentials
+case class AuthenticatedRequest[A](
+  userId: String,
+  agentRef: Option[Uar],
+  saUtr: Option[SaUtr],
+  nino: Option[Nino],
+  isAgentActive: Boolean,
+  confidenceLevel: ConfidenceLevel,
+  credentials: Credentials,
+  request: Request[A]
+) extends WrappedRequest[A](request) {
+  def isSa: Boolean    = saUtr.isDefined
+  def isAgent: Boolean = agentRef.isDefined
 }

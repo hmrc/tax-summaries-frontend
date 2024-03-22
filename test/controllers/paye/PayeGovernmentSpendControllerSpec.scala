@@ -18,7 +18,8 @@ package controllers.paye
 
 import cats.data.EitherT
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -47,7 +48,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
   val sut =
     new PayeGovernmentSpendController(
       mockPayeAtsService,
-      FakePayeAuthAction,
+      FakeAuthJourney,
       mcc,
       inject[PayeGovernmentSpendingView],
       payeGenericErrorView,
@@ -69,7 +70,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       val sut =
         new PayeGovernmentSpendController(
           mockPayeAtsService,
-          FakePayeAuthAction,
+          FakeAuthJourney,
           mcc,
           inject[PayeGovernmentSpendingView],
           payeGenericErrorView,
@@ -151,7 +152,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       val sut =
         new PayeGovernmentSpendController(
           mockPayeAtsService,
-          FakePayeAuthAction,
+          FakeAuthJourney,
           mcc,
           inject[PayeGovernmentSpendingView],
           payeGenericErrorView,

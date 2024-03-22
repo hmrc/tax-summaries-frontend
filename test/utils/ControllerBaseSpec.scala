@@ -16,7 +16,8 @@
 
 package utils
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.i18n
 import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.mvc._
@@ -27,8 +28,8 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants.{testNino, testUtr}
-import views.html.errors._
 import views.html._
+import views.html.errors._
 
 import scala.concurrent.ExecutionContext
 
@@ -69,24 +70,22 @@ trait ControllerBaseSpec extends BaseSpec {
 
   val fakeCredentials = new Credentials("provider ID", "provider type")
 
-  lazy val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  lazy val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
     Some(testNino),
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
-  lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
     None,
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,

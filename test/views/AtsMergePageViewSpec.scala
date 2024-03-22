@@ -17,7 +17,8 @@
 package views
 
 import config.ApplicationConfig
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
@@ -33,12 +34,11 @@ import views.html.AtsMergePageView
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
-  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
@@ -48,24 +48,22 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
   lazy val atsMergePageView: AtsMergePageView = inject[AtsMergePageView]
   lazy val atsForms: AtsForms                 = inject[AtsForms]
 
-  val requestWithCL50: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  val requestWithCL50: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
-  val requestWithCL200: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
+  val requestWithCL200: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     Some(Uar(testUar)),
     Some(SaUtr(testUtr)),
     None,
-    isSa = true,
     isAgentActive = false,
     ConfidenceLevel.L200,
     fakeCredentials,

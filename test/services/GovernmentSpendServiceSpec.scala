@@ -17,7 +17,8 @@
 package services
 
 import connectors.MiddleConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.MockitoSugar
@@ -52,16 +53,15 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    isSa = true,
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = None,
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
     isAgentActive = false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("GET", "?taxYear=2015")
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("GET", "?taxYear=2015")
   )
 
   def sut: GovernmentSpendService with MockitoSugar = new GovernmentSpendService(mockAtsService, mockMiddleConnector)

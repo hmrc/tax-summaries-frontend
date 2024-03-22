@@ -17,7 +17,7 @@
 package utils
 
 import com.google.inject.Inject
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 

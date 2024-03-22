@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.MessagesControllerComponents
 import utils.{GenericViewModel, TaxYearUtil}

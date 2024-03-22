@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -33,28 +34,26 @@ class AuthorityUtilsSpec extends BaseSpec {
     val uar: String            = testUar
     val nonMatchingUtr: String = testNonMatchingUtr
 
-    protected val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(utr)),
-      None,
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+    protected val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(utr)),
+      nino = None,
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
     val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type]      =
-      AuthenticatedRequest(
-        "userId",
-        Some(Uar(uar)),
-        Some(SaUtr(utr)),
-        None,
-        true,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        FakeRequest()
+      requests.AuthenticatedRequest(
+        userId = "userId",
+        agentRef = Some(Uar(uar)),
+        saUtr = Some(SaUtr(utr)),
+        nino = None,
+        isAgentActive = false,
+        confidenceLevel = ConfidenceLevel.L50,
+        credentials = fakeCredentials,
+        request = FakeRequest()
       )
 
     val account: TaxIdentifier      = AccountUtils.getAccount(request)

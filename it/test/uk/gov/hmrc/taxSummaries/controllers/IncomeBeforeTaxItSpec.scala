@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package uk.gov.hmrc.taxSummaries.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
+import org.mockito.ArgumentMatchers
 import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
@@ -24,12 +25,15 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, IntegrationSpec}
 
-class IncomeBeforeTaxItSpec extends IntegrationSpec {
+import scala.concurrent.Future
 
+class IncomeBeforeTaxItSpec extends IntegrationSpec {
+  private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"                   -> server.port(),
@@ -38,13 +42,21 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
     )
     .overrides(
       api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
-      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService),
+      api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
     )
     .build()
 
   override lazy val keystoreData: Map[String, JsValue] = Map(
     s"TAXS_ATS_$taxYear" -> Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))
   )
+
+  override def beforeEach(): Unit = {
+    server.resetAll()
+    super.beforeEach()
+    reset(mockPertaxAuthService)
+    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
+  }
 
   "/income-before-tax" must {
 
@@ -62,7 +74,6 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
-
       result.map(status) mustBe Some(OK)
     }
     "return a 400 when TaxYearUtil.extractTaxYear returns invalid tax year" in {
