@@ -149,6 +149,21 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must not include messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary")
     }
 
+    s"not show no ats before ${taxYear - 2} message if there are no years missing from paye and sa data before ${taxYear - 2}" in {
+      val result =
+        view(
+          AtsMergePageViewModel(
+            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1)),
+            List.empty,
+            mockAppConfig,
+            ConfidenceLevel.L200
+          ),
+          atsForms.atsYearFormMapping
+        )
+
+      result must not include messages("merge.page.no.ats.summary.unavailable.text")
+    }
+
     "show radiobuttons if there is paye data" in {
       val result = view(
         AtsMergePageViewModel(
