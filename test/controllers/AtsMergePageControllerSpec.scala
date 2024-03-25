@@ -62,7 +62,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
   )
 
   val successViewModel: AtsMergePageViewModel =
-    AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), mockAppConfig, ConfidenceLevel.L50)
+    AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2022), mockAppConfig, ConfidenceLevel.L50)
 
   override def beforeEach(): Unit = {
     reset(mockAppConfig, mockFeatureFlagService)
@@ -82,7 +82,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.text() contains "Select the tax year"
-      document.text() contains "2018"
+      document.text() contains "2022"
 
       session(result).get("TAXS_USER_TYPE") mustBe None
     }
@@ -107,7 +107,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.text() contains "Select the tax year"
-      document.text() contains "2018"
+      document.text() contains "2022"
 
       session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
 

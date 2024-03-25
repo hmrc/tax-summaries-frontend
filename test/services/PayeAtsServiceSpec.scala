@@ -43,7 +43,7 @@ class PayeAtsServiceSpec extends BaseSpec {
   val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
   val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
-  private val currentYearMinus1: Int        = 2018
+  private val currentYearMinus1: Int        = 2022
   private val currentYear: Int              = 2019
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
 

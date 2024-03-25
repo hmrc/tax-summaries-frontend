@@ -191,7 +191,7 @@ class AtsListServiceSpec extends BaseSpec {
         .thenReturn(Future.successful(Some(AtsTestData.atsListData)))
 
       whenReady(sut.createModel()) { result =>
-        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2018)))
+        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2022)))
       }
 
     }
