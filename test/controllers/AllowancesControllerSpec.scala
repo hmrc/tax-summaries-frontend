@@ -32,10 +32,10 @@ import scala.concurrent.Future
 
 class AllowancesControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
+  override val taxYear = 2023
 
   val baseModel: Allowances = Allowances(
-    taxYear = 2014,
+    taxYear = 2023,
     utr = testUtr,
     taxFreeAllowance = Amount(9440, "GBP"),
     marriageAllowanceTransferred = Amount(0, "GBP"),
@@ -100,7 +100,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe "Tax year: April 6 2013 to April 5 2014 Your tax-free amount"
+        .text mustBe "Tax year: April 6 2022 to April 5 2023 Your tax-free amount"
     }
 
     "have zero-value fields hidden in the view" in {
