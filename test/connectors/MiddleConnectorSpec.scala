@@ -79,7 +79,8 @@ class MiddleConnectorSpec
   val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
   val loadAtsListData: String               = loadAtsListDataSource.mkString
   loadAtsListDataSource.close()
-  val atsListData: AtsListData              = Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
+  val atsListData: AtsListData              =
+    Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
 
   "connectToPayeATS" must {
 
