@@ -36,7 +36,7 @@ case class AtsMergePageViewModel(
 
   private val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
 
-  val showNoAtsYearList: Boolean = !totalTaxYearList.forall(saAndPayeTaxYearList.toSet)
+  val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).exists(_ >= 2019)
 
   private val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
 
