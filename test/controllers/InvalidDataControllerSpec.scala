@@ -23,8 +23,7 @@ import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{ControllerBaseSpec, GenericViewModel}
-import view_models.AtsList
+import utils.ControllerBaseSpec
 
 import scala.concurrent.Future
 
@@ -35,13 +34,6 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
   override val taxYear = 2023
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
-
-  val genericViewModel: GenericViewModel = AtsList(
-    utr = "3000024376",
-    forename = "forename",
-    surname = "surname",
-    yearList = List(2015)
-  )
 
   "Calling a service with a JSON containing errors" must {
 

@@ -24,8 +24,8 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import utils.ControllerBaseSpec
 import utils.TestConstants._
-import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
@@ -54,13 +54,6 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       genericErrorView,
       tokenErrorView
     )
-
-  val genericViewModel: GenericViewModel = AtsList(
-    utr = "3000024376",
-    forename = "forename",
-    surname = "surname",
-    yearList = List(2015)
-  )
 
   val model: GovernmentSpend = GovernmentSpend(
     taxYear = 2023,
