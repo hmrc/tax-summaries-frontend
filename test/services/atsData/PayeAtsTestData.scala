@@ -588,7 +588,7 @@ class PayeAtsTestData extends BaseSpec {
     None
   )
 
-  val govSpendingDataFor2019: PayeAtsData = PayeAtsData(
+  val govSpendingDataFor2022: PayeAtsData = PayeAtsData(
     2022,
     None,
     None,

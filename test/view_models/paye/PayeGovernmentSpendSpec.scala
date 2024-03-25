@@ -89,11 +89,11 @@ class PayeGovernmentSpendSpec
 
     "reorder categories for tax year 2022" in {
 
-      val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2019
-      val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2019)
+      val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2022
+      val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2022)
 
-      result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2019
-      result.orderedSpendRows.map(_.category) mustBe TestConstants.expectedCategoryOrderFor2019
+      result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2022
+      result.orderedSpendRows.map(_.category) mustBe TestConstants.expectedCategoryOrderFor2022
     }
   }
 }
