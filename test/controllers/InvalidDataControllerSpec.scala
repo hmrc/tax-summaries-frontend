@@ -32,7 +32,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
 
   val dataPath         = "/json_containing_errors_test.json"
   val dataPathNoAts    = "/no_ats_json_test.json"
-  override val taxYear = 2014
+  override val taxYear = 2023
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 

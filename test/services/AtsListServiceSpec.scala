@@ -59,15 +59,15 @@ class AtsListServiceSpec extends BaseSpec {
     reset(mockAuditService)
     reset(mockAuthUtils)
 
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
-      .thenReturn(Future.successful(Some(2014)))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
+      .thenReturn(Future.successful(Some(2023)))
     when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any(), any()))
       .thenReturn(Future.successful(Some(2015)))
     when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(data)))
 
     when(mockDataCacheConnector.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(Future.successful(Some(2014)))
+      .thenReturn(Future.successful(Some(2023)))
 
     when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
       .thenReturn(Future.successful(Some(data)))
@@ -130,19 +130,19 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a successful future upon success" in {
 
-      val result = sut.storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2023)
 
       whenReady(result) { result =>
-        result mustBe 2014
+        result mustBe 2023
       }
     }
 
     "Return a failed future when None is returned from the dataCache" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val result = sut.storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2023)
       whenReady(result.failed) { exception =>
         exception mustBe a[NoSuchElementException]
       }
@@ -150,10 +150,10 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when the dataCache future has failed" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
         .thenReturn(Future.failed(new Exception("failed")))
 
-      val result = sut.storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2023)
 
       whenReady(result.failed) { exception =>
         exception mustBe an[Exception]
@@ -166,7 +166,7 @@ class AtsListServiceSpec extends BaseSpec {
     "Return a successful future upon success" in {
 
       whenReady(sut.fetchSelectedTaxYear) { result =>
-        result mustBe 2014
+        result mustBe 2023
       }
     }
 
