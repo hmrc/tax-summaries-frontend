@@ -34,7 +34,7 @@ class PayeTaxFreeAmountSpec
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
     PayeAtsData(
-      2018,
+      2022,
       None,
       Some(DataHolder(Some(summary_data), None, None)),
       None,
@@ -60,7 +60,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -94,7 +94,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -127,7 +127,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -162,7 +162,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("marriage_allowance_transferred_amount", Amount.gbp(200)),
@@ -198,7 +198,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
         ),
         Amount.gbp(9740),
@@ -228,7 +228,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
         ),
         Amount.gbp(9740),
@@ -260,7 +260,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
         ),
         Amount.gbp(0),
@@ -286,7 +286,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2018,
+        2022,
         List(
         ),
         Amount.gbp(0),

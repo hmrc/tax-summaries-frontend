@@ -22,17 +22,17 @@ import org.scalatest.wordspec.AnyWordSpec
 class TaxYearFormattingSpec extends AnyWordSpec with Matchers {
 
   val instance = new TaxYearFormatting {
-    val taxYear = 2019
+    val taxYear = 2023
   }
 
   "TaxYearFormatting" must {
 
     "Calculate valid start year" in {
-      instance.taxYearFrom mustBe "2018"
+      instance.taxYearFrom mustBe "2022"
     }
 
     "Calculate valid end year" in {
-      instance.taxYearTo mustBe "2019"
+      instance.taxYearTo mustBe "2023"
     }
 
   }

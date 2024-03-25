@@ -59,15 +59,15 @@ class AtsListServiceSpec extends BaseSpec {
     reset(mockAuditService)
     reset(mockAuthUtils)
 
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
-      .thenReturn(Future.successful(Some(2014)))
-    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2015))(any(), any()))
-      .thenReturn(Future.successful(Some(2015)))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
+      .thenReturn(Future.successful(Some(2023)))
+    when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
+      .thenReturn(Future.successful(Some(2023)))
     when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful(Some(data)))
 
     when(mockDataCacheConnector.fetchAndGetAtsTaxYearForSession(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(Future.successful(Some(2014)))
+      .thenReturn(Future.successful(Some(2023)))
 
     when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
       .thenReturn(Future.successful(Some(data)))
@@ -115,14 +115,6 @@ class AtsListServiceSpec extends BaseSpec {
     timestamp = 0
   )
 
-  val dataFor2019: AtsListData = {
-    val source: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr_year_2019.json"))
-    val sourceString: String   = source.mkString
-    source.close()
-    val json                   = Json.parse(sourceString)
-    Json.fromJson[AtsListData](json).get
-  }
-
   def sut: AtsListService =
     new AtsListService(mockAuditService, mockMiddleConnector, mockDataCacheConnector, mockAuthUtils, appConfig)
 
@@ -130,19 +122,19 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a successful future upon success" in {
 
-      val result = sut.storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2023)
 
       whenReady(result) { result =>
-        result mustBe 2014
+        result mustBe 2023
       }
     }
 
     "Return a failed future when None is returned from the dataCache" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val result = sut.storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2023)
       whenReady(result.failed) { exception =>
         exception mustBe a[NoSuchElementException]
       }
@@ -150,10 +142,10 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when the dataCache future has failed" in {
 
-      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2014))(any(), any()))
+      when(mockDataCacheConnector.storeAtsTaxYearForSession(eqTo(2023))(any(), any()))
         .thenReturn(Future.failed(new Exception("failed")))
 
-      val result = sut.storeSelectedTaxYear(2014)
+      val result = sut.storeSelectedTaxYear(2023)
 
       whenReady(result.failed) { exception =>
         exception mustBe an[Exception]
@@ -166,7 +158,7 @@ class AtsListServiceSpec extends BaseSpec {
     "Return a successful future upon success" in {
 
       whenReady(sut.fetchSelectedTaxYear) { result =>
-        result mustBe 2014
+        result mustBe 2023
       }
     }
 
@@ -199,7 +191,7 @@ class AtsListServiceSpec extends BaseSpec {
         .thenReturn(Future.successful(Some(AtsTestData.atsListData)))
 
       whenReady(sut.createModel()) { result =>
-        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2018)))
+        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2022)))
       }
 
     }
@@ -240,11 +232,12 @@ class AtsListServiceSpec extends BaseSpec {
     }
 
     "Return a ats list without 2020 year data" in {
+      val dataMinus2020 = data copy (atsYearList = data.atsYearList.map(_.filter(_ != 2020)))
 
-      when(mockAppConfig.taxYear).thenReturn(2019)
+      when(mockAppConfig.taxYear).thenReturn(2023)
 
       when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(dataFor2019)))
+        .thenReturn(Future.successful(Some(dataMinus2020)))
 
       whenReady(sut.getAtsYearList) { result =>
         result.value.atsYearList.get.contains(2020) mustBe false

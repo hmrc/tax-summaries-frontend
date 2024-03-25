@@ -88,7 +88,7 @@ class PayeYourTaxableIncomeSpec
   )
 
   def incomeTaxPayeAtsData(incomeTax: Option[DataHolder]): PayeAtsData =
-    PayeAtsData(2018, None, None, incomeTax, None, None)
+    PayeAtsData(2022, None, None, incomeTax, None, None)
 
   "PayeYourTaxableIncome" must {
     "Transform income tax data just other pension to view model" in {

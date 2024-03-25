@@ -43,8 +43,8 @@ class PayeAtsServiceSpec extends BaseSpec {
   val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
   val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
-  private val currentYearMinus1: Int        = 2018
-  private val currentYear: Int              = 2019
+  private val currentYearMinus1: Int        = 2022
+  private val currentYear: Int              = 2023
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
 
   private def readJson(path: String) = {
@@ -155,7 +155,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
 
-      result mustBe Right(List(2020, 2019))
+      result mustBe Right(List(2023, 2022))
     }
 
     "return a left of response after receiving left from connector" in {

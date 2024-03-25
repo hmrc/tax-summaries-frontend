@@ -133,10 +133,10 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
         .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2020-2021/"
     }
 
-    "link to Scottish government spending page for Scottish users for tax year 2020" in {
+    "link to Scottish government spending page for Scottish users for tax year 2023" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = 2020
+        override lazy val taxYear: Int = 2023
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
@@ -150,7 +150,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
       document
         .select("#scottish-spending-link a")
-        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2022-2023/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {

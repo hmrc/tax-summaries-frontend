@@ -90,6 +90,6 @@ trait ControllerBaseSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", "?taxYear=20145")
+    FakeRequest("GET", "?taxYear=20235")
   )
 }
