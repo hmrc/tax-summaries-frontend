@@ -231,6 +231,20 @@ class AtsListServiceSpec extends BaseSpec {
 
     }
 
+    "Return a ats list without 2020 year data" in {
+      val dataMinus2020 = data copy (atsYearList = data.atsYearList.map(_.filter(_ != 2020)))
+
+      when(mockAppConfig.taxYear).thenReturn(2023)
+
+      when(mockDataCacheConnector.storeAtsListForSession(any[AtsListData])(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(dataMinus2020)))
+
+      whenReady(sut.getAtsYearList) { result =>
+        result.value.atsYearList.get.contains(2020) mustBe false
+      }
+
+    }
+
     "Return a failed future when the call to the dataCache fails (fetch)" in {
 
       when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
