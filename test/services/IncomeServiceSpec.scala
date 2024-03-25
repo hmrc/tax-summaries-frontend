@@ -83,7 +83,7 @@ class IncomeServiceSpec extends BaseSpec {
       val incomeData: AtsData     = AtsTestData.incomeData
       val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

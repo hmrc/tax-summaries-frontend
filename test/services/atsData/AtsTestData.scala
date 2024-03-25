@@ -22,7 +22,7 @@ import view_models.{Amount, Rate}
 object AtsTestData {
 
   val atsAllowancesData = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     None,
     None,
@@ -58,7 +58,7 @@ object AtsTestData {
   )
 
   val incomeData = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     None,
     None,
@@ -98,7 +98,7 @@ object AtsTestData {
   )
 
   val totalIncomeTaxData = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -184,7 +184,7 @@ object AtsTestData {
   )
 
   val govSpendingDataForWelshUser = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -204,7 +204,7 @@ object AtsTestData {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2019,
+        2022,
         Some(
           Map(
             "Welfare"                  -> SpendData(Amount(100, "GBP"), 10),
@@ -301,7 +301,7 @@ object AtsTestData {
   )
 
   val summaryData = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     None,
     Some(
@@ -349,7 +349,7 @@ object AtsTestData {
   )
 
   val capitalGainsData = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     None,
     None,
@@ -426,7 +426,7 @@ object AtsTestData {
   )
 
   val incomeTaxDataForWelshTaxPayer = AtsData(
-    2019,
+    2022,
     Some("1111111111"),
     Some(
       DataHolder(

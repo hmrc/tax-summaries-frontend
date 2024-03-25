@@ -81,7 +81,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
       val result  = sut.capitalGains(atsData)
 
       result mustBe CapitalGains(
-        2019,
+        2022,
         "1111111111",
         Amount.gbp(100),
         Amount.gbp(-200),

@@ -80,7 +80,7 @@ class SummaryServiceSpec extends BaseSpec {
       val result  = sut.summaryConverter(atsData)
 
       result mustBe Summary(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

@@ -36,7 +36,7 @@ class PayeYourIncomeAndTaxesSpec
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
 
-  val taxYear: Int = 2019
+  val taxYear: Int = 2022
 
   "PayeYourIncomeAndTaxesData" must {
 

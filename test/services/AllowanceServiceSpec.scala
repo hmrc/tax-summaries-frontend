@@ -85,7 +85,7 @@ class AllowanceServiceSpec extends BaseSpec {
       val result  = sut.allowanceDataConverter(atsData)
 
       result mustBe Allowances(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

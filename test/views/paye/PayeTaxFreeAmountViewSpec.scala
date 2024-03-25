@@ -40,7 +40,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
   lazy val payeTaxFreeAmountView: PayeTaxFreeAmountView                  = inject[PayeTaxFreeAmountView]
 
   val payeTaxFreeAmountViewModel: PayeTaxFreeAmount = PayeTaxFreeAmount(
-    2019,
+    2022,
     List.empty,
     Amount.empty,
     List.empty,

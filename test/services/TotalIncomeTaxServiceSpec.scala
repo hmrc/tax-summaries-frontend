@@ -119,7 +119,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       )
 
       result mustEqual TotalIncomeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
@@ -164,7 +164,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
       result mustEqual TotalIncomeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
