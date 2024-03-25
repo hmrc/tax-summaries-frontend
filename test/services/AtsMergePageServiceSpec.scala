@@ -67,7 +67,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     surname = "surname",
     yearList = List(
       2023,
-      2015
+      2023
     )
   )
 

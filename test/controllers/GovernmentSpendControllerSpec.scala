@@ -129,7 +129,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
-    "have correct data for 2023" in {
+    "have correct data for 2022" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -172,10 +172,10 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
         .text mustBe "Tax year: April 6 2022 to April 5 2023 Your taxes and public spending"
     }
 
-    "have correct data for 2015" in {
+    "have correct data for 2023" in {
 
       val model2 = GovernmentSpend(
-        taxYear = 2015,
+        taxYear = 2023,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),

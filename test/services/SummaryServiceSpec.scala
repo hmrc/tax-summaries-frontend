@@ -38,13 +38,13 @@ class SummaryServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(2023)
   )
 
   val mockAtsService: AtsService = mock[AtsService]
 
   implicit val hc: HeaderCarrier                            = new HeaderCarrier
-  override val taxYear: Int                                 = 2015
+  override val taxYear: Int                                 = 2023
   val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
