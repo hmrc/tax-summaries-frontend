@@ -24,8 +24,8 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.ControllerBaseSpec
 import utils.TestConstants._
-import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
@@ -44,13 +44,6 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     title = "Mr",
     forename = "forename",
     surname = "surname"
-  )
-
-  val genericViewModel: GenericViewModel = AtsList(
-    utr = "3000024376",
-    forename = "forename",
-    surname = "surname",
-    yearList = List(2015)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
