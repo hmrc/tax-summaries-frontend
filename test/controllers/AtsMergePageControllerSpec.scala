@@ -62,7 +62,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
   )
 
   val successViewModel: AtsMergePageViewModel =
-    AtsMergePageViewModel(AtsList("", "", "", List(2019)), List(2018), mockAppConfig, ConfidenceLevel.L50)
+    AtsMergePageViewModel(AtsList("", "", "", List(2022)), List(2022), mockAppConfig, ConfidenceLevel.L50)
 
   override def beforeEach(): Unit = {
     reset(mockAppConfig, mockFeatureFlagService)
@@ -82,7 +82,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.text() contains "Select the tax year"
-      document.text() contains "2018"
+      document.text() contains "2022"
 
       session(result).get("TAXS_USER_TYPE") mustBe None
     }
@@ -106,7 +106,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.text() contains "Select the tax year"
-      document.text() contains "2018"
+      document.text() contains "2022"
 
       session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
 
@@ -144,8 +144,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"SA\",\"year\":2019}"))
-      val requestWithQuery = requests.AuthenticatedRequest(
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"SA\",\"year\":2022}"))
+      val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),
@@ -159,7 +159,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe (routes.AtsMainController.authorisedAtsMain.url + "?taxYear=2019")
+      redirectLocation(result).get mustBe (routes.AtsMainController.authorisedAtsMain.url + "?taxYear=2022")
 
     }
 
@@ -167,8 +167,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"PAYE\",\"year\":2019}"))
-      val requestWithQuery = requests.AuthenticatedRequest(
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"PAYE\",\"year\":2022}"))
+      val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),
@@ -182,7 +182,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe paye.routes.PayeAtsMainController.show(2019).toString
+      redirectLocation(result).get mustBe paye.routes.PayeAtsMainController.show(2022).toString
 
     }
 
@@ -190,8 +190,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2019}"))
-      val requestWithQuery = requests.AuthenticatedRequest(
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2022}"))
+      val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),
@@ -205,7 +205,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2019).toString
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2022).toString
 
     }
 
@@ -213,8 +213,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2019}"))
-      val requestWithQuery = requests.AuthenticatedRequest(
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2022}"))
+      val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
         None,
@@ -228,7 +228,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2019).toString
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2022).toString
 
     }
 
@@ -236,8 +236,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2019}"))
-      val requestWithQuery = requests.AuthenticatedRequest(
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2022}"))
+      val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
         Some(SaUtr(testUtr)),
@@ -251,7 +251,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2019).toString
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(2022).toString
 
     }
 

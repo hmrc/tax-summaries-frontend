@@ -67,12 +67,12 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     forename = "forename",
     surname = "surname",
     yearList = List(
-      2014,
-      2015
+      2023,
+      2023
     )
   )
 
-  val payeDataResponse: List[Int] = List(2018, 2019)
+  val payeDataResponse: List[Int] = List(2022, 2022)
 
   val agentRequestWithQuery: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     userId = "userId",

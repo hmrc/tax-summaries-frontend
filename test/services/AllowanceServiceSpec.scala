@@ -36,7 +36,7 @@ import scala.language.postfixOps
 
 class AllowanceServiceSpec extends BaseSpec {
 
-  override val taxYear = 2015
+  override val taxYear = 2023
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -85,7 +85,7 @@ class AllowanceServiceSpec extends BaseSpec {
       val result  = sut.allowanceDataConverter(atsData)
 
       result mustBe Allowances(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

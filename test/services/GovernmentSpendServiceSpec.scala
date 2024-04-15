@@ -43,10 +43,10 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(2023)
   )
 
-  override val taxYear = 2015
+  override val taxYear = 2023
 
   val mockAtsService: AtsService           = mock[AtsService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
@@ -59,9 +59,9 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     saUtr = Some(SaUtr(testUtr)),
     nino = None,
     isAgentActive = false,
-    confidenceLevel = ConfidenceLevel.L50,
-    credentials = fakeCredentials,
-    request = FakeRequest("GET", "?taxYear=2015")
+    ConfidenceLevel.L50,
+    fakeCredentials,
+    FakeRequest("GET", "?taxYear=2023")
   )
 
   def sut: GovernmentSpendService with MockitoSugar = new GovernmentSpendService(mockAtsService, mockMiddleConnector)

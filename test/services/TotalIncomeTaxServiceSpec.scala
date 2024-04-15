@@ -35,7 +35,7 @@ import scala.language.postfixOps
 
 class TotalIncomeTaxServiceSpec extends BaseSpec {
 
-  override val taxYear = 2015
+  override val taxYear = 2023
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -67,7 +67,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         isAgentActive = false,
         confidenceLevel = ConfidenceLevel.L50,
         credentials = fakeCredentials,
-        request = FakeRequest("GET", "?taxYear=2015")
+        request = FakeRequest("GET", "?taxYear=2023")
       )
       val result       = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -118,7 +118,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       )
 
       result mustEqual TotalIncomeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
@@ -163,7 +163,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
       result mustEqual TotalIncomeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
