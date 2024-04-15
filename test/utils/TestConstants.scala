@@ -169,7 +169,7 @@ trait TestConstants extends BaseSpec {
       Amount(2000.00, "GBP")
     )
 
-  val expectedPercentageOrder2019: List[BigDecimal] =
+  val expectedPercentageOrder2022: List[BigDecimal] =
     List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
 
   val expectedPercentageOrder2020: List[BigDecimal] =
@@ -178,7 +178,7 @@ trait TestConstants extends BaseSpec {
   val expectedPercentageOrder2021: List[BigDecimal] =
     List(21.9, 19.6, 14.4, 10.1, 9.6, 4.5, 4.5, 4.1, 3.9, 2.0, 1.4, 1.3, 1.2, 0.9, 0.6)
 
-  val expectedCategoryOrderFor2019: List[String] =
+  val expectedCategoryOrderFor2022: List[String] =
     List(
       "Welfare",
       "Health",

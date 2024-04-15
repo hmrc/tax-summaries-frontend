@@ -588,15 +588,15 @@ class PayeAtsTestData extends BaseSpec {
     None
   )
 
-  val govSpendingDataFor2019: PayeAtsData = PayeAtsData(
-    2019,
+  val govSpendingDataFor2022: PayeAtsData = PayeAtsData(
+    2022,
     None,
     None,
     None,
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2019,
+        2022,
         Some(
           Map(
             "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 1.00),

@@ -40,13 +40,13 @@ class IncomeServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(2023)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val mockAtsService: AtsService                            = mock[AtsService]
-  override val taxYear                                      = 2015
+  override val taxYear                                      = 2023
   val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
     "userId",
     None,
@@ -83,7 +83,7 @@ class IncomeServiceSpec extends BaseSpec {
       val incomeData: AtsData     = AtsTestData.incomeData
       val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
