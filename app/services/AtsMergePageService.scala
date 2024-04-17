@@ -20,7 +20,7 @@ import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.DataCacheConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.AtsResponse
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,7 +44,7 @@ class AtsMergePageService @Inject() (
     (for {
       saData   <- EitherT(if (!appConfig.saShuttered) { getSaYearList }
                   else { Future(Right(AtsList.empty)) })
-      payeData <- EitherT(if (!appConfig.payeShuttered) { getPayeAtsYearList }
+      payeData <- EitherT(if (!appConfig.payeShuttered && !request.isAgent) { getPayeAtsYearList }
                   else { Future(Right(List.empty[Int])) })
     } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
 
@@ -52,7 +52,7 @@ class AtsMergePageService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsList]] = {
-    if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).equals(Some(Globals.TAXS_PORTAL_REFERENCE))) {
+    if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).contains(Globals.TAXS_PORTAL_REFERENCE)) {
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
       agentToken.fold[Future[_]] {

@@ -17,7 +17,8 @@
 package services
 
 import connectors.MiddleConnector
-import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
+import controllers.auth.requests
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -54,19 +55,18 @@ class PayeAtsServiceSpec extends BaseSpec {
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
+    requests.PayeAuthenticatedRequest(testNino, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
   val authenticatedRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      Some(testNino),
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+    requests.AuthenticatedRequest(
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(testUtr)),
+      nino = Some(testNino),
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
   val mockAuditService: AuditService                                     = mock[AuditService]
 

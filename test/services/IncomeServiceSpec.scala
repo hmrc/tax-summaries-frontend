@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -47,16 +48,15 @@ class IncomeServiceSpec extends BaseSpec {
 
   val mockAtsService: AtsService                            = mock[AtsService]
   override val taxYear                                      = 2023
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = None,
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   def sut: IncomeService with MockitoSugar = new IncomeService(mockAtsService) with MockitoSugar

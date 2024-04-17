@@ -16,7 +16,8 @@
 
 package controllers.paye
 
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -41,7 +42,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
   val sut = new PayeYourIncomeAndTaxesController(
     mockPayeAtsService,
-    FakePayeAuthAction,
+    FakeAuthJourney,
     mcc,
     inject[PayeYourIncomeAndTaxesView],
     payeGenericErrorView

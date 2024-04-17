@@ -18,11 +18,11 @@ package controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{MessagesControllerComponents, Result}
 import services._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils._
@@ -82,10 +82,4 @@ abstract class TaxsController @Inject() (
           InternalServerError(genericErrorView())
       }
     }
-
-  def getParamAsInt(param: String, block: Int => Future[GenericViewModel])(implicit request: Request[AnyContent]) = {
-    val intParam = request.body.asFormUrlEncoded.map(_(param).head.toInt).getOrElse(0)
-    block(intParam)
-  }
-
 }

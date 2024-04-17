@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import play.api.mvc.AnyContentAsEmpty
@@ -45,17 +46,16 @@ class CapitalGainsServiceSpec extends BaseSpec {
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val mockAtsService: AtsService                            = mock[AtsService]
-  override val taxYear                                      = 2023
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+  override val taxYear                                      = 2015
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = None,
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   val sut = new CapitalGainsService(mockAtsService) with MockitoSugar

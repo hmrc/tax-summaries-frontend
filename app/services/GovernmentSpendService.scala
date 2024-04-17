@@ -21,7 +21,7 @@ import cats.implicits._
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import io.jsonwebtoken.io.DeserializationException
 import models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
 import play.api.libs.json.{JsObject, JsValue}

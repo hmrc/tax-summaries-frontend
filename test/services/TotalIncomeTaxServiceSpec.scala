@@ -16,7 +16,7 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -59,16 +59,15 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      lazy val request = AuthenticatedRequest(
-        "userId",
-        None,
-        Some(SaUtr(testUtr)),
-        None,
-        true,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        FakeRequest("GET", "?taxYear=2023")
+      lazy val request = requests.AuthenticatedRequest(
+        userId = "userId",
+        agentRef = None,
+        saUtr = Some(SaUtr(testUtr)),
+        nino = None,
+        isAgentActive = false,
+        confidenceLevel = ConfidenceLevel.L50,
+        credentials = fakeCredentials,
+        request = FakeRequest("GET", "?taxYear=2023")
       )
       val result       = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel

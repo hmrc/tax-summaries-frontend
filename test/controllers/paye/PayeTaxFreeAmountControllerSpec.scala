@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -39,7 +40,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   val sut = new PayeTaxFreeAmountController(
     mockPayeAtsService,
-    FakePayeAuthAction,
+    FakeAuthJourney,
     mcc,
     inject[PayeTaxFreeAmountView],
     payeGenericErrorView

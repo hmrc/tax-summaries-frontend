@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package controllers.paye
 
 import config.{ApplicationConfig, PayeConfig}
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -43,7 +44,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
   val sut =
     new PayeIncomeTaxAndNicsController(
       mockPayeAtsService,
-      FakePayeAuthAction,
+      FakeAuthJourney,
       mcc,
       inject[PayeIncomeTaxAndNicsView],
       inject[PayeConfig],
@@ -70,7 +71,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       val sut                      =
         new PayeIncomeTaxAndNicsController(
           mockPayeAtsService,
-          FakePayeAuthAction,
+          FakeAuthJourney,
           mcc,
           inject[PayeIncomeTaxAndNicsView],
           fakePayeConfig,
@@ -118,7 +119,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       val sut                      =
         new PayeIncomeTaxAndNicsController(
           mockPayeAtsService,
-          FakePayeAuthAction,
+          FakeAuthJourney,
           mcc,
           inject[PayeIncomeTaxAndNicsView],
           fakePayeConfig,

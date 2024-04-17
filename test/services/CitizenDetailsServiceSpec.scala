@@ -16,8 +16,8 @@
 
 package services
 
+import cats.data.EitherT
 import connectors.CitizenDetailsConnector
-import models.MatchingDetails
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
@@ -25,8 +25,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.domain.{Generator, Nino, SaUtr, SaUtrGenerator}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
 import utils.BaseSpec
-
-import scala.concurrent.Future
 
 class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
 
@@ -52,34 +50,32 @@ class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
 
       val response = HttpResponse.apply(OK, json)
       when(citizenDetailsConnector.connectToCid(any())(any()))
-        .thenReturn(Future.successful(Right(response)))
+        .thenReturn(EitherT.rightT(response))
 
-      val result = service.getMatchingDetails(nino.toString()).futureValue
-      result mustBe SucccessMatchingDetailsResponse(MatchingDetails(Some(utr)))
+      val result = service.getMatchingSaUtr(nino.toString()).value.futureValue
+      result mustBe Right(Some(utr))
     }
 
-    List(SEE_OTHER, CREATED, ACCEPTED).foreach { httpStatus =>
-      s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
-        val response = HttpResponse.apply(httpStatus, "body")
-
-        when(citizenDetailsConnector.connectToCid(any())(any()))
-          .thenReturn(Future.successful(Right(response)))
-
-        val result = service.getMatchingDetails(nino.toString()).futureValue
-        result mustBe FailedMatchingDetailsResponse
-      }
-    }
-
-    List(BAD_REQUEST, NOT_FOUND, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
-      s"when cid sends a $httpStatus, return a FailedMatchingDetailsResponse" in {
+    List(BAD_REQUEST, LOCKED, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpStatus =>
+      s"when cid sends a $httpStatus, return a Left[UpstreamErrorResponse]" in {
         val response = UpstreamErrorResponse.apply("body", httpStatus)
 
         when(citizenDetailsConnector.connectToCid(any())(any()))
-          .thenReturn(Future.successful(Left(response)))
+          .thenReturn(EitherT.leftT(response))
 
-        val result = service.getMatchingDetails(nino.toString()).futureValue
-        result mustBe FailedMatchingDetailsResponse
+        val result = service.getMatchingSaUtr(nino.toString()).value.futureValue
+        result mustBe a[Left[UpstreamErrorResponse, _]]
       }
+    }
+
+    "when cid sends a NOT_FOUND, return a Right(None)" in {
+      val response = UpstreamErrorResponse.apply("body", NOT_FOUND)
+
+      when(citizenDetailsConnector.connectToCid(any())(any()))
+        .thenReturn(EitherT.leftT(response))
+
+      val result = service.getMatchingSaUtr(nino.toString()).value.futureValue
+      result mustBe Right(None)
     }
   }
 }

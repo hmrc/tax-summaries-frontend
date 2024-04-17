@@ -18,7 +18,8 @@ package services
 
 import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -96,12 +97,11 @@ class AtsListServiceSpec extends BaseSpec {
   }
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
+    requests.AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),
       None,
-      isSa = true,
       isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,
@@ -296,12 +296,11 @@ class AtsListServiceSpec extends BaseSpec {
       "Return the ats year list data for a user from the cache" in {
 
         implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
-          AuthenticatedRequest(
+          requests.AuthenticatedRequest(
             "userId",
             Some(Uar(testUtr)),
             Some(SaUtr(testUtr)),
             None,
-            isSa = true,
             isAgentActive = false,
             ConfidenceLevel.L50,
             fakeCredentials,
@@ -362,12 +361,11 @@ class AtsListServiceSpec extends BaseSpec {
     "Agent" must {
 
       val agentRequest =
-        AuthenticatedRequest(
+        requests.AuthenticatedRequest(
           "userId",
           Some(Uar(testUar)),
           Some(SaUtr(testUtr)),
           None,
-          isSa = true,
           isAgentActive = false,
           ConfidenceLevel.L50,
           fakeCredentials,
