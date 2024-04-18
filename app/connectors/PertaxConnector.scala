@@ -45,7 +45,7 @@ class PertaxConnector @Inject() (
     ec: ExecutionContext
   ): EitherT[Future, UpstreamErrorResponse, PertaxApiResponse] =
     httpClientResponse
-      .read(
+      .readLogUnauthorisedAsWarning(
         http
           .post(url"$baseUrl/pertax/authorise")
           .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
