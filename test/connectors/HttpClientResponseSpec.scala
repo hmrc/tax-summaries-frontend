@@ -51,11 +51,11 @@ class HttpClientResponseSpec
     )
   }
 
-  "readLogUnauthorisedAsWarning" must {
+  "readIgnoreUnauthorised" must {
     behave like clientResponseLogger(
-      httpClientResponseUsingMockLogger.readLogUnauthorisedAsWarning,
+      httpClientResponseUsingMockLogger.readIgnoreUnauthorised,
       infoLevel = Set(NOT_FOUND, UNPROCESSABLE_ENTITY),
-      warnLevel = Set(UNAUTHORIZED),
+      warnLevel = Set.empty,
       errorLevelWithThrowable = Set.empty,
       errorLevelWithoutThrowable = Set(TOO_MANY_REQUESTS, INTERNAL_SERVER_ERROR)
     )

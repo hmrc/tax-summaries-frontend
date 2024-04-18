@@ -54,16 +54,16 @@ class HttpClientResponse @Inject() ()(implicit ec: ExecutionContext) extends Log
           recover recoverHttpException
     )
 
-  def readLogUnauthorisedAsWarning(
+  def readIgnoreUnauthorised(
     response: Future[Either[UpstreamErrorResponse, HttpResponse]]
   ): EitherT[Future, UpstreamErrorResponse, HttpResponse] = {
-    val logUnauthorisedAsWarning: PartialFunction[Try[Either[UpstreamErrorResponse, HttpResponse]], Unit] = {
-      case Success(Left(error)) if error.statusCode == UNAUTHORIZED => logger.warn(error.message)
+    val ignoreUnauthorised: PartialFunction[Try[Either[UpstreamErrorResponse, HttpResponse]], Unit] = {
+      case Success(Left(error)) if error.statusCode == UNAUTHORIZED => (): Unit
     }
     EitherT(
       response
         andThen
-          (logErrorResponsesMain orElse logUnauthorisedAsWarning orElse logUpstreamErrorResponseAsError)
+          (logErrorResponsesMain orElse ignoreUnauthorised orElse logUpstreamErrorResponseAsError)
           recover recoverHttpException
     )
   }
