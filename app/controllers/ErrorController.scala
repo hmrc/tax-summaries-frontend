@@ -48,7 +48,7 @@ class ErrorController @Inject() (
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOrAgents.async {
     implicit request =>
-      if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
+      if (taxYear > appConfig.taxYear || taxYear <= (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed)) {
         Future.successful(Forbidden(serviceUnavailableView()))
       } else {
         governmentSpendService
