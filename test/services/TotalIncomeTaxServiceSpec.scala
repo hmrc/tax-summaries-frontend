@@ -16,7 +16,7 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -35,7 +35,7 @@ import scala.language.postfixOps
 
 class TotalIncomeTaxServiceSpec extends BaseSpec {
 
-  override val taxYear = 2015
+  override val taxYear = 2023
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -59,16 +59,15 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      lazy val request = AuthenticatedRequest(
-        "userId",
-        None,
-        Some(SaUtr(testUtr)),
-        None,
-        true,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        FakeRequest("GET", "?taxYear=2015")
+      lazy val request = requests.AuthenticatedRequest(
+        userId = "userId",
+        agentRef = None,
+        saUtr = Some(SaUtr(testUtr)),
+        nino = None,
+        isAgentActive = false,
+        confidenceLevel = ConfidenceLevel.L50,
+        credentials = fakeCredentials,
+        request = FakeRequest("GET", "?taxYear=2023")
       )
       val result       = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -119,7 +118,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       )
 
       result mustEqual TotalIncomeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
@@ -164,7 +163,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
       val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
 
       result mustEqual TotalIncomeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

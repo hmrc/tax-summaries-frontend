@@ -25,17 +25,11 @@ class CategoriesUtilsSpec extends BaseSpec {
   "reorderCategories" must {
     "sort data given order from appConfig" in {
 
-      val taxYear = 2020
-
-      when(
-        mockAppConfig
-          .spendCategories(taxYear)
-      )
-        .thenReturn(List("A", "C", "B", "D"))
+      val orderingList = List("A", "C", "B", "D")
 
       val spendData        = List("A" -> 1.5, "B" -> 1.20, "C" -> 1.20, "D" -> 0.5)
       val expectedResponse = List("A" -> 1.5, "C" -> 1.20, "B" -> 1.20, "D" -> 0.5)
-      val result           = CategoriesUtils.reorderCategories(mockAppConfig, taxYear, spendData)
+      val result           = CategoriesUtils.reorderCategories(orderingList, spendData)
 
       result mustBe expectedResponse
     }

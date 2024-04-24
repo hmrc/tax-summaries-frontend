@@ -17,17 +17,15 @@
 package config
 
 import com.google.inject.Inject
-import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
 import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative, RedirectUrl}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
-import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 @Singleton
-class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Configuration) {
+class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   private def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
@@ -37,12 +35,12 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val sessionCacheHost: String = config.baseUrl("cachable.session-cache")
   lazy val cidHost: String          = config.baseUrl("citizen-details")
 
-  lazy val pertaxHost: String           = config.baseUrl("pertax")
+  lazy val pertaxHost: String = config.baseUrl("pertax")
 
   // Caching config
   lazy val sessionCacheDomain: String = getConf("cachable.session-cache.domain")
 
-  lazy val homePageUrl                    = "/annual-tax-summary/"
+  lazy val homePageUrl = "/annual-tax-summary/"
 
   // Encryption config
   lazy val encryptionKey: String      = config.getString("portal.clientagent.encryption.key")
@@ -53,8 +51,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val loginUrl: String                      = getConf("login.url")
   lazy val portalUrl: String                     = getConf("portal.url")
   lazy val feedbackUrl: String                   = getConf("feedback.url")
-  lazy val payeLoginUrl: String                  = getConf("paye.login.url")
-  lazy val payeLoginCallbackUrl: String          = getConf("paye.login-callback.url")
   lazy val identityVerificationUpliftUrl: String = getConf("paye.iv-uplift-redirect.url")
   lazy val iVUpliftFailureCallback: String       = getConf("paye.iv-uplift-failure.url")
   lazy val contactHmrcSAUrl                      = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
@@ -71,7 +67,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   lazy val walesIncomeTaxLink = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
-
   //Application name
   lazy val appName: String = config.getString("appName")
 
@@ -82,7 +77,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   val sessionTimeoutInSeconds: String   = config.getString("timeout.sessionTimeOut")
   val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
 
-  val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
+  private val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
   def accessibilityStatementUrl(referrer: String): String = {
@@ -105,10 +100,4 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val taxYear: Int = config.getInt("taxYear")
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
-
-  def spendCategories(taxYear: Int): List[String] =
-    configuration.underlying.getStringList(s"categoryOrder.$taxYear").asScala.toList
-
-  lazy val internalAuthResourceType: String =
-    config.getConfString("internal-auth.resource-type", "ddcn-live-admin-frontend")
 }

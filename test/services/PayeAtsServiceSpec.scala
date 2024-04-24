@@ -17,7 +17,8 @@
 package services
 
 import connectors.MiddleConnector
-import controllers.auth.{AuthenticatedRequest, PayeAuthenticatedRequest}
+import controllers.auth.requests
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -43,8 +44,8 @@ class PayeAtsServiceSpec extends BaseSpec {
   val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
   val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
   val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
-  private val currentYearMinus1: Int        = 2018
-  private val currentYear: Int              = 2019
+  private val currentYearMinus1: Int        = 2022
+  private val currentYear: Int              = 2023
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
 
   private def readJson(path: String) = {
@@ -54,19 +55,18 @@ class PayeAtsServiceSpec extends BaseSpec {
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(testNino, false, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
+    requests.PayeAuthenticatedRequest(testNino, fakeCredentials, FakeRequest("GET", "/annual-tax-summary/paye/"))
 
   val authenticatedRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
-      "userId",
-      None,
-      Some(SaUtr(testUtr)),
-      Some(testNino),
-      true,
-      false,
-      ConfidenceLevel.L50,
-      fakeCredentials,
-      FakeRequest()
+    requests.AuthenticatedRequest(
+      userId = "userId",
+      agentRef = None,
+      saUtr = Some(SaUtr(testUtr)),
+      nino = Some(testNino),
+      isAgentActive = false,
+      confidenceLevel = ConfidenceLevel.L50,
+      credentials = fakeCredentials,
+      request = FakeRequest()
     )
   val mockAuditService: AuditService                                     = mock[AuditService]
 
@@ -155,7 +155,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
 
-      result mustBe Right(List(2020, 2019))
+      result mustBe Right(List(2023, 2022))
     }
 
     "return a left of response after receiving left from connector" in {

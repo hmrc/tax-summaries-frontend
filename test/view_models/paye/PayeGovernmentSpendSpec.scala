@@ -16,16 +16,13 @@
 
 package view_models.paye
 
-import config.ApplicationConfig
 import models.DataHolder
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.Configuration
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.{JsonUtil, TestConstants}
 import view_models.Amount
 
@@ -38,15 +35,9 @@ class PayeGovernmentSpendSpec
     with IntegrationPatience
     with Injecting {
 
-  lazy val payeAtsTestData = inject[PayeAtsTestData]
+  lazy val payeAtsTestData: PayeAtsTestData = inject[PayeAtsTestData]
 
   val taxYear: Int = 2021
-
-  class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-    override lazy val taxYear: Int = taxYear
-  }
-
-  implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
   "PayeGovernmentSpend" must {
 
@@ -55,7 +46,7 @@ class PayeGovernmentSpendSpec
       "Scottish income is not present" in {
 
         val payeGovSpendingData = payeAtsTestData.govSpendingData
-        val result              = PayeGovernmentSpend(payeGovSpendingData, appConfig)
+        val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2021)
 
         result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2021
         result mustBe payeAtsTestData.payeGovernmentSpendViewModel2021
@@ -65,7 +56,7 @@ class PayeGovernmentSpendSpec
         val payeGovSpendingData = payeAtsTestData.govSpendingData.copy(
           income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(500.00))), None, None))
         )
-        val result              = PayeGovernmentSpend(payeGovSpendingData, appConfig)
+        val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2021)
 
         result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2021
         result mustBe payeAtsTestData.payeGovernmentSpendViewModel2021.copy(
@@ -77,7 +68,7 @@ class PayeGovernmentSpendSpec
         val payeGovSpendingData = payeAtsTestData.govSpendingData.copy(
           income_tax = Some(DataHolder(Some(Map("scottish_total_tax" -> Amount.gbp(0.00))), None, None))
         )
-        val result              = PayeGovernmentSpend(payeGovSpendingData, appConfig)
+        val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2021)
 
         result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2021
         result mustBe payeAtsTestData.payeGovernmentSpendViewModel2021.copy(
@@ -89,26 +80,20 @@ class PayeGovernmentSpendSpec
 
     "reorder categories for tax year 2020" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-        override lazy val taxYear: Int = 2020
-      }
-
-      implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
-
       val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2020
-      val result              = PayeGovernmentSpend(payeGovSpendingData, appConfig)
+      val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2020)
 
       result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2020
-      result.orderedSpendRows.map(_.category) mustBe TestConstants.expectedCategoryOrderfor2020
+      result.orderedSpendRows.map(_.category) mustBe TestConstants.expectedCategoryOrderFor2020
     }
 
-    "reorder categories for tax year 2019" in {
+    "reorder categories for tax year 2022" in {
 
-      val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2019
-      val result              = PayeGovernmentSpend(payeGovSpendingData, appConfig)
+      val payeGovSpendingData = payeAtsTestData.govSpendingDataFor2022
+      val result              = PayeGovernmentSpend(payeGovSpendingData, TestConstants.expectedCategoryOrderFor2022)
 
-      result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2019
-      result.orderedSpendRows.map(_.category) mustBe TestConstants.expectedCategoryOrderFor2019
+      result.orderedSpendRows.map(_.spendData.percentage) mustBe TestConstants.expectedPercentageOrder2022
+      result.orderedSpendRows.map(_.category) mustBe TestConstants.expectedCategoryOrderFor2022
     }
   }
 }

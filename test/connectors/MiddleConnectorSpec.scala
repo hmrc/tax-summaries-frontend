@@ -60,7 +60,7 @@ class MiddleConnectorSpec
   implicit val hc: HeaderCarrier                 = HeaderCarrier()
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
   implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
-  private val currentYear                        = 2018
+  private val currentYear                        = 2022
   private val currentYearMinus1                  = currentYear - 1
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
@@ -78,7 +78,8 @@ class MiddleConnectorSpec
   val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
   val loadAtsListData: String               = loadAtsListDataSource.mkString
   loadAtsListDataSource.close()
-  val atsListData: AtsListData              = Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
+  val atsListData: AtsListData              =
+    Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
 
   "connectToPayeATS" must {
 
@@ -266,7 +267,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -276,14 +277,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, 2018, 5).futureValue
+      val result = sut.connectToAtsList(utr, 2022, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -294,14 +295,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, 2018, 5).futureValue
+      val result = sut.connectToAtsList(utr, 2022, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -312,14 +313,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, 2018, 5).futureValue
+      val result = sut.connectToAtsList(utr, 2022, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
 
-      val url = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -329,7 +330,7 @@ class MiddleConnectorSpec
         )
       )
 
-      sut.connectToAtsList(utr, 2018, 5).futureValue mustBe a[AtsErrorResponse]
+      sut.connectToAtsList(utr, 2022, 5).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
@@ -337,7 +338,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -347,14 +348,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, 2018, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, 2022, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -365,14 +366,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, 2018, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, 2022, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2018/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -383,7 +384,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, 2018, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, 2022, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }

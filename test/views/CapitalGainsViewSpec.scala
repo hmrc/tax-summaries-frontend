@@ -16,7 +16,8 @@
 
 package views
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.ActingAsAttorneyFor
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -29,12 +30,11 @@ import views.html.CapitalGainsView
 class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
-    AuthenticatedRequest(
+    requests.AuthenticatedRequest(
       "userId",
       None,
       Some(SaUtr(testUtr)),
       None,
-      isSa = true,
       isAgentActive = false,
       ConfidenceLevel.L50,
       fakeCredentials,

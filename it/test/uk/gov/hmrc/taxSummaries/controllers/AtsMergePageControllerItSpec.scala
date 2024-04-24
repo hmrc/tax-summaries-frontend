@@ -19,6 +19,7 @@ package controllers
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import connectors.DataCacheConnector
 import models.{AgentToken, AtsListData}
+import org.mockito.ArgumentMatchers
 import org.mockito.scalatest.MockitoSugar
 import play.api
 import play.api.Application
@@ -27,6 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.PertaxAuthService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
@@ -35,7 +37,7 @@ import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
-
+  private val mockPertaxAuthService               = mock[PertaxAuthService]
   lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   lazy implicit val hc: HeaderCarrier = inject[HeaderCarrier]
@@ -57,7 +59,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
     .overrides(
       api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
       api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
-      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService),
+      api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
     )
     .build()
 
@@ -87,15 +90,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
          |        "ggCredId": "xyz"
          |    },
          |    "externalId": "testExternalId",
-         |    "allEnrolments": [{
-         |        "key": "IR-SA-AGENT",
-         |        "identifiers": [
-         |          {
-         |            "key": "IRAgentReference",
-         |            "value": "uar"
-         |          }],
-         |        "state": "Activated"
-         |     }]
+         |    "allEnrolments": []
          |}
          |""".stripMargin
 
@@ -105,6 +100,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
     )
 
     reset(mockFeatureFlagService)
+    reset(mockPertaxAuthService)
+    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
   }
 
   when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))

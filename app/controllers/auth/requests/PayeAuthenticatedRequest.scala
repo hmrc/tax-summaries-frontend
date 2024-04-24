@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.auth.requests
 
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain._
+import uk.gov.hmrc.domain.Nino
 
 case class PayeAuthenticatedRequest[A](
   nino: Nino,
-  isSa: Boolean,
   credentials: Credentials,
   request: Request[A]
 ) extends WrappedRequest[A](request)
-    with CommonRequest
