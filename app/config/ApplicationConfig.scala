@@ -29,9 +29,7 @@ import scala.jdk.CollectionConverters.CollectionHasAsScala
 @Singleton
 class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Configuration) {
 
-  def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
-
-  def getExternalUrl(key: String): String = config.getString(s"external-urls.$key")
+  private def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   // Services url config
   val serviceUrl: String = config.baseUrl("tax-summaries")
@@ -40,15 +38,11 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   lazy val cidHost: String          = config.baseUrl("citizen-details")
 
   lazy val pertaxHost: String           = config.baseUrl("pertax")
-  lazy val contactFormServiceIdentifier = "ATS"
 
   // Caching config
   lazy val sessionCacheDomain: String = getConf("cachable.session-cache.domain")
 
   lazy val homePageUrl                    = "/annual-tax-summary/"
-  lazy val contactFrontendBaseUrl: String = getExternalUrl("contact-frontend.host")
-  lazy val betaFeedbackUrl                =
-    s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
   // Encryption config
   lazy val encryptionKey: String      = config.getString("portal.clientagent.encryption.key")
@@ -77,7 +71,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   lazy val walesIncomeTaxLink = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
-  lazy val calculateWelshIncomeTaxSpend = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
   //Application name
   lazy val appName: String = config.getString("appName")
@@ -92,7 +85,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
-  def accessibilityStatementUrl(referrer: String) = {
+  def accessibilityStatementUrl(referrer: String): String = {
     val redirectUrl = RedirectUrl(accessibilityBaseUrl + referrer).getEither(
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
     ) match {
@@ -118,8 +111,4 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
 
   lazy val internalAuthResourceType: String =
     config.getConfString("internal-auth.resource-type", "ddcn-live-admin-frontend")
-
-  val ehCacheTtlInSeconds: Int = config.getInt("ehCache.ttlInSeconds")
-
-  val SCAWrapperFutureTimeout: Int = config.getInt("sca-wrapper.future-timeout")
 }
