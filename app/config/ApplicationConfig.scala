@@ -25,15 +25,16 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Singleton
 
 @Singleton
-class ApplicationConfig @Inject() (config: ServicesConfig) {
+class ApplicationConfig @Inject()(config: ServicesConfig) {
 
-  private def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  private def getConf(key: String): String =
+    config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   // Services url config
   val serviceUrl: String = config.baseUrl("tax-summaries")
 
   lazy val sessionCacheHost: String = config.baseUrl("cachable.session-cache")
-  lazy val cidHost: String          = config.baseUrl("citizen-details")
+  lazy val cidHost: String = config.baseUrl("citizen-details")
 
   lazy val pertaxHost: String = config.baseUrl("pertax")
 
@@ -43,21 +44,21 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   lazy val homePageUrl = "/annual-tax-summary/"
 
   // Encryption config
-  lazy val encryptionKey: String      = config.getString("portal.clientagent.encryption.key")
+  lazy val encryptionKey: String = config.getString("portal.clientagent.encryption.key")
   lazy val encryptionTokenMaxAge: Int = config.getConfInt("encryption.tokenMaxAge", 0)
 
   // External urls
-  lazy val loginCallback: String                 = getConf(s"login-callback.url")
-  lazy val loginUrl: String                      = getConf("login.url")
-  lazy val portalUrl: String                     = getConf("portal.url")
-  lazy val feedbackUrl: String                   = getConf("feedback.url")
+  lazy val loginCallback: String = getConf(s"login-callback.url")
+  lazy val loginUrl: String = getConf("login.url")
+  lazy val portalUrl: String = getConf("portal.url")
+  lazy val feedbackUrl: String = getConf("feedback.url")
   lazy val identityVerificationUpliftUrl: String = getConf("paye.iv-uplift-redirect.url")
-  lazy val iVUpliftFailureCallback: String       = getConf("paye.iv-uplift-failure.url")
-  lazy val contactHmrcSAUrl                      = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
-  lazy val contactHmrcPayeUrl                    =
+  lazy val iVUpliftFailureCallback: String = getConf("paye.iv-uplift-failure.url")
+  lazy val contactHmrcSAUrl = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
+  lazy val contactHmrcPayeUrl =
     "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
-  lazy val govScotAccounts                       = "https://www.gov.scot/accounts"
-  lazy val govScotHowItWorks                     = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
+  lazy val govScotAccounts = "https://www.gov.scot/accounts"
+  lazy val govScotHowItWorks = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
 
   def scottishIncomeTaxLink(taxYear: Int): String =
     s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
@@ -74,10 +75,10 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
 
-  val sessionTimeoutInSeconds: String   = config.getString("timeout.sessionTimeOut")
+  val sessionTimeoutInSeconds: String = config.getString("timeout.sessionTimeOut")
   val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
 
-  private val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
+  private val accessibilityBaseUrl: String = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
   def accessibilityStatementUrl(referrer: String): String = {
@@ -85,7 +86,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
     ) match {
       case Right(safeRedirectUrl) => safeRedirectUrl.url
-      case Left(error)            => throw new IllegalArgumentException(error)
+      case Left(error) => throw new IllegalArgumentException(error)
     }
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=$redirectUrl"
   }
@@ -93,7 +94,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 
-  def payeFallbackURL: String        = config.getString("paye.language.fallbackUrl")
+  def payeFallbackURL: String = config.getString("paye.language.fallbackUrl")
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 

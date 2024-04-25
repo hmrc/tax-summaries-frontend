@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext
 import scala.io.{BufferedSource, Source}
 
 class MiddleConnectorSpec
-    extends AnyWordSpec
+  extends AnyWordSpec
     with Matchers
     with GuiceOneAppPerSuite
     with ScalaFutures
@@ -51,17 +51,17 @@ class MiddleConnectorSpec
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "microservice.services.tax-summaries.port"       -> server.port(),
-        "play.ws.timeout.request"                        -> "1000ms",
-        "play.ws.timeout.connection"                     -> "500ms"
+        "microservice.services.tax-summaries.port" -> server.port(),
+        "play.ws.timeout.request" -> "1000ms",
+        "play.ws.timeout.connection" -> "500ms"
       )
       .build()
 
-  implicit val hc: HeaderCarrier                 = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
-  private val currentYear                        = 2022
-  private val currentYearMinus1                  = currentYear - 1
+  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
+  private val currentYear = 2022
+  private val currentYearMinus1 = currentYear - 1
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
@@ -71,14 +71,14 @@ class MiddleConnectorSpec
 
   val uar: Uar = Uar(testUar)
 
-  val loadSAJson: JsValue         = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-  val saResponse: String          = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
+  val loadSAJson: JsValue = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
+  val saResponse: String = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
 
   val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
-  val loadAtsListData: String               = loadAtsListDataSource.mkString
+  val loadAtsListData: String = loadAtsListDataSource.mkString
   loadAtsListDataSource.close()
-  val atsListData: AtsListData              =
+  val atsListData: AtsListData =
     Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
 
   "connectToPayeATS" must {
@@ -86,7 +86,7 @@ class MiddleConnectorSpec
     "return successful response" in {
 
       val expectedResponse: String = loadAndReplace("/paye_ats_2020.json", Map("$nino" -> testNino.nino))
-      val url                      = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
+      val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -157,7 +157,7 @@ class MiddleConnectorSpec
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -175,7 +175,7 @@ class MiddleConnectorSpec
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -228,7 +228,7 @@ class MiddleConnectorSpec
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -246,7 +246,7 @@ class MiddleConnectorSpec
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -284,7 +284,7 @@ class MiddleConnectorSpec
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -302,7 +302,7 @@ class MiddleConnectorSpec
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -355,7 +355,7 @@ class MiddleConnectorSpec
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -373,7 +373,7 @@ class MiddleConnectorSpec
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
