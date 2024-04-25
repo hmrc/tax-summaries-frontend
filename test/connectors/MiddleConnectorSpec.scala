@@ -51,10 +51,9 @@ class MiddleConnectorSpec
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "microservice.services.tax-summaries.port"       -> server.port(),
-        "microservice.services.tax-summaries-agent.port" -> server.port(),
-        "play.ws.timeout.request"                        -> "1000ms",
-        "play.ws.timeout.connection"                     -> "500ms"
+        "microservice.services.tax-summaries.port" -> server.port(),
+        "play.ws.timeout.request"                  -> "1000ms",
+        "play.ws.timeout.connection"               -> "500ms"
       )
       .build()
 

@@ -27,7 +27,8 @@ import javax.inject.Singleton
 @Singleton
 class ApplicationConfig @Inject() (config: ServicesConfig) {
 
-  def getConf(key: String): String = config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
+  private def getConf(key: String): String =
+    config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
 
   // Services url config
   val serviceUrl: String = config.baseUrl("tax-summaries")
@@ -51,8 +52,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   lazy val loginUrl: String                      = getConf("login.url")
   lazy val portalUrl: String                     = getConf("portal.url")
   lazy val feedbackUrl: String                   = getConf("feedback.url")
-  lazy val payeLoginUrl: String                  = getConf("paye.login.url")
-  lazy val payeLoginCallbackUrl: String          = getConf("paye.login-callback.url")
   lazy val identityVerificationUpliftUrl: String = getConf("paye.iv-uplift-redirect.url")
   lazy val iVUpliftFailureCallback: String       = getConf("paye.iv-uplift-failure.url")
   lazy val contactHmrcSAUrl                      = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
@@ -79,7 +78,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   val sessionTimeoutInSeconds: String   = config.getString("timeout.sessionTimeOut")
   val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
 
-  val accessibilityBaseUrl: String             = config.getString(s"accessibility-statement.baseUrl")
+  private val accessibilityBaseUrl: String     = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
   def accessibilityStatementUrl(referrer: String): String = {
@@ -102,7 +101,4 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   lazy val taxYear: Int = config.getInt("taxYear")
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
-
-  lazy val internalAuthResourceType: String =
-    config.getConfString("internal-auth.resource-type", "ddcn-live-admin-frontend")
 }

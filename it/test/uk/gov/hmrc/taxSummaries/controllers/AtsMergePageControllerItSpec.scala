@@ -55,7 +55,6 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
     .configure(
       "microservice.services.auth.port"             -> server.port(),
       "microservice.services.tax-summaries.port"    -> server.port(),
-      "microservice.services.message-frontend.port" -> server.port()
     )
     .overrides(
       api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),

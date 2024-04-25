@@ -228,7 +228,6 @@ class ContentsCheckSpec extends IntegrationSpec {
       "microservice.services.citizen-details.port"                    -> server.port(),
       "microservice.services.auth.port"                               -> server.port(),
       "microservice.services.tax-summaries.port"                      -> server.port(),
-      "microservice.services.message-frontend.port"                   -> server.port(),
       "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}",
       "microservice.services.cachable.session-cache.port"             -> server.port(),
       "microservice.services.cachable.session-cache.host"             -> "127.0.0.1"
