@@ -103,4 +103,5 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
+
 }

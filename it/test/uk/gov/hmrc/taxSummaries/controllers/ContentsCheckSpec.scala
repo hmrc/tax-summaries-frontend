@@ -230,7 +230,8 @@ class ContentsCheckSpec extends IntegrationSpec {
       "microservice.services.tax-summaries.port"                      -> server.port(),
       "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}",
       "microservice.services.cachable.session-cache.port"             -> server.port(),
-      "microservice.services.cachable.session-cache.host"             -> "127.0.0.1"
+      "microservice.services.cachable.session-cache.host"             -> "127.0.0.1",
+      "urBanner.enable"                                               -> true
     )
     .build()
 
