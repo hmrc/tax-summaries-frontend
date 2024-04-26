@@ -108,7 +108,7 @@ trait TestConstants extends BaseSpec {
 
   val govSpendTotalTuple: (String, SpendData) = ("GovSpendTotal", SpendData(Amount(2898.13, "GBP"), 100.0))
 
-  val fakeTaxYear = taxYear - 3
+  val fakeTaxYear: Int = taxYear - 3
 
   val fakeGovernmentSpend: GovernmentSpend =
     GovernmentSpend(
@@ -140,7 +140,36 @@ trait TestConstants extends BaseSpec {
       Amount(2000.00, "GBP")
     )
 
-  val expectedPercentageOrder2019: List[BigDecimal] =
+  val governmentSpendFromBackend: GovernmentSpend =
+    GovernmentSpend(
+      fakeTaxYear,
+      testUtr,
+      List(
+        ("Welfare", SpendData(Amount(2898.13, "GBP"), 23.5)),
+        ("Health", SpendData(Amount(2898.13, "GBP"), 20.2)),
+        ("StatePensions", SpendData(Amount(2898.13, "GBP"), 11.8)),
+        ("Education", SpendData(Amount(2898.13, "GBP"), 12.8)),
+        ("Defence", SpendData(Amount(2898.13, "GBP"), 5.3)),
+        ("NationalDebtInterest", SpendData(Amount(2898.13, "GBP"), 5.3)),
+        ("PublicOrderAndSafety", SpendData(Amount(2898.13, "GBP"), 4.3)),
+        ("Transport", SpendData(Amount(2898.13, "GBP"), 4.3)),
+        ("BusinessAndIndustry", SpendData(Amount(2898.13, "GBP"), 3.6)),
+        ("GovernmentAdministration", SpendData(Amount(2898.13, "GBP"), 2.1)),
+        ("HousingAndUtilities", SpendData(Amount(2898.13, "GBP"), 1.6)),
+        ("Culture", SpendData(Amount(2898.13, "GBP"), 1.5)),
+        ("Environment", SpendData(Amount(2898.13, "GBP"), 1.5)),
+        ("OverseasAid", SpendData(Amount(2898.13, "GBP"), 1.2)),
+        ("UkContributionToEuBudget", SpendData(Amount(2898.13, "GBP"), 1))
+      ),
+      "Mr",
+      "John",
+      "Doe",
+      Amount(23912.00, "GBP"),
+      "0002",
+      Amount(2000.00, "GBP")
+    )
+
+  val expectedPercentageOrder2022: List[BigDecimal] =
     List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
 
   val expectedPercentageOrder2020: List[BigDecimal] =
@@ -149,7 +178,7 @@ trait TestConstants extends BaseSpec {
   val expectedPercentageOrder2021: List[BigDecimal] =
     List(21.9, 19.6, 14.4, 10.1, 9.6, 4.5, 4.5, 4.1, 3.9, 2.0, 1.4, 1.3, 1.2, 0.9, 0.6)
 
-  val expectedCategoryOrderFor2019: List[String] =
+  val expectedCategoryOrderFor2022: List[String] =
     List(
       "Welfare",
       "Health",
@@ -168,7 +197,7 @@ trait TestConstants extends BaseSpec {
       "UkContributionToEuBudget"
     )
 
-  val expectedCategoryOrderfor2020: List[String] =
+  val expectedCategoryOrderFor2020: List[String] =
     List(
       "Welfare",
       "Health",
@@ -187,7 +216,7 @@ trait TestConstants extends BaseSpec {
       "UkContributionToEuBudget"
     )
 
-  val expectedCategoryOrderfor2021: List[String] =
+  val expectedCategoryOrderFor2021: List[String] =
     List(
       "Health",
       "Welfare",

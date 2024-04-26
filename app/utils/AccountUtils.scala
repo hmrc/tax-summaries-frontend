@@ -16,7 +16,7 @@
 
 package utils
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.ActingAsAttorneyFor
 import play.api.i18n.Messages
 import play.api.mvc.Request

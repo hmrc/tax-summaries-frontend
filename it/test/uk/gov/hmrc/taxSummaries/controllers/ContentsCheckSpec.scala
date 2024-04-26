@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty}
+import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -41,7 +42,7 @@ import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.util.Random
 
 class ContentsCheckSpec extends IntegrationSpec {
-
+  private val mockPertaxAuthService = mock[PertaxAuthService]
   case class ExpectedData(title: String)
 
   def getExpectedData(key: String): ExpectedData =
@@ -132,15 +133,7 @@ class ContentsCheckSpec extends IntegrationSpec {
        |        "ggCredId": "xyz"
        |    },
        |    "externalId": "testExternalId",
-       |    "allEnrolments": [{
-       |        "key": "IR-SA-AGENT",
-       |        "identifiers": [
-       |          {
-       |            "key": "IRAgentReference",
-       |            "value": "uar"
-       |          }],
-       |        "state": "Activated"
-       |     }]
+       |    "allEnrolments": []
        |}
        |""".stripMargin
 
@@ -159,6 +152,8 @@ class ContentsCheckSpec extends IntegrationSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockFeatureFlagService)
+    reset(mockPertaxAuthService)
+    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
 
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PertaxBackendToggle)))
       .thenReturn(Future.successful(FeatureFlag(PertaxBackendToggle, isEnabled = false)))
@@ -225,12 +220,14 @@ class ContentsCheckSpec extends IntegrationSpec {
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService))
+    .overrides(
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService),
+      api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
+    )
     .configure(
       "microservice.services.citizen-details.port"                    -> server.port(),
       "microservice.services.auth.port"                               -> server.port(),
       "microservice.services.tax-summaries.port"                      -> server.port(),
-      "microservice.services.message-frontend.port"                   -> server.port(),
       "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}",
       "microservice.services.cachable.session-cache.port"             -> server.port(),
       "microservice.services.cachable.session-cache.host"             -> "127.0.0.1",

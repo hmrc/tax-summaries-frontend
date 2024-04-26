@@ -16,12 +16,13 @@
 
 package controllers.auth
 
+import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import play.api.mvc._
 import utils.ControllerBaseSpec
 
 object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
-  override val authWithSelfAssessment: ActionBuilder[AuthenticatedRequest, AnyContent]    =
-    FakeAuthAction andThen FakeSelfAssessmentAuthAction
-  override val authWithSingleGGCheck: ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
-    FakePertaxAuthAction andThen FakePertaxAuthAction
+  override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                  = FakeAuthAction
+  override val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]   = FakeAuthAction
+  override val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent] = FakeAuthAction
+  override val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent]   = FakePayeAuthAction
 }

@@ -17,7 +17,8 @@
 package services
 
 import connectors.DataCacheConnector
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
@@ -31,7 +32,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.BaseSpec
 import utils.JsonUtil._
-import utils.TestConstants.{testNino, _}
+import utils.TestConstants._
 import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -66,23 +67,22 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     forename = "forename",
     surname = "surname",
     yearList = List(
-      2014,
-      2015
+      2023,
+      2023
     )
   )
 
-  val payeDataResponse: List[Int] = List(2018, 2019)
+  val payeDataResponse: List[Int] = List(2022, 2022)
 
-  val agentRequestWithQuery: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    Some(Uar(testUar)),
-    Some(SaUtr(testUtr)),
-    Some(testNino),
-    true,
-    true,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest(
+  val agentRequestWithQuery: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = Some(Uar(testUar)),
+    saUtr = Some(SaUtr(testUtr)),
+    nino = Some(testNino),
+    isAgentActive = true,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest(
       "GET",
       controllers.routes.AtsMergePageController.onPageLoad.toString + "/?ref=PORTAL&id=bxk2Z3Q84R0W2XSklMb7Kg"
     )
@@ -94,18 +94,17 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
       "call data cache connector" when {
 
-        "user is an agent" in {
+        "user is an agent (should not include paye data as agent)" in {
           implicit val request =
-            AuthenticatedRequest(
-              "userId",
-              Some(Uar("ref")),
-              Some(SaUtr(testUtr)),
-              Some(testNino),
-              true,
-              true,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = Some(Uar("ref")),
+              saUtr = Some(SaUtr(testUtr)),
+              nino = Some(testNino),
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
             )
 
           when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
@@ -120,9 +119,8 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
               )
           )
             .thenReturn(Future(Right(payeDataResponse)))
-
           val result = sut.getSaAndPayeYearList.futureValue
-          result mustBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
+          result mustBe Right(AtsMergePageViewModel(saDataResponse, Nil, appConfig, ConfidenceLevel.L50))
 
           verify(mockDataCacheConnector, times(1))
             .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
@@ -133,16 +131,15 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData and payeData is successfully received" in {
           implicit val request =
-            AuthenticatedRequest(
-              "userId",
-              None,
-              Some(SaUtr(testUtr)),
-              Some(testNino),
-              true,
-              true,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest()
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = None,
+              saUtr = Some(SaUtr(testUtr)),
+              nino = Some(testNino),
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest()
             )
 
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
@@ -165,16 +162,15 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData is successfully received and nino is not present" in {
           implicit val requestNoNino =
-            AuthenticatedRequest(
-              "userId",
-              None,
-              Some(SaUtr(testUtr)),
-              None,
-              true,
-              true,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest()
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = None,
+              saUtr = Some(SaUtr(testUtr)),
+              nino = None,
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest()
             )
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
 
@@ -190,16 +186,15 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData returns error and paye returns success response" in {
           implicit val request =
-            AuthenticatedRequest(
-              "userId",
-              None,
-              Some(SaUtr(testUtr)),
-              Some(testNino),
-              true,
-              true,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest()
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = None,
+              saUtr = Some(SaUtr(testUtr)),
+              nino = Some(testNino),
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest()
             )
 
           when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
@@ -219,16 +214,15 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData returns success and paye returns error response" in {
           implicit val request =
-            AuthenticatedRequest(
-              "userId",
-              None,
-              Some(SaUtr(testUtr)),
-              Some(testNino),
-              true,
-              true,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest()
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = None,
+              saUtr = Some(SaUtr(testUtr)),
+              nino = Some(testNino),
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest()
             )
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(
@@ -247,16 +241,15 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData and paye both return error response" in {
           implicit val request =
-            AuthenticatedRequest(
-              "userId",
-              None,
-              Some(SaUtr(testUtr)),
-              Some(testNino),
-              true,
-              true,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest()
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = None,
+              saUtr = Some(SaUtr(testUtr)),
+              nino = Some(testNino),
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest()
             )
           when(mockAtsListService.createModel()).thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(

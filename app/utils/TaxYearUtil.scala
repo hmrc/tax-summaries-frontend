@@ -16,7 +16,7 @@
 
 package utils
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 
 object TaxYearUtil {

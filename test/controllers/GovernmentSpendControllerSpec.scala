@@ -24,15 +24,15 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import utils.ControllerBaseSpec
 import utils.TestConstants._
-import utils.{ControllerBaseSpec, GenericViewModel}
 import view_models._
 
 import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
+  override val taxYear = 2023
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
@@ -40,11 +40,11 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request)))
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
       .thenReturn(Future.successful(model))
   }
 
-  def sut =
+  def sut: GovernmentSpendController =
     new GovernmentSpendController(
       mockGovernmentSpendService,
       mockAuditService,
@@ -55,15 +55,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       tokenErrorView
     )
 
-  val genericViewModel: GenericViewModel = AtsList(
-    utr = "3000024376",
-    forename = "forename",
-    surname = "surname",
-    yearList = List(2015)
-  )
-
   val model: GovernmentSpend = GovernmentSpend(
-    taxYear = 2014,
+    taxYear = 2023,
     userUtr = testUtr,
     govSpendAmountData = List(
       ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
@@ -115,7 +108,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -128,7 +121,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
       val result = sut.show(request)
@@ -136,7 +129,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
-    "have correct data for 2014" in {
+    "have correct data for 2022" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -176,13 +169,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + dd").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe "Tax year: April 6 2013 to April 5 2014 Your taxes and public spending"
+        .text mustBe "Tax year: April 6 2022 to April 5 2023 Your taxes and public spending"
     }
 
-    "have correct data for 2015" in {
+    "have correct data for 2023" in {
 
       val model2 = GovernmentSpend(
-        taxYear = 2015,
+        taxYear = 2023,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
@@ -210,7 +203,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request))
+        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(model2))
 

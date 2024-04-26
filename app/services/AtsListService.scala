@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.{DataCacheConnector, MiddleConnector}
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests.AuthenticatedRequest
 import models._
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier

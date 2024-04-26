@@ -30,10 +30,10 @@ import scala.concurrent.Future
 
 class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2014
+  override val taxYear = 2023
 
   val baseModel: TotalIncomeTax = TotalIncomeTax(
-    year = 2014,
+    year = 2023,
     utr = testUtr,
     startingRateForSavings = Amount(110, "GBP"),
     startingRateForSavingsAmount = Amount(140, "GBP"),

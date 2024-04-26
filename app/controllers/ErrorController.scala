@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
-import controllers.auth.{MergePageAuthAction, MinAuthAction}
+import controllers.auth.AuthJourney
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
@@ -33,8 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorController @Inject() (
   governmentSpendService: GovernmentSpendService,
-  mergePageAuthAction: MergePageAuthAction,
-  minAuthAction: MinAuthAction,
+  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   notAuthorisedView: NotAuthorisedView,
   howTaxIsSpentView: HowTaxIsSpentView,
@@ -47,23 +46,24 @@ class ErrorController @Inject() (
 
   override def now: () => LocalDate = () => LocalDate.now()
 
-  def authorisedNoAts(taxYear: Int): Action[AnyContent] = mergePageAuthAction.async { implicit request =>
-    if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
-      Future.successful(Forbidden(serviceUnavailableView()))
-    } else {
-      governmentSpendService
-        .getGovernmentSpendFigures(taxYear)
-        .fold(
-          errorResponse => {
-            logger.error(errorResponse.message)
-            InternalServerError(serviceUnavailableView())
-          },
-          spendData => Ok(howTaxIsSpentView(spendData, taxYear))
-        )
-    }
+  def authorisedNoAts(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOrAgents.async {
+    implicit request =>
+      if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
+        Future.successful(Forbidden(serviceUnavailableView()))
+      } else {
+        governmentSpendService
+          .getGovernmentSpendFigures(taxYear)
+          .fold(
+            errorResponse => {
+              logger.error(errorResponse.message)
+              InternalServerError(serviceUnavailableView())
+            },
+            spendData => Ok(howTaxIsSpentView(spendData, taxYear))
+          )
+      }
   }
 
-  def notAuthorised: Action[AnyContent] = minAuthAction { implicit request =>
+  def notAuthorised: Action[AnyContent] = authJourney.authMinimal { implicit request =>
     Ok(notAuthorisedView())
   }
 

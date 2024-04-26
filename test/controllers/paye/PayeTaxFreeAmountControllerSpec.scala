@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package controllers.paye
 
 import config.ApplicationConfig
-import controllers.auth.{FakePayeAuthAction, PayeAuthenticatedRequest}
+import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
@@ -40,7 +40,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   val sut = new PayeTaxFreeAmountController(
     mockPayeAtsService,
-    FakePayeAuthAction,
+    FakeAuthJourney,
     mcc,
     inject[PayeTaxFreeAmountView],
     payeGenericErrorView
@@ -50,7 +50,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear = 2021
       }
 
@@ -82,7 +82,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response for 2020" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear = 2020
       }
 
