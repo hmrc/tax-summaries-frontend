@@ -95,7 +95,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val allowanceService = mock[AllowanceService]
 
-    def sut =
+    def sut: AllowancesController =
       new AllowancesController(
         allowanceService,
         mockAuditService,
@@ -119,7 +119,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val mockCapitalGainsService = mock[CapitalGainsService]
 
-    def sut =
+    def sut: CapitalGainsTaxController =
       new CapitalGainsTaxController(
         mockCapitalGainsService,
         mockAuditService,
@@ -143,7 +143,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
     val mockGovernmentSpendService = mock[GovernmentSpendService]
 
-    def sut =
+    def sut: GovernmentSpendController =
       new GovernmentSpendController(
         mockGovernmentSpendService,
         mockAuditService,
@@ -154,7 +154,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
         tokenErrorView
       )
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any()))
+    when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any(), any()))
       .thenReturn(Future.successful(model))
 
     val result = sut.show(request)
@@ -165,7 +165,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
   "show no ats page for summary page" in {
 
-    def sut =
+    def sut: SummaryController =
       new SummaryController(
         mockSummaryService,
         mockAuditService,
@@ -187,7 +187,7 @@ class ZeroTaxLiabilitySpec extends ControllerBaseSpec {
 
   "show no ats page for nics summary page" in {
 
-    def sut =
+    def sut: NicsController =
       new NicsController(
         mockSummaryService,
         mockAuditService,

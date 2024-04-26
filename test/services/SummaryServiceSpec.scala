@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -38,23 +39,22 @@ class SummaryServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(2023)
   )
 
   val mockAtsService: AtsService = mock[AtsService]
 
   implicit val hc: HeaderCarrier                            = new HeaderCarrier
-  override val taxYear: Int                                 = 2015
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+  override val taxYear: Int                                 = 2023
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = None,
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   def sut: SummaryService = new SummaryService(mockAtsService)
@@ -80,7 +80,7 @@ class SummaryServiceSpec extends BaseSpec {
       val result  = sut.summaryConverter(atsData)
 
       result mustBe Summary(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

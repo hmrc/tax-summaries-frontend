@@ -16,6 +16,8 @@
 
 package controllers.auth
 
+import controllers.auth.actions.Auth
+import controllers.auth.requests.AuthenticatedRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
@@ -24,23 +26,22 @@ import utils.TestConstants._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeAuthAction extends ControllerBaseSpec with AuthAction {
+object FakeAuthAction extends ControllerBaseSpec with Auth {
 
   override val parser: BodyParser[AnyContent]               = mcc.parsers.anyContent
   override protected val executionContext: ExecutionContext = mcc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(
-      AuthenticatedRequest(
-        "userId",
-        None,
-        Some(SaUtr(testUtr)),
-        None,
-        true,
-        false,
-        ConfidenceLevel.L50,
-        fakeCredentials,
-        request
+      requests.AuthenticatedRequest(
+        userId = "userId",
+        agentRef = None,
+        saUtr = Some(SaUtr(testUtr)),
+        nino = None,
+        isAgentActive = false,
+        confidenceLevel = ConfidenceLevel.L50,
+        credentials = fakeCredentials,
+        request = request
       )
     )
 }

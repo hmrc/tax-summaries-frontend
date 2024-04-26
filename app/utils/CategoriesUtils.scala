@@ -16,16 +16,13 @@
 
 package utils
 
-import config.ApplicationConfig
-
 object CategoriesUtils {
   def reorderCategories[A](
-    appConfig: ApplicationConfig,
-    taxYear: Int,
+    spendCategories: List[String],
     spendDataList: List[(String, A)]
   ): List[(String, A)] = {
     val spendDataListMap = spendDataList.toMap
-    appConfig.spendCategories(taxYear).map { category =>
+    spendCategories.map { category =>
       (category, spendDataListMap(category))
     }
   }

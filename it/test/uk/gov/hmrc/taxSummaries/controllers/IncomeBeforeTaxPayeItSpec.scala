@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package controllers
+package uk.gov.hmrc.taxSummaries.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo, urlMatching}
+import org.mockito.ArgumentMatchers
 import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, IntegrationSpec}
 
-class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
+import scala.concurrent.Future
 
+class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
+  private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"          -> server.port(),
@@ -37,10 +41,16 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
     )
     .overrides(
       api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
-      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
+      api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService),
+      api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
     )
     .build()
-
+  override def beforeEach(): Unit = {
+    server.resetAll()
+    super.beforeEach()
+    reset(mockPertaxAuthService)
+    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
+  }
   "/paye/income-before-tax" must {
 
     lazy val url = s"/annual-tax-summary/paye/income-before-tax/$taxYear"

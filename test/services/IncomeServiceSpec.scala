@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -40,23 +41,22 @@ class IncomeServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2015)
+    yearList = List(2023)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val mockAtsService: AtsService                            = mock[AtsService]
-  override val taxYear                                      = 2015
-  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    None,
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+  override val taxYear                                      = 2023
+  val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = None,
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   def sut: IncomeService with MockitoSugar = new IncomeService(mockAtsService) with MockitoSugar
@@ -83,7 +83,7 @@ class IncomeServiceSpec extends BaseSpec {
       val incomeData: AtsData     = AtsTestData.incomeData
       val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
-        2019,
+        2022,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

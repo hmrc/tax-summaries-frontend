@@ -17,9 +17,9 @@
 package views.paye
 
 import config.ApplicationConfig
-import controllers.auth.PayeAuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
-import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -33,9 +33,8 @@ import views.html.paye.PayeGovernmentSpendingView
 class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 
   implicit val request: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
-    PayeAuthenticatedRequest(
+    requests.PayeAuthenticatedRequest(
       testNino,
-      isSa = false,
       fakeCredentials,
       FakeRequest("GET", "/annual-tax-summary/paye/treasury-spending")
     )
@@ -116,7 +115,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
     "link to Scottish government spending page for Scottish users for tax year 2021" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
         override lazy val taxYear: Int = 2021
       }
 
@@ -134,10 +133,10 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
         .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2020-2021/"
     }
 
-    "link to Scottish government spending page for Scottish users for tax year 2020" in {
+    "link to Scottish government spending page for Scottish users for tax year 2023" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig], inject[Configuration]) {
-        override lazy val taxYear: Int = 2020
+      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+        override lazy val taxYear: Int = 2023
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
@@ -151,7 +150,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
       document
         .select("#scottish-spending-link a")
-        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2019-2020/"
+        .attr("href") mustBe "https://www.gov.scot/publications/scottish-income-tax-2022-2023/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {

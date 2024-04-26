@@ -17,7 +17,8 @@
 package view_models
 
 import config.ApplicationConfig
-import controllers.auth.AuthenticatedRequest
+import controllers.auth.requests
+import controllers.auth.requests.AuthenticatedRequest
 import models.{AtsYearChoice, NoATS, PAYE, SA}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.AnyContentAsEmpty
@@ -32,16 +33,15 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
   val fakeCredentials: Credentials     = new Credentials("provider ID", "provider type")
   val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
-  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(
-    "userId",
-    Some(Uar(testUar)),
-    Some(SaUtr(testUtr)),
-    None,
-    true,
-    false,
-    ConfidenceLevel.L50,
-    fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+  implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+    userId = "userId",
+    agentRef = Some(Uar(testUar)),
+    saUtr = Some(SaUtr(testUtr)),
+    nino = None,
+    isAgentActive = false,
+    confidenceLevel = ConfidenceLevel.L50,
+    credentials = fakeCredentials,
+    request = FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
   override def beforeEach(): Unit =
