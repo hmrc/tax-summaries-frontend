@@ -122,4 +122,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig, configuration: Config
   val ehCacheTtlInSeconds: Int = config.getInt("ehCache.ttlInSeconds")
 
   val SCAWrapperFutureTimeout: Int = config.getInt("sca-wrapper.future-timeout")
+
+  val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 }

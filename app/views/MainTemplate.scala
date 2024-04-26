@@ -90,7 +90,7 @@ class MainTemplateImpl @Inject() (
       bannerConfig = BannerConfig(
         showAlphaBanner = false,
         showBetaBanner = true,
-        showHelpImproveBanner = true
+        showHelpImproveBanner = appConfig.showUrBanner
       ),
       fullWidth = false,
       hideMenuBar = !showAccountMenu,
