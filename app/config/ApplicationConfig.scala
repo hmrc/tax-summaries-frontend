@@ -101,4 +101,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   lazy val taxYear: Int = config.getInt("taxYear")
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
+
+  val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 }
