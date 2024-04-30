@@ -53,7 +53,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       mcc,
       notAuthorisedView,
       howTaxIsSpentView,
-      serviceUnavailableView
+      serviceUnavailableView,
+      pageNotFoundTemplateView
     )
   implicit lazy val messageApi: MessagesApi = inject[MessagesApi]
 
@@ -100,7 +101,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               mcc,
               notAuthorisedView,
               howTaxIsSpentView,
-              serviceUnavailableView
+              serviceUnavailableView,
+              pageNotFoundTemplateView
             )
           val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
@@ -161,8 +163,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result   = sut.authorisedNoAts(appConfig.taxYear + 1)(request)
           val document = contentAsString(result)
 
-          status(result) mustBe FORBIDDEN
-          document mustBe contentAsString(serviceUnavailableView())
+          status(result) mustBe NOT_FOUND
+          document mustBe contentAsString(pageNotFoundTemplateView())
         }
 
         "the service tries to access a year before the current year minus the max years to be displayed" in {
@@ -191,8 +193,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
           val result   = sut.authorisedNoAts(appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed - 1)(request)
           val document = contentAsString(result)
 
-          status(result) mustBe FORBIDDEN
-          document mustBe contentAsString(serviceUnavailableView())
+          status(result) mustBe NOT_FOUND
+          document mustBe contentAsString(pageNotFoundTemplateView())
         }
 
       }
@@ -239,7 +241,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               mcc,
               notAuthorisedView,
               howTaxIsSpentView,
-              serviceUnavailableView
+              serviceUnavailableView,
+              pageNotFoundTemplateView
             )
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)

@@ -26,7 +26,7 @@ import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.time.CurrentTaxYear
 import views.html.HowTaxIsSpentView
-import views.html.errors.{NotAuthorisedView, ServiceUnavailableView}
+import views.html.errors.{NotAuthorisedView, PageNotFoundTemplateView, ServiceUnavailableView}
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +37,8 @@ class ErrorController @Inject() (
   mcc: MessagesControllerComponents,
   notAuthorisedView: NotAuthorisedView,
   howTaxIsSpentView: HowTaxIsSpentView,
-  serviceUnavailableView: ServiceUnavailableView
+  serviceUnavailableView: ServiceUnavailableView,
+  pageNotFoundTemplateView: PageNotFoundTemplateView
 )(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -48,8 +49,8 @@ class ErrorController @Inject() (
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOrAgents.async {
     implicit request =>
-      if (taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) {
-        Future.successful(Forbidden(serviceUnavailableView()))
+      if (taxYear > appConfig.taxYear || taxYear <= (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed)) {
+        Future.successful(NotFound(pageNotFoundTemplateView()))
       } else {
         governmentSpendService
           .getGovernmentSpendFigures(taxYear)

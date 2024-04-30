@@ -52,21 +52,22 @@ trait ControllerBaseSpec extends BaseSpec {
   implicit lazy val lang: Lang                 = Lang(java.util.Locale.getDefault)
   implicit lazy val testMessages: MessagesImpl = MessagesImpl(i18n.Lang("en"), mcc.messagesApi)
 
-  val mockPayeAtsService: PayeAtsService                  = mock[PayeAtsService]
-  lazy val taxFreeAmountView: TaxFreeAmountView           = inject[TaxFreeAmountView]
-  lazy val genericErrorView: GenericErrorView             = inject[GenericErrorView]
-  lazy val atsMergePageView: AtsMergePageView             = inject[AtsMergePageView]
-  lazy val tokenErrorView: TokenErrorView                 = inject[TokenErrorView]
-  lazy val taxsMainView: TaxsMainView                     = inject[TaxsMainView]
-  lazy val capitalGainsView: CapitalGainsView             = inject[CapitalGainsView]
-  lazy val notAuthorisedView: NotAuthorisedView           = inject[NotAuthorisedView]
-  lazy val howTaxIsSpentView: HowTaxIsSpentView           = inject[HowTaxIsSpentView]
-  lazy val serviceUnavailableView: ServiceUnavailableView = inject[ServiceUnavailableView]
-  lazy val governmentSpendingView: GovernmentSpendingView = inject[GovernmentSpendingView]
-  lazy val incomeBeforeTaxView: IncomeBeforeTaxView       = inject[IncomeBeforeTaxView]
-  lazy val totalIncomeTaxView: TotalIncomeTaxView         = inject[TotalIncomeTaxView]
-  lazy val summaryView: SummaryView                       = inject[SummaryView]
-  lazy val nicsView: NicsView                             = inject[NicsView]
+  val mockPayeAtsService: PayeAtsService                      = mock[PayeAtsService]
+  lazy val taxFreeAmountView: TaxFreeAmountView               = inject[TaxFreeAmountView]
+  lazy val genericErrorView: GenericErrorView                 = inject[GenericErrorView]
+  lazy val atsMergePageView: AtsMergePageView                 = inject[AtsMergePageView]
+  lazy val tokenErrorView: TokenErrorView                     = inject[TokenErrorView]
+  lazy val taxsMainView: TaxsMainView                         = inject[TaxsMainView]
+  lazy val capitalGainsView: CapitalGainsView                 = inject[CapitalGainsView]
+  lazy val notAuthorisedView: NotAuthorisedView               = inject[NotAuthorisedView]
+  lazy val howTaxIsSpentView: HowTaxIsSpentView               = inject[HowTaxIsSpentView]
+  lazy val serviceUnavailableView: ServiceUnavailableView     = inject[ServiceUnavailableView]
+  lazy val pageNotFoundTemplateView: PageNotFoundTemplateView = inject[PageNotFoundTemplateView]
+  lazy val governmentSpendingView: GovernmentSpendingView     = inject[GovernmentSpendingView]
+  lazy val incomeBeforeTaxView: IncomeBeforeTaxView           = inject[IncomeBeforeTaxView]
+  lazy val totalIncomeTaxView: TotalIncomeTaxView             = inject[TotalIncomeTaxView]
+  lazy val summaryView: SummaryView                           = inject[SummaryView]
+  lazy val nicsView: NicsView                                 = inject[NicsView]
 
   val fakeCredentials = new Credentials("provider ID", "provider type")
 
