@@ -19,6 +19,7 @@
 @import views.html.includes.CurrencyAmountView
 @import helpers.{HeaderSection, PageHeading, P, Link}
 @import views.MainTemplate
+@import includes.TotalIncomeTaxView
 
 @this(
     main: MainTemplate,
@@ -26,7 +27,8 @@
     currencyAmountView: CurrencyAmountView,
     viewUtils: ViewUtils,
     pageHeading: PageHeading,
-    p: P
+    p: P,
+    totalIncomeTaxView:TotalIncomeTaxView
 )
 
 @(  viewModel: view_models.IncomeTaxAndNI,
@@ -60,6 +62,8 @@
         @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
           "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.summary.nicsAndTaxRate).percent+"</span>")))
 
+        @totalIncomeTaxView(viewModel.totalIncomeTax, actingAsAttorney)
+
         <table id="total-income-tax" class="govuk-table">
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -70,7 +74,7 @@
           <tbody>
             <tr>
               <td class="govuk-table__cell">
-                <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax?taxYear=@viewModel.summary.taxYearTo">
+                <a href="/">
                    @Html(Messages("ats.nics.tax_and_nics.income_tax"))
                 </a>
               </td>

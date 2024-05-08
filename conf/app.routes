@@ -12,7 +12,7 @@ GET     /nics                                                  controllers.NicsC
 GET     /treasury-spending                                     controllers.GovernmentSpendController.authorisedGovernmentSpendData
 GET     /income-before-tax                                     controllers.IncomeController.authorisedIncomeBeforeTax
 GET     /tax-free-amount                                       controllers.AllowancesController.authorisedAllowance
-GET     /total-income-tax                                      controllers.TotalIncomeTaxController.authorisedTotalIncomeTax
+#GET     /total-income-tax                                      controllers.TotalIncomeTaxController.authorisedTotalIncomeTax
 GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised

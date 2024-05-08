@@ -46,19 +46,6 @@
     )
 }
 
-@main(
-        pageTitle = Messages("ats.total_income_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYear),
-        actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent),
-        pageHeading = Messages("ats.summary.title"),
-        headerSectionNeeded = true
-) {
-
-        @pageHeading(
-          text = "ats.total_income_tax.income_tax",
-          section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYear)
-        )
-
         @if(viewModel.showIncomeTaxTable) {
         <table id="income-tax" class="govuk-table">
           <thead class="govuk-table__head">
@@ -222,4 +209,3 @@
             }
           </tbody>
         </table>
-}
