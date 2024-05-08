@@ -22,9 +22,9 @@ import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AuditService, SummaryService}
+import services.{AuditService, SummaryService, TotalIncomeTaxService}
 import utils.GenericViewModel
-import view_models.Summary
+import view_models.{IncomeTaxAndNI, Summary, TotalIncomeTax}
 import views.html.NicsView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -37,7 +37,8 @@ class NicsController @Inject() (
   mcc: MessagesControllerComponents,
   nicsView: NicsView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView
+  tokenErrorView: TokenErrorView,
+  totalIncomeTaxService: TotalIncomeTaxService
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
@@ -45,12 +46,34 @@ class NicsController @Inject() (
     show(request)
   }
 
-  type ViewModel = Summary
+  /*
+    NicsController/ NicsView (annual-tax-summary/nics) is page to be changed
+    TotalIncomeTaxController/ TotalIncomeTaxView is page with income tax data to be got rid of
+   */
+
+  // TODO 8717: Need to:-
+  //  1) Merge TotalIncomeTax model and Summary model into a new IncomeTaxAndNI model,
+  //  2) Create new IncomeTaxAndNIService to get the data for above and call from NicsController
+  //  3) Amend NicsView to include fields from TotalIncomeTaxView
+  //  4) get rid of TotalIncomeTaxController + view
+
+  type ViewModel = IncomeTaxAndNI
 
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
-  ): Future[Either[ErrorResponse, GenericViewModel]]                                              =
-    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
+  ): Future[Either[ErrorResponse, GenericViewModel]] =
+    extractViewModelWithTaxYear(i =>
+      for {
+        summaryVM <- summaryService.getSummaryData(i)
+        incomeVM  <- totalIncomeTaxService.getIncomeData(i)
+      } yield IncomeTaxAndNI(summaryVM.asInstanceOf[Summary], incomeVM.asInstanceOf[TotalIncomeTax])
+    )
+
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
-    Ok(nicsView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(
+      nicsView(
+        result,
+        getActingAsAttorneyFor(request, result.summary.forename, result.summary.surname, result.summary.utr)
+      )
+    )
 }

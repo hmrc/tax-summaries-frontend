@@ -29,7 +29,7 @@
     p: P
 )
 
-@(  viewModel: view_models.Summary,
+@(  viewModel: view_models.IncomeTaxAndNI,
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit request: AuthenticatedRequest[_],
@@ -38,14 +38,14 @@
 
 @beforeContent = {
     @headerSection(
-        name = viewModel.forename + ' ' + viewModel.surname,
-        utr = viewModel.utr,
+        name = viewModel.summary.forename + ' ' + viewModel.summary.surname,
+        utr = viewModel.summary.utr,
         actingAsAttorney = actingAsAttorney
     )
 }
 
 @main(
-        pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.summary.taxYearFrom, viewModel.summary.taxYearTo),
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent),
         pageHeading = Messages("ats.nics.tax_and_nics.title"),
@@ -54,11 +54,11 @@
 
         @pageHeading(
           text = "ats.nics.tax_and_nics.title",
-          section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+          section = Messages("generic.tax_year_heading", viewModel.summary.taxYearFrom, viewModel.summary.taxYearTo)
         )
         @p(HtmlContent(Messages("ats.nics.tax_and_nics.lede")), classes = Some("govuk-body-l"))
         @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
-          "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>")))
+          "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.summary.nicsAndTaxRate).percent+"</span>")))
 
         <table id="total-income-tax" class="govuk-table">
           <thead class="govuk-table__head">
@@ -70,21 +70,21 @@
           <tbody>
             <tr>
               <td class="govuk-table__cell">
-                <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax?taxYear=@viewModel.taxYearTo">
+                <a href="@controllers.routes.TotalIncomeTaxController.authorisedTotalIncomeTax?taxYear=@viewModel.summary.taxYearTo">
                    @Html(Messages("ats.nics.tax_and_nics.income_tax"))
                 </a>
               </td>
-              <td id="total-income-tax-amt" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewUtils.positiveOrZero(viewModel.totalIncomeTaxAmount))</td>
+              <td id="total-income-tax-amt" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewUtils.positiveOrZero(viewModel.summary.totalIncomeTaxAmount))</td>
             </tr>
             <tr>
               <td class="govuk-table__cell">@Html(Messages("ats.nics.tax_and_nics_explained"))</td>
-              <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.employeeNicAmount)</td>
+              <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.summary.employeeNicAmount)</td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
               <th scope="row" class="govuk-table__header">@Html(Messages("ats.nics.tax_and_nics.total"))</th>
-              <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics)</td>
+              <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.summary.nonNegativeTotalIncomeTaxAndNics)</td>
             </tr>
           </tfoot>
         </table>
