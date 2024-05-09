@@ -18,6 +18,7 @@ package views
 
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
+import models.ActingAsAttorneyFor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -27,10 +28,10 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models._
-import views.html.includes.IncomeTaxDetailsView
+import views.html.NicsView
 import views.html.total_income_tax_includes._
 
-class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
+class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.AuthenticatedRequest(
@@ -45,15 +46,15 @@ class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheck
     )
   lazy val scottishTableView: ScottishTableView                      = inject[ScottishTableView]
   lazy val savingsTableView: SavingsTableView                        = inject[SavingsTableView]
-  lazy val incomeTaxDetailsView: IncomeTaxDetailsView                = inject[IncomeTaxDetailsView]
+  lazy val nicsView: NicsView                = inject[NicsView]
 
   def view(tax: IncomeTaxAndNI): String =
-    incomeTaxDetailsView(tax).body
+    nicsView(tax).body
 
-  def view: String = view(testTotalIncomeTax)
+  def view: String = view(testIncomeTaxAndNI)
 
   def agentView: String =
-    incomeTaxDetailsView(testTotalIncomeTax).body
+    nicsView(testIncomeTaxAndNI, Some(ActingAsAttorneyFor(Some("Agent"), Map()))).body
 
   implicit val arbAmount: Arbitrary[Amount]           = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate]               = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
@@ -115,7 +116,7 @@ class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheck
     "include scottish table" in {
 
       forAll { (tax: ScottishTax, rates: ScottishRates) =>
-        val data = testTotalIncomeTax.copy(scottishTax = tax, scottishRates = rates)
+        val data = testIncomeTaxAndNI.copy(scottishTax = tax, scottishRates = rates)
         view(data) must include(scottishTableView(tax, rates).body)
       }
     }
@@ -123,13 +124,13 @@ class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheck
     "include savings table" in {
 
       forAll { (tax: SavingsTax, rates: SavingsRates) =>
-        val data = testTotalIncomeTax.copy(savingsTax = tax, savingsRates = rates)
+        val data = testIncomeTaxAndNI.copy(savingsTax = tax, savingsRates = rates)
         view(data) must include(savingsTableView(tax, rates).body)
       }
     }
 
     "include total uk income tax if there are any values (and scottish)" in {
-      val data = testTotalIncomeTax.copy(
+      val data = testIncomeTaxAndNI.copy(
         savingsTax = SavingsTax(
           Amount(BigDecimal(100.11), "GBP"),
           Amount.empty,
@@ -144,12 +145,12 @@ class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheck
     }
 
     "not show total uk income tax if there no values (and scottish)" in {
-      val data = testTotalIncomeTax
+      val data = testIncomeTaxAndNI
       view(data) mustNot include("total-uk-income-tax-amount")
     }
 
     "not show total uk income tax if there any values (and not scottish)" in {
-      val data = testTotalIncomeTax.copy(
+      val data = testIncomeTaxAndNI.copy(
         savingsTax = SavingsTax(
           Amount(BigDecimal(100.11), "GBP"),
           Amount.empty,
@@ -160,6 +161,18 @@ class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheck
         )
       )
       view(data) mustNot include("total-uk-income-tax-amount")
+    }
+
+    "not show account menu for agent" in {
+
+      val result = agentView
+      result must not include "hmrc-account-menu"
+    }
+
+    "show account menu for non agent users" in {
+
+      val result = view
+      result must include("hmrc-account-menu")
     }
   }
 }

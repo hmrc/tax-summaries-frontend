@@ -36,7 +36,7 @@ trait TestConstants extends BaseSpec {
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
   def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
-  val testTotalIncomeTax: IncomeTaxAndNI = IncomeTaxAndNI(
+  val testIncomeTaxAndNI: IncomeTaxAndNI = IncomeTaxAndNI(
     year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
