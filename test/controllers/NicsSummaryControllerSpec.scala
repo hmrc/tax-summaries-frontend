@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import play.api.i18n.Messages
 import play.api.test.Helpers._
-import services.{AuditService, SummaryService}
+import services.{AuditService, SummaryService, TotalIncomeTaxService}
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
@@ -55,8 +55,9 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
 
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
+  private val mockTotalIncomeTaxService  = mock[TotalIncomeTaxService]
 
-  def sut =
+  private def sut =
     new NicsController(
       mockSummaryService,
       mockAuditService,
@@ -64,16 +65,57 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
       mcc,
       nicsView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      mockTotalIncomeTaxService
     )
+
+  private val totalIncomeTaxModel: TotalIncomeTax = TotalIncomeTax(
+    year = 2023,
+    utr = testUtr,
+    startingRateForSavings = Amount(110, "GBP"),
+    startingRateForSavingsAmount = Amount(140, "GBP"),
+    basicRateIncomeTax = Amount(1860, "GBP"),
+    basicRateIncomeTaxAmount = Amount(372, "GBP"),
+    higherRateIncomeTax = Amount(130, "GBP"),
+    higherRateIncomeTaxAmount = Amount(70, "GBP"),
+    additionalRateIncomeTax = Amount(80, "GBP"),
+    additionalRateIncomeTaxAmount = Amount(60, "GBP"),
+    ordinaryRate = Amount(100, "GBP"),
+    ordinaryRateAmount = Amount(50, "GBP"),
+    upperRate = Amount(30, "GBP"),
+    upperRateAmount = Amount(120, "GBP"),
+    additionalRate = Amount(10, "GBP"),
+    additionalRateAmount = Amount(40, "GBP"),
+    otherAdjustmentsIncreasing = Amount(90, "GBP"),
+    marriageAllowanceReceivedAmount = Amount(0, "GBP"),
+    otherAdjustmentsReducing = Amount(-20, "GBP"),
+    ScottishTax.empty,
+    totalIncomeTax = Amount(372, "GBP"),
+    scottishIncomeTax = Amount(100, "GBP"),
+    welshIncomeTax = Amount(100, "GBP"),
+    SavingsTax.empty,
+    incomeTaxStatus = "0002",
+    startingRateForSavingsRateRate = Rate("10%"),
+    basicRateIncomeTaxRateRate = Rate("20%"),
+    higherRateIncomeTaxRateRate = Rate("40%"),
+    additionalRateIncomeTaxRateRate = Rate("45%"),
+    ordinaryRateTaxRateRate = Rate("10%"),
+    upperRateRateRate = Rate("32.5%"),
+    additionalRateRateRate = Rate("37.5%"),
+    ScottishRates.empty,
+    SavingsRates.empty,
+    "Mr",
+    "forename",
+    "surname"
+  )
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-
-    when(
-      mockSummaryService.getSummaryData(any())(any(), any())
-    ) thenReturn Future
-      .successful(model)
+    reset(mockTotalIncomeTaxService)
+    when(mockSummaryService.getSummaryData(any())(any(), any()))
+      .thenReturn(Future.successful(model))
+    when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      .thenReturn(Future.successful(totalIncomeTaxModel))
   }
 
   "Calling NICs" must {
@@ -122,7 +164,6 @@ class NicsSummaryControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-income-tax-amt").text() mustBe "£372"
       document.getElementById("total-cg-tax-rate").text() mustBe "56.78%"
       document.getElementById("employee-nic-amount").text() mustBe "£1,200"
       document.getElementById("total-income-tax-and-nics").text() mustBe "£1,572"

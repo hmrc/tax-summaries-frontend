@@ -65,7 +65,6 @@ trait ControllerBaseSpec extends BaseSpec {
   lazy val pageNotFoundTemplateView: PageNotFoundTemplateView = inject[PageNotFoundTemplateView]
   lazy val governmentSpendingView: GovernmentSpendingView     = inject[GovernmentSpendingView]
   lazy val incomeBeforeTaxView: IncomeBeforeTaxView           = inject[IncomeBeforeTaxView]
-  lazy val totalIncomeTaxView: TotalIncomeTaxView             = inject[TotalIncomeTaxView]
   lazy val summaryView: SummaryView                           = inject[SummaryView]
   lazy val nicsView: NicsView                                 = inject[NicsView]
 

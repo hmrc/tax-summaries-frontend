@@ -66,7 +66,14 @@ class NicsController @Inject() (
       for {
         summaryVM <- summaryService.getSummaryData(i)
         incomeVM  <- totalIncomeTaxService.getIncomeData(i)
-      } yield IncomeTaxAndNI(summaryVM.asInstanceOf[Summary], incomeVM.asInstanceOf[TotalIncomeTax])
+      } yield
+        if (!summaryVM.isInstanceOf[Summary]) {
+          summaryVM
+        } else if (!incomeVM.isInstanceOf[TotalIncomeTax]) {
+          incomeVM
+        } else {
+          IncomeTaxAndNI(summaryVM.asInstanceOf[Summary], incomeVM.asInstanceOf[TotalIncomeTax])
+        }
     )
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
