@@ -46,7 +46,7 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
     )
   lazy val scottishTableView: ScottishTableView                      = inject[ScottishTableView]
   lazy val savingsTableView: SavingsTableView                        = inject[SavingsTableView]
-  lazy val nicsView: NicsView                = inject[NicsView]
+  lazy val nicsView: NicsView                                        = inject[NicsView]
 
   def view(tax: IncomeTaxAndNI): String =
     nicsView(tax).body
