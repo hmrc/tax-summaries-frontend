@@ -27,10 +27,10 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
 import view_models._
-import views.html.includes.TotalIncomeTaxView
+import views.html.includes.IncomeTaxDetailsView
 import views.html.total_income_tax_includes._
 
-class TotalIncomeTaxSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
+class IncomeTaxAndNISpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.AuthenticatedRequest(
@@ -45,15 +45,15 @@ class TotalIncomeTaxSpec extends ViewSpecBase with TestConstants with ScalaCheck
     )
   lazy val scottishTableView: ScottishTableView                      = inject[ScottishTableView]
   lazy val savingsTableView: SavingsTableView                        = inject[SavingsTableView]
-  lazy val totalIncomeTaxView: TotalIncomeTaxView                    = inject[TotalIncomeTaxView]
+  lazy val incomeTaxDetailsView: IncomeTaxDetailsView                = inject[IncomeTaxDetailsView]
 
-  def view(tax: TotalIncomeTax): String =
-    totalIncomeTaxView(tax).body
+  def view(tax: IncomeTaxAndNI): String =
+    incomeTaxDetailsView(tax).body
 
   def view: String = view(testTotalIncomeTax)
 
   def agentView: String =
-    totalIncomeTaxView(testTotalIncomeTax).body
+    incomeTaxDetailsView(testTotalIncomeTax).body
 
   implicit val arbAmount: Arbitrary[Amount]           = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate]               = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))

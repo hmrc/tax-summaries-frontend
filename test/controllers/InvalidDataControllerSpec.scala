@@ -48,7 +48,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
   val dataPath                          = "/json_containing_errors_test.json"
   val dataPathNoAts                     = "/no_ats_json_test.json"
   override val taxYear                  = 2023
-  private val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
+  private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
   implicit val hc: HeaderCarrier        = new HeaderCarrier
 
   "Calling a service with a JSON containing errors" must {
@@ -182,7 +182,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     }
 
     "show ats error page for nics on summary page" in {
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(totalIncomeTaxModel))
       val mockAuditService = mock[AuditService]
 
@@ -197,7 +197,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mockTotalIncomeTaxService
         )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)

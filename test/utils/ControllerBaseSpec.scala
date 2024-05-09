@@ -93,7 +93,7 @@ trait ControllerBaseSpec extends BaseSpec {
     FakeRequest("GET", "?taxYear=20235")
   )
 
-  protected val totalIncomeTaxModel: TotalIncomeTax = TotalIncomeTax(
+  protected val totalIncomeTaxModel: IncomeTaxAndNI = IncomeTaxAndNI(
     year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),

@@ -33,7 +33,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
-class TotalIncomeTaxServiceSpec extends BaseSpec {
+class IncomeTaxAndNIServiceSpec extends BaseSpec {
 
   override val taxYear = 2023
 
@@ -48,7 +48,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
 
   val mockAtsService: AtsService = mock[AtsService]
 
-  def sut: TotalIncomeTaxService = new TotalIncomeTaxService(mockAtsService) with MockitoSugar
+  def sut: IncomeTaxAndNIService = new IncomeTaxAndNIService(mockAtsService) with MockitoSugar
 
   "TotalIncomeTaxService getIncomeData" must {
 
@@ -69,7 +69,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         credentials = fakeCredentials,
         request = FakeRequest("GET", "?taxYear=2023")
       )
-      val result       = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
+      val result       = Await.result(sut.getIncomeAndNIData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
@@ -93,7 +93,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
 
     "return complete TotalIncomeTax data when given complete AtsData for scottish tax payer" in {
       val incomeData: AtsData    = AtsTestData.totalIncomeTaxData
-      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       val scottishTax = ScottishTax(
         Amount.gbp(1800),
@@ -117,7 +117,7 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
         Rate("120%")
       )
 
-      result mustEqual TotalIncomeTax(
+      result mustEqual IncomeTaxAndNI(
         year = 2022,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
@@ -173,9 +173,9 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
 
     "return complete TotalIncomeTax data when given complete AtsData for welsh tax payer" in {
       val incomeData: AtsData    = AtsTestData.incomeTaxDataForWelshTaxPayer
-      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
-      result mustEqual TotalIncomeTax(
+      result mustEqual IncomeTaxAndNI(
         year = 2022,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
@@ -231,14 +231,14 @@ class TotalIncomeTaxServiceSpec extends BaseSpec {
 
     "return a isScottishTaxPayer as true and isWelshTaxPayer as false when incomeTaxStatus is 0002" in {
       val incomeData: AtsData    = AtsTestData.totalIncomeTaxData
-      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
       result.isScottishTaxPayer mustEqual true
       result.isWelshTaxPayer mustEqual false
     }
 
     "return a isScottishTaxPayer as false and isWelshTaxPayer as true when incomeTaxStatus is 0003" in {
       val incomeData: AtsData    = AtsTestData.incomeTaxDataForWelshTaxPayer
-      val result: TotalIncomeTax = sut.totalIncomeConverter(incomeData)
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
       result.isScottishTaxPayer mustEqual false
       result.isWelshTaxPayer mustEqual true
     }

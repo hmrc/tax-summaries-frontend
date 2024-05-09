@@ -18,7 +18,7 @@ package view_models
 
 import utils.{GenericViewModel, ViewUtils}
 
-case class TotalIncomeTax(
+case class IncomeTaxAndNI(
   year: Int,
   utr: String,
   employeeNicAmount: Amount,

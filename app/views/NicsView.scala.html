@@ -19,7 +19,7 @@
 @import views.html.includes.CurrencyAmountView
 @import helpers.{HeaderSection, PageHeading, P, Link}
 @import views.MainTemplate
-@import includes.TotalIncomeTaxView
+@import includes.IncomeTaxDetailsView
 
 @this(
     main: MainTemplate,
@@ -28,7 +28,7 @@
     viewUtils: ViewUtils,
     pageHeading: PageHeading,
     p: P,
-    totalIncomeTaxView:TotalIncomeTaxView
+    incomeTaxDetailsView:IncomeTaxDetailsView
 )
 
 @(  viewModel: view_models.TotalIncomeTax,
@@ -61,7 +61,7 @@
     @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
       "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>")))
 
-    @totalIncomeTaxView(viewModel)
+    @incomeTaxDetailsView(viewModel)
 
     <table id="total-income-tax" class="govuk-table">
       <thead class="govuk-table__head">
@@ -81,7 +81,7 @@
     <table id="total-income-tax-and-ni" class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">@Html(Messages("paye.ats.nicsheading"))</th>
+          <th scope="col" class="govuk-table__header">@Html(Messages("paye.ats.total_income_tax.title"))</th>
           <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
         </tr>
       </thead>

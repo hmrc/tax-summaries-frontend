@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
-import services.{AuditService, TotalIncomeTaxService}
+import services.{AuditService, IncomeTaxAndNIService}
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
@@ -33,7 +33,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
   val dataPath = "/summary_json_test_2021.json"
 
   val mockAuditService: AuditService    = mock[AuditService]
-  private val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
+  private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
 
   private def sut =
     new NicsController(
@@ -49,7 +49,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
     reset(mockTotalIncomeTaxService)
-    when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+    when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
       .thenReturn(Future.successful(totalIncomeTaxModel))
   }
 
@@ -72,7 +72,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -83,7 +83,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(NoATSViewModel(taxYear)))
 
       val result = sut.show(request)
@@ -99,7 +99,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         basicRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model2))
 
       val result   = sut.show(request)
@@ -120,7 +120,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         additionalRateIncomeTax = Amount(0, "GBP")
       )
 
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model3))
 
       val result   = sut.show(request)
@@ -198,7 +198,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model4))
 
       val result   = sut.show(request)
@@ -218,7 +218,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(meq(taxYear))(any(), meq(request)))
         .thenReturn(Future.successful(model5))
 
       val result   = sut.show(request)
@@ -251,7 +251,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       val model6 = totalIncomeTaxModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model6))
 
       val result   = sut.show(request)
@@ -268,7 +268,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       val model7 = totalIncomeTaxModel.copy(
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model7))
 
       val result   = sut.show(request)
@@ -285,7 +285,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         otherAdjustmentsIncreasing = Amount(0, "GBP"),
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model8))
 
       val result   = sut.show(request)

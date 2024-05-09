@@ -22,9 +22,9 @@ import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AuditService, TotalIncomeTaxService}
+import services.{AuditService, IncomeTaxAndNIService}
 import utils.GenericViewModel
-import view_models.TotalIncomeTax
+import view_models.IncomeTaxAndNI
 import views.html.NicsView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
@@ -37,7 +37,7 @@ class NicsController @Inject() (
   nicsView: NicsView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView,
-  totalIncomeTaxService: TotalIncomeTaxService
+  incomeTaxAndNIService: IncomeTaxAndNIService
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
 
@@ -45,12 +45,12 @@ class NicsController @Inject() (
     show(request)
   }
 
-  type ViewModel = TotalIncomeTax
+  type ViewModel = IncomeTaxAndNI
 
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
   ): Future[Either[ErrorResponse, GenericViewModel]] =
-    extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
+    extractViewModelWithTaxYear(incomeTaxAndNIService.getIncomeAndNIData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(
