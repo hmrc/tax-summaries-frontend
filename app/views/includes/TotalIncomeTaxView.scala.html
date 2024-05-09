@@ -18,15 +18,13 @@
 @import utils.ViewUtils
 @import total_income_tax_includes._
 @import views.html.includes.CurrencyAmountView
-@import views.html.helpers.{HeaderSection, PageHeading}
+@import views.html.helpers.HeaderSection
 
 @this(
     headerSection: HeaderSection,
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
-    currencyAmountView: CurrencyAmountView,
-    viewUtils: ViewUtils,
-    pageHeading: PageHeading
+    currencyAmountView: CurrencyAmountView
 )
 
 @(  viewModel: view_models.TotalIncomeTax,

@@ -53,44 +53,43 @@
         pageHeading = Messages("ats.nics.tax_and_nics.title"),
         headerSectionNeeded = true
     ) {
+    @pageHeading(
+      text = "ats.nics.tax_and_nics.title",
+      section = Messages("generic.tax_year_heading", viewModel.summary.taxYearFrom, viewModel.summary.taxYearTo)
+    )
+    @p(HtmlContent(Messages("ats.nics.tax_and_nics.lede")))
+    @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
+      "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.summary.nicsAndTaxRate).percent+"</span>")))
 
-        @pageHeading(
-          text = "ats.nics.tax_and_nics.title",
-          section = Messages("generic.tax_year_heading", viewModel.summary.taxYearFrom, viewModel.summary.taxYearTo)
-        )
-        @p(HtmlContent(Messages("ats.nics.tax_and_nics.lede")))
-        @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
-          "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.summary.nicsAndTaxRate).percent+"</span>")))
+    @totalIncomeTaxView(viewModel.totalIncomeTax, actingAsAttorney)
 
-        @totalIncomeTaxView(viewModel.totalIncomeTax, actingAsAttorney)
+    <table id="total-income-tax" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">@Html(Messages("ats.nics.tax_and_nics_explained"))</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="govuk-table__cell">@Html(Messages("paye.ats.national_insurance.title"))</td>
+          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.summary.employeeNicAmount)</td>
+        </tr>
+      </tbody>
+    </table>
 
-        <table id="total-income-tax" class="govuk-table">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header">@Html(Messages("ats.nics.tax_and_nics_explained"))</th>
-              <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="govuk-table__cell">@Html(Messages("paye.ats.national_insurance.title"))</td>
-              <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.summary.employeeNicAmount)</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table id="total-income-tax-and-ni" class="govuk-table">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header">@Html(Messages("paye.ats.summary.nicsheading"))</th>
-              <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
-                <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.summary.nonNegativeTotalIncomeTaxAndNics)</td>
-            </tr>
-          </tbody>
-        </table>
+    <table id="total-income-tax-and-ni" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">@Html(Messages("paye.ats.summary.nicsheading"))</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
+            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.summary.nonNegativeTotalIncomeTaxAndNics)</td>
+        </tr>
+      </tbody>
+    </table>
 }
