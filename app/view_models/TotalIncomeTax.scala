@@ -16,10 +16,24 @@
 
 package view_models
 
-import utils.GenericViewModel
+import utils.{GenericViewModel, ViewUtils}
 
 case class TotalIncomeTax(
-  summary: Summary,
+  year: Int,
+  utr: String,
+  employeeNicAmount: Amount,
+  totalIncomeTaxAndNics: Amount,
+  yourTotalTax: Amount,
+  totalTaxFree: Amount,
+  totalTaxFreeAllowance: Amount,
+  yourIncomeBeforeTax: Amount,
+  totalIncomeTaxAmount: Amount,
+  totalCapitalGainsTax: Amount,
+  taxableGains: Amount,
+  cgTaxPerCurrencyUnit: Amount,
+  nicsAndTaxPerCurrencyUnit: Amount,
+  totalCgTaxRate: Rate,
+  nicsAndTaxRate: Rate,
   startingRateForSavings: Amount,
   startingRateForSavingsAmount: Amount,
   basicRateIncomeTax: Amount,
@@ -57,9 +71,8 @@ case class TotalIncomeTax(
   surname: String
 ) extends GenericViewModel {
 
-  def utr: String         = summary.utr
-  def taxYearTo: String   = summary.taxYearTo
-  def taxYearFrom: String = summary.taxYearFrom
+  def taxYearTo: String   = year.toString
+  def taxYearFrom: String = (year - 1).toString
 
   val isScottishTaxPayer: Boolean = incomeTaxStatus == "0002"
   val isWelshTaxPayer: Boolean    = incomeTaxStatus == "0003"
@@ -93,6 +106,13 @@ case class TotalIncomeTax(
         + additionalRateAmount.amount,
       savingsTax.savingsLowerRateTaxAmount.currency
     )
+
+  def nonNegativeTotalIncomeTaxAndNics: Amount = {
+    val viewUtils     = new ViewUtils
+    val nonNegativeIT = viewUtils.positiveOrZero(totalIncomeTaxAmount)
+    val total         = nonNegativeIT.amount + employeeNicAmount.amount
+    Amount(total, totalIncomeTaxAndNics.currency)
+  }
 }
 
 case class ScottishTax(

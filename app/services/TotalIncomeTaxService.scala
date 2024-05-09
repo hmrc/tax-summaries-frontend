@@ -32,29 +32,29 @@ class TotalIncomeTaxService @Inject() (atsService: AtsService) {
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, totalIncomeConverter)
 
-  private[services] def summaryConverter(atsData: AtsData): Summary = {
-    val summaryData: DataHolder = atsData.summary_data.get
-    Summary(
-      atsData.taxYear,
-      atsData.utr.get,
-      summaryData.payload.get("employee_nic_amount"),
-      summaryData.payload.get("total_income_tax_and_nics"),
-      summaryData.payload.get("your_total_tax"),
-      summaryData.payload.get("personal_tax_free_amount"),
-      summaryData.payload.get("total_tax_free_amount"),
-      summaryData.payload.get("total_income_before_tax"),
-      summaryData.payload.get("total_income_tax"),
-      summaryData.payload.get("total_cg_tax"),
-      summaryData.payload.get("taxable_gains"),
-      summaryData.payload.get("cg_tax_per_currency_unit"),
-      summaryData.payload.get("nics_and_tax_per_currency_unit"),
-      summaryData.rates.get("total_cg_tax_rate"),
-      summaryData.rates.get("nics_and_tax_rate"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
-    )
-  }
+//  private[services] def summaryConverter(atsData: AtsData): Summary = {
+//    val summaryData: DataHolder = atsData.summary_data.get
+//    Summary(
+//      atsData.taxYear,
+//      atsData.utr.get,
+//      summaryData.payload.get("employee_nic_amount"),
+//      summaryData.payload.get("total_income_tax_and_nics"),
+//      summaryData.payload.get("your_total_tax"),
+//      summaryData.payload.get("personal_tax_free_amount"),
+//      summaryData.payload.get("total_tax_free_amount"),
+//      summaryData.payload.get("total_income_before_tax"),
+//      summaryData.payload.get("total_income_tax"),
+//      summaryData.payload.get("total_cg_tax"),
+//      summaryData.payload.get("taxable_gains"),
+//      summaryData.payload.get("cg_tax_per_currency_unit"),
+//      summaryData.payload.get("nics_and_tax_per_currency_unit"),
+//      summaryData.rates.get("total_cg_tax_rate"),
+//      summaryData.rates.get("nics_and_tax_rate"),
+//      atsData.taxPayerData.get.taxpayer_name.get("title"),
+//      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+//      atsData.taxPayerData.get.taxpayer_name.get("surname")
+//    )
+//  }
 
   private[services] def totalIncomeConverter(atsData: AtsData): TotalIncomeTax = {
     def payload(key: String): Amount =
@@ -104,64 +104,57 @@ class TotalIncomeTaxService @Inject() (atsService: AtsService) {
     )
 
     val summaryData: DataHolder = atsData.summary_data.get
-    val summary                 = Summary(
-      atsData.taxYear,
-      atsData.utr.get,
-      summaryData.payload.get("employee_nic_amount"),
-      summaryData.payload.get("total_income_tax_and_nics"),
-      summaryData.payload.get("your_total_tax"),
-      summaryData.payload.get("personal_tax_free_amount"),
-      summaryData.payload.get("total_tax_free_amount"),
-      summaryData.payload.get("total_income_before_tax"),
-      summaryData.payload.get("total_income_tax"),
-      summaryData.payload.get("total_cg_tax"),
-      summaryData.payload.get("taxable_gains"),
-      summaryData.payload.get("cg_tax_per_currency_unit"),
-      summaryData.payload.get("nics_and_tax_per_currency_unit"),
-      summaryData.rates.get("total_cg_tax_rate"),
-      summaryData.rates.get("nics_and_tax_rate"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
-    )
-
     TotalIncomeTax(
-      summary,
-      payload("starting_rate_for_savings"),
-      payload("starting_rate_for_savings_amount"),
-      payload("basic_rate_income_tax"),
-      payload("basic_rate_income_tax_amount"),
-      payload("higher_rate_income_tax"),
-      payload("higher_rate_income_tax_amount"),
-      payload("additional_rate_income_tax"),
-      payload("additional_rate_income_tax_amount"),
-      payload("ordinary_rate"),
-      payload("ordinary_rate_amount"),
-      payload("upper_rate"),
-      payload("upper_rate_amount"),
-      payload("additional_rate"),
-      payload("additional_rate_amount"),
-      payload("other_adjustments_increasing"),
-      payload("marriage_allowance_received_amount"),
-      -payload("other_adjustments_reducing"),
-      scottishTax,
-      payload("total_income_tax"),
-      payload("scottish_income_tax"),
-      payload("welsh_income_tax"),
-      savingsTax,
-      atsData.income_tax.flatMap(_.incomeTaxStatus).getOrElse(""),
-      rates("starting_rate_for_savings_rate"),
-      rates("basic_rate_income_tax_rate"),
-      rates("higher_rate_income_tax_rate"),
-      rates("additional_rate_income_tax_rate"),
-      rates("ordinary_rate_tax_rate"),
-      rates("upper_rate_rate"),
-      rates("additional_rate_rate"),
-      scottishRates,
-      savingsRates,
-      taxpayerName("title"),
-      taxpayerName("forename"),
-      taxpayerName("surname")
+      year = atsData.taxYear,
+      utr = atsData.utr.get,
+      employeeNicAmount = summaryData.payload.get("employee_nic_amount"),
+      totalIncomeTaxAndNics = summaryData.payload.get("total_income_tax_and_nics"),
+      yourTotalTax = summaryData.payload.get("your_total_tax"),
+      totalTaxFree = summaryData.payload.get("personal_tax_free_amount"),
+      totalTaxFreeAllowance = summaryData.payload.get("total_tax_free_amount"),
+      yourIncomeBeforeTax = summaryData.payload.get("total_income_before_tax"),
+      totalIncomeTaxAmount = summaryData.payload.get("total_income_tax"),
+      totalCapitalGainsTax = summaryData.payload.get("total_cg_tax"),
+      taxableGains = summaryData.payload.get("taxable_gains"),
+      cgTaxPerCurrencyUnit = summaryData.payload.get("cg_tax_per_currency_unit"),
+      nicsAndTaxPerCurrencyUnit = summaryData.payload.get("nics_and_tax_per_currency_unit"),
+      totalCgTaxRate = summaryData.rates.get("total_cg_tax_rate"),
+      nicsAndTaxRate = summaryData.rates.get("nics_and_tax_rate"),
+      startingRateForSavings = payload("starting_rate_for_savings"),
+      startingRateForSavingsAmount = payload("starting_rate_for_savings_amount"),
+      basicRateIncomeTax = payload("basic_rate_income_tax"),
+      basicRateIncomeTaxAmount = payload("basic_rate_income_tax_amount"),
+      higherRateIncomeTax = payload("higher_rate_income_tax"),
+      higherRateIncomeTaxAmount = payload("higher_rate_income_tax_amount"),
+      additionalRateIncomeTax = payload("additional_rate_income_tax"),
+      additionalRateIncomeTaxAmount = payload("additional_rate_income_tax_amount"),
+      ordinaryRate = payload("ordinary_rate"),
+      ordinaryRateAmount = payload("ordinary_rate_amount"),
+      upperRate = payload("upper_rate"),
+      upperRateAmount = payload("upper_rate_amount"),
+      additionalRate = payload("additional_rate"),
+      additionalRateAmount = payload("additional_rate_amount"),
+      otherAdjustmentsIncreasing = payload("other_adjustments_increasing"),
+      marriageAllowanceReceivedAmount = payload("marriage_allowance_received_amount"),
+      otherAdjustmentsReducing = -payload("other_adjustments_reducing"),
+      scottishTax = scottishTax,
+      totalIncomeTax = payload("total_income_tax"),
+      scottishIncomeTax = payload("scottish_income_tax"),
+      welshIncomeTax = payload("welsh_income_tax"),
+      savingsTax = savingsTax,
+      incomeTaxStatus = atsData.income_tax.flatMap(_.incomeTaxStatus).getOrElse(""),
+      startingRateForSavingsRateRate = rates("starting_rate_for_savings_rate"),
+      basicRateIncomeTaxRateRate = rates("basic_rate_income_tax_rate"),
+      higherRateIncomeTaxRateRate = rates("higher_rate_income_tax_rate"),
+      additionalRateIncomeTaxRateRate = rates("additional_rate_income_tax_rate"),
+      ordinaryRateTaxRateRate = rates("ordinary_rate_tax_rate"),
+      upperRateRateRate = rates("upper_rate_rate"),
+      additionalRateRateRate = rates("additional_rate_rate"),
+      scottishRates = scottishRates,
+      savingsRates = savingsRates,
+      title = taxpayerName("title"),
+      forename = taxpayerName("forename"),
+      surname = taxpayerName("surname")
     )
   }
 }

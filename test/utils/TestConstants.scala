@@ -36,7 +36,7 @@ trait TestConstants extends BaseSpec {
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
   def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
-  val model: Summary = Summary(
+  val testTotalIncomeTax: TotalIncomeTax = TotalIncomeTax(
     year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
@@ -52,13 +52,6 @@ trait TestConstants extends BaseSpec {
     nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
     totalCgTaxRate = Rate("12.34%"),
     nicsAndTaxRate = Rate("56.78%"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
-  )
-
-  val testTotalIncomeTax: TotalIncomeTax = TotalIncomeTax(
-    model,
     Amount.empty,
     Amount.empty,
     Amount.empty,

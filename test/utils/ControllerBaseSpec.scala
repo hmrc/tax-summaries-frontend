@@ -93,7 +93,7 @@ trait ControllerBaseSpec extends BaseSpec {
     FakeRequest("GET", "?taxYear=20235")
   )
 
-  protected val model: Summary = Summary(
+  protected val totalIncomeTaxModel: TotalIncomeTax = TotalIncomeTax(
     year = taxYear,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
@@ -109,13 +109,6 @@ trait ControllerBaseSpec extends BaseSpec {
     nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
     totalCgTaxRate = Rate("12.34%"),
     nicsAndTaxRate = Rate("56.78%"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
-  )
-
-  protected val totalIncomeTaxModel: TotalIncomeTax = TotalIncomeTax(
-    model,
     startingRateForSavings = Amount(110, "GBP"),
     startingRateForSavingsAmount = Amount(140, "GBP"),
     basicRateIncomeTax = Amount(1860, "GBP"),

@@ -56,7 +56,7 @@ class NicsController @Inject() (
     Ok(
       nicsView(
         result,
-        getActingAsAttorneyFor(request, result.summary.forename, result.summary.surname, result.summary.utr)
+        getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)
       )
     )
 }
