@@ -28,7 +28,7 @@ import view_models._
 
 import scala.concurrent.Future
 
-class NicsSummaryControllerSpec extends ControllerBaseSpec {
+class NicsControllerSpec extends ControllerBaseSpec {
 
   val dataPath = "/summary_json_test_2021.json"
 

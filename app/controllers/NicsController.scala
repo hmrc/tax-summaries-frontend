@@ -46,17 +46,6 @@ class NicsController @Inject() (
     show(request)
   }
 
-  /*
-    NicsController/ NicsView (annual-tax-summary/nics) is page to be changed
-    TotalIncomeTaxController/ TotalIncomeTaxView is page with income tax data to be got rid of
-   */
-
-  // TODO 8717: Need to:-
-  //  1) Merge TotalIncomeTax model and Summary model into a new IncomeTaxAndNI model,
-  //  2) Create new IncomeTaxAndNIService to get the data for above and call from NicsController
-  //  3) Amend NicsView to include fields from TotalIncomeTaxView
-  //  4) get rid of TotalIncomeTaxController + view
-
   type ViewModel = IncomeTaxAndNI
 
   override def extractViewModel()(implicit
