@@ -51,10 +51,10 @@ class NicsController @Inject() (
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
   ): Future[Either[ErrorResponse, GenericViewModel]] =
-    extractViewModelWithTaxYear(i =>
+    extractViewModelWithTaxYear(taxYear =>
       for {
-        summaryVM <- summaryService.getSummaryData(i)
-        incomeVM  <- totalIncomeTaxService.getIncomeData(i)
+        summaryVM <- summaryService.getSummaryData(taxYear)
+        incomeVM  <- totalIncomeTaxService.getIncomeData(taxYear)
       } yield
         if (!summaryVM.isInstanceOf[Summary]) {
           summaryVM
