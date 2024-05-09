@@ -34,104 +34,113 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
 
   // scalastyle:off method.length
   private[services] def totalIncomeConverter(atsData: AtsData): IncomeTaxAndNI = {
-    def payload(key: String): Amount =
+    def getFromIncomeTaxPayload(key: String): Amount =
       atsData.income_tax.flatMap(_.payload.flatMap(_.get(key))).getOrElse(Amount.empty)
 
-    def rates(key: String): Rate =
+    val summaryData: DataHolder = atsData.summary_data.fold(DataHolder(None, None, None))(identity)
+
+    def getFromSummaryPayload(key: String): Amount = summaryData.payload
+      .flatMap(_.get(key))
+      .getOrElse(Amount.empty)
+
+    def getFromSummaryRates(key: String): Rate =
+      atsData.summary_data.flatMap(_.rates.flatMap(_.get(key))).getOrElse(Rate.empty)
+
+    def getFromIncomeTaxRates(key: String): Rate =
       atsData.income_tax.flatMap(_.rates.flatMap(_.get(key))).getOrElse(Rate.empty)
 
     def taxpayerName(key: String): String =
       atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
     val scottishTax = ScottishTax(
-      payload("scottish_starter_rate_tax"),
-      payload("scottish_starter_income"),
-      payload("scottish_basic_rate_tax"),
-      payload("scottish_basic_income"),
-      payload("scottish_intermediate_rate_tax"),
-      payload("scottish_intermediate_income"),
-      payload("scottish_higher_rate_tax"),
-      payload("scottish_higher_income"),
-      payload("scottish_additional_rate_tax"),
-      payload("scottish_additional_income"),
-      payload("scottish_total_tax")
+      getFromIncomeTaxPayload("scottish_starter_rate_tax"),
+      getFromIncomeTaxPayload("scottish_starter_income"),
+      getFromIncomeTaxPayload("scottish_basic_rate_tax"),
+      getFromIncomeTaxPayload("scottish_basic_income"),
+      getFromIncomeTaxPayload("scottish_intermediate_rate_tax"),
+      getFromIncomeTaxPayload("scottish_intermediate_income"),
+      getFromIncomeTaxPayload("scottish_higher_rate_tax"),
+      getFromIncomeTaxPayload("scottish_higher_income"),
+      getFromIncomeTaxPayload("scottish_additional_rate_tax"),
+      getFromIncomeTaxPayload("scottish_additional_income"),
+      getFromIncomeTaxPayload("scottish_total_tax")
     )
 
     val savingsTax = SavingsTax(
-      payload("savings_lower_rate_tax"),
-      payload("savings_lower_income"),
-      payload("savings_higher_rate_tax"),
-      payload("savings_higher_income"),
-      payload("savings_additional_rate_tax"),
-      payload("savings_additional_income")
+      getFromIncomeTaxPayload("savings_lower_rate_tax"),
+      getFromIncomeTaxPayload("savings_lower_income"),
+      getFromIncomeTaxPayload("savings_higher_rate_tax"),
+      getFromIncomeTaxPayload("savings_higher_income"),
+      getFromIncomeTaxPayload("savings_additional_rate_tax"),
+      getFromIncomeTaxPayload("savings_additional_income")
     )
 
     val scottishRates = ScottishRates(
-      rates("scottish_starter_rate"),
-      rates("scottish_basic_rate"),
-      rates("scottish_intermediate_rate"),
-      rates("scottish_higher_rate"),
-      rates("scottish_additional_rate")
+      getFromIncomeTaxRates("scottish_starter_rate"),
+      getFromIncomeTaxRates("scottish_basic_rate"),
+      getFromIncomeTaxRates("scottish_intermediate_rate"),
+      getFromIncomeTaxRates("scottish_higher_rate"),
+      getFromIncomeTaxRates("scottish_additional_rate")
     )
 
     val savingsRates = SavingsRates(
-      rates("savings_lower_rate"),
-      rates("savings_higher_rate"),
-      rates("savings_additional_rate")
+      getFromIncomeTaxRates("savings_lower_rate"),
+      getFromIncomeTaxRates("savings_higher_rate"),
+      getFromIncomeTaxRates("savings_additional_rate")
     )
 
-    val summaryData: DataHolder = atsData.summary_data.get
     IncomeTaxAndNI(
       year = atsData.taxYear,
       utr = atsData.utr.get,
-      employeeNicAmount = summaryData.payload.get("employee_nic_amount"),
-      totalIncomeTaxAndNics = summaryData.payload.get("total_income_tax_and_nics"),
-      yourTotalTax = summaryData.payload.get("your_total_tax"),
-      totalTaxFree = summaryData.payload.get("personal_tax_free_amount"),
-      totalTaxFreeAllowance = summaryData.payload.get("total_tax_free_amount"),
-      yourIncomeBeforeTax = summaryData.payload.get("total_income_before_tax"),
-      totalIncomeTaxAmount = summaryData.payload.get("total_income_tax"),
-      totalCapitalGainsTax = summaryData.payload.get("total_cg_tax"),
-      taxableGains = summaryData.payload.get("taxable_gains"),
-      cgTaxPerCurrencyUnit = summaryData.payload.get("cg_tax_per_currency_unit"),
-      nicsAndTaxPerCurrencyUnit = summaryData.payload.get("nics_and_tax_per_currency_unit"),
-      totalCgTaxRate = summaryData.rates.get("total_cg_tax_rate"),
-      nicsAndTaxRate = summaryData.rates.get("nics_and_tax_rate"),
-      startingRateForSavings = payload("starting_rate_for_savings"),
-      startingRateForSavingsAmount = payload("starting_rate_for_savings_amount"),
-      basicRateIncomeTax = payload("basic_rate_income_tax"),
-      basicRateIncomeTaxAmount = payload("basic_rate_income_tax_amount"),
-      higherRateIncomeTax = payload("higher_rate_income_tax"),
-      higherRateIncomeTaxAmount = payload("higher_rate_income_tax_amount"),
-      additionalRateIncomeTax = payload("additional_rate_income_tax"),
-      additionalRateIncomeTaxAmount = payload("additional_rate_income_tax_amount"),
-      ordinaryRate = payload("ordinary_rate"),
-      ordinaryRateAmount = payload("ordinary_rate_amount"),
-      upperRate = payload("upper_rate"),
-      upperRateAmount = payload("upper_rate_amount"),
-      additionalRate = payload("additional_rate"),
-      additionalRateAmount = payload("additional_rate_amount"),
-      otherAdjustmentsIncreasing = payload("other_adjustments_increasing"),
-      marriageAllowanceReceivedAmount = payload("marriage_allowance_received_amount"),
-      otherAdjustmentsReducing = -payload("other_adjustments_reducing"),
+      employeeNicAmount = getFromSummaryPayload("employee_nic_amount"),
+      totalIncomeTaxAndNics = getFromSummaryPayload("total_income_tax_and_nics"),
+      yourTotalTax = getFromSummaryPayload("your_total_tax"),
+      totalTaxFree = getFromSummaryPayload("personal_tax_free_amount"),
+      totalTaxFreeAllowance = getFromSummaryPayload("total_tax_free_amount"),
+      yourIncomeBeforeTax = getFromSummaryPayload("total_income_before_tax"),
+      totalIncomeTaxAmount = getFromSummaryPayload("total_income_tax"),
+      totalCapitalGainsTax = getFromSummaryPayload("total_cg_tax"),
+      taxableGains = getFromSummaryPayload("taxable_gains"),
+      cgTaxPerCurrencyUnit = getFromSummaryPayload("cg_tax_per_currency_unit"),
+      nicsAndTaxPerCurrencyUnit = getFromSummaryPayload("nics_and_tax_per_currency_unit"),
+      totalCgTaxRate = getFromSummaryRates("total_cg_tax_rate"),
+      nicsAndTaxRate = getFromSummaryRates("nics_and_tax_rate"),
+      startingRateForSavings = getFromIncomeTaxPayload("starting_rate_for_savings"),
+      startingRateForSavingsAmount = getFromIncomeTaxPayload("starting_rate_for_savings_amount"),
+      basicRateIncomeTax = getFromIncomeTaxPayload("basic_rate_income_tax"),
+      basicRateIncomeTaxAmount = getFromIncomeTaxPayload("basic_rate_income_tax_amount"),
+      higherRateIncomeTax = getFromIncomeTaxPayload("higher_rate_income_tax"),
+      higherRateIncomeTaxAmount = getFromIncomeTaxPayload("higher_rate_income_tax_amount"),
+      additionalRateIncomeTax = getFromIncomeTaxPayload("additional_rate_income_tax"),
+      additionalRateIncomeTaxAmount = getFromIncomeTaxPayload("additional_rate_income_tax_amount"),
+      ordinaryRate = getFromIncomeTaxPayload("ordinary_rate"),
+      ordinaryRateAmount = getFromIncomeTaxPayload("ordinary_rate_amount"),
+      upperRate = getFromIncomeTaxPayload("upper_rate"),
+      upperRateAmount = getFromIncomeTaxPayload("upper_rate_amount"),
+      additionalRate = getFromIncomeTaxPayload("additional_rate"),
+      additionalRateAmount = getFromIncomeTaxPayload("additional_rate_amount"),
+      otherAdjustmentsIncreasing = getFromIncomeTaxPayload("other_adjustments_increasing"),
+      marriageAllowanceReceivedAmount = getFromIncomeTaxPayload("marriage_allowance_received_amount"),
+      otherAdjustmentsReducing = -getFromIncomeTaxPayload("other_adjustments_reducing"),
       scottishTax = scottishTax,
-      totalIncomeTax = payload("total_income_tax"),
-      scottishIncomeTax = payload("scottish_income_tax"),
-      welshIncomeTax = payload("welsh_income_tax"),
+      totalIncomeTax = getFromIncomeTaxPayload("total_income_tax"),
+      scottishIncomeTax = getFromIncomeTaxPayload("scottish_income_tax"),
+      welshIncomeTax = getFromIncomeTaxPayload("welsh_income_tax"),
       savingsTax = savingsTax,
       incomeTaxStatus = atsData.income_tax.flatMap(_.incomeTaxStatus).getOrElse(""),
-      startingRateForSavingsRateRate = rates("starting_rate_for_savings_rate"),
-      basicRateIncomeTaxRateRate = rates("basic_rate_income_tax_rate"),
-      higherRateIncomeTaxRateRate = rates("higher_rate_income_tax_rate"),
-      additionalRateIncomeTaxRateRate = rates("additional_rate_income_tax_rate"),
-      ordinaryRateTaxRateRate = rates("ordinary_rate_tax_rate"),
-      upperRateRateRate = rates("upper_rate_rate"),
-      additionalRateRateRate = rates("additional_rate_rate"),
+      startingRateForSavingsRateRate = getFromIncomeTaxRates("starting_rate_for_savings_rate"),
+      basicRateIncomeTaxRateRate = getFromIncomeTaxRates("basic_rate_income_tax_rate"),
+      higherRateIncomeTaxRateRate = getFromIncomeTaxRates("higher_rate_income_tax_rate"),
+      additionalRateIncomeTaxRateRate = getFromIncomeTaxRates("additional_rate_income_tax_rate"),
+      ordinaryRateTaxRateRate = getFromIncomeTaxRates("ordinary_rate_tax_rate"),
+      upperRateRateRate = getFromIncomeTaxRates("upper_rate_rate"),
+      additionalRateRateRate = getFromIncomeTaxRates("additional_rate_rate"),
       scottishRates = scottishRates,
       savingsRates = savingsRates,
       title = taxpayerName("title"),
       forename = taxpayerName("forename"),
       surname = taxpayerName("surname")
     )
+
   }
 }

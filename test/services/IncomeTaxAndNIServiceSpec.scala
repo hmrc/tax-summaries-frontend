@@ -91,7 +91,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       Rate("150%")
     )
 
-    "return complete TotalIncomeTax data when given complete AtsData for scottish tax payer" in {
+    "return complete IncomeTaxAndNI data when given complete AtsData for scottish tax payer" in {
       val incomeData: AtsData    = AtsTestData.totalIncomeTaxData
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
@@ -171,7 +171,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       )
     }
 
-    "return complete TotalIncomeTax data when given complete AtsData for welsh tax payer" in {
+    "return complete IncomeTaxAndNI data when given complete AtsData for welsh tax payer" in {
       val incomeData: AtsData    = AtsTestData.incomeTaxDataForWelshTaxPayer
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
@@ -191,6 +191,64 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         nicsAndTaxPerCurrencyUnit = Amount(1000, "GBP"),
         totalCgTaxRate = Rate("10.00%"),
         nicsAndTaxRate = Rate("20.00%"),
+        startingRateForSavings = Amount(100, "GBP"),
+        startingRateForSavingsAmount = Amount(200, "GBP"),
+        basicRateIncomeTax = Amount(300, "GBP"),
+        basicRateIncomeTaxAmount = Amount(400, "GBP"),
+        higherRateIncomeTax = Amount(500, "GBP"),
+        higherRateIncomeTaxAmount = Amount(600, "GBP"),
+        additionalRateIncomeTax = Amount(700, "GBP"),
+        additionalRateIncomeTaxAmount = Amount(800, "GBP"),
+        ordinaryRate = Amount(900, "GBP"),
+        ordinaryRateAmount = Amount(1000, "GBP"),
+        upperRate = Amount(1100, "GBP"),
+        upperRateAmount = Amount(1200, "GBP"),
+        additionalRate = Amount(1300, "GBP"),
+        additionalRateAmount = Amount(1400, "GBP"),
+        otherAdjustmentsIncreasing = Amount(1500, "GBP"),
+        marriageAllowanceReceivedAmount = Amount(1600, "GBP"),
+        otherAdjustmentsReducing = Amount(1700, "GBP"),
+        scottishTax = ScottishTax.empty,
+        totalIncomeTax = Amount.gbp(3500),
+        scottishIncomeTax = Amount.empty,
+        welshIncomeTax = Amount.gbp(2600),
+        savingsTax = savingsTax,
+        incomeTaxStatus = "0003",
+        startingRateForSavingsRateRate = Rate("10%"),
+        basicRateIncomeTaxRateRate = Rate("20%"),
+        higherRateIncomeTaxRateRate = Rate("30%"),
+        additionalRateIncomeTaxRateRate = Rate("40%"),
+        ordinaryRateTaxRateRate = Rate("50%"),
+        upperRateRateRate = Rate("60%"),
+        additionalRateRateRate = Rate("70%"),
+        scottishRates = ScottishRates.empty,
+        savingsRates = savingsRates,
+        title = "Mr",
+        forename = "John",
+        surname = "Smith"
+      )
+    }
+
+    "return IncomeTaxAndNI data with empty values when summary data missing" in {
+      val incomeData: AtsData    = AtsTestData.incomeTaxDataForWelshTaxPayer.copy(summary_data = None)
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
+
+      result mustEqual IncomeTaxAndNI(
+        year = 2022,
+        utr = "1111111111",
+        employeeNicAmount = Amount.empty,
+        totalIncomeTaxAndNics = Amount.empty,
+        yourTotalTax = Amount.empty,
+        totalTaxFree = Amount.empty,
+        totalTaxFreeAllowance = Amount.empty,
+        yourIncomeBeforeTax = Amount.empty,
+        totalIncomeTaxAmount = Amount.empty,
+        totalCapitalGainsTax = Amount.empty,
+        taxableGains = Amount.empty,
+        cgTaxPerCurrencyUnit = Amount.empty,
+        nicsAndTaxPerCurrencyUnit = Amount.empty,
+        totalCgTaxRate = Rate.empty,
+        nicsAndTaxRate = Rate.empty,
         startingRateForSavings = Amount(100, "GBP"),
         startingRateForSavingsAmount = Amount(200, "GBP"),
         basicRateIncomeTax = Amount(300, "GBP"),
