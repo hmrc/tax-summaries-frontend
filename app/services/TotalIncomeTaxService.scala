@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Inject
 import controllers.auth.requests.AuthenticatedRequest
-import models.AtsData
+import models.{AtsData, DataHolder}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.GenericViewModel
 import view_models._
@@ -31,6 +31,30 @@ class TotalIncomeTaxService @Inject() (atsService: AtsService) {
     taxYear: Int
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[GenericViewModel] =
     atsService.createModel(taxYear, totalIncomeConverter)
+
+  private[services] def summaryConverter(atsData: AtsData): Summary = {
+    val summaryData: DataHolder = atsData.summary_data.get
+    Summary(
+      atsData.taxYear,
+      atsData.utr.get,
+      summaryData.payload.get("employee_nic_amount"),
+      summaryData.payload.get("total_income_tax_and_nics"),
+      summaryData.payload.get("your_total_tax"),
+      summaryData.payload.get("personal_tax_free_amount"),
+      summaryData.payload.get("total_tax_free_amount"),
+      summaryData.payload.get("total_income_before_tax"),
+      summaryData.payload.get("total_income_tax"),
+      summaryData.payload.get("total_cg_tax"),
+      summaryData.payload.get("taxable_gains"),
+      summaryData.payload.get("cg_tax_per_currency_unit"),
+      summaryData.payload.get("nics_and_tax_per_currency_unit"),
+      summaryData.rates.get("total_cg_tax_rate"),
+      summaryData.rates.get("nics_and_tax_rate"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
+    )
+  }
 
   private[services] def totalIncomeConverter(atsData: AtsData): TotalIncomeTax = {
     def payload(key: String): Amount =
@@ -79,7 +103,30 @@ class TotalIncomeTaxService @Inject() (atsService: AtsService) {
       rates("savings_additional_rate")
     )
 
+    val summaryData: DataHolder = atsData.summary_data.get
+    val summary                 = Summary(
+      atsData.taxYear,
+      atsData.utr.get,
+      summaryData.payload.get("employee_nic_amount"),
+      summaryData.payload.get("total_income_tax_and_nics"),
+      summaryData.payload.get("your_total_tax"),
+      summaryData.payload.get("personal_tax_free_amount"),
+      summaryData.payload.get("total_tax_free_amount"),
+      summaryData.payload.get("total_income_before_tax"),
+      summaryData.payload.get("total_income_tax"),
+      summaryData.payload.get("total_cg_tax"),
+      summaryData.payload.get("taxable_gains"),
+      summaryData.payload.get("cg_tax_per_currency_unit"),
+      summaryData.payload.get("nics_and_tax_per_currency_unit"),
+      summaryData.rates.get("total_cg_tax_rate"),
+      summaryData.rates.get("nics_and_tax_rate"),
+      atsData.taxPayerData.get.taxpayer_name.get("title"),
+      atsData.taxPayerData.get.taxpayer_name.get("forename"),
+      atsData.taxPayerData.get.taxpayer_name.get("surname")
+    )
+
     TotalIncomeTax(
+      summary,
       payload("starting_rate_for_savings"),
       payload("starting_rate_for_savings_amount"),
       payload("basic_rate_income_tax"),

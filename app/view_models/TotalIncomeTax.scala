@@ -19,6 +19,7 @@ package view_models
 import utils.GenericViewModel
 
 case class TotalIncomeTax(
+  summary: Summary,
   startingRateForSavings: Amount,
   startingRateForSavingsAmount: Amount,
   basicRateIncomeTax: Amount,
@@ -55,6 +56,10 @@ case class TotalIncomeTax(
   forename: String,
   surname: String
 ) extends GenericViewModel {
+
+  def utr: String         = summary.utr
+  def taxYearTo: String   = summary.taxYearTo
+  def taxYearFrom: String = summary.taxYearFrom
 
   val isScottishTaxPayer: Boolean = incomeTaxStatus == "0002"
   val isWelshTaxPayer: Boolean    = incomeTaxStatus == "0003"

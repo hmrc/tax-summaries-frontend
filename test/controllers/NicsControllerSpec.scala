@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
-import services.{AuditService, SummaryService, TotalIncomeTaxService}
+import services.{AuditService, TotalIncomeTaxService}
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
@@ -32,34 +32,11 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
   val dataPath = "/summary_json_test_2021.json"
 
-  val model: Summary = Summary(
-    year = taxYear,
-    utr = testUtr,
-    employeeNicAmount = Amount(1200, "GBP"),
-    totalIncomeTaxAndNics = Amount(1400, "GBP"),
-    yourTotalTax = Amount(1800, "GBP"),
-    totalTaxFree = Amount(9440, "GBP"),
-    totalTaxFreeAllowance = Amount(9740, "GBP"),
-    yourIncomeBeforeTax = Amount(11600, "GBP"),
-    totalIncomeTaxAmount = Amount(372, "GBP"),
-    totalCapitalGainsTax = Amount(5500, "GBP"),
-    taxableGains = Amount(20000, "GBP"),
-    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
-    nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
-    totalCgTaxRate = Rate("12.34%"),
-    nicsAndTaxRate = Rate("56.78%"),
-    title = "Mr",
-    forename = "forename",
-    surname = "surname"
-  )
-
-  val mockSummaryService: SummaryService = mock[SummaryService]
-  val mockAuditService: AuditService     = mock[AuditService]
-  private val mockTotalIncomeTaxService  = mock[TotalIncomeTaxService]
+  val mockAuditService: AuditService    = mock[AuditService]
+  private val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
 
   private def sut =
     new NicsController(
-      mockSummaryService,
       mockAuditService,
       FakeAuthJourney,
       mcc,
@@ -72,8 +49,6 @@ class NicsControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
     reset(mockTotalIncomeTaxService)
-    when(mockSummaryService.getSummaryData(any())(any(), any()))
-      .thenReturn(Future.successful(model))
     when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
       .thenReturn(Future.successful(totalIncomeTaxModel))
   }
@@ -97,7 +72,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -108,7 +83,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(NoATSViewModel(taxYear)))
 
       val result = sut.show(request)

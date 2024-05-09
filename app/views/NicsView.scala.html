@@ -31,7 +31,7 @@
     totalIncomeTaxView:TotalIncomeTaxView
 )
 
-@(  viewModel: view_models.IncomeTaxAndNI,
+@(  viewModel: view_models.TotalIncomeTax,
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit request: AuthenticatedRequest[_],
@@ -61,7 +61,7 @@
     @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
       "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.summary.nicsAndTaxRate).percent+"</span>")))
 
-    @totalIncomeTaxView(viewModel.totalIncomeTax)
+    @totalIncomeTaxView(viewModel)
 
     <table id="total-income-tax" class="govuk-table">
       <thead class="govuk-table__head">

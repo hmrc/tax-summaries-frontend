@@ -184,12 +184,10 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     "show ats error page for nics on summary page" in {
       when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.successful(totalIncomeTaxModel))
-      val mockSummaryService = mock[SummaryService]
-      val mockAuditService   = mock[AuditService]
+      val mockAuditService = mock[AuditService]
 
       def sut =
         new NicsController(
-          mockSummaryService,
           mockAuditService,
           FakeAuthJourney,
           mcc,
@@ -199,7 +197,7 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mockTotalIncomeTaxService
         )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)

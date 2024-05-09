@@ -22,16 +22,15 @@ import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AuditService, SummaryService, TotalIncomeTaxService}
+import services.{AuditService, TotalIncomeTaxService}
 import utils.GenericViewModel
-import view_models.{IncomeTaxAndNI, Summary, TotalIncomeTax}
+import view_models.TotalIncomeTax
 import views.html.NicsView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NicsController @Inject() (
-  summaryService: SummaryService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
@@ -46,24 +45,12 @@ class NicsController @Inject() (
     show(request)
   }
 
-  type ViewModel = IncomeTaxAndNI
+  type ViewModel = TotalIncomeTax
 
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
   ): Future[Either[ErrorResponse, GenericViewModel]] =
-    extractViewModelWithTaxYear(taxYear =>
-      for {
-        summaryVM <- summaryService.getSummaryData(taxYear)
-        incomeVM  <- totalIncomeTaxService.getIncomeData(taxYear)
-      } yield
-        if (!summaryVM.isInstanceOf[Summary]) {
-          summaryVM
-        } else if (!incomeVM.isInstanceOf[TotalIncomeTax]) {
-          incomeVM
-        } else {
-          IncomeTaxAndNI(summaryVM.asInstanceOf[Summary], incomeVM.asInstanceOf[TotalIncomeTax])
-        }
-    )
+    extractViewModelWithTaxYear(totalIncomeTaxService.getIncomeData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
     Ok(

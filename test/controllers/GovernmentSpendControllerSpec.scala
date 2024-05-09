@@ -40,6 +40,34 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
+    val model: GovernmentSpend = GovernmentSpend(
+      taxYear = 2023,
+      userUtr = testUtr,
+      govSpendAmountData = List(
+        ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
+        ("health", SpendData(Amount(4512.19, "GBP"), 18.87)),
+        ("education", SpendData(Amount(3144.43, "GBP"), 13.15)),
+        ("pension", SpendData(Amount(2898.13, "GBP"), 12.12)),
+        ("national_debt_interest", SpendData(Amount(1673.84, "GBP"), 7.00)),
+        ("defence", SpendData(Amount(1269.73, "GBP"), 5.31)),
+        ("criminal_justice", SpendData(Amount(1052.13, "GBP"), 4.40)),
+        ("transport", SpendData(Amount(705.4, "GBP"), 2.95)),
+        ("business_and_industry", SpendData(Amount(655.19, "GBP"), 2.74)),
+        ("government_administration", SpendData(Amount(490.2, "GBP"), 2.05)),
+        ("Culture", SpendData(Amount(404.11, "GBP"), 1.69)),
+        ("HousingAndUtilities", SpendData(Amount(392.16, "GBP"), 1.64)),
+        ("Environment", SpendData(Amount(396.94, "GBP"), 1.66)),
+        ("overseas_aid", SpendData(Amount(274.99, "GBP"), 1.15)),
+        ("uk_contribution_to_eu_budget", SpendData(Amount(179.34, "GBP"), 0.75))
+      ),
+      userTitle = "Mr",
+      userForename = "userForename",
+      userSurname = "userSurname",
+      totalAmount = new Amount(23912.00, "GBP"),
+      incomeTaxStatus = "0002",
+      scottishIncomeTax = new Amount(2000.00, "GBP")
+    )
+
     when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
       .thenReturn(Future.successful(model))
   }
@@ -54,34 +82,6 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       genericErrorView,
       tokenErrorView
     )
-
-  val model: GovernmentSpend = GovernmentSpend(
-    taxYear = 2023,
-    userUtr = testUtr,
-    govSpendAmountData = List(
-      ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
-      ("health", SpendData(Amount(4512.19, "GBP"), 18.87)),
-      ("education", SpendData(Amount(3144.43, "GBP"), 13.15)),
-      ("pension", SpendData(Amount(2898.13, "GBP"), 12.12)),
-      ("national_debt_interest", SpendData(Amount(1673.84, "GBP"), 7.00)),
-      ("defence", SpendData(Amount(1269.73, "GBP"), 5.31)),
-      ("criminal_justice", SpendData(Amount(1052.13, "GBP"), 4.40)),
-      ("transport", SpendData(Amount(705.4, "GBP"), 2.95)),
-      ("business_and_industry", SpendData(Amount(655.19, "GBP"), 2.74)),
-      ("government_administration", SpendData(Amount(490.2, "GBP"), 2.05)),
-      ("Culture", SpendData(Amount(404.11, "GBP"), 1.69)),
-      ("HousingAndUtilities", SpendData(Amount(392.16, "GBP"), 1.64)),
-      ("Environment", SpendData(Amount(396.94, "GBP"), 1.66)),
-      ("overseas_aid", SpendData(Amount(274.99, "GBP"), 1.15)),
-      ("uk_contribution_to_eu_budget", SpendData(Amount(179.34, "GBP"), 0.75))
-    ),
-    userTitle = "Mr",
-    userForename = "userForename",
-    userSurname = "userSurname",
-    totalAmount = new Amount(23912.00, "GBP"),
-    incomeTaxStatus = "0002",
-    scottishIncomeTax = new Amount(2000.00, "GBP")
-  )
 
   "Calling government spend" must {
 

@@ -98,9 +98,9 @@ object AtsTestData {
   )
 
   val totalIncomeTaxData = AtsData(
-    2022,
-    Some("1111111111"),
-    Some(
+    taxYear = 2022,
+    utr = Some("1111111111"),
+    income_tax = Some(
       DataHolder(
         Some(
           Map(
@@ -164,12 +164,37 @@ object AtsTestData {
         Some("0002")
       )
     ),
-    None,
-    None,
-    None,
-    None,
-    None,
-    Some(
+    summary_data = Some(
+      DataHolder(
+        Some(
+          Map(
+            "employee_nic_amount"            -> Amount(100, "GBP"),
+            "total_income_tax_and_nics"      -> Amount(200, "GBP"),
+            "your_total_tax"                 -> Amount(300, "GBP"),
+            "personal_tax_free_amount"       -> Amount(400, "GBP"),
+            "total_tax_free_amount"          -> Amount(400, "GBP"),
+            "total_income_before_tax"        -> Amount(500, "GBP"),
+            "total_income_tax"               -> Amount(600, "GBP"),
+            "total_cg_tax"                   -> Amount(700, "GBP"),
+            "taxable_gains"                  -> Amount(800, "GBP"),
+            "cg_tax_per_currency_unit"       -> Amount(900, "GBP"),
+            "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP")
+          )
+        ),
+        Some(
+          Map(
+            "total_cg_tax_rate" -> Rate("10.00%"),
+            "nics_and_tax_rate" -> Rate("20.00%")
+          )
+        ),
+        None
+      )
+    ),
+    income_data = None,
+    allowance_data = None,
+    capital_gains_data = None,
+    gov_spending = None,
+    taxPayerData = Some(
       UserData(
         Some(
           Map(
@@ -180,7 +205,7 @@ object AtsTestData {
         )
       )
     ),
-    None
+    errors = None
   )
 
   val govSpendingDataForWelshUser = AtsData(
@@ -301,10 +326,10 @@ object AtsTestData {
   )
 
   val summaryData = AtsData(
-    2022,
-    Some("1111111111"),
-    None,
-    Some(
+    taxYear = 2022,
+    utr = Some("1111111111"),
+    income_tax = None,
+    summary_data = Some(
       DataHolder(
         Some(
           Map(
@@ -330,11 +355,11 @@ object AtsTestData {
         None
       )
     ),
-    None,
-    None,
-    None,
-    None,
-    Some(
+    income_data = None,
+    allowance_data = None,
+    capital_gains_data = None,
+    gov_spending = None,
+    taxPayerData = Some(
       UserData(
         Some(
           Map(
@@ -345,7 +370,7 @@ object AtsTestData {
         )
       )
     ),
-    None
+    errors = None
   )
 
   val capitalGainsData = AtsData(
@@ -426,9 +451,9 @@ object AtsTestData {
   )
 
   val incomeTaxDataForWelshTaxPayer = AtsData(
-    2022,
-    Some("1111111111"),
-    Some(
+    taxYear = 2022,
+    utr = Some("1111111111"),
+    income_tax = Some(
       DataHolder(
         Some(
           Map(
@@ -476,12 +501,37 @@ object AtsTestData {
         Some("0003")
       )
     ),
-    None,
-    None,
-    None,
-    None,
-    None,
-    Some(
+    summary_data = Some(
+      DataHolder(
+        Some(
+          Map(
+            "employee_nic_amount"            -> Amount(100, "GBP"),
+            "total_income_tax_and_nics"      -> Amount(200, "GBP"),
+            "your_total_tax"                 -> Amount(300, "GBP"),
+            "personal_tax_free_amount"       -> Amount(400, "GBP"),
+            "total_tax_free_amount"          -> Amount(400, "GBP"),
+            "total_income_before_tax"        -> Amount(500, "GBP"),
+            "total_income_tax"               -> Amount(600, "GBP"),
+            "total_cg_tax"                   -> Amount(700, "GBP"),
+            "taxable_gains"                  -> Amount(800, "GBP"),
+            "cg_tax_per_currency_unit"       -> Amount(900, "GBP"),
+            "nics_and_tax_per_currency_unit" -> Amount(1000, "GBP")
+          )
+        ),
+        Some(
+          Map(
+            "total_cg_tax_rate" -> Rate("10.00%"),
+            "nics_and_tax_rate" -> Rate("20.00%")
+          )
+        ),
+        None
+      )
+    ),
+    income_data = None,
+    allowance_data = None,
+    capital_gains_data = None,
+    gov_spending = None,
+    taxPayerData = Some(
       UserData(
         Some(
           Map(
@@ -492,6 +542,6 @@ object AtsTestData {
         )
       )
     ),
-    None
+    errors = None
   )
 }
