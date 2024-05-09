@@ -31,6 +31,7 @@ generic.hm.revenue = HM Revenue
 generic.hm.and = &
 generic.hm.customs = Customs
 generic.at=at
+generic.total=Total
 site.back=Back
 generic.error = Error:
 view.languageToggle.english=English
