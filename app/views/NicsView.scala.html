@@ -61,7 +61,7 @@
     @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
       "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.summary.nicsAndTaxRate).percent+"</span>")))
 
-    @totalIncomeTaxView(viewModel.totalIncomeTax, actingAsAttorney)
+    @totalIncomeTaxView(viewModel.totalIncomeTax)
 
     <table id="total-income-tax" class="govuk-table">
       <thead class="govuk-table__head">

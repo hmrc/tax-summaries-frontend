@@ -21,18 +21,12 @@
 @import views.html.helpers.HeaderSection
 
 @this(
-    headerSection: HeaderSection,
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
     currencyAmountView: CurrencyAmountView
 )
 
-@(  viewModel: view_models.TotalIncomeTax,
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None
-    )(
-    implicit request: AuthenticatedRequest[_],
-    messages: Messages
-)
+@(viewModel: view_models.TotalIncomeTax)(implicit messages: Messages)
 
 @if(viewModel.showIncomeTaxTable) {
 <table id="income-tax" class="govuk-table">

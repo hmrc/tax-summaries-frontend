@@ -18,9 +18,8 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import play.api.i18n.Messages
 import org.mockito.ArgumentMatchers.{any, eq => meq}
+import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services.{AuditService, SummaryService, TotalIncomeTaxService}
 import utils.ControllerBaseSpec

@@ -18,7 +18,6 @@ package views
 
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models.ActingAsAttorneyFor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -54,7 +53,7 @@ class TotalIncomeTaxSpec extends ViewSpecBase with TestConstants with ScalaCheck
   def view: String = view(testTotalIncomeTax)
 
   def agentView: String =
-    totalIncomeTaxView(testTotalIncomeTax, Some(ActingAsAttorneyFor(Some("Agent"), Map()))).body
+    totalIncomeTaxView(testTotalIncomeTax).body
 
   implicit val arbAmount: Arbitrary[Amount]           = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate]               = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))
