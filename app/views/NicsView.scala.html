@@ -41,13 +41,13 @@
 @beforeContent = {
     @headerSection(
         name = viewModel.summary.forename + ' ' + viewModel.summary.surname,
-        utr = viewModel.summary.utr,
+        utr = viewModel.utr,
         actingAsAttorney = actingAsAttorney
     )
 }
 
 @main(
-        pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.summary.taxYearFrom, viewModel.summary.taxYearTo),
+        pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
         actingAttorney = actingAsAttorney,
         beforeContentHtml = Some(beforeContent),
         pageHeading = Messages("ats.nics.tax_and_nics.title"),
@@ -55,7 +55,7 @@
     ) {
     @pageHeading(
       text = "ats.nics.tax_and_nics.title",
-      section = Messages("generic.tax_year_heading", viewModel.summary.taxYearFrom, viewModel.summary.taxYearTo)
+      section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
     )
     @p(HtmlContent(Messages("ats.nics.tax_and_nics.lede")))
     @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",

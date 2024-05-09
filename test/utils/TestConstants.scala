@@ -37,8 +37,6 @@ trait TestConstants extends BaseSpec {
   def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
   val testTotalIncomeTax: TotalIncomeTax = TotalIncomeTax(
-    year = taxYear,
-    utr = "",
     Amount.empty,
     Amount.empty,
     Amount.empty,

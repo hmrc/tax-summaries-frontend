@@ -80,8 +80,6 @@ class TotalIncomeTaxService @Inject() (atsService: AtsService) {
     )
 
     TotalIncomeTax(
-      atsData.taxYear,
-      atsData.utr.getOrElse(""),
       payload("starting_rate_for_savings"),
       payload("starting_rate_for_savings_amount"),
       payload("basic_rate_income_tax"),

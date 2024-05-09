@@ -34,14 +34,6 @@
     messages: Messages
 )
 
-@beforeContent = {
-    @headerSection(
-        name = viewModel.forename + ' ' + viewModel.surname,
-        utr = viewModel.utr,
-        actingAsAttorney = actingAsAttorney
-    )
-}
-
 @if(viewModel.showIncomeTaxTable) {
 <table id="income-tax" class="govuk-table">
   <thead class="govuk-table__head">

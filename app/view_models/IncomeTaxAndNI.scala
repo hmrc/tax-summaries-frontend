@@ -22,6 +22,7 @@ case class IncomeTaxAndNI(
   summary: Summary,
   totalIncomeTax: TotalIncomeTax
 ) extends GenericViewModel {
-  def taxYear: String     = summary.year.toString
-  def taxYearFrom: String = (summary.year - 1).toString
+  def utr: String         = summary.utr
+  def taxYearTo: String   = summary.taxYearTo
+  def taxYearFrom: String = summary.taxYearFrom
 }

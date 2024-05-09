@@ -19,8 +19,6 @@ package view_models
 import utils.GenericViewModel
 
 case class TotalIncomeTax(
-  year: Int,
-  utr: String,
   startingRateForSavings: Amount,
   startingRateForSavingsAmount: Amount,
   basicRateIncomeTax: Amount,
@@ -61,8 +59,6 @@ case class TotalIncomeTax(
   val isScottishTaxPayer: Boolean = incomeTaxStatus == "0002"
   val isWelshTaxPayer: Boolean    = incomeTaxStatus == "0003"
 
-  def taxYear: String = year.toString
-
   def startingRateForSavingsRate: String  = startingRateForSavingsRateRate.percent
   def basicRateIncomeTaxRate: String      = basicRateIncomeTaxRateRate.percent
   def higherRateIncomeTaxRate: String     = higherRateIncomeTaxRateRate.percent
@@ -70,7 +66,6 @@ case class TotalIncomeTax(
   def ordinaryRateTaxRate: String         = ordinaryRateTaxRateRate.percent
   def upperRateRate: String               = upperRateRateRate.percent
   def additionalRateRate: String          = additionalRateRateRate.percent
-  def taxYearFrom: String                 = (year - 1).toString
 
   def showIncomeTaxTable: Boolean =
     startingRateForSavings.nonZero ||

@@ -28,7 +28,7 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants.{testNino, testUtr}
-import view_models.{Amount, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax, TotalIncomeTax}
+import view_models._
 import views.html._
 import views.html.errors._
 
@@ -94,8 +94,6 @@ trait ControllerBaseSpec extends BaseSpec {
   )
 
   protected val totalIncomeTaxModel: TotalIncomeTax = TotalIncomeTax(
-    year = 2023,
-    utr = testUtr,
     startingRateForSavings = Amount(110, "GBP"),
     startingRateForSavingsAmount = Amount(140, "GBP"),
     basicRateIncomeTax = Amount(1860, "GBP"),
