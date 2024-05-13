@@ -11,10 +11,6 @@ ThisBuild / scalafmtOnCompile := true
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
-    //:= "<empty>;Reverse.*;.*.Routes.*;prod.*;views.html.*;",
-//    ScoverageKeys.coverageExcludedPackages :=
-    //    "<empty>;Reverse.*;views.html.*;app.Routes.*;prod.*;uk.gov.hmrc.*;testOnlyDoNotUseInAppConf.*;config.*;models.*;connectors.*;awrs.app.*;view_models.*;views.helpers.*;
-    //    utils.validation.*;utils.prevalidation.*;",
     ScoverageKeys.coverageExcludedPackages := List(
       "<empty>",
       "Reverse.*",
