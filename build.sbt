@@ -45,6 +45,10 @@ lazy val microservice = Project(appName, file("."))
     )
   )
   .settings(routesImport ++= Seq("models.admin._"))
+  .configs(A11yTest)
+  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings) *)
+  .settings(headerSettings(A11yTest) *)
+  .settings(automateHeaderSettings(A11yTest))
 
 Test / Keys.fork := true
 Test / parallelExecution := true
@@ -60,16 +64,6 @@ lazy val it = project
     DefaultBuildSettings.itSettings()
   )
 
-/*
-lazy val a11y = project
-  .enablePlugins(play.sbt.PlayScala)
-  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
-  .settings(
-    libraryDependencies ++= AppDependencies.test,
-    DefaultBuildSettings.itSettings(),
-    A11yTest / unmanagedSourceDirectories += (baseDirectory.value / "test")
-  )
-*/
 
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",

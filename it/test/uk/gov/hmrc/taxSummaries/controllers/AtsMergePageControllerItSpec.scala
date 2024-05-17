@@ -53,8 +53,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"             -> server.port(),
-      "microservice.services.tax-summaries.port"    -> server.port(),
+      "microservice.services.auth.port"          -> server.port(),
+      "microservice.services.tax-summaries.port" -> server.port()
     )
     .overrides(
       api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
