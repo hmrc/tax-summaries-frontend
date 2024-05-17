@@ -172,25 +172,5 @@
     </table>
 }
 
-<table id="total-income-tax-nics" class="govuk-table">
-    <tbody class="govuk-table__body">
-    <tr class="govuk-table__row">
-        <th scope="row" class="govuk-table__header">@Messages("ats.total_income_tax.total_income_tax")</th>
-        <td id="total-income-tax-amount-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewUtils.positiveOrZero(viewModel.totalIncomeTax))</td>
-    </tr>
-    @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
-        <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.scottishIncomeTax)</td>
-    </tr>
-    }
-    @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
-        <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax)</td>
-    </tr>
-    }
-    </tbody>
-</table>
 
 

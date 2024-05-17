@@ -90,11 +90,19 @@
           <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
             <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics)</td>
         </tr>
+        @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
+                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.scottishIncomeTax)</td>
+            </tr>
+        }
+        @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
+                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax)</td>
+            </tr>
+        }      
       </tbody>
     </table>
-
-
-
-
 
 }
