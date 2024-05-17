@@ -20,6 +20,7 @@ import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, IncomeTaxAndNIService}
 import utils.ControllerBaseSpec
@@ -35,7 +36,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
   val mockAuditService: AuditService    = mock[AuditService]
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
 
-  private def sut =
+  private def nicsController =
     new NicsController(
       mockAuditService,
       FakeAuthJourney,
@@ -53,10 +54,27 @@ class NicsControllerSpec extends ControllerBaseSpec {
       .thenReturn(Future.successful(totalIncomeTaxModel))
   }
 
+  "Calling deprecated total income tax endpoint" must {
+    "redirect to the nics page when there is a tax year in request" in {
+      val result = nicsController.redirectForDeprecatedTotalIncomeTaxPage(request)
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe controllers.routes.NicsController.authorisedNics.url + s"?taxYear=$taxYear"
+    }
+
+    "redirect to the year selection page when there is a no tax year in request" in {
+      val result =
+        nicsController.redirectForDeprecatedTotalIncomeTaxPage(request copy (request = FakeRequest("GET", "/")))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe controllers.routes.AtsMergePageController.onPageLoad.url
+    }
+  }
+
   "Calling NICs" must {
 
     "return a successful response for a valid request" in {
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
@@ -65,7 +83,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page for an invalid request" in {
-      val result   = sut.show(badRequest)
+      val result   = nicsController.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
@@ -75,18 +93,18 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = sut.show(request)
+      val result = nicsController.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
-    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
+    "redirect to the main nics page when deprecated endpoint called" in {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(NoATSViewModel(taxYear)))
 
-      val result = sut.show(request)
+      val result = nicsController.show(request)
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
@@ -102,7 +120,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model2))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -123,7 +141,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model3))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -135,7 +153,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
     "have the right user data in the view" in {
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -173,7 +191,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
   "Dividends section" must {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in {
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -201,7 +219,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model4))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -221,7 +239,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(meq(taxYear))(any(), meq(request)))
         .thenReturn(Future.successful(model5))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -238,7 +256,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
     "have the right user data for adjustments increasing and reducing income tax" in {
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -254,7 +272,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model6))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -271,7 +289,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model7))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -288,7 +306,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model8))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 

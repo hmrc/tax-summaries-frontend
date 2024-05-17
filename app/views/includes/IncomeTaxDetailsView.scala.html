@@ -23,7 +23,8 @@
 @this(
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
-    currencyAmountView: CurrencyAmountView
+    currencyAmountView: CurrencyAmountView,
+    viewUtils: ViewUtils
 )
 
 @(viewModel: view_models.IncomeTaxAndNI)(implicit messages: Messages)
@@ -135,40 +136,61 @@
 }
 
 @if(viewModel.showAdjustmentsTable) {
-<table id="adjustments" class="govuk-table">
-  <thead class="govuk-table__head">
-    <tr id="adjustments-section" class="govuk-table__row">
-      <th scope="col" class="govuk-table__header">@Html(Messages("ats.total_income_tax.adjustments"))</th>
-      <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-    </tr>
-  </thead>
-
-  <tbody class="govuk-table__body">
-    @if(!viewModel.otherAdjustmentsIncreasing.isZero) {
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
-      <td id="other-adjustments-increasing-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.otherAdjustmentsIncreasing)</td>
-    </tr>
-    }
-
-    @if(!viewModel.marriageAllowanceReceivedAmount.isZero) {
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
-      <td id="marriage-allowance-received-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.marriageAllowanceReceivedAmount)</td>
-    </tr>
-    }
-
-    @if(!viewModel.otherAdjustmentsReducing.isZero) {
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
-      <td id="other-adjustments-reducing-amount" class="govuk-table__cell govuk-table__cell--numeric">
-          <span id="reducing-amount" class="govuk-visually-hidden">@currencyAmountView(viewModel.otherAdjustmentsReducing, twoDecimalPlaces = false, spokenMinus = true)</span>
-          <span aria-hidden="true">@currencyAmountView(viewModel.otherAdjustmentsReducing)</span>
-      </td>
-    </tr>
-    }
-  </tbody>
-</table>
+    <table id="adjustments" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr id="adjustments-section" class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">@Html(Messages("ats.total_income_tax.adjustments"))</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+    
+      <tbody class="govuk-table__body">
+        @if(!viewModel.otherAdjustmentsIncreasing.isZero) {
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
+          <td id="other-adjustments-increasing-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.otherAdjustmentsIncreasing)</td>
+        </tr>
+        }
+    
+        @if(!viewModel.marriageAllowanceReceivedAmount.isZero) {
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
+          <td id="marriage-allowance-received-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.marriageAllowanceReceivedAmount)</td>
+        </tr>
+        }
+    
+        @if(!viewModel.otherAdjustmentsReducing.isZero) {
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
+          <td id="other-adjustments-reducing-amount" class="govuk-table__cell govuk-table__cell--numeric">
+              <span id="reducing-amount" class="govuk-visually-hidden">@currencyAmountView(viewModel.otherAdjustmentsReducing, twoDecimalPlaces = false, spokenMinus = true)</span>
+              <span aria-hidden="true">@currencyAmountView(viewModel.otherAdjustmentsReducing)</span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
 }
+
+<table id="total-income-tax-nics" class="govuk-table">
+    <tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+        <th scope="row" class="govuk-table__header">@Messages("ats.total_income_tax.total_income_tax")</th>
+        <td id="total-income-tax-amount-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewUtils.positiveOrZero(viewModel.totalIncomeTax))</td>
+    </tr>
+    @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
+        <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.scottishIncomeTax)</td>
+    </tr>
+    }
+    @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
+        <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax)</td>
+    </tr>
+    }
+    </tbody>
+</table>
 
 
