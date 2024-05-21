@@ -8,7 +8,7 @@ GET     /                                                      controllers.AtsMe
 POST    /                                                      controllers.AtsMergePageController.onSubmit
 GET     /main                                                  controllers.AtsMainController.authorisedAtsMain
 GET     /summary                                               controllers.SummaryController.authorisedSummaries
-#GET    /nics                                                  controllers.NicsController.redirectForDeprecatedNicsPage
+GET    /nics                                                  controllers.NicsController.redirectForDeprecatedNicsPage
 GET     /income-tax-national-insurance-contributions           controllers.NicsController.authorisedTaxAndNICs
 GET     /treasury-spending                                     controllers.GovernmentSpendController.authorisedGovernmentSpendData
 GET     /income-before-tax                                     controllers.IncomeController.authorisedIncomeBeforeTax
