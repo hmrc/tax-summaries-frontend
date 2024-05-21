@@ -59,7 +59,9 @@ class NicsControllerSpec extends ControllerBaseSpec {
       val result = nicsController.redirectForDeprecatedTotalIncomeTaxPage(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe controllers.routes.NicsController.authorisedNics.url + s"?taxYear=$taxYear"
+      redirectLocation(
+        result
+      ).get mustBe controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$taxYear"
     }
 
     "redirect to the year selection page when there is a no tax year in request" in {

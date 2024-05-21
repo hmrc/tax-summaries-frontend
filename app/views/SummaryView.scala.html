@@ -99,7 +99,7 @@
 
             @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
-            <a href="@controllers.routes.NicsController.authorisedNics?taxYear=@viewModel.taxYearTo" class="data-link">
+            <a href="@controllers.routes.NicsController.authorisedTaxAndNICs?taxYear=@viewModel.taxYearTo" class="data-link">
                 @linkSectionContents(Messages("screen.reader.income_tax_and_ni"), currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics), xLargeID="total-income-tax-and-nics", Messages("ats.summary.tax_and_nics.link"))
             </a>
 
