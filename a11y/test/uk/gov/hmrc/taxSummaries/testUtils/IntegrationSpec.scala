@@ -145,6 +145,11 @@ class IntegrationSpec
         .willReturn(ok(authResponseNoSA))
     )
 
+    server.stubFor(
+      post(urlEqualTo("/pertax/authorise"))
+        .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
+    )
+
     when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(Future.successful("token"))
 
