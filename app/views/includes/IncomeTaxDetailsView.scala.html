@@ -15,7 +15,6 @@
  *@
 
 @import controllers.auth.requests.AuthenticatedRequest
-@import utils.ViewUtils
 @import total_income_tax_includes._
 @import views.html.includes.CurrencyAmountView
 @import views.html.helpers.HeaderSection
@@ -23,8 +22,7 @@
 @this(
     scottishTableView: ScottishTableView,
     savingsTableView: SavingsTableView,
-    currencyAmountView: CurrencyAmountView,
-    viewUtils: ViewUtils
+    currencyAmountView: CurrencyAmountView
 )
 
 @(viewModel: view_models.IncomeTaxAndNI)(implicit messages: Messages)
