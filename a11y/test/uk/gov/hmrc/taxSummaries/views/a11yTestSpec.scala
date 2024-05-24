@@ -116,11 +116,10 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
     List(
       s"/annual-tax-summary/main?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/summary?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/nics?taxYear=$fakeTaxYear",
+      s"/annual-tax-summary/income-tax-national-insurance-contributions?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/treasury-spending?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/income-before-tax?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/tax-free-amount?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/total-income-tax?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/capital-gains-tax?taxYear=$fakeTaxYear"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {

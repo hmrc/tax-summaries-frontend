@@ -20,127 +20,150 @@ import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.i18n.Messages
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services._
+import services.{AuditService, IncomeTaxAndNIService}
 import utils.ControllerBaseSpec
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 
-class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
+class NicsControllerSpec extends ControllerBaseSpec {
 
-  override val taxYear = 2023
+  val dataPath = "/summary_json_test_2021.json"
 
-  val baseModel: TotalIncomeTax = TotalIncomeTax(
-    year = 2023,
-    utr = testUtr,
-    startingRateForSavings = Amount(110, "GBP"),
-    startingRateForSavingsAmount = Amount(140, "GBP"),
-    basicRateIncomeTax = Amount(1860, "GBP"),
-    basicRateIncomeTaxAmount = Amount(372, "GBP"),
-    higherRateIncomeTax = Amount(130, "GBP"),
-    higherRateIncomeTaxAmount = Amount(70, "GBP"),
-    additionalRateIncomeTax = Amount(80, "GBP"),
-    additionalRateIncomeTaxAmount = Amount(60, "GBP"),
-    ordinaryRate = Amount(100, "GBP"),
-    ordinaryRateAmount = Amount(50, "GBP"),
-    upperRate = Amount(30, "GBP"),
-    upperRateAmount = Amount(120, "GBP"),
-    additionalRate = Amount(10, "GBP"),
-    additionalRateAmount = Amount(40, "GBP"),
-    otherAdjustmentsIncreasing = Amount(90, "GBP"),
-    marriageAllowanceReceivedAmount = Amount(0, "GBP"),
-    otherAdjustmentsReducing = Amount(-20, "GBP"),
-    ScottishTax.empty,
-    totalIncomeTax = Amount(372, "GBP"),
-    scottishIncomeTax = Amount(100, "GBP"),
-    welshIncomeTax = Amount(100, "GBP"),
-    SavingsTax.empty,
-    incomeTaxStatus = "0002",
-    startingRateForSavingsRateRate = Rate("10%"),
-    basicRateIncomeTaxRateRate = Rate("20%"),
-    higherRateIncomeTaxRateRate = Rate("40%"),
-    additionalRateIncomeTaxRateRate = Rate("45%"),
-    ordinaryRateTaxRateRate = Rate("10%"),
-    upperRateRateRate = Rate("32.5%"),
-    additionalRateRateRate = Rate("37.5%"),
-    ScottishRates.empty,
-    SavingsRates.empty,
-    "Mr",
-    "forename",
-    "surname"
-  )
+  val mockAuditService: AuditService    = mock[AuditService]
+  private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
 
-  val mockTotalIncomeTaxService: TotalIncomeTaxService = mock[TotalIncomeTaxService]
-  val mockAuditService: AuditService                   = mock[AuditService]
-
-  def sut =
-    new TotalIncomeTaxController(
-      mockTotalIncomeTaxService,
+  private def nicsController =
+    new NicsController(
       mockAuditService,
       FakeAuthJourney,
       mcc,
-      totalIncomeTaxView,
+      nicsView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      mockTotalIncomeTaxService
     )
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-
-    when(
-      mockTotalIncomeTaxService.getIncomeData(any())(any(), any())
-    ) thenReturn Future
-      .successful(baseModel)
+    reset(mockTotalIncomeTaxService)
+    when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
+      .thenReturn(Future.successful(totalIncomeTaxModel))
   }
 
-  "Calling Total Income Tax" must {
+  "Calling deprecated total income tax endpoint" must {
+    "redirect to the nics page when there is a tax year in request" in {
+      val result = nicsController.redirectForDeprecatedTotalIncomeTaxPage(request)
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(
+        result
+      ).get mustBe controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$taxYear"
+    }
+
+    "redirect to the year selection page when there is a no tax year in request" in {
+      val result =
+        nicsController.redirectForDeprecatedTotalIncomeTaxPage(request copy (request = FakeRequest("GET", "/")))
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result).get mustBe controllers.routes.AtsMergePageController.onPageLoad.url
+    }
+  }
+
+  "Calling NICs" must {
 
     "return a successful response for a valid request" in {
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
-        Messages("ats.total_income_tax.income_tax") + Messages(
-          "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
-        )
+        Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
       )
     }
 
     "display an error page for an invalid request" in {
-      val result   = sut.show(badRequest)
+      val result   = nicsController.show(badRequest)
       status(result) mustBe 400
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
-      val result = sut.show(request)
+      val result = nicsController.show(request)
       status(result) mustBe INTERNAL_SERVER_ERROR
 
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(Messages("global.error.InternalServerError500.title"))
     }
 
-    "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
-        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
-      val result = sut.show(request)
+    "redirect to the main nics page when deprecated endpoint called" in {
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
+        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
+
+      val result = nicsController.show(request)
       status(result) mustBe SEE_OTHER
+
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+    }
+
+    "hide rows if there is a zero value in the left cell amount field of the view" in {
+
+      val model2 = totalIncomeTaxModel.copy(
+        startingRateForSavings = Amount(0, "GBP"),
+        basicRateIncomeTax = Amount(0, "GBP")
+      )
+
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
+        .thenReturn(Future.successful(model2))
+
+      val result   = nicsController.show(request)
+      status(result) mustBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.toString must not include "Technical Difficulties"
+      document.toString must not include "starting-rate-for-savings-row"
+      document.toString must not include "basic-rate-income-tax-row"
+      document.toString must not include "higher-rate-income-tax-row"
+      document.toString must not include "additional-rate-income-tax-row"
+    }
+
+    "hide Higher and Additional Rate fields if the amounts are 0.00" in {
+
+      val model3 = totalIncomeTaxModel.copy(
+        higherRateIncomeTax = Amount(0, "GBP"),
+        additionalRateIncomeTax = Amount(0, "GBP")
+      )
+
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
+        .thenReturn(Future.successful(model3))
+
+      val result   = nicsController.show(request)
+      status(result) mustBe 200
+      val document = Jsoup.parse(contentAsString(result))
+
+      document.toString must not include "Technical Difficulties"
+      document.toString must include("basic-rate-income-tax-row")
+      document.toString must not include "higher-rate-income-tax-row"
+      document.toString must not include "additional-rate-income-tax-row"
     }
 
     "have the right user data in the view" in {
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
+
+      document.getElementById("total-cg-tax-rate").text() mustBe "56.78%"
+      document.getElementById("employee-nic-amount").text() mustBe "£1,200"
+      document.getElementById("total-income-tax-and-nics").text() mustBe "£1,572"
+      document.getElementById("user-info").text must include("forename surname")
+      document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
 
       document.toString must not include "Technical Difficulties"
       document.getElementById("starting-rate-for-savings-amount").text() mustBe "£140"
@@ -160,60 +183,17 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
       document.getElementById("additional-rate-income-tax-rate").text() mustBe "45%"
 
       document.getElementById("ordinary-rate-amount").text() mustBe "£50"
-      document.getElementById("total-income-tax-amount-nics").text() mustBe "£372"
 
-      document.toString                         must include("Total Income Tax")
       document.getElementById("user-info").text must include("forename surname")
       document.getElementById("user-info").text must include("Unique Taxpayer Reference: " + testUtr)
+
     }
-
-    "hide rows if there is a zero value in the left cell amount field of the view" in {
-
-      val model2 = baseModel.copy(
-        startingRateForSavings = Amount(0, "GBP"),
-        basicRateIncomeTax = Amount(0, "GBP")
-      )
-
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
-        .thenReturn(Future.successful(model2))
-
-      val result   = sut.show(request)
-      status(result) mustBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.toString must not include "Technical Difficulties"
-      document.toString must not include "starting-rate-for-savings-row"
-      document.toString must not include "basic-rate-income-tax-row"
-      document.toString must not include "higher-rate-income-tax-row"
-      document.toString must not include "additional-rate-income-tax-row"
-    }
-
-    "hide Higher and Additional Rate fields if the amounts are 0.00" in {
-
-      val model3 = baseModel.copy(
-        higherRateIncomeTax = Amount(0, "GBP"),
-        additionalRateIncomeTax = Amount(0, "GBP")
-      )
-
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
-        .thenReturn(Future.successful(model3))
-
-      val result   = sut.show(request)
-      status(result) mustBe 200
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.toString must not include "Technical Difficulties"
-      document.toString must include("basic-rate-income-tax-row")
-      document.toString must not include "higher-rate-income-tax-row"
-      document.toString must not include "additional-rate-income-tax-row"
-    }
-
   }
 
   "Dividends section" must {
     "have the right user data for Ordinary, Additional and Higher Rates fields in the view" in {
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -233,15 +213,15 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "hide Dividends section if the amount before in each row is 0.00" in {
 
-      val model4 = baseModel.copy(
+      val model4 = totalIncomeTaxModel.copy(
         ordinaryRate = Amount(0, "GBP"),
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model4))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -254,14 +234,14 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "not hide Dividends section if only Ordinary rate amount is greater than 0.00" in {
 
-      val model5 = baseModel.copy(
+      val model5 = totalIncomeTaxModel.copy(
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(meq(taxYear))(any(), meq(request)))
         .thenReturn(Future.successful(model5))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -278,7 +258,7 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "have the right user data for adjustments increasing and reducing income tax" in {
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -288,13 +268,13 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "hide other adjustments increasing your tax section if the amount is 0.00" in {
 
-      val model6 = baseModel.copy(
+      val model6 = totalIncomeTaxModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model6))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -305,13 +285,13 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "hide other adjustments reducing your tax section if the amount is 0.00" in {
 
-      val model7 = baseModel.copy(
+      val model7 = totalIncomeTaxModel.copy(
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model7))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -321,14 +301,14 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
 
     "hide Adjustments section if all the amounts in this section are 0.00" in {
 
-      val model8 = baseModel.copy(
+      val model8 = totalIncomeTaxModel.copy(
         otherAdjustmentsIncreasing = Amount(0, "GBP"),
         otherAdjustmentsReducing = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.successful(model8))
 
-      val result   = sut.show(request)
+      val result   = nicsController.show(request)
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
@@ -337,21 +317,4 @@ class TotalIncomeTaxControllerSpec extends ControllerBaseSpec {
     }
   }
 
-  "Total Income Tax" must {
-
-    "show zero value" in {
-
-      val model9 = baseModel.copy(
-        marriageAllowanceReceivedAmount = Amount(0, "GBP"),
-        totalIncomeTax = Amount(0, "GBP")
-      )
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
-        .thenReturn(Future.successful(model9))
-
-      val result   = sut.show(request)
-      val document = Jsoup.parse(contentAsString(result))
-
-      document.getElementById("total-income-tax-amount-nics").text() must equal("£0")
-    }
-  }
 }

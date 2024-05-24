@@ -36,9 +36,22 @@ trait TestConstants extends BaseSpec {
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
   def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
-  val testTotalIncomeTax: TotalIncomeTax = TotalIncomeTax(
+  val testIncomeTaxAndNI: IncomeTaxAndNI = IncomeTaxAndNI(
     year = taxYear,
-    utr = "",
+    utr = testUtr,
+    employeeNicAmount = Amount(1200, "GBP"),
+    totalIncomeTaxAndNics = Amount(1400, "GBP"),
+    yourTotalTax = Amount(1800, "GBP"),
+    totalTaxFree = Amount(9440, "GBP"),
+    totalTaxFreeAllowance = Amount(9740, "GBP"),
+    yourIncomeBeforeTax = Amount(11600, "GBP"),
+    totalIncomeTaxAmount = Amount(372, "GBP"),
+    totalCapitalGainsTax = Amount(5500, "GBP"),
+    taxableGains = Amount(20000, "GBP"),
+    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
+    nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
+    totalCgTaxRate = Rate("12.34%"),
+    nicsAndTaxRate = Rate("56.78%"),
     Amount.empty,
     Amount.empty,
     Amount.empty,

@@ -11,9 +11,25 @@ ThisBuild / scalafmtOnCompile := true
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
-    ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;views.html.*;app.Routes.*;prod.*;uk.gov.hmrc.*;testOnlyDoNotUseInAppConf.*;config.*;models.*;connectors.*;awrs.app.*;view_models.*;views.helpers.*;utils.validation.*;utils.prevalidation.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
-    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageExcludedPackages := List(
+      "<empty>",
+      "Reverse.*",
+      ".*.Routes.*",
+      "prod.*",
+      "views.html.*",
+      "uk.gov.hmrc.*",
+      "testOnlyDoNotUseInAppConf.*",
+      "config.*",
+      "models.*",
+      "connectors.*",
+      "awrs.app.*",
+      "views.helpers.*",
+      "utils.validation.*",
+      "utils.prevalidation.*"
+    ).mkString(";"),
+    ScoverageKeys.coverageMinimumStmtTotal := 85,
+    ScoverageKeys.coverageMinimumBranchTotal := 81,
+    ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
 }
@@ -53,8 +69,6 @@ lazy val microservice = Project(appName, file("."))
 Test / Keys.fork := true
 Test / parallelExecution := true
 Test / scalacOptions --= Seq("-Wdead-code", "-Wvalue-discard")
-
-
 
 lazy val it = project
   .enablePlugins(play.sbt.PlayScala)

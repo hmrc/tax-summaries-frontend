@@ -28,6 +28,7 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants.{testNino, testUtr}
+import view_models._
 import views.html._
 import views.html.errors._
 
@@ -65,7 +66,6 @@ trait ControllerBaseSpec extends BaseSpec {
   lazy val pageNotFoundTemplateView: PageNotFoundTemplateView = inject[PageNotFoundTemplateView]
   lazy val governmentSpendingView: GovernmentSpendingView     = inject[GovernmentSpendingView]
   lazy val incomeBeforeTaxView: IncomeBeforeTaxView           = inject[IncomeBeforeTaxView]
-  lazy val totalIncomeTaxView: TotalIncomeTaxView             = inject[TotalIncomeTaxView]
   lazy val summaryView: SummaryView                           = inject[SummaryView]
   lazy val nicsView: NicsView                                 = inject[NicsView]
 
@@ -91,5 +91,58 @@ trait ControllerBaseSpec extends BaseSpec {
     ConfidenceLevel.L50,
     fakeCredentials,
     FakeRequest("GET", "?taxYear=20235")
+  )
+
+  protected val totalIncomeTaxModel: IncomeTaxAndNI = IncomeTaxAndNI(
+    year = taxYear,
+    utr = testUtr,
+    employeeNicAmount = Amount(1200, "GBP"),
+    totalIncomeTaxAndNics = Amount(1400, "GBP"),
+    yourTotalTax = Amount(1800, "GBP"),
+    totalTaxFree = Amount(9440, "GBP"),
+    totalTaxFreeAllowance = Amount(9740, "GBP"),
+    yourIncomeBeforeTax = Amount(11600, "GBP"),
+    totalIncomeTaxAmount = Amount(372, "GBP"),
+    totalCapitalGainsTax = Amount(5500, "GBP"),
+    taxableGains = Amount(20000, "GBP"),
+    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
+    nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
+    totalCgTaxRate = Rate("12.34%"),
+    nicsAndTaxRate = Rate("56.78%"),
+    startingRateForSavings = Amount(110, "GBP"),
+    startingRateForSavingsAmount = Amount(140, "GBP"),
+    basicRateIncomeTax = Amount(1860, "GBP"),
+    basicRateIncomeTaxAmount = Amount(372, "GBP"),
+    higherRateIncomeTax = Amount(130, "GBP"),
+    higherRateIncomeTaxAmount = Amount(70, "GBP"),
+    additionalRateIncomeTax = Amount(80, "GBP"),
+    additionalRateIncomeTaxAmount = Amount(60, "GBP"),
+    ordinaryRate = Amount(100, "GBP"),
+    ordinaryRateAmount = Amount(50, "GBP"),
+    upperRate = Amount(30, "GBP"),
+    upperRateAmount = Amount(120, "GBP"),
+    additionalRate = Amount(10, "GBP"),
+    additionalRateAmount = Amount(40, "GBP"),
+    otherAdjustmentsIncreasing = Amount(90, "GBP"),
+    marriageAllowanceReceivedAmount = Amount(0, "GBP"),
+    otherAdjustmentsReducing = Amount(-20, "GBP"),
+    ScottishTax.empty,
+    totalIncomeTax = Amount(372, "GBP"),
+    scottishIncomeTax = Amount(100, "GBP"),
+    welshIncomeTax = Amount(100, "GBP"),
+    SavingsTax.empty,
+    incomeTaxStatus = "0002",
+    startingRateForSavingsRateRate = Rate("10%"),
+    basicRateIncomeTaxRateRate = Rate("20%"),
+    higherRateIncomeTaxRateRate = Rate("40%"),
+    additionalRateIncomeTaxRateRate = Rate("45%"),
+    ordinaryRateTaxRateRate = Rate("10%"),
+    upperRateRateRate = Rate("32.5%"),
+    additionalRateRateRate = Rate("37.5%"),
+    ScottishRates.empty,
+    SavingsRates.empty,
+    "Mr",
+    "forename",
+    "surname"
   )
 }

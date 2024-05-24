@@ -8,11 +8,12 @@ GET     /                                                      controllers.AtsMe
 POST    /                                                      controllers.AtsMergePageController.onSubmit
 GET     /main                                                  controllers.AtsMainController.authorisedAtsMain
 GET     /summary                                               controllers.SummaryController.authorisedSummaries
-GET     /nics                                                  controllers.NicsController.authorisedNics
+GET    /nics                                                  controllers.NicsController.redirectForDeprecatedNicsPage
+GET     /income-tax-national-insurance-contributions           controllers.NicsController.authorisedTaxAndNICs
 GET     /treasury-spending                                     controllers.GovernmentSpendController.authorisedGovernmentSpendData
 GET     /income-before-tax                                     controllers.IncomeController.authorisedIncomeBeforeTax
 GET     /tax-free-amount                                       controllers.AllowancesController.authorisedAllowance
-GET     /total-income-tax                                      controllers.TotalIncomeTaxController.authorisedTotalIncomeTax
+GET     /total-income-tax                                      controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
 GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised

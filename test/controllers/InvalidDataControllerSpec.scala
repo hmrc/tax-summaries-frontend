@@ -29,11 +29,11 @@ import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
 
-  val dataPath         = "/json_containing_errors_test.json"
-  val dataPathNoAts    = "/no_ats_json_test.json"
-  override val taxYear = 2023
-
-  implicit val hc: HeaderCarrier = new HeaderCarrier
+  val dataPath                          = "/json_containing_errors_test.json"
+  val dataPathNoAts                     = "/no_ats_json_test.json"
+  override val taxYear                  = 2023
+  private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
+  implicit val hc: HeaderCarrier        = new HeaderCarrier
 
   "Calling a service with a JSON containing errors" must {
 
@@ -140,32 +140,6 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
       document.toString must include(Messages("global.error.InternalServerError500.title"))
     }
 
-    "show ats error page for total-income-tax" in {
-
-      val mockTotalIncomeTaxService = mock[TotalIncomeTaxService]
-      val mockAuditService          = mock[AuditService]
-
-      def sut =
-        new TotalIncomeTaxController(
-          mockTotalIncomeTaxService,
-          mockAuditService,
-          FakeAuthJourney,
-          mcc,
-          totalIncomeTaxView,
-          genericErrorView,
-          tokenErrorView
-        )
-
-      when(mockTotalIncomeTaxService.getIncomeData(any())(any(), any()))
-        .thenReturn(Future.failed(new Exception("failure")))
-
-      val result   = sut.show(request)
-      val document = Jsoup.parse(contentAsString(result))
-
-      status(result) mustBe 500
-      document.toString must include(Messages("global.error.InternalServerError500.title"))
-    }
-
     "show ats error page for summary page" in {
 
       val mockSummaryService = mock[SummaryService]
@@ -192,22 +166,22 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
     }
 
     "show ats error page for nics on summary page" in {
-
-      val mockSummaryService = mock[SummaryService]
-      val mockAuditService   = mock[AuditService]
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
+        .thenReturn(Future.successful(totalIncomeTaxModel))
+      val mockAuditService = mock[AuditService]
 
       def sut =
         new NicsController(
-          mockSummaryService,
           mockAuditService,
           FakeAuthJourney,
           mcc,
           nicsView,
           genericErrorView,
-          tokenErrorView
+          tokenErrorView,
+          mockTotalIncomeTaxService
         )
 
-      when(mockSummaryService.getSummaryData(any())(any(), any()))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("failure")))
 
       val result   = sut.show(request)
