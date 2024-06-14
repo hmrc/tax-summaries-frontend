@@ -75,18 +75,20 @@ class AtsListService @Inject() (
   private def getAtsList(
     agentToken: Option[AgentToken] = None
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
-    val account      = getAccount(request)
-    val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
-
-    val response = (account: @unchecked) match {
-      case _: Uar            =>
-        middleConnector.connectToAtsListOnBehalfOf(
-          requestedUTR,
-          appConfig.taxYear,
-          appConfig.maxTaxYearsTobeDisplayed
-        )
-      case individual: SaUtr =>
-        middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
+    val account  = getAccount(request)
+    val response = Future {
+      authUtils.getRequestedUtr(account, agentToken)
+    } flatMap { requestedUTR =>
+      (account: @unchecked) match {
+        case _: Uar            =>
+          middleConnector.connectToAtsListOnBehalfOf(
+            requestedUTR,
+            appConfig.taxYear,
+            appConfig.maxTaxYearsTobeDisplayed
+          )
+        case individual: SaUtr =>
+          middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
+      }
     }
 
     val result = response flatMap {
