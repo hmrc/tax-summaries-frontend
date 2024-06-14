@@ -104,4 +104,12 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 
+  lazy val mongoEnabled: Boolean           = config.getConfBool("cache.isEnabled", defBool = false)
+  lazy val mongoEncryptionEnabled: Boolean =
+    config.getConfBool("mongo.encryption.enabled", defBool = true)
+  lazy val mongoTTL: Int                   = config.getConfInt("tai.cache.expiryInSeconds", 900)
+  lazy val mongoLockTTL: Int               = config.getConfInt("mongo.lock.expiryInSeconds", 20)
+  lazy val mongoTTLUpdateIncome: Int       =
+    config.getConfInt("tai.cache.updateIncome.expiryInSeconds", 3600 * 48)
+
 }
