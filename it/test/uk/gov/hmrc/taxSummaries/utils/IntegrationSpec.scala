@@ -16,8 +16,7 @@
 
 package utils
 
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, put, urlEqualTo, urlMatching}
+import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, urlEqualTo}
 import config.ApplicationConfig
 import org.mockito.scalatest.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -25,10 +24,9 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
-import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
 import scala.concurrent.ExecutionContext
@@ -93,17 +91,6 @@ class IntegrationSpec
     server.stubFor(
       post(urlEqualTo("/auth/authorise"))
         .willReturn(ok(authResponse))
-    )
-
-    server.stubFor(
-      put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
-        .willReturn(ok(Json.toJson(CacheMap("id", keystoreData)).toString))
-    )
-
-    server.stubFor(
-      WireMock
-        .get(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
-        .willReturn(ok(Json.toJson(CacheMap("id", keystoreData)).toString))
     )
   }
 }

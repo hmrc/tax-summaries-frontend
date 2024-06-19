@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{DataCacheConnector, MiddleConnector}
+import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
@@ -24,9 +24,11 @@ import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import utils.JsonUtil._
 import utils.TestConstants._
@@ -42,15 +44,15 @@ class AtsServiceSpec extends BaseSpec {
     Json.fromJson[AtsData](json).get
   }
 
-  val mockMiddleConnector: MiddleConnector       = mock[MiddleConnector]
-  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
-  val mockAuditService: AuditService             = mock[AuditService]
-  val mockAuthUtils: AuthorityUtils              = mock[AuthorityUtils]
-  val mockAccountUtils: AccountUtils             = mock[AccountUtils]
+  val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
+  private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
+  val mockAuditService: AuditService                   = mock[AuditService]
+  val mockAuthUtils: AuthorityUtils                    = mock[AuthorityUtils]
+  val mockAccountUtils: AccountUtils                   = mock[AccountUtils]
 
   override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
-    reset(mockDataCacheConnector)
+    reset(mockTaxsAgentTokenSessionCacheRepository)
     reset(mockAuditService)
     reset(mockAuthUtils)
     reset(mockAccountUtils)
@@ -78,7 +80,13 @@ class AtsServiceSpec extends BaseSpec {
   )
 
   def sut: AtsService =
-    new AtsService(mockMiddleConnector, mockDataCacheConnector, appConfig, mockAuditService, mockAuthUtils) {
+    new AtsService(
+      mockMiddleConnector,
+      mockTaxsAgentTokenSessionCacheRepository,
+      appConfig,
+      mockAuditService,
+      mockAuthUtils
+    ) {
       override val accountUtils: AccountUtils = mockAccountUtils
     }
 
@@ -96,40 +104,18 @@ class AtsServiceSpec extends BaseSpec {
 
           "a user who is not an agent" that {
 
-            "has AtsData present in the cache" in {
-
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future
-                .successful(Some(data))
+            "getting data from mockMiddleConnector" in {
 
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
               when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
                 Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
-              when(mockDataCacheConnector.storeAtsForSession(any())(any(), any())) thenReturn Future.successful(
-                Some(data)
-              )
-
-              when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
-
-              sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
-
-              verify(mockAuditService).sendEvent(any(), any())(any())
-            }
-
-            "has no data in the cache" in {
-
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future
-                .successful(None)
-
-              when(mockAccountUtils.isAgent(any())) thenReturn false
-
-              when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
-                Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
-
-              when(mockDataCacheConnector.storeAtsForSession(any())(any(), any())) thenReturn Future.successful(
-                Some(data)
-              )
+              when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
+                .thenReturn(
+                  Future
+                    .successful(Some(agentToken))
+                )
 
               when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
@@ -141,24 +127,7 @@ class AtsServiceSpec extends BaseSpec {
 
           "a user who is an agent" that {
 
-            "has AtsData present in the cache" in {
-
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future
-                .successful(Some(data))
-
-              when(mockAccountUtils.isAgent(any())) thenReturn true
-
-              when(mockAuthUtils.checkUtr(any[Option[String]](), any())(any())) thenReturn true
-
-              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
-
-              sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
-            }
-
-            "has no data in the cache" in {
-
-              when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future
-                .successful(None)
+            "getting data from middleconnector" in {
 
               when(mockAccountUtils.isAgent(any())) thenReturn true
 
@@ -166,7 +135,11 @@ class AtsServiceSpec extends BaseSpec {
 
               when(mockAccountUtils.getAccount(any())) thenReturn Uar(testUar)
 
-              when(mockDataCacheConnector.getAgentToken(any(), any())) thenReturn Future.successful(Some(agentToken))
+              when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
+                .thenReturn(
+                  Future
+                    .successful(Some(agentToken))
+                )
 
               when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
@@ -175,11 +148,7 @@ class AtsServiceSpec extends BaseSpec {
                   .connectToAtsOnBehalfOf(any(), any())(any())
               ) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
-              when(mockDataCacheConnector.storeAtsForSession(any())(any(), any())) thenReturn Future.successful(
-                Some(data)
-              )
-
-              implicit val request =
+              implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
                 requests.AuthenticatedRequest(
                   userId = "userId",
                   agentRef = Some(Uar(testUar)),
@@ -203,10 +172,6 @@ class AtsServiceSpec extends BaseSpec {
 
         "the connector returns a NoATSViewModel" in {
 
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future.successful(
-            Some(data)
-          )
-
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
           when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
@@ -220,10 +185,6 @@ class AtsServiceSpec extends BaseSpec {
         "there is a NoAtsError in the AtsData" in {
 
           val dataWithError = data.copy(errors = Some(IncomingAtsError("NoAtsError")))
-
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future.successful(
-            Some(dataWithError)
-          )
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
@@ -241,8 +202,6 @@ class AtsServiceSpec extends BaseSpec {
 
         "the connector returns an AtsErrorResponse" in {
 
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future(Some(data))
-
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
           when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future(
@@ -257,10 +216,6 @@ class AtsServiceSpec extends BaseSpec {
         "there is any other error in the AtsData" in {
 
           val dataWithError = data.copy(errors = Some(IncomingAtsError("Random error")))
-
-          when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any())) thenReturn Future.successful(
-            Some(dataWithError)
-          )
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 

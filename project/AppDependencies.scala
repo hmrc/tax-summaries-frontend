@@ -1,6 +1,5 @@
-import play.core.PlayVersion
-import play.sbt.PlayImport._
-import sbt._
+import play.sbt.PlayImport.*
+import sbt.*
 
 
 object AppDependencies {
@@ -13,19 +12,18 @@ object AppDependencies {
     filters,
     ws,
     "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
-    "uk.gov.hmrc"                %% s"http-caching-client-$playVersion"        % s"11.1.0",
     "uk.gov.hmrc"                %% "tax-year"                   % "4.0.0",
-    "org.typelevel"              %% "cats-core"                  % "2.10.0",
+    "org.typelevel"              %% "cats-core"                  % "2.12.0",
     "uk.gov.hmrc"               %% s"mongo-feature-toggles-client-$playVersion"     % "1.1.0",
     "uk.gov.hmrc" %% s"sca-wrapper-$playVersion" % "1.3.0"
   )
 
   val test: Seq[ModuleID] = Seq(
-    "org.jsoup"                   % "jsoup"                   % "1.16.1",
+    "org.jsoup"                   % "jsoup"                   % "1.17.2",
     "uk.gov.hmrc"                %% s"bootstrap-test-$playVersion" % bootstrapVersion,
-    "org.mockito"       %% "mockito-scala-scalatest" % "1.17.30",
-    "org.scalatestplus"          %% "scalacheck-1-17"         % "3.2.17.0",
-    "com.softwaremill.quicklens" %% "quicklens"               % "1.9.6"
+    "org.mockito"       %% "mockito-scala-scalatest" % "1.17.31",
+    "org.scalatestplus"          %% "scalacheck-1-17"         % "3.2.18.0",
+    "com.softwaremill.quicklens" %% "quicklens"               % "1.9.7"
   ).map(_ % "test")
 
 
