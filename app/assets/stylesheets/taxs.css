@@ -16,7 +16,6 @@
      display: none;
 }
  .print-this {
-     border-bottom: 1px solid #000;
      position: relative;
      display: inline;
 }
@@ -26,9 +25,10 @@
      top: 2px;
 }
  .print-this__link {
+     border-bottom: 1px solid #000;
      color: #000;
      font-size: 16px;
-     padding-left: 25px;
+     margin-left: 25px;
      text-decoration: none;
      font-family: "GDS Transport", Arial, sans-serif;
 }
