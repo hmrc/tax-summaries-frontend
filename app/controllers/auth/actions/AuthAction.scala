@@ -41,20 +41,20 @@ import utils.Globals
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthImpl(
-                override val authConnector: DefaultAuthConnector,
-                cc: MessagesControllerComponents,
-                taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
-                citizenDetailsService: CitizenDetailsService,
-                pertaxAuthService: PertaxAuthService,
-                saShutterCheck: Boolean,
-                agentTokenCheck: Boolean,
-                utrCheck: Boolean
-              )(implicit
-                ec: ExecutionContext,
-                appConfig: ApplicationConfig
-              ) extends Auth
-  with AuthorisedFunctions
-  with Logging {
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
+  citizenDetailsService: CitizenDetailsService,
+  pertaxAuthService: PertaxAuthService,
+  saShutterCheck: Boolean,
+  agentTokenCheck: Boolean,
+  utrCheck: Boolean
+)(implicit
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
+) extends Auth
+    with AuthorisedFunctions
+    with Logging {
 
   protected val saShuttered: Boolean = appConfig.saShuttered
 
@@ -84,9 +84,9 @@ class AuthImpl(
   }
 
   private def agentTokenCheck[A](
-                                  request: Request[A],
-                                  rq: => AuthenticatedRequest[A]
-                                )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
+    request: Request[A],
+    rq: => AuthenticatedRequest[A]
+  )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
       taxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(Globals.TAXS_AGENT_TOKEN_KEY)).map {
         agentToken =>
@@ -96,7 +96,7 @@ class AuthImpl(
               .isEmpty || request
               .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
               .isEmpty) &&
-              agentToken.isEmpty
+            agentToken.isEmpty
           ) {
             Left(notAuthorisedPage)
           } else {
@@ -108,7 +108,7 @@ class AuthImpl(
     }
 
   private def createAuthenticatedRequest[A](request: Request[A])(implicit
-                                                                 hc: HeaderCarrier
+    hc: HeaderCarrier
   ): Future[Either[Result, AuthenticatedRequest[A]]] =
     authorised(ConfidenceLevel.L50)
       .retrieve(
@@ -167,7 +167,7 @@ class AuthImpl(
       .getOrElse(Tuple2(None, false))
 
   private def citizenDetailsCheck[A](request: AuthenticatedRequest[A])(implicit
-                                                                       hc: HeaderCarrier
+    hc: HeaderCarrier
   ): EitherT[Future, Result, AuthenticatedRequest[A]] =
     (request.nino, request.saUtr, request.isAgent) match {
       case (Some(nino), None, false) =>
@@ -189,15 +189,15 @@ class AuthImpl(
 trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
 
 class AuthAction @Inject() (
-                             authConnector: DefaultAuthConnector,
-                             cc: MessagesControllerComponents,
-                             taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
-                             citizenDetailsService: CitizenDetailsService,
-                             pertaxAuthService: PertaxAuthService
-                           )(implicit
-                             ec: ExecutionContext,
-                             appConfig: ApplicationConfig
-                           ) {
+  authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
+  citizenDetailsService: CitizenDetailsService,
+  pertaxAuthService: PertaxAuthService
+)(implicit
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
+) {
   def apply(saShutterCheck: Boolean, agentTokenCheck: Boolean, utrCheck: Boolean): Auth =
     new AuthImpl(
       authConnector,

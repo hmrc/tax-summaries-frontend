@@ -26,12 +26,12 @@ import scala.language.postfixOps
 
 @Singleton
 class TaxsAgentTokenSessionCacheRepository @Inject() (
-                                                       mongoComponent: MongoComponent,
-                                                       applicationConfig: ApplicationConfig
-                                                     )(implicit ec: ExecutionContext)
-  extends SessionCacheRepository(
-    mongoComponent = mongoComponent,
-    collectionName = "agentToken",
-    ttl = applicationConfig.mongoTTL seconds,
-    timestampSupport = new CurrentTimestampSupport()
-  )
+  mongoComponent: MongoComponent,
+  applicationConfig: ApplicationConfig
+)(implicit ec: ExecutionContext)
+    extends SessionCacheRepository(
+      mongoComponent = mongoComponent,
+      collectionName = "agentToken",
+      ttl = applicationConfig.mongoTTL seconds,
+      timestampSupport = new CurrentTimestampSupport()
+    )

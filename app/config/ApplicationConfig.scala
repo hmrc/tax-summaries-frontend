@@ -33,7 +33,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   // Services url config
   val serviceUrl: String = config.baseUrl("tax-summaries")
 
-  lazy val cidHost: String          = config.baseUrl("citizen-details")
+  lazy val cidHost: String = config.baseUrl("citizen-details")
 
   lazy val pertaxHost: String = config.baseUrl("pertax")
 
@@ -100,5 +100,5 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 
-  lazy val mongoTTL: Int                   = config.getConfInt("tai.cache.expiryInSeconds", 900)
+  lazy val mongoTTL: Int = config.getConfInt("tai.cache.expiryInSeconds", 900)
 }
