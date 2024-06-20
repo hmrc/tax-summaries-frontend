@@ -17,10 +17,9 @@
 package uk.gov.hmrc.taxSummaries.repositories
 
 import play.api.libs.json.{Json, OFormat}
-import repository.SessionCacheRepository
+import repository.{SessionCacheId, SessionCacheRepository}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
-import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongo.test.MongoSupport
 import utils.BaseSpec

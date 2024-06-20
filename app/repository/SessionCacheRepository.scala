@@ -33,7 +33,7 @@ case object SessionCacheId extends CacheIdType[HeaderCarrier] {
       .map(_.value)
       .getOrElse(throw NoSessionException)
 
-  private case object NoSessionException extends Exception("Could not find sessionId")
+  case object NoSessionException extends Exception("Could not find sessionId")
 }
 
 class SessionCacheRepository @Inject() (
