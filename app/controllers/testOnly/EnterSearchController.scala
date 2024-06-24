@@ -19,7 +19,7 @@ package controllers.testOnly
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
-import forms.testOnly.EnterSearchForm
+import forms.testOnly.EnterSearchFormProvider
 import modules.testOnly.TaxYearAndUTR
 import play.api.Logging
 import play.api.data.Form
@@ -36,7 +36,7 @@ class EnterSearchController @Inject() (
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   view: EnterSearchView,
-  formProvider: EnterSearchForm,
+  formProvider: EnterSearchFormProvider,
   applicationConfig: ApplicationConfig
 ) extends FrontendController(mcc)
     with AccountUtils

@@ -20,17 +20,16 @@ import forms.mappings.{Constraints, Mappings}
 import modules.testOnly.TaxYearAndUTR
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import play.api.i18n.Messages
 
-class EnterSearchForm extends Mappings with Constraints {
+class EnterSearchFormProvider extends Mappings with Constraints {
 
-  def apply()(implicit messages: Messages): Form[TaxYearAndUTR] =
+  def apply(): Form[TaxYearAndUTR] =
     Form(
       mapping(
         "taxYear" -> int(
-          requiredKey = "chargeA.numberOfMembers.error.required",
-          wholeNumberKey = "chargeA.numberOfMembers.error.nonNumeric",
-          nonNumericKey = "chargeA.numberOfMembers.error.nonNumeric"
+          requiredKey = "No tax year specified",
+          wholeNumberKey = "Non numeric tax year specified",
+          nonNumericKey = "Non numeric tax year specified"
         ),
         "utr"     -> text()
       )(TaxYearAndUTR.apply)(TaxYearAndUTR.unapply)

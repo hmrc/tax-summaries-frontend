@@ -22,26 +22,25 @@ import java.time.LocalDate
 
 trait Constraints {
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
-    Constraint {
-      input =>
-        constraints
-          .map(_.apply(input))
-          .find(_ != Valid)
-          .getOrElse(Valid)
+    Constraint { input =>
+      constraints
+        .map(_.apply(input))
+        .find(_ != Valid)
+        .getOrElse(Valid)
     }
 
   protected def isEqual(expectedValue: Option[String], errorKey: String): Constraint[String] =
     Constraint {
-      case _ if expectedValue.isEmpty => Valid
+      case _ if expectedValue.isEmpty     => Valid
       case s if expectedValue.contains(s) => Valid
-      case _ => Invalid(errorKey)
+      case _                              => Invalid(errorKey)
     }
 
   protected def regexp(regex: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.matches(regex) =>
         Valid
-      case _ =>
+      case _                         =>
         Invalid(errorKey, regex)
     }
 
@@ -49,7 +48,7 @@ trait Constraints {
     Constraint {
       case str if str.length <= maximum =>
         Valid
-      case _ =>
+      case _                            =>
         Invalid(errorKey, maximum)
     }
 
@@ -57,8 +56,8 @@ trait Constraints {
     Constraint {
       case Some(str) if str.length <= maximum =>
         Valid
-      case None => Valid
-      case _ =>
+      case None                               => Valid
+      case _                                  =>
         Invalid(errorKey, maximum)
     }
 
@@ -66,13 +65,13 @@ trait Constraints {
     Constraint {
       case str if str.length == length =>
         Valid
-      case _ =>
+      case _                           =>
         Invalid(errorKey, length)
     }
 
   protected def yearHas4Digits(errorKey: String): Constraint[LocalDate] =
     Constraint {
       case date if date.getYear >= 1000 => Valid
-      case _ => Invalid(errorKey)
+      case _                            => Invalid(errorKey)
     }
 }

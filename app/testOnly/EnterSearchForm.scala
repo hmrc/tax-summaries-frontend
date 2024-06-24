@@ -16,6 +16,4 @@
 
 package testOnly
 
-class EnterSearchForm {
-  
-}
+class EnterSearchForm {}
