@@ -13,4 +13,8 @@
 ->         /                          prod.Routes
 
 PUT         /annual-tax-summary/test-only/setDefaultFlags  controllers.testOnly.FeatureFlagsController.setDefaults()
+
+GET         /enterSearch        controllers.testOnly.EnterSearchController.onPageLoad
+POST         /enterSearch        controllers.testOnly.EnterSearchController.onSubmit
+
 ->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes
