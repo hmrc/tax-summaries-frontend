@@ -17,21 +17,23 @@
 package repository
 
 import config.ApplicationConfig
-import uk.gov.hmrc.mongo.{CurrentTimestampSupport, MongoComponent}
+import uk.gov.hmrc.mongo.cache.SessionCacheRepository
+import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
-@Singleton
 class TaxsAgentTokenSessionCacheRepository @Inject() (
   mongoComponent: MongoComponent,
-  applicationConfig: ApplicationConfig
+  applicationConfig: ApplicationConfig,
+  timestampSupport: TimestampSupport
 )(implicit ec: ExecutionContext)
     extends SessionCacheRepository(
       mongoComponent = mongoComponent,
       collectionName = "agentToken",
-      ttl = applicationConfig.mongoTTL seconds,
-      timestampSupport = new CurrentTimestampSupport()
+      ttl = applicationConfig.mongoTTL minutes,
+      timestampSupport = timestampSupport,
+      sessionIdKey = "agentToken"
     )
