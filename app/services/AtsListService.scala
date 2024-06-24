@@ -18,13 +18,11 @@ package services
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import connectors.MiddleConnector
+import connectors.{DataCacheConnector, MiddleConnector}
 import controllers.auth.requests.AuthenticatedRequest
 import models._
-import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
 import view_models.AtsList
@@ -34,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AtsListService @Inject() (
   auditService: AuditService,
   middleConnector: MiddleConnector,
-  taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
+  dataCache: DataCacheConnector,
   authUtils: AuthorityUtils,
   appConfig: ApplicationConfig
 )(implicit ec: ExecutionContext)
@@ -62,33 +60,54 @@ class AtsListService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsListData]] = {
-    if (isAgent(request)) {
-      taxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(Globals.TAXS_AGENT_TOKEN_KEY)).flatMap {
-        token =>
-          getAtsList(token)
-      }
-    } else {
-      getAtsList()
+    for {
+      data <- dataCache.fetchAndGetAtsListForSession
+    } yield data match {
+      case Some(data) =>
+        if (isAgent(request)) {
+          fetchAgentInfo(data)
+        } else {
+          getAtsListAndStore()
+        }
+      case _          =>
+        if (isAgent(request)) {
+          dataCache.getAgentToken.flatMap { token =>
+            getAtsListAndStore(token)
+          }
+        } else {
+          getAtsListAndStore()
+        }
     }
-  } map identity
+  } flatMap identity
 
-  private def getAtsList(
+  private def fetchAgentInfo(
+    data: AtsListData
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
+    for {
+      token <- dataCache.getAgentToken
+    } yield
+      if (authUtils.checkUtr(data.utr, token)) {
+        Future.successful(Right(data))
+      } else {
+        getAtsListAndStore(token)
+      }
+  } flatMap identity
+
+  private def getAtsListAndStore(
     agentToken: Option[AgentToken] = None
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
-    val account  = getAccount(request)
-    val response = Future {
-      authUtils.getRequestedUtr(account, agentToken)
-    } flatMap { requestedUTR =>
-      (account: @unchecked) match {
-        case _: Uar            =>
-          middleConnector.connectToAtsListOnBehalfOf(
-            requestedUTR,
-            appConfig.taxYear,
-            appConfig.maxTaxYearsTobeDisplayed
-          )
-        case individual: SaUtr =>
-          middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
-      }
+    val account      = getAccount(request)
+    val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
+
+    val response = (account: @unchecked) match {
+      case _: Uar            =>
+        middleConnector.connectToAtsListOnBehalfOf(
+          requestedUTR,
+          appConfig.taxYear,
+          appConfig.maxTaxYearsTobeDisplayed
+        )
+      case individual: SaUtr =>
+        middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
     }
 
     val result = response flatMap {
@@ -98,7 +117,10 @@ class AtsListService @Inject() (
         } else {
           payload
         }
-        Future.successful(Right(atsListData))
+
+        for {
+          data: AtsListData <- storeAtsListData(atsListData)
+        } yield Right(data)
       case r                                                   => Future.successful(Left(r))
     }
 
@@ -107,6 +129,21 @@ class AtsListService @Inject() (
       res
     }
   }
+
+  private def storeAtsListData(atsList: AtsListData)(implicit hc: HeaderCarrier): Future[AtsListData] =
+    dataCache.storeAtsListForSession(atsList) map { data =>
+      data.get
+    }
+
+  def storeSelectedTaxYear(taxYear: Int)(implicit hc: HeaderCarrier): Future[Int] =
+    dataCache.storeAtsTaxYearForSession(taxYear: Int) map { data =>
+      data.get
+    }
+
+  def fetchSelectedTaxYear(implicit hc: HeaderCarrier): Future[Int] =
+    dataCache.fetchAndGetAtsTaxYearForSession map { data =>
+      data.get
+    }
 
   private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[AtsResponse, AtsListData])(implicit
     hc: HeaderCarrier,
