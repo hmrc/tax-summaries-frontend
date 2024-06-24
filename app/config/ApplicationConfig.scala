@@ -33,9 +33,13 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   // Services url config
   val serviceUrl: String = config.baseUrl("tax-summaries")
 
-  lazy val cidHost: String = config.baseUrl("citizen-details")
+  lazy val sessionCacheHost: String = config.baseUrl("cachable.session-cache")
+  lazy val cidHost: String          = config.baseUrl("citizen-details")
 
   lazy val pertaxHost: String = config.baseUrl("pertax")
+
+  // Caching config
+  lazy val sessionCacheDomain: String = getConf("cachable.session-cache.domain")
 
   lazy val homePageUrl = "/annual-tax-summary/"
 
@@ -100,5 +104,12 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 
-  lazy val mongoTTL: Int = config.getConfInt("tai.cache.expiryInSeconds", 900)
+  lazy val mongoEnabled: Boolean           = config.getConfBool("cache.isEnabled", defBool = false)
+  lazy val mongoEncryptionEnabled: Boolean =
+    config.getConfBool("mongo.encryption.enabled", defBool = true)
+  lazy val mongoTTL: Int                   = config.getConfInt("tai.cache.expiryInSeconds", 900)
+  lazy val mongoLockTTL: Int               = config.getConfInt("mongo.lock.expiryInSeconds", 20)
+  lazy val mongoTTLUpdateIncome: Int       =
+    config.getConfInt("tai.cache.updateIncome.expiryInSeconds", 3600 * 48)
+
 }
