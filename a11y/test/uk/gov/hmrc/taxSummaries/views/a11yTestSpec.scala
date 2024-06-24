@@ -18,6 +18,7 @@ package views
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo, urlMatching}
+import connectors.DataCacheConnector
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
@@ -26,7 +27,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty, status => getStatus}
-import repository.TaxsAgentTokenSessionCacheRepository
 import testUtils.{FileHelper, IntegrationSpec}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -52,7 +52,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
       "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}"
     )
     .overrides(
-      api.inject.bind[TaxsAgentTokenSessionCacheRepository].toInstance(mockTaxsAgentTokenSessionCacheRepository),
+      api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
       api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
     .build()
@@ -84,7 +84,6 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         .willReturn(ok(s"$messageCount"))
     )
   }
-
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] = {
     val uuid = UUID.randomUUID().toString
     FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid, SessionKeys.authToken -> "Bearer 1")
