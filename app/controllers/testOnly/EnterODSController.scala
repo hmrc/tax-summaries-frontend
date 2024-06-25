@@ -17,10 +17,11 @@
 package controllers.testOnly
 
 import com.google.inject.Inject
+import connectors.MiddleConnector
 import forms.testOnly.EnterODSFormProvider
 import modules.testOnly.CountryAndODSValues
 import play.api.Logging
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
@@ -28,13 +29,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
 import views.html.testOnly.EnterODSView
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 class EnterODSController @Inject() (
   mcc: MessagesControllerComponents,
   view: EnterODSView,
-  formProvider: EnterODSFormProvider
-) extends FrontendController(mcc)
+  formProvider: EnterODSFormProvider,
+  middleConnector: MiddleConnector
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with AccountUtils
     with AttorneyUtils
     with I18nSupport
@@ -62,22 +65,44 @@ class EnterODSController @Inject() (
   )
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    val form: Form[CountryAndODSValues] = formProvider()
-    val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
-    Future.successful(Ok(view(submitCall, countries, form)))
+    // TODO: 9032 - connect to stubs and retrieve for utr/ tax year + if present populate with values
+    middleConnector.connectToAtsSaFields(taxYear).map {
+      case Right(validOdsFieldNames) =>
+        // TODO: 9032 - if odsValues is empty then default to validOdsFieldNames as key value pairs
+        val form: Form[CountryAndODSValues] = formProvider()
+        val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
+        Ok(view(submitCall, countries, form))
+      case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
+    }
   }
 
-  def onSubmit(taxYear: Int, utr: String): Action[AnyContent] = Action { implicit request =>
-    val form: Form[CountryAndODSValues] = formProvider()
+  // TODO: 9032 - implement the method below + add unit test
+  private def convertOdsValuesToKeyValuePairs(odsValues: String): Map[String, String] =
+    Map.empty
 
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => {
-          val submitCall: Call = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
-          BadRequest(view(submitCall, countries, formWithErrors))
-        },
-        value => Ok("VALUES:" + value)
-      )
+  def onSubmit(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
+    middleConnector.connectToAtsSaFields(taxYear).map {
+      case Right(validOdsFieldNames) =>
+        val form: Form[CountryAndODSValues] = formProvider()
+        val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => BadRequest(view(submitCall, countries, formWithErrors)),
+            value => {
+              val keyValuePairs     = convertOdsValuesToKeyValuePairs(value.odsValues)
+              val enteredFieldNames = keyValuePairs.keys.toSeq
+              enteredFieldNames diff validOdsFieldNames match {
+                case missingItems if missingItems.nonEmpty =>
+                  // TODO: 9032 - Write unit test for line below
+                  val formWithErrors = form.withError(FormError("odsValues", s"Unrecognised fields: $missingItems"))
+                  BadRequest(view(submitCall, countries, formWithErrors))
+                case _                                     => Ok("VALUES:" + value)
+              }
+            }
+          )
+      case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
+    }
+
   }
 }

@@ -16,25 +16,40 @@
 
 package controllers.testOnly
 
+import connectors.MiddleConnector
 import forms.testOnly.EnterODSFormProvider
+import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.ControllerBaseSpec
 import views.html.testOnly.EnterODSView
 
+import scala.concurrent.Future
+
 class EnterODSControllerSpec extends ControllerBaseSpec {
-  private val formProvider = new EnterODSFormProvider
-  private val view         = inject[EnterODSView]
+  private val formProvider        = new EnterODSFormProvider
+  private val view                = inject[EnterODSView]
+  private val mockMiddleConnector = mock[MiddleConnector]
 
   private def controller = new EnterODSController(
     mcc,
     view,
-    formProvider
+    formProvider,
+    mockMiddleConnector
   )
 
-  private val utr = "00000000010"
+  private val utr         = "00000000010"
 
-  override def beforeEach(): Unit = {}
+  // TODO: 9032 - populate below seq
+  private val atsSaFields = Seq(
+  )
+
+  override def beforeEach(): Unit = {
+    reset(mockMiddleConnector)
+    when(mockMiddleConnector.connectToAtsSaFields(any())(any())).thenReturn(
+      Future.successful(Right(atsSaFields))
+    )
+  }
 
   "onPageLoad" must {
     "render the page" in {

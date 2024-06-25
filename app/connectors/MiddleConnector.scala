@@ -18,8 +18,10 @@ package connectors
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import models.{AtsData, AtsListData, AtsResponse}
+import models._
 import play.api.Logging
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.libs.json.JsObject
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
@@ -34,6 +36,15 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
   val serviceUrl: String = appConfig.serviceUrl
 
   private def url(path: String) = s"$serviceUrl$path"
+
+  def connectToAtsSaFields(taxYear: Int)(implicit hc: HeaderCarrier): Future[Either[Int, Seq[String]]] =
+    httpHandler.get[AtsData](url("/test-only/taxs/" + taxYear + "/ats-sa-fields")).map {
+      case AtsSuccessResponseWithPayload(data: JsObject) =>
+        val items = (data \ "items").as[Seq[String]]
+        Right(items)
+      case AtsNotFoundResponse(_)                        => Left(NOT_FOUND)
+      case AtsErrorResponse(_)                           => Left(INTERNAL_SERVER_ERROR)
+    }
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
