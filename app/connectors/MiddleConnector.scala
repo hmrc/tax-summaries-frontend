@@ -19,6 +19,7 @@ package connectors
 import com.google.inject.Inject
 import config.ApplicationConfig
 import models._
+import models.testOnly.AtsSaFields
 import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.JsObject
@@ -35,15 +36,14 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
 
   val serviceUrl: String = appConfig.serviceUrl
 
-  private def url(path: String) = s"$serviceUrl$path"
-
+  private def url(path: String)                                                                        = s"$serviceUrl$path"
   def connectToAtsSaFields(taxYear: Int)(implicit hc: HeaderCarrier): Future[Either[Int, Seq[String]]] =
-    httpHandler.get[AtsData](url("/test-only/taxs/" + taxYear + "/ats-sa-fields")).map {
-      case AtsSuccessResponseWithPayload(data: JsObject) =>
-        val items = (data \ "items").as[Seq[String]]
+    httpHandler.get[AtsSaFields](url("/test-only/taxs/" + taxYear + "/ats-sa-fields")).map {
+      case AtsSuccessResponseWithPayload(data: AtsSaFields) =>
+        val items = data.items
         Right(items)
-      case AtsNotFoundResponse(_)                        => Left(NOT_FOUND)
-      case AtsErrorResponse(_)                           => Left(INTERNAL_SERVER_ERROR)
+      case AtsNotFoundResponse(_)                           => Left(NOT_FOUND)
+      case AtsErrorResponse(_)                              => Left(INTERNAL_SERVER_ERROR)
     }
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =

@@ -42,7 +42,8 @@ class HttpHandler @Inject() (http: HttpClient)(implicit ec: ExecutionContext) ex
             logger.error(upstreamErrorResponse.message, upstreamErrorResponse)
             AtsErrorResponse(upstreamErrorResponse.message)
         }
-      case Right(response)             => extractJson[A](response.json)
+      case Right(response)             =>
+        extractJson[A](response.json)
     } recover { case e: HttpException =>
       logger.error(e.message)
       AtsErrorResponse(e.message)

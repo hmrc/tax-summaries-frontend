@@ -39,20 +39,24 @@ def 24.44"""
       )
     }
   }
-  
+
   "keyValuePairsToString" must {
     "convert map correctly to string when valid map" in {
-      CountryAndODSValues.keyValuePairsToString(Map(
-        "abc" -> "33.44",
-        "def" -> "24.44"
-      )) mustBe s"""abc 33.44${newLine}def 24.44"""
+      CountryAndODSValues.keyValuePairsToString(
+        Map(
+          "abc" -> "33.44",
+          "def" -> "24.44"
+        )
+      ) mustBe s"""abc 33.44${newLine}def 24.44"""
     }
 
     "convert map correctly to string when valid mapdd" in {
-      CountryAndODSValues.keyValuePairsToString(Map(
-        "abc" -> "",
-        "def" -> "24.44"
-      )) mustBe s"""abc${newLine}def 24.44"""
+      CountryAndODSValues.keyValuePairsToString(
+        Map(
+          "abc" -> "",
+          "def" -> "24.44"
+        )
+      ) mustBe s"""abc${newLine}def 24.44"""
     }
   }
 
