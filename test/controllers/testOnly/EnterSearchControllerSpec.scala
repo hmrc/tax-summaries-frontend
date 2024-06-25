@@ -51,7 +51,10 @@ class EnterSearchControllerSpec extends ControllerBaseSpec {
       val postRequest = FakeRequest("POST", "/").withFormUrlEncodedBody(("taxYear", "2023"), ("utr", "0000000010"))
       val result      = controller.onSubmit(postRequest)
 
-      status(result) mustBe OK
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(
+        controllers.testOnly.routes.EnterODSController.onPageLoad(2023, "0000000010").url
+      )
     }
 
     "return bad request when request invalid" in {

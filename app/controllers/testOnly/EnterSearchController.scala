@@ -85,7 +85,7 @@ class EnterSearchController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(view(taxYears, utrs, formWithErrors)),
-        value => Ok("VALUES:" + value)
+        value => Redirect(controllers.testOnly.routes.EnterODSController.onPageLoad(value.taxYear, value.utr))
       )
 
   }

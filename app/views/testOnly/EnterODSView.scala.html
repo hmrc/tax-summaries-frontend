@@ -17,40 +17,44 @@
 @import helpers.{H1, P}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
-@import modules.testOnly.TaxYearAndUTR
+@import modules.testOnly.CountryAndODSValues
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF)
-@(taxYears: Seq[SelectItem], utrs: Seq[SelectItem], form: Form[TaxYearAndUTR])(implicit request: Request[_], messages: Messages)
+@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea)
+@(submitCall: Call, countries: Seq[SelectItem], form: Form[CountryAndODSValues])(implicit request: Request[_], messages: Messages)
 
 @main(
 pageTitle = "Enter which calculations do you want to retrieve",
 disableSessionExpired = true
 ) {
 
-    @formWithCSRF(action = controllers.testOnly.routes.EnterSearchController.onSubmit){
+    @formWithCSRF(action = submitCall){
 
     @h1("Enter which calculations do you want to retrieve")
 
     @p(Text(messages("This will be used on the following pages.")))
 
     @govukSelect(Select(
-        id = "taxYear",
-        name = "taxYear",
-        items = taxYears,
+        id = "country",
+        name = "country",
+        items = countries,
         label = Label(
-          content = Text("Tax year")
+          content = Text("Country")
         )
       ))
 
-    @govukSelect(Select(
-        id = "utr",
-        name = "utr",
-        items = utrs,
+    @govukTextarea(Textarea(
+        id = "odsValues",
+        name = "odsValues",
         label = Label(
-          content = Text("UTR")
-        )
+          isPageHeading = true,
+          classes = "govuk-label--l",
+          content = Text("Enter ODS values")
+        ),
+        hint = Some(Hint(
+          content = Text("Separated by spaces")
+        ))
       ))
-
 
     @govukButton(Button(
         content = Text("Continue")

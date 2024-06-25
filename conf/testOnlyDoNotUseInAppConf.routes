@@ -17,4 +17,7 @@ PUT         /annual-tax-summary/test-only/setDefaultFlags  controllers.testOnly.
 GET         /enterSearch        controllers.testOnly.EnterSearchController.onPageLoad
 POST         /enterSearch        controllers.testOnly.EnterSearchController.onSubmit
 
+GET         /enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onPageLoad(taxYear: Int, utr: String)
+POST         /enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onSubmit(taxYear: Int, utr: String)
+
 ->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes
