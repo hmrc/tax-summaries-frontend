@@ -24,7 +24,7 @@ class EnterSearchFormProviderSpec extends BaseSpec {
 
   private val form = new EnterSearchFormProvider().apply()
 
-  private val utr     = "000000000"
+  private val utr = "000000000"
 
   "form" must {
     "must bind valid data" in {
@@ -41,7 +41,7 @@ class EnterSearchFormProviderSpec extends BaseSpec {
 
     "must display errors for missing tax year" in {
       val data = Map(
-        "utr"     -> "999999"
+        "utr" -> "999999"
       )
 
       val result = form.bind(data)
@@ -70,7 +70,7 @@ class EnterSearchFormProviderSpec extends BaseSpec {
 
     "must display errors for missing utr" in {
       val data = Map(
-        "taxYear" -> taxYear.toString,
+        "taxYear" -> taxYear.toString
       )
 
       val result = form.bind(data)
