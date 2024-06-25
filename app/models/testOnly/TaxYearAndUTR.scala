@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package modules.testOnly
+package models.testOnly
 
 import play.api.libs.json.{Format, Json}
 
-case class CountryAndODSValues(country: String, odsValues: String)
+case class TaxYearAndUTR(taxYear: Int, utr: String)
 
-object CountryAndODSValues {
-  implicit lazy val formats: Format[CountryAndODSValues] =
-    Json.format[CountryAndODSValues]
+object TaxYearAndUTR {
+  implicit lazy val formats: Format[TaxYearAndUTR] =
+    Json.format[TaxYearAndUTR]
 }

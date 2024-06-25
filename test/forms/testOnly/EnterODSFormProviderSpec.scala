@@ -16,21 +16,47 @@
 
 package forms.testOnly
 
-import modules.testOnly.CountryAndODSValues
+import models.testOnly.CountryAndODSValues
 import play.api.data.FormError
 import utils.BaseSpec
 
 class EnterODSFormProviderSpec extends BaseSpec {
 
-  private val form = new EnterODSFormProvider().apply()
+  private val validOdsFieldNames = Seq("abc", "def")
 
-  private val odsValues = "abc"
+  private val form = new EnterODSFormProvider().apply(validOdsFieldNames)
+
+  private val odsValues = """abc 22.33
+def 24.44"""
+
+  private val expOdsValues = Map(
+    "abc" -> "22.33",
+    "def" -> "24.44"
+  )
 
   "form" must {
-    "must bind valid data (England)" in {
-      val expectedResult = CountryAndODSValues("0001", odsValues)
+    "must bind valid data (England), ignoring trailing and leading spaces and values beyond 2 items" in {
+      val odsValues      = """      abc 22.33 55.77     
+ def 24.44  """
+      val expectedResult = CountryAndODSValues("0001", expOdsValues)
+      val data           = Map(
+        "country"   -> "0001",
+        "odsValues" -> odsValues
+      )
 
-      val data = Map(
+      val result = form.bind(data)
+      result.value mustBe Some(expectedResult)
+    }
+
+    "must bind valid data (England), giving blank value where less than 2 items" in {
+      val expOdsValues   = Map(
+        "abc" -> "",
+        "def" -> "24.44"
+      )
+      val odsValues      = """      abc
+ def 24.44  """
+      val expectedResult = CountryAndODSValues("0001", expOdsValues)
+      val data           = Map(
         "country"   -> "0001",
         "odsValues" -> odsValues
       )
@@ -40,7 +66,7 @@ class EnterODSFormProviderSpec extends BaseSpec {
     }
 
     "must bind valid data (Scotland)" in {
-      val expectedResult = CountryAndODSValues("0003", odsValues)
+      val expectedResult = CountryAndODSValues("0003", expOdsValues)
 
       val data = Map(
         "country"   -> "0003",
@@ -52,7 +78,7 @@ class EnterODSFormProviderSpec extends BaseSpec {
     }
 
     "must bind valid data (Wales)" in {
-      val expectedResult = CountryAndODSValues("0002", odsValues)
+      val expectedResult = CountryAndODSValues("0002", expOdsValues)
 
       val data = Map(
         "country"   -> "0002",

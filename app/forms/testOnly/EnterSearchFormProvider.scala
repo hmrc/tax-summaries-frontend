@@ -17,7 +17,7 @@
 package forms.testOnly
 
 import forms.mappings.{Constraints, Mappings}
-import modules.testOnly.TaxYearAndUTR
+import models.testOnly.TaxYearAndUTR
 import play.api.data.Form
 import play.api.data.Forms.mapping
 

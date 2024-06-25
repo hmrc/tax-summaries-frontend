@@ -17,7 +17,7 @@
 @import helpers.{H1, P}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
-@import modules.testOnly.TaxYearAndUTR
+@import models.testOnly.TaxYearAndUTR
 
 @this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF)
 @(taxYears: Seq[SelectItem], utrs: Seq[SelectItem], form: Form[TaxYearAndUTR])(implicit request: Request[_], messages: Messages)

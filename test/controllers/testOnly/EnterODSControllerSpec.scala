@@ -38,10 +38,11 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
     mockMiddleConnector
   )
 
-  private val utr         = "00000000010"
+  private val utr = "00000000010"
 
   // TODO: 9032 - populate below seq
   private val atsSaFields = Seq(
+    "abc"
   )
 
   override def beforeEach(): Unit = {
@@ -61,7 +62,8 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
 
   "onSubmit" must {
     "redirect when request valid" in {
-      val postRequest = FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abc"))
+      val postRequest =
+        FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abc 180.99"))
       val result      = controller.onSubmit(taxYear, utr)(postRequest)
 
       status(result) mustBe OK
@@ -73,5 +75,14 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
 
       status(result) mustBe BAD_REQUEST
     }
+
+    "return bad request when request invalid due to invalid ods field" in {
+      val postRequest =
+        FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abcd 180.99"))
+      val result      = controller.onSubmit(taxYear, utr)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+    }
+
   }
 }

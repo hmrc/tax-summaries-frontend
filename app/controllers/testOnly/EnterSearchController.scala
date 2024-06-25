@@ -19,7 +19,7 @@ package controllers.testOnly
 import com.google.inject.Inject
 import config.ApplicationConfig
 import forms.testOnly.EnterSearchFormProvider
-import modules.testOnly.TaxYearAndUTR
+import models.testOnly.TaxYearAndUTR
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport

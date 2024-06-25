@@ -16,7 +16,7 @@
 
 package forms.testOnly
 
-import modules.testOnly.TaxYearAndUTR
+import models.testOnly.TaxYearAndUTR
 import play.api.data.FormError
 import utils.BaseSpec
 
