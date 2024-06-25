@@ -14,19 +14,21 @@
  * limitations under the License.
  *@
 
-@import helpers.{H1, P}
+@import helpers.{H1, P, ErrorSummary}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 @import models.testOnly.CountryAndODSValues
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea)
+@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton, formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea, errorSummary: ErrorSummary)
 @(submitCall: Call, countries: Seq[SelectItem], form: Form[CountryAndODSValues])(implicit request: Request[_], messages: Messages)
 
 @main(
 pageTitle = "Enter which calculations do you want to retrieve",
 disableSessionExpired = true
 ) {
+
+    @errorSummary(form, Some("odsValues"))
 
     @formWithCSRF(action = submitCall){
 

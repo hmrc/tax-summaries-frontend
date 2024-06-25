@@ -38,7 +38,7 @@ class EnterODSFormProvider extends Mappings with Constraints {
       if (unrecognisedFields.isEmpty) {
         Valid
       } else {
-        Invalid(s"Unrecognised field names: $unrecognisedFields")
+        Invalid(s"Unrecognised field names: ${unrecognisedFields.mkString(",")}")
       }
     }
 
