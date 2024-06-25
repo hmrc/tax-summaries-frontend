@@ -21,9 +21,10 @@ import connectors.MiddleConnector
 import forms.testOnly.EnterODSFormProvider
 import modules.testOnly.CountryAndODSValues
 import play.api.Logging
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import services.testOnly.ODSValuesConverter
 import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
@@ -35,7 +36,8 @@ class EnterODSController @Inject() (
   mcc: MessagesControllerComponents,
   view: EnterODSView,
   formProvider: EnterODSFormProvider,
-  middleConnector: MiddleConnector
+  middleConnector: MiddleConnector,
+  odsValuesConverter: ODSValuesConverter
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with AccountUtils
@@ -69,36 +71,25 @@ class EnterODSController @Inject() (
     middleConnector.connectToAtsSaFields(taxYear).map {
       case Right(validOdsFieldNames) =>
         // TODO: 9032 - if odsValues is empty then default to validOdsFieldNames as key value pairs
-        val form: Form[CountryAndODSValues] = formProvider()
+        val form: Form[CountryAndODSValues] = formProvider(validOdsFieldNames)
         val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
         Ok(view(submitCall, countries, form))
       case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
     }
   }
 
-  // TODO: 9032 - implement the method below + add unit test
-  private def convertOdsValuesToKeyValuePairs(odsValues: String): Map[String, String] =
-    Map.empty
-
   def onSubmit(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
     middleConnector.connectToAtsSaFields(taxYear).map {
       case Right(validOdsFieldNames) =>
-        val form: Form[CountryAndODSValues] = formProvider()
+        val form: Form[CountryAndODSValues] = formProvider(validOdsFieldNames)
         val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
         form
           .bindFromRequest()
           .fold(
             formWithErrors => BadRequest(view(submitCall, countries, formWithErrors)),
             value => {
-              val keyValuePairs     = convertOdsValuesToKeyValuePairs(value.odsValues)
-              val enteredFieldNames = keyValuePairs.keys.toSeq
-              enteredFieldNames diff validOdsFieldNames match {
-                case missingItems if missingItems.nonEmpty =>
-                  // TODO: 9032 - Write unit test for line below
-                  val formWithErrors = form.withError(FormError("odsValues", s"Unrecognised fields: $missingItems"))
-                  BadRequest(view(submitCall, countries, formWithErrors))
-                case _                                     => Ok("VALUES:" + value)
-              }
+              // TODO: 9032 - save key value pairs to stubs
+              Ok("VALUES:" + value)
             }
           )
       case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
