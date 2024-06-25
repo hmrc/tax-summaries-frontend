@@ -17,7 +17,6 @@
 package controllers.testOnly
 
 import config.ApplicationConfig
-import controllers.auth.FakeAuthJourney
 import forms.testOnly.EnterSearchFormProvider
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,7 +29,6 @@ class EnterSearchControllerSpec extends ControllerBaseSpec {
   private val view                  = inject[EnterSearchView]
 
   private def controller = new EnterSearchController(
-    FakeAuthJourney,
     mcc,
     view,
     formProvider,

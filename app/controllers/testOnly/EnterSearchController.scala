@@ -18,7 +18,6 @@ package controllers.testOnly
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.AuthJourney
 import forms.testOnly.EnterSearchFormProvider
 import modules.testOnly.TaxYearAndUTR
 import play.api.Logging
@@ -33,7 +32,6 @@ import views.html.testOnly.EnterSearchView
 import scala.concurrent.Future
 
 class EnterSearchController @Inject() (
-  authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
   view: EnterSearchView,
   formProvider: EnterSearchFormProvider,
@@ -75,12 +73,12 @@ class EnterSearchController @Inject() (
     SelectItem(value = Some(utr), text = utr, selected = true, disabled = false)
   }
 
-  def onPageLoad: Action[AnyContent] = authJourney.authMinimal.async { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
     val form: Form[TaxYearAndUTR] = formProvider()
     Future.successful(Ok(view(taxYears, utrs, form)))
   }
 
-  def onSubmit: Action[AnyContent] = authJourney.authMinimal { implicit request =>
+  def onSubmit: Action[AnyContent] = Action { implicit request =>
     val form: Form[TaxYearAndUTR] = formProvider()
 
     form
