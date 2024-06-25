@@ -18,6 +18,7 @@ package controllers.testOnly
 
 import com.google.inject.Inject
 import connectors.MiddleConnector
+import connectors.testOnly.TaxSummariesStubsConnector
 import forms.testOnly.EnterODSFormProvider
 import models.testOnly.CountryAndODSValues
 import play.api.Logging
@@ -35,7 +36,8 @@ class EnterODSController @Inject() (
   mcc: MessagesControllerComponents,
   view: EnterODSView,
   formProvider: EnterODSFormProvider,
-  middleConnector: MiddleConnector
+  middleConnector: MiddleConnector,
+  taxSummariesStubsConnector: TaxSummariesStubsConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with AccountUtils
@@ -65,14 +67,20 @@ class EnterODSController @Inject() (
   )
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    // TODO: 9032 - connect to stubs and retrieve for utr/ tax year + if present populate with values
-    middleConnector.connectToAtsSaFields(taxYear).map {
-      case Right(validOdsFieldNames) =>
-        // TODO: 9032 - if odsValues is empty then default to validOdsFieldNames as key value pairs
-        val form: Form[CountryAndODSValues] = formProvider(validOdsFieldNames)
-        val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
-        Ok(view(submitCall, countries, form))
-      case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
+    taxSummariesStubsConnector.get(taxYear, utr).flatMap { saODSModel =>
+      middleConnector.connectToAtsSaFields(taxYear).map {
+        case Right(validOdsFieldNames) =>
+          val odsValues: Map[String, String]           = if (saODSModel.odsValues.nonEmpty) {
+            saODSModel.odsValues.map(x => x.fieldName -> x.amount.toString).toMap
+          } else {
+            validOdsFieldNames.map(_ -> "0.00").toMap
+          }
+          val countryAndODSValues: CountryAndODSValues = CountryAndODSValues("0001", odsValues)
+          val form: Form[CountryAndODSValues]          = formProvider(validOdsFieldNames).fill(countryAndODSValues)
+          val submitCall: Call                         = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
+          Ok(view(submitCall, countries, form))
+        case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
+      }
     }
   }
 
