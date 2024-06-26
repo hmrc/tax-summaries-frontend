@@ -21,39 +21,42 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(main: MainTemplate, h1: H1, h2: H2, p: P, govukSelect : GovukSelect,    govukButton : GovukButton, formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea, errorSummary: ErrorSummary)
-@(continueUrl: String, incomeTaxDataSection: Seq[(String, BigDecimal, String)], summaryDataSection: Seq[(String, BigDecimal, String)], incomeDataSection: Seq[(String, BigDecimal, String)], allowanceDataSection: Seq[(String, BigDecimal, String)], capitalGainsDataSection: Seq[(String, BigDecimal, String)])(implicit request: Request[_], messages: Messages)
+@(continueUrl: String, sections: Seq[(String, Seq[(String, BigDecimal, String)])])(implicit request: Request[_], messages: Messages)
 
 @main(
 pageTitle = "Display ATS Values",
 disableSessionExpired = true
 ) {
-
     @h1("Display ATS Values")
 
-    @p(Text(messages("For the ODS values entered and the rates for the tax year, the following values will be displayed in PTA.")))
-    @p(Text(messages("The fieldname is the same field name that is found in the redesigned matrix spreadsheet. The field names displayed in the calculus column in brackets are the field names returned from the ODS API (1535).")))
+    @if(sections.flatMap(_._2).nonEmpty) {
+        @p(Text("For the ODS values entered and the rates for the tax year, the following values will be displayed in PTA."))
+        @p(Text("The fieldname is the same field name that is found in the redesigned matrix spreadsheet. The field names displayed in the calculus column in brackets are the field names returned from the ODS API (1535)."))
 
-
-
-    @h2("Income tax data")
-    <table id="income-tax" class="govuk-table">
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Fieldname</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Value</th>
-            <th scope="col" class="govuk-table__header">Calculus</th>
-        </tr>
-        </thead>
-        <tbody>
-        @incomeTaxDataSection.map{ t =>
-            <tr>
-                <td class="govuk-table__cell">@t._1</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@t._2</td>
-                <td class="govuk-table__cell">@t._3</td>
-            </tr>
+        @sections.map{ case (title, data) =>
+            @h2(title)
+            <table id="income-tax" class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Fieldname</th>
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">Value</th>
+                    <th scope="col" class="govuk-table__header">Calculus</th>
+                </tr>
+                </thead>
+                <tbody>
+                @data.map{ t =>
+                    <tr>
+                        <td class="govuk-table__cell">@t._1</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@t._2</td>
+                        <td class="govuk-table__cell">@t._3</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         }
-        </tbody>
-    </table>
+    } else {
+        @p(Text("There is no tax liability for the ODS values entered."))
+    }
 
     @govukButton(Button(
         href = Some(continueUrl),

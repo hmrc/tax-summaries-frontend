@@ -38,11 +38,11 @@ class EnterODSFormProvider extends Mappings {
       val unrecognisedFields = keyValuePairs.keys.toSeq.diff(validOdsFieldNames)
       if (unrecognisedFields.isEmpty) {
         keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
-          case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.mkString(",")}")
+          case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.mkString(", ")}")
           case Right(_)            => Valid
         }
       } else {
-        Invalid(s"Unrecognised field names: ${unrecognisedFields.mkString(",")}")
+        Invalid(s"Unrecognised field names: ${unrecognisedFields.mkString(", ")}")
       }
     }
 

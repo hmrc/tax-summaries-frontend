@@ -39,22 +39,22 @@ class DisplayPTAController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def getSection(data: JsValue, section: String): Seq[(String, BigDecimal, String)] = {
-    val jsArray = (data \ "odsValues" \ section).as[JsArray]
-    jsArray.value.toSeq.map { json =>
-      val jsNode    = json.as[JsObject]
-      val fieldName = (jsNode \ "fieldName").as[String]
-      val amount    = (jsNode \ "amount").as[BigDecimal]
-      val calculus  = (jsNode \ "calculus").as[String]
-      Tuple3(fieldName, amount, calculus)
+  private def getSection(data: JsValue, section: String): Seq[(String, BigDecimal, String)] =
+    (data \ "odsValues" \ section).asOpt[JsArray] match {
+      case Some(jsArray) =>
+        jsArray.value.toSeq.map { json =>
+          val jsNode    = json.as[JsObject]
+          val fieldName = (jsNode \ "fieldName").as[String]
+          val amount    = (jsNode \ "amount").as[BigDecimal]
+          val calculus  = (jsNode \ "calculus").as[String]
+          Tuple3(fieldName, amount, calculus)
+        }
+      case None          => Nil
     }
-  }
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
     middleConnector.connectToAtsSaDataPlusCalculus(taxYear, utr).map {
       case Right(data) =>
-        println("\nDATA:" + data)
-
         val incomeTaxDataSection: Seq[(String, BigDecimal, String)]    = getSection(data = data, section = "income_tax")
         val summaryDataSection: Seq[(String, BigDecimal, String)]      = getSection(data = data, section = "summary_data")
         val incomeDataSection: Seq[(String, BigDecimal, String)]       = getSection(data = data, section = "income_data")
@@ -66,11 +66,13 @@ class DisplayPTAController @Inject() (
         Ok(
           view(
             "https://www.staging.tax.service.gov.uk/auth-login-stub/gg-sign-in",
-            incomeTaxDataSection,
-            summaryDataSection,
-            incomeDataSection,
-            allowanceDataSection,
-            capitalGainsDataSection
+            Seq(
+              Tuple2("Income tax data", incomeTaxDataSection),
+              Tuple2("Summary data", summaryDataSection),
+              Tuple2("Income data", incomeDataSection),
+              Tuple2("Allowance data", allowanceDataSection),
+              Tuple2("Capital gains data", capitalGainsDataSection)
+            )
           )
         )
       case Left(e)     => throw new RuntimeException(s"Error returned, status=$e")
