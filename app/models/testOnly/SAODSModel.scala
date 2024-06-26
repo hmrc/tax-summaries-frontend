@@ -18,7 +18,7 @@ package models.testOnly
 
 import play.api.libs.json._
 
-case class OdsValue(fieldName: String, amount: Double)
+case class OdsValue(fieldName: String, amount: BigDecimal)
 
 case class SAODSModel(utr: String, taxYear: Int, country: String, odsValues: List[OdsValue])
 

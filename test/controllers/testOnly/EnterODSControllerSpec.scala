@@ -17,7 +17,9 @@
 package controllers.testOnly
 
 import connectors.MiddleConnector
+import connectors.testOnly.TaxSummariesStubsConnector
 import forms.testOnly.EnterODSFormProvider
+import models.testOnly.SAODSModel
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -27,29 +29,39 @@ import views.html.testOnly.EnterODSView
 import scala.concurrent.Future
 
 class EnterODSControllerSpec extends ControllerBaseSpec {
-  private val formProvider        = new EnterODSFormProvider
-  private val view                = inject[EnterODSView]
-  private val mockMiddleConnector = mock[MiddleConnector]
+  private val formProvider                   = new EnterODSFormProvider
+  private val view                           = inject[EnterODSView]
+  private val mockMiddleConnector            = mock[MiddleConnector]
+  private val mockTaxSummariesStubsConnector = mock[TaxSummariesStubsConnector]
 
   private def controller = new EnterODSController(
     mcc,
     view,
     formProvider,
-    mockMiddleConnector
+    mockMiddleConnector,
+    mockTaxSummariesStubsConnector
   )
 
-  private val utr = "00000000010"
+  private val utr     = "00000000010"
+  private val country = "0001"
 
   // TODO: 9032 - populate below seq
   private val atsSaFields = Seq(
     "abc"
   )
 
+  private val saODSModel = SAODSModel(utr, taxYear, country, Nil)
+
   override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
+    reset(mockTaxSummariesStubsConnector)
     when(mockMiddleConnector.connectToAtsSaFields(any())(any())).thenReturn(
       Future.successful(Right(atsSaFields))
     )
+    when(mockTaxSummariesStubsConnector.get(any(), any())(any(), any()))
+      .thenReturn(Future.successful(saODSModel))
+    when(mockTaxSummariesStubsConnector.save(any(), any(), any())(any(), any()))
+      .thenReturn(Future.successful((): Unit))
   }
 
   "onPageLoad" must {

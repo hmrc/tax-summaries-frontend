@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
 import views.html.testOnly.EnterODSView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class EnterODSController @Inject() (
   mcc: MessagesControllerComponents,
@@ -85,17 +85,18 @@ class EnterODSController @Inject() (
   }
 
   def onSubmit(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    middleConnector.connectToAtsSaFields(taxYear).map {
+    middleConnector.connectToAtsSaFields(taxYear).flatMap {
       case Right(validOdsFieldNames) =>
         val form: Form[CountryAndODSValues] = formProvider(validOdsFieldNames)
         val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => BadRequest(view(submitCall, countries, formWithErrors)),
+            formWithErrors => Future.successful(BadRequest(view(submitCall, countries, formWithErrors))),
             value =>
-              // TODO: 9032 - save key value pairs to stubs
-              Ok("VALUES:" + value)
+              taxSummariesStubsConnector.save(taxYear, utr, value).map { _ =>
+                Ok("VALUES:" + value)
+              }
           )
       case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
     }

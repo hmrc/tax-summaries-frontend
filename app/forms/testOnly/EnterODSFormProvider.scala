@@ -18,7 +18,7 @@ package forms.testOnly
 
 import forms.mappings.{Constraints, Mappings}
 import models.testOnly.CountryAndODSValues
-import CountryAndODSValues.{keyValuePairsToString, stringToKeyValuePairs}
+import models.testOnly.CountryAndODSValues.{keyValuePairsToEitherSeqODSValue, keyValuePairsToString, stringToKeyValuePairs}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -33,10 +33,14 @@ class EnterODSFormProvider extends Mappings with Constraints {
   }
 
   def apply(validOdsFieldNames: Seq[String]): Form[CountryAndODSValues] = {
-    val constraintOdsValues: Constraint[CountryAndODSValues] = Constraint { countryAndODSValues =>
-      val unrecognisedFields = countryAndODSValues.odsValues.keys.toSeq.diff(validOdsFieldNames)
+    val constraintOdsValues: Constraint[String] = Constraint { odsValues =>
+      val keyValuePairs      = stringToKeyValuePairs(odsValues)
+      val unrecognisedFields = keyValuePairs.keys.toSeq.diff(validOdsFieldNames)
       if (unrecognisedFields.isEmpty) {
-        Valid
+        keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
+          case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.mkString(",")}")
+          case Right(_)            => Valid
+        }
       } else {
         Invalid(s"Unrecognised field names: ${unrecognisedFields.mkString(",")}")
       }
@@ -45,10 +49,10 @@ class EnterODSFormProvider extends Mappings with Constraints {
     Form(
       mapping(
         "country"   -> text().verifying(constraintCountry),
-        "odsValues" -> text()
+        "odsValues" -> text().verifying(constraintOdsValues)
       )((country, odsValues) => CountryAndODSValues(country, stringToKeyValuePairs(odsValues)))(countryAndODSValues =>
         Some((countryAndODSValues.country, keyValuePairsToString(countryAndODSValues.odsValues)))
-      ).verifying(constraintOdsValues)
+      )
     )
   }
 }

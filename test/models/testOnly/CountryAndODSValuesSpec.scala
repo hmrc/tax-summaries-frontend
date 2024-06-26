@@ -60,4 +60,31 @@ def 24.44"""
     }
   }
 
+  "keyValuePairsToArray" must {
+    "convert key value pairs correctly to array + return right" in {
+      CountryAndODSValues.keyValuePairsToEitherSeqODSValue(
+        Map(
+          "abc" -> "33.44",
+          "def" -> "24.44"
+        )
+      ) mustBe Right(
+        Seq(
+          OdsValue("abc", BigDecimal(33.44)),
+          OdsValue("def", BigDecimal(24.44))
+        )
+      )
+    }
+
+    "return left when fields not convertable to big decimals" in {
+      CountryAndODSValues.keyValuePairsToEitherSeqODSValue(
+        Map(
+          "abc" -> "33.44",
+          "def" -> "invalid1",
+          "ghi" -> "77.88",
+          "ghi" -> "invalid2"
+        )
+      ) mustBe Left(Seq("def", "ghi"))
+    }
+  }
+
 }

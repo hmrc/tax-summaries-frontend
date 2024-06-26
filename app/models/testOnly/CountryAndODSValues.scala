@@ -16,6 +16,12 @@
 
 package models.testOnly
 
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.libs.ws.BodyWritable
+
+import scala.util.{Failure, Success, Try}
+
 case class CountryAndODSValues(country: String, odsValues: Map[String, String])
 
 object CountryAndODSValues {
@@ -52,15 +58,36 @@ object CountryAndODSValues {
 
     }
   }
-//
-//    implicit def writes: Writes[CountryAndODSValues] =
-//      ((__ \ "country").write[String] and
-//        (__ \ "odsValues").write[String])(a => (a.country, keyValuePairsToString(a.odsValues)))
-//
-//    implicit def reads: Reads[CountryAndODSValues] =
-//      ((__ \ "country").read[String] and
-//        (__ \ "odsValues").read[String])((country, odsValues) =>
-//        CountryAndODSValues(country, stringToKeyValuePairs(odsValues))
-//      )
 
+  def keyValuePairsToEitherSeqODSValue(v: Map[String, String]): Either[Seq[String], Seq[OdsValue]] =
+    v.toSeq.foldLeft[Either[Seq[String], Seq[OdsValue]]](Right(Nil)) { (c, i) =>
+      (c, Try(BigDecimal(i._2))) match {
+        case (Right(_), Success(value)) =>
+          c.map(rr => rr :+ OdsValue(i._1, value))
+        case (Left(_), Success(_))      => c
+        case (Left(_), Failure(_))      => c.swap.map(_ :+ i._1).swap
+        case (Right(_), Failure(_))     => Left(Seq(i._1))
+      }
+    }
+
+  implicit val writes: Writes[CountryAndODSValues] =
+    ((__ \ "country").write[String] and
+      (__ \ "odsValues").write[Seq[OdsValue]]) { a =>
+      keyValuePairsToEitherSeqODSValue(a.odsValues) match {
+        case Left(e)             => throw new RuntimeException("Invalid values for fields:" + e.toString)
+        case Right(seqODSValues) => (a.country, seqODSValues)
+      }
+
+    }
+
+  implicit val reads: Reads[CountryAndODSValues] =
+    ((__ \ "country").read[String] and
+      (__ \ "odsValues").read[String])((country, odsValues) =>
+      CountryAndODSValues(country, stringToKeyValuePairs(odsValues))
+    )
+
+  implicit def jsonBodyWritable[T](implicit
+    writes: Writes[T],
+    jsValueBodyWritable: BodyWritable[JsValue]
+  ): BodyWritable[T] = jsValueBodyWritable.map(writes.writes)
 }

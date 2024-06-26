@@ -42,7 +42,9 @@ disableSessionExpired = true
         items = countries,
         label = Label(
           content = Text("Country")
-        )
+        ),
+        errorMessage = form("country").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message))),
+        value = form("country").value
       ))
 
     @govukTextarea(Textarea(
@@ -55,7 +57,9 @@ disableSessionExpired = true
         ),
         hint = Some(Hint(
           content = Text("Separated by spaces")
-        ))
+        )),
+        errorMessage = form("odsValues").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message))),
+        value = form("odsValues").value
       ))
 
     @govukButton(Button(

@@ -22,7 +22,7 @@ import utils.BaseSpec
 
 class EnterODSFormProviderSpec extends BaseSpec {
 
-  private val validOdsFieldNames = Seq("abc", "def")
+  private val validOdsFieldNames = Seq("abc", "def", "ghi")
 
   private val form = new EnterODSFormProvider().apply(validOdsFieldNames)
 
@@ -36,7 +36,7 @@ def 24.44"""
 
   "form" must {
     "must bind valid data (England), ignoring trailing and leading spaces and values beyond 2 items" in {
-      val odsValues      = """      abc 22.33 55.77     
+      val odsValues      = """      abc 22.33 55.77
  def 24.44  """
       val expectedResult = CountryAndODSValues("0001", expOdsValues)
       val data           = Map(
@@ -48,7 +48,7 @@ def 24.44"""
       result.value mustBe Some(expectedResult)
     }
 
-    "must bind valid data (England), giving blank value where less than 2 items" in {
+    "must bind valid data (England), allowing blank value but displaying as invalid" in {
       val expOdsValues   = Map(
         "abc" -> "",
         "def" -> "24.44"
@@ -62,7 +62,7 @@ def 24.44"""
       )
 
       val result = form.bind(data)
-      result.value mustBe Some(expectedResult)
+      result.errors mustBe Seq(FormError("odsValues", List("Invalid field values: abc")))
     }
 
     "must bind valid data (Scotland)" in {
@@ -87,6 +87,19 @@ def 24.44"""
 
       val result = form.bind(data)
       result.value mustBe Some(expectedResult)
+    }
+
+    "must display errors for invalid field values" in {
+      val odsValues = """      abc 22.33 55.77     
+ def invalid
+ ghi 66.77  """
+      val data      = Map(
+        "country"   -> "0001",
+        "odsValues" -> odsValues
+      )
+
+      val result = form.bind(data)
+      result.errors mustBe Seq(FormError("odsValues", List("Invalid field values: def")))
     }
 
     "must display errors for missing country" in {

@@ -16,39 +16,40 @@
 
 package connectors.testOnly
 
-import cats.data.EitherT
 import config.ApplicationConfig
-import connectors.HttpClientResponse
-import models.testOnly.SAODSModel
+import models.testOnly.{CountryAndODSValues, SAODSModel}
 import play.api.Logging
 import play.api.http.HeaderNames
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.{CREATED, NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxSummariesStubsConnector @Inject() (
   http: HttpClientV2,
-  httpClientResponse: HttpClientResponse,
   applicationConfig: ApplicationConfig
 ) extends Logging {
 
   private val baseUrl = applicationConfig.taxSummariesStubsHost
 
-  def save(taxYear: Int, utr: String)(implicit
+  def save(taxYear: Int, utr: String, countryAndODSValues: CountryAndODSValues)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): EitherT[Future, UpstreamErrorResponse, Unit] =
-    httpClientResponse
-      .read(
-        http
-          .post(url"$baseUrl/ods-sa-data/$utr/$taxYear")
-          .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
-          .execute[Either[UpstreamErrorResponse, HttpResponse]]
-      )
+  ): Future[Unit] =
+    http
+      .post(url"$baseUrl/ods-sa-data/$utr/$taxYear")
+      .withBody(countryAndODSValues)
+      .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse]
+      .map { r =>
+        r.status match {
+          case CREATED => (): Unit
+          case _       => throw new RuntimeException(s"Unexpected response: ${r.status}")
+        }
+      }
       .map(_ => (): Unit)
 
   def get(taxYear: Int, utr: String)(implicit
@@ -63,7 +64,7 @@ class TaxSummariesStubsConnector @Inject() (
         r.status match {
           case OK        => r.json.as[SAODSModel]
           case NOT_FOUND => SAODSModel(utr, taxYear, "0001", Nil)
-          case e         => throw new RuntimeException(s"Unexpected response: ${r.status}")
+          case _         => throw new RuntimeException(s"Unexpected response: ${r.status}")
         }
       }
 }
