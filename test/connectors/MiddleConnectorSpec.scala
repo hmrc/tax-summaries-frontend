@@ -19,6 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
 import config.ApplicationConfig
 import models._
+import models.testOnly.AtsSaFields
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -493,6 +494,25 @@ class MiddleConnectorSpec
 
       val result = sut.connectToGovernmentSpend(currentYear).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
+    }
+  }
+
+  "connectToAtsSaFields" must {
+    "return successful response" in {
+      val expectedResponse: String = Json.toJson(AtsSaFields(Seq("abc", "def"))).toString()
+      val url                      = "/test-only/taxs/" + currentYear + "/ats-sa-fields"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(expectedResponse)
+        )
+      )
+
+      val result = sut.connectToAtsSaFields(currentYear).futureValue.value
+
+      result mustBe Seq("abc", "def")
     }
   }
 }
