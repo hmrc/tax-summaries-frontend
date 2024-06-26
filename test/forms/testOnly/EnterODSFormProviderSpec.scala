@@ -49,14 +49,13 @@ def 24.44"""
     }
 
     "must bind valid data (England), allowing blank value but displaying as invalid" in {
-      val expOdsValues   = Map(
+      val expOdsValues = Map(
         "abc" -> "",
         "def" -> "24.44"
       )
-      val odsValues      = """      abc
+      val odsValues    = """      abc
  def 24.44  """
-      val expectedResult = CountryAndODSValues("0001", expOdsValues)
-      val data           = Map(
+      val data         = Map(
         "country"   -> "0001",
         "odsValues" -> odsValues
       )

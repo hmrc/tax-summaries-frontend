@@ -16,14 +16,14 @@
 
 package forms.testOnly
 
-import forms.mappings.{Constraints, Mappings}
+import forms.mappings.Mappings
 import models.testOnly.CountryAndODSValues
 import models.testOnly.CountryAndODSValues.{keyValuePairsToEitherSeqODSValue, keyValuePairsToString, stringToKeyValuePairs}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
-class EnterODSFormProvider extends Mappings with Constraints {
+class EnterODSFormProvider extends Mappings {
 
   private val validCountries = Set("0001", "0002", "0003")
 

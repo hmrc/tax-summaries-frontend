@@ -71,7 +71,7 @@ class EnterODSController @Inject() (
       middleConnector.connectToAtsSaFields(taxYear).map {
         case Right(validOdsFieldNames) =>
           val odsValues: Map[String, String]           = if (saODSModel.odsValues.nonEmpty) {
-            saODSModel.odsValues.map(x => x.fieldName -> x.amount.toString).toMap
+            saODSModel.odsValues.map(odsValue => odsValue.fieldName -> odsValue.amount.toString).toMap
           } else {
             validOdsFieldNames.map(_ -> "0.00").toMap
           }

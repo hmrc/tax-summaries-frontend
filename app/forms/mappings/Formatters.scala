@@ -20,17 +20,11 @@ import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import java.text.DecimalFormat
 import scala.util.Try
 import scala.util.control.Exception.nonFatalCatch
 
-trait Formatters extends Transforms with Constraints {
-  private[mappings] val decimalFormat    = new DecimalFormat("0.00")
-  private[mappings] val postcodeRegexp   = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
-  private[mappings] val numericRegexp    = """^-?(\-?)(\d*)(\.?)(\d*)$"""
-  private[mappings] val decimalRegexp    = """^-?(\d*\.\d*)$"""
-  private[mappings] val intRegexp        = """^-?(\d*)$"""
-  private[mappings] val decimal2DPRegexp = """^-?(\d*\.\d{2})$"""
+trait Formatters {
+  private[mappings] val decimalRegexp = """^-?(\d*\.\d*)$"""
 
   private[mappings] val optionalStringFormatter: Formatter[Option[String]] =
     new Formatter[Option[String]] {
@@ -38,7 +32,6 @@ trait Formatters extends Transforms with Constraints {
         Right(
           data
             .get(key)
-            .map(standardiseText)
             .filter(_.lengthCompare(0) > 0)
         )
 

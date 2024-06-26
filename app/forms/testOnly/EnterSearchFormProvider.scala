@@ -16,12 +16,12 @@
 
 package forms.testOnly
 
-import forms.mappings.{Constraints, Mappings}
+import forms.mappings.Mappings
 import models.testOnly.TaxYearAndUTR
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
-class EnterSearchFormProvider extends Mappings with Constraints {
+class EnterSearchFormProvider extends Mappings {
 
   def apply(): Form[TaxYearAndUTR] =
     Form(

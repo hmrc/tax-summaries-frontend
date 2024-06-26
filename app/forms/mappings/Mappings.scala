@@ -16,13 +16,10 @@
 
 package forms.mappings
 
-import models.Enumerable
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 
-trait Mappings extends Formatters with Constraints with Transforms {
-
-  private val maxPostCodeLength = 8
+trait Mappings extends Formatters {
 
   protected def optionalText(): FieldMapping[Option[String]] =
     of(optionalStringFormatter)
@@ -38,17 +35,5 @@ trait Mappings extends Formatters with Constraints with Transforms {
     max: Option[(String, Int)] = None
   ): FieldMapping[Int] =
     of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, min, max))
-
-  protected def boolean(
-    requiredKey: String = "error.required",
-    invalidKey: String = "error.boolean",
-    invalidPaymentTypeBoolean: String = "error.paymentType"
-  ): FieldMapping[Boolean] =
-    of(booleanFormatter(requiredKey, invalidKey, invalidPaymentTypeBoolean))
-
-  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit
-    ev: Enumerable[A]
-  ): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey))
 
 }
