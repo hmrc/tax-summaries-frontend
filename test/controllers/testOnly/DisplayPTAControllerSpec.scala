@@ -17,83 +17,39 @@
 package controllers.testOnly
 
 import connectors.MiddleConnector
-import connectors.testOnly.TaxSummariesStubsConnector
-import forms.testOnly.EnterODSFormProvider
-import models.testOnly.SAODSModel
 import org.mockito.ArgumentMatchers.any
-import play.api.test.FakeRequest
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.ControllerBaseSpec
-import views.html.testOnly.EnterODSView
+import views.html.testOnly.DisplayPTAView
 
 import scala.concurrent.Future
 
-class EnterODSControllerSpec extends ControllerBaseSpec {
-  private val formProvider                   = new EnterODSFormProvider
-  private val view                           = inject[EnterODSView]
-  private val mockMiddleConnector            = mock[MiddleConnector]
-  private val mockTaxSummariesStubsConnector = mock[TaxSummariesStubsConnector]
+class DisplayPTAControllerSpec extends ControllerBaseSpec {
+  private val view                = inject[DisplayPTAView]
+  private val mockMiddleConnector = mock[MiddleConnector]
 
-  private def controller = new EnterODSController(
+  private def controller = new DisplayPTAController(
     mcc,
     view,
-    formProvider,
-    mockMiddleConnector,
-    mockTaxSummariesStubsConnector
+    mockMiddleConnector
   )
 
-  private val utr     = "00000000010"
-  private val country = "0001"
+  private val utr = "00000000010"
 
-  private val atsSaFields = Seq(
-    "abc"
-  )
-
-  private val saODSModel = SAODSModel(utr, taxYear, country, Nil)
+  private val jsValue = Json.obj()
 
   override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
-    reset(mockTaxSummariesStubsConnector)
-    when(mockMiddleConnector.connectToAtsSaFields(any())(any())).thenReturn(
-      Future.successful(Right(atsSaFields))
+    when(mockMiddleConnector.connectToAtsSaDataPlusCalculus(any(), any())(any())).thenReturn(
+      Future.successful(Right(jsValue))
     )
-    when(mockTaxSummariesStubsConnector.get(any(), any())(any(), any()))
-      .thenReturn(Future.successful(saODSModel))
-    when(mockTaxSummariesStubsConnector.save(any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful((): Unit))
   }
 
   "onPageLoad" must {
     "render the page" in {
       val result = controller.onPageLoad(taxYear, utr)(request)
-
       status(result) mustBe OK
     }
-  }
-
-  "onSubmit" must {
-    "redirect when request valid" in {
-      val postRequest =
-        FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abc 180.99"))
-      val result      = controller.onSubmit(taxYear, utr)(postRequest)
-
-      status(result) mustBe OK
-    }
-
-    "return bad request when request invalid" in {
-      val postRequest = FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0006"))
-      val result      = controller.onSubmit(taxYear, utr)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-    }
-
-    "return bad request when request invalid due to invalid ods field" in {
-      val postRequest =
-        FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abcd 180.99"))
-      val result      = controller.onSubmit(taxYear, utr)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-    }
-
   }
 }

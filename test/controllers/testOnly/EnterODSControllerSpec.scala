@@ -77,7 +77,10 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
         FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abc 180.99"))
       val result      = controller.onSubmit(taxYear, utr)(postRequest)
 
-      status(result) mustBe OK
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(
+        controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr).url
+      )
     }
 
     "return bad request when request invalid" in {
