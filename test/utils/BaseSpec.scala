@@ -26,7 +26,6 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.routing.Router
 import play.api.test.Injecting
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 

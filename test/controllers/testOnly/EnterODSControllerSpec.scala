@@ -45,7 +45,6 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
   private val utr     = "00000000010"
   private val country = "0001"
 
-  // TODO: 9032 - populate below seq
   private val atsSaFields = Seq(
     "abc"
   )
