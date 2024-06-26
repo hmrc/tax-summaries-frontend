@@ -95,7 +95,7 @@ class EnterODSController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(submitCall, countries, formWithErrors))),
             value =>
               taxSummariesStubsConnector.save(taxYear, utr, value).map { _ =>
-                Ok("VALUES:" + value)
+                Redirect(controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr))
               }
           )
       case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")

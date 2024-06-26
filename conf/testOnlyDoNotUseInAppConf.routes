@@ -20,4 +20,6 @@ POST        /test-only/enterSearch        controllers.testOnly.EnterSearchContro
 GET         /test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onPageLoad(taxYear: Int, utr: String)
 POST        /test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onSubmit(taxYear: Int, utr: String)
 
+GET         /test-only/displayPTA/:taxYear/:utr        controllers.testOnly.DisplayPTAController.onPageLoad(taxYear: Int, utr: String)
+
 ->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes

@@ -22,7 +22,7 @@ import models._
 import models.testOnly.AtsSaFields
 import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
-import play.api.libs.json.JsObject
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
@@ -44,6 +44,17 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
         Right(items)
       case AtsNotFoundResponse(_)                           => Left(NOT_FOUND)
       case AtsErrorResponse(_)                              => Left(INTERNAL_SERVER_ERROR)
+    }
+
+  def connectToAtsSaDataPlusCalculus(taxYear: Int, utr: String)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[Int, JsValue]] =
+    httpHandler.get[JsValue](url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data-plus-calculus")).map {
+      case AtsSuccessResponseWithPayload(data: JsValue) =>
+        Right(data)
+      case AtsNotFoundResponse(_)                       => Left(NOT_FOUND)
+      case AtsErrorResponse(e)                          =>
+        Left(INTERNAL_SERVER_ERROR)
     }
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
