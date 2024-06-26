@@ -56,7 +56,7 @@ disableSessionExpired = true
           content = Text("Enter ODS values")
         ),
         hint = Some(Hint(
-          content = Text("Separated by spaces")
+          content = Text("Field-value pairs, one per line, separated by one or more spaces or tabs")
         )),
         errorMessage = form("odsValues").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message))),
         value = form("odsValues").value
