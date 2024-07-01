@@ -86,9 +86,8 @@ class AuthImpl(
   private def agentTokenCheck[A](
     request: Request[A],
     rq: => AuthenticatedRequest[A]
-  ): Future[Either[Result, AuthenticatedRequest[A]]] =
+  )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
-      implicit val req: Request[A] = request
       taxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(Globals.TAXS_AGENT_TOKEN_KEY)).map {
         agentToken =>
           if (
