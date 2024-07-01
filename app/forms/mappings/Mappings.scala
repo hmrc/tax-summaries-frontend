@@ -27,10 +27,8 @@ trait Mappings extends Formatters {
   protected def int(
     requiredKey: String = "error.required",
     wholeNumberKey: String = "error.wholeNumber",
-    nonNumericKey: String = "error.nonNumeric",
-    min: Option[(String, Int)] = None,
-    max: Option[(String, Int)] = None
+    nonNumericKey: String = "error.nonNumeric"
   ): FieldMapping[Int] =
-    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, min, max))
+    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey))
 
 }

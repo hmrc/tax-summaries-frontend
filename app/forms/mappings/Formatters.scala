@@ -42,8 +42,6 @@ trait Formatters {
     requiredKey: String,
     wholeNumberKey: String,
     nonNumericKey: String,
-    min: Option[(String, Int)] = None,
-    max: Option[(String, Int)] = None,
     args: Seq[String] = Seq.empty
   ): Formatter[Int] =
     new Formatter[Int] {
@@ -66,9 +64,7 @@ trait Formatters {
 
       private def nonDecimalIntMatcher(s: String, key: String): Either[Seq[FormError], Int] =
         Try(BigInt(s)).toOption match {
-          case Some(l) if min.isDefined && l < min.get._2 => Left(Seq(FormError(key, min.get._1, args)))
-          case Some(l) if max.isDefined && l > max.get._2 => Left(Seq(FormError(key, max.get._1, args)))
-          case _                                          =>
+          case _ =>
             nonFatalCatch
               .either(s.toInt)
               .left
