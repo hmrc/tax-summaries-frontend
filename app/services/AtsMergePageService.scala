@@ -59,11 +59,11 @@ class AtsMergePageService @Inject() (
   private def getSaYearList(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
-  ): Future[Either[AtsResponse, AtsList]] = {
+  ): Future[Either[AtsResponse, AtsList]] =
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).contains(Globals.TAXS_PORTAL_REFERENCE)) {
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
-      agentToken.fold[Future[_]] {
+      val agentTokenTask = agentToken.fold[Future[_]] {
         Future.successful(None)
       } { token =>
         if (AccountUtils.isAgent(request)) {
@@ -78,9 +78,10 @@ class AtsMergePageService @Inject() (
           Future.successful(None)
         }
       }
+      agentTokenTask.map(_ => atsListService.createModel()).flatten
+    } else {
+      atsListService.createModel()
     }
-    atsListService.createModel()
-  }
 
   private def getPayeAtsYearList(implicit
     hc: HeaderCarrier,

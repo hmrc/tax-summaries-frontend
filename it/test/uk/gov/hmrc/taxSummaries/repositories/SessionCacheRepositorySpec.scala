@@ -44,12 +44,12 @@ class SessionCacheRepositorySpec extends BaseSpec with MongoSupport {
   }
 
   "data should be cached based on the session id" in {
-    val data = FakeData("test")
-    val hc = HeaderCarrier(sessionId = Some(SessionId("SessionId-0000")))
+    val data    = FakeData("test")
+    val hc      = HeaderCarrier(sessionId = Some(SessionId("SessionId-0000")))
     val wrongHc = HeaderCarrier(sessionId = Some(SessionId("SessionId-xxxx")))
     repository.putSession[FakeData](DataKey[FakeData]("testId"), data)(implicitly, hc, implicitly)
 
-    val result = repository.getFromSession(DataKey[FakeData]("testId"))(implicitly, hc).futureValue.get
+    val result      = repository.getFromSession(DataKey[FakeData]("testId"))(implicitly, hc).futureValue.get
     val resultWrong = repository.getFromSession(DataKey[FakeData]("testId"))(implicitly, wrongHc).futureValue
 
     result mustBe data
@@ -59,12 +59,12 @@ class SessionCacheRepositorySpec extends BaseSpec with MongoSupport {
   "an exception is thrown" when {
     "A session id is not present" in {
       val data = FakeData("test")
-      val hc = HeaderCarrier(sessionId = None)
+      val hc   = HeaderCarrier(sessionId = None)
 
       val result = Try(repository.putSession[FakeData](DataKey[FakeData]("testId"), data)(implicitly, hc, implicitly))
 
       result match {
-        case Success(_) => ???
+        case Success(_)         => ???
         case Failure(exception) => exception mustBe a[SessionCacheId.NoSessionException.type]
       }
     }
