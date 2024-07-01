@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(main: MainTemplate, h1: H1, h2: H2, p: P, govukSelect : GovukSelect,    govukButton : GovukButton, formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea, errorSummary: ErrorSummary)
-@(continueUrl: String, sections: Seq[(String, Seq[(String, BigDecimal, String)])])(implicit request: Request[_], messages: Messages)
+@(sections: Seq[(String, Seq[(String, BigDecimal, String)])])(implicit request: Request[_], messages: Messages)
 
 @main(
 pageTitle = "Display ATS Values",
@@ -59,7 +59,7 @@ disableSessionExpired = true
     }
 
     @govukButton(Button(
-        href = Some(continueUrl),
+        href = Some("https://www.staging.tax.service.gov.uk/auth-login-stub/gg-sign-in"),
         isStartButton = true,
         content = Text("Log into PTA")
       ))

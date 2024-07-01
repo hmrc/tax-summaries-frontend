@@ -37,7 +37,47 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
 
   private val utr = "00000000010"
 
-  private val jsValue = Json.obj()
+  private val jsValue = Json.parse("""{
+                          |   "taxYear":2023,
+                          |   "utr":"0000000010",
+                          |   "odsValues":{
+                          |      "income_tax":[
+                          |         {
+                          |            "fieldName":"Field1",
+                          |            "amount":1.00,
+                          |            "calculus":"calculusField1"
+                          |         }
+                          |      ],
+                          |      "summary_data":[
+                          |         {
+                          |            "fieldName":"Field2",
+                          |            "amount":2.00,
+                          |            "calculus":"calculusField2"
+                          |         }
+                          |      ],
+                          |      "income_data":[
+                          |         {
+                          |            "fieldName":"Field3",
+                          |            "amount":3.00,
+                          |            "calculus":"calculusField3"
+                          |         }
+                          |      ],
+                          |      "allowance_data":[
+                          |         {
+                          |            "fieldName":"Field4",
+                          |            "amount":4.00,
+                          |            "calculus":"calculusField4"
+                          |         }
+                          |      ],
+                          |      "capital_gains_data":[
+                          |         {
+                          |            "fieldName":"Field5",
+                          |            "amount":5.00,
+                          |            "calculus":"calculusField5"
+                          |         }
+                          |      ]
+                          |   }
+                          |}""".stripMargin)
 
   override def beforeEach(): Unit = {
     reset(mockMiddleConnector)
@@ -48,8 +88,18 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
 
   "onPageLoad" must {
     "render the page" in {
-      val result = controller.onPageLoad(taxYear, utr)(request)
+      val result                                                        = controller.onPageLoad(taxYear, utr)(request)
       status(result) mustBe OK
+      val document                                                      = contentAsString(result)
+      val expSections: Seq[(String, Seq[(String, BigDecimal, String)])] = Seq(
+        ("Income tax data", Seq(("Field1", BigDecimal(1.00).setScale(2), "calculusField1"))),
+        ("Summary data", Seq(("Field2", BigDecimal(2.00).setScale(2), "calculusField2"))),
+        ("Income data", Seq(("Field3", BigDecimal(3.00).setScale(2), "calculusField3"))),
+        ("Allowance data", Seq(("Field4", BigDecimal(4.00).setScale(2), "calculusField4"))),
+        ("Capital gains data", Seq(("Field5", BigDecimal(5.00).setScale(2), "calculusField5")))
+      )
+
+      document mustBe contentAsString(view(expSections)(request, implicitly))
     }
   }
 }

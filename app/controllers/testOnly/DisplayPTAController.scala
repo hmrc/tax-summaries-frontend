@@ -62,10 +62,8 @@ class DisplayPTAController @Inject() (
           getSection(data = data, section = "allowance_data")
         val capitalGainsDataSection: Seq[(String, BigDecimal, String)] =
           getSection(data = data, section = "capital_gains_data")
-
         Ok(
           view(
-            "https://www.staging.tax.service.gov.uk/auth-login-stub/gg-sign-in",
             Seq(
               Tuple2("Income tax data", incomeTaxDataSection),
               Tuple2("Summary data", summaryDataSection),
