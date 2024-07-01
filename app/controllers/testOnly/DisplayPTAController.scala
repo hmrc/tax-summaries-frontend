@@ -75,7 +75,7 @@ class DisplayPTAController @Inject() (
             )
           )
         )
-      case Left(e)     => throw new RuntimeException(s"Error returned, status=$e")
+      case Left(e)     => throw e
     }
 
   }

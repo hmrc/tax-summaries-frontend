@@ -81,5 +81,16 @@ class TaxSummariesStubsConnectorSpec
       val result = Await.result(connector.get(taxYear, utr), 5.seconds)
       result mustBe SAODSModel(utr, taxYear, "0001", Nil)
     }
+
+    "return an error response when the connector returns neither OK nor NOT FOUND" in {
+      server.stubFor(
+        get(url)
+          .willReturn(serverError())
+      )
+
+      a[RuntimeException] mustBe thrownBy {
+        Await.result(connector.get(taxYear, utr), 5.seconds)
+      }
+    }
   }
 }

@@ -79,7 +79,7 @@ class EnterODSController @Inject() (
           val form: Form[CountryAndODSValues]          = formProvider(validOdsFieldNames).fill(countryAndODSValues)
           val submitCall: Call                         = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
           Ok(view(submitCall, countries, form))
-        case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
+        case Left(e)                   => throw e
       }
     }
   }
@@ -98,7 +98,7 @@ class EnterODSController @Inject() (
                 Redirect(controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr))
               }
           )
-      case Left(e)                   => throw new RuntimeException(s"Error returned, status=$e")
+      case Left(e)                   => throw e
     }
 
   }
