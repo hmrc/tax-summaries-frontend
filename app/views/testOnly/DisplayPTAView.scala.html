@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import helpers.{H1, H2, P, ErrorSummary}
+@import helpers.{H1, H2, H3, P, ErrorSummary}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 @import models.testOnly.CountryAndODSValues
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(main: MainTemplate, h1: H1, h2: H2, p: P, govukSelect : GovukSelect,    govukButton : GovukButton, formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea, errorSummary: ErrorSummary)
-@(sections: Seq[(String, Seq[(String, BigDecimal, String)])])(implicit request: Request[_], messages: Messages)
+@this(main: MainTemplate, h1: H1, h2: H2, h3: H3, p: P,  govukButton : GovukButton)
+@(sections: Seq[(String, Seq[(String, BigDecimal, String)])], taxLiability: Option[(String, BigDecimal, String)])(implicit request: Request[_], messages: Messages)
 
 @main(
 pageTitle = "Display ATS Values",
@@ -29,12 +29,29 @@ disableSessionExpired = true
 ) {
     @h1("Display ATS Values")
 
+    @h2("Total tax liability")
+
     @if(sections.flatMap(_._2).nonEmpty) {
-        @p(Text("For the ODS values entered and the rates for the tax year, the following values will be displayed in PTA."))
-        @p(Text("The fieldname is the same field name that is found in the redesigned matrix spreadsheet. The field names displayed in the calculus column in brackets are the field names returned from the ODS API (1535)."))
+        @{
+            taxLiability match {
+                case Some(Tuple3(_, totalLiabilityAmount, _)) if totalLiabilityAmount < 1 =>
+                    p(Text("There is no tax liability for the ODS values entered."))
+                case Some(Tuple3(_, totalLiabilityAmount, totalLiabilityCalculus)) =>
+                    <p class="govuk-body">The total tax liability - based on the ODS values entered on the previous page and the rates for the tax year - has been calculated as:-</p>
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
+                    <p class="govuk-body">This was calculated via the formula below. The field names displayed in brackets are the field names returned from the ODS API (1535)</p>
+                    <p class="govuk-body">{totalLiabilityCalculus}.</p>
+                case None =>
+                    p(Text("There is no tax liability for the ODS values entered."))
+            } 
+        }
+
+        @h2("Retrieved/ calculated fields")
+
+        @p(Text("Below are listed all the calculated/ retrieved field values, grouped by the section in which they appear in ATS. The field names displayed in the calculus column in brackets are the field names returned from the ODS API (1535). A value of null means that the field was not found."))
 
         @sections.map{ case (title, data) =>
-            @h2(title)
+            @h3(title)
             <table id="income-tax" class="govuk-table">
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">

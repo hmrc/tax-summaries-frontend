@@ -75,7 +75,11 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
                           |            "amount":5.00,
                           |            "calculus":"calculusField5"
                           |         }
-                          |      ]
+                          |      ],
+                          |      "tax_liability": {
+                          |         "amount":6.00,
+                          |         "calculus": "calculusAll"
+                          |      }
                           |   }
                           |}""".stripMargin)
 
@@ -98,8 +102,10 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         ("Allowance data", Seq(("Field4", BigDecimal(4.00).setScale(2), "calculusField4"))),
         ("Capital gains data", Seq(("Field5", BigDecimal(5.00).setScale(2), "calculusField5")))
       )
+      val expTaxLiability: Option[(String, BigDecimal, String)]         =
+        Some(Tuple3("", BigDecimal(6.00).setScale(2), "calculusAll"))
 
-      document mustBe contentAsString(view(expSections)(request, implicitly))
+      document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
     }
   }
 }

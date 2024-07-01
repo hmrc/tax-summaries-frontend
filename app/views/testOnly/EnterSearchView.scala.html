@@ -14,18 +14,20 @@
  * limitations under the License.
  *@
 
-@import helpers.{H1, P}
+@import helpers.{H1, P, ErrorSummary}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 @import models.testOnly.TaxYearAndUTR
 
-@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF)
+@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 @(taxYears: Seq[SelectItem], utrs: Seq[SelectItem], form: Form[TaxYearAndUTR])(implicit request: Request[_], messages: Messages)
 
 @main(
 pageTitle = "Enter which calculations do you want to retrieve",
 disableSessionExpired = true
 ) {
+
+    @errorSummary(form)
 
     @formWithCSRF(action = controllers.testOnly.routes.EnterSearchController.onSubmit){
 
@@ -39,7 +41,8 @@ disableSessionExpired = true
         items = taxYears,
         label = Label(
           content = Text("Tax year")
-        )
+        ),
+        errorMessage = form("taxYear").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message)))
       ))
 
     @govukSelect(Select(
@@ -48,7 +51,8 @@ disableSessionExpired = true
         items = utrs,
         label = Label(
           content = Text("UTR")
-        )
+        ),
+        errorMessage = form("utr").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message)))
       ))
 
 

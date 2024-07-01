@@ -62,6 +62,14 @@ class DisplayPTAController @Inject() (
           getSection(data = data, section = "allowance_data")
         val capitalGainsDataSection: Seq[(String, BigDecimal, String)] =
           getSection(data = data, section = "capital_gains_data")
+
+        val taxLiability: Option[(String, BigDecimal, String)] =
+          (data \ "odsValues" \ "tax_liability").asOpt[JsObject].map { jsNode =>
+            val amount   = (jsNode \ "amount").as[BigDecimal]
+            val calculus = (jsNode \ "calculus").as[String]
+            Tuple3("", amount, calculus)
+          }
+
         Ok(
           view(
             Seq(
@@ -70,7 +78,8 @@ class DisplayPTAController @Inject() (
               Tuple2("Income data", incomeDataSection),
               Tuple2("Allowance data", allowanceDataSection),
               Tuple2("Capital gains data", capitalGainsDataSection)
-            )
+            ),
+            taxLiability
           )
         )
       case Left(e)     => throw e
