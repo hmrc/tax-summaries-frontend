@@ -19,9 +19,8 @@ package connectors
 import com.google.inject.Inject
 import config.ApplicationConfig
 import models._
-import models.testOnly.AtsSaFields
 import play.api.Logging
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.OK
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -36,25 +35,26 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
 
   val serviceUrl: String = appConfig.serviceUrl
 
-  private def url(path: String)                                                                        = s"$serviceUrl$path"
-  def connectToAtsSaFields(taxYear: Int)(implicit hc: HeaderCarrier): Future[Either[Int, Seq[String]]] =
-    httpHandler.get[AtsSaFields](url("/test-only/taxs/" + taxYear + "/ats-sa-fields")).map {
-      case AtsSuccessResponseWithPayload(data: AtsSaFields) =>
-        val items = data.items
-        Right(items)
-      case AtsNotFoundResponse(_)                           => Left(NOT_FOUND)
-      case AtsErrorResponse(_)                              => Left(INTERNAL_SERVER_ERROR)
+  private def url(path: String) = s"$serviceUrl$path"
+
+  def connectToAtsSaFields(
+    taxYear: Int
+  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Seq[String]]] =
+    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
+      url("/test-only/taxs/" + taxYear + "/ats-sa-fields")
+    ) recover handleHttpExceptions).map {
+      case Right(response) if response.status == OK => Right((response.json \ "items").as[Seq[String]])
+      case Left(response)                           => Left(response)
     }
 
   def connectToAtsSaDataPlusCalculus(taxYear: Int, utr: String)(implicit
     hc: HeaderCarrier
-  ): Future[Either[Int, JsValue]] =
-    httpHandler.get[JsValue](url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data-plus-calculus")).map {
-      case AtsSuccessResponseWithPayload(data: JsValue) =>
-        Right(data)
-      case AtsNotFoundResponse(_)                       => Left(NOT_FOUND)
-      case AtsErrorResponse(e)                          =>
-        Left(INTERNAL_SERVER_ERROR)
+  ): Future[Either[UpstreamErrorResponse, JsValue]] =
+    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
+      url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data-plus-calculus")
+    ) recover handleHttpExceptions).map {
+      case Right(response) if response.status == OK => Right(response.json)
+      case Left(response)                           => Left(response)
     }
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =

@@ -55,6 +55,7 @@ disableSessionExpired = true
           classes = "govuk-label--l",
           content = Text("Enter ODS values")
         ),
+        rows = 40,
         hint = Some(Hint(
           content = Text("Field-value pairs, one per line, separated by one or more spaces or tabs")
         )),
@@ -63,7 +64,7 @@ disableSessionExpired = true
       ))
 
     @govukButton(Button(
-        content = Text("Continue")
+        content = Text("Save and continue")
       ))
 
 }
