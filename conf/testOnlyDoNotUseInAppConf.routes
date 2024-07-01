@@ -14,12 +14,12 @@
 
 PUT         /annual-tax-summary/test-only/setDefaultFlags  controllers.testOnly.FeatureFlagsController.setDefaults()
 
-GET         /test-only/enterSearch        controllers.testOnly.EnterSearchController.onPageLoad
-POST        /test-only/enterSearch        controllers.testOnly.EnterSearchController.onSubmit
+GET         /annual-tax-summary/test-only/enterSearch        controllers.testOnly.EnterSearchController.onPageLoad
+POST        /annual-tax-summary/test-only/enterSearch        controllers.testOnly.EnterSearchController.onSubmit
 
-GET         /test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onPageLoad(taxYear: Int, utr: String)
-POST        /test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onSubmit(taxYear: Int, utr: String)
+GET         /annual-tax-summary/test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onPageLoad(taxYear: Int, utr: String)
+POST        /annual-tax-summary/test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onSubmit(taxYear: Int, utr: String)
 
-GET         /test-only/displayPTA/:taxYear/:utr        controllers.testOnly.DisplayPTAController.onPageLoad(taxYear: Int, utr: String)
+GET         /annual-tax-summary/test-only/displayPTA/:taxYear/:utr        controllers.testOnly.DisplayPTAController.onPageLoad(taxYear: Int, utr: String)
 
 ->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes
