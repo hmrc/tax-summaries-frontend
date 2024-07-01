@@ -18,21 +18,20 @@ package controllers.auth
 
 import cats.data.EitherT
 import config.ApplicationConfig
+import connectors.DataCacheConnector
 import controllers.auth.actions.AuthAction
 import models.AgentToken
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, InjectedController}
+import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
-import repository.TaxsAgentTokenSessionCacheRepository
 import services.{CitizenDetailsService, PertaxAuthService}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps.Ops
@@ -43,10 +42,9 @@ import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {
 
-  private val mockTaxsAgentTokenSessionCacheRepository           = mock[TaxsAgentTokenSessionCacheRepository]
-  private val mockCitizenDetailsService                          = mock[CitizenDetailsService]
-  private val mockPertaxAuthService                              = mock[PertaxAuthService]
-  implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  private val mockDataCacheConnector    = mock[DataCacheConnector]
+  private val mockCitizenDetailsService = mock[CitizenDetailsService]
+  private val mockPertaxAuthService     = mock[PertaxAuthService]
 
   private class Harness(authAction: AuthAction) extends InjectedController {
     def onPageLoad(
@@ -70,7 +68,7 @@ class AuthActionSpec extends BaseSpec {
     val authAction: AuthAction = new AuthAction(
       authConnector = mockAuthConnector,
       cc = FakeAuthAction.mcc,
-      taxsAgentTokenSessionCacheRepository = mockTaxsAgentTokenSessionCacheRepository,
+      dataCacheConnector = mockDataCacheConnector,
       citizenDetailsService = mockCitizenDetailsService,
       pertaxAuthService = mockPertaxAuthService
     )(ec, appConfig)
@@ -87,7 +85,7 @@ class AuthActionSpec extends BaseSpec {
   override def beforeEach(): Unit = {
     reset(appConfig)
     reset(mockAuthConnector)
-    reset(mockTaxsAgentTokenSessionCacheRepository)
+    reset(mockDataCacheConnector)
     reset(mockCitizenDetailsService)
     reset(mockPertaxAuthService)
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
@@ -131,13 +129,7 @@ class AuthActionSpec extends BaseSpec {
             Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
           )
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(None)
-          )
-
+        when(mockDataCacheConnector.getAgentToken(any(), any())).thenReturn(Future.successful(None))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
       }
@@ -149,13 +141,7 @@ class AuthActionSpec extends BaseSpec {
             Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
           )
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(None)
-          )
-
+        when(mockDataCacheConnector.getAgentToken(any(), any())).thenReturn(Future.successful(None))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
@@ -264,13 +250,7 @@ class AuthActionSpec extends BaseSpec {
             Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
           )
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(Some(agentToken))
-          )
-
+        when(mockDataCacheConnector.getAgentToken(any(), any())).thenReturn(Future.successful(Some(agentToken)))
         val result =
           createHarness.onPageLoad(agentTokenCheck = true)(
             FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
@@ -287,13 +267,7 @@ class AuthActionSpec extends BaseSpec {
             Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
           )
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(None)
-          )
-
+        when(mockDataCacheConnector.getAgentToken(any(), any())).thenReturn(Future.successful(None))
         val result =
           createHarness.onPageLoad(agentTokenCheck = true)(
             FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
@@ -310,13 +284,7 @@ class AuthActionSpec extends BaseSpec {
             Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
           )
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(None)
-          )
-
+        when(mockDataCacheConnector.getAgentToken(any(), any())).thenReturn(Future.successful(None))
         val result =
           createHarness.onPageLoad(agentTokenCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER

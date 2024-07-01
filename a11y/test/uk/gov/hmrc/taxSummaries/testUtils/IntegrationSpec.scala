@@ -18,6 +18,7 @@ package testUtils
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
+import connectors.DataCacheConnector
 import models.{AgentToken, AtsData, AtsListData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,12 +29,12 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Injecting
-import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
-import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.TestConstants.mock
-import utils.{Globals, WireMockHelper}
+import utils.WireMockHelper
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,8 +60,7 @@ class IntegrationSpec
 
   lazy val fakeTaxYear: Int = 2022
 
-  val mockTaxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository =
-    mock[TaxsAgentTokenSessionCacheRepository]
+  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
   val atsListData: AtsListData =
     Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
@@ -136,6 +136,11 @@ class IntegrationSpec
     super.beforeEach()
 
     server.stubFor(
+      put(urlMatching(s"/keystore/tax-summaries-frontend/.*"))
+        .willReturn(ok(Json.toJson(CacheMap("id", Map.empty)).toString))
+    )
+
+    server.stubFor(
       post(urlEqualTo("/auth/authorise"))
         .willReturn(ok(authResponseNoSA))
     )
@@ -145,15 +150,22 @@ class IntegrationSpec
         .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
     )
 
-    when(
-      mockTaxsAgentTokenSessionCacheRepository
-        .putSession[AgentToken](DataKey(any), any)(any, any, any)
-    ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
+    when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful("token"))
 
-    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
-      .thenReturn(
-        Future
-          .successful(Some(agentTokenMock))
-      )
+    when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Some(atsListData)))
+
+    when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any()))
+      .thenReturn(Future.successful(Some(agentTokenMock)))
+
+    when(mockDataCacheConnector.storeAtsListForSession(any())(any(), any()))
+      .thenReturn(Future.successful(Some(atsListData)))
+
+    when(mockDataCacheConnector.fetchAndGetAtsForSession(any())(any()))
+      .thenReturn(Future.successful(Some(atsData)))
+
+    when(mockDataCacheConnector.storeAtsForSession(any())(any(), any()))
+      .thenReturn(Future.successful(Some(atsData)))
   }
 }

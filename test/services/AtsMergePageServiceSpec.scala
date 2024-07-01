@@ -16,6 +16,7 @@
 
 package services
 
+import connectors.DataCacheConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
@@ -26,17 +27,15 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.mongo.cache.DataKey
 import utils.BaseSpec
 import utils.JsonUtil._
 import utils.TestConstants._
 import view_models.{AtsList, AtsMergePageViewModel}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
 
@@ -45,13 +44,12 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     Json.fromJson[AtsData](json).get
   }
 
-  val mockPayeAtsService: PayeAtsService               = mock[PayeAtsService]
-  private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
-  val mockAtsListService: AtsListService               = mock[AtsListService]
-  val cryptoService: CryptoService                     = inject[CryptoService]
+  val mockPayeAtsService: PayeAtsService         = mock[PayeAtsService]
+  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  val mockAtsListService: AtsListService         = mock[AtsListService]
 
   override def beforeEach(): Unit =
-    reset(mockTaxsAgentTokenSessionCacheRepository)
+    reset(mockDataCacheConnector)
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
@@ -62,13 +60,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
   )
 
   def sut: AtsMergePageService =
-    new AtsMergePageService(
-      mockTaxsAgentTokenSessionCacheRepository,
-      mockPayeAtsService,
-      mockAtsListService,
-      appConfig,
-      cryptoService
-    )
+    new AtsMergePageService(mockDataCacheConnector, mockPayeAtsService, mockAtsListService, appConfig)
 
   val saDataResponse: AtsList = AtsList(
     utr = testUtr,
@@ -99,10 +91,46 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
   "AtsMergePageService" when {
 
     "getSaAndPayeYearList is called" must {
+
+      "call data cache connector" when {
+
+        "user is an agent (should not include paye data as agent)" in {
+          implicit val request =
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = Some(Uar("ref")),
+              saUtr = Some(SaUtr(testUtr)),
+              nino = Some(testNino),
+              isAgentActive = true,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest("GET", "http://test.com?ref=PORTAL&id=something")
+            )
+
+          when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful("token"))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
+          when(
+            mockPayeAtsService
+              .getPayeTaxYearData(
+                testNino,
+                appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1,
+                appConfig.taxYear
+              )
+          )
+            .thenReturn(Future(Right(payeDataResponse)))
+          val result = sut.getSaAndPayeYearList.futureValue
+          result mustBe Right(AtsMergePageViewModel(saDataResponse, Nil, appConfig, ConfidenceLevel.L50))
+
+          verify(mockDataCacheConnector, times(1))
+            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
+        }
+      }
+
       "return a AtsMergePageViewModel" when {
 
         "saData and payeData is successfully received" in {
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+          implicit val request =
             requests.AuthenticatedRequest(
               userId = "userId",
               agentRef = None,
@@ -128,13 +156,12 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           val result = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(AtsMergePageViewModel(saDataResponse, payeDataResponse, appConfig, ConfidenceLevel.L50))
 
-          verify(mockTaxsAgentTokenSessionCacheRepository, never)
-            .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
-
+          verify(mockDataCacheConnector, never)
+            .storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext])
         }
 
         "saData is successfully received and nino is not present" in {
-          implicit val requestNoNino: AuthenticatedRequest[AnyContentAsEmpty.type] =
+          implicit val requestNoNino =
             requests.AuthenticatedRequest(
               userId = "userId",
               agentRef = None,
@@ -150,15 +177,15 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           val result = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
 
-          verify(mockTaxsAgentTokenSessionCacheRepository, never)
-            .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
+          verify(mockDataCacheConnector, never)
+            .storeAgentToken(any())(any(), any())
         }
       }
 
       "return INTERNAL_SERVER_ERROR" when {
 
         "saData returns error and paye returns success response" in {
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+          implicit val request =
             requests.AuthenticatedRequest(
               userId = "userId",
               agentRef = None,
@@ -186,7 +213,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
         }
 
         "saData returns success and paye returns error response" in {
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+          implicit val request =
             requests.AuthenticatedRequest(
               userId = "userId",
               agentRef = None,
@@ -213,7 +240,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
         }
 
         "saData and paye both return error response" in {
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+          implicit val request =
             requests.AuthenticatedRequest(
               userId = "userId",
               agentRef = None,
