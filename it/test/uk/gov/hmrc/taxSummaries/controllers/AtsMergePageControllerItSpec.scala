@@ -17,7 +17,6 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
-import connectors.DataCacheConnector
 import models.{AgentToken, AtsListData}
 import org.mockito.ArgumentMatchers
 import org.mockito.scalatest.MockitoSugar
@@ -28,8 +27,10 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repository.TaxsAgentTokenSessionCacheRepository
 import services.PertaxAuthService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
@@ -47,7 +48,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
 
   val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
-  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
 
   val agentToken: String = LoginPage.agentToken(generatedSaUtr.utr)
 
@@ -57,7 +58,6 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
       "microservice.services.tax-summaries.port" -> server.port()
     )
     .overrides(
-      api.inject.bind[DataCacheConnector].toInstance(mockDataCacheConnector),
       api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
       api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService),
       api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
@@ -104,17 +104,16 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
   }
 
-  when(mockDataCacheConnector.storeAgentToken(any[String])(any[HeaderCarrier], any[ExecutionContext]))
-    .thenReturn(Future.successful("token"))
+  when(
+    mockTaxsAgentTokenSessionCacheRepository
+      .putSession[AgentToken](DataKey(any), any)(any, any, any)
+  ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
 
-  when(mockDataCacheConnector.fetchAndGetAtsListForSession(any[HeaderCarrier]))
-    .thenReturn(Future.successful(Some(atsListData)))
-
-  when(mockDataCacheConnector.getAgentToken(any[HeaderCarrier], any))
-    .thenReturn(Future.successful(Some(agentTokenMock)))
-
-  when(mockDataCacheConnector.storeAtsListForSession(any)(any, any))
-    .thenReturn(Future.successful(Some(atsListData)))
+  when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
+    .thenReturn(
+      Future
+        .successful(Some(agentTokenMock))
+    )
 
   "/income-before-tax" must {
 
