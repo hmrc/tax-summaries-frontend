@@ -21,9 +21,6 @@ import play.api.data.Forms.of
 
 trait Mappings extends Formatters {
 
-  protected def optionalText(): FieldMapping[Option[String]] =
-    of(optionalStringFormatter)
-
   protected def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))
 

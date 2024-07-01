@@ -26,8 +26,8 @@ case class CountryAndODSValues(country: String, odsValues: Map[String, String])
 
 object CountryAndODSValues {
 
-  def stringToKeyValuePairs(v: String): Map[String, String] =
-    v.split("""\R""")
+  def stringToKeyValuePairs(s: String): Map[String, String] =
+    s.split("""\R""")
       .filter(_.nonEmpty)
       .map(_.trim.split("\\s+"))
       .map { t =>
@@ -41,9 +41,9 @@ object CountryAndODSValues {
       .toSeq
       .toMap
 
-  def keyValuePairsToString(v: Map[String, String]): String = {
+  def keyValuePairsToString(map: Map[String, String]): String = {
     val newLine = sys.props("line.separator")
-    v.foldLeft("") { (c, i) =>
+    map.foldLeft("") { (c, i) =>
       def concat: String = if (i._2.isEmpty) {
         i._1
       } else {
@@ -59,11 +59,10 @@ object CountryAndODSValues {
     }
   }
 
-  def keyValuePairsToEitherSeqODSValue(v: Map[String, String]): Either[Seq[String], Seq[OdsValue]] =
-    v.toSeq.foldLeft[Either[Seq[String], Seq[OdsValue]]](Right(Nil)) { (c, i) =>
+  def keyValuePairsToEitherSeqODSValue(map: Map[String, String]): Either[Seq[String], Seq[OdsValue]] =
+    map.toSeq.foldLeft[Either[Seq[String], Seq[OdsValue]]](Right(Nil)) { (c, i) =>
       (c, Try(BigDecimal(i._2))) match {
-        case (Right(_), Success(value)) =>
-          c.map(rr => rr :+ OdsValue(i._1, value))
+        case (Right(_), Success(value)) => c.map(_ :+ OdsValue(i._1, value))
         case (Left(_), Success(_))      => c
         case (Left(_), Failure(_))      => c.swap.map(_ :+ i._1).swap
         case (Right(_), Failure(_))     => Left(Seq(i._1))
@@ -72,10 +71,10 @@ object CountryAndODSValues {
 
   implicit val writes: Writes[CountryAndODSValues] =
     ((__ \ "country").write[String] and
-      (__ \ "odsValues").write[Seq[OdsValue]]) { a =>
-      keyValuePairsToEitherSeqODSValue(a.odsValues) match {
+      (__ \ "odsValues").write[Seq[OdsValue]]) { countryAndODSValues =>
+      keyValuePairsToEitherSeqODSValue(countryAndODSValues.odsValues) match {
         case Left(e)             => throw new RuntimeException("Invalid values for fields:" + e.toString)
-        case Right(seqODSValues) => (a.country, seqODSValues)
+        case Right(seqODSValues) => (countryAndODSValues.country, seqODSValues)
       }
 
     }

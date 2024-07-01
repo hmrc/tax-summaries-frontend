@@ -25,19 +25,6 @@ import scala.util.control.Exception.nonFatalCatch
 trait Formatters {
   private[mappings] val decimalRegexp = """^-?(\d*\.\d*)$"""
 
-  private[mappings] val optionalStringFormatter: Formatter[Option[String]] =
-    new Formatter[Option[String]] {
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
-        Right(
-          data
-            .get(key)
-            .filter(_.lengthCompare(0) > 0)
-        )
-
-      override def unbind(key: String, value: Option[String]): Map[String, String] =
-        Map(key -> value.getOrElse(""))
-    }
-
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] =
     new Formatter[String] {
 
@@ -49,29 +36,6 @@ trait Formatters {
 
       override def unbind(key: String, value: String): Map[String, String] =
         Map(key -> value)
-    }
-
-  private[mappings] def booleanFormatter(
-    requiredKey: String,
-    invalidKey: String,
-    invalidPaymentTypeBoolean: String
-  ): Formatter[Boolean] =
-    new Formatter[Boolean] {
-
-      private val baseFormatter = stringFormatter(requiredKey)
-
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
-        baseFormatter
-          .bind(key, data)
-          .flatMap {
-            case "true"  => Right(true)
-            case "false" => Right(false)
-            case "0"     => Left(Seq(FormError(key, invalidPaymentTypeBoolean)))
-            case "1"     => Left(Seq(FormError(key, invalidPaymentTypeBoolean)))
-            case _       => Left(Seq(FormError(key, invalidKey)))
-          }
-
-      def unbind(key: String, value: Boolean) = Map(key -> value.toString)
     }
 
   private[mappings] def intFormatter(
