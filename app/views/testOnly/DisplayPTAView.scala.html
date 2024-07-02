@@ -35,12 +35,11 @@ disableSessionExpired = true
         @{
             taxLiability match {
                 case Some(Tuple3(_, totalLiabilityAmount, _)) if totalLiabilityAmount < 1 =>
-                    p(Text("There is no tax liability for the ODS values entered."))
-                case Some(Tuple3(_, totalLiabilityAmount, totalLiabilityCalculus)) =>
-                    <p class="govuk-body">The total tax liability - based on the ODS values entered on the previous page and the rates for the tax year - has been calculated as:-</p>
+                    p(Text("There is no tax liability for the ODS values entered. This is because the calculated total tax liability (TotalCgTax + TotalIncomeTax) is zero or less. It has been calculated as:-"))
                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
-                    <p class="govuk-body">This was calculated via the formula below. The field names displayed in brackets are the field names returned from the ODS API (1535)</p>
-                    <p class="govuk-body">{totalLiabilityCalculus}.</p>
+                case Some(Tuple3(_, totalLiabilityAmount, _)) =>
+                    <p class="govuk-body">The total tax liability (TotalCgTax + TotalIncomeTax) has been calculated as:-</p>
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
                 case None =>
                     p(Text("There is no tax liability for the ODS values entered."))
             } 

@@ -55,13 +55,13 @@ class EnterODSController @Inject() (
     ),
     SelectItem(
       value = Some("0002"),
-      text = "Wales",
+      text = "Scotland",
       selected = false,
       disabled = false
     ),
     SelectItem(
       value = Some("0003"),
-      text = "Scotland",
+      text = "Wales",
       selected = false,
       disabled = false
     )
@@ -79,7 +79,7 @@ class EnterODSController @Inject() (
           } else {
             ListMap(validOdsFieldNames.sortWith(compareString).map(_ -> "0.00"): _*)
           }
-          val countryAndODSValues: CountryAndODSValues = CountryAndODSValues("0001", odsValues)
+          val countryAndODSValues: CountryAndODSValues = CountryAndODSValues(saODSModel.country, odsValues)
           val form: Form[CountryAndODSValues]          = formProvider(validOdsFieldNames).fill(countryAndODSValues)
           val submitCall: Call                         = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
           Ok(view(submitCall, countries, form))
