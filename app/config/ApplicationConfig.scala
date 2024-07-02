@@ -35,7 +35,8 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
 
   lazy val cidHost: String = config.baseUrl("citizen-details")
 
-  lazy val pertaxHost: String = config.baseUrl("pertax")
+  lazy val pertaxHost: String            = config.baseUrl("pertax")
+  lazy val taxSummariesStubsHost: String = config.baseUrl("tax-summaries-stubs")
 
   lazy val homePageUrl = "/annual-tax-summary/"
 
