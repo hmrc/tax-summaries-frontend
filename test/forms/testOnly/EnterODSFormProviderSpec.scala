@@ -22,21 +22,21 @@ import utils.BaseSpec
 
 class EnterODSFormProviderSpec extends BaseSpec {
 
-  private val validOdsFieldNames = Seq("abc", "def", "ghi")
+  private val validOdsFieldNames = Seq("abc", "def", "ghi", "hij")
 
   private val form = new EnterODSFormProvider().apply(validOdsFieldNames)
 
-  private val odsValues = """abc 22.33
+  private val odsValues = """abc 1,122.33
 def 24.44"""
 
   private val expOdsValues = Map(
-    "abc" -> "22.33",
+    "abc" -> "1122.33",
     "def" -> "24.44"
   )
 
   "form" must {
     "must bind valid data (England), ignoring trailing and leading spaces and values beyond 2 items" in {
-      val odsValues      = """      abc 22.33 55.77
+      val odsValues      = """      abc 1,122.33 55.77
  def 24.44  """
       val expectedResult = CountryAndODSValues("0001", expOdsValues)
       val data           = Map(
@@ -84,8 +84,23 @@ def 24.44"""
       result.value mustBe Some(expectedResult)
     }
 
+    "must display errors for invalid fields (duplicated field names)" in {
+      val odsValues = """      abc 1,122.33 55.77
+ def 324.44
+ hij 7724.44
+ def 24.44
+ hij 424.44  """
+      val data      = Map(
+        "country"   -> "0001",
+        "odsValues" -> odsValues
+      )
+
+      val result = form.bind(data)
+      result.errors mustBe Seq(FormError("odsValues", List("Duplicated field values: def, hij")))
+    }
+
     "must display errors for invalid field values" in {
-      val odsValues = """      abc 22.33 55.77     
+      val odsValues = """      abc 22.33 55.77
  def invalid
  ghi 66.77  """
       val data      = Map(

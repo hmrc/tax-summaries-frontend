@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
 import views.html.testOnly.EnterODSView
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnterODSController @Inject() (
@@ -66,14 +67,17 @@ class EnterODSController @Inject() (
     )
   )
 
+  private val compareString: (String, String) => Boolean = (s1, s2) => s1.toLowerCase < s2.toLowerCase
+
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
     taxSummariesStubsConnector.get(taxYear, utr).flatMap { saODSModel =>
       middleConnector.connectToAtsSaFields(taxYear).map {
         case Right(validOdsFieldNames) =>
           val odsValues: Map[String, String]           = if (saODSModel.odsValues.nonEmpty) {
-            saODSModel.odsValues.map(odsValue => odsValue.fieldName -> odsValue.amount.toString).toMap
+            val seqTuples = saODSModel.odsValues.map(odsValue => odsValue.fieldName -> odsValue.amount.toString)
+            ListMap(seqTuples: _*)
           } else {
-            validOdsFieldNames.map(_ -> "0.00").toMap
+            ListMap(validOdsFieldNames.sortWith(compareString).map(_ -> "0.00"): _*)
           }
           val countryAndODSValues: CountryAndODSValues = CountryAndODSValues("0001", odsValues)
           val form: Form[CountryAndODSValues]          = formProvider(validOdsFieldNames).fill(countryAndODSValues)
@@ -93,10 +97,18 @@ class EnterODSController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(submitCall, countries, formWithErrors))),
-            value =>
-              taxSummariesStubsConnector.save(taxYear, utr, value).map { _ =>
+            value => {
+              val validOdsFieldsWithZeroValues: ListMap[String, String] =
+                ListMap(validOdsFieldNames.sortWith(compareString).map(_ -> "0.00"): _*)
+              val updatedValue                                          =
+                CountryAndODSValues(
+                  country = value.country,
+                  odsValues = validOdsFieldsWithZeroValues ++ value.odsValues
+                )
+              taxSummariesStubsConnector.save(taxYear, utr, updatedValue).map { _ =>
                 Redirect(controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr))
               }
+            }
           )
       case Left(e)                   => throw e
     }

@@ -19,7 +19,8 @@ package controllers.testOnly
 import connectors.MiddleConnector
 import connectors.testOnly.TaxSummariesStubsConnector
 import forms.testOnly.EnterODSFormProvider
-import models.testOnly.SAODSModel
+import models.testOnly.{CountryAndODSValues, SAODSModel}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -46,7 +47,10 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
   private val country = "0001"
 
   private val atsSaFields = Seq(
-    "abc"
+    "abc",
+    "def",
+    "ghi",
+    "aaa"
   )
 
   private val saODSModel = SAODSModel(utr, taxYear, country, Nil)
@@ -72,15 +76,25 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
   }
 
   "onSubmit" must {
-    "redirect when request valid" in {
+    "redirect when request valid and add in any missing values with order as per fields list" in {
       val postRequest =
-        FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abc 180.99"))
+        FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "def 180.99"))
       val result      = controller.onSubmit(taxYear, utr)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
         controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr).url
       )
+      val expSavedCountryAndOdsValues =
+        CountryAndODSValues(
+          country = country,
+          odsValues = Map("aaa" -> "0.00", "abc" -> "0.00", "def" -> "180.99", "ghi" -> "0.00")
+        )
+      verify(mockTaxSummariesStubsConnector, times(1))
+        .save(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(utr), ArgumentMatchers.eq(expSavedCountryAndOdsValues))(
+          any(),
+          any()
+        )
     }
 
     "return bad request when request invalid" in {

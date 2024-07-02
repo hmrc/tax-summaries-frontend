@@ -18,7 +18,7 @@ package forms.testOnly
 
 import forms.mappings.Mappings
 import models.testOnly.CountryAndODSValues
-import models.testOnly.CountryAndODSValues.{keyValuePairsToEitherSeqODSValue, keyValuePairsToString, stringToKeyValuePairs}
+import models.testOnly.CountryAndODSValues.{findDuplicateFields, keyValuePairsToEitherSeqODSValue, keyValuePairsToString, stringToKeyValuePairs}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -34,15 +34,20 @@ class EnterODSFormProvider extends Mappings {
 
   def apply(validOdsFieldNames: Seq[String]): Form[CountryAndODSValues] = {
     val constraintOdsValues: Constraint[String] = Constraint { odsValues =>
-      val keyValuePairs      = stringToKeyValuePairs(odsValues)
-      val unrecognisedFields = keyValuePairs.keys.toSeq.diff(validOdsFieldNames)
-      if (unrecognisedFields.isEmpty) {
-        keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
-          case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.mkString(", ")}")
-          case Right(_)            => Valid
-        }
+      val duplicatedFields = findDuplicateFields(odsValues)
+      if (duplicatedFields.nonEmpty) {
+        Invalid(s"Duplicated field values: ${duplicatedFields.sorted.mkString(", ")}")
       } else {
-        Invalid(s"Unrecognised field names: ${unrecognisedFields.mkString(", ")}")
+        val keyValuePairs      = stringToKeyValuePairs(odsValues)
+        val unrecognisedFields = keyValuePairs.keys.toSeq.diff(validOdsFieldNames)
+        if (unrecognisedFields.isEmpty) {
+          keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
+            case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.sorted.mkString(", ")}")
+            case Right(_)            => Valid
+          }
+        } else {
+          Invalid(s"Unrecognised field names: ${unrecognisedFields.sorted.mkString(", ")}")
+        }
       }
     }
 

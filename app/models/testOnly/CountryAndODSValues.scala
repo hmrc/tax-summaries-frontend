@@ -26,8 +26,9 @@ case class CountryAndODSValues(country: String, odsValues: Map[String, String])
 
 object CountryAndODSValues {
 
-  def stringToKeyValuePairs(s: String): Map[String, String] =
-    s.split("""\R""")
+  private def stringToSeqTuples(s: String): Seq[(String, String)] =
+    s.filter(_ != ',')
+      .split("""\R""")
       .filter(_.nonEmpty)
       .map(_.trim.split("\\s+"))
       .map { t =>
@@ -39,7 +40,12 @@ object CountryAndODSValues {
 
       }
       .toSeq
-      .toMap
+
+  def findDuplicateFields(s: String): Seq[String] =
+    stringToSeqTuples(s).map(_._1).groupBy(identity).filter(_._2.size > 1).keys.toSeq
+
+  def stringToKeyValuePairs(s: String): Map[String, String] =
+    stringToSeqTuples(s).toMap
 
   def keyValuePairsToString(map: Map[String, String]): String = {
     val newLine = sys.props("line.separator")

@@ -20,12 +20,23 @@ import utils.BaseSpec
 
 class CountryAndODSValuesSpec extends BaseSpec {
   private val newLine = sys.props("line.separator")
+
+  "findDuplicateFields" must {
+    "find duplicates when present" in {
+      CountryAndODSValues.findDuplicateFields("""abc 1,122.33
+bde 24.44
+abc 424.44
+bde 624.44
+def 24.44""") mustBe Seq("abc", "bde")
+    }
+  }
+
   "stringToKeyValuePairs" must {
-    "return map when valid string passed in" in {
-      val odsValues = """abc 22.33
+    "return map when valid string passed in, filtering out any commas" in {
+      val odsValues = """abc 1,122.33
 def 24.44"""
       CountryAndODSValues.stringToKeyValuePairs(odsValues) mustBe Map(
-        "abc" -> "22.33",
+        "abc" -> "1122.33",
         "def" -> "24.44"
       )
     }
