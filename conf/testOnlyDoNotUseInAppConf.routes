@@ -12,14 +12,14 @@
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
 
-PUT         /annual-tax-summary/test-only/setDefaultFlags  controllers.testOnly.FeatureFlagsController.setDefaults()
+PUT         /annual-tax-summary/test-only/setDefaultFlags  testOnly.controllers.FeatureFlagsController.setDefaults()
 
-GET         /annual-tax-summary/test-only/enterSearch        controllers.testOnly.EnterSearchController.onPageLoad
-POST        /annual-tax-summary/test-only/enterSearch        controllers.testOnly.EnterSearchController.onSubmit
+GET         /annual-tax-summary/test-only/enterSearch        testOnly.controllers.EnterSearchController.onPageLoad
+POST        /annual-tax-summary/test-only/enterSearch        testOnly.controllers.EnterSearchController.onSubmit
 
-GET         /annual-tax-summary/test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onPageLoad(taxYear: Int, utr: String)
-POST        /annual-tax-summary/test-only/enterODS/:taxYear/:utr        controllers.testOnly.EnterODSController.onSubmit(taxYear: Int, utr: String)
+GET         /annual-tax-summary/test-only/enterODS/:taxYear/:utr        testOnly.controllers.EnterODSController.onPageLoad(taxYear: Int, utr: String)
+POST        /annual-tax-summary/test-only/enterODS/:taxYear/:utr        testOnly.controllers.EnterODSController.onSubmit(taxYear: Int, utr: String)
 
-GET         /annual-tax-summary/test-only/displayPTA/:taxYear/:utr        controllers.testOnly.DisplayPTAController.onPageLoad(taxYear: Int, utr: String)
+GET         /annual-tax-summary/test-only/displayPTA/:taxYear/:utr        testOnly.controllers.DisplayPTAController.onPageLoad(taxYear: Int, utr: String)
 
 ->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes

@@ -20,8 +20,6 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import models._
 import play.api.Logging
-import play.api.http.Status.OK
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
@@ -36,26 +34,6 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
   val serviceUrl: String = appConfig.serviceUrl
 
   private def url(path: String) = s"$serviceUrl$path"
-
-  def connectToAtsSaFields(
-    taxYear: Int
-  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Seq[String]]] =
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url("/test-only/taxs/" + taxYear + "/ats-sa-fields")
-    ) recover handleHttpExceptions).map {
-      case Right(response) if response.status == OK => Right((response.json \ "items").as[Seq[String]])
-      case Left(response)                           => Left(response)
-    }
-
-  def connectToAtsSaDataPlusCalculus(taxYear: Int, utr: String)(implicit
-    hc: HeaderCarrier
-  ): Future[Either[UpstreamErrorResponse, JsValue]] =
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data-plus-calculus")
-    ) recover handleHttpExceptions).map {
-      case Right(response) if response.status == OK => Right(response.json)
-      case Left(response)                           => Left(response)
-    }
 
   def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package forms.testOnly
+package testOnly.forms
 
 import forms.mappings.Mappings
-import models.testOnly.TaxYearAndUTR
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import testOnly.models.TaxYearAndUTR
 
 class EnterSearchFormProvider extends Mappings {
 

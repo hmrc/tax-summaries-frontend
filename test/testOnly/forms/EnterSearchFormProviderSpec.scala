@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package forms.testOnly
+package testOnly.forms
 
-import models.testOnly.TaxYearAndUTR
 import play.api.data.FormError
+import testOnly.models.TaxYearAndUTR
 import utils.BaseSpec
 
 class EnterSearchFormProviderSpec extends BaseSpec {

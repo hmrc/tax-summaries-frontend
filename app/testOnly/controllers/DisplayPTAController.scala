@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
 import com.google.inject.Inject
-import connectors.MiddleConnector
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsArray, JsObject, JsValue}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import testOnly.connectors.TaxSummariesConnector
+import testOnly.views.html.DisplayPTAView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
-import views.html.testOnly.DisplayPTAView
 
 import scala.concurrent.ExecutionContext
 
 class DisplayPTAController @Inject() (
   mcc: MessagesControllerComponents,
   view: DisplayPTAView,
-  middleConnector: MiddleConnector
+  taxSummariesConnector: TaxSummariesConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with AccountUtils
@@ -53,7 +53,7 @@ class DisplayPTAController @Inject() (
     }
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    middleConnector.connectToAtsSaDataPlusCalculus(taxYear, utr).map {
+    taxSummariesConnector.connectToAtsSaDataPlusCalculus(taxYear, utr).map {
       case Right(data) =>
         val incomeTaxDataSection: Seq[(String, BigDecimal, String)]    = getSection(data = data, section = "income_tax")
         val summaryDataSection: Seq[(String, BigDecimal, String)]      = getSection(data = data, section = "summary_data")

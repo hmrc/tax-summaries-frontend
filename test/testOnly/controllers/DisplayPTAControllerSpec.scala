@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
-import connectors.MiddleConnector
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
 import play.api.test.Helpers._
+import testOnly.connectors.TaxSummariesConnector
+import testOnly.views.html.DisplayPTAView
 import utils.ControllerBaseSpec
-import views.html.testOnly.DisplayPTAView
 
 import scala.concurrent.Future
 
 class DisplayPTAControllerSpec extends ControllerBaseSpec {
-  private val view                = inject[DisplayPTAView]
-  private val mockMiddleConnector = mock[MiddleConnector]
+  private val view                      = inject[DisplayPTAView]
+  private val mockTaxSummariesConnector = mock[TaxSummariesConnector]
 
   private def controller = new DisplayPTAController(
     mcc,
     view,
-    mockMiddleConnector
+    mockTaxSummariesConnector
   )
 
   private val utr = "00000000010"
@@ -84,8 +84,8 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
                           |}""".stripMargin)
 
   override def beforeEach(): Unit = {
-    reset(mockMiddleConnector)
-    when(mockMiddleConnector.connectToAtsSaDataPlusCalculus(any(), any())(any())).thenReturn(
+    reset(mockTaxSummariesConnector)
+    when(mockTaxSummariesConnector.connectToAtsSaDataPlusCalculus(any(), any())(any())).thenReturn(
       Future.successful(Right(jsValue))
     )
   }

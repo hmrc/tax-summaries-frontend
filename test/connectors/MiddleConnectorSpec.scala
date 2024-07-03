@@ -19,7 +19,6 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
 import config.ApplicationConfig
 import models._
-import models.testOnly.AtsSaFields
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -494,78 +493,6 @@ class MiddleConnectorSpec
 
       val result = sut.connectToGovernmentSpend(currentYear).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
-    }
-  }
-
-  "connectToAtsSaFields" must {
-    "return successful response" in {
-      val expectedResponse: String = Json.toJson(AtsSaFields(Seq("abc", "def"))).toString()
-      val url                      = "/test-only/taxs/" + currentYear + "/ats-sa-fields"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(expectedResponse)
-        )
-      )
-
-      val result = sut.connectToAtsSaFields(currentYear).futureValue.value
-
-      result mustBe Seq("abc", "def")
-    }
-
-    val url = "/test-only/taxs/" + currentYear + "/ats-sa-fields"
-    listOfErrors.foreach { status =>
-      s"a response with status $status is received" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(
-              aResponse()
-                .withStatus(status)
-            )
-        )
-
-        val result = sut.connectToAtsSaFields(currentYear).futureValue
-
-        result.left.value.statusCode mustBe status
-      }
-    }
-  }
-
-  "connectToAtsSaDataPlusCalculus" must {
-    "return successful response" in {
-      val expectedResponse: String = Json.toJson(Json.obj("abc" -> "def")).toString()
-      val url                      = "/test-only/taxs/" + utr.utr + "/" + currentYear + "/ats-sa-data-plus-calculus"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(expectedResponse)
-        )
-      )
-
-      val result = sut.connectToAtsSaDataPlusCalculus(currentYear, utr.utr).futureValue.value
-
-      result mustBe Json.obj("abc" -> "def")
-    }
-
-    val url = "/test-only/taxs/" + utr.utr + "/" + currentYear + "/ats-sa-data-plus-calculus"
-    listOfErrors.foreach { status =>
-      s"a response with status $status is received" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .willReturn(
-              aResponse()
-                .withStatus(status)
-            )
-        )
-
-        val result = sut.connectToAtsSaDataPlusCalculus(currentYear, utr.utr).futureValue
-
-        result.left.value.statusCode mustBe status
-      }
     }
   }
 }

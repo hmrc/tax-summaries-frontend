@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
-import connectors.MiddleConnector
-import forms.testOnly.EnterODSFormProvider
-import models.testOnly.{CountryAndODSValues, SAODSModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import testOnly.connectors.TaxSummariesStubsConnector
+import testOnly.connectors.{TaxSummariesConnector, TaxSummariesStubsConnector}
+import testOnly.forms.EnterODSFormProvider
+import testOnly.models.{CountryAndODSValues, SAODSModel}
+import testOnly.views.html.EnterODSView
 import utils.ControllerBaseSpec
-import views.html.testOnly.EnterODSView
 
 import scala.concurrent.Future
 
 class EnterODSControllerSpec extends ControllerBaseSpec {
   private val formProvider                   = new EnterODSFormProvider
   private val view                           = inject[EnterODSView]
-  private val mockMiddleConnector            = mock[MiddleConnector]
+  private val mockTaxSummariesConnector      = mock[TaxSummariesConnector]
   private val mockTaxSummariesStubsConnector = mock[TaxSummariesStubsConnector]
 
   private def controller = new EnterODSController(
     mcc,
     view,
     formProvider,
-    mockMiddleConnector,
+    mockTaxSummariesConnector,
     mockTaxSummariesStubsConnector
   )
 
@@ -56,9 +55,9 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
   private val saODSModel = SAODSModel(utr, taxYear, country, Nil)
 
   override def beforeEach(): Unit = {
-    reset(mockMiddleConnector)
+    reset(mockTaxSummariesConnector)
     reset(mockTaxSummariesStubsConnector)
-    when(mockMiddleConnector.connectToAtsSaFields(any())(any())).thenReturn(
+    when(mockTaxSummariesConnector.connectToAtsSaFields(any())(any())).thenReturn(
       Future.successful(Right(atsSaFields))
     )
     when(mockTaxSummariesStubsConnector.get(any(), any())(any(), any()))
@@ -83,7 +82,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr).url
+        testOnly.controllers.routes.DisplayPTAController.onPageLoad(taxYear, utr).url
       )
       val expSavedCountryAndOdsValues =
         CountryAndODSValues(

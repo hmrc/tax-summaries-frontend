@@ -17,7 +17,6 @@
 package testOnly.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.testOnly.{OdsValue, SAODSModel}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -27,6 +26,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Injecting
+import testOnly.models.{OdsValue, SAODSModel}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{JsonUtil, WireMockHelper}
 

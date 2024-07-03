@@ -17,7 +17,7 @@
 @import helpers.{H1, P, ErrorSummary}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
-@import models.testOnly.TaxYearAndUTR
+@import testOnly.models.TaxYearAndUTR
 
 @this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 @(taxYears: Seq[SelectItem], utrs: Seq[SelectItem], form: Form[TaxYearAndUTR])(implicit request: Request[_], messages: Messages)
@@ -29,7 +29,7 @@ disableSessionExpired = true
 
     @errorSummary(form)
 
-    @formWithCSRF(action = controllers.testOnly.routes.EnterSearchController.onSubmit){
+    @formWithCSRF(action = testOnly.controllers.routes.EnterSearchController.onSubmit){
 
     @h1("Enter which calculations do you want to retrieve")
 

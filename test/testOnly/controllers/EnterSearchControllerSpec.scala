@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
 import config.ApplicationConfig
-import forms.testOnly.EnterSearchFormProvider
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import testOnly.forms.EnterSearchFormProvider
+import testOnly.views.html.EnterSearchView
 import utils.ControllerBaseSpec
-import views.html.testOnly.EnterSearchView
 
 class EnterSearchControllerSpec extends ControllerBaseSpec {
   private val mockApplicationConfig = mock[ApplicationConfig]
@@ -53,7 +53,7 @@ class EnterSearchControllerSpec extends ControllerBaseSpec {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        controllers.testOnly.routes.EnterODSController.onPageLoad(2023, "0000000010").url
+        testOnly.controllers.routes.EnterODSController.onPageLoad(2023, "0000000010").url
       )
     }
 

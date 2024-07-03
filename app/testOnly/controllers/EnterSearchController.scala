@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import forms.testOnly.EnterSearchFormProvider
-import models.testOnly.TaxYearAndUTR
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import testOnly.forms.EnterSearchFormProvider
+import testOnly.models.TaxYearAndUTR
+import testOnly.views.html.EnterSearchView
 import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
-import views.html.testOnly.EnterSearchView
 
 import scala.concurrent.Future
 
@@ -85,7 +85,7 @@ class EnterSearchController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(view(taxYears, utrs, formWithErrors)),
-        value => Redirect(controllers.testOnly.routes.EnterODSController.onPageLoad(value.taxYear, value.utr))
+        value => Redirect(testOnly.controllers.routes.EnterODSController.onPageLoad(value.taxYear, value.utr))
       )
 
   }

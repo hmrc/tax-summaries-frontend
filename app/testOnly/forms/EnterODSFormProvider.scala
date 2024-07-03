@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms.testOnly
+package testOnly.forms
 
 import forms.mappings.Mappings
-import models.testOnly.CountryAndODSValues
-import models.testOnly.CountryAndODSValues.{findDuplicateFields, keyValuePairsToEitherSeqODSValue, keyValuePairsToString, stringToKeyValuePairs}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import testOnly.models.CountryAndODSValues
+import testOnly.models.CountryAndODSValues._
 
 class EnterODSFormProvider extends Mappings {
 

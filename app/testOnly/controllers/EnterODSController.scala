@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
 import com.google.inject.Inject
-import connectors.MiddleConnector
-import forms.testOnly.EnterODSFormProvider
-import models.testOnly.CountryAndODSValues
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import testOnly.connectors.TaxSummariesStubsConnector
+import testOnly.connectors.{TaxSummariesConnector, TaxSummariesStubsConnector}
+import testOnly.forms.EnterODSFormProvider
+import testOnly.models.CountryAndODSValues
+import testOnly.views.html.EnterODSView
 import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
-import views.html.testOnly.EnterODSView
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +36,7 @@ class EnterODSController @Inject() (
   mcc: MessagesControllerComponents,
   view: EnterODSView,
   formProvider: EnterODSFormProvider,
-  middleConnector: MiddleConnector,
+  taxSummariesConnector: TaxSummariesConnector,
   taxSummariesStubsConnector: TaxSummariesStubsConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -71,7 +70,7 @@ class EnterODSController @Inject() (
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
     taxSummariesStubsConnector.get(taxYear, utr).flatMap { saODSModel =>
-      middleConnector.connectToAtsSaFields(taxYear).map {
+      taxSummariesConnector.connectToAtsSaFields(taxYear).map {
         case Right(validOdsFieldNames) =>
           val odsValues: Map[String, String]           = if (saODSModel.odsValues.nonEmpty) {
             val seqTuples = saODSModel.odsValues.map(odsValue => odsValue.fieldName -> odsValue.amount.toString)
@@ -81,7 +80,7 @@ class EnterODSController @Inject() (
           }
           val countryAndODSValues: CountryAndODSValues = CountryAndODSValues(saODSModel.country, odsValues)
           val form: Form[CountryAndODSValues]          = formProvider(validOdsFieldNames).fill(countryAndODSValues)
-          val submitCall: Call                         = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
+          val submitCall: Call                         = testOnly.controllers.routes.EnterODSController.onSubmit(taxYear, utr)
           Ok(view(submitCall, countries, form))
         case Left(e)                   => throw e
       }
@@ -89,10 +88,10 @@ class EnterODSController @Inject() (
   }
 
   def onSubmit(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    middleConnector.connectToAtsSaFields(taxYear).flatMap {
+    taxSummariesConnector.connectToAtsSaFields(taxYear).flatMap {
       case Right(validOdsFieldNames) =>
         val form: Form[CountryAndODSValues] = formProvider(validOdsFieldNames)
-        val submitCall: Call                = controllers.testOnly.routes.EnterODSController.onSubmit(taxYear, utr)
+        val submitCall: Call                = testOnly.controllers.routes.EnterODSController.onSubmit(taxYear, utr)
         form
           .bindFromRequest()
           .fold(
@@ -106,7 +105,7 @@ class EnterODSController @Inject() (
                   odsValues = validOdsFieldsWithZeroValues ++ value.odsValues
                 )
               taxSummariesStubsConnector.save(taxYear, utr, updatedValue).map { _ =>
-                Redirect(controllers.testOnly.routes.DisplayPTAController.onPageLoad(taxYear, utr))
+                Redirect(testOnly.controllers.routes.DisplayPTAController.onPageLoad(taxYear, utr))
               }
             }
           )

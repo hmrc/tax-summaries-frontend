@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package forms.testOnly
+package testOnly.forms
 
-import models.testOnly.CountryAndODSValues
 import play.api.data.FormError
+import testOnly.models.CountryAndODSValues
 import utils.BaseSpec
 
 class EnterODSFormProviderSpec extends BaseSpec {

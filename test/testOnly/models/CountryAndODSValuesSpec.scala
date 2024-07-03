@@ -16,7 +16,6 @@
 
 package testOnly.models
 
-import models.testOnly.{CountryAndODSValues, OdsValue}
 import utils.BaseSpec
 
 class CountryAndODSValuesSpec extends BaseSpec {
