@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package testOnly.forms.mappings
 
 import play.api.data.FormError
 import play.api.data.format.Formatter

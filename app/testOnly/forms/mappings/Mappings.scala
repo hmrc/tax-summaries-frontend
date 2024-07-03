@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package testOnly.forms.mappings
 
 import play.api.data.FieldMapping
 import play.api.data.Forms.of

@@ -16,9 +16,9 @@
 
 package testOnly.forms
 
-import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import testOnly.forms.mappings.Mappings
 import testOnly.models.TaxYearAndUTR
 
 class EnterSearchFormProvider extends Mappings {
