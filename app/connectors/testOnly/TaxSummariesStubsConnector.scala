@@ -19,7 +19,6 @@ package connectors.testOnly
 import config.ApplicationConfig
 import models.testOnly.{CountryAndODSValues, SAODSModel}
 import play.api.Logging
-import play.api.http.HeaderNames
 import play.api.http.Status.{CREATED, NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -42,7 +41,6 @@ class TaxSummariesStubsConnector @Inject() (
     http
       .post(url"$baseUrl/ods-sa-data/$utr/$taxYear")
       .withBody(countryAndODSValues)
-      .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
       .execute[HttpResponse]
       .map { r =>
         r.status match {
@@ -58,7 +56,6 @@ class TaxSummariesStubsConnector @Inject() (
   ): Future[SAODSModel] =
     http
       .get(url"$baseUrl/ods-sa-data/$utr/$taxYear")
-      .setHeader(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
       .execute[HttpResponse]
       .map { r =>
         r.status match {
