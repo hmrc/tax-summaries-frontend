@@ -19,21 +19,23 @@ package services
 import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
-import connectors.DataCacheConnector
 import controllers.auth.requests.AuthenticatedRequest
 import models.AtsResponse
 import play.api.Logging
+import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.cache.DataKey
 import utils._
 import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsMergePageService @Inject() (
-  dataCacheConnector: DataCacheConnector,
+  taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   payeAtsService: PayeAtsService,
   atsListService: AtsListService,
-  appConfig: ApplicationConfig
+  appConfig: ApplicationConfig,
+  cryptoService: CryptoService
 )(implicit ec: ExecutionContext)
     extends Logging {
 
@@ -42,31 +44,44 @@ class AtsMergePageService @Inject() (
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsMergePageViewModel]] =
     (for {
-      saData   <- EitherT(if (!appConfig.saShuttered) { getSaYearList }
-                  else { Future(Right(AtsList.empty)) })
-      payeData <- EitherT(if (!appConfig.payeShuttered && !request.isAgent) { getPayeAtsYearList }
-                  else { Future(Right(List.empty[Int])) })
+      saData   <- EitherT(if (!appConfig.saShuttered) {
+                    getSaYearList
+                  } else {
+                    Future(Right(AtsList.empty))
+                  })
+      payeData <- EitherT(if (!appConfig.payeShuttered && !request.isAgent) {
+                    getPayeAtsYearList
+                  } else {
+                    Future(Right(List.empty[Int]))
+                  })
     } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
 
   private def getSaYearList(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
-  ): Future[Either[AtsResponse, AtsList]] = {
+  ): Future[Either[AtsResponse, AtsList]] =
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).contains(Globals.TAXS_PORTAL_REFERENCE)) {
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
-      agentToken.fold[Future[_]] {
+      val agentTokenTask = agentToken.fold[Future[_]] {
         Future.successful(None)
       } { token =>
         if (AccountUtils.isAgent(request)) {
-          dataCacheConnector.storeAgentToken(token) recover { case e: Throwable => throw e }
+          val finalAgentToken = cryptoService.getAgentToken(token)
+          taxsAgentTokenSessionCacheRepository.putSession(
+            DataKey(Globals.TAXS_AGENT_TOKEN_KEY),
+            finalAgentToken
+          ) recover { case e: Throwable =>
+            throw e
+          }
         } else {
           Future.successful(None)
         }
       }
+      agentTokenTask.map(_ => atsListService.createModel()).flatten
+    } else {
+      atsListService.createModel()
     }
-    atsListService.createModel()
-  }
 
   private def getPayeAtsYearList(implicit
     hc: HeaderCarrier,

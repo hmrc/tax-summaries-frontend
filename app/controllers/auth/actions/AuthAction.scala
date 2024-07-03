@@ -17,20 +17,23 @@
 package controllers.auth.actions
 
 import cats.data.EitherT
+import cats.implicits._
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import connectors.DataCacheConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
+import models.AgentToken
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import repository.TaxsAgentTokenSessionCacheRepository
 import services._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
@@ -40,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthImpl(
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
-  dataCacheConnector: DataCacheConnector,
+  taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService,
   saShutterCheck: Boolean,
@@ -80,23 +83,25 @@ class AuthImpl(
     }
   }
 
-  private def agentTokenCheck[A](request: Request[A], rq: => AuthenticatedRequest[A])(implicit
-    hc: HeaderCarrier
-  ): Future[Either[Result, AuthenticatedRequest[A]]] =
+  private def agentTokenCheck[A](
+    request: Request[A],
+    rq: => AuthenticatedRequest[A]
+  )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
-      dataCacheConnector.getAgentToken.map { agentToken =>
-        if (
-          (request
-            .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
-            .isEmpty || request
-            .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
-            .isEmpty) &&
-          agentToken.isEmpty
-        ) {
-          Left(notAuthorisedPage)
-        } else {
-          Right(rq)
-        }
+      taxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(Globals.TAXS_AGENT_TOKEN_KEY)).map {
+        agentToken =>
+          if (
+            (request
+              .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+              .isEmpty || request
+              .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
+              .isEmpty) &&
+            agentToken.isEmpty
+          ) {
+            Left(notAuthorisedPage)
+          } else {
+            Right(rq)
+          }
       }
     } else {
       Future.successful(Right(rq))
@@ -110,7 +115,8 @@ class AuthImpl(
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
-          val (agentRef, isAgentActive)           = agentInfo(enrolments)
+          val (agentRef, isAgentActive) = agentInfo(enrolments)
+
           def newRequest: AuthenticatedRequest[A] =
             requests.AuthenticatedRequest(
               userId = externalId,
@@ -122,6 +128,7 @@ class AuthImpl(
               credentials = credentials,
               request = request
             )
+
           (agentRef.isDefined, isAgentActive) match {
             case (true, false) =>
               Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
@@ -173,7 +180,8 @@ class AuthImpl(
       case _                         => EitherT.rightT(request)
     }
 
-  private def notAuthorisedPage: Result      = Redirect(controllers.routes.ErrorController.notAuthorised)
+  private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
+
   private def serviceUnavailablePage: Result = Redirect(controllers.routes.ErrorController.serviceUnavailable)
 }
 
@@ -183,7 +191,7 @@ trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFu
 class AuthAction @Inject() (
   authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
-  dataCacheConnector: DataCacheConnector,
+  taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService
 )(implicit
@@ -194,7 +202,7 @@ class AuthAction @Inject() (
     new AuthImpl(
       authConnector,
       cc,
-      dataCacheConnector,
+      taxsAgentTokenSessionCacheRepository,
       citizenDetailsService,
       pertaxAuthService,
       saShutterCheck,
