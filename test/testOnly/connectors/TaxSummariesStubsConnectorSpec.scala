@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.testOnly
+package testOnly.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.testOnly.{OdsValue, SAODSModel}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.testOnly
+package testOnly.connectors
 
 import config.ApplicationConfig
 import models.testOnly.{CountryAndODSValues, SAODSModel}

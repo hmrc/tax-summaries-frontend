@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models.testOnly
+package testOnly.models
 
+import models.testOnly.{CountryAndODSValues, OdsValue}
 import utils.BaseSpec
 
 class CountryAndODSValuesSpec extends BaseSpec {
