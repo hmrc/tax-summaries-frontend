@@ -20,6 +20,7 @@ import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
@@ -104,7 +105,7 @@ class AtsServiceSpec extends BaseSpec {
 
           "a user who is not an agent" that {
 
-            "getting data from mockMiddleConnector" in {
+            "getting data from mockMiddleConnector (+ check ignore caching not requested)" in {
 
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
@@ -122,6 +123,12 @@ class AtsServiceSpec extends BaseSpec {
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any())(any())
+
+              val captor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+              verify(mockMiddleConnector, times(1)).connectToAts(any(), any())(captor.capture())
+              val actHC                                 = captor.getValue
+              actHC.extraHeaders.contains("ignoreSAODSCache" -> "true") mustBe false
+
             }
           }
 

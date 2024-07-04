@@ -18,9 +18,11 @@ package testOnly.controllers
 
 import connectors.MiddleConnector
 import models.{AtsData, AtsSuccessResponseWithPayload, DataHolder}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.Helpers._
 import testOnly.views.html.DisplayPTAView
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.ControllerBaseSpec
 import view_models.Amount
 
@@ -37,29 +39,6 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
   )
 
   private val utr = "00000000010"
-
-  /*
-    taxYear: Int,
-  utr: Option[String],
-  income_tax: Option[DataHolder],
-  summary_data: Option[DataHolder],
-  income_data: Option[DataHolder],
-  allowance_data: Option[DataHolder],
-  capital_gains_data: Option[DataHolder],
-  gov_spending: Option[GovernmentSpendingOutputWrapper],
-  taxPayerData: Option[UserData],
-  errors: Option[IncomingAtsError],
-  taxLiability: Option[Amount]
-
-  DataHolder:-
-    payload: Option[Map[String, Amount]],
-  rates: Option[Map[String, Rate]],
-  incomeTaxStatus: Option[String]
-
-        "additional_rate":{"amount":10.0,"currency":"GBP"},
-        "other_adjustments_reducing":{"amount":20.0,"currency":"GBP"},
-        "basic_rate_income_tax":{"amount":1860.0,"currency":"GBP"},
-   */
 
   private val connectorResponse: AtsData = {
     def fieldInSection(fieldName: String, amount: BigDecimal, calculus: String): Option[DataHolder] =
@@ -113,6 +92,10 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         Some(BigDecimal(6.00).setScale(2))
 
       document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
+      val captor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+      verify(mockMiddleConnector, times(1)).connectToAts(any(), any())(captor.capture())
+      val actHC                                 = captor.getValue
+      actHC.extraHeaders.contains("ignoreSAODSCache" -> "true") mustBe true
     }
   }
 }
