@@ -27,6 +27,7 @@ import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
@@ -112,26 +113,25 @@ class AtsService @Inject() (
 
     EitherT {
       gotData flatMap {
-        case AtsSuccessResponseWithPayload(data: AtsData) if hasNoAts(data)       => Future.successful(Left(NOT_FOUND))
-        case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty =>
+        case AtsSuccessResponseWithPayload(data: AtsData) if data.taxLiability.forall(_.isZeroOrLess) =>
+          Future.successful(Left(NOT_FOUND))
+        case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty                     =>
           Future.successful(Left(INTERNAL_SERVER_ERROR))
-        case AtsSuccessResponseWithPayload(data: AtsData)                         =>
+        case AtsSuccessResponseWithPayload(data: AtsData)                                             =>
           sendAuditEvent(account, data)
           Future.successful(Right(data))
-        case AtsNotFoundResponse(_)                                               => Future.successful(Left(NOT_FOUND))
-        case AtsErrorResponse(_)                                                  => Future.successful(Left(INTERNAL_SERVER_ERROR))
+        case AtsNotFoundResponse(_)                                                                   =>
+          Future.successful(Left(NOT_FOUND))
+        case AtsErrorResponse(_)                                                                      =>
+          Future.successful(Left(INTERNAL_SERVER_ERROR))
       }
     }
-  }
-
-  private def hasNoAts(data: AtsData): Boolean = data.errors.fold(false) { errors =>
-    errors.error == "NoAtsError"
   }
 
   private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
-  ) =
+  ): Future[AuditResult] =
     (account: @unchecked) match {
       case _: Uar   =>
         auditService.sendEvent(
