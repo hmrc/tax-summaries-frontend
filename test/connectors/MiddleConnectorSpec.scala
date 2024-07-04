@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
 import models._
 import org.scalatest.EitherValues
@@ -56,6 +56,8 @@ class MiddleConnectorSpec
         "play.ws.timeout.connection"               -> "500ms"
       )
       .build()
+
+  //        "microservice.services.tax-summaries-stubs.host" -> "localhost"
 
   implicit val hc: HeaderCarrier                 = HeaderCarrier()
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
@@ -143,16 +145,67 @@ class MiddleConnectorSpec
       val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
 
       server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(saResponse)
-        )
+        get(urlEqualTo(url))
+          .withHeader("ignoreSAODSCache", absent)
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(saResponse)
+          )
       )
 
       val result = sut.connectToAts(utr, currentYear).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
+    }
+
+    "have ignoreSAODSCache set to true in headers for HTTP call if utr IS a test utr and ATS stubs host is not UNUSED" in {
+      lazy val testUtr: String = "0000000010"
+      val utr: SaUtr           = SaUtr(testUtr)
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url))
+          .withHeader("ignoreSAODSCache", equalTo("true"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr)))
+          )
+      )
+
+      whenReady(sut.connectToAts(utr, currentYear)) { atsResponse: AtsResponse =>
+        atsResponse match {
+          case AtsSuccessResponseWithPayload(payload: AtsData) =>
+            payload.utr mustBe Some(utr.utr)
+          case e                                               => fail("Unexpected response:" + e)
+        }
+      }
+    }
+
+    "have ignoreSAODSCache absent in headers for HTTP call if utr is NOT a test utr and ATS stubs host is not UNUSED" in {
+      lazy val testUtr: String = "0000000099"
+      val utr: SaUtr           = SaUtr(testUtr)
+      val url                  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val saResponse: String   = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
+      server.stubFor(
+        get(urlEqualTo(url))
+          .withHeader("ignoreSAODSCache", absent)
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(saResponse)
+          )
+      )
+
+      whenReady(sut.connectToAts(utr, currentYear)) { atsResponse: AtsResponse =>
+        atsResponse match {
+          case AtsSuccessResponseWithPayload(payload: AtsData) =>
+            payload.utr mustBe Some(utr.utr)
+          case e                                               => fail("Unexpected response:" + e)
+        }
+      }
     }
 
     "return 4xx response" in {
@@ -495,4 +548,61 @@ class MiddleConnectorSpec
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
+}
+
+class MiddleConnectorHeaderSpec
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with ScalaFutures
+    with WireMockHelper
+    with IntegrationPatience
+    with JsonUtil
+    with Injecting
+    with EitherValues {
+
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder()
+      .configure(
+        "microservice.services.tax-summaries.port"       -> server.port(),
+        "play.ws.timeout.request"                        -> "1000ms",
+        "play.ws.timeout.connection"                     -> "500ms",
+        "microservice.services.tax-summaries-stubs.host" -> "UNUSED"
+      )
+      .build()
+
+  private implicit val hc: HeaderCarrier                 = HeaderCarrier()
+  private implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  private implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
+  private val currentYear                                = 2022
+
+  private def sut: MiddleConnector = new MiddleConnector(inject[HttpClient], inject[HttpHandler])
+
+  "connectToAts" must {
+    "have ignoreSAODSCache absent in headers for HTTP request if utr IS a test utr and ATS stubs host is UNUSED" in {
+      lazy val testUtr: String = "0000000010"
+      val utr: SaUtr           = SaUtr(testUtr)
+
+      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+
+      server.stubFor(
+        get(urlEqualTo(url))
+          .withHeader("ignoreSAODSCache", absent)
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr)))
+          )
+      )
+
+      whenReady(sut.connectToAts(utr, currentYear)) { atsResponse: AtsResponse =>
+        atsResponse match {
+          case AtsSuccessResponseWithPayload(payload: AtsData) =>
+            payload.utr mustBe Some(utr.utr)
+          case e                                               => fail("Unexpected response:" + e)
+        }
+      }
+    }
+  }
+
 }

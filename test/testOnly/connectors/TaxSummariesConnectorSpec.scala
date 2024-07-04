@@ -116,4 +116,40 @@ class TaxSummariesConnectorSpec
       }
     }
   }
+
+  "connectToAtsSaDataWithoutAuth" must {
+    "return successful response" in {
+      val expectedResponse: String = Json.toJson(Json.obj("abc" -> "def")).toString()
+      val url                      = "/test-only/taxs/" + utr.utr + "/" + currentYear + "/ats-sa-data"
+
+      server.stubFor(
+        get(urlEqualTo(url)).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(expectedResponse)
+        )
+      )
+
+      val result = sut.connectToAtsSaDataWithoutAuth(currentYear, utr.utr).futureValue.value
+
+      result mustBe Json.obj("abc" -> "def")
+    }
+
+    val url = "/test-only/taxs/" + utr.utr + "/" + currentYear + "/ats-sa-data"
+    listOfErrors.foreach { status =>
+      s"a response with status $status is received" in {
+        server.stubFor(
+          get(urlEqualTo(url))
+            .willReturn(
+              aResponse()
+                .withStatus(status)
+            )
+        )
+
+        val result = sut.connectToAtsSaDataWithoutAuth(currentYear, utr.utr).futureValue
+
+        result.left.value.statusCode mustBe status
+      }
+    }
+  }
 }

@@ -55,21 +55,7 @@ class EnterSearchController @Inject() (
     }
   }
 
-  private val utrsForTestingAdmin = Seq(
-    "0000000010",
-    "0000000011",
-    "0000000012",
-    "0000000013",
-    "0000000014",
-    "0000000015",
-    "0000000016",
-    "0000000017",
-    "0000000018",
-    "0000000019",
-    "0000000020"
-  )
-
-  private def utrs: Seq[SelectItem] = utrsForTestingAdmin.map { utr =>
+  private lazy val utrs: Seq[SelectItem] = applicationConfig.utrsReservedForSAUpratingTest.map { utr =>
     SelectItem(value = Some(utr), text = utr, selected = true, disabled = false)
   }
 

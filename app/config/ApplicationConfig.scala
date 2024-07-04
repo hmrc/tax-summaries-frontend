@@ -78,6 +78,8 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   private val accessibilityBaseUrl: String     = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
+  lazy val taxSummariesServiceHost: String = config.getString("microservice.services.tax-summaries-stubs.host")
+
   def accessibilityStatementUrl(referrer: String): String = {
     val redirectUrl = RedirectUrl(accessibilityBaseUrl + referrer).getEither(
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
@@ -102,4 +104,18 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 
   lazy val mongoTTL: Int = config.getConfInt("tai.cache.expiryInSeconds", 900)
+
+  lazy val utrsReservedForSAUpratingTest: Seq[String] = Seq(
+    "0000000010",
+    "0000000011",
+    "0000000012",
+    "0000000013",
+    "0000000014",
+    "0000000015",
+    "0000000016",
+    "0000000017",
+    "0000000018",
+    "0000000019",
+    "0000000020"
+  )
 }

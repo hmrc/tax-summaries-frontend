@@ -16,11 +16,12 @@
 
 package testOnly.controllers
 
-import connectors.MiddleConnector
-import models.{AtsData, AtsSuccessResponseWithPayload, DataHolder}
+import models.{AtsData, DataHolder}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
+import testOnly.connectors.TaxSummariesConnector
 import testOnly.views.html.DisplayPTAView
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ControllerBaseSpec
@@ -29,18 +30,18 @@ import view_models.Amount
 import scala.concurrent.Future
 
 class DisplayPTAControllerSpec extends ControllerBaseSpec {
-  private val view                = inject[DisplayPTAView]
-  private val mockMiddleConnector = mock[MiddleConnector]
+  private val view                      = inject[DisplayPTAView]
+  private val mockTaxSummariesConnector = mock[TaxSummariesConnector]
 
   private def controller = new DisplayPTAController(
     mcc,
     view,
-    mockMiddleConnector
+    mockTaxSummariesConnector
   )
 
   private val utr = "00000000010"
 
-  private val connectorResponse: AtsData = {
+  private val connectorResponse: JsValue = {
     def fieldInSection(fieldName: String, amount: BigDecimal, calculus: String): Option[DataHolder] =
       Some(
         DataHolder(
@@ -54,25 +55,27 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         )
       )
 
-    AtsData(
-      taxYear = taxYear,
-      utr = Some(utr),
-      income_tax = fieldInSection("Field1", BigDecimal(1).setScale(2), "calculusField1"),
-      summary_data = fieldInSection("Field2", BigDecimal(2).setScale(2), "calculusField2"),
-      income_data = fieldInSection("Field3", BigDecimal(3).setScale(2), "calculusField3"),
-      allowance_data = fieldInSection("Field4", BigDecimal(4).setScale(2), "calculusField4"),
-      capital_gains_data = fieldInSection("Field5", BigDecimal(5).setScale(2), "calculusField5"),
-      gov_spending = None,
-      taxPayerData = None,
-      errors = None,
-      taxLiability = Some(Amount(BigDecimal(6).setScale(2), "GBP", None))
+    Json.toJson(
+      AtsData(
+        taxYear = taxYear,
+        utr = Some(utr),
+        income_tax = fieldInSection("Field1", BigDecimal(1).setScale(2), "calculusField1"),
+        summary_data = fieldInSection("Field2", BigDecimal(2).setScale(2), "calculusField2"),
+        income_data = fieldInSection("Field3", BigDecimal(3).setScale(2), "calculusField3"),
+        allowance_data = fieldInSection("Field4", BigDecimal(4).setScale(2), "calculusField4"),
+        capital_gains_data = fieldInSection("Field5", BigDecimal(5).setScale(2), "calculusField5"),
+        gov_spending = None,
+        taxPayerData = None,
+        errors = None,
+        taxLiability = Some(Amount(BigDecimal(6).setScale(2), "GBP", None))
+      )
     )
   }
 
   override def beforeEach(): Unit = {
-    reset(mockMiddleConnector)
-    when(mockMiddleConnector.connectToAts(any(), any())(any())).thenReturn(
-      Future.successful(AtsSuccessResponseWithPayload(connectorResponse))
+    reset(mockTaxSummariesConnector)
+    when(mockTaxSummariesConnector.connectToAtsSaDataWithoutAuth(any(), any())(any())).thenReturn(
+      Future.successful(Right(connectorResponse))
     )
   }
 
@@ -93,7 +96,7 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
 
       document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
       val captor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-      verify(mockMiddleConnector, times(1)).connectToAts(any(), any())(captor.capture())
+      verify(mockTaxSummariesConnector, times(1)).connectToAtsSaDataWithoutAuth(any(), any())(captor.capture())
       val actHC                                 = captor.getValue
       actHC.extraHeaders.contains("ignoreSAODSCache" -> "true") mustBe true
     }

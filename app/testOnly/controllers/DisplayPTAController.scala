@@ -17,14 +17,13 @@
 package testOnly.controllers
 
 import com.google.inject.Inject
-import connectors.MiddleConnector
 import models._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import testOnly.connectors.TaxSummariesConnector
 import testOnly.models.FieldInfo
 import testOnly.views.html.DisplayPTAView
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
@@ -34,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class DisplayPTAController @Inject() (
   mcc: MessagesControllerComponents,
   view: DisplayPTAView,
-  middleConnector: MiddleConnector
+  taxSummariesConnector: TaxSummariesConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with AccountUtils
@@ -55,9 +54,9 @@ class DisplayPTAController @Inject() (
       .withExtraHeaders(
         "ignoreSAODSCache" -> "true"
       )
-
-    middleConnector.connectToAts(SaUtr(utr), taxYear)(hcWithExtraHeaders).map {
-      case AtsSuccessResponseWithPayload(atsData: AtsData) =>
+    taxSummariesConnector.connectToAtsSaDataWithoutAuth(taxYear, utr)(hcWithExtraHeaders).map {
+      case Right(json) =>
+        val atsData                                                    = json.as[AtsData]
         val incomeTaxDataSection: Seq[(String, BigDecimal, String)]    =
           getSection(atsData.income_tax.map(createSeqFieldInfo).getOrElse(Nil))
         val summaryDataSection: Seq[(String, BigDecimal, String)]      =
@@ -81,9 +80,7 @@ class DisplayPTAController @Inject() (
             taxLiability
           )
         )
-      case AtsNotFoundResponse(s)                          => throw new RuntimeException("Not found:" + s)
-      case AtsBadRequestResponse(s)                        => throw new RuntimeException("Bad request:" + s)
-      case AtsErrorResponse(s)                             => throw new RuntimeException("Exception:" + s)
+      case Left(e)     => throw e
     }
 
   }
