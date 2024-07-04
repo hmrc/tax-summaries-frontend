@@ -17,6 +17,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
+import view_models.Amount
 
 case class AtsData(
   taxYear: Int,
@@ -28,7 +29,8 @@ case class AtsData(
   capital_gains_data: Option[DataHolder],
   gov_spending: Option[GovernmentSpendingOutputWrapper],
   taxPayerData: Option[UserData],
-  errors: Option[IncomingAtsError]
+  errors: Option[IncomingAtsError],
+  taxLiability: Option[Amount]
 )
 
 object AtsData {

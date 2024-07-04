@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import play.api.Logging
 import play.api.http.Status.OK
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
@@ -31,8 +30,7 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
   ec: ExecutionContext
 ) extends Logging {
 
-  val serviceUrl: String = appConfig.serviceUrl
-
+  val serviceUrl: String        = appConfig.serviceUrl
   private def url(path: String) = s"$serviceUrl$path"
 
   def connectToAtsSaFields(
@@ -42,16 +40,6 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
       url("/test-only/taxs/" + taxYear + "/ats-sa-fields")
     ) recover handleHttpExceptions).map {
       case Right(response) if response.status == OK => Right((response.json \ "items").as[Seq[String]])
-      case Left(response)                           => Left(response)
-    }
-
-  def connectToAtsSaDataPlusCalculus(taxYear: Int, utr: String)(implicit
-    hc: HeaderCarrier
-  ): Future[Either[UpstreamErrorResponse, JsValue]] =
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data-plus-calculus")
-    ) recover handleHttpExceptions).map {
-      case Right(response) if response.status == OK => Right(response.json)
       case Left(response)                           => Left(response)
     }
 

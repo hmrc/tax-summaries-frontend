@@ -21,7 +21,7 @@ import java.util.Locale
 import play.api.libs.json.{Json, OFormat}
 import utils.BigDecimalUtils
 
-case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils {
+case class Amount(amount: BigDecimal, currency: String, calculus: Option[String] = None) extends BigDecimalUtils {
 
   private def format(
     decimalNumber: Int,

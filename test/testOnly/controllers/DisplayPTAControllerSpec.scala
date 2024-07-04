@@ -16,77 +16,84 @@
 
 package testOnly.controllers
 
+import connectors.MiddleConnector
+import models.{AtsData, AtsSuccessResponseWithPayload, DataHolder}
 import org.mockito.ArgumentMatchers.any
-import play.api.libs.json.Json
 import play.api.test.Helpers._
-import testOnly.connectors.TaxSummariesConnector
 import testOnly.views.html.DisplayPTAView
 import utils.ControllerBaseSpec
+import view_models.Amount
 
 import scala.concurrent.Future
 
 class DisplayPTAControllerSpec extends ControllerBaseSpec {
-  private val view                      = inject[DisplayPTAView]
-  private val mockTaxSummariesConnector = mock[TaxSummariesConnector]
+  private val view                = inject[DisplayPTAView]
+  private val mockMiddleConnector = mock[MiddleConnector]
 
   private def controller = new DisplayPTAController(
     mcc,
     view,
-    mockTaxSummariesConnector
+    mockMiddleConnector
   )
 
   private val utr = "00000000010"
 
-  private val jsValue = Json.parse("""{
-                          |   "taxYear":2023,
-                          |   "utr":"0000000010",
-                          |   "odsValues":{
-                          |      "income_tax":[
-                          |         {
-                          |            "fieldName":"Field1",
-                          |            "amount":1.00,
-                          |            "calculus":"calculusField1"
-                          |         }
-                          |      ],
-                          |      "summary_data":[
-                          |         {
-                          |            "fieldName":"Field2",
-                          |            "amount":2.00,
-                          |            "calculus":"calculusField2"
-                          |         }
-                          |      ],
-                          |      "income_data":[
-                          |         {
-                          |            "fieldName":"Field3",
-                          |            "amount":3.00,
-                          |            "calculus":"calculusField3"
-                          |         }
-                          |      ],
-                          |      "allowance_data":[
-                          |         {
-                          |            "fieldName":"Field4",
-                          |            "amount":4.00,
-                          |            "calculus":"calculusField4"
-                          |         }
-                          |      ],
-                          |      "capital_gains_data":[
-                          |         {
-                          |            "fieldName":"Field5",
-                          |            "amount":5.00,
-                          |            "calculus":"calculusField5"
-                          |         }
-                          |      ],
-                          |      "tax_liability": {
-                          |         "amount":6.00,
-                          |         "calculus": "calculusAll"
-                          |      }
-                          |   }
-                          |}""".stripMargin)
+  /*
+    taxYear: Int,
+  utr: Option[String],
+  income_tax: Option[DataHolder],
+  summary_data: Option[DataHolder],
+  income_data: Option[DataHolder],
+  allowance_data: Option[DataHolder],
+  capital_gains_data: Option[DataHolder],
+  gov_spending: Option[GovernmentSpendingOutputWrapper],
+  taxPayerData: Option[UserData],
+  errors: Option[IncomingAtsError],
+  taxLiability: Option[Amount]
+
+  DataHolder:-
+    payload: Option[Map[String, Amount]],
+  rates: Option[Map[String, Rate]],
+  incomeTaxStatus: Option[String]
+
+        "additional_rate":{"amount":10.0,"currency":"GBP"},
+        "other_adjustments_reducing":{"amount":20.0,"currency":"GBP"},
+        "basic_rate_income_tax":{"amount":1860.0,"currency":"GBP"},
+   */
+
+  private val connectorResponse: AtsData = {
+    def fieldInSection(fieldName: String, amount: BigDecimal, calculus: String): Option[DataHolder] =
+      Some(
+        DataHolder(
+          payload = Some(
+            Map(
+              fieldName -> Amount(amount, "GBP", Some(calculus))
+            )
+          ),
+          rates = None,
+          incomeTaxStatus = None
+        )
+      )
+
+    AtsData(
+      taxYear = taxYear,
+      utr = Some(utr),
+      income_tax = fieldInSection("Field1", BigDecimal(1).setScale(2), "calculusField1"),
+      summary_data = fieldInSection("Field2", BigDecimal(2).setScale(2), "calculusField2"),
+      income_data = fieldInSection("Field3", BigDecimal(3).setScale(2), "calculusField3"),
+      allowance_data = fieldInSection("Field4", BigDecimal(4).setScale(2), "calculusField4"),
+      capital_gains_data = fieldInSection("Field5", BigDecimal(5).setScale(2), "calculusField5"),
+      gov_spending = None,
+      taxPayerData = None,
+      errors = None,
+      taxLiability = Some(Amount(BigDecimal(6).setScale(2), "GBP", None))
+    )
+  }
 
   override def beforeEach(): Unit = {
-    reset(mockTaxSummariesConnector)
-    when(mockTaxSummariesConnector.connectToAtsSaDataPlusCalculus(any(), any())(any())).thenReturn(
-      Future.successful(Right(jsValue))
+    reset(mockMiddleConnector)
+    when(mockMiddleConnector.connectToAts(any(), any())(any())).thenReturn(
+      Future.successful(AtsSuccessResponseWithPayload(connectorResponse))
     )
   }
 
@@ -102,8 +109,8 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         ("Allowance data", Seq(("Field4", BigDecimal(4.00).setScale(2), "calculusField4"))),
         ("Capital gains data", Seq(("Field5", BigDecimal(5.00).setScale(2), "calculusField5")))
       )
-      val expTaxLiability: Option[(String, BigDecimal, String)]         =
-        Some(Tuple3("", BigDecimal(6.00).setScale(2), "calculusAll"))
+      val expTaxLiability: Option[BigDecimal]                           =
+        Some(BigDecimal(6.00).setScale(2))
 
       document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
     }

@@ -17,12 +17,15 @@
 package testOnly.controllers
 
 import com.google.inject.Inject
+import connectors.MiddleConnector
+import models._
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsArray, JsObject, JsValue}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import testOnly.connectors.TaxSummariesConnector
+import testOnly.models.FieldInfo
 import testOnly.views.html.DisplayPTAView
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
 
@@ -31,7 +34,7 @@ import scala.concurrent.ExecutionContext
 class DisplayPTAController @Inject() (
   mcc: MessagesControllerComponents,
   view: DisplayPTAView,
-  taxSummariesConnector: TaxSummariesConnector
+  middleConnector: MiddleConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with AccountUtils
@@ -39,37 +42,33 @@ class DisplayPTAController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def getSection(data: JsValue, section: String): Seq[(String, BigDecimal, String)] =
-    (data \ "odsValues" \ section).asOpt[JsArray] match {
-      case Some(jsArray) =>
-        jsArray.value.toSeq.map { json =>
-          val jsNode    = json.as[JsObject]
-          val fieldName = (jsNode \ "fieldName").as[String]
-          val amount    = (jsNode \ "amount").as[BigDecimal]
-          val calculus  = (jsNode \ "calculus").as[String]
-          Tuple3(fieldName, amount, calculus)
-        }
-      case None          => Nil
+  private def getSection(fields: Seq[FieldInfo]): Seq[(String, BigDecimal, String)] =
+    fields.map { fieldInfo =>
+      val fieldName = fieldInfo.fieldName
+      val amount    = fieldInfo.amount
+      val calculus  = fieldInfo.calculus
+      Tuple3(fieldName, amount, calculus)
     }
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    taxSummariesConnector.connectToAtsSaDataPlusCalculus(taxYear, utr).map {
-      case Right(data) =>
-        val incomeTaxDataSection: Seq[(String, BigDecimal, String)]    = getSection(data = data, section = "income_tax")
-        val summaryDataSection: Seq[(String, BigDecimal, String)]      = getSection(data = data, section = "summary_data")
-        val incomeDataSection: Seq[(String, BigDecimal, String)]       = getSection(data = data, section = "income_data")
+    val hcWithExtraHeaders: HeaderCarrier = hc
+      .withExtraHeaders(
+        "ignoreSAODSCache" -> "true"
+      )
+
+    middleConnector.connectToAts(SaUtr(utr), taxYear)(hcWithExtraHeaders).map {
+      case AtsSuccessResponseWithPayload(atsData: AtsData) =>
+        val incomeTaxDataSection: Seq[(String, BigDecimal, String)]    =
+          getSection(atsData.income_tax.map(createSeqFieldInfo).getOrElse(Nil))
+        val summaryDataSection: Seq[(String, BigDecimal, String)]      =
+          getSection(atsData.summary_data.map(createSeqFieldInfo).getOrElse(Nil))
+        val incomeDataSection: Seq[(String, BigDecimal, String)]       =
+          getSection(atsData.income_data.map(createSeqFieldInfo).getOrElse(Nil))
         val allowanceDataSection: Seq[(String, BigDecimal, String)]    =
-          getSection(data = data, section = "allowance_data")
+          getSection(atsData.allowance_data.map(createSeqFieldInfo).getOrElse(Nil))
         val capitalGainsDataSection: Seq[(String, BigDecimal, String)] =
-          getSection(data = data, section = "capital_gains_data")
-
-        val taxLiability: Option[(String, BigDecimal, String)] =
-          (data \ "odsValues" \ "tax_liability").asOpt[JsObject].map { jsNode =>
-            val amount   = (jsNode \ "amount").as[BigDecimal]
-            val calculus = (jsNode \ "calculus").as[String]
-            Tuple3("", amount, calculus)
-          }
-
+          getSection(atsData.capital_gains_data.map(createSeqFieldInfo).getOrElse(Nil))
+        val taxLiability: Option[BigDecimal]                           = atsData.taxLiability.map(_.amount)
         Ok(
           view(
             Seq(
@@ -82,8 +81,28 @@ class DisplayPTAController @Inject() (
             taxLiability
           )
         )
-      case Left(e)     => throw e
+      case AtsNotFoundResponse(s)                          => throw new RuntimeException("Not found:" + s)
+      case AtsBadRequestResponse(s)                        => throw new RuntimeException("Bad request:" + s)
+      case AtsErrorResponse(s)                             => throw new RuntimeException("Exception:" + s)
     }
 
   }
+
+  private def createSeqFieldInfo(dataHolder: DataHolder): Seq[FieldInfo] = {
+    val dataHolderWithCalculusList =
+      dataHolder.payload match {
+        case Some(payload) =>
+          payload.map(liabilityAmountMap =>
+            FieldInfo(
+              liabilityAmountMap._1,
+              liabilityAmountMap._2.amount,
+              liabilityAmountMap._2.calculus.getOrElse("")
+            )
+          )
+
+        case _ => List.empty
+      }
+    dataHolderWithCalculusList.toList
+  }
+
 }
