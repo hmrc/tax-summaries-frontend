@@ -528,5 +528,9 @@
       "forename": "Tom",
       "surname": "Fisher"
     }
-  }
+  },   
+  "taxLiability": {
+  "amount":23456.0,
+  "currency":"GBP"
+}
 }

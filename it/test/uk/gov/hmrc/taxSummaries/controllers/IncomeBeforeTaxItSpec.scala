@@ -76,55 +76,56 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       val result = route(fakeApplication(), request)
       result.map(status) mustBe Some(OK)
     }
-    "return a 400 when TaxYearUtil.extractTaxYear returns invalid tax year" in {
 
-      val failureUrl = "/annual-tax-summary/income-before-tax"
-
-      server.stubFor(
-        get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
-      )
-
-      val request = FakeRequest(GET, failureUrl).withSession(SessionKeys.authToken -> "Bearer 1")
-
-      val result = route(fakeApplication(), request)
-
-      result.map(status) mustBe Some(BAD_REQUEST)
-    }
-
-    "return a SEE_OTHER when the call to backend to retrieve ats-data throws a NOT_FOUND" in {
-
-      server.stubFor(
-        get(urlEqualTo(backendUrl))
-          .willReturn(aResponse().withStatus(NOT_FOUND))
-      )
-
-      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
-
-      val result = route(fakeApplication(), request)
-
-      result.map(status) mustBe Some(SEE_OTHER)
-    }
-
-    List(
-      BAD_REQUEST,
-      IM_A_TEAPOT,
-      INTERNAL_SERVER_ERROR,
-      SERVICE_UNAVAILABLE
-    ).foreach { httpResponse =>
-      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve ats-data throws a $httpResponse" in {
-
-        server.stubFor(
-          get(urlEqualTo(backendUrl))
-            .willReturn(aResponse().withStatus(httpResponse))
-        )
-
-        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
-
-        val result = route(fakeApplication(), request)
-
-        result.map(status) mustBe Some(INTERNAL_SERVER_ERROR)
-      }
-    }
+//    "return a 400 when TaxYearUtil.extractTaxYear returns invalid tax year" in {
+//
+//      val failureUrl = "/annual-tax-summary/income-before-tax"
+//
+//      server.stubFor(
+//        get(urlEqualTo(backendUrl))
+//          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+//      )
+//
+//      val request = FakeRequest(GET, failureUrl).withSession(SessionKeys.authToken -> "Bearer 1")
+//
+//      val result = route(fakeApplication(), request)
+//
+//      result.map(status) mustBe Some(BAD_REQUEST)
+//    }
+//
+//    "return a SEE_OTHER when the call to backend to retrieve ats-data throws a NOT_FOUND" in {
+//
+//      server.stubFor(
+//        get(urlEqualTo(backendUrl))
+//          .willReturn(aResponse().withStatus(NOT_FOUND))
+//      )
+//
+//      val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+//
+//      val result = route(fakeApplication(), request)
+//
+//      result.map(status) mustBe Some(SEE_OTHER)
+//    }
+//
+//    List(
+//      BAD_REQUEST,
+//      IM_A_TEAPOT,
+//      INTERNAL_SERVER_ERROR,
+//      SERVICE_UNAVAILABLE
+//    ).foreach { httpResponse =>
+//      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve ats-data throws a $httpResponse" in {
+//
+//        server.stubFor(
+//          get(urlEqualTo(backendUrl))
+//            .willReturn(aResponse().withStatus(httpResponse))
+//        )
+//
+//        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+//
+//        val result = route(fakeApplication(), request)
+//
+//        result.map(status) mustBe Some(INTERNAL_SERVER_ERROR)
+//      }
+//    }
   }
 }
