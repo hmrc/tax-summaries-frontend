@@ -58,7 +58,7 @@ object PayeTaxFreeAmount {
       AmountRow("income_before_tax", totalIncomeBeforeTax),
       AmountRow(
         "tax_free_amount",
-        if (totalTaxFreeAmount == Amount.empty) personalTaxFreeAmount else totalTaxFreeAmount
+        if (totalTaxFreeAmount.isValueEqual(Amount.empty)) personalTaxFreeAmount else totalTaxFreeAmount
       )
     )
 

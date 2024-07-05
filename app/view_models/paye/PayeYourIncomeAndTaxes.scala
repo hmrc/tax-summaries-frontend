@@ -35,8 +35,8 @@ object PayeYourIncomeAndTaxes {
     val taxableIncome = payeAtsData.allowance_data.flatMap { allowanceData =>
       allowanceData.payload.flatMap { payload =>
         payload.get("total_tax_free_amount") match {
-          case Some(amount) if amount == Amount.empty => payload.get("personal_tax_free_amount")
-          case _                                      => payload.get("total_tax_free_amount")
+          case Some(amount) if amount.isValueEqual(Amount.empty) => payload.get("personal_tax_free_amount")
+          case _                                                 => payload.get("total_tax_free_amount")
         }
       }
     }

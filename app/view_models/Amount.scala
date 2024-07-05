@@ -49,7 +49,9 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
 
   def toHundredthsString: String = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 
-  def unary_- : Amount = copy(amount = -this.amount)
+  def unary_- : Amount                    = copy(amount = -this.amount)
+  // TODO: Need to define == as calculus is interfering with comparisons wherever == Amount.empty is used
+  def isValueEqual(that: Amount): Boolean = this.amount == that.amount && this.currency == that.currency
 }
 
 object Amount {
