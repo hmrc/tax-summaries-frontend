@@ -78,8 +78,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   private val accessibilityBaseUrl: String     = config.getString(s"accessibility-statement.baseUrl")
   private val accessibilityRedirectUrl: String = config.getString(s"accessibility-statement.redirectUrl")
 
-  lazy val taxSummariesServiceHost: String = config.getString("microservice.services.tax-summaries-stubs.host")
-
   def accessibilityStatementUrl(referrer: String): String = {
     val redirectUrl = RedirectUrl(accessibilityBaseUrl + referrer).getEither(
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
