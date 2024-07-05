@@ -17,13 +17,11 @@
 package testOnly.controllers
 
 import models.{AtsData, DataHolder}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import testOnly.connectors.TaxSummariesConnector
 import testOnly.views.html.DisplayPTAView
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.ControllerBaseSpec
 import view_models.Amount
 
@@ -95,10 +93,6 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         Some(BigDecimal(6.00).setScale(2))
 
       document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
-      val captor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-      verify(mockTaxSummariesConnector, times(1)).connectToAtsSaDataWithoutAuth(any(), any())(captor.capture())
-      val actHC                                 = captor.getValue
-      actHC.extraHeaders.contains("ignoreSAODSCache" -> "true") mustBe true
     }
   }
 }

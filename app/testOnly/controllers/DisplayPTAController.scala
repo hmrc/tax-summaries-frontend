@@ -24,7 +24,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.connectors.TaxSummariesConnector
 import testOnly.models.FieldInfo
 import testOnly.views.html.DisplayPTAView
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AccountUtils, AttorneyUtils}
 
@@ -50,11 +49,7 @@ class DisplayPTAController @Inject() (
     }
 
   def onPageLoad(taxYear: Int, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    val hcWithExtraHeaders: HeaderCarrier = hc
-      .withExtraHeaders(
-        "ignoreSAODSCache" -> "true"
-      )
-    taxSummariesConnector.connectToAtsSaDataWithoutAuth(taxYear, utr)(hcWithExtraHeaders).map {
+    taxSummariesConnector.connectToAtsSaDataWithoutAuth(taxYear, utr).map {
       case Right(json) =>
         val atsData                                                    = json.as[AtsData]
         val incomeTaxDataSection: Seq[(String, BigDecimal, String)]    =

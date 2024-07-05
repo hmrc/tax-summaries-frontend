@@ -35,24 +35,8 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
 
   private def url(path: String) = s"$serviceUrl$path"
 
-  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] = {
-    val taxSummariesServiceHost: String = appConfig.taxSummariesServiceHost
-    val ignoreCache                     =
-      taxSummariesServiceHost != "UNUSED" && appConfig.utrsReservedForSAUpratingTest.contains(UTR.utr)
-
-    val hcWithExtraHeaders: HeaderCarrier = if (ignoreCache) {
-      logger.info(
-        s"MiddleConnector.connectoToAts called with ignoreSAODSCache set to true. Tax summaries service host is $taxSummariesServiceHost."
-      )
-      hc.withExtraHeaders(
-        "ignoreSAODSCache" -> "true"
-      )
-    } else {
-      hc
-    }
-
-    httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))(implicitly, hcWithExtraHeaders)
-  }
+  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+    httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
   def connectToAtsOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
     hc: HeaderCarrier

@@ -35,10 +35,8 @@ class EnterSearchControllerSpec extends ControllerBaseSpec {
     mockApplicationConfig
   )
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     reset(mockApplicationConfig)
-    when(mockApplicationConfig.utrsReservedForSAUpratingTest).thenReturn(Seq("0000000010"))
-  }
 
   "onPageLoad" must {
     "render the page" in {

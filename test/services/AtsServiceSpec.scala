@@ -20,7 +20,6 @@ import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
@@ -104,9 +103,7 @@ class AtsServiceSpec extends BaseSpec {
         "connector returns a success response with valid payload" which {
 
           "a user who is not an agent" that {
-
-            "getting data from mockMiddleConnector (+ check ignore caching not requested)" in {
-
+            "getting data from mockMiddleConnector" in {
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
               when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
@@ -123,14 +120,7 @@ class AtsServiceSpec extends BaseSpec {
               sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any())(any())
-
-              val captor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-              verify(mockMiddleConnector, times(1)).connectToAts(any(), any())(captor.capture())
-              val actHC                                 = captor.getValue
-              actHC.extraHeaders.contains("ignoreSAODSCache" -> "true") mustBe false
-
             }
-
           }
 
           "a user who is an agent" that {
@@ -190,7 +180,7 @@ class AtsServiceSpec extends BaseSpec {
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
 
-        "getting data from mockMiddleConnector (+ check ignore caching not requested) where no tax liability" in {
+        "getting data from mockMiddleConnector where no tax liability" in {
           val dataNoTaxLiability: AtsData = data copy (taxLiability = None)
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
@@ -208,7 +198,7 @@ class AtsServiceSpec extends BaseSpec {
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
         }
 
-        "getting data from mockMiddleConnector (+ check ignore caching not requested) where tax liability is negative value" in {
+        "getting data from mockMiddleConnector where tax liability is negative value" in {
           val dataNegTaxLiability: AtsData = data copy (taxLiability = Some(Amount(BigDecimal(-100), "GBP")))
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
