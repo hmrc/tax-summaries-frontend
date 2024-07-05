@@ -16,20 +16,18 @@
 
 package testOnly.models
 
-import play.api.libs.json.{Format, Json}
+import utils.BaseSpec
 
-case class FieldInfo(
-  fieldName: String,
-  amount: BigDecimal,
-  calculus: String
-) {
-  def fieldNameCamelCase: String = {
-    val a = fieldName.split("_")
-    a.toSeq.map(_.capitalize).mkString
+class FieldInfoSpec extends BaseSpec {
+  "fieldNameCamelCase" must {
+    "convert correctly for string with underscores" in {
+      FieldInfo("abc_def_ehi", BigDecimal(0), "").fieldNameCamelCase mustBe "AbcDefEhi"
+    }
+    "convert correctly for string without underscores" in {
+      FieldInfo("abcdefehi", BigDecimal(0), "").fieldNameCamelCase mustBe "Abcdefehi"
+    }
+    "handle empty string" in {
+      FieldInfo("", BigDecimal(0), "").fieldNameCamelCase mustBe ""
+    }
   }
-}
-
-object FieldInfo {
-  implicit val formats: Format[FieldInfo] = Json.format[FieldInfo]
-
 }

@@ -95,4 +95,5 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
       document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
     }
   }
+
 }

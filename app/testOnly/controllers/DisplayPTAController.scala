@@ -42,7 +42,7 @@ class DisplayPTAController @Inject() (
 
   private def getSection(fields: Seq[FieldInfo]): Seq[(String, BigDecimal, String)] =
     fields.map { fieldInfo =>
-      val fieldName = fieldInfo.fieldName
+      val fieldName = fieldInfo.fieldNameCamelCase
       val amount    = fieldInfo.amount
       val calculus  = fieldInfo.calculus
       Tuple3(fieldName, amount, calculus)
