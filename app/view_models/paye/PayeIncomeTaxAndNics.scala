@@ -88,7 +88,7 @@ object PayeIncomeTaxAndNics {
       .filterKeys(adjustments)
       .toList
       .map(adjustment => AdjustmentRow(adjustment._1, adjustment._2))
-      .filter(_.adjustmentAmount != Amount.empty)
+      .filter(_.adjustmentAmount.isValueNotEqual(Amount.empty))
       .sortBy(_.label)).getOrElse(List.empty)
 
   private def getNationalInsuranceContribution(payeAtsData: PayeAtsData, nicKey: String): Amount =

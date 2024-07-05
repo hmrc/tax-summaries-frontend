@@ -48,14 +48,15 @@ class PayeIncomeTaxAndNicsController @Inject() (
     implicit request: PayeAuthenticatedRequest[_] =>
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
         case Right(successResponse: PayeAtsData) =>
+          val a = PayeIncomeTaxAndNics(
+            payeAtsData = successResponse,
+            scottishRates = payeConfig.scottishTaxBandKeys,
+            uKRates = payeConfig.ukTaxBandKeys,
+            adjustments = payeConfig.adjustmentsKeys.toSet
+          )
           Ok(
             payeIncomeTaxAndNicsView(
-              PayeIncomeTaxAndNics(
-                payeAtsData = successResponse,
-                scottishRates = payeConfig.scottishTaxBandKeys,
-                uKRates = payeConfig.ukTaxBandKeys,
-                adjustments = payeConfig.adjustmentsKeys.toSet
-              ),
+              a,
               successResponse.isWelshTaxPayer
             )
           )

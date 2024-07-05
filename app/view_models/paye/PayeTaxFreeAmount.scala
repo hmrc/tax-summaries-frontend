@@ -52,7 +52,7 @@ object PayeTaxFreeAmount {
       .map { adjustment =>
         AmountRow(adjustment, payload.getOrElse(adjustment, Amount.empty))
       }
-      .filter(_.amount != Amount.empty)).getOrElse(List.empty)
+      .filter(_.amount.isValueNotEqual(Amount.empty))).getOrElse(List.empty)
 
     val summaryRows = List(
       AmountRow("income_before_tax", totalIncomeBeforeTax),
