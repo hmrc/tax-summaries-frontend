@@ -23,10 +23,8 @@ case class FieldInfo(
   amount: BigDecimal,
   calculus: String
 ) {
-  def fieldNameCamelCase: String = {
-    val a = fieldName.split("_")
-    a.toSeq.map(_.capitalize).mkString
-  }
+  def fieldNameCamelCase: String =
+    fieldName.split("_").toSeq.map(_.capitalize).mkString
 }
 
 object FieldInfo {
