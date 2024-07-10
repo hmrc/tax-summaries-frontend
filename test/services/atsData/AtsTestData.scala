@@ -54,6 +54,7 @@ object AtsTestData {
         )
       )
     ),
+    None,
     None
   )
 
@@ -94,6 +95,7 @@ object AtsTestData {
         )
       )
     ),
+    None,
     None
   )
 
@@ -205,7 +207,8 @@ object AtsTestData {
         )
       )
     ),
-    errors = None
+    errors = None,
+    None
   )
 
   val govSpendingDataForWelshUser = AtsData(
@@ -264,6 +267,7 @@ object AtsTestData {
         )
       )
     ),
+    None,
     None
   )
 
@@ -322,6 +326,7 @@ object AtsTestData {
         )
       )
     ),
+    None,
     None
   )
 
@@ -370,7 +375,8 @@ object AtsTestData {
         )
       )
     ),
-    errors = None
+    errors = None,
+    None
   )
 
   val capitalGainsData = AtsData(
@@ -427,6 +433,7 @@ object AtsTestData {
         )
       )
     ),
+    None,
     None
   )
 
@@ -542,6 +549,7 @@ object AtsTestData {
         )
       )
     ),
-    errors = None
+    errors = None,
+    None
   )
 }

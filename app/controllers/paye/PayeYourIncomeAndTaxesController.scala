@@ -52,7 +52,8 @@ class PayeYourIncomeAndTaxesController @Inject() (
           Forbidden(payeGenericErrorView())
         case Right(successResponse: PayeAtsData) =>
           PayeYourIncomeAndTaxes.buildViewModel(successResponse, taxYear) match {
-            case Some(viewModel) => Ok(payeYourIncomeAndTaxesView(viewModel))
+            case Some(viewModel) =>
+              Ok(payeYourIncomeAndTaxesView(viewModel))
             case _               =>
               val exception = new InternalServerException("Missing Paye ATS data")
               logger.error(s"Internal server error ${exception.getMessage}", exception)

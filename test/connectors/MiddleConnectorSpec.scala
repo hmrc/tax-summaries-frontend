@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import config.ApplicationConfig
 import models._
 import org.scalatest.EitherValues
@@ -143,11 +143,12 @@ class MiddleConnectorSpec
       val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
 
       server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(saResponse)
-        )
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(saResponse)
+          )
       )
 
       val result = sut.connectToAts(utr, currentYear).futureValue

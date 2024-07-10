@@ -76,6 +76,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       val result = route(fakeApplication(), request)
       result.map(status) mustBe Some(OK)
     }
+
     "return a 400 when TaxYearUtil.extractTaxYear returns invalid tax year" in {
 
       val failureUrl = "/annual-tax-summary/income-before-tax"

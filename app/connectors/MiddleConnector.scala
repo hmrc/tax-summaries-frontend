@@ -18,7 +18,7 @@ package connectors
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import models.{AtsData, AtsListData, AtsResponse}
+import models._
 import play.api.Logging
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits._

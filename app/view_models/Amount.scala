@@ -16,12 +16,13 @@
 
 package view_models
 
-import java.text.NumberFormat
-import java.util.Locale
 import play.api.libs.json.{Json, OFormat}
 import utils.BigDecimalUtils
 
-case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils {
+import java.text.NumberFormat
+import java.util.Locale
+
+case class Amount(amount: BigDecimal, currency: String, calculus: Option[String] = None) extends BigDecimalUtils {
 
   private def format(
     decimalNumber: Int,
@@ -50,6 +51,10 @@ case class Amount(amount: BigDecimal, currency: String) extends BigDecimalUtils 
   def toHundredthsString: String = format(2, BigDecimal.RoundingMode.DOWN, amount = amount * 100)
 
   def unary_- : Amount = copy(amount = -this.amount)
+
+  def isValueEqual(that: Amount): Boolean = this.amount == that.amount && this.currency == that.currency
+
+  def isValueNotEqual(that: Amount): Boolean = !isValueEqual(that)
 }
 
 object Amount {

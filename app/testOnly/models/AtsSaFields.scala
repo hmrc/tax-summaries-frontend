@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package testOnly.models
 
 import play.api.libs.json.{Json, OFormat}
-import view_models.Amount
 
-case class AtsData(
-  taxYear: Int,
-  utr: Option[String],
-  income_tax: Option[DataHolder],
-  summary_data: Option[DataHolder],
-  income_data: Option[DataHolder],
-  allowance_data: Option[DataHolder],
-  capital_gains_data: Option[DataHolder],
-  gov_spending: Option[GovernmentSpendingOutputWrapper],
-  taxPayerData: Option[UserData],
-  errors: Option[IncomingAtsError],
-  taxLiability: Option[Amount]
+case class AtsSaFields(
+  items: Seq[String]
 )
 
-object AtsData {
-  implicit val formats: OFormat[AtsData] = Json.format[AtsData]
+object AtsSaFields {
+  implicit val formats: OFormat[AtsSaFields] = Json.format[AtsSaFields]
 }

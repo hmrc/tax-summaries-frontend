@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
+import testOnly.controllers.FeatureFlagsController
 import utils.BaseSpec
 
 import scala.concurrent.Future

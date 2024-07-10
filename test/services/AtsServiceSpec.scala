@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import utils.JsonUtil._
 import utils.TestConstants._
 import utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
-import view_models.{ATSUnavailableViewModel, NoATSViewModel}
+import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 
 import scala.concurrent.Future
 
@@ -103,9 +103,7 @@ class AtsServiceSpec extends BaseSpec {
         "connector returns a success response with valid payload" which {
 
           "a user who is not an agent" that {
-
             "getting data from mockMiddleConnector" in {
-
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
               when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
@@ -182,20 +180,42 @@ class AtsServiceSpec extends BaseSpec {
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
 
-        "there is a NoAtsError in the AtsData" in {
-
-          val dataWithError = data.copy(errors = Some(IncomingAtsError("NoAtsError")))
-
+        "getting data from mockMiddleConnector where no tax liability" in {
+          val dataNoTaxLiability: AtsData = data copy (taxLiability = None)
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future(
-            AtsSuccessResponseWithPayload(dataWithError)
-          )
+          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
+            Future.successful(AtsSuccessResponseWithPayload[AtsData](dataNoTaxLiability))
+
+          when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
+            .thenReturn(
+              Future
+                .successful(Some(agentToken))
+            )
+
+          when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
           sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
-
-          verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
+
+        "getting data from mockMiddleConnector where tax liability is negative value" in {
+          val dataNegTaxLiability: AtsData = data copy (taxLiability = Some(Amount(BigDecimal(-100), "GBP")))
+          when(mockAccountUtils.isAgent(any())) thenReturn false
+
+          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
+            Future.successful(AtsSuccessResponseWithPayload[AtsData](dataNegTaxLiability))
+
+          when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
+            .thenReturn(
+              Future
+                .successful(Some(agentToken))
+            )
+
+          when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
+
+          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
+        }
+
       }
 
       "return an AtsUnavailableViewModel" when {

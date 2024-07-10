@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.testOnly
+package testOnly.controllers
 
 import models.admin.PertaxBackendToggle
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

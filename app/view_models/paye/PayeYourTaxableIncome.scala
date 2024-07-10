@@ -49,7 +49,7 @@ object PayeYourTaxableIncome {
       IncomeTaxRow("income_from_employment", incomeFromEmployment),
       IncomeTaxRow("state_pension", statePension),
       IncomeTaxRow(
-        if (statePension == Amount.empty) "personal_pension_income" else "other_pension_income",
+        if (statePension.isValueEqual(Amount.empty)) "personal_pension_income" else "other_pension_income",
         otherPensionIncome
       ),
       IncomeTaxRow("taxable_state_benefits", taxableStateBenefits),

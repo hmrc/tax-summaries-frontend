@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package testOnly.forms.mappings
 
-import play.api.libs.json.{Json, OFormat}
-import view_models.Amount
+import play.api.data.FieldMapping
+import play.api.data.Forms.of
 
-case class AtsData(
-  taxYear: Int,
-  utr: Option[String],
-  income_tax: Option[DataHolder],
-  summary_data: Option[DataHolder],
-  income_data: Option[DataHolder],
-  allowance_data: Option[DataHolder],
-  capital_gains_data: Option[DataHolder],
-  gov_spending: Option[GovernmentSpendingOutputWrapper],
-  taxPayerData: Option[UserData],
-  errors: Option[IncomingAtsError],
-  taxLiability: Option[Amount]
-)
+trait Mappings extends Formatters {
 
-object AtsData {
-  implicit val formats: OFormat[AtsData] = Json.format[AtsData]
+  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
+    of(stringFormatter(errorKey))
+
+  protected def int(
+    requiredKey: String = "error.required",
+    wholeNumberKey: String = "error.wholeNumber",
+    nonNumericKey: String = "error.nonNumeric"
+  ): FieldMapping[Int] =
+    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey))
+
 }

@@ -197,4 +197,39 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
       }
     }
   }
+
+  "isValueEqual is called" must {
+    "return true" when {
+      "when values are equal but calculi have different values" in {
+        Amount(BigDecimal(34.43), "GBP", Some("calculus1")).isValueEqual(
+          Amount(BigDecimal(34.43), "GBP", Some("calculus2"))
+        ) mustBe true
+      }
+    }
+    "return false" when {
+      "when values are not equal" in {
+        Amount(BigDecimal(34.43), "GBP", Some("calculus1")).isValueEqual(
+          Amount(BigDecimal(34.44), "GBP", Some("calculus2"))
+        ) mustBe false
+      }
+    }
+  }
+
+  "isValueNotEqual is called" must {
+    "return false" when {
+      "when values are equal but calculi have different values" in {
+        Amount(BigDecimal(34.43), "GBP", Some("calculus1")).isValueNotEqual(
+          Amount(BigDecimal(34.43), "GBP", Some("calculus2"))
+        ) mustBe false
+      }
+    }
+
+    "return true" when {
+      "when values are not equal" in {
+        Amount(BigDecimal(34.43), "GBP", Some("calculus1")).isValueNotEqual(
+          Amount(BigDecimal(34.44), "GBP", Some("calculus2"))
+        ) mustBe true
+      }
+    }
+  }
 }
