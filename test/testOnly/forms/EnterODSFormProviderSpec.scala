@@ -35,9 +35,12 @@ def 24.44"""
   )
 
   "form" must {
-    "must bind valid data (England), ignoring trailing and leading spaces and values beyond 2 items" in {
+    "must bind valid data (England), ignoring trailing and leading spaces, empty lines and values beyond 2 items" in {
       val odsValues      = """      abc 1,122.33 55.77
- def 24.44  """
+ def 24.44  
+      
+      
+      """
       val expectedResult = CountryAndODSValues("0001", expOdsValues)
       val data           = Map(
         "country"   -> "0001",
