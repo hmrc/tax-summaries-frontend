@@ -29,7 +29,7 @@ object CountryAndODSValues {
   private def stringToSeqTuples(s: String): Seq[(String, String)] =
     s.filter(_ != ',')
       .split("""\R""")
-      .filter(_.nonEmpty)
+      .filter(x => !x.isBlank && x.nonEmpty)
       .map(_.trim.split("\\s+"))
       .map { t =>
         if (t.length < 2) {
