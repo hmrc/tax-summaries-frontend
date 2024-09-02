@@ -58,6 +58,9 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
   }
 
+  // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024
+  override lazy val taxYear: Int = 2023
+
   "/income-before-tax" must {
 
     lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$taxYear"

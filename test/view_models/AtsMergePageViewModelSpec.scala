@@ -70,43 +70,29 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
-      if (taxYear == 2023) { /// TODO - Delete this block besides the 2023 contents when uprating is complete
-        val model =
-          AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
-        model.completeYearList mustBe List(
-          AtsYearChoice(PAYE, taxYear),
-          AtsYearChoice(NoATS, taxYear - 1),
-          AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3)
-        )
-      } else {
-        val model =
-          AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
-        model.completeYearList mustBe List(
-          AtsYearChoice(PAYE, taxYear),
-          AtsYearChoice(NoATS, taxYear - 1),
-          AtsYearChoice(SA, taxYear - 2)
-        )
-      }
+      val model =
+        AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
+      model.completeYearList mustBe List(
+        AtsYearChoice(PAYE, taxYear),
+        AtsYearChoice(NoATS, taxYear - 1),
+        AtsYearChoice(SA, taxYear - 2),
+        AtsYearChoice(NoATS, taxYear - 3)
+      )
+
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
       when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
-      if (taxYear == 2023) { /// TODO - Delete this block besides the 2023 contents when uprating is complete
-        val model =
-          AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L50)
-        model.completeYearList mustBe List(
-          AtsYearChoice(NoATS, taxYear - 1),
-          AtsYearChoice(SA, taxYear - 2),
-          AtsYearChoice(NoATS, taxYear - 3)
-        )
-      } else {
-        val model =
-          AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L50)
-        model.completeYearList mustBe List(AtsYearChoice(NoATS, taxYear - 1), AtsYearChoice(SA, taxYear - 2))
-      }
+      val model =
+        AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L50)
+      model.completeYearList mustBe List(
+        AtsYearChoice(NoATS, taxYear - 1),
+        AtsYearChoice(SA, taxYear - 2),
+        AtsYearChoice(NoATS, taxYear - 3)
+      )
+
     }
 
     "set showContinueButton to true when showSaYearList is true" in {
