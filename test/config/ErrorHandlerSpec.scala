@@ -18,7 +18,6 @@ package config
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import views.ViewSpecBase
@@ -28,9 +27,9 @@ class ErrorHandlerSpec extends ViewSpecBase {
 
   lazy val errorHandler: ErrorHandler = new ErrorHandler(
     messagesApi,
-    inject[Configuration],
     inject[ErrorTemplateView],
-    inject[PageNotFoundTemplateView]
+    inject[PageNotFoundTemplateView],
+    inject[ApplicationConfig]
   )
 
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()

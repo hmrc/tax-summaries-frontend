@@ -18,8 +18,8 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import models.{AgentToken, AtsListData}
-import org.mockito.ArgumentMatchers
-import org.mockito.scalatest.MockitoSugar
+import org.mockito.ArgumentMatchers.{any => mockAny}
+import org.mockito.Mockito.{when, reset => mockReset}
 import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
@@ -37,7 +37,7 @@ import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
+class AtsMergePageControllerItSpec extends IntegrationSpec {
   private val mockPertaxAuthService               = mock[PertaxAuthService]
   lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 
@@ -99,17 +99,17 @@ class AtsMergePageControllerItSpec extends IntegrationSpec with MockitoSugar {
         .willReturn(ok(authResponse))
     )
 
-    reset(mockFeatureFlagService)
-    reset(mockPertaxAuthService)
-    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
+    mockReset(mockFeatureFlagService)
+    mockReset(mockPertaxAuthService)
+    when(mockPertaxAuthService.authorise(mockAny())).thenReturn(Future.successful(None))
   }
 
   when(
     mockTaxsAgentTokenSessionCacheRepository
-      .putSession[AgentToken](DataKey(any), any)(any, any, any)
+      .putSession[AgentToken](DataKey(mockAny), mockAny)(mockAny, mockAny, mockAny)
   ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
 
-  when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
+  when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(mockAny))(mockAny, mockAny))
     .thenReturn(
       Future
         .successful(Some(agentTokenMock))

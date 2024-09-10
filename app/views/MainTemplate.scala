@@ -21,10 +21,9 @@ import config.ApplicationConfig
 import models.ActingAsAttorneyFor
 import play.api.Logging
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.mvc.RequestHeader
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.ServiceURLs
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.sca.models.BannerConfig
 import uk.gov.hmrc.sca.services.WrapperService
 import views.html.components.{AdditionalJavascript, HeadBlock}
@@ -45,7 +44,7 @@ trait MainTemplate {
     showBackLink: Boolean = true,
     headerSectionNeeded: Boolean = false
   )(contentBlock: Html)(implicit
-    request: Request[_],
+    requestHeader: RequestHeader,
     messages: Messages
   ): HtmlFormat.Appendable
 }
@@ -68,7 +67,7 @@ class MainTemplateImpl @Inject() (
     pageHeading: String = null,
     showBackLink: Boolean = true,
     headerSectionNeeded: Boolean = false
-  )(contentBlock: Html)(implicit request: Request[_], messages: Messages): HtmlFormat.Appendable = {
+  )(contentBlock: Html)(implicit requestHeader: RequestHeader, messages: Messages): HtmlFormat.Appendable = {
 
     val fullPageTitle = s"$pageTitle - ${Messages("generic.ats.browser.title")}"
 
@@ -81,7 +80,7 @@ class MainTemplateImpl @Inject() (
       serviceURLs = ServiceURLs(
         serviceUrl = Some(appConfig.homePageUrl),
         signOutUrl = Some(controllers.routes.AccountController.signOut.url),
-        accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(request.uri))
+        accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(requestHeader.uri))
       ),
       sidebarContent = Some(sidebar(beforeContentHtml)),
       timeOutUrl = Some(controllers.routes.AccountController.sessionExpired.url),
@@ -97,6 +96,6 @@ class MainTemplateImpl @Inject() (
       disableSessionExpired = disableSessionExpired,
       showBackLinkJS = showBackLink,
       scripts = Seq(scripts())
-    )(messages, HeaderCarrierConverter.fromRequest(request), request)
+    )(messages, requestHeader)
   }
 }

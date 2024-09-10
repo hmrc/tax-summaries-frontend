@@ -19,7 +19,7 @@ package services
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -58,7 +58,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
     request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
-  val sut = new CapitalGainsService(mockAtsService) with MockitoSugar
+  val sut = new CapitalGainsService(mockAtsService)
 
   "CapitalGainsService getCapitalGains" must {
 

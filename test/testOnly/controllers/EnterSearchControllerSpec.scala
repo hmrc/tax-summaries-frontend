@@ -17,6 +17,7 @@
 package testOnly.controllers
 
 import config.ApplicationConfig
+import org.mockito.Mockito.reset
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testOnly.forms.EnterSearchFormProvider

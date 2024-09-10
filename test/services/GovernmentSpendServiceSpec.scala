@@ -21,7 +21,7 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.{AtsData, SpendData}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
 import play.api.http.Status.OK
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -64,8 +64,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     FakeRequest("GET", "?taxYear=2023")
   )
 
-  def sut: GovernmentSpendService with MockitoSugar = new GovernmentSpendService(mockAtsService, mockMiddleConnector)
-    with MockitoSugar
+  def sut: GovernmentSpendService = new GovernmentSpendService(mockAtsService, mockMiddleConnector)
 
   "GovernmentSpendService getGovernmentSpendData" must {
 

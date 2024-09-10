@@ -36,6 +36,7 @@ import controllers.auth.requests.PayeAuthenticatedRequest
 import controllers.auth.{FakeAuthJourney, requests}
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty

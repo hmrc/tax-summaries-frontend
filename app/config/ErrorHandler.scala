@@ -17,26 +17,27 @@
 package config
 
 import com.google.inject.Inject
-import play.api.Configuration
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
-  val configuration: Configuration,
   errorTemplateView: ErrorTemplateView,
-  pageNotFoundTemplateView: PageNotFoundTemplateView
-)(implicit val appConfig: ApplicationConfig)
+  pageNotFoundTemplateView: PageNotFoundTemplateView,
+  appConfig: ApplicationConfig
+)(implicit val ec: ExecutionContext)
     extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    request: Request[_]
-  ): Html =
-    errorTemplateView(pageTitle, heading, message)
+    requestHeader: RequestHeader
+  ): Future[Html] =
+    Future.successful(errorTemplateView(pageTitle, heading, message))
 
-  override def notFoundTemplate(implicit request: Request[_]): Html =
-    pageNotFoundTemplateView()
+  override def notFoundTemplate(implicit requestHeader: RequestHeader): Future[Html] =
+    Future.successful(pageNotFoundTemplateView()(implicitly, implicitly, appConfig))
 }

@@ -19,6 +19,7 @@ package controllers
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._

@@ -21,6 +21,7 @@ import config.ApplicationConfig
 import connectors.PertaxConnector
 import models.{ErrorView, PertaxApiResponse}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
