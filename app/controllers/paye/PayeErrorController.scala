@@ -17,8 +17,8 @@
 package controllers.paye
 
 import com.google.inject.Inject
-import com.typesafe.scalalogging.LazyLogging
 import config.ApplicationConfig
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -35,7 +35,7 @@ class PayeErrorController @Inject() (
     extends FrontendController(mcc)
     with I18nSupport
     with CurrentTaxYear
-    with LazyLogging {
+    with Logging {
 
   val payeYear                      = appConfig.taxYear
   override def now: () => LocalDate = () => LocalDate.now()

@@ -16,17 +16,18 @@
 
 package connectors
 
-import com.typesafe.scalalogging.LazyLogging
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsResponse, AtsSuccessResponseWithPayload}
+import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Reads}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class HttpHandler @Inject() (http: HttpClient)(implicit ec: ExecutionContext) extends LazyLogging {
+@Singleton
+class HttpHandler @Inject() (http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
     http.GET[Either[UpstreamErrorResponse, HttpResponse]](url) map {

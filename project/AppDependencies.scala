@@ -11,7 +11,6 @@ object AppDependencies {
   val compile: Seq[ModuleID] = Seq(
     filters,
     ws,
-    "com.typesafe.scala-logging" %% "scala-logging"              % "3.9.5",
     "uk.gov.hmrc"                %% "tax-year"                   % "4.0.0",
     "org.typelevel"              %% "cats-core"                  % "2.12.0",
     "uk.gov.hmrc"                %% s"mongo-feature-toggles-client-$playVersion" % featureToggleVersion,
