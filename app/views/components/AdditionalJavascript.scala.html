@@ -17,5 +17,5 @@
 @import views.html.helper.CSPNonce
 
 @this()
-@()(implicit request: Request[_])
+@()(implicit requestHeader: RequestHeader)
 <script @CSPNonce.attr src='@controllers.routes.Assets.versioned("javascripts/taxs.js")'></script>

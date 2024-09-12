@@ -65,7 +65,8 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         Seq(
           MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None)
         ),
-        PtaMinMenuConfig("MenuName", "BackName")
+        PtaMinMenuConfig("MenuName", "BackName"),
+        List.empty
       )
     )
     .toString

@@ -20,6 +20,7 @@ import controllers.auth.requests
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -28,7 +29,7 @@ import uk.gov.hmrc.http.HeaderNames
 import utils.BaseSpec
 import utils.TestConstants.fakeCredentials
 
-trait ViewSpecBase extends BaseSpec {
+trait ViewSpecBase extends BaseSpec with MockitoSugar {
 
   implicit val messagesApi: MessagesApi = inject[MessagesApi]
   implicit val messages: Messages       = MessagesImpl(Lang("en"), messagesApi)

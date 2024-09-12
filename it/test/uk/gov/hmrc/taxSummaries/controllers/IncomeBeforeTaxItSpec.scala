@@ -18,6 +18,7 @@ package uk.gov.hmrc.taxSummaries.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
 import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{reset, when}
 import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi

@@ -57,7 +57,9 @@ lazy val microservice = Project(appName, file("."))
       "-Wconf:cat=unused&src=.*Routes\\.scala:s",
       "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
       "-Wconf:cat=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
-      "-Wconf:cat=other-match-analysis:s"
+      "-Wconf:cat=other-match-analysis:s",
+      "-Wconf:msg=trait HttpClient in package http is deprecated.*:s",
+      "-Wconf:src=.*Spec\\.scala&msg=a type was inferred to be `Object`; this may indicate a programming error\\.:s"
     )
   )
   .settings(routesImport ++= Seq("models.admin._"))

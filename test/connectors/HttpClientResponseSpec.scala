@@ -17,13 +17,16 @@
 package connectors
 
 import cats.data.EitherT
+import org.mockito.Mockito.{reset, times, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.RecoverMethods
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import play.api.Logger
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status._
 import uk.gov.hmrc.http._
 import utils.WireMockHelper
+import org.slf4j.{Logger => UnderlyingLogger}
+import play.api.Logger
 
 import scala.concurrent.Future
 
@@ -32,11 +35,12 @@ class HttpClientResponseSpec
     with WireMockHelper
     with ScalaFutures
     with IntegrationPatience
-    with RecoverMethods {
-  private val mockLogger: Logger = mock[Logger]
+    with RecoverMethods
+    with MockitoSugar {
+  private val mockLogger = mock[UnderlyingLogger]
 
   private lazy val httpClientResponseUsingMockLogger: HttpClientResponse = new HttpClientResponse {
-    override protected val logger: Logger = mockLogger
+    override protected val logger: Logger = new Logger(mockLogger)
   }
 
   private val dummyContent = "error message"
@@ -72,6 +76,8 @@ class HttpClientResponseSpec
     infoLevel.foreach { httpResponseCode =>
       s"log message: INFO level only when response code is $httpResponseCode" in {
         reset(mockLogger)
+        when(mockLogger.isErrorEnabled).thenReturn(true)
+        when(mockLogger.isInfoEnabled).thenReturn(true)
         val response: Future[Either[UpstreamErrorResponse, HttpResponse]] =
           Future(Left(UpstreamErrorResponse(dummyContent, httpResponseCode)))
         whenReady(block(response).value) { actual =>
@@ -83,6 +89,8 @@ class HttpClientResponseSpec
     warnLevel.foreach { httpResponseCode =>
       s"log message: WARNING level only when response is $httpResponseCode" in {
         reset(mockLogger)
+        when(mockLogger.isErrorEnabled).thenReturn(true)
+        when(mockLogger.isInfoEnabled).thenReturn(true)
         val response: Future[Either[UpstreamErrorResponse, HttpResponse]] =
           Future(Left(UpstreamErrorResponse(dummyContent, httpResponseCode)))
         whenReady(block(response).value) { actual =>
@@ -94,6 +102,8 @@ class HttpClientResponseSpec
     errorLevelWithThrowable.foreach { httpResponseCode =>
       s"log message: ERROR level only WITH throwable when response code is $httpResponseCode" in {
         reset(mockLogger)
+        when(mockLogger.isErrorEnabled).thenReturn(true)
+        when(mockLogger.isInfoEnabled).thenReturn(true)
         val response: Future[Either[UpstreamErrorResponse, HttpResponse]] =
           Future(Left(UpstreamErrorResponse(dummyContent, httpResponseCode)))
         whenReady(block(response).value) { actual =>
@@ -105,6 +115,8 @@ class HttpClientResponseSpec
     errorLevelWithoutThrowable.foreach { httpResponseCode =>
       s"log message: ERROR level only WITHOUT throwable when response code is $httpResponseCode" in {
         reset(mockLogger)
+        when(mockLogger.isErrorEnabled).thenReturn(true)
+        when(mockLogger.isInfoEnabled).thenReturn(true)
         val response: Future[Either[UpstreamErrorResponse, HttpResponse]] =
           Future(Left(UpstreamErrorResponse(dummyContent, httpResponseCode)))
         whenReady(block(response).value) { actual =>
@@ -116,6 +128,8 @@ class HttpClientResponseSpec
     "log message: ERROR level only WITHOUT throwable when future failed with HttpException & " +
       "recover to BAD GATEWAY" in {
         reset(mockLogger)
+        when(mockLogger.isErrorEnabled).thenReturn(true)
+        when(mockLogger.isInfoEnabled).thenReturn(true)
         val response: Future[Either[UpstreamErrorResponse, HttpResponse]] =
           Future.failed(new HttpException(dummyContent, GATEWAY_TIMEOUT))
         whenReady(block(response).value) { actual =>
@@ -125,6 +139,8 @@ class HttpClientResponseSpec
       }
     "log nothing at all when future failed with non-HTTPException" in {
       reset(mockLogger)
+      when(mockLogger.isErrorEnabled).thenReturn(true)
+      when(mockLogger.isInfoEnabled).thenReturn(true)
       val response: Future[Either[UpstreamErrorResponse, HttpResponse]] =
         Future.failed(new RuntimeException(dummyContent))
 
@@ -154,16 +170,16 @@ class HttpClientResponseSpec
 
     Mockito
       .verify(mockLogger, times(infoTimes))
-      .info(argumentMatcher(info))(ArgumentMatchers.any())
+      .info(argumentMatcher(info))
     Mockito
       .verify(mockLogger, times(warnTimes))
-      .warn(argumentMatcher(warn))(ArgumentMatchers.any())
+      .warn(argumentMatcher(warn))
     Mockito
       .verify(mockLogger, times(errorWithThrowableTimes))
-      .error(argumentMatcher(errorWithThrowable), ArgumentMatchers.any())(ArgumentMatchers.any())
+      .error(argumentMatcher(errorWithThrowable), ArgumentMatchers.any())
     Mockito
       .verify(mockLogger, times(errorWithoutThrowableTimes))
-      .error(argumentMatcher(errorWithoutThrowable))(ArgumentMatchers.any())
+      .error(argumentMatcher(errorWithoutThrowable))
   }
 
 }

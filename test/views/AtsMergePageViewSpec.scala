@@ -21,6 +21,7 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.mvc.AnyContentAsEmpty

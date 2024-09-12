@@ -20,7 +20,7 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
@@ -59,7 +59,7 @@ class IncomeServiceSpec extends BaseSpec {
     request = FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
-  def sut: IncomeService with MockitoSugar = new IncomeService(mockAtsService) with MockitoSugar
+  def sut: IncomeService = new IncomeService(mockAtsService)
 
   "IncomeService getIncomeData" must {
 

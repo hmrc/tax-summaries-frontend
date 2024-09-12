@@ -19,6 +19,7 @@ package services
 import cats.data.EitherT
 import connectors.CitizenDetailsConnector
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
 import play.api.test.Helpers._

@@ -18,10 +18,11 @@ package utils
 
 import com.github.tomakehurst.wiremock.client.WireMock.{ok, post, urlEqualTo}
 import config.ApplicationConfig
-import org.mockito.scalatest.MockitoSugar
+import org.mockito.Mockito.reset
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
 import play.api.libs.json.JsValue

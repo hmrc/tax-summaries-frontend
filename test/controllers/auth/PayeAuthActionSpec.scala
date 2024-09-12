@@ -20,6 +20,7 @@ import config.ApplicationConfig
 import controllers.auth.actions.{PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
@@ -113,7 +114,7 @@ class PayeAuthActionSpec extends BaseSpec {
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.PayeErrorController.serviceUnavailable.url
-      verifyZeroInteractions(mockAuthConnector)
+      verifyNoInteractions(mockAuthConnector)
     }
   }
 

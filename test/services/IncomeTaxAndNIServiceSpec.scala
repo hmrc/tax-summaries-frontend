@@ -19,7 +19,7 @@ package services
 import controllers.auth.requests
 import models.AtsData
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
@@ -48,7 +48,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
 
   val mockAtsService: AtsService = mock[AtsService]
 
-  def sut: IncomeTaxAndNIService = new IncomeTaxAndNIService(mockAtsService) with MockitoSugar
+  def sut: IncomeTaxAndNIService = new IncomeTaxAndNIService(mockAtsService)
 
   "TotalIncomeTaxService getIncomeData" must {
 

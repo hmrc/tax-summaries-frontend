@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, post
 import models.admin.PertaxBackendToggle
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{reset, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
@@ -144,7 +145,8 @@ class ContentsCheckSpec extends IntegrationSpec {
           MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None),
           MenuItemConfig("signout", "Sign out", "link", leftAligned = false, 0, None, None)
         ),
-        PtaMinMenuConfig("MenuName", "BackName")
+        PtaMinMenuConfig("MenuName", "BackName"),
+        List.empty
       )
     )
     .toString

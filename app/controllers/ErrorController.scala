@@ -16,10 +16,10 @@
 
 package controllers
 
-import com.google.inject.Inject
-import com.typesafe.scalalogging.LazyLogging
+import com.google.inject.{Inject, Singleton}
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
@@ -31,6 +31,7 @@ import views.html.errors.{NotAuthorisedView, PageNotFoundTemplateView, ServiceUn
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ErrorController @Inject() (
   governmentSpendService: GovernmentSpendService,
   authJourney: AuthJourney,
@@ -43,7 +44,7 @@ class ErrorController @Inject() (
     extends FrontendController(mcc)
     with I18nSupport
     with CurrentTaxYear
-    with LazyLogging {
+    with Logging {
 
   override def now: () => LocalDate = () => LocalDate.now()
 
