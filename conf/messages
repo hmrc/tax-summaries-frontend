@@ -53,7 +53,7 @@ ats.select_tax_year.label={0} to {1}
 ats.index.html.title=Self Assessment Annual Tax Summary
 ats.index.html.lede=This summarises your personal tax and National Insurance, and how they are spent by government.
 ats.index.html.tax_calc_link=Your income and taxes
-ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free amount, and how much tax and National Insurance you have paid or will pay.
+ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free income, and how much tax and National Insurance you have paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
 ats.index.html.view.paye.link=View PAYE Annual Tax Summary
@@ -61,7 +61,7 @@ ats.index.html.view.paye.link=View PAYE Annual Tax Summary
 paye.ats.index.html.title=Your PAYE Annual Tax Summary
 paye.ats.index.html.tax_spend_link=How your tax was spent
 paye.ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
-paye.ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free amount and how much tax and National Insurance you have paid.
+paye.ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free income and how much tax and National Insurance you have paid.
 paye.ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
 paye.ats.index.html.view.sa.link=View Self Assessment Annual Tax Summary
 
@@ -69,16 +69,16 @@ paye.ats.index.html.view.sa.link=View Self Assessment Annual Tax Summary
 #============================================================
 ats.summary.html.title=Your income and taxes
 ats.summary.title=Your income and taxes
-ats.summary.lede=This shows a breakdown of your income, tax-free amount and taxes you have paid or will pay.
+ats.summary.lede=This shows a breakdown of your income, tax-free income and taxes you have paid or will pay.
 ats.summary.total_income.title=Total income
 ats.summary.total_income.link=Your total income
 ats.summary.total_income.description=This is your total income for the year.
-ats.summary.tax_free.title=Tax-free amount
-ats.summary.tax_free.link=Your tax-free amount
+ats.summary.tax_free.title=Tax-free income
+ats.summary.tax_free.link=Your tax-free income
 ats.summary.tax_free.description=This is how much you can earn before you start paying Income Tax.
 ats.summary.tax_and_nics.title=Income Tax and National Insurance
 ats.summary.tax_and_nics.link=Your Income Tax and National Insurance
-ats.summary.tax_and_nics.description=This is how much you pay on all your income above your tax-free amount.
+ats.summary.tax_and_nics.description=This is how much you pay on all your income above your tax-free income.
 ats.summary.capital_gains.title=Capital Gains Tax
 ats.summary.capital_gains.link=Your Capital Gains Tax
 ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
@@ -98,7 +98,7 @@ paye.ats.summary.tax_and_nics.description-2=Your total income tax and NIC’s on
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
-ats.nics.tax_and_nics.lede=This is how much you pay on income above your tax-free amount.
+ats.nics.tax_and_nics.lede=This is how much you pay on income above your tax-free income.
 ats.nics.tax_and_nics.description=Your Income Tax and National Insurance is {0} of your total income.
 ats.nics.tax_and_nics.income_tax=Income Tax
 ats.nics.tax_and_nics_explained=National Insurance
@@ -138,18 +138,18 @@ paye.ats.income_before_tax.intro=We have calculated this using information given
 paye.ats.income_before_tax.table_caption=Your taxable income
 paye.ats.income_before_tax.table.line6=Other income (including interest)
 
-# View ATS - tax free amount (IND)
+# View ATS - tax free income (IND)
 #============================================================
-ats.tax_free_amount.html.title=Your tax-free amount
-ats.tax_free_amount.subtitle=Your tax-free amount
+ats.tax_free_amount.html.title=Your tax-free income
+ats.tax_free_amount.subtitle=Your tax-free income
 ats.tax_free_amount.lede=This is how much you can earn before you start paying Income Tax.
 ats.tax_free_amount.description=This includes your Personal Allowance and any other allowances, deductions and expenses.
 
-ats.tax_free_amount.tax_free_amount=Your tax-free amount
+ats.tax_free_amount.tax_free_amount=Your tax-free income
 ats.tax_free_amount.table.line1=Personal Allowance
 ats.tax_free_amount.table.line2=Other allowances, deductions and expenses
 ats.tax_free_amount.table.line3=Less Marriage Allowance Transferred
-ats.tax_free_amount.table.total=Total tax-free amount
+ats.tax_free_amount.table.total=Total tax-free income
 
 # View ATS - total income tax (IND)
 #============================================================
@@ -320,8 +320,8 @@ paye.ats.summary.lede=This is for your information only. You do not need to cont
 paye.ats.summary.total_income.title=Taxable income
 paye.ats.summary.total_income.link=Your taxable income
 paye.ats.summary.total_income.description=This is your total taxable income for the year.
-paye.ats.summary.tax_free.title=Tax-free amount
-paye.ats.summary.tax_free.link=Your tax-free amount
+paye.ats.summary.tax_free.title=Tax-free income
+paye.ats.summary.tax_free.link=Your tax-free income
 paye.ats.summary.tax_free.description=This is the amount you received without paying tax.
 paye.ats.summary.tax_and_nics.title=Income Tax and National Insurance
 paye.ats.summary.tax_and_nics.link=Your Income Tax and National Insurance contributions
@@ -337,17 +337,17 @@ paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=Tota
 paye.ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 paye.ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
-# PAYE - Tax Free Amount
+# PAYE - Tax Free Income
 #============================================================
-paye.ats.tax_free_amount.title=Tax-free amount
+paye.ats.tax_free_amount.title=Tax-free income
 paye.ats.tax_free_amount.description=Description
 paye.ats.tax_free_amount.amount=Amount
 paye.ats.tax_free_amount.personal_tax_free_amount=Personal Allowance
 paye.ats.tax_free_amount.marriage_allowance_transferred_amount=Marriage allowance transferred
 paye.ats.tax_free_amount.other_allowances_amount=Other allowances, deductions and expenses
-paye.ats.tax_free_amount.total_tax_free_amount=Total tax-free amount
+paye.ats.tax_free_amount.total_tax_free_amount=Total tax-free income
 paye.ats.tax_free_amount.income_before_tax=Income before tax
-paye.ats.tax_free_amount.tax_free_amount=Less your tax-free amount
+paye.ats.tax_free_amount.tax_free_amount=Less your tax-free income
 paye.ats.tax_free_amount.total_tax_liable=You pay tax on
 
 
@@ -404,7 +404,7 @@ token_error.lede=We couldn’t retrieve your client’s summary. Please try agai
 # Screen reader - visually hidden
 #============================================================
 screen.reader.total_income=Your total income is
-screen.reader.tax_free_amount=Your tax-free amount is
+screen.reader.tax_free_amount=Your tax-free income is
 screen.reader.income_tax_and_ni=Your Income Tax and National Insurance is
 screen.reader.capital_gains_tax=Your Capital Gains Tax is
 

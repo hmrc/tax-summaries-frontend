@@ -64,7 +64,7 @@ class ContentsCheckSpec extends IntegrationSpec {
       case "income-before-tax-year"   =>
         ExpectedData("Taxable income: 2021 to 2022 - Annual Tax Summary - GOV.UK")
       case "tax-free-amount-year"     =>
-        ExpectedData("Tax-free amount: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData("Tax-free income: 2021 to 2022 - Annual Tax Summary - GOV.UK")
       case "paye-not-authorised"      =>
         ExpectedData("We could not confirm your identity - Annual Tax Summary - GOV.UK")
       case "paye-service-unavailable" =>

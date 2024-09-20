@@ -69,7 +69,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
       document
         .select("h1")
-        .text mustBe "Tax-free amount 6 April 2022 to 5 April 2023"
+        .text mustBe "Tax-free income 6 April 2022 to 5 April 2023"
     }
 
     "display the table of adjustments when there is more than one row" in {
