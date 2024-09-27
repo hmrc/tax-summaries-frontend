@@ -30,7 +30,8 @@ class PayeConfigSpec extends BaseSpec {
         "scottish_starter_rate",
         "scottish_basic_rate",
         "scottish_intermediate_rate",
-        "scottish_higher_rate"
+        "scottish_higher_rate",
+        "scottish_top_rate"
       )
 
       config.scottishTaxBandKeys mustBe expected
@@ -42,7 +43,9 @@ class PayeConfigSpec extends BaseSpec {
         "basic_rate_income_tax",
         "higher_rate_income_tax",
         "ordinary_rate",
-        "upper_rate"
+        "upper_rate",
+        "additional_rate_income_tax",
+        "dividend_additional_rate"
       )
 
       config.ukTaxBandKeys mustBe expected

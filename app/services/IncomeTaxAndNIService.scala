@@ -53,20 +53,20 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
 
     val scottishTax = ScottishTax(
-        getFromIncomeTaxPayload("scottish_starter_rate_tax"),
-        getFromIncomeTaxPayload("scottish_starter_income"),
-        getFromIncomeTaxPayload("scottish_basic_rate_tax"),
-        getFromIncomeTaxPayload("scottish_basic_income"),
-        getFromIncomeTaxPayload("scottish_intermediate_rate_tax"),
-        getFromIncomeTaxPayload("scottish_intermediate_income"),
-        getFromIncomeTaxPayload("scottish_higher_rate_tax"),
-        getFromIncomeTaxPayload("scottish_higher_income"),
-        getFromIncomeTaxPayload("scottish_additional_rate_tax"),
-        getFromIncomeTaxPayload("scottish_additional_income"),
-        getFromIncomeTaxPayload("scottish_top_rate_tax"),
-        getFromIncomeTaxPayload("scottish_top_income"),
-        getFromIncomeTaxPayload("scottish_total_tax")
-      )
+      getFromIncomeTaxPayload("scottish_starter_rate_tax"),
+      getFromIncomeTaxPayload("scottish_starter_income"),
+      getFromIncomeTaxPayload("scottish_basic_rate_tax"),
+      getFromIncomeTaxPayload("scottish_basic_income"),
+      getFromIncomeTaxPayload("scottish_intermediate_rate_tax"),
+      getFromIncomeTaxPayload("scottish_intermediate_income"),
+      getFromIncomeTaxPayload("scottish_higher_rate_tax"),
+      getFromIncomeTaxPayload("scottish_higher_income"),
+      getFromIncomeTaxPayload("scottish_additional_rate_tax"),
+      getFromIncomeTaxPayload("scottish_additional_income"),
+      getFromIncomeTaxPayload("scottish_top_rate_tax"),
+      getFromIncomeTaxPayload("scottish_top_income"),
+      getFromIncomeTaxPayload("scottish_total_tax")
+    )
 
     val savingsTax = SavingsTax(
       getFromIncomeTaxPayload("savings_lower_rate_tax"),

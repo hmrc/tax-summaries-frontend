@@ -133,7 +133,9 @@ object AtsTestData {
             "scottish_higher_income"             -> Amount.gbp(2500),
             "scottish_additional_rate_tax"       -> Amount.gbp(2600),
             "scottish_additional_income"         -> Amount.gbp(2700),
-            "scottish_total_tax"                 -> Amount.gbp(2800),
+            "scottish_top_rate_tax"              -> Amount.gbp(2800),
+            "scottish_top_income"                -> Amount.gbp(2900),
+            "scottish_total_tax"                 -> Amount.gbp(3000),
             "savings_lower_rate_tax"             -> Amount.gbp(2900),
             "savings_lower_income"               -> Amount.gbp(3000),
             "savings_higher_rate_tax"            -> Amount.gbp(3100),
@@ -159,6 +161,7 @@ object AtsTestData {
             "scottish_higher_rate"            -> Rate("110%"),
             "scottish_additional_rate"        -> Rate("120%"),
             "savings_lower_rate"              -> Rate("130%"),
+            "scottish_top_rate"               -> Rate("130%"),
             "savings_higher_rate"             -> Rate("140%"),
             "savings_additional_rate"         -> Rate("150%")
           )

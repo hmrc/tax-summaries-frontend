@@ -62,7 +62,7 @@ abstract class TaxsController @Inject() (
       case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
     }
 
-  def show(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+  def show(implicit request: AuthenticatedRequest[_]): Future[Result] =
     transformation recover { case error =>
       logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
       error match {
@@ -82,5 +82,4 @@ abstract class TaxsController @Inject() (
           InternalServerError(genericErrorView())
       }
     }
-  }
 }

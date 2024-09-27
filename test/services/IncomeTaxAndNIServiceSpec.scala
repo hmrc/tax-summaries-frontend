@@ -106,7 +106,9 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         Amount.gbp(2500),
         Amount.gbp(2600),
         Amount.gbp(2700),
-        Amount.gbp(2800)
+        Amount.gbp(2800),
+        Amount.gbp(2900),
+        Amount.gbp(3000)
       )
 
       val scottishRates = ScottishRates(
@@ -114,7 +116,8 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         Rate("90%"),
         Rate("100%"),
         Rate("110%"),
-        Rate("120%")
+        Rate("120%"),
+        Rate("130%")
       )
 
       result mustEqual IncomeTaxAndNI(
