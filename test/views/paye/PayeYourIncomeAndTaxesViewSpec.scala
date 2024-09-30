@@ -71,7 +71,7 @@ class PayeYourIncomeAndTaxesViewSpec extends ViewSpecBase with TestConstants wit
       val document = Jsoup.parse(view)
 
       document
-        .getElementById("tax-free-amount")
+        .getElementById("tax-free-income")
         .text() mustBe "Tax-free income £800.00 Your tax-free income This is the amount you received without paying tax."
 
     }

@@ -68,12 +68,12 @@
         @p(HtmlContent(Messages("paye.ats.summary.total_income.description")))
     </div>
 
-    <div id="tax-free-amount" class="incomeTaxesSection">
+    <div id="tax-free-income" class="incomeTaxesSection">
         @h2("paye.ats.summary.tax_free.title")
         <p>
             <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = currencyAmountView(viewModel.taxableIncome, twoDecimalPlaces = true),
-                                    xLargeID="total-tax-free-amount", 
+                                    xLargeID="total-tax-free-income", 
                                     smallText = Messages("paye.ats.summary.tax_free.link"))
             </a>
         </p>

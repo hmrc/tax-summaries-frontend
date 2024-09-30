@@ -35,7 +35,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
     requests.PayeAuthenticatedRequest(
       testNino,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount")
+      FakeRequest("GET", "/annual-tax-summary/paye/tax-free-income")
     )
   lazy val payeTaxFreeAmountView: PayeTaxFreeAmountView                  = inject[PayeTaxFreeAmountView]
 

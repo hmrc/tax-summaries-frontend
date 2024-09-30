@@ -12,7 +12,7 @@ GET    /nics                                                  controllers.NicsCo
 GET     /income-tax-national-insurance-contributions           controllers.NicsController.authorisedTaxAndNICs
 GET     /treasury-spending                                     controllers.GovernmentSpendController.authorisedGovernmentSpendData
 GET     /income-before-tax                                     controllers.IncomeController.authorisedIncomeBeforeTax
-GET     /tax-free-amount                                       controllers.AllowancesController.authorisedAllowance
+GET     /tax-free-income                                       controllers.AllowancesController.authorisedAllowance
 GET     /total-income-tax                                      controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
 GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
 
@@ -39,7 +39,7 @@ GET     /paye/income-tax-and-national-insurance/:taxYear       controllers.paye.
 
 GET     /paye/income-before-tax/:taxYear                       controllers.paye.PayeYourTaxableIncomeController.show(taxYear: Int)
 
-GET     /paye/tax-free-amount/:taxYear                         controllers.paye.PayeTaxFreeAmountController.show(taxYear: Int)
+GET     /paye/tax-free-income/:taxYear                         controllers.paye.PayeTaxFreeAmountController.show(taxYear: Int)
 
 GET     /paye/not-authorised                                   controllers.paye.PayeErrorController.notAuthorised
 

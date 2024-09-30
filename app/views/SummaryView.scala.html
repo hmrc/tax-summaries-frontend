@@ -83,12 +83,12 @@
 
     </div>
 
-    <div id="tax-free-amount" class="incomeTaxesSection">
+    <div id="tax-free-income" class="incomeTaxesSection">
 
         @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
         <a href="@controllers.routes.AllowancesController.authorisedAllowance?taxYear=@viewModel.taxYearTo" class="data-link">
-            @linkSectionContents(Messages("screen.reader.tax_free_amount"), currencyAmountView(viewModel.totalTaxFreeAllowance), xLargeID="total-tax-free-amount", Messages("ats.summary.tax_free.link"))
+            @linkSectionContents(Messages("screen.reader.tax_free_amount"), currencyAmountView(viewModel.totalTaxFreeAllowance), xLargeID="total-tax-free-income", Messages("ats.summary.tax_free.link"))
         </a>
 
         @p(HtmlContent(Messages("ats.summary.tax_free.description")))
