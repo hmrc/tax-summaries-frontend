@@ -63,8 +63,8 @@ class ContentsCheckSpec extends IntegrationSpec {
         ExpectedData("Income Tax and National Insurance contributions: 2021 to 2022 - Annual Tax Summary - GOV.UK")
       case "income-before-tax-year"   =>
         ExpectedData("Taxable income: 2021 to 2022 - Annual Tax Summary - GOV.UK")
-      case "tax-free-amount-year"     =>
-        ExpectedData("Tax-free amount: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+      case "tax-free-income-year"     =>
+        ExpectedData("Tax-free income: 2021 to 2022 - Annual Tax Summary - GOV.UK")
       case "paye-not-authorised"      =>
         ExpectedData("We could not confirm your identity - Annual Tax Summary - GOV.UK")
       case "paye-service-unavailable" =>
@@ -87,7 +87,7 @@ class ContentsCheckSpec extends IntegrationSpec {
     "/annual-tax-summary/paye/summary/2022"                           -> getExpectedData("paye-summary-year"),
     "/annual-tax-summary/paye/income-tax-and-national-insurance/2022" -> getExpectedData("income-insurance-year"),
     "/annual-tax-summary/paye/income-before-tax/2022"                 -> getExpectedData("income-before-tax-year"),
-    "/annual-tax-summary/paye/tax-free-amount/2022"                   -> getExpectedData("tax-free-amount-year"),
+    "/annual-tax-summary/paye/tax-free-income/2022"                   -> getExpectedData("tax-free-income-year"),
     "/annual-tax-summary/paye/not-authorised"                         -> getExpectedData("paye-not-authorised"),
     "/annual-tax-summary/paye/service-unavailable"                    -> getExpectedData("paye-service-unavailable"),
     "/annual-tax-summary/session-expired"                             -> getExpectedData("session-expired")

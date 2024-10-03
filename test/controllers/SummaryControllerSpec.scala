@@ -136,7 +136,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-tax-free-amount").text() mustBe "£9,740"
+      document.getElementById("total-tax-free-income").text() mustBe "£9,740"
     }
 
     "still show a 0 tax free amount" in {
@@ -151,7 +151,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("total-tax-free-amount").text() mustBe "£0"
+      document.getElementById("total-tax-free-income").text() mustBe "£0"
     }
 
     "show total income tax and NICs value on the summary page" in {

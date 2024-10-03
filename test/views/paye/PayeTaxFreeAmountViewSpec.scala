@@ -35,7 +35,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
     requests.PayeAuthenticatedRequest(
       testNino,
       fakeCredentials,
-      FakeRequest("GET", "/annual-tax-summary/paye/tax-free-amount")
+      FakeRequest("GET", "/annual-tax-summary/paye/tax-free-income")
     )
   lazy val payeTaxFreeAmountView: PayeTaxFreeAmountView                  = inject[PayeTaxFreeAmountView]
 
@@ -69,7 +69,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
       document
         .select("h1")
-        .text mustBe "Tax-free amount 6 April 2022 to 5 April 2023"
+        .text mustBe "Tax-free income 6 April 2022 to 5 April 2023"
     }
 
     "display the table of adjustments when there is more than one row" in {

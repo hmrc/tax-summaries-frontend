@@ -44,7 +44,7 @@ ats.select_tax_year.label={0} i {1}
 ats.index.html.title=Crynodeb Treth Blynyddol Hunanasesiad
 ats.index.html.lede=Mae hwn yn crynhoi eich treth bersonol a’ch Yswiriant Gwladol, a sut mae’r llywodraeth yn eu gwario.
 ats.index.html.tax_calc_link=Eich incwm a’ch trethi
-ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich swm yn rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
+ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o gyfanswm eich incwm, eich incwm sy’n rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi eu talu neu y byddwch yn eu talu.
 ats.index.html.tax_spend_link=Eich trethi a gwariant cyhoeddus
 ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
 
@@ -52,16 +52,16 @@ ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’
 #============================================================
 ats.summary.html.title=Eich incwm a’ch trethi
 ats.summary.title=Eich incwm a’ch trethi
-ats.summary.lede=Mae hwn yn dangos dadansoddiad o’ch incwm, swm yn rhydd o dreth, a threthi rydych wedi eu talu neu y byddwch yn eu talu.
+ats.summary.lede=Mae hwn yn dangos dadansoddiad o’ch incwm, incwm sy’n rhydd o dreth, a threthi rydych wedi eu talu neu y byddwch yn eu talu.
 ats.summary.total_income.title=Cyfanswm yr incwm
 ats.summary.total_income.link=Cyfanswm eich incwm
 ats.summary.total_income.description=Dyma gyfanswm eich incwm am y flwyddyn.
-ats.summary.tax_free.title=Swm yn rhydd o dreth
-ats.summary.tax_free.link=Eich swm yn rhydd o dreth
+ats.summary.tax_free.title=Incwm sy’n Rhydd o Dreth
+ats.summary.tax_free.link=Eich incwm sy’n rhydd o dreth
 ats.summary.tax_free.description=Dyma faint y gallwch ei ennill cyn i chi ddechrau talu Treth Incwm.
 ats.summary.tax_and_nics.title=Treth Incwm ac Yswiriant Gwladol
 ats.summary.tax_and_nics.link=Eich Treth Incwm ac Yswiriant Gwladol
-ats.summary.tax_and_nics.description=Dyma faint y talwch ar eich holl incwm uwchlaw eich swm yn rhydd o dreth.
+ats.summary.tax_and_nics.description=Dyma faint y talwch ar eich holl incwm uwchlaw eich swm incwm sy’n rhydd o dreth.
 ats.summary.capital_gains.title=Treth Enillion Cyfalaf
 ats.summary.capital_gains.link=Eich Treth Enillion Cyfalaf
 ats.summary.capital_gains.description=Dyma faint o dreth y talwch ar elw uwchlaw eich lwfans blynyddol yn rhydd o dreth pan fyddwch yn gwerthu, neu’n rhoi i fwrdd, rhywbeth sydd wedi cynyddu mewn gwerth.
@@ -78,7 +78,7 @@ ats.summary.taxable_income.your_total_tax.msg_unary=Eich {0}.
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Treth Incwm a chyfraniadau Yswiriant Gwladol
-ats.nics.tax_and_nics.lede=Dyma faint y talwch ar incwm uwchlaw eich swm yn rhydd o dreth.
+ats.nics.tax_and_nics.lede=Dyma faint y talwch ar incwm uwchlaw eich incwm sy’n rhydd o dreth.
 ats.nics.tax_and_nics.description=Mae eich Treth Incwm ac Yswiriant Gwladol yn {0} o gyfanswm eich incwm.
 ats.nics.tax_and_nics.income_tax=Treth Incwm
 ats.nics.tax_and_nics_explained=Yswiriant Gwladol
@@ -99,18 +99,18 @@ ats.income_before_tax.table.line5=Budd-daliadau trethadwy’r Wladwriaeth
 ats.income_before_tax.table.line6=Incwm arall
 ats.income_before_tax.table.line7=Buddiannau o gyflogaeth
 
-# View ATS - tax free amount (IND)
+# View ATS - tax free income (IND)
 #============================================================
-ats.tax_free_amount.html.title=Swm yn rhydd o dreth
-ats.tax_free_amount.subtitle=Swm yn rhydd o dreth
+ats.tax_free_amount.html.title=Swm incwm sy’n rhydd o dreth
+ats.tax_free_amount.subtitle=Swm incwm sy’n rhydd o dreth
 ats.tax_free_amount.lede=Dyma faint y gallwch ei ennill cyn i chi ddechrau talu Treth Incwm.
 ats.tax_free_amount.description=Mae hwn yn cynnwys eich Lwfans Personol ac unrhyw lwfansau, didyniadau a threuliau eraill.
 
-ats.tax_free_amount.tax_free_amount=Swm yn rhydd o dreth
+ats.tax_free_amount.tax_free_amount=Incwm sy’n rhydd o dreth
 ats.tax_free_amount.table.line1=Lwfans Personol
 ats.tax_free_amount.table.line2=Lwfansau, didyniadau a threuliau eraill
 ats.tax_free_amount.table.line3=Llai’r Lwfans Priodasol sydd wedi’i drosglwyddo
-ats.tax_free_amount.table.total=Cyfanswm yn rhydd o dreth
+ats.tax_free_amount.table.total=Cyfanswm incwm sy’n rhydd o dreth
 
 # View ATS - total income tax (IND)
 #============================================================
@@ -254,7 +254,7 @@ token_error.lede=Ni allem gyrchu crynodeb eich cleient. Rhowch gynnig arall arni
 # Screen reader - visually hidden
 #============================================================
 screen.reader.total_income=Cyfanswm eich incwm yw
-screen.reader.tax_free_amount=Eich swm yn rhydd o dreth yw
+screen.reader.tax_free_amount=Eich incwm sy’n rhydd o dreth yw
 screen.reader.income_tax_and_ni=Eich Treth Incwm ac Yswiriant Gwladol yw
 screen.reader.capital_gains_tax=Eich Treth Enillion Cyfalaf yw
 
@@ -278,7 +278,7 @@ paye.generic.tax_year_heading={0} hyd at {1}
 paye.ats.index.html.lede=Mae hwn yn dangos sut y cafodd eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol eu cyfrifo, a sut mae’r llywodraeth yn gwario’ch arian.
 paye.ats.index.html.view.sa.link=Bwrw golwg dros Grynodeb Treth Blynyddol Hunanasesiad
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario eich trethi, neu sut y byddant yn gwneud hynny.
-paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich swm rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.
+paye.ats.index.html.tax_calc_description=Mae hwn yn dangos dadansoddiad o’ch incwm trethadwy, eich incwm sy’n rhydd o dreth, a faint o dreth ac Yswiriant Gwladol rydych wedi’u talu.
 paye.ats.index.html.tax_spend_description=Mae hwn yn dangos dadansoddiad o sut mae’r llywodraeth wedi gwario’ch trethi.
 ats.index.html.view.paye.link=Bwrw golwg dros Grynodeb Treth Blynyddol TWE
 paye.ats.index.html.tax_spend_link=Sut y gwariwyd eich treth
@@ -290,8 +290,8 @@ paye.ats.summary.title=Eich incwm a’ch trethi
 paye.ats.summary.total_income.title=Incwm trethadwy
 paye.ats.summary.total_income.link=Eich incwm trethadwy
 paye.ats.summary.total_income.description=Dyma gyfanswm eich incwm trethadwy am y flwyddyn.
-paye.ats.summary.tax_free.title=Swm rhydd o dreth
-paye.ats.summary.tax_free.link=Eich swm rhydd o dreth
+paye.ats.summary.tax_free.title=Incwm sy’n Rhydd o Dreth
+paye.ats.summary.tax_free.link=Eich incwm sy’n rhydd o dreth
 paye.ats.summary.tax_free.description=Dyma’r swm a gawsoch heb dalu treth.
 paye.ats.summary.nicsheading=Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.tax_and_nics.link=Eich Treth Incwm a chyfraniadau Yswiriant Gwladol
@@ -389,17 +389,17 @@ paye.ats.income_before_tax.other_income=Incwm arall (gan gynnwys llog)
 paye.ats.income_before_tax.benefits_from_employment=Buddiannau o gyflogaeth
 paye.ats.income_before_tax.total_income_before_tax=Eich incwm cyn treth
 
-# Paye ATS - tax free amount page
+# Paye ATS - tax free income page
 #===========================================================
-paye.ats.tax_free_amount.title=Swm rhydd o dreth
+paye.ats.tax_free_amount.title=Incwm sy’n Rhydd o Dreth
 paye.ats.tax_free_amount.description=Disgrifiad
 paye.ats.tax_free_amount.amount=Swm
 paye.ats.tax_free_amount.personal_tax_free_amount=Lwfans Personol
 paye.ats.tax_free_amount.marriage_allowance_transferred_amount=Lwfans Priodasol wedi’i drosglwyddo
 paye.ats.tax_free_amount.other_allowances_amount=Lwfansau, didyniadau a threuliau eraill
-paye.ats.tax_free_amount.total_tax_free_amount=Cyfanswm yn rhydd o dreth
+paye.ats.tax_free_amount.total_tax_free_amount=Cyfanswm yn Incwm sy’n Rhydd o Dreth
 paye.ats.tax_free_amount.income_before_tax=Incwm cyn treth
-paye.ats.tax_free_amount.tax_free_amount=Llai eich swm rhydd o dreth
+paye.ats.tax_free_amount.tax_free_amount=Llai eich incwm sy’n rhydd o dreth
 paye.ats.tax_free_amount.total_tax_liable=Rydych yn talu treth ar y canlynol
 
 ats.howYourTaxWasSpent.heading = Sut y gwariwyd treth

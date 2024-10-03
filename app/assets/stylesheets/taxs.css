@@ -1,4 +1,4 @@
-#taxable-income a, #tax-calculated-as a, #tax-free-amount a, #capital-gains a {
+#taxable-income a, #tax-calculated-as a, #tax-free-income a, #capital-gains a {
      display: inline-block;
      display: inline;
      text-decoration: none;
