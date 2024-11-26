@@ -68,10 +68,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
   //Application name
   lazy val appName: String = config.getString("appName")
 
-  val saShuttered: Boolean = config.getBoolean("shuttering.sa")
-
-  val payeShuttered: Boolean = config.getBoolean("shuttering.paye")
-
   val sessionTimeoutInSeconds: String   = config.getString("timeout.sessionTimeOut")
   val sessionCountdownInSeconds: String = config.getString("timeout.countdownIn")
 

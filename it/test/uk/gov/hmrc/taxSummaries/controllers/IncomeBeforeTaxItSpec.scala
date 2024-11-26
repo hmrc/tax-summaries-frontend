@@ -17,6 +17,7 @@
 package uk.gov.hmrc.taxSummaries.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
+import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import play.api
@@ -28,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, IntegrationSpec}
 
@@ -55,8 +57,12 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
   override def beforeEach(): Unit = {
     server.resetAll()
     super.beforeEach()
-    reset(mockPertaxAuthService)
+    reset(mockPertaxAuthService, mockFeatureFlagService)
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
   }
 
   // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024

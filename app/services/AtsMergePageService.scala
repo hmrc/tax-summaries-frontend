@@ -21,21 +21,23 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
 import models.AtsResponse
+import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
 import play.api.Logging
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils._
 import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
-
 class AtsMergePageService @Inject() (
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   payeAtsService: PayeAtsService,
   atsListService: AtsListService,
   appConfig: ApplicationConfig,
-  cryptoService: CryptoService
+  cryptoService: CryptoService,
+  featureFlagService: FeatureFlagService
 )(implicit ec: ExecutionContext)
     extends Logging {
 
@@ -44,17 +46,27 @@ class AtsMergePageService @Inject() (
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsMergePageViewModel]] =
     (for {
-      saData   <- EitherT(if (!appConfig.saShuttered) {
-                    getSaYearList
-                  } else {
-                    Future(Right(AtsList.empty))
-                  })
-      payeData <- EitherT(if (!appConfig.payeShuttered && !request.isAgent) {
-                    getPayeAtsYearList
-                  } else {
-                    Future(Right(List.empty[Int]))
-                  })
+      saData   <- EitherT(getSaYearListIfEnabled)
+      payeData <- EitherT(getPayeYearListIfEnabled(request.isAgent))
     } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
+
+  private def getSaYearListIfEnabled(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, AtsList]] =
+    featureFlagService.get(ShutteringSelfAssessmentToggle).flatMap { toggle =>
+      if (!toggle.isEnabled) getSaYearList
+      else Future.successful(Right(AtsList.empty))
+    }
+
+  private def getPayeYearListIfEnabled(isAgent: Boolean)(implicit
+    hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]
+  ): Future[Either[AtsResponse, List[Int]]] =
+    featureFlagService.get(ShutteringPAYEToggle).flatMap { toggle =>
+      if (!toggle.isEnabled && !isAgent) getPayeAtsYearList
+      else Future.successful(Right(List.empty[Int]))
+    }
 
   private def getSaYearList(implicit
     hc: HeaderCarrier,
@@ -63,22 +75,19 @@ class AtsMergePageService @Inject() (
     if (request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).contains(Globals.TAXS_PORTAL_REFERENCE)) {
       val agentToken = request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
 
-      val agentTokenTask = agentToken.fold[Future[_]] {
-        Future.successful(None)
-      } { token =>
-        if (AccountUtils.isAgent(request)) {
-          val finalAgentToken = cryptoService.getAgentToken(token)
-          taxsAgentTokenSessionCacheRepository.putSession(
-            DataKey(Globals.TAXS_AGENT_TOKEN_KEY),
-            finalAgentToken
-          ) recover { case e: Throwable =>
-            throw e
+      agentToken
+        .fold(Future.successful(None)) { token =>
+          if (AccountUtils.isAgent(request)) {
+            val finalAgentToken = cryptoService.getAgentToken(token)
+            taxsAgentTokenSessionCacheRepository
+              .putSession(DataKey(Globals.TAXS_AGENT_TOKEN_KEY), finalAgentToken)
+              .map(_ => None)
+          } else {
+            Future.successful(None)
           }
-        } else {
-          Future.successful(None)
         }
-      }
-      agentTokenTask.map(_ => atsListService.createModel()).flatten
+        .map(_ => atsListService.createModel())
+        .flatten
     } else {
       atsListService.createModel()
     }
@@ -92,5 +101,5 @@ class AtsMergePageService @Inject() (
         payeAtsService
           .getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1, appConfig.taxYear)
       )
-      .getOrElse(Future(Right(List.empty)))
+      .getOrElse(Future.successful(Right(List.empty)))
 }

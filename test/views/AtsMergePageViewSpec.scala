@@ -19,8 +19,10 @@ package views
 import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
+import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -28,9 +30,12 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
+
+import scala.concurrent.Future
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
@@ -71,21 +76,34 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     FakeRequest("Get", s"?taxYear=$taxYear")
   )
 
-  def view(model: AtsMergePageViewModel, form: Form[AtsYearChoice])(implicit request: AuthenticatedRequest[_]): String =
-    atsMergePageView(model, form)(request, implicitly, mockAppConfig).body
+  def view(
+    model: AtsMergePageViewModel,
+    form: Form[AtsYearChoice],
+    payeShuttered: Boolean = false,
+    saShuttered: Boolean = false
+  )(implicit request: AuthenticatedRequest[_]): String =
+    atsMergePageView(model, form, payeShuttered = payeShuttered, saShuttered = saShuttered)(request, implicitly).body
 
   def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
-    atsMergePageView(model, form, Some(ActingAsAttorneyFor(Some("Agent"), Map())))(
+    atsMergePageView(
+      model,
+      form,
+      Some(ActingAsAttorneyFor(Some("Agent"), Map())),
+      saShuttered = false,
+      payeShuttered = false
+    )(
       implicitly,
-      implicitly,
-      mockAppConfig
+      implicitly
     ).body
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockAppConfig.payeShuttered).thenReturn(false)
-    when(mockAppConfig.saShuttered).thenReturn(false)
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+
     when(mockAppConfig.taxYear).thenReturn(taxYear)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
   }
@@ -235,10 +253,10 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     "show paye shuttered message if service is shuttered" in {
-      when(mockAppConfig.payeShuttered).thenReturn(true)
       val result = view(
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
-        atsForms.atsYearFormMapping
+        atsForms.atsYearFormMapping,
+        payeShuttered = true
       )
       result must include(messages("merge.page.paye.unavailable"))
     }
@@ -280,17 +298,16 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
 
     "show sa shuttered message if service is shuttered" in {
-      when(mockAppConfig.saShuttered).thenReturn(true)
       val result = view(
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
-        atsForms.atsYearFormMapping
+        atsForms.atsYearFormMapping,
+        saShuttered = true
       )
       result must include(messages("merge.page.sa.unavailable"))
 
     }
 
     "show paye uplift header message if user only has paye data and needs uplift" in {
-      when(mockAppConfig.saShuttered).thenReturn(true)
       val result = view(
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
@@ -298,7 +315,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           mockAppConfig,
           ConfidenceLevel.L50
         ),
-        atsForms.atsYearFormMapping
+        atsForms.atsYearFormMapping,
+        saShuttered = true
       )
       result must include(messages("merge.page.paye.ivuplift.header"))
     }

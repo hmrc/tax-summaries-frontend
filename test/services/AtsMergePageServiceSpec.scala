@@ -19,6 +19,8 @@ package services
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
+import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -32,6 +34,7 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.BaseSpec
 import utils.JsonUtil._
 import utils.TestConstants._
@@ -51,8 +54,13 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
   val mockAtsListService: AtsListService               = mock[AtsListService]
   val cryptoService: CryptoService                     = inject[CryptoService]
 
-  override def beforeEach(): Unit =
-    reset(mockTaxsAgentTokenSessionCacheRepository)
+  override def beforeEach(): Unit = {
+    reset(mockTaxsAgentTokenSessionCacheRepository, mockFeatureFlagService)
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+  }
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
@@ -68,7 +76,8 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
       mockPayeAtsService,
       mockAtsListService,
       appConfig,
-      cryptoService
+      cryptoService,
+      mockFeatureFlagService
     )
 
   val saDataResponse: AtsList = AtsList(

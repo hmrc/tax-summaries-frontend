@@ -19,6 +19,8 @@ package controllers.auth
 import config.ApplicationConfig
 import controllers.auth.actions.{PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
+import models.admin.ShutteringPAYEToggle
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import play.api.http.Status.SEE_OTHER
@@ -30,6 +32,7 @@ import services.PertaxAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps._
@@ -55,7 +58,9 @@ class PayeAuthActionSpec extends BaseSpec {
     reset(mockAuthConnector)
     reset(mockPertaxAuthService)
     reset(appConfig)
-    when(appConfig.payeShuttered).thenReturn(false)
+    reset(mockFeatureFlagService)
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
   }
 
@@ -71,7 +76,8 @@ class PayeAuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService)
+      val authAction =
+        new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -94,7 +100,8 @@ class PayeAuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService)
+      val authAction =
+        new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -107,8 +114,10 @@ class PayeAuthActionSpec extends BaseSpec {
   "A user visiting the service when it is shuttered" must {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
-      when(appConfig.payeShuttered).thenReturn(true)
-      val authAction = new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService)
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
+        .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = true)))
+      val authAction =
+        new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
 
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
@@ -117,5 +126,4 @@ class PayeAuthActionSpec extends BaseSpec {
       verifyNoInteractions(mockAuthConnector)
     }
   }
-
 }

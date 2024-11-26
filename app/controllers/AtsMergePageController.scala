@@ -20,11 +20,13 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
+import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
 import models.{AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Session}
 import services._
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AttorneyUtils, Globals}
 import view_models.AtsForms
@@ -39,62 +41,63 @@ class AtsMergePageController @Inject() (
   mcc: MessagesControllerComponents,
   atsMergePageView: AtsMergePageView,
   genericErrorView: GenericErrorView,
-  atsForms: AtsForms
+  atsForms: AtsForms,
+  featureFlagService: FeatureFlagService
 )(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with AttorneyUtils
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async {
-    implicit request: AuthenticatedRequest[_] =>
-      if (appConfig.saShuttered && appConfig.payeShuttered) {
-        Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
-      } else getSaAndPayeYearList()
+  def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
+    areServicesShuttered.flatMap {
+      case true  => Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
+      case false => getSaAndPayeYearList()
+    }
   }
+
+  private def areServicesShuttered: Future[Boolean] =
+    for {
+      saShuttered   <- featureFlagService.get(ShutteringSelfAssessmentToggle).map(_.isEnabled)
+      payeShuttered <- featureFlagService.get(ShutteringPAYEToggle).map(_.isEnabled)
+    } yield saShuttered && payeShuttered
 
   private def getSaAndPayeYearList(
     formWithErrors: Option[Form[AtsYearChoice]] = None
-  )(implicit request: AuthenticatedRequest[_]) = {
-    val session = request
-      .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
-      .fold(
-        request.session
-      )(parameter => request.session + (Globals.TAXS_USER_TYPE_KEY -> parameter))
+  )(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    val session = putTaxUserTypeInSession(request)
+    val form    = getYearChoiceForm(formWithErrors, request)
 
-    val form    = formWithErrors.getOrElse(
-      request.session
-        .get("yearChoice")
-        .fold(
-          atsForms.atsYearFormMapping
-        )(value => atsForms.atsYearFormMapping.fill(AtsYearChoice.fromString(Some(value))))
-    )
+    for {
+      saShuttered   <- featureFlagService.get(ShutteringSelfAssessmentToggle).map(_.isEnabled)
+      payeShuttered <- featureFlagService.get(ShutteringPAYEToggle).map(_.isEnabled)
+      result        <- atsMergePageService.getSaAndPayeYearList.map {
+                         case Right(atsMergePageViewModel) =>
+                           Ok(
+                             atsMergePageView(
+                               atsMergePageViewModel,
+                               form,
+                               getActingAsAttorneyFor(
+                                 request,
+                                 atsMergePageViewModel.saData.forename,
+                                 atsMergePageViewModel.saData.surname,
+                                 atsMergePageViewModel.saData.utr
+                               ),
+                               saShuttered,
+                               payeShuttered
+                             )
+                           ).withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-    atsMergePageService.getSaAndPayeYearList.map {
-      case Right(atsMergePageViewModel) =>
-        Ok(
-          atsMergePageView(
-            atsMergePageViewModel,
-            form,
-            getActingAsAttorneyFor(
-              request,
-              atsMergePageViewModel.saData.forename,
-              atsMergePageViewModel.saData.surname,
-              atsMergePageViewModel.saData.utr
-            )
-          )
-        )
-          .withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
-
-      case _                            =>
-        InternalServerError(genericErrorView())
-    }
+                         case _                            =>
+                           InternalServerError(genericErrorView())
+                       }
+    } yield result
   }
 
   def onSubmit: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
     atsForms.atsYearFormMapping
       .bindFromRequest()
       .fold(
-        formWithErrors => getSaAndPayeYearList(Some(formWithErrors))(request),
+        formWithErrors => getSaAndPayeYearList(Some(formWithErrors)),
         value =>
           Future.successful(
             redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))
@@ -112,4 +115,20 @@ class AtsMergePageController @Inject() (
         Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYearChoice.year))
     }
 
+  private def putTaxUserTypeInSession(request: AuthenticatedRequest[_]): Session =
+    request
+      .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
+      .fold(request.session)(parameter => request.session + (Globals.TAXS_USER_TYPE_KEY -> parameter))
+
+  private def getYearChoiceForm(
+    formWithErrors: Option[Form[AtsYearChoice]],
+    request: AuthenticatedRequest[_]
+  ): Form[AtsYearChoice]                                                         =
+    formWithErrors.getOrElse {
+      request.session
+        .get("yearChoice")
+        .fold(atsForms.atsYearFormMapping)(value =>
+          atsForms.atsYearFormMapping.fill(AtsYearChoice.fromString(Some(value)))
+        )
+    }
 }

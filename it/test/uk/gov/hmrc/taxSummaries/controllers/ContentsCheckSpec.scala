@@ -18,7 +18,7 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, post, urlEqualTo, urlMatching, urlPathMatching}
-import models.admin.PertaxBackendToggle
+import models.admin.{PertaxBackendToggle, ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -153,12 +153,15 @@ class ContentsCheckSpec extends IntegrationSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFeatureFlagService)
-    reset(mockPertaxAuthService)
+    reset(mockFeatureFlagService, mockPertaxAuthService)
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
 
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PertaxBackendToggle)))
       .thenReturn(Future.successful(FeatureFlag(PertaxBackendToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
+      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
 
     server.stubFor(
       get(urlPathMatching(s"$cacheMap/.*"))

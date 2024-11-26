@@ -17,9 +17,9 @@
 package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
+import models.admin.ShutteringPAYEToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -27,20 +27,20 @@ import services.PertaxAuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.domain.{Nino, Uar}
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
-
 class PayeAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
-  pertaxAuthService: PertaxAuthService
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService
 )(implicit
-  ec: ExecutionContext,
-  appConfig: ApplicationConfig
+  ec: ExecutionContext
 ) extends PayeAuthAction
     with AuthorisedFunctions
     with Logging {
@@ -48,49 +48,59 @@ class PayeAuthActionImpl @Inject() (
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
-  private val payeShuttered: Boolean = appConfig.payeShuttered
+  private def isAgent(enrolments: Set[Enrolment]): Boolean =
+    enrolments.exists(_.key == "IR-SA-AGENT") &&
+      enrolments.exists(_.identifiers.exists(_.key == "IRAgentReference"))
 
-  private def isAgent(enrolments: Set[Enrolment]) =
-    enrolments
-      .find(_.key == "IR-SA-AGENT")
-      .flatMap { enrolment =>
-        enrolment.identifiers
-          .find(id => id.key == "IRAgentReference")
-          .map(key => Uar(key.value))
-      }
-      .isDefined
+  private def isPayeShuttered: Future[Boolean] =
+    featureFlagService.get(ShutteringPAYEToggle).map(_.isEnabled)
 
   override def invokeBlock[A](
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
-  ): Future[Result] =
-    if (payeShuttered) {
-      Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
-    } else {
-      implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      pertaxAuthService.authorise[A, Request[A]](request).flatMap {
-        case None    =>
-          authorised(
-            ConfidenceLevel.L200
-          ).retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
-            case Enrolments(enrolments) ~ Some(nino) ~ Some(credentials) =>
-              if (isAgent(enrolments)) {
-                Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
-              } else {
-                block {
-                  requests.PayeAuthenticatedRequest(
-                    nino = Nino(nino),
-                    credentials = credentials,
-                    request = request
-                  )
-                }
-              }
-            case _                                                       => throw new RuntimeException("Retrieval succeeded but did not match expectation")
-          }
-        case Some(r) => Future.successful(r)
-      }
+  ): Future[Result] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    isPayeShuttered.flatMap {
+      case true  => redirectToServiceUnavailable
+      case false => handleAuthorisation(request, block)
     }
+  }
+
+  private def redirectToServiceUnavailable: Future[Result] =
+    Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
+
+  private def handleAuthorisation[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier): Future[Result] =
+    pertaxAuthService.authorise[A, Request[A]](request).flatMap {
+      case Some(result) => Future.successful(result)
+      case None         => fetchUserDetails(request, block)
+    }
+
+  private def fetchUserDetails[A](
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier): Future[Result] =
+    authorised(ConfidenceLevel.L200)
+      .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
+        case Enrolments(enrolments) ~ Some(_) ~ Some(_) if isAgent(enrolments) =>
+          redirectToNotAuthorised
+        case Enrolments(_) ~ Some(nino) ~ Some(credentials)                    =>
+          block(
+            requests.PayeAuthenticatedRequest(
+              nino = Nino(nino),
+              credentials = credentials,
+              request = request
+            )
+          )
+        case _                                                                 =>
+          throw new RuntimeException("Retrieval succeeded but did not match expectation")
+      }
+
+  private def redirectToNotAuthorised: Future[Result] =
+    Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
 }
 
 @ImplementedBy(classOf[PayeAuthActionImpl])

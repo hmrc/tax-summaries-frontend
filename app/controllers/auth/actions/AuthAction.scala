@@ -23,6 +23,7 @@ import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
+import models.admin.ShutteringSelfAssessmentToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -34,18 +35,19 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
 
 import scala.concurrent.{ExecutionContext, Future}
-
 class AuthImpl(
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService,
   saShutterCheck: Boolean,
   agentTokenCheck: Boolean,
   utrCheck: Boolean
@@ -56,32 +58,46 @@ class AuthImpl(
     with AuthorisedFunctions
     with Logging {
 
-  protected val saShuttered: Boolean = appConfig.saShuttered
-
   override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    if (saShutterCheck && saShuttered) {
-      Future.successful(Redirect(controllers.routes.ErrorController.serviceUnavailable))
-    } else {
-      createAuthenticatedRequest(request).flatMap {
-        case Right(authenticatedRequest) =>
-          citizenDetailsCheck(authenticatedRequest).value.flatMap {
-            case Left(r)        => Future.successful(r)
-            case Right(authReq) =>
-              (utrCheck, authReq.isAgent, authReq.saUtr) match {
-                case (true, false, None) => Future.successful(notAuthorisedPage)
-                case _                   => block(authReq)
-              }
-          }
-        case Left(r)                     => Future.successful(r)
+    if (saShutterCheck) {
+      isSaShuttered.flatMap {
+        case true  => Future.successful(serviceUnavailablePage)
+        case false => handleRequest(request, block)
       }
+    } else {
+      handleRequest(request, block)
     }
   }
+
+  private def isSaShuttered: Future[Boolean] =
+    featureFlagService.get(ShutteringSelfAssessmentToggle).map(_.isEnabled)
+
+  private def handleRequest[A](
+    request: Request[A],
+    block: AuthenticatedRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier): Future[Result] =
+    createAuthenticatedRequest(request).flatMap {
+      case Right(authenticatedRequest) =>
+        validateCitizenDetails(authenticatedRequest).flatMap {
+          case Left(result)   => Future.successful(result)
+          case Right(authReq) => validateUtrCheck(authReq, block)
+        }
+      case Left(result)                => Future.successful(result)
+    }
+
+  private def validateUtrCheck[A](
+    authReq: AuthenticatedRequest[A],
+    block: AuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] =
+    (utrCheck, authReq.isAgent, authReq.saUtr) match {
+      case (true, false, None) => Future.successful(notAuthorisedPage)
+      case _                   => block(authReq)
+    }
 
   private def agentTokenCheck[A](
     request: Request[A],
@@ -89,23 +105,17 @@ class AuthImpl(
   )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
     if (agentTokenCheck) {
       taxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(Globals.TAXS_AGENT_TOKEN_KEY)).map {
-        agentToken =>
-          if (
-            (request
-              .getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER)
-              .isEmpty || request
-              .getQueryString(Globals.TAXS_AGENT_TOKEN_ID)
-              .isEmpty) &&
-            agentToken.isEmpty
-          ) {
-            Left(notAuthorisedPage)
-          } else {
-            Right(rq)
-          }
+        case Some(_)                                  => Right(rq)
+        case None if missingAgentTokenParams(request) => Left(notAuthorisedPage)
+        case None                                     => Right(rq)
       }
     } else {
       Future.successful(Right(rq))
     }
+
+  private def missingAgentTokenParams[A](request: Request[A]): Boolean =
+    request.getQueryString(Globals.TAXS_USER_TYPE_QUERY_PARAMETER).isEmpty ||
+      request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isEmpty
 
   private def createAuthenticatedRequest[A](request: Request[A])(implicit
     hc: HeaderCarrier
@@ -115,7 +125,7 @@ class AuthImpl(
         Retrievals.allEnrolments and Retrievals.externalId and Retrievals.credentials and Retrievals.saUtr and Retrievals.nino and Retrievals.confidenceLevel
       ) {
         case Enrolments(enrolments) ~ Some(externalId) ~ Some(credentials) ~ saUtr ~ nino ~ confidenceLevel =>
-          val (agentRef, isAgentActive) = agentInfo(enrolments)
+          val (agentRef, isAgentActive) = extractAgentInfo(enrolments)
 
           def newRequest: AuthenticatedRequest[A] =
             requests.AuthenticatedRequest(
@@ -130,45 +140,41 @@ class AuthImpl(
             )
 
           (agentRef.isDefined, isAgentActive) match {
-            case (true, false) =>
-              Future.successful(Left(Redirect(controllers.routes.ErrorController.notAuthorised)))
-            case (true, true)  =>
-              agentTokenCheck(request, newRequest)
-            case _             =>
-              pertaxAuthService.authorise[A, Request[A]](request).map {
-                case Some(r) => Left(r)
-                case _       => Right(newRequest)
-              }
+            case (true, false) => Future.successful(Left(notAuthorisedPage))
+            case (true, true)  => agentTokenCheck(request, newRequest)
+            case _             => validatePertaxAuth(request, newRequest)
           }
-        case _                                                                                              => throw new RuntimeException("Can't find credentials for user")
+        case _                                                                                              => Future.failed(new RuntimeException("Can't find credentials for user"))
       } recover { case _: NoActiveSession =>
-      lazy val ggSignIn    = appConfig.loginUrl
-      lazy val callbackUrl = appConfig.loginCallback
-      Left(
-        Redirect(
-          ggSignIn,
-          Map(
-            "continue_url" -> Seq(callbackUrl),
-            "origin"       -> Seq(appConfig.appName)
-          )
-        )
-      )
+      Left(loginRedirect)
     }
 
-  private def agentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
+  private def validatePertaxAuth[A](
+    request: Request[A],
+    newRequest: AuthenticatedRequest[A]
+  ): Future[Either[Result, AuthenticatedRequest[A]]] =
+    pertaxAuthService.authorise[A, Request[A]](request).map {
+      case Some(result) => Left(result)
+      case None         => Right(newRequest)
+    }
+
+  private def extractAgentInfo(enrolments: Set[Enrolment]): (Option[Uar], Boolean) =
     enrolments
       .find(_.key == "IR-SA-AGENT")
       .map { enrolment =>
-        val d = enrolment.identifiers
-          .find(id => id.key == "IRAgentReference")
-          .map(key => Uar(key.value))
-        Tuple2(d, enrolment.isActivated)
+        val agentReference = enrolment.identifiers.find(_.key == "IRAgentReference").map(key => Uar(key.value))
+        (agentReference, enrolment.isActivated)
       }
-      .getOrElse(Tuple2(None, false))
+      .getOrElse((None, false))
 
-  private def citizenDetailsCheck[A](request: AuthenticatedRequest[A])(implicit
-    hc: HeaderCarrier
-  ): EitherT[Future, Result, AuthenticatedRequest[A]] =
+  private def validateCitizenDetails[A](
+    request: AuthenticatedRequest[A]
+  )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
+    citizenDetailsCheck(request).value
+
+  private def citizenDetailsCheck[A](
+    request: AuthenticatedRequest[A]
+  )(implicit hc: HeaderCarrier): EitherT[Future, Result, AuthenticatedRequest[A]] =
     (request.nino, request.saUtr, request.isAgent) match {
       case (Some(nino), None, false) =>
         citizenDetailsService
@@ -183,6 +189,15 @@ class AuthImpl(
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 
   private def serviceUnavailablePage: Result = Redirect(controllers.routes.ErrorController.serviceUnavailable)
+
+  private def loginRedirect: Result =
+    Redirect(
+      appConfig.loginUrl,
+      Map(
+        "continue_url" -> Seq(appConfig.loginCallback),
+        "origin"       -> Seq(appConfig.appName)
+      )
+    )
 }
 
 @ImplementedBy(classOf[AuthImpl])
@@ -193,7 +208,8 @@ class AuthAction @Inject() (
   cc: MessagesControllerComponents,
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   citizenDetailsService: CitizenDetailsService,
-  pertaxAuthService: PertaxAuthService
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
@@ -205,6 +221,7 @@ class AuthAction @Inject() (
       taxsAgentTokenSessionCacheRepository,
       citizenDetailsService,
       pertaxAuthService,
+      featureFlagService,
       saShutterCheck,
       agentTokenCheck,
       utrCheck
