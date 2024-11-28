@@ -16,15 +16,15 @@
 
 package config
 
-import models.admin.{PertaxBackendToggle, ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, PertaxBackendToggle, SelfAssessmentServiceToggle}
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlagNamesLibrary
 
 class ApplicationStartUp {
   FeatureFlagNamesLibrary.addFlags(
     List(
       PertaxBackendToggle,
-      ShutteringSelfAssessmentToggle,
-      ShutteringPAYEToggle
+      SelfAssessmentServiceToggle,
+      PAYEServiceToggle
     )
   )
 }

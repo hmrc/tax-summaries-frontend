@@ -20,7 +20,7 @@ import cats.data.EitherT
 import config.ApplicationConfig
 import controllers.auth.actions.AuthAction
 import models.AgentToken
-import models.admin.ShutteringSelfAssessmentToggle
+import models.admin.SelfAssessmentServiceToggle
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -97,8 +97,8 @@ class AuthActionSpec extends BaseSpec {
     reset(mockPertaxAuthService)
     reset(mockFeatureFlagService)
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
   private val extId: String          = "123"
@@ -244,16 +244,16 @@ class AuthActionSpec extends BaseSpec {
     }
 
     "shutter check is true" must {
-      "redirect to service unavailable page when SA is shuttered" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-          .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = true)))
+      "redirect to service unavailable page when SA is not enabled" in {
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
         val result = createHarness.onPageLoad(saShutterCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
       }
-      "return OK when SA is NOT shuttered" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-          .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+      "return OK when SA is enabled" in {
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
@@ -265,8 +265,8 @@ class AuthActionSpec extends BaseSpec {
 
     "agent token check is true" must {
       "direct to OK when agent token present in db & query params present" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-          .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
 
         whenRetrieval(enrolments =
           Set(
@@ -289,8 +289,8 @@ class AuthActionSpec extends BaseSpec {
       }
 
       "direct to OK when agent token absent from db & query params present" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-          .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(enrolments =
           Set(
             Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated"),
@@ -312,8 +312,8 @@ class AuthActionSpec extends BaseSpec {
       }
 
       "redirect to not authorised page when agent token present in db & query params absent" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-          .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(enrolments =
           Set(
             Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated"),

@@ -19,7 +19,7 @@ package controllers.auth
 import config.ApplicationConfig
 import controllers.auth.actions.{PayeAuthAction, PayeAuthActionImpl}
 import controllers.paye.routes
-import models.admin.ShutteringPAYEToggle
+import models.admin.PAYEServiceToggle
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
@@ -59,8 +59,8 @@ class PayeAuthActionSpec extends BaseSpec {
     reset(mockPertaxAuthService)
     reset(appConfig)
     reset(mockFeatureFlagService)
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
   }
 
@@ -111,11 +111,11 @@ class PayeAuthActionSpec extends BaseSpec {
     }
   }
 
-  "A user visiting the service when it is shuttered" must {
+  "A user visiting the service when it is not enabled" must {
     "be directed to the service unavailable page without calling auth" in {
       reset(mockAuthConnector)
-      when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-        .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = true)))
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
       val authAction =
         new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
 import models.AtsResponse
-import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import play.api.Logging
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,6 +31,7 @@ import utils._
 import view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
+
 class AtsMergePageService @Inject() (
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   payeAtsService: PayeAtsService,
@@ -54,8 +55,8 @@ class AtsMergePageService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsList]] =
-    featureFlagService.get(ShutteringSelfAssessmentToggle).flatMap { toggle =>
-      if (!toggle.isEnabled) getSaYearList
+    featureFlagService.get(SelfAssessmentServiceToggle).flatMap { toggle =>
+      if (toggle.isEnabled) getSaYearList
       else Future.successful(Right(AtsList.empty))
     }
 
@@ -63,9 +64,11 @@ class AtsMergePageService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, List[Int]]] =
-    featureFlagService.get(ShutteringPAYEToggle).flatMap { toggle =>
-      if (!toggle.isEnabled && !isAgent) getPayeAtsYearList
-      else Future.successful(Right(List.empty[Int]))
+    featureFlagService.get(PAYEServiceToggle).flatMap { toggle =>
+      if (toggle.isEnabled && !isAgent)
+        getPayeAtsYearList
+      else
+        Future.successful(Right(List.empty[Int]))
     }
 
   private def getSaYearList(implicit

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
-import models.admin.ShutteringSelfAssessmentToggle
+import models.admin.SelfAssessmentServiceToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -65,17 +65,17 @@ class AuthImpl(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     if (saShutterCheck) {
-      isSaShuttered.flatMap {
-        case true  => Future.successful(serviceUnavailablePage)
-        case false => handleRequest(request, block)
+      isSaEnabled.flatMap {
+        case true  => handleRequest(request, block)
+        case false => Future.successful(serviceUnavailablePage)
       }
     } else {
       handleRequest(request, block)
     }
   }
 
-  private def isSaShuttered: Future[Boolean] =
-    featureFlagService.get(ShutteringSelfAssessmentToggle).map(_.isEnabled)
+  private def isSaEnabled: Future[Boolean] =
+    featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
 
   private def handleRequest[A](
     request: Request[A],

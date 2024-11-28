@@ -19,7 +19,7 @@ package services
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
-import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
@@ -56,10 +56,10 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
   override def beforeEach(): Unit = {
     reset(mockTaxsAgentTokenSessionCacheRepository, mockFeatureFlagService)
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
   }
 
   implicit val hc: HeaderCarrier = new HeaderCarrier

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.taxSummaries.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo, urlMatching}
-import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import play.api
@@ -52,10 +52,10 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
     server.resetAll()
     super.beforeEach()
     reset(mockPertaxAuthService, mockFeatureFlagService)
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
   }
 

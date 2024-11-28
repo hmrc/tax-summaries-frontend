@@ -26,16 +26,16 @@ case object PertaxBackendToggle extends FeatureFlagName {
 
 }
 
-case object ShutteringSelfAssessmentToggle extends FeatureFlagName {
-  override val name: String                = "shuttering-self-assessment-toggle"
+case object SelfAssessmentServiceToggle extends FeatureFlagName {
+  override val name: String                = "self-assessment-service-toggle"
   override val description: Option[String] = Some(
-    "Enable/disable shuttering for Self-Assessment services"
+    "Enable/disable Self-Assessment services"
   )
 }
 
-case object ShutteringPAYEToggle extends FeatureFlagName {
-  override val name: String                = "shuttering-paye-toggle"
+case object PAYEServiceToggle extends FeatureFlagName {
+  override val name: String                = "paye-service-toggle"
   override val description: Option[String] = Some(
-    "Enable/disable shuttering for PAYE services"
+    "Enable/disable PAYE services"
   )
 }

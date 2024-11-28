@@ -17,7 +17,7 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
-import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import models.{AgentToken, AtsListData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any => mockAny}
@@ -106,10 +106,10 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
     when(mockPertaxAuthService.authorise(mockAny())).thenReturn(Future.successful(None))
 
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
   when(

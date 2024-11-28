@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
-import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import models.{AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -49,17 +49,17 @@ class AtsMergePageController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
-    areServicesShuttered.flatMap {
-      case true  => Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
-      case false => getSaAndPayeYearList()
+    areServicesEnabled.flatMap {
+      case false => Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
+      case true  => getSaAndPayeYearList()
     }
   }
 
-  private def areServicesShuttered: Future[Boolean] =
+  private def areServicesEnabled: Future[Boolean] =
     for {
-      saShuttered   <- featureFlagService.get(ShutteringSelfAssessmentToggle).map(_.isEnabled)
-      payeShuttered <- featureFlagService.get(ShutteringPAYEToggle).map(_.isEnabled)
-    } yield saShuttered && payeShuttered
+      saEnabled   <- featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
+      payeEnabled <- featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
+    } yield saEnabled && payeEnabled
 
   private def getSaAndPayeYearList(
     formWithErrors: Option[Form[AtsYearChoice]] = None
@@ -68,28 +68,28 @@ class AtsMergePageController @Inject() (
     val form    = getYearChoiceForm(formWithErrors, request)
 
     for {
-      saShuttered   <- featureFlagService.get(ShutteringSelfAssessmentToggle).map(_.isEnabled)
-      payeShuttered <- featureFlagService.get(ShutteringPAYEToggle).map(_.isEnabled)
-      result        <- atsMergePageService.getSaAndPayeYearList.map {
-                         case Right(atsMergePageViewModel) =>
-                           Ok(
-                             atsMergePageView(
-                               atsMergePageViewModel,
-                               form,
-                               getActingAsAttorneyFor(
-                                 request,
-                                 atsMergePageViewModel.saData.forename,
-                                 atsMergePageViewModel.saData.surname,
-                                 atsMergePageViewModel.saData.utr
-                               ),
-                               saShuttered,
-                               payeShuttered
-                             )
-                           ).withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
+      saEnabled   <- featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
+      payeEnabled <- featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
+      result      <- atsMergePageService.getSaAndPayeYearList.map {
+                       case Right(atsMergePageViewModel) =>
+                         Ok(
+                           atsMergePageView(
+                             atsMergePageViewModel,
+                             form,
+                             getActingAsAttorneyFor(
+                               request,
+                               atsMergePageViewModel.saData.forename,
+                               atsMergePageViewModel.saData.surname,
+                               atsMergePageViewModel.saData.utr
+                             ),
+                             saEnabled,
+                             payeEnabled
+                           )
+                         ).withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-                         case _                            =>
-                           InternalServerError(genericErrorView())
-                       }
+                       case _                            =>
+                         InternalServerError(genericErrorView())
+                     }
     } yield result
   }
 

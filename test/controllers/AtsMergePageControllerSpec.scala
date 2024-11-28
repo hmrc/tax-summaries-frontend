@@ -20,7 +20,7 @@ import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
 import controllers.auth.{FakeAuthJourney, requests}
 import models.AtsErrorResponse
-import models.admin.{ShutteringPAYEToggle, ShutteringSelfAssessmentToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -72,11 +72,11 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
   override def beforeEach(): Unit = {
     reset(mockAppConfig, mockFeatureFlagService)
 
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
 
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-      .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
   }
 
   "AtsMergePageController for onPageLoad" must {
@@ -120,13 +120,13 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
     }
 
-    "redirect to serviceUnavailable page if sa and paye are shuttered" in {
+    "redirect to serviceUnavailable page if sa and paye are not enabled" in {
 
-      when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringSelfAssessmentToggle)))
-        .thenReturn(Future.successful(FeatureFlag(ShutteringSelfAssessmentToggle, isEnabled = true)))
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
 
-      when(mockFeatureFlagService.get(ArgumentMatchers.eq(ShutteringPAYEToggle)))
-        .thenReturn(Future.successful(FeatureFlag(ShutteringPAYEToggle, isEnabled = true)))
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 

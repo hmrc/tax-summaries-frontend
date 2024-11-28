@@ -19,7 +19,7 @@ package controllers.auth.actions
 import com.google.inject.{ImplementedBy, Inject}
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
-import models.admin.ShutteringPAYEToggle
+import models.admin.PAYEServiceToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -52,8 +52,8 @@ class PayeAuthActionImpl @Inject() (
     enrolments.exists(_.key == "IR-SA-AGENT") &&
       enrolments.exists(_.identifiers.exists(_.key == "IRAgentReference"))
 
-  private def isPayeShuttered: Future[Boolean] =
-    featureFlagService.get(ShutteringPAYEToggle).map(_.isEnabled)
+  private def isPayeEnabled: Future[Boolean] =
+    featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
 
   override def invokeBlock[A](
     request: Request[A],
@@ -61,9 +61,9 @@ class PayeAuthActionImpl @Inject() (
   ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    isPayeShuttered.flatMap {
-      case true  => redirectToServiceUnavailable
-      case false => handleAuthorisation(request, block)
+    isPayeEnabled.flatMap {
+      case true  => handleAuthorisation(request, block)
+      case false => redirectToServiceUnavailable
     }
   }
 
