@@ -23,7 +23,6 @@ case object PertaxBackendToggle extends FeatureFlagName {
   override val description: Option[String] = Some(
     "Enable/disable pertax backend during auth"
   )
-
 }
 
 case object SelfAssessmentServiceToggle extends FeatureFlagName {
