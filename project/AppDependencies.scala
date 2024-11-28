@@ -5,13 +5,13 @@ import sbt.*
 object AppDependencies {
 
   private val playVersion = "play-30"
-  private val scaWrapperVersion = "1.12.0"
-  private val featureToggleVersion = "1.6.0"
+  private val scaWrapperVersion = "2.1.0"
+  private val featureToggleVersion = "1.8.0"
 
   val compile: Seq[ModuleID] = Seq(
     filters,
     ws,
-    "uk.gov.hmrc"                %% "tax-year"                   % "4.0.0",
+    "uk.gov.hmrc"                %% "tax-year"                   % "5.0.0",
     "org.typelevel"              %% "cats-core"                  % "2.12.0",
     "uk.gov.hmrc"                %% s"mongo-feature-toggles-client-$playVersion" % featureToggleVersion,
     "uk.gov.hmrc"                %% s"sca-wrapper-$playVersion"                  % scaWrapperVersion
