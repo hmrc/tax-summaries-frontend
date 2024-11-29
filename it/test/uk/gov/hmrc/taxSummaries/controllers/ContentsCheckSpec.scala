@@ -17,7 +17,7 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, post, urlEqualTo, urlMatching, urlPathMatching}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import models.admin.{PAYEServiceToggle, PertaxBackendToggle, SelfAssessmentServiceToggle}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -169,23 +169,23 @@ class ContentsCheckSpec extends IntegrationSpec {
           aResponse()
             .withStatus(OK)
             .withBody("""
-                |{
-                | "id": "session-id",
-                | "data": {
-                |   "addressPageVisitedDto": {
-                |     "hasVisitedPage": true
-                |   }
-                | },
-                | "modifiedDetails": {
-                |    "createdAt": {
-                |       "$date": 1400258561678
-                |    },
-                |    "lastUpdated": {
-                |       "$date": 1400258561675
-                |    }
-                | }
-                |}
-                |""".stripMargin)
+                        |{
+                        | "id": "session-id",
+                        | "data": {
+                        |   "addressPageVisitedDto": {
+                        |     "hasVisitedPage": true
+                        |   }
+                        | },
+                        | "modifiedDetails": {
+                        |    "createdAt": {
+                        |       "$date": 1400258561678
+                        |    },
+                        |    "lastUpdated": {
+                        |       "$date": 1400258561675
+                        |    }
+                        | }
+                        |}
+                        |""".stripMargin)
         )
     )
 
@@ -253,15 +253,19 @@ class ContentsCheckSpec extends IntegrationSpec {
         s"pass content checks at url $url" in {
           server.stubFor(post(urlEqualTo("/auth/authorise")).willReturn(ok(authResponse)))
           val result: Future[Result] = route(app, request(url)).get
-          val content                = Jsoup.parse(contentAsString(result))
+
+          val content = Jsoup.parse(contentAsString(result))
 
           content.title() mustBe expectedData.title
 
-          val govUkBanner = content.getElementsByClass("govuk-phase-banner")
+          val govUkBanner       = content.getElementsByClass("govuk-phase-banner")
           govUkBanner.size() mustBe 1
-          govUkBanner.get(0).getElementsByClass("govuk-link").get(0).attr("href") must include(
-            "http://localhost:9250/contact/beta-feedback?service=ATS&backUrl"
+          val actualHref        = govUkBanner.get(0).getElementsByClass("govuk-link").get(0).attr("href")
+          val actualReferrerUrl = actualHref.substring(actualHref.indexOf("&referrerUrl=") + 13).replace("%2F", "/")
+          actualHref        must include(
+            "http://localhost:9250/contact/beta-feedback?service=ATS"
           )
+          actualReferrerUrl must include(url)
 
           val accessibilityStatement = content
             .getElementsByClass("govuk-footer__link")
