@@ -20,6 +20,8 @@ import cats.data.EitherT
 import config.ApplicationConfig
 import controllers.auth.actions.AuthAction
 import models.AgentToken
+import models.admin.SelfAssessmentServiceToggle
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.SEE_OTHER
@@ -34,6 +36,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import utils.BaseSpec
 import utils.RetrievalOps.Ops
@@ -73,7 +76,8 @@ class AuthActionSpec extends BaseSpec {
       cc = FakeAuthAction.mcc,
       taxsAgentTokenSessionCacheRepository = mockTaxsAgentTokenSessionCacheRepository,
       citizenDetailsService = mockCitizenDetailsService,
-      pertaxAuthService = mockPertaxAuthService
+      pertaxAuthService = mockPertaxAuthService,
+      mockFeatureFlagService
     )(ec, appConfig)
     new Harness(authAction)
   }
@@ -91,8 +95,10 @@ class AuthActionSpec extends BaseSpec {
     reset(mockTaxsAgentTokenSessionCacheRepository)
     reset(mockCitizenDetailsService)
     reset(mockPertaxAuthService)
+    reset(mockFeatureFlagService)
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-    when(appConfig.saShuttered).thenReturn(false)
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
   private val extId: String          = "123"
@@ -238,14 +244,16 @@ class AuthActionSpec extends BaseSpec {
     }
 
     "shutter check is true" must {
-      "redirect to service unavailable page when SA is shuttered" in {
-        when(appConfig.saShuttered).thenReturn(true)
+      "redirect to service unavailable page when SA is not enabled" in {
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
         val result = createHarness.onPageLoad(saShutterCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
       }
-      "return OK when SA is NOT shuttered" in {
-        when(appConfig.saShuttered).thenReturn(false)
+      "return OK when SA is enabled" in {
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
@@ -257,7 +265,8 @@ class AuthActionSpec extends BaseSpec {
 
     "agent token check is true" must {
       "direct to OK when agent token present in db & query params present" in {
-        when(appConfig.saShuttered).thenReturn(false)
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
 
         whenRetrieval(enrolments =
           Set(
@@ -280,8 +289,8 @@ class AuthActionSpec extends BaseSpec {
       }
 
       "direct to OK when agent token absent from db & query params present" in {
-        when(appConfig.saShuttered).thenReturn(false)
-
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(enrolments =
           Set(
             Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated"),
@@ -303,8 +312,8 @@ class AuthActionSpec extends BaseSpec {
       }
 
       "redirect to not authorised page when agent token present in db & query params absent" in {
-        when(appConfig.saShuttered).thenReturn(false)
-
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(enrolments =
           Set(
             Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated"),

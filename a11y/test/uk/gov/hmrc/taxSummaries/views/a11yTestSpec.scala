@@ -18,6 +18,9 @@ package views
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo, urlMatching}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
@@ -29,6 +32,7 @@ import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, 
 import repository.TaxsAgentTokenSessionCacheRepository
 import testUtils.{FileHelper, IntegrationSpec}
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
@@ -84,6 +88,10 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         .get(urlMatching("/single-customer-account-wrapper-data/message-data.*"))
         .willReturn(ok(s"$messageCount"))
     )
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] = {

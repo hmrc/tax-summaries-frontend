@@ -17,7 +17,9 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import models.{AgentToken, AtsListData}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any => mockAny}
 import org.mockito.Mockito.{when, reset => mockReset}
 import play.api
@@ -31,6 +33,7 @@ import repository.TaxsAgentTokenSessionCacheRepository
 import services.PertaxAuthService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
@@ -99,9 +102,14 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         .willReturn(ok(authResponse))
     )
 
-    mockReset(mockFeatureFlagService)
-    mockReset(mockPertaxAuthService)
+    mockReset(mockFeatureFlagService, mockPertaxAuthService)
+
     when(mockPertaxAuthService.authorise(mockAny())).thenReturn(Future.successful(None))
+
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
   when(

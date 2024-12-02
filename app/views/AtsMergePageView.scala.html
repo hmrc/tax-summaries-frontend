@@ -16,72 +16,70 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.requests.AuthenticatedRequest
-@import view_models.AtsForms
-@import view_models.AtsMergePageViewModel
-@import helpers.{H1, P, Link, Button, InputRadios, ErrorSummary, PageHeading, HeaderSection}
+@import helpers.{Button, ErrorSummary, HeaderSection, InputRadios, Link, P, PageHeading}
+@import view_models.{AtsForms, AtsMergePageViewModel}
 @import views.MainTemplate
 
 @this(
-    main: MainTemplate,
-    headerSection: HeaderSection,
-    atsForms: AtsForms,
-    formWithCSRF: FormWithCSRF,
-    p: P,
-    errorSummary: ErrorSummary,
-    link: Link,
-    button: Button,
-    inputRadios: InputRadios,
-    pageHeading: PageHeading
+        main: MainTemplate,
+        headerSection: HeaderSection,
+        atsForms: AtsForms,
+        formWithCSRF: FormWithCSRF,
+        p: P,
+        errorSummary: ErrorSummary,
+        link: Link,
+        button: Button,
+        inputRadios: InputRadios,
+        pageHeading: PageHeading
 )
 
-@(  atsMergePageViewModel: AtsMergePageViewModel,
-    atsYearForm: Form[models.AtsYearChoice],
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None
-    )(
-    implicit request: AuthenticatedRequest[_],
-    messages: Messages,
-    appConfig: ApplicationConfig
+@(atsMergePageViewModel: AtsMergePageViewModel,
+        atsYearForm: Form[models.AtsYearChoice],
+        actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+        saShuttered: Boolean,
+        payeShuttered: Boolean
+)(
+        implicit request: AuthenticatedRequest[_],
+        messages: Messages
 )
 
 @beforeContent = {
-    @headerSection(
-        name = atsMergePageViewModel.name,
-        utr = atsMergePageViewModel.saData.utr,
-        actingAsAttorney = actingAsAttorney
-    )
+@headerSection(
+    name = atsMergePageViewModel.name,
+    utr = atsMergePageViewModel.saData.utr,
+    actingAsAttorney = actingAsAttorney
+)
 }
 
 @title = {
-    @if(atsYearForm.errors) {@messages("error.form.error") @messages(atsMergePageViewModel.titleMsg)} else {@messages(atsMergePageViewModel.titleMsg)}
+@if(atsYearForm.errors) {@messages("error.form.error") @messages(atsMergePageViewModel.titleMsg)} else {
+    @messages(atsMergePageViewModel.titleMsg)
+}
 }
 
-@errorSummaryLink = @{
-    if(atsMergePageViewModel.completeYearList.nonEmpty){
-        Some(atsMergePageViewModel.completeYearList.map{
-            x => s"${atsForms.yearChoice}-${x.year}-${x.atsType}"
-        }.head)
-    } else None
+@errorSummaryLink = @{atsMergePageViewModel.completeYearList.headOption.map { x =>
+    s"${atsForms.yearChoice}-${x.year}-${x.atsType}"
+    }
 }
-
 
 @main(
-        pageTitle = title.toString,
-        actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent),
-        pageHeading = Messages("ats.summary.title"),
-        showBackLink = false,
-        headerSectionNeeded = true
+    pageTitle = title.toString,
+    actingAttorney = actingAsAttorney,
+    beforeContentHtml = Some(beforeContent),
+    pageHeading = Messages("ats.summary.title"),
+    showBackLink = false,
+    headerSectionNeeded = true
 ) {
     @errorSummary(atsYearForm, errorSummaryLink)
 
-    @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit){
+    @formWithCSRF(action = controllers.routes.AtsMergePageController.onSubmit) {
         @pageHeading(
             elmId = "index-page-header",
             text = atsMergePageViewModel.subtitleMsg
         )
 
-        @if(atsMergePageViewModel.showNoAtsYearList){
-            @p(Text(messages("merge.page.no.ats.summary.text")), classes=Some("govuk-hint"), elmId=Some("generic-no-ats"))
+        @if(atsMergePageViewModel.showNoAtsYearList) {
+            @p(Text(messages("merge.page.no.ats.summary.text")), classes = Some("govuk-hint"), elmId = Some("generic-no-ats"))
         }
 
         @inputRadios(
@@ -91,42 +89,44 @@
             legendAsHeading = false,
             name = atsForms.yearChoice,
             items = radioItems(atsForms.yearChoice, atsMergePageViewModel.completeYearList.map(
-            yearChoice => yearChoice -> yearChoice.getLabel
-        )),
-            fieldSetAttrs = Map("id" ->"year_field")
+                yearChoice => yearChoice -> yearChoice.getLabel
+            )),
+            fieldSetAttrs = Map("id" -> "year_field")
         )
 
-        @if(appConfig.saShuttered){
-            @p(Text(messages("merge.page.sa.unavailable")), elmId=Some("sa-unavailable"))
+        @if(saShuttered) {
+            @p(Text(messages("merge.page.sa.unavailable")), elmId = Some("sa-unavailable"))
         }
-        @if(appConfig.payeShuttered){
 
-            @p(Text(messages("merge.page.paye.unavailable")), elmId=Some("paye-unavailable"))
-
-
-        }else if(atsMergePageViewModel.showIvUpliftLink){
-            @p(HtmlContent(messages("merge.page.paye.ivuplift.text") +
-                            link(link = controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel.url, 
-                                messageKey = "merge.page.paye.ivuplift.link.text", 
-                                id = Some("ivUplift-link"), 
-                                inParagraph = true)
-                        ), elmId = Some("paye-uplift"))
-        }
-        @if(atsMergePageViewModel.showContinueButton){
-            @button(msg="ats.select_tax_year.continue", id = "continue")
-        }
-}
-}
-
-@radioItems(name: String, radioOptions:Seq[(AtsYearChoice, String)]) = @{
-    radioOptions.map { case (value, label) =>
-        RadioItem(
-                    content = Text(label),
-                    value = Some(AtsYearChoice.toString(value)),
-                    id = Some(s"$name-${value.year}-${value.atsType}"),
-                    label = Some(Label(content = Text(label),
-                                attributes = Map("id" -> s"$name-${value.year}-${value.atsType}-label"))),
-                    checked = atsYearForm(name).value == Some(AtsYearChoice.toString(value)),
+        @if(payeShuttered) {
+            @p(Text(messages("merge.page.paye.unavailable")), elmId = Some("paye-unavailable"))
+        } else if(atsMergePageViewModel.showIvUpliftLink) {
+        @p(HtmlContent(messages("merge.page.paye.ivuplift.text") +
+                link(
+                    link = controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel.url,
+                    messageKey = "merge.page.paye.ivuplift.link.text",
+                    id = Some("ivUplift-link"),
+                    inParagraph = true
                 )
+        ), elmId = Some("paye-uplift"))
+        }
+
+        @if(atsMergePageViewModel.showContinueButton) {
+            @button(msg = "ats.select_tax_year.continue", id = "continue")
+        }
     }
 }
+
+@radioItems(name: String, radioOptions: Seq[(AtsYearChoice, String)]) = @{
+    radioOptions.map { case (value, label) =>
+        RadioItem(
+            content = Text(label),
+            value = Some(AtsYearChoice.toString(value)),
+            id = Some(s"$name-${value.year}-${value.atsType}"),
+            label = Some(Label(content = Text(label), attributes = Map("id" -> s"$name-${value.year}-${value.atsType}-label"))),
+            checked = atsYearForm(name).value.contains(AtsYearChoice.toString(value))
+        )
+    }
+}
+
+

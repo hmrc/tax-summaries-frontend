@@ -18,7 +18,7 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.admin.PertaxBackendToggle
+import models.admin.{PAYEServiceToggle, PertaxBackendToggle, SelfAssessmentServiceToggle}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -153,12 +153,15 @@ class ContentsCheckSpec extends IntegrationSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFeatureFlagService)
-    reset(mockPertaxAuthService)
+    reset(mockFeatureFlagService, mockPertaxAuthService)
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
 
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PertaxBackendToggle)))
       .thenReturn(Future.successful(FeatureFlag(PertaxBackendToggle, isEnabled = false)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
 
     server.stubFor(
       get(urlPathMatching(s"$cacheMap/.*"))
@@ -166,23 +169,23 @@ class ContentsCheckSpec extends IntegrationSpec {
           aResponse()
             .withStatus(OK)
             .withBody("""
-                |{
-                | "id": "session-id",
-                | "data": {
-                |   "addressPageVisitedDto": {
-                |     "hasVisitedPage": true
-                |   }
-                | },
-                | "modifiedDetails": {
-                |    "createdAt": {
-                |       "$date": 1400258561678
-                |    },
-                |    "lastUpdated": {
-                |       "$date": 1400258561675
-                |    }
-                | }
-                |}
-                |""".stripMargin)
+                        |{
+                        | "id": "session-id",
+                        | "data": {
+                        |   "addressPageVisitedDto": {
+                        |     "hasVisitedPage": true
+                        |   }
+                        | },
+                        | "modifiedDetails": {
+                        |    "createdAt": {
+                        |       "$date": 1400258561678
+                        |    },
+                        |    "lastUpdated": {
+                        |       "$date": 1400258561675
+                        |    }
+                        | }
+                        |}
+                        |""".stripMargin)
         )
     )
 

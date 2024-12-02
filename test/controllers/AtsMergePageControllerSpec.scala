@@ -20,7 +20,9 @@ import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
 import controllers.auth.{FakeAuthJourney, requests}
 import models.AtsErrorResponse
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -31,6 +33,7 @@ import play.api.test.Helpers._
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.ControllerBaseSpec
 import utils.TestConstants.{testNino, testUtr}
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
@@ -48,7 +51,8 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     mcc,
     atsMergePageView,
     genericErrorView,
-    atsForms
+    atsForms,
+    mockFeatureFlagService
   )
 
   lazy implicit val authRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
@@ -68,8 +72,11 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
   override def beforeEach(): Unit = {
     reset(mockAppConfig, mockFeatureFlagService)
 
-    when(mockAppConfig.saShuttered).thenReturn(false)
-    when(mockAppConfig.payeShuttered).thenReturn(false)
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
   }
 
   "AtsMergePageController for onPageLoad" must {
@@ -113,10 +120,13 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
     }
 
-    "redirect to serviceUnavailable page if sa and paye are shuttered" in {
+    "redirect to serviceUnavailable page if sa and paye are not enabled" in {
 
-      when(mockAppConfig.saShuttered).thenReturn(true)
-      when(mockAppConfig.payeShuttered).thenReturn(true)
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
+
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
@@ -280,5 +290,4 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       document.text() contains "Select an option for the tax year"
     }
   }
-
 }
