@@ -136,6 +136,40 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       redirectLocation(result).get mustBe controllers.routes.ErrorController.serviceUnavailable.url
     }
 
+    "not redirect to serviceUnavailable page if sa is disabled and paye is enabled" in {
+
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
+
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+
+      val result = sut.onPageLoad(authRequest)
+
+      status(result) mustBe 200
+
+      redirectLocation(result) mustBe None
+    }
+
+    "not redirect to serviceUnavailable page if sa is enabled and paye is disabled" in {
+
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+
+      when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+        .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+
+      val result = sut.onPageLoad(authRequest)
+
+      status(result) mustBe 200
+
+      redirectLocation(result) mustBe None
+    }
+
     "redirect to genericErrorView page if service returns an error" in {
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any()))

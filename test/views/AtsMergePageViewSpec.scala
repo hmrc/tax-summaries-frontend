@@ -19,23 +19,18 @@ package views
 import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import utils.TestConstants
 import view_models.{AtsForms, AtsList, AtsMergePageViewModel}
 import views.html.AtsMergePageView
-
-import scala.concurrent.Future
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
@@ -79,31 +74,24 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
   def view(
     model: AtsMergePageViewModel,
     form: Form[AtsYearChoice],
-    payeShuttered: Boolean = false,
-    saShuttered: Boolean = false
+    payeAvailable: Boolean = true,
+    saAvailable: Boolean = true
   )(implicit request: AuthenticatedRequest[_]): String =
-    atsMergePageView(model, form, payeShuttered = payeShuttered, saShuttered = saShuttered)(request, implicitly).body
+    atsMergePageView(model, form, payeAvailable = payeAvailable, saAvailable = saAvailable)(request, implicitly).body
 
   def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
     atsMergePageView(
       model,
       form,
       Some(ActingAsAttorneyFor(Some("Agent"), Map())),
-      saShuttered = false,
-      payeShuttered = false
+      saAvailable = true,
+      payeAvailable = true
     )(
       implicitly,
       implicitly
     ).body
 
   override def beforeEach(): Unit = {
-    reset(mockFeatureFlagService)
-
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
-      .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
-      .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
-
     when(mockAppConfig.taxYear).thenReturn(taxYear)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
   }
@@ -181,7 +169,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must not include messages("merge.page.no.ats.summary.unavailable.text")
     }
 
-    "show radiobuttons if there is paye data" in {
+    "show radiobuttons if there is paye data when the paye is available and not show paye shuttered message" in {
       val result = view(
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
@@ -197,6 +185,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must include(s"${taxYear - 3} to ${taxYear - 2} for PAYE")
       result must include(s"${taxYear - 4} to ${taxYear - 3} for PAYE")
       result must include(s"${taxYear - 5} to ${taxYear - 4} for PAYE")
+      result mustNot include(messages("merge.page.paye.unavailable"))
+
     }
 
     "not show radiobuttons if paye data is not present" in {
@@ -244,24 +234,17 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must not include messages("merge.page.paye.ivuplift.text")
     }
 
-    "not show paye shuttered message if service is shuttered" in {
-      val result = view(
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
-        atsForms.atsYearFormMapping
-      )
-      result mustNot include(messages("merge.page.paye.unavailable"))
-    }
-
-    "show paye shuttered message if service is shuttered" in {
+    "show paye shuttered message if paye service is not available" in {
       val result = view(
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
         atsForms.atsYearFormMapping,
-        payeShuttered = true
+        payeAvailable = false
       )
       result must include(messages("merge.page.paye.unavailable"))
+      result mustNot include(s"${taxYear - 1} to $taxYear for PAYE")
     }
 
-    "show radiobuttons if there is sa data" in {
+    "show radiobuttons if there is sa data and not show sa shuttered message" in {
       val result = view(
         AtsMergePageViewModel(
           AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
@@ -277,6 +260,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must include(s"${taxYear - 3} to ${taxYear - 2} for Self Assessment")
       result must include(s"${taxYear - 4} to ${taxYear - 3} for Self Assessment")
       result must include(s"${taxYear - 5} to ${taxYear - 4} for Self Assessment")
+      result mustNot include(messages("merge.page.sa.unavailable"))
+
     }
 
     "not show radiobuttons if sa data is not present" in {
@@ -289,21 +274,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must not include "for Self Assessment"
     }
 
-    "not show sa shuttered message if service is shuttered" in {
-      val result = view(
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
-        atsForms.atsYearFormMapping
-      )
-      result mustNot include(messages("merge.page.sa.unavailable"))
-    }
-
-    "show sa shuttered message if service is shuttered" in {
+    "show sa shuttered message if sa service is not available" in {
       val result = view(
         AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
         atsForms.atsYearFormMapping,
-        saShuttered = true
+        saAvailable = false
       )
       result must include(messages("merge.page.sa.unavailable"))
+      result mustNot include(s"${taxYear - 1} to $taxYear for Self Assessment")
 
     }
 
@@ -315,8 +293,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           mockAppConfig,
           ConfidenceLevel.L50
         ),
-        atsForms.atsYearFormMapping,
-        saShuttered = true
+        atsForms.atsYearFormMapping
       )
       result must include(messages("merge.page.paye.ivuplift.header"))
     }
