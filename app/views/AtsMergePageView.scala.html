@@ -36,8 +36,8 @@
 @(atsMergePageViewModel: AtsMergePageViewModel,
         atsYearForm: Form[models.AtsYearChoice],
         actingAsAttorney: Option[ActingAsAttorneyFor] = None,
-        saShuttered: Boolean,
-        payeShuttered: Boolean
+        saAvailable: Boolean,
+        payeAvailable: Boolean
 )(
         implicit request: AuthenticatedRequest[_],
         messages: Messages
@@ -94,11 +94,11 @@
             fieldSetAttrs = Map("id" -> "year_field")
         )
 
-        @if(saShuttered) {
+        @if(!saAvailable) {
             @p(Text(messages("merge.page.sa.unavailable")), elmId = Some("sa-unavailable"))
         }
 
-        @if(payeShuttered) {
+        @if(!payeAvailable) {
             @p(Text(messages("merge.page.paye.unavailable")), elmId = Some("paye-unavailable"))
         } else if(atsMergePageViewModel.showIvUpliftLink) {
         @p(HtmlContent(messages("merge.page.paye.ivuplift.text") +
