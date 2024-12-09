@@ -16,7 +16,6 @@
 
 package controllers.auth.actions
 
-import cats.data.EitherT
 import cats.implicits._
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
@@ -170,11 +169,6 @@ class AuthImpl(
   private def validateCitizenDetails[A](
     request: AuthenticatedRequest[A]
   )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
-    citizenDetailsCheck(request).value
-
-  private def citizenDetailsCheck[A](
-    request: AuthenticatedRequest[A]
-  )(implicit hc: HeaderCarrier): EitherT[Future, Result, AuthenticatedRequest[A]] =
     (request.nino, request.saUtr, request.isAgent) match {
       case (Some(nino), None, false) =>
         citizenDetailsService
@@ -183,7 +177,8 @@ class AuthImpl(
             _ => serviceUnavailablePage,
             maybeSaUtr => request.copy(saUtr = maybeSaUtr)
           )
-      case _                         => EitherT.rightT(request)
+          .value
+      case _                         => Future.successful(Right(request))
     }
 
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
