@@ -82,28 +82,24 @@ class AuthImpl(
   )(implicit hc: HeaderCarrier): Future[Result] =
     createAuthenticatedRequest(request).flatMap {
       case Right(authenticatedRequest) =>
-      // For PAYE users iff no utr enrolment then we should try to call citizen details. We need the UTR if there is one present so we can present paye and sa data in radio buttons list together
-      // If cd call fails then throw exception.
-        if (utrCheck) {
-          val requestAfterCitizenDetailsCall =
-            (authenticatedRequest.nino, authenticatedRequest.saUtr, authenticatedRequest.isAgent) match {
-              case (Some(nino), None, false) =>
-                citizenDetailsService
-                  .getMatchingSaUtr(nino.nino)
-                  .bimap(_ => serviceUnavailablePage, maybeSaUtr => authenticatedRequest.copy(saUtr = maybeSaUtr))
-                  .value
-              case _                         => Future.successful(Right(authenticatedRequest))
-            }
-          requestAfterCitizenDetailsCall.flatMap {
-            case Left(result)   => Future.successful(result)
-            case Right(authReq) =>
-              (authReq.isAgent, authReq.saUtr) match {
-                case (false, None) => Future.successful(notAuthorisedPage)
-                case _             => block(authReq)
-              }
+        val requestAfterCitizenDetailsCall =
+          (authenticatedRequest.nino, authenticatedRequest.saUtr, authenticatedRequest.isAgent) match {
+            case (Some(nino), None, false) =>
+              citizenDetailsService
+                .getMatchingSaUtr(nino.nino)
+                .bimap(_ => serviceUnavailablePage, maybeSaUtr => authenticatedRequest.copy(saUtr = maybeSaUtr))
+                .value
+            case _                         =>
+              Future.successful(Right(authenticatedRequest))
           }
-        } else {
-          block(authenticatedRequest)
+
+        requestAfterCitizenDetailsCall.flatMap {
+          case Left(result)   => Future.successful(result)
+          case Right(authReq) =>
+            (utrCheck, authReq.isAgent, authReq.saUtr) match {
+              case (true, false, None) => Future.successful(notAuthorisedPage)
+              case _                   => block(authReq)
+            }
         }
 
       case Left(result) => Future.successful(result)
@@ -149,12 +145,9 @@ class AuthImpl(
               request = request
             )
           (agentRef.isDefined, isAgentActive) match {
-            case (true, false) =>
-              Future.successful(Left(notAuthorisedPage))
-            case (true, true)  =>
-              agentTokenCheck(request, newRequest)
-            case _             =>
-              validatePertaxAuth(request, newRequest)
+            case (true, false) => Future.successful(Left(notAuthorisedPage))
+            case (true, true)  => agentTokenCheck(request, newRequest)
+            case _             => validatePertaxAuth(request, newRequest)
           }
         case _                                                                                              => Future.failed(new RuntimeException("Can't find credentials for user"))
       } recover { case _: NoActiveSession =>

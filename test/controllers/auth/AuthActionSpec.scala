@@ -131,38 +131,33 @@ class AuthActionSpec extends BaseSpec {
   "invokeBlock" when {
 
     "shutter, agent token and utr checks are all false" must {
-      "Not call citizen details and return OK when an agent is active" in {
-        whenRetrieval(enrolments =
-          Set(
-            Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated"),
+      "Not call citizen details and return OK when SA UTR is in the enrolments" in {
+        whenRetrieval(
+          nino = Some(nino),
+          enrolments = Set(
             Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
           )
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(None)
-          )
 
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
         verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
       }
 
+      "Call citizen details and return OK when no SA UTR is in the enrolments" in {
+        whenRetrieval(nino = Some(nino))
+
+        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
+          .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
+        val result = createHarness.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+        verify(mockCitizenDetailsService, times(1)).getMatchingSaUtr(any())(any())
+      }
+
       "Not call citizen details and redirect to not authorised page when an agent is inactive" in {
         whenRetrieval(enrolments =
-          Set(
-            Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Inactive"),
-            Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated")
-          )
+          Set(Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Inactive"))
         )
-
-        when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-          .thenReturn(
-            Future
-              .successful(None)
-          )
 
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
@@ -170,21 +165,23 @@ class AuthActionSpec extends BaseSpec {
         verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
       }
 
-      "Not call citizen details and return OK when a non-agent with nino and authorised successfully" in {
-        whenRetrieval(nino = Some(nino))
-        when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
-          .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
+      "Not call agent token check or citizen details and return OK when agent is active" in {
+        whenRetrieval(enrolments =
+          Set(
+            Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated")
+          )
+        )
+
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
         verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
+        verify(mockTaxsAgentTokenSessionCacheRepository, times(0))
+          .getFromSession[AgentToken](DataKey(any()))(any(), any())
       }
 
       "redirect to failure url when authorisation fails" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(Some(Redirect("/dummy"))))
-        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
-          .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/dummy")
