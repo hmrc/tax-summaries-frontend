@@ -23,12 +23,11 @@ import models.AgentToken
 import models.admin.SelfAssessmentServiceToggle
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import play.api.http.Status.SEE_OTHER
+import org.mockito.Mockito.{reset, times, verify, when}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, InjectedController}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, _}
+import play.api.test.Helpers._
 import repository.TaxsAgentTokenSessionCacheRepository
 import services.{CitizenDetailsService, PertaxAuthService}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
@@ -113,10 +112,10 @@ class AuthActionSpec extends BaseSpec {
     enrolments: Set[Enrolment] = Set.empty,
     externalId: Option[String] = Some(extId),
     creds: Option[Credentials] = Some(fakeCredentials),
-    utr: Option[String] = None,
     nino: Option[String] = None,
     confidenceLevel: ConfidenceLevel = L50
-  ): Unit =
+  ): Unit = {
+    val utr = enrolments.find(_.key == "IR-SA").flatMap(_.identifiers.find(_.key == "UTR").map(_.value))
     when(
       mockAuthConnector
         .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
@@ -127,11 +126,12 @@ class AuthActionSpec extends BaseSpec {
         Enrolments(enrolments) ~ externalId ~ creds ~ utr ~ nino ~ confidenceLevel
       )
     )
+  }
 
   "invokeBlock" when {
 
     "shutter, agent token and utr checks are all false" must {
-      "Return OK when an agent is active" in {
+      "Not call citizen details and return OK when an agent is active" in {
         whenRetrieval(enrolments =
           Set(
             Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Activated"),
@@ -147,9 +147,10 @@ class AuthActionSpec extends BaseSpec {
 
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
+        verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
       }
 
-      "redirect to not authorised page when an agent is inactive" in {
+      "Not call citizen details and redirect to not authorised page when an agent is inactive" in {
         whenRetrieval(enrolments =
           Set(
             Enrolment("IR-SA-AGENT", Seq(EnrolmentIdentifier("IRAgentReference", agentRef)), "Inactive"),
@@ -166,25 +167,17 @@ class AuthActionSpec extends BaseSpec {
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
+        verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
       }
 
-      "Call citizen details & find no utr and return OK when a non-agent with nino but no utr and authorised successfully" in {
-        whenRetrieval(nino = Some(nino))
-        when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
-          .thenReturn(EitherT.rightT(None))
-        val result = createHarness.onPageLoad()(fakeRequest)
-        status(result) mustBe OK
-      }
-
-      "Call citizen details and find a utr and return OK when a non-agent with nino but no utr and authorised successfully" in {
+      "Not call citizen details and return OK when a non-agent with nino and authorised successfully" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
           .thenReturn(EitherT.rightT(Some(SaUtr(utr))))
         val result = createHarness.onPageLoad()(fakeRequest)
         status(result) mustBe OK
-        contentAsString(result) must include(s"SaUtr: $utr")
+        verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
       }
 
       "redirect to failure url when authorisation fails" in {
@@ -221,8 +214,20 @@ class AuthActionSpec extends BaseSpec {
     }
 
     "utr check is true" must {
+      "Not call citizen details and return OK when utr is already available in enrolments" in {
+        whenRetrieval(
+          nino = Some(nino),
+          enrolments = Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", utr)), "Activated"))
+        )
 
-      "Return OK when citizen details returns a utr" in {
+        when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
+        val result = createHarness.onPageLoad(utrCheck = true)(fakeRequest)
+        status(result) mustBe OK
+        contentAsString(result) must include(s"SaUtr: $utr")
+        verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
+      }
+
+      "Call citizen details and return OK when it returns a utr" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
@@ -230,9 +235,10 @@ class AuthActionSpec extends BaseSpec {
         val result = createHarness.onPageLoad(utrCheck = true)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) must include(s"SaUtr: $utr")
+        verify(mockCitizenDetailsService, times(1)).getMatchingSaUtr(any())(any())
       }
 
-      "Redirect to not authorised when citizen details returns no utr" in {
+      "Call citizen details and redirect to not authorised when it returns no utr" in {
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
@@ -240,6 +246,7 @@ class AuthActionSpec extends BaseSpec {
         val result = createHarness.onPageLoad(utrCheck = true)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
+        verify(mockCitizenDetailsService, times(1)).getMatchingSaUtr(any())(any())
       }
     }
 

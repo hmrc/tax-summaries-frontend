@@ -32,8 +32,8 @@ class CitizenDetailsService @Inject() (citizenDetailsConnector: CitizenDetailsCo
     nino: String
   )(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, Option[SaUtr]] =
     citizenDetailsConnector.connectToCid(nino).transform {
-      case Right(httpResponse)                          =>
-        Right((httpResponse.json \ "ids" \ "sautr").asOpt[String].map(SaUtr.apply))
+      case Right(_)                                     =>
+        Right(None)
       case Left(error) if error.statusCode == NOT_FOUND => Right(None)
       case Left(error)                                  => Left(error)
     }

@@ -82,20 +82,32 @@ class AuthImpl(
   )(implicit hc: HeaderCarrier): Future[Result] =
     createAuthenticatedRequest(request).flatMap {
       case Right(authenticatedRequest) =>
-        validateCitizenDetails(authenticatedRequest).flatMap {
-          case Left(result)   => Future.successful(result)
-          case Right(authReq) => validateUtrCheck(authReq, block)
+        if (utrCheck) {
+          val requestAfterCitizenDetailsCall =
+            (authenticatedRequest.nino, authenticatedRequest.saUtr, authenticatedRequest.isAgent) match {
+              case (Some(nino), None, false) =>
+                citizenDetailsService
+                  .getMatchingSaUtr(nino.nino)
+                  .bimap(
+                    _ => serviceUnavailablePage,
+                    maybeSaUtr => authenticatedRequest.copy(saUtr = maybeSaUtr)
+                  )
+                  .value
+              case _                         => Future.successful(Right(authenticatedRequest))
+            }
+          requestAfterCitizenDetailsCall.flatMap {
+            case Left(result)   => Future.successful(result)
+            case Right(authReq) =>
+              (authReq.isAgent, authReq.saUtr) match {
+                case (false, None) => Future.successful(notAuthorisedPage)
+                case _             => block(authReq)
+              }
+          }
+        } else {
+          block(authenticatedRequest)
         }
-      case Left(result)                => Future.successful(result)
-    }
 
-  private def validateUtrCheck[A](
-    authReq: AuthenticatedRequest[A],
-    block: AuthenticatedRequest[A] => Future[Result]
-  ): Future[Result] =
-    (utrCheck, authReq.isAgent, authReq.saUtr) match {
-      case (true, false, None) => Future.successful(notAuthorisedPage)
-      case _                   => block(authReq)
+      case Left(result) => Future.successful(result)
     }
 
   private def agentTokenCheck[A](
@@ -137,11 +149,13 @@ class AuthImpl(
               credentials = credentials,
               request = request
             )
-
           (agentRef.isDefined, isAgentActive) match {
-            case (true, false) => Future.successful(Left(notAuthorisedPage))
-            case (true, true)  => agentTokenCheck(request, newRequest)
-            case _             => validatePertaxAuth(request, newRequest)
+            case (true, false) =>
+              Future.successful(Left(notAuthorisedPage))
+            case (true, true)  =>
+              agentTokenCheck(request, newRequest)
+            case _             =>
+              validatePertaxAuth(request, newRequest)
           }
         case _                                                                                              => Future.failed(new RuntimeException("Can't find credentials for user"))
       } recover { case _: NoActiveSession =>
@@ -165,21 +179,6 @@ class AuthImpl(
         (agentReference, enrolment.isActivated)
       }
       .getOrElse((None, false))
-
-  private def validateCitizenDetails[A](
-    request: AuthenticatedRequest[A]
-  )(implicit hc: HeaderCarrier): Future[Either[Result, AuthenticatedRequest[A]]] =
-    (request.nino, request.saUtr, request.isAgent) match {
-      case (Some(nino), None, false) =>
-        citizenDetailsService
-          .getMatchingSaUtr(nino.nino)
-          .bimap(
-            _ => serviceUnavailablePage,
-            maybeSaUtr => request.copy(saUtr = maybeSaUtr)
-          )
-          .value
-      case _                         => Future.successful(Right(request))
-    }
 
   private def notAuthorisedPage: Result = Redirect(controllers.routes.ErrorController.notAuthorised)
 

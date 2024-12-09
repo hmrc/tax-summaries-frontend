@@ -59,7 +59,7 @@ class AtsMergePageController @Inject() (
     for {
       saEnabled   <- featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
       payeEnabled <- featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
-    } yield saEnabled || payeEnabled
+    } yield true //saEnabled || payeEnabled
 
   private def getSaAndPayeYearList(
     formWithErrors: Option[Form[AtsYearChoice]] = None
