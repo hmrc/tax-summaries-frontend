@@ -82,16 +82,15 @@ class AuthImpl(
   )(implicit hc: HeaderCarrier): Future[Result] =
     createAuthenticatedRequest(request).flatMap {
       case Right(authenticatedRequest) =>
+      // For PAYE users iff no utr enrolment then we should try to call citizen details. We need the UTR if there is one present so we can present paye and sa data in radio buttons list together
+      // If cd call fails then throw exception.
         if (utrCheck) {
           val requestAfterCitizenDetailsCall =
             (authenticatedRequest.nino, authenticatedRequest.saUtr, authenticatedRequest.isAgent) match {
               case (Some(nino), None, false) =>
                 citizenDetailsService
                   .getMatchingSaUtr(nino.nino)
-                  .bimap(
-                    _ => serviceUnavailablePage,
-                    maybeSaUtr => authenticatedRequest.copy(saUtr = maybeSaUtr)
-                  )
+                  .bimap(_ => serviceUnavailablePage, maybeSaUtr => authenticatedRequest.copy(saUtr = maybeSaUtr))
                   .value
               case _                         => Future.successful(Right(authenticatedRequest))
             }

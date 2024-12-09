@@ -30,11 +30,15 @@ class CitizenDetailsService @Inject() (citizenDetailsConnector: CitizenDetailsCo
 ) {
   def getMatchingSaUtr(
     nino: String
-  )(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, Option[SaUtr]] =
+  )(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, Option[SaUtr]] = {
+    println("\n\n*** CALLING CD")
     citizenDetailsConnector.connectToCid(nino).transform {
-      case Right(_)                                     =>
+      case Right(httpResponse)                          =>
+        Right((httpResponse.json \ "ids" \ "sautr").asOpt[String].map(SaUtr.apply))
+      case Left(error) if error.statusCode == NOT_FOUND =>
+        println("\n..... NOT FOUND")
         Right(None)
-      case Left(error) if error.statusCode == NOT_FOUND => Right(None)
       case Left(error)                                  => Left(error)
     }
+  }
 }

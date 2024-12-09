@@ -49,6 +49,7 @@ class AtsMergePageController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
+    println("\nHERE IS REQ UTR:" + request.saUtr)
     areServicesEnabled.flatMap {
       case false => Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
       case true  => getSaAndPayeYearList()
