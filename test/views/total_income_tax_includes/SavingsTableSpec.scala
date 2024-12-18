@@ -15,7 +15,6 @@
  */
 
 package views.total_income_tax_includes
-import com.softwaremill.quicklens.modifyLens
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -58,33 +57,38 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
       }
     }
 
-    val rowData = List(
-      (
+    val rowData: Seq[Tuple2[String, (Amount, Amount, Rate) => Tuple2[SavingsTax, SavingsRates]]] = Seq(
+      Tuple2(
         "lower",
-        modifyLens[SavingsTax](_.savingsLowerRateTax),
-        modifyLens[SavingsTax](_.savingsLowerRateTaxAmount),
-        modifyLens[SavingsRates](_.savingsLowerRate)
+        (tax, total, rate) =>
+          Tuple2(
+            savingsTaxData.copy(savingsLowerRateTax = tax, savingsLowerRateTaxAmount = total),
+            savingsRateData.copy(savingsLowerRate = rate)
+          )
       ),
-      (
+      Tuple2(
         "higher",
-        modifyLens[SavingsTax](_.savingsHigherRateTax),
-        modifyLens[SavingsTax](_.savingsHigherRateTaxAmount),
-        modifyLens[SavingsRates](_.savingsHigherRate)
+        (tax, total, rate) =>
+          Tuple2(
+            savingsTaxData.copy(savingsHigherRateTax = tax, savingsHigherRateTaxAmount = total),
+            savingsRateData.copy(savingsHigherRate = rate)
+          )
       ),
-      (
+      Tuple2(
         "additional",
-        modifyLens[SavingsTax](_.savingsAdditionalRateTax),
-        modifyLens[SavingsTax](_.savingsAdditionalRateTaxAmount),
-        modifyLens[SavingsRates](_.savingsAdditionalRate)
+        (tax, total, rate) =>
+          Tuple2(
+            savingsTaxData.copy(savingsAdditionalRateTax = tax, savingsAdditionalRateTaxAmount = total),
+            savingsRateData.copy(savingsAdditionalRate = rate)
+          )
       )
     )
 
-    for ((id, taxLens, totalLens, rateLens) <- rowData)
+    for ((id, func) <- rowData)
       s"display $id tax row" in {
 
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
-          val taxData = (taxLens.setTo(tax) andThen totalLens.setTo(total))(savingsTaxData)
-          val rates   = rateLens.setTo(rate)(savingsRateData)
+          val (taxData, rates) = func(tax, total, rate)
 
           val result = view(taxData, rates)
 

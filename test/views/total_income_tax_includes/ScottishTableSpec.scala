@@ -16,7 +16,6 @@
 
 package views.total_income_tax_includes
 
-import com.softwaremill.quicklens._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -58,45 +57,54 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
       }
     }
 
-    val rowData = List(
-      (
+    val rowData: Seq[Tuple2[String, (Amount, Amount, Rate) => Tuple2[ScottishTax, ScottishRates]]] = Seq(
+      Tuple2(
         "starter",
-        modifyLens[ScottishTax](_.scottishStarterIncomeTax),
-        modifyLens[ScottishTax](_.scottishStarterIncomeTaxAmount),
-        modifyLens[ScottishRates](_.scottishStarterRate)
+        (tax, total, rate) =>
+          Tuple2(
+            scottishTaxData.copy(scottishStarterIncomeTax = tax, scottishStarterIncomeTaxAmount = total),
+            scottishRateData.copy(scottishStarterRate = rate)
+          )
       ),
-      (
+      Tuple2(
         "basic",
-        modifyLens[ScottishTax](_.scottishBasicIncomeTax),
-        modifyLens[ScottishTax](_.scottishBasicIncomeTaxAmount),
-        modifyLens[ScottishRates](_.scottishBasicRate)
+        (tax, total, rate) =>
+          Tuple2(
+            scottishTaxData.copy(scottishBasicIncomeTax = tax, scottishBasicIncomeTaxAmount = total),
+            scottishRateData.copy(scottishBasicRate = rate)
+          )
       ),
-      (
+      Tuple2(
         "intermediate",
-        modifyLens[ScottishTax](_.scottishIntermediateIncomeTax),
-        modifyLens[ScottishTax](_.scottishIntermediateIncomeTaxAmount),
-        modifyLens[ScottishRates](_.scottishIntermediateRate)
+        (tax, total, rate) =>
+          Tuple2(
+            scottishTaxData.copy(scottishIntermediateIncomeTax = tax, scottishIntermediateIncomeTaxAmount = total),
+            scottishRateData.copy(scottishIntermediateRate = rate)
+          )
       ),
-      (
+      Tuple2(
         "higher",
-        modifyLens[ScottishTax](_.scottishHigherIncomeTax),
-        modifyLens[ScottishTax](_.scottishHigherIncomeTaxAmount),
-        modifyLens[ScottishRates](_.scottishHigherRate)
+        (tax, total, rate) =>
+          Tuple2(
+            scottishTaxData.copy(scottishHigherIncomeTax = tax, scottishHigherIncomeTaxAmount = total),
+            scottishRateData.copy(scottishHigherRate = rate)
+          )
       ),
-      (
+      Tuple2(
         "additional",
-        modifyLens[ScottishTax](_.scottishAdditionalIncomeTax),
-        modifyLens[ScottishTax](_.scottishAdditionalIncomeTaxAmount),
-        modifyLens[ScottishRates](_.scottishAdditionalRate)
+        (tax, total, rate) =>
+          Tuple2(
+            scottishTaxData.copy(scottishAdditionalIncomeTax = tax, scottishAdditionalIncomeTaxAmount = total),
+            scottishRateData.copy(scottishAdditionalRate = rate)
+          )
       )
     )
 
-    for ((id, taxLens, totalLens, rateLens) <- rowData)
+    for ((id, func) <- rowData)
       s"display $id tax row" in {
 
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
-          val taxData = (taxLens.setTo(tax) andThen totalLens.setTo(total))(scottishTaxData)
-          val rates   = rateLens.setTo(rate)(scottishRateData)
+          val (taxData, rates) = func(tax, total, rate)
 
           val result = view(taxData, rates)
 
