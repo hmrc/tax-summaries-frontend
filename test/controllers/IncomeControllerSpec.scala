@@ -24,15 +24,15 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, IncomeService}
-import utils.ControllerBaseSpec
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
 
 import scala.concurrent.Future
 
 class IncomeControllerSpec extends ControllerBaseSpec {
-
-  override val taxYear = 2023
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  override val taxYear    = 2023
 
   val baseModel: IncomeBeforeTax = IncomeBeforeTax(
     taxYear = 2023,
@@ -61,7 +61,8 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       mcc,
       incomeBeforeTaxView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {

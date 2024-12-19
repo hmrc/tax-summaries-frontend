@@ -25,15 +25,15 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.ControllerBaseSpec
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 
 class AllowancesControllerSpec extends ControllerBaseSpec {
-
-  override val taxYear = 2023
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  override val taxYear    = 2023
 
   val baseModel: Allowances = Allowances(
     taxYear = 2023,
@@ -64,7 +64,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       mcc,
       taxFreeAmountView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {

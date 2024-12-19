@@ -17,7 +17,6 @@
 package controllers.auth.actions
 
 import com.google.inject.Inject
-import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
 import controllers.routes
@@ -34,6 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.TaxYearUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 class PayeAuthActionImpl @Inject() (
@@ -41,7 +41,7 @@ class PayeAuthActionImpl @Inject() (
   cc: MessagesControllerComponents,
   pertaxAuthService: PertaxAuthService,
   featureFlagService: FeatureFlagService,
-  appConfig: ApplicationConfig,
+  taxYearUtil: TaxYearUtil,
   taxYear: Int
 )(implicit
   ec: ExecutionContext
@@ -65,13 +65,13 @@ class PayeAuthActionImpl @Inject() (
     block: PayeAuthenticatedRequest[A] => Future[Result]
   ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    if (taxYear > appConfig.taxYear || taxYear <= (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed)) {
-      Future.successful(Redirect(routes.ErrorController.authorisedNoAts(taxYear)))
-    } else {
+    if (taxYearUtil.isValidTaxYear(taxYear)) {
       isPayeEnabled.flatMap {
         case true  => handleAuthorisation(request, block)
         case false => redirectToServiceUnavailable
       }
+    } else {
+      Future.successful(Redirect(routes.ErrorController.authorisedNoAts(taxYear)))
     }
   }
 
@@ -116,10 +116,10 @@ class PayeAuthAction @Inject() (
   cc: MessagesControllerComponents,
   pertaxAuthService: PertaxAuthService,
   featureFlagService: FeatureFlagService,
-  appConfig: ApplicationConfig
+  taxYearUtil: TaxYearUtil
 )(implicit
   ec: ExecutionContext
 ) {
   def apply(taxYear: Int) =
-    new PayeAuthActionImpl(authConnector, cc, pertaxAuthService, featureFlagService, appConfig, taxYear)
+    new PayeAuthActionImpl(authConnector, cc, pertaxAuthService, featureFlagService, taxYearUtil, taxYear)
 }

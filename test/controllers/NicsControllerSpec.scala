@@ -24,7 +24,7 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, IncomeTaxAndNIService}
-import utils.ControllerBaseSpec
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import utils.TestConstants._
 import view_models._
 
@@ -36,6 +36,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
   val mockAuditService: AuditService    = mock[AuditService]
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
+  private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
 
   private def nicsController =
     new NicsController(
@@ -45,7 +46,8 @@ class NicsControllerSpec extends ControllerBaseSpec {
       nicsView,
       genericErrorView,
       tokenErrorView,
-      mockTotalIncomeTaxService
+      mockTotalIncomeTaxService,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {

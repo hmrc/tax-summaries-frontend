@@ -25,14 +25,13 @@ import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
 import utils.TestConstants._
-import utils.{BaseSpec, ControllerBaseSpec}
+import utils.{BaseSpec, ControllerBaseSpec, TaxYearUtil}
 import view_models._
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
 
 object SummaryControllerSpec extends BaseSpec {
-
   val baseModel: Summary = Summary(
     year = taxYear,
     utr = testUtr,
@@ -56,8 +55,8 @@ object SummaryControllerSpec extends BaseSpec {
 }
 
 class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenPropertyChecks {
-
-  val baseModel: Summary = SummaryControllerSpec.baseModel
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  val baseModel: Summary  = SummaryControllerSpec.baseModel
 
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
@@ -70,7 +69,8 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       mcc,
       summaryView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {

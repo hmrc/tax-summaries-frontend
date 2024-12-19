@@ -29,15 +29,16 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class TaxYearRequest @Inject() (
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView
+  tokenErrorView: TokenErrorView,
+  taxYearUtil: TaxYearUtil
 )(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
   def extractViewModelWithTaxYear(
     genericViewModel: Int => Future[GenericViewModel]
   )(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
-    TaxYearUtil.extractTaxYear match {
-      case Right(taxYear)      => ???
+    taxYearUtil.extractTaxYear match {
+//      case Right(taxYear)      => ???
       case Right(taxYear)      => genericViewModel(taxYear).map(Right(_))
       case Left(errorResponse) => Future.successful(Left(errorResponse))
     }

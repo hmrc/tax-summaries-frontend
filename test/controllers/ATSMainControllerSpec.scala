@@ -23,15 +23,15 @@ import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
-import utils.ControllerBaseSpec
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import utils.TestConstants._
 import view_models.{ATSUnavailableViewModel, NoATSViewModel, Summary}
 
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec {
-
-  val baseModel: Summary = SummaryControllerSpec.baseModel
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  val baseModel: Summary  = SummaryControllerSpec.baseModel
 
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
@@ -44,7 +44,8 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       mcc,
       taxsMainView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {

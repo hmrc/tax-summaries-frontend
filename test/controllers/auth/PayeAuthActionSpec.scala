@@ -34,9 +34,9 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants.fakeCredentials
+import utils.{BaseSpec, TaxYearUtil}
 
 import scala.concurrent.Future
 
@@ -45,7 +45,7 @@ class PayeAuthActionSpec extends BaseSpec {
   private val mockAuthConnector: DefaultAuthConnector     = mock[DefaultAuthConnector]
   private val mockPertaxAuthService                       = mock[PertaxAuthService]
   override val taxYear                                    = 2024
-  private val howManyTaxYears                             = 4
+  private val mockTaxYearUtil                             = mock[TaxYearUtil]
 
   private class Harness(authAction: PayeAuthActionImpl) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
@@ -58,11 +58,11 @@ class PayeAuthActionSpec extends BaseSpec {
     reset(mockPertaxAuthService)
     reset(appConfig)
     reset(mockFeatureFlagService)
+    reset(mockTaxYearUtil)
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-    when(appConfig.taxYear).thenReturn(taxYear)
-    when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(howManyTaxYears)
+    when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
   }
 
   "A user with a confidence level 200 and a Nino" must {
@@ -83,7 +83,7 @@ class PayeAuthActionSpec extends BaseSpec {
           FakePayeAuthAction.mcc,
           mockPertaxAuthService,
           mockFeatureFlagService,
-          appConfig,
+          mockTaxYearUtil,
           taxYear
         )
       val controller = new Harness(authAction)
@@ -104,8 +104,7 @@ class PayeAuthActionSpec extends BaseSpec {
       )
         .thenReturn(retrievalResult)
 
-      when(appConfig.taxYear).thenReturn(taxYear - howManyTaxYears)
-      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(howManyTaxYears)
+      when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(false)
 
       val authAction =
         new PayeAuthActionImpl(
@@ -113,7 +112,7 @@ class PayeAuthActionSpec extends BaseSpec {
           FakePayeAuthAction.mcc,
           mockPertaxAuthService,
           mockFeatureFlagService,
-          appConfig,
+          mockTaxYearUtil,
           taxYear
         )
       val controller = new Harness(authAction)
@@ -142,7 +141,7 @@ class PayeAuthActionSpec extends BaseSpec {
           FakePayeAuthAction.mcc,
           mockPertaxAuthService,
           mockFeatureFlagService,
-          appConfig,
+          mockTaxYearUtil,
           taxYear
         )
       val controller = new Harness(authAction)
@@ -165,7 +164,7 @@ class PayeAuthActionSpec extends BaseSpec {
           FakePayeAuthAction.mcc,
           mockPertaxAuthService,
           mockFeatureFlagService,
-          appConfig,
+          mockTaxYearUtil,
           taxYear
         )
 

@@ -25,15 +25,15 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
-import utils.ControllerBaseSpec
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import utils.TestConstants._
 import view_models._
 
 import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec {
-
-  override val taxYear = 2023
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  override val taxYear    = 2023
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
@@ -81,7 +81,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       mcc,
       governmentSpendingView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   "Calling government spend" must {

@@ -24,7 +24,7 @@ import models.ErrorResponse
 import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, SummaryService}
-import utils.GenericViewModel
+import utils.{GenericViewModel, TaxYearUtil}
 import view_models.Summary
 import views.html.SummaryView
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -38,9 +38,10 @@ class SummaryController @Inject() (
   mcc: MessagesControllerComponents,
   summaryView: SummaryView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView
+  tokenErrorView: TokenErrorView,
+  taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
   def authorisedSummaries: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)

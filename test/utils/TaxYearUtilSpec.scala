@@ -16,9 +16,12 @@
 
 package utils
 
+import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.InvalidTaxYear
+import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.AnyContentAsEmpty
@@ -27,13 +30,65 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants._
 
-class TaxYearUtilSpec extends AnyWordSpec with Matchers {
+import java.time.LocalDate
 
-  val authenticatedRequest: Unit =
-    "TaxYearUtil" must {
-      "extract tax year when a valid tax year is present" in {
+class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach {
+  private val mockAppConfig = mock[ApplicationConfig]
+  private val taxYearUtil   = new TaxYearUtil(mockAppConfig)
 
-        val taxYear = 2022
+  override def beforeEach(): Unit =
+    super.beforeEach()
+
+  private val currentYear = LocalDate.now.getYear
+
+  "isValidTaxYear" must {
+    "return true for current year" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isValidTaxYear(currentYear) mustBe true
+    }
+    "return true for earliest year" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isValidTaxYear(currentYear - 3) mustBe true
+    }
+    "return false for earliest year - 1" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isValidTaxYear(currentYear - 4) mustBe false
+    }
+    "return false for current year + 1" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isValidTaxYear(currentYear + 1) mustBe false
+    }
+  }
+
+  "taxYearUtil" must {
+    "extract tax year when a valid tax year is present" in {
+
+      val taxYear = 2022
+
+      implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        None,
+        false,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest("GET", s"?taxYear=$taxYear")
+      )
+
+      val result = taxYearUtil.extractTaxYear
+
+      result mustBe Right(taxYear)
+
+    }
+
+    "return an InvalidTaxYear response" when {
+
+      " taxYear is more than 4 digits long " in {
 
         implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
           "userId",
@@ -43,90 +98,69 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers {
           false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          FakeRequest("GET", s"?taxYear=$taxYear")
+          FakeRequest("GET", "?taxYear=20192")
         )
 
-        val result = TaxYearUtil.extractTaxYear
+        val result = taxYearUtil.extractTaxYear
 
-        result mustBe Right(taxYear)
+        result mustBe Left(InvalidTaxYear)
+      }
+
+      " taxYear is less than 4 digits long " in {
+
+        implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+          "userId",
+          None,
+          Some(SaUtr(testUtr)),
+          None,
+          false,
+          ConfidenceLevel.L50,
+          fakeCredentials,
+          FakeRequest("GET", "?taxYear=201")
+        )
+
+        val result = taxYearUtil.extractTaxYear
+
+        result mustBe Left(InvalidTaxYear)
+      }
+
+      "request has no taxYear field " in {
+
+        implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+          requests.AuthenticatedRequest(
+            "userId",
+            None,
+            Some(SaUtr(testUtr)),
+            None,
+            false,
+            ConfidenceLevel.L50,
+            fakeCredentials,
+            FakeRequest("GET", "?")
+          )
+
+        val result = taxYearUtil.extractTaxYear
+
+        result mustBe Left(InvalidTaxYear)
 
       }
 
-      "return an InvalidTaxYear response" when {
+      "taxYear is not numeric " in {
 
-        " taxYear is more than 4 digits long " in {
+        implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+          "userId",
+          None,
+          Some(SaUtr(testUtr)),
+          None,
+          false,
+          ConfidenceLevel.L50,
+          fakeCredentials,
+          FakeRequest("GET", "?taxYear=ABCD")
+        )
 
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
-            "userId",
-            None,
-            Some(SaUtr(testUtr)),
-            None,
-            false,
-            ConfidenceLevel.L50,
-            fakeCredentials,
-            FakeRequest("GET", "?taxYear=20192")
-          )
+        val result = taxYearUtil.extractTaxYear
 
-          val result = TaxYearUtil.extractTaxYear
-
-          result mustBe Left(InvalidTaxYear)
-        }
-
-        " taxYear is less than 4 digits long " in {
-
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
-            "userId",
-            None,
-            Some(SaUtr(testUtr)),
-            None,
-            false,
-            ConfidenceLevel.L50,
-            fakeCredentials,
-            FakeRequest("GET", "?taxYear=201")
-          )
-
-          val result = TaxYearUtil.extractTaxYear
-
-          result mustBe Left(InvalidTaxYear)
-        }
-
-        "request has no taxYear field " in {
-
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
-            requests.AuthenticatedRequest(
-              "userId",
-              None,
-              Some(SaUtr(testUtr)),
-              None,
-              false,
-              ConfidenceLevel.L50,
-              fakeCredentials,
-              FakeRequest("GET", "?")
-            )
-
-          val result = TaxYearUtil.extractTaxYear
-
-          result mustBe Left(InvalidTaxYear)
-
-        }
-
-        "taxYear is not numeric " in {
-
-          implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
-            "userId",
-            None,
-            Some(SaUtr(testUtr)),
-            None,
-            false,
-            ConfidenceLevel.L50,
-            fakeCredentials,
-            FakeRequest("GET", "?taxYear=ABCD")
-          )
-
-          val result = TaxYearUtil.extractTaxYear
-
-          result mustBe Left(InvalidTaxYear)
-        }
+        result mustBe Left(InvalidTaxYear)
       }
     }
+  }
 }
