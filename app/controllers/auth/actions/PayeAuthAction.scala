@@ -35,17 +35,17 @@ import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.TaxYearUtil
 
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
-class PayeAuthActionImpl @Inject() (
+class PayeAuthActionImpl(
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   pertaxAuthService: PertaxAuthService,
   featureFlagService: FeatureFlagService,
   taxYearUtil: TaxYearUtil,
   taxYear: Int
-)(implicit
-  ec: ExecutionContext
-) extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+)(implicit ec: ExecutionContext)
+    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
     with ActionFunction[Request, PayeAuthenticatedRequest]
     with AuthorisedFunctions
     with Logging {
@@ -111,6 +111,7 @@ class PayeAuthActionImpl @Inject() (
     Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
 }
 
+@Singleton
 class PayeAuthAction @Inject() (
   authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
