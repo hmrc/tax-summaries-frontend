@@ -40,7 +40,6 @@ abstract class TaxYearRequest @Inject() (
     taxYearUtil.extractTaxYear match {
       case Right(taxYear) if taxYearUtil.isValidTaxYear(taxYear) => genericViewModel(taxYear).map(Right(_))
       case Right(taxYear)                                        =>
-        println("\nINVALID TAX")
         Future.successful(Left(InvalidTaxYear(taxYear)))
       case Left(errorResponse)                                   => Future.successful(Left(errorResponse))
     }
