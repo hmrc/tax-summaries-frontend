@@ -37,6 +37,7 @@ abstract class TaxYearRequest @Inject() (
     genericViewModel: Int => Future[GenericViewModel]
   )(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
     TaxYearUtil.extractTaxYear match {
+      case Right(taxYear)      => ???
       case Right(taxYear)      => genericViewModel(taxYear).map(Right(_))
       case Left(errorResponse) => Future.successful(Left(errorResponse))
     }

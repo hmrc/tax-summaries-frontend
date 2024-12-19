@@ -93,7 +93,35 @@ class PayeAuthActionSpec extends BaseSpec {
       contentAsString(result) must include(nino)
       contentAsString(result) must include("provider type")
     }
+    "redirect to not found when tax year out of range" in {
+      val nino                                                                       = new Generator().nextNino.nino
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+        Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+      )
+        .thenReturn(retrievalResult)
+
+      when(appConfig.taxYear).thenReturn(taxYear - howManyTaxYears)
+      when(appConfig.maxTaxYearsTobeDisplayed).thenReturn(howManyTaxYears)
+
+      val authAction =
+        new PayeAuthActionImpl(
+          mockAuthConnector,
+          FakePayeAuthAction.mcc,
+          mockPertaxAuthService,
+          mockFeatureFlagService,
+          appConfig,
+          taxYear
+        )
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(taxYear).url)
+    }
     "redirect to failure url when authorisation fails" in {
 
       when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(Some(Redirect("/dummy"))))
