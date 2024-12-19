@@ -86,7 +86,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
 
     }
 
-    "return an MissingTaxYear response" when {
+    "return a MissingTaxYear response" when {
 
       " taxYear is more than 4 digits long " in {
 
