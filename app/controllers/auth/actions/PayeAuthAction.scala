@@ -16,9 +16,11 @@
 
 package controllers.auth.actions
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
+import controllers.routes
 import models.admin.PAYEServiceToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -38,10 +40,13 @@ class PayeAuthActionImpl @Inject() (
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   pertaxAuthService: PertaxAuthService,
-  featureFlagService: FeatureFlagService
+  featureFlagService: FeatureFlagService,
+  appConfig: ApplicationConfig,
+  taxYear: Int
 )(implicit
   ec: ExecutionContext
-) extends PayeAuthAction
+) extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, PayeAuthenticatedRequest]
     with AuthorisedFunctions
     with Logging {
 
@@ -60,10 +65,13 @@ class PayeAuthActionImpl @Inject() (
     block: PayeAuthenticatedRequest[A] => Future[Result]
   ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    isPayeEnabled.flatMap {
-      case true  => handleAuthorisation(request, block)
-      case false => redirectToServiceUnavailable
+    if (taxYear > appConfig.taxYear || taxYear <= (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed)) {
+      Future.successful(Redirect(routes.ErrorController.authorisedNoAts(taxYear)))
+    } else {
+      isPayeEnabled.flatMap {
+        case true  => handleAuthorisation(request, block)
+        case false => redirectToServiceUnavailable
+      }
     }
   }
 
@@ -103,7 +111,15 @@ class PayeAuthActionImpl @Inject() (
     Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
 }
 
-@ImplementedBy(classOf[PayeAuthActionImpl])
-trait PayeAuthAction
-    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
-    with ActionFunction[Request, PayeAuthenticatedRequest]
+class PayeAuthAction @Inject() (
+  authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService,
+  appConfig: ApplicationConfig
+)(implicit
+  ec: ExecutionContext
+) {
+  def apply(taxYear: Int) =
+    new PayeAuthActionImpl(authConnector, cc, pertaxAuthService, featureFlagService, appConfig, taxYear)
+}
