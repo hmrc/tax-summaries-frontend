@@ -19,7 +19,7 @@ package utils
 import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models.InvalidTaxYear
+import models.MissingTaxYear
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
@@ -86,7 +86,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
 
     }
 
-    "return an InvalidTaxYear response" when {
+    "return an MissingTaxYear response" when {
 
       " taxYear is more than 4 digits long " in {
 
@@ -103,7 +103,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
 
         val result = taxYearUtil.extractTaxYear
 
-        result mustBe Left(InvalidTaxYear)
+        result mustBe Left(MissingTaxYear)
       }
 
       " taxYear is less than 4 digits long " in {
@@ -121,7 +121,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
 
         val result = taxYearUtil.extractTaxYear
 
-        result mustBe Left(InvalidTaxYear)
+        result mustBe Left(MissingTaxYear)
       }
 
       "request has no taxYear field " in {
@@ -140,7 +140,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
 
         val result = taxYearUtil.extractTaxYear
 
-        result mustBe Left(InvalidTaxYear)
+        result mustBe Left(MissingTaxYear)
 
       }
 
@@ -159,7 +159,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
 
         val result = taxYearUtil.extractTaxYear
 
-        result mustBe Left(InvalidTaxYear)
+        result mustBe Left(MissingTaxYear)
       }
     }
   }

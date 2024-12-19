@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
-import models.{ErrorResponse, InvalidTaxYear}
+import models.{ErrorResponse, InvalidTaxYear, MissingTaxYear}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -59,7 +59,8 @@ abstract class TaxsController @Inject() (
       case Right(NoATSViewModel(year))       => Redirect(routes.ErrorController.authorisedNoAts(year))
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
       case Right(result: ViewModel)          => obtainResult(result)
-      case Left(InvalidTaxYear)              => BadRequest(genericErrorView())
+      case Left(InvalidTaxYear(year))        => Redirect(routes.ErrorController.authorisedNoAts(year))
+      case Left(MissingTaxYear)              => BadRequest(genericErrorView())
     }
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] =

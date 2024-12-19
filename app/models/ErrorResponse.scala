@@ -17,4 +17,5 @@
 package models
 
 sealed trait ErrorResponse
-case object InvalidTaxYear extends ErrorResponse
+case class InvalidTaxYear(taxYear: Int) extends ErrorResponse
+case object MissingTaxYear extends ErrorResponse

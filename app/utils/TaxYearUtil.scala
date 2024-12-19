@@ -19,7 +19,7 @@ package utils
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
-import models.{ErrorResponse, InvalidTaxYear}
+import models.{ErrorResponse, MissingTaxYear}
 
 class TaxYearUtil @Inject() (
   appConfig: ApplicationConfig
@@ -35,6 +35,6 @@ class TaxYearUtil @Inject() (
       case Some(taxYearPattern(year, _)) =>
         Right(year.toInt)
       case _                             =>
-        Left(InvalidTaxYear)
+        Left(MissingTaxYear)
     }
 }
