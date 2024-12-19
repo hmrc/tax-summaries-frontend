@@ -60,7 +60,7 @@ abstract class TaxsController @Inject() (
       case Right(_: ATSUnavailableViewModel) => InternalServerError(genericErrorView())
       case Right(result: ViewModel)          => obtainResult(result)
       case Left(InvalidTaxYear(year))        => Redirect(routes.ErrorController.authorisedNoAts(year))
-      case Left(MissingTaxYear)              => BadRequest(genericErrorView())
+      case Left(MissingTaxYear)              => Redirect(routes.ErrorController.authorisedNoTaxYear)
     }
 
   def show(implicit request: AuthenticatedRequest[_]): Future[Result] =

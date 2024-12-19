@@ -244,6 +244,78 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       }
     }
 
+    "authorisedNoTaxYear is called" must {
+
+      "return not found" when {
+
+        "the service throws an illegal argument exception" in {
+
+          val response: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.leftT(AtsErrorResponse("some error occured"))
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)
+
+          implicit lazy val request =
+            requests.AuthenticatedRequest(
+              userId = "userId",
+              agentRef = None,
+              saUtr = Some(SaUtr(testUtr)),
+              nino = None,
+              isAgentActive = false,
+              confidenceLevel = ConfidenceLevel.L50,
+              credentials = fakeCredentials,
+              request = FakeRequest()
+            )
+
+          val result   = sut.authorisedNoTaxYear(request)
+          val document = contentAsString(result)
+
+          status(result) mustBe NOT_FOUND
+          document mustBe contentAsString(pageNotFoundTemplateView())
+        }
+      }
+
+      "return internal server error" when {
+        "the service return an UpstreamErrorResponse" in {
+
+          val response: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
+            EitherT.leftT(AtsErrorResponse("some error occured"))
+
+          def sutWithMockAppConfig =
+            new ErrorController(
+              mockGovernmentSpendService,
+              FakeAuthJourney,
+              mcc,
+              notAuthorisedView,
+              howTaxIsSpentView,
+              serviceUnavailableView,
+              pageNotFoundTemplateView,
+              mockTaxYearUtil
+            )
+
+          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)
+
+          implicit lazy val request =
+            AuthenticatedRequest(
+              "userId",
+              None,
+              Some(SaUtr(testUtr)),
+              None,
+              false,
+              ConfidenceLevel.L50,
+              fakeCredentials,
+              FakeRequest()
+            )
+
+          val result   = sutWithMockAppConfig.authorisedNoAts(taxYear)(request)
+          val document = contentAsString(result)
+
+          status(result) mustBe INTERNAL_SERVER_ERROR
+          document mustBe contentAsString(serviceUnavailableView()(implicitly, implicitly))
+        }
+      }
+    }
+
     "notAuthorised is called" must {
 
       "show the not authorised view" in {

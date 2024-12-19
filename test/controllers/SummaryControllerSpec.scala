@@ -93,10 +93,9 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
     }
 
     "display an error page for an invalid request" in {
-      val result   = sut.show(badRequest)
-      status(result) mustBe 400
-      val document = Jsoup.parse(contentAsString(result))
-      document.title must include(Messages("global.error.InternalServerError500.title"))
+      val result = sut.show(badRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {

@@ -18,6 +18,7 @@ GET     /capital-gains-tax                                     controllers.Capit
 
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised
 GET     /no-ats                                                controllers.ErrorController.authorisedNoAts(taxYear:Int)
+GET     /no-tax-year                                           controllers.ErrorController.authorisedNoTaxYear
 GET     /service-unavailable                                   controllers.ErrorController.serviceUnavailable
 
 GET     /language/:lang                                        controllers.paye.PayeLanguageController.switchToLanguage(lang: String)

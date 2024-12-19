@@ -67,6 +67,10 @@ class ErrorController @Inject() (
       }
   }
 
+  def authorisedNoTaxYear: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
+    Future.successful(NotFound(pageNotFoundTemplateView()))
+  }
+
   def notAuthorised: Action[AnyContent] = authJourney.authMinimal { implicit request =>
     Ok(notAuthorisedView())
   }
