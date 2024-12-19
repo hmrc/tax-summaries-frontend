@@ -30,8 +30,8 @@ import services.GovernmentSpendService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
-import utils.ControllerBaseSpec
 import utils.TestConstants.{testUtr, _}
+import utils.{ControllerBaseSpec, TaxYearUtil}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -41,10 +41,13 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
   override def now: () => LocalDate = () => LocalDate.now()
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
+  private val mockTaxYearUtil                            = mock[TaxYearUtil]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockGovernmentSpendService)
+    reset(mockTaxYearUtil)
+    when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
   }
 
   def sut: ErrorController                  =
@@ -55,7 +58,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
       notAuthorisedView,
       howTaxIsSpentView,
       serviceUnavailableView,
-      pageNotFoundTemplateView
+      pageNotFoundTemplateView,
+      mockTaxYearUtil
     )
   implicit lazy val messageApi: MessagesApi = inject[MessagesApi]
 
@@ -103,7 +107,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               notAuthorisedView,
               howTaxIsSpentView,
               serviceUnavailableView,
-              pageNotFoundTemplateView
+              pageNotFoundTemplateView,
+              mockTaxYearUtil
             )
           val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
@@ -138,8 +143,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
       "return forbidden request" when {
 
-        "the service tries to access a future year" in {
-
+        "the service tries to access an invalid year" in {
+          when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(false)
           val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
             key -> value.percentage.toDouble
           }
@@ -161,43 +166,12 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               request = FakeRequest()
             )
 
-          val result   = sut.authorisedNoAts(appConfig.taxYear + 1)(request)
+          val result   = sut.authorisedNoAts(appConfig.taxYear)(request)
           val document = contentAsString(result)
 
           status(result) mustBe NOT_FOUND
           document mustBe contentAsString(pageNotFoundTemplateView())
         }
-
-        "the service tries to access a year before the current year minus the max years to be displayed" in {
-
-          val response: Seq[(String, Double)] = fakeGovernmentSpend.govSpendAmountData.map { case (key, value) =>
-            key -> value.percentage.toDouble
-          }
-
-          val serviceResponse: EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] =
-            EitherT.rightT(response)
-
-          when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())) thenReturn serviceResponse
-
-          implicit lazy val request =
-            requests.AuthenticatedRequest(
-              userId = "userId",
-              agentRef = None,
-              saUtr = Some(SaUtr(testUtr)),
-              nino = None,
-              isAgentActive = false,
-              confidenceLevel = ConfidenceLevel.L50,
-              credentials = fakeCredentials,
-              request = FakeRequest()
-            )
-
-          val result   = sut.authorisedNoAts(appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed - 1)(request)
-          val document = contentAsString(result)
-
-          status(result) mustBe NOT_FOUND
-          document mustBe contentAsString(pageNotFoundTemplateView())
-        }
-
       }
 
       "return bad request" when {
@@ -243,7 +217,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               notAuthorisedView,
               howTaxIsSpentView,
               serviceUnavailableView,
-              pageNotFoundTemplateView
+              pageNotFoundTemplateView,
+              mockTaxYearUtil
             )
 
           when(mockGovernmentSpendService.getGovernmentSpendFigures(any())(any(), any())).thenReturn(response)
