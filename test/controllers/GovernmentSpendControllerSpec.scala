@@ -25,15 +25,15 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
-import utils.ControllerBaseSpec
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models._
 
 import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec {
-
-  override val taxYear = 2023
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  override val taxYear    = 2023
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
@@ -81,7 +81,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       mcc,
       governmentSpendingView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   "Calling government spend" must {
@@ -100,10 +101,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page for an invalid request" in {
-      val result   = sut.show(badRequest)
-      status(result) mustBe 400
-      val document = Jsoup.parse(contentAsString(result))
-      document.title must include(Messages("global.error.InternalServerError500.title"))
+      val result = sut.show(badRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {

@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
-import models.ErrorResponse
+import models.{ErrorResponse, InvalidTaxYear}
 import play.api.mvc.MessagesControllerComponents
 import utils.{GenericViewModel, TaxYearUtil}
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -29,15 +29,18 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class TaxYearRequest @Inject() (
   mcc: MessagesControllerComponents,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView
+  tokenErrorView: TokenErrorView,
+  taxYearUtil: TaxYearUtil
 )(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxsController(mcc, genericErrorView, tokenErrorView) {
 
   def extractViewModelWithTaxYear(
     genericViewModel: Int => Future[GenericViewModel]
   )(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]] =
-    TaxYearUtil.extractTaxYear match {
-      case Right(taxYear)      => genericViewModel(taxYear).map(Right(_))
-      case Left(errorResponse) => Future.successful(Left(errorResponse))
+    taxYearUtil.extractTaxYear match {
+      case Right(taxYear) if taxYearUtil.isValidTaxYear(taxYear) => genericViewModel(taxYear).map(Right(_))
+      case Right(taxYear)                                        =>
+        Future.successful(Left(InvalidTaxYear(taxYear)))
+      case Left(errorResponse)                                   => Future.successful(Left(errorResponse))
     }
 }

@@ -44,12 +44,9 @@ class PayeGovernmentSpendController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async {
-    implicit request: PayeAuthenticatedRequest[_] =>
+  def show(taxYear: Int): Action[AnyContent] =
+    authJourney.authForPayeIndividuals(taxYear).async { implicit request: PayeAuthenticatedRequest[_] =>
       val response = payeAtsService.getPayeATSData(request.nino, taxYear).flatMap {
-        case Right(_: PayeAtsData)
-            if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
-          Future(Forbidden(payeGenericErrorView()))
         case Right(successResponse: PayeAtsData) =>
           val payeGovernmentSpendingViewFuture =
             governmentSpendService.getGovernmentSpendFigures(taxYear).map { governmentSpendFiguredMapList =>
@@ -76,5 +73,5 @@ class PayeGovernmentSpendController @Inject() (
         case _                                   => Future(InternalServerError(payeGenericErrorView()))
       }
       response
-  }
+    }
 }

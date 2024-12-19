@@ -23,15 +23,15 @@ import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import services._
-import utils.ControllerBaseSpec
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel, Summary}
 
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec {
-
-  val baseModel: Summary = SummaryControllerSpec.baseModel
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  val baseModel: Summary  = SummaryControllerSpec.baseModel
 
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
@@ -44,7 +44,8 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       mcc,
       taxsMainView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {
@@ -69,10 +70,9 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page for an invalid request" in {
-      val result   = sut.show(badRequest)
-      status(result) mustBe 400
-      val document = Jsoup.parse(contentAsString(result))
-      document.title must include(Messages("global.error.InternalServerError500.title"))
+      val result = sut.show(badRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {

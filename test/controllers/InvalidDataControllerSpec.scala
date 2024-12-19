@@ -24,12 +24,12 @@ import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.ControllerBaseSpec
+import utils.{ControllerBaseSpec, TaxYearUtil}
 
 import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
-
+  private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
   val dataPath                          = "/json_containing_errors_test.json"
   val dataPathNoAts                     = "/no_ats_json_test.json"
   override val taxYear                  = 2023
@@ -50,7 +50,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           taxFreeAmountView,
           genericErrorView,
-          tokenErrorView
+          tokenErrorView,
+          taxYearUtil
         )
 
       when(mockAllowanceService.getAllowances(any())(any(), any()))
@@ -76,7 +77,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           capitalGainsView,
           genericErrorView,
-          tokenErrorView
+          tokenErrorView,
+          taxYearUtil
         )
 
       when(mockCapitalGainsService.getCapitalGains(any())(any(), any()))
@@ -102,7 +104,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           governmentSpendingView,
           genericErrorView,
-          tokenErrorView
+          tokenErrorView,
+          taxYearUtil
         )
 
       when(mockGovernmentSpendService.getGovernmentSpendData(any())(any(), any(), any()))
@@ -128,7 +131,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           mcc,
           incomeBeforeTaxView,
           genericErrorView,
-          tokenErrorView
+          tokenErrorView,
+          taxYearUtil
         )
 
       when(mockIncomeService.getIncomeData(any())(any(), any()))
@@ -153,7 +157,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
         mcc,
         summaryView,
         genericErrorView,
-        tokenErrorView
+        tokenErrorView,
+        taxYearUtil
       )
 
       when(mockSummaryService.getSummaryData(any())(any(), any()))
@@ -179,7 +184,8 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
           nicsView,
           genericErrorView,
           tokenErrorView,
-          mockTotalIncomeTaxService
+          mockTotalIncomeTaxService,
+          taxYearUtil
         )
 
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))

@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.GovernmentSpendService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.time.CurrentTaxYear
+import utils.TaxYearUtil
 import views.html.HowTaxIsSpentView
 import views.html.errors.{NotAuthorisedView, PageNotFoundTemplateView, ServiceUnavailableView}
 
@@ -39,7 +40,8 @@ class ErrorController @Inject() (
   notAuthorisedView: NotAuthorisedView,
   howTaxIsSpentView: HowTaxIsSpentView,
   serviceUnavailableView: ServiceUnavailableView,
-  pageNotFoundTemplateView: PageNotFoundTemplateView
+  pageNotFoundTemplateView: PageNotFoundTemplateView,
+  taxYearUtil: TaxYearUtil
 )(implicit val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -50,9 +52,7 @@ class ErrorController @Inject() (
 
   def authorisedNoAts(taxYear: Int): Action[AnyContent] = authJourney.authForIndividualsOrAgents.async {
     implicit request =>
-      if (taxYear > appConfig.taxYear || taxYear <= (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed)) {
-        Future.successful(NotFound(pageNotFoundTemplateView()))
-      } else {
+      if (taxYearUtil.isValidTaxYear(taxYear)) {
         governmentSpendService
           .getGovernmentSpendFigures(taxYear)
           .fold(
@@ -62,7 +62,13 @@ class ErrorController @Inject() (
             },
             spendData => Ok(howTaxIsSpentView(spendData, taxYear))
           )
+      } else {
+        Future.successful(NotFound(pageNotFoundTemplateView()))
       }
+  }
+
+  def authorisedNoTaxYear: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
+    Future.successful(NotFound(pageNotFoundTemplateView()))
   }
 
   def notAuthorised: Action[AnyContent] = authJourney.authMinimal { implicit request =>

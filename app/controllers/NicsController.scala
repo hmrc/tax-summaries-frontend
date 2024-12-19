@@ -23,7 +23,7 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeTaxAndNIService}
-import utils.GenericViewModel
+import utils.{GenericViewModel, TaxYearUtil}
 import view_models.IncomeTaxAndNI
 import views.html.NicsView
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -37,9 +37,10 @@ class NicsController @Inject() (
   nicsView: NicsView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView,
-  incomeTaxAndNIService: IncomeTaxAndNIService
+  incomeTaxAndNIService: IncomeTaxAndNIService,
+  taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
   private def redirectToMainTaxAndNIPage(request: AuthenticatedRequest[AnyContent]): Result =
     request.getQueryString("taxYear") match {

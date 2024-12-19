@@ -24,14 +24,14 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, CapitalGainsService}
-import utils.ControllerBaseSpec
 import utils.TestConstants.{capitalGains, testUtr}
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models.{ATSUnavailableViewModel, Amount, CapitalGains, NoATSViewModel}
 
 import scala.concurrent.Future
 
 class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
-
+  private val taxYearUtil     = app.injector.instanceOf[TaxYearUtil]
   val baseModel: CapitalGains = capitalGains
 
   val mockCapitalGainsService: CapitalGainsService = mock[CapitalGainsService]
@@ -45,7 +45,8 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       mcc,
       capitalGainsView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {
@@ -71,10 +72,9 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page for an invalid request " in {
-      val result   = sut.show(badRequest)
-      status(result) mustBe 400
-      val document = Jsoup.parse(contentAsString(result))
-      document.title must include(Messages("global.error.InternalServerError500.title"))
+      val result = sut.show(badRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {

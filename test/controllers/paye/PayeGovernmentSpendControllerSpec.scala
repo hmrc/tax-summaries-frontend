@@ -23,7 +23,7 @@ import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -138,37 +138,6 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           taxYear.toString
         )
       )
-    }
-
-    "return SEE_OTHER response for 2021 when tax year is 2020" in {
-
-      val taxYear: Int = 2021
-
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = 2020
-      }
-
-      implicit val appConfig: FakeAppConfig = new FakeAppConfig
-
-      val sut =
-        new PayeGovernmentSpendController(
-          mockPayeAtsService,
-          FakeAuthJourney,
-          mcc,
-          inject[PayeGovernmentSpendingView],
-          payeGenericErrorView,
-          govSpendService
-        )
-
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
-
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
-
-      status(result) mustBe FORBIDDEN
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {

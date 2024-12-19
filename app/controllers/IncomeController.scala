@@ -23,7 +23,7 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, IncomeService}
-import utils.GenericViewModel
+import utils.{GenericViewModel, TaxYearUtil}
 import view_models.IncomeBeforeTax
 import views.html.IncomeBeforeTaxView
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -37,9 +37,10 @@ class IncomeController @Inject() (
   mcc: MessagesControllerComponents,
   incomeBeforeTaxView: IncomeBeforeTaxView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView
+  tokenErrorView: TokenErrorView,
+  taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
   def authorisedIncomeBeforeTax: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)

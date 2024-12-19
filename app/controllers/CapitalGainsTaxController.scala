@@ -23,7 +23,7 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AuditService, CapitalGainsService}
-import utils.GenericViewModel
+import utils.{GenericViewModel, TaxYearUtil}
 import view_models.CapitalGains
 import views.html.CapitalGainsView
 import views.html.errors.{GenericErrorView, TokenErrorView}
@@ -37,9 +37,10 @@ class CapitalGainsTaxController @Inject() (
   mcc: MessagesControllerComponents,
   capitalGainsView: CapitalGainsView,
   genericErrorView: GenericErrorView,
-  tokenErrorView: TokenErrorView
+  tokenErrorView: TokenErrorView,
+  taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
-    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView) {
+    extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
   def authorisedCapitalGains: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)
