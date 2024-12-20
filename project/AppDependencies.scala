@@ -19,7 +19,6 @@ object AppDependencies {
 
   val test: Seq[ModuleID] = Seq(
     "org.jsoup"                   % "jsoup"                   % "1.18.1",
-    "com.softwaremill.quicklens" %% "quicklens"               % "1.9.7",
     "uk.gov.hmrc"                %% s"mongo-feature-toggles-client-test-$playVersion" % featureToggleVersion,
     "uk.gov.hmrc"                %% s"sca-wrapper-test-$playVersion"                  % scaWrapperVersion,
     "org.scalatestplus"          %% "scalacheck-1-17"         % "3.2.18.0"
