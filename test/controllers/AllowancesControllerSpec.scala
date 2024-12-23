@@ -25,15 +25,15 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.ControllerBaseSpec
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models._
 
 import scala.concurrent.Future
 
 class AllowancesControllerSpec extends ControllerBaseSpec {
-
-  override val taxYear = 2023
+  private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
+  override val taxYear    = 2023
 
   val baseModel: Allowances = Allowances(
     taxYear = 2023,
@@ -64,7 +64,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       mcc,
       taxFreeAmountView,
       genericErrorView,
-      tokenErrorView
+      tokenErrorView,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {
@@ -128,10 +129,9 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page for an invalid request" in {
-      val result   = sut.show(badRequest)
-      status(result) mustBe 400
-      val document = Jsoup.parse(contentAsString(result))
-      document.title must include(Messages("global.error.InternalServerError500.title"))
+      val result = sut.show(badRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {

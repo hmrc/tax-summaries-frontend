@@ -17,7 +17,7 @@
 package controllers.auth
 
 import config.ApplicationConfig
-import controllers.auth.actions.{PayeAuthAction, PayeAuthActionImpl}
+import controllers.auth.actions.PayeAuthActionImpl
 import controllers.paye.routes
 import models.admin.PAYEServiceToggle
 import org.mockito.ArgumentMatchers
@@ -34,21 +34,20 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import utils.BaseSpec
 import utils.RetrievalOps._
 import utils.TestConstants.fakeCredentials
+import utils.{BaseSpec, TaxYearUtil}
 
 import scala.concurrent.Future
 
 class PayeAuthActionSpec extends BaseSpec {
   override implicit lazy val appConfig: ApplicationConfig = mock[ApplicationConfig]
-  val mockAuthConnector: DefaultAuthConnector             = mock[DefaultAuthConnector]
+  private val mockAuthConnector: DefaultAuthConnector     = mock[DefaultAuthConnector]
+  private val mockPertaxAuthService                       = mock[PertaxAuthService]
+  override val taxYear                                    = 2024
+  private val mockTaxYearUtil                             = mock[TaxYearUtil]
 
-  val unauthorisedRoute: String = routes.PayeErrorController.notAuthorised.url
-
-  private val mockPertaxAuthService = mock[PertaxAuthService]
-
-  class Harness(authAction: PayeAuthAction) extends InjectedController {
+  private class Harness(authAction: PayeAuthActionImpl) extends InjectedController {
     def onPageLoad(): Action[AnyContent] = authAction { request =>
       Ok(s"Nino: ${request.nino.nino} and Credentials: ${request.credentials.providerType}")
     }
@@ -59,9 +58,11 @@ class PayeAuthActionSpec extends BaseSpec {
     reset(mockPertaxAuthService)
     reset(appConfig)
     reset(mockFeatureFlagService)
+    reset(mockTaxYearUtil)
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
+    when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
   }
 
   "A user with a confidence level 200 and a Nino" must {
@@ -77,7 +78,14 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(retrievalResult)
 
       val authAction =
-        new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
+        new PayeAuthActionImpl(
+          mockAuthConnector,
+          FakePayeAuthAction.mcc,
+          mockPertaxAuthService,
+          mockFeatureFlagService,
+          mockTaxYearUtil,
+          taxYear
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -85,7 +93,34 @@ class PayeAuthActionSpec extends BaseSpec {
       contentAsString(result) must include(nino)
       contentAsString(result) must include("provider type")
     }
+    "redirect to not found when tax year out of range" in {
+      val nino                                                                       = new Generator().nextNino.nino
+      val retrievalResult: Future[Enrolments ~ Option[String] ~ Option[Credentials]] =
+        Future.successful(Enrolments(Set.empty) ~ Some(nino) ~ Some(fakeCredentials))
 
+      when(
+        mockAuthConnector
+          .authorise[Enrolments ~ Option[String] ~ Option[Credentials]](any(), any())(any(), any())
+      )
+        .thenReturn(retrievalResult)
+
+      when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(false)
+
+      val authAction =
+        new PayeAuthActionImpl(
+          mockAuthConnector,
+          FakePayeAuthAction.mcc,
+          mockPertaxAuthService,
+          mockFeatureFlagService,
+          mockTaxYearUtil,
+          taxYear
+        )
+      val controller = new Harness(authAction)
+
+      val result = controller.onPageLoad()(FakeRequest())
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(taxYear).url)
+    }
     "redirect to failure url when authorisation fails" in {
 
       when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(Some(Redirect("/dummy"))))
@@ -101,7 +136,14 @@ class PayeAuthActionSpec extends BaseSpec {
         .thenReturn(retrievalResult)
 
       val authAction =
-        new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
+        new PayeAuthActionImpl(
+          mockAuthConnector,
+          FakePayeAuthAction.mcc,
+          mockPertaxAuthService,
+          mockFeatureFlagService,
+          mockTaxYearUtil,
+          taxYear
+        )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
@@ -117,7 +159,14 @@ class PayeAuthActionSpec extends BaseSpec {
       when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
         .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
       val authAction =
-        new PayeAuthActionImpl(mockAuthConnector, FakePayeAuthAction.mcc, mockPertaxAuthService, mockFeatureFlagService)
+        new PayeAuthActionImpl(
+          mockAuthConnector,
+          FakePayeAuthAction.mcc,
+          mockPertaxAuthService,
+          mockFeatureFlagService,
+          mockTaxYearUtil,
+          taxYear
+        )
 
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())

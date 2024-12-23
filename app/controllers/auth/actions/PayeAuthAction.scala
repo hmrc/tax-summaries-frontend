@@ -16,9 +16,10 @@
 
 package controllers.auth.actions
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.Inject
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
+import controllers.routes
 import models.admin.PAYEServiceToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -32,16 +33,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.TaxYearUtil
 
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
-class PayeAuthActionImpl @Inject() (
+class PayeAuthActionImpl(
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
   pertaxAuthService: PertaxAuthService,
-  featureFlagService: FeatureFlagService
-)(implicit
-  ec: ExecutionContext
-) extends PayeAuthAction
+  featureFlagService: FeatureFlagService,
+  taxYearUtil: TaxYearUtil,
+  taxYear: Int
+)(implicit ec: ExecutionContext)
+    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, PayeAuthenticatedRequest]
     with AuthorisedFunctions
     with Logging {
 
@@ -60,10 +65,13 @@ class PayeAuthActionImpl @Inject() (
     block: PayeAuthenticatedRequest[A] => Future[Result]
   ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    isPayeEnabled.flatMap {
-      case true  => handleAuthorisation(request, block)
-      case false => redirectToServiceUnavailable
+    if (taxYearUtil.isValidTaxYear(taxYear)) {
+      isPayeEnabled.flatMap {
+        case true  => handleAuthorisation(request, block)
+        case false => redirectToServiceUnavailable
+      }
+    } else {
+      Future.successful(Redirect(routes.ErrorController.authorisedNoAts(taxYear)))
     }
   }
 
@@ -103,7 +111,16 @@ class PayeAuthActionImpl @Inject() (
     Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
 }
 
-@ImplementedBy(classOf[PayeAuthActionImpl])
-trait PayeAuthAction
-    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
-    with ActionFunction[Request, PayeAuthenticatedRequest]
+@Singleton
+class PayeAuthAction @Inject() (
+  authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService,
+  taxYearUtil: TaxYearUtil
+)(implicit
+  ec: ExecutionContext
+) {
+  def apply(taxYear: Int) =
+    new PayeAuthActionImpl(authConnector, cc, pertaxAuthService, featureFlagService, taxYearUtil, taxYear)
+}

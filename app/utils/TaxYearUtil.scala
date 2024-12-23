@@ -16,18 +16,25 @@
 
 package utils
 
+import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
-import models.{ErrorResponse, InvalidTaxYear}
+import models.{ErrorResponse, MissingTaxYear}
 
-object TaxYearUtil {
+class TaxYearUtil @Inject() (
+  appConfig: ApplicationConfig
+) {
 
   private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
+
+  def isValidTaxYear(taxYear: Int): Boolean =
+    !(taxYear > appConfig.taxYear || taxYear <= (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed))
 
   def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] =
     request.getQueryString("taxYear") match {
       case Some(taxYearPattern(year, _)) =>
         Right(year.toInt)
       case _                             =>
-        Left(InvalidTaxYear)
+        Left(MissingTaxYear)
     }
 }

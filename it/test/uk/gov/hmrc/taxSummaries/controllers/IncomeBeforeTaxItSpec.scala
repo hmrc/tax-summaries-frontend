@@ -100,7 +100,9 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
       val result = route(fakeApplication(), request)
 
-      result.map(status) mustBe Some(BAD_REQUEST)
+      result.map(status) mustBe Some(SEE_OTHER)
+      result.flatMap(redirectLocation) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
+
     }
 
     "return a SEE_OTHER when the call to backend to retrieve ats-data throws a NOT_FOUND" in {

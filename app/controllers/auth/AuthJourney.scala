@@ -28,7 +28,7 @@ trait AuthJourney {
   val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]
   val authForIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
   val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent]
-  val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+  def authForPayeIndividuals(taxYear: Int): ActionBuilder[PayeAuthenticatedRequest, AnyContent]
 }
 
 class AuthJourneyImpl @Inject() (
@@ -44,5 +44,6 @@ class AuthJourneyImpl @Inject() (
   override val authForSAIndividualsOrAgents: ActionBuilder[AuthenticatedRequest, AnyContent] =
     authAction(saShutterCheck = true, agentTokenCheck = false, utrCheck = true)
 
-  override val authForPayeIndividuals: ActionBuilder[PayeAuthenticatedRequest, AnyContent] = payeAuthAction
+  override def authForPayeIndividuals(taxYear: Int): ActionBuilder[PayeAuthenticatedRequest, AnyContent] =
+    payeAuthAction(taxYear)
 }

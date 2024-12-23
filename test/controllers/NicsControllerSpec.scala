@@ -24,8 +24,8 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AuditService, IncomeTaxAndNIService}
-import utils.ControllerBaseSpec
 import utils.TestConstants._
+import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models._
 
 import scala.concurrent.Future
@@ -36,6 +36,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
   val mockAuditService: AuditService    = mock[AuditService]
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
+  private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
 
   private def nicsController =
     new NicsController(
@@ -45,7 +46,8 @@ class NicsControllerSpec extends ControllerBaseSpec {
       nicsView,
       genericErrorView,
       tokenErrorView,
-      mockTotalIncomeTaxService
+      mockTotalIncomeTaxService,
+      taxYearUtil
     )
 
   override def beforeEach(): Unit = {
@@ -86,10 +88,9 @@ class NicsControllerSpec extends ControllerBaseSpec {
     }
 
     "display an error page for an invalid request" in {
-      val result   = nicsController.show(badRequest)
-      status(result) mustBe 400
-      val document = Jsoup.parse(contentAsString(result))
-      document.title must include(Messages("global.error.InternalServerError500.title"))
+      val result = nicsController.show(badRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
     }
 
     "display an error page when AtsUnavailableViewModel is returned" in {

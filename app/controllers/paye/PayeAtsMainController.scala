@@ -43,15 +43,12 @@ class PayeAtsMainController @Inject() (
     with I18nSupport
     with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals.async { implicit request =>
+  def show(taxYear: Int): Action[AnyContent] = authJourney.authForPayeIndividuals(taxYear).async { implicit request =>
     getPayeAts(taxYear)
   }
 
   private def getPayeAts(taxYear: Int)(implicit request: PayeAuthenticatedRequest[_]): Future[Result] =
     payeAtsService.getPayeATSData(request.nino, taxYear).map {
-      case Right(_: PayeAtsData)
-          if taxYear > appConfig.taxYear || taxYear < appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed =>
-        Forbidden(payeGenericErrorView())
       case Right(_: PayeAtsData)        => Ok(payeTaxsMainView(PayeAtsMain(taxYear)))
       case Left(_: AtsNotFoundResponse) => Redirect(controllers.routes.ErrorController.authorisedNoAts(taxYear))
       case _                            => InternalServerError(payeGenericErrorView())
