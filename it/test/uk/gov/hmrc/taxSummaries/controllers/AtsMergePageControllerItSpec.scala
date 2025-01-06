@@ -17,8 +17,8 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
+import models.AgentToken
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
-import models.{AgentToken, AtsListData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any => mockAny}
 import org.mockito.Mockito.{when, reset => mockReset}
@@ -26,7 +26,6 @@ import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repository.TaxsAgentTokenSessionCacheRepository
@@ -45,9 +44,6 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
   lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   lazy implicit val hc: HeaderCarrier = inject[HeaderCarrier]
-
-  val atsListData: AtsListData =
-    Json.fromJson[AtsListData](Json.parse(atsList(Seq(2020, 2021, 2022, 2023)))).get
 
   val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
@@ -150,7 +146,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(atsList(Seq(2020, 2021, 2022, 2023))))
+          .willReturn(ok(atsList(allPreviousYears)))
       )
 
       server.stubFor(
@@ -180,7 +176,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(atsList(Seq(2020, 2021, 2022, 2023))))
+          .willReturn(ok(atsList(allPreviousYears)))
       )
 
       server.stubFor(
@@ -203,7 +199,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(atsList(Seq(2020, 2021, 2022, 2023))))
+          .willReturn(ok(atsList(allPreviousYears)))
       )
 
       server.stubFor(
@@ -300,7 +296,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return a success response when the call to backend to retrieve payeData throws a $httpResponse but sa data present for ALL previous x years" in {
+      s"return a success response when the call to backend to retrieve payeData throws a $httpResponse but sa data present for ALL previous tax years" in {
         server.stubFor(get(urlEqualTo(backendUrlSa)).willReturn(ok(atsList(allPreviousYears))))
 
         server.stubFor(
