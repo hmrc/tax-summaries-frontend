@@ -16,7 +16,6 @@
 
 package services
 
-import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
@@ -46,10 +45,21 @@ class AtsMergePageService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsMergePageViewModel]] =
-    (for {
-      saData   <- EitherT(getSaYearListIfEnabled)
-      payeData <- EitherT(getPayeYearListIfEnabled(request.isAgent))
-    } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
+    getSaYearListIfEnabled.flatMap { saResponse =>
+      getPayeYearListIfEnabled(request.isAgent).map { payeResponse =>
+        (saResponse, payeResponse) match {
+          case (Left(atsResponse), Left(_))                                                           => Left(atsResponse)
+          case (Left(_), Right(payeData)) if payeData.size == appConfig.maxTaxYearsTobeDisplayed      =>
+            Right(AtsMergePageViewModel(AtsList("", "", "", Nil), payeData, appConfig, request.confidenceLevel))
+          case (Left(atsResponse), Right(_))                                                          => Left(atsResponse)
+          case (Right(saData), Left(_)) if saData.yearList.size == appConfig.maxTaxYearsTobeDisplayed =>
+            Right(AtsMergePageViewModel(saData, Nil, appConfig, request.confidenceLevel))
+          case (Right(_), Left(atsResponse))                                                          => Left(atsResponse)
+          case (Right(saData), Right(payeData))                                                       =>
+            Right(AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel))
+        }
+      }
+    }
 
   private def getSaYearListIfEnabled(implicit
     hc: HeaderCarrier,
