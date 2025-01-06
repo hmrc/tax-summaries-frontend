@@ -59,12 +59,11 @@ class AtsMergePageService @Inject() (
       case payeResponse                                     =>
         getSaYearListIfEnabled.map { saResponse =>
           (saResponse, payeResponse) match {
-            case (Left(atsResponse), Left(_))                                     => Left(atsResponse)
-            case (Left(atsResponse), Right(_))                                    => Left(atsResponse)
-            case (Right(saData), Left(_)) if saData.yearList == requiredYearsList =>
+            case (Left(atsResponse), _)                                     => Left(atsResponse)
+            case (Right(saData), _) if saData.yearList == requiredYearsList =>
               Right(AtsMergePageViewModel(saData, Nil, appConfig, request.confidenceLevel))
-            case (Right(_), Left(atsResponse))                                    => Left(atsResponse)
-            case (Right(saData), Right(payeData))                                 =>
+            case (Right(_), Left(atsResponse))                              => Left(atsResponse)
+            case (Right(saData), Right(payeData))                           =>
               Right(AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel))
           }
         }
