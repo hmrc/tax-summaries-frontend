@@ -47,7 +47,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
   lazy implicit val hc: HeaderCarrier = inject[HeaderCarrier]
 
   val atsListData: AtsListData =
-    Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
+    Json.fromJson[AtsListData](Json.parse(atsList(Seq(2020, 2021, 2022, 2023)))).get
 
   val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
@@ -123,6 +123,20 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         .successful(Some(agentTokenMock))
     )
 
+  private def atsList(taxYears: Seq[Int]) = {
+    val ty = taxYears.foldLeft("")((acc, c) => acc + (if (acc.isEmpty) "" else ",") + c)
+    """{
+      |  "utr":"$utr",
+      |  "taxPayer":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}},
+      |  "atsYearList":[$YEARS]
+      |}""".stripMargin.replace("$YEARS", ty)
+  }
+
+  private def allPreviousYears: Seq[Int] = {
+    val yearFrom = appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1
+    yearFrom to appConfig.taxYear
+  }
+
   "/income-before-tax" must {
 
     lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
@@ -136,7 +150,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          .willReturn(ok(atsList(Seq(2020, 2021, 2022, 2023))))
       )
 
       server.stubFor(
@@ -166,7 +180,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          .willReturn(ok(atsList(Seq(2020, 2021, 2022, 2023))))
       )
 
       server.stubFor(
@@ -189,7 +203,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          .willReturn(ok(atsList(Seq(2020, 2021, 2022, 2023))))
       )
 
       server.stubFor(
@@ -286,11 +300,34 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve payeData throws a $httpResponse" in {
+      s"return a success response when the call to backend to retrieve payeData throws a $httpResponse but sa data present for ALL previous x years" in {
+        server.stubFor(get(urlEqualTo(backendUrlSa)).willReturn(ok(atsList(allPreviousYears))))
 
         server.stubFor(
-          get(urlEqualTo(backendUrlSa))
-            .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          get(urlEqualTo(backendUrlPaye))
+            .willReturn(aResponse().withStatus(httpResponse))
+        )
+
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+
+        val result = route(fakeApplication(), request)
+
+        result.map(status) mustBe Some(OK)
+      }
+    }
+
+    List(
+      BAD_REQUEST,
+      IM_A_TEAPOT,
+      INTERNAL_SERVER_ERROR,
+      SERVICE_UNAVAILABLE
+    ).foreach { httpResponse =>
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve payeData throws a $httpResponse and sa data not present for all years (one year missing)" in {
+
+        server.stubFor(
+          get(urlEqualTo(backendUrlSa)).willReturn(
+            ok(atsList(allPreviousYears.take(appConfig.maxTaxYearsTobeDisplayed - 1)))
+          )
         )
 
         server.stubFor(
