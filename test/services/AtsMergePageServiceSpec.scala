@@ -59,18 +59,14 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
       mockFeatureFlagService,
       mockTaxYearUtil
     )
+  private val dummyYears: List[Int]        = List(2023, 2023)
 
-  private val saYears   = Seq(2023, 2023)
-  private val payeYears = Seq(2022, 2022)
-
-  private def saDataResponse(yearList: Seq[Int] = saYears): AtsList = AtsList(
+  private val saDataResponse: AtsList = AtsList(
     utr = testUtr,
     forename = "forename",
     surname = "surname",
-    yearList = yearList.toList
+    yearList = dummyYears
   )
-
-  private val payeDataResponse: List[Int] = payeYears.toList
 
   private def createRequest(optNino: Option[Nino] = Some(testNino)): AuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.AuthenticatedRequest(
@@ -85,8 +81,6 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     )
 
   private val yearFrom = appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1
-
-  private val dummyYears: List[Int] = List(2023, 2023)
 
   override def beforeEach(): Unit = {
     reset(mockTaxsAgentTokenSessionCacheRepository)
@@ -106,26 +100,26 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
       "return a AtsMergePageViewModel" when {
         "saData is successfully received and payeData is successfully received" in {
           implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = createRequest()
-          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse())))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, yearFrom, appConfig.taxYear))
-            .thenReturn(Future(Right(payeDataResponse)))
+            .thenReturn(Future(Right(dummyYears)))
           when(mockTaxYearUtil.isYearListComplete(any())).thenReturn(false)
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result mustBe Right(AtsMergePageViewModel(saDataResponse(), payeDataResponse, appConfig, ConfidenceLevel.L50))
+          result mustBe Right(AtsMergePageViewModel(saDataResponse, dummyYears, appConfig, ConfidenceLevel.L50))
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
         }
 
         "saData is successfully received for each year but payeData returns error" in {
           implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = createRequest()
-          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse(dummyYears))))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, yearFrom, appConfig.taxYear))
             .thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(mockTaxYearUtil.isYearListComplete(ArgumentMatchers.eq(dummyYears))).thenReturn(true)
           val result                                                         = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(
-            AtsMergePageViewModel(saDataResponse(dummyYears), Nil, appConfig, ConfidenceLevel.L50)
+            AtsMergePageViewModel(saDataResponse, Nil, appConfig, ConfidenceLevel.L50)
           )
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
@@ -157,11 +151,11 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
         "saData is successfully received and nino is not present" in {
           implicit val requestNoNino: AuthenticatedRequest[AnyContentAsEmpty.type] = createRequest(optNino = None)
-          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse())))
+          when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
           when(mockTaxYearUtil.isYearListComplete(any())).thenReturn(false)
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result mustBe Right(AtsMergePageViewModel(saDataResponse(), List(), appConfig, ConfidenceLevel.L50))
+          result mustBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
 
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
@@ -172,7 +166,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
         "saData is successfully received but not for each year and payeData returns error" in {
           implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = createRequest()
           when(mockAtsListService.createModel())
-            .thenReturn(Future(Right(saDataResponse(yearList = dummyYears))))
+            .thenReturn(Future(Right(saDataResponse)))
           when(mockPayeAtsService.getPayeTaxYearData(testNino, yearFrom, appConfig.taxYear))
             .thenReturn(Future(Left(AtsErrorResponse("bad gateway"))))
           when(mockTaxYearUtil.isYearListComplete(ArgumentMatchers.eq(dummyYears)))
