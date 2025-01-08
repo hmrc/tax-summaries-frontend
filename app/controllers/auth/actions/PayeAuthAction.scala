@@ -38,14 +38,14 @@ import utils.TaxYearUtil
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 class PayeAuthActionImpl(
-                          override val authConnector: DefaultAuthConnector,
-                          cc: MessagesControllerComponents,
-                          pertaxAuthService: PertaxAuthService,
-                          featureFlagService: FeatureFlagService,
-                          taxYearUtil: TaxYearUtil,
-                          taxYear: Int
-                        )(implicit ec: ExecutionContext)
-  extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
+  override val authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService,
+  taxYearUtil: TaxYearUtil,
+  taxYear: Int
+)(implicit ec: ExecutionContext)
+    extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
     with ActionFunction[Request, PayeAuthenticatedRequest]
     with AuthorisedFunctions
     with Logging {
@@ -61,9 +61,9 @@ class PayeAuthActionImpl(
     featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
 
   override def invokeBlock[A](
-                               request: Request[A],
-                               block: PayeAuthenticatedRequest[A] => Future[Result]
-                             ): Future[Result] = {
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  ): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     if (taxYearUtil.isValidTaxYear(taxYear)) {
       isPayeEnabled.flatMap {
@@ -79,18 +79,18 @@ class PayeAuthActionImpl(
     Future.successful(Redirect(controllers.paye.routes.PayeErrorController.serviceUnavailable))
 
   private def handleAuthorisation[A](
-                                      request: Request[A],
-                                      block: PayeAuthenticatedRequest[A] => Future[Result]
-                                    )(implicit hc: HeaderCarrier): Future[Result] =
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier): Future[Result] =
     pertaxAuthService.authorise[A, Request[A]](request).flatMap {
       case Some(result) => Future.successful(result)
       case None         => fetchUserDetails(request, block)
     }
 
   private def fetchUserDetails[A](
-                                   request: Request[A],
-                                   block: PayeAuthenticatedRequest[A] => Future[Result]
-                                 )(implicit hc: HeaderCarrier): Future[Result] =
+    request: Request[A],
+    block: PayeAuthenticatedRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier): Future[Result] =
     authorised(ConfidenceLevel.L200)
       .retrieve(Retrievals.allEnrolments and Retrievals.nino and Retrievals.credentials) {
         case Enrolments(enrolments) ~ Some(_) ~ Some(_) if isAgent(enrolments) =>
@@ -113,14 +113,14 @@ class PayeAuthActionImpl(
 
 @Singleton
 class PayeAuthAction @Inject() (
-                                 authConnector: DefaultAuthConnector,
-                                 cc: MessagesControllerComponents,
-                                 pertaxAuthService: PertaxAuthService,
-                                 featureFlagService: FeatureFlagService,
-                                 taxYearUtil: TaxYearUtil
-                               )(implicit
-                                 ec: ExecutionContext
-                               ) {
+  authConnector: DefaultAuthConnector,
+  cc: MessagesControllerComponents,
+  pertaxAuthService: PertaxAuthService,
+  featureFlagService: FeatureFlagService,
+  taxYearUtil: TaxYearUtil
+)(implicit
+  ec: ExecutionContext
+) {
   def apply(taxYear: Int) =
     new PayeAuthActionImpl(authConnector, cc, pertaxAuthService, featureFlagService, taxYearUtil, taxYear)
 }
