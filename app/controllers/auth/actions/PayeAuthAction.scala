@@ -17,11 +17,13 @@
 package controllers.auth.actions
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.PayeAuthenticatedRequest
 import controllers.routes
 import models.admin.PAYEServiceToggle
 import play.api.Logging
+import play.api.http.Status
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import services.PertaxAuthService
@@ -29,7 +31,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -37,6 +39,7 @@ import utils.TaxYearUtil
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
+
 class PayeAuthActionImpl(
   override val authConnector: DefaultAuthConnector,
   cc: MessagesControllerComponents,
@@ -44,7 +47,7 @@ class PayeAuthActionImpl(
   featureFlagService: FeatureFlagService,
   taxYearUtil: TaxYearUtil,
   taxYear: Int
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, appConfig: ApplicationConfig)
     extends ActionBuilder[PayeAuthenticatedRequest, AnyContent]
     with ActionFunction[Request, PayeAuthenticatedRequest]
     with AuthorisedFunctions
@@ -82,10 +85,15 @@ class PayeAuthActionImpl(
     request: Request[A],
     block: PayeAuthenticatedRequest[A] => Future[Result]
   )(implicit hc: HeaderCarrier): Future[Result] =
-    pertaxAuthService.authorise[A, Request[A]](request).flatMap {
-      case Some(result) => Future.successful(result)
-      case None         => fetchUserDetails(request, block)
-    }
+    pertaxAuthService
+      .authorise[A, Request[A]](request)
+      .flatMap {
+        case Some(result) => Future.successful(result)
+        case None         => fetchUserDetails(request, block)
+      }
+      .recoverWith { case UpstreamErrorResponse(_, Status.UNAUTHORIZED, _, _) =>
+        Future.successful(redirectToLogin)
+      }
 
   private def fetchUserDetails[A](
     request: Request[A],
@@ -109,6 +117,15 @@ class PayeAuthActionImpl(
 
   private def redirectToNotAuthorised: Future[Result] =
     Future.successful(Redirect(controllers.paye.routes.PayeErrorController.notAuthorised))
+
+  private def redirectToLogin: Result =
+    Redirect(
+      appConfig.loginUrl,
+      Map(
+        "continue_url" -> Seq(appConfig.loginCallback),
+        "origin"       -> Seq(appConfig.appName)
+      )
+    )
 }
 
 @Singleton
@@ -119,7 +136,8 @@ class PayeAuthAction @Inject() (
   featureFlagService: FeatureFlagService,
   taxYearUtil: TaxYearUtil
 )(implicit
-  ec: ExecutionContext
+  ec: ExecutionContext,
+  appConfig: ApplicationConfig
 ) {
   def apply(taxYear: Int) =
     new PayeAuthActionImpl(authConnector, cc, pertaxAuthService, featureFlagService, taxYearUtil, taxYear)
