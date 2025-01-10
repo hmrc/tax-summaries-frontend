@@ -16,8 +16,6 @@
 
 package view_models
 
-import play.api.i18n.Messages
-import play.api.libs.json.{Format, Json, OFormat}
 import utils.GenericViewModel
 
 case class AtsList(utr: String, forename: String, surname: String, yearList: List[Int]) extends GenericViewModel {
@@ -26,14 +24,4 @@ case class AtsList(utr: String, forename: String, surname: String, yearList: Lis
 
 object AtsList {
   val empty: AtsList = AtsList("", "", "", List.empty)
-}
-
-case class TaxYearEnd(year: Option[String]) extends GenericViewModel {
-  def taxYearPeriod(implicit messages: Messages): String =
-    messages("ats.select_tax_year.label", (year.get.toInt - 1).toString, year.get)
-}
-
-object TaxYearEnd {
-  implicit val formats: OFormat[TaxYearEnd]              = Json.format[TaxYearEnd]
-  implicit val optionFormats: Format[Option[TaxYearEnd]] = Format.optionWithNull[TaxYearEnd]
 }

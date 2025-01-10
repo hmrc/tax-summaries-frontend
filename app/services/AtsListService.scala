@@ -49,8 +49,8 @@ class AtsListService @Inject() (
         Right(
           AtsList(
             atsList.utr,
-            atsList.taxPayer.get.taxpayer_name.get("forename"),
-            atsList.taxPayer.get.taxpayer_name.get("surname"),
+            atsList.taxPayer.fold("")(_.getOrElse("forename", "")),
+            atsList.taxPayer.fold("")(_.getOrElse("surname", "")),
             atsList.atsYearList.get
           )
         )

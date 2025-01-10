@@ -443,14 +443,9 @@ object AtsTestData {
   val atsListData = AtsListData(
     "1111111111",
     Some(
-      TaxpayerFrontTierData(
-        Some(
-          Map(
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        ),
-        None
+      Map(
+        "forename" -> "John",
+        "surname"  -> "Smith"
       )
     ),
     Some(
