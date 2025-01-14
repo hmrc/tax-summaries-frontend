@@ -17,8 +17,8 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
+import models.AgentToken
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
-import models.{AgentToken, AtsListData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any => mockAny}
 import org.mockito.Mockito.{when, reset => mockReset}
@@ -26,7 +26,6 @@ import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repository.TaxsAgentTokenSessionCacheRepository
@@ -45,9 +44,6 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
   lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   lazy implicit val hc: HeaderCarrier = inject[HeaderCarrier]
-
-  val atsListData: AtsListData =
-    Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
 
   val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
@@ -123,6 +119,20 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         .successful(Some(agentTokenMock))
     )
 
+  private def atsList(taxYears: Seq[Int]) = {
+    val ty = taxYears.foldLeft("")((acc, c) => acc + (if (acc.isEmpty) "" else ",") + c)
+    """{
+      |  "utr":"$utr",
+      |  "taxPayer":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}},
+      |  "atsYearList":[$YEARS]
+      |}""".stripMargin.replace("$YEARS", ty)
+  }
+
+  private def allPreviousYears: Seq[Int] = {
+    val yearFrom = appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1
+    yearFrom to appConfig.taxYear
+  }
+
   "/income-before-tax" must {
 
     lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
@@ -136,7 +146,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          .willReturn(ok(atsList(allPreviousYears)))
       )
 
       server.stubFor(
@@ -166,7 +176,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          .willReturn(ok(atsList(allPreviousYears)))
       )
 
       server.stubFor(
@@ -189,7 +199,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          .willReturn(ok(atsList(allPreviousYears)))
       )
 
       server.stubFor(
@@ -286,11 +296,34 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve payeData throws a $httpResponse" in {
+      s"return a success response when the call to backend to retrieve payeData throws a $httpResponse but sa data present for ALL previous tax years" in {
+        server.stubFor(get(urlEqualTo(backendUrlSa)).willReturn(ok(atsList(allPreviousYears))))
 
         server.stubFor(
-          get(urlEqualTo(backendUrlSa))
-            .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+          get(urlEqualTo(backendUrlPaye))
+            .willReturn(aResponse().withStatus(httpResponse))
+        )
+
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+
+        val result = route(fakeApplication(), request)
+
+        result.map(status) mustBe Some(OK)
+      }
+    }
+
+    List(
+      BAD_REQUEST,
+      IM_A_TEAPOT,
+      INTERNAL_SERVER_ERROR,
+      SERVICE_UNAVAILABLE
+    ).foreach { httpResponse =>
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve payeData throws a $httpResponse and sa data not present for all years (one year missing)" in {
+
+        server.stubFor(
+          get(urlEqualTo(backendUrlSa)).willReturn(
+            ok(atsList(allPreviousYears.take(appConfig.maxTaxYearsTobeDisplayed - 1)))
+          )
         )
 
         server.stubFor(
