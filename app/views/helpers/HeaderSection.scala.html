@@ -35,5 +35,5 @@
 }
 
 @if(!actingAsAttorney.isDefined && utr.nonEmpty){
-    @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body info-header-section"))
+    @p(HtmlContent(s"""<strong>$name</strong> <br>${Messages("generic.utr")} $utr"""), elmId = Some("user-info"), classes = Some("govuk-body govuk-!-margin-top-1"))
 }
