@@ -80,7 +80,6 @@ lazy val it = project
     DefaultBuildSettings.itSettings()
   )
 
-
 TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",
   "uk.gov.hmrc.hmrcfrontend.views.html.components._",

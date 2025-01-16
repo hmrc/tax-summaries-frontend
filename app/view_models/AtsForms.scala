@@ -37,7 +37,7 @@ class AtsForms @Inject() extends Logging {
           Invalid("ats.select_tax_year.required")
         }
       }
-      .getOrElse{
+      .getOrElse {
         logger.warn(s"Invalid value submitted on AtsMergePage $submittedValue")
         Invalid("ats.select_tax_year.required")
       }
