@@ -43,6 +43,21 @@ object AtsYearChoice {
       case _       => throw new Exception(s"Could not parse json $value to AtsYearChoice")
     }
 
+  def fromFormString(value: Option[String]): AtsYearChoice =
+    value match {
+      case Some(v) =>
+        val data = v.split("-")
+        (data(0), data(1)) match {
+          case ("SA", year)    => AtsYearChoice(SA, year.toInt)
+          case ("PAYE", year)  => AtsYearChoice(PAYE, year.toInt)
+          case ("NoATS", year) => AtsYearChoice(NoATS, year.toInt)
+          case _               => throw new Exception(s"Could not convert submitted value $value to AtsYearChoice")
+        }
+      case _       => throw new Exception(s"Could not convert submitted value $value to AtsYearChoice")
+
+    }
+
   def toOptionString(choice: AtsYearChoice): Option[Option[String]] = Some(Some(Json.stringify(Json.toJson(choice))))
   def toString(choice: AtsYearChoice): String                       = Json.stringify(Json.toJson(choice))
+  def toFormString(choice: AtsYearChoice): String                   = s"${choice.atsType}-${choice.year}"
 }

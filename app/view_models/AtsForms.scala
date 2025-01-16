@@ -17,30 +17,32 @@
 package view_models
 
 import com.google.inject.Inject
+import config.ApplicationConfig
 import models.AtsYearChoice
 import play.api.Logging
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import play.api.libs.json.Json
 
-class AtsForms @Inject() extends Logging {
+class AtsForms @Inject() (appConfig: ApplicationConfig) extends Logging {
 
   private val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
     submittedValue
       .map { value =>
-        val json = Json.parse(value)
-        if (Json.fromJson[AtsYearChoice](json).isSuccess) {
-          Valid
-        } else {
-          logger.warn(s"Invalid value submitted on AtsMergePage $value")
-          Invalid("ats.select_tax_year.required")
-        }
+        val data = value.split("-").toList
+        if (data.size > 1) {
+          (data.head, data(1)) match {
+            case (_, year)
+                if year.toInt < (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) || year.toInt > appConfig.taxYear =>
+              Invalid("ats.select_tax_year.required")
+            case ("SA", _)    => Valid
+            case ("PAYE", _)  => Valid
+            case ("NoATS", _) => Valid
+            case _            => Invalid("ats.select_tax_year.required")
+          }
+        } else Invalid("ats.select_tax_year.required")
       }
-      .getOrElse {
-        logger.warn(s"Invalid value submitted on AtsMergePage $submittedValue")
-        Invalid("ats.select_tax_year.required")
-      }
+      .getOrElse(Invalid("ats.select_tax_year.required"))
   }
 
   val yearChoice = "year"
@@ -51,7 +53,7 @@ class AtsForms @Inject() extends Logging {
         .verifying("ats.select_tax_year.required", _.nonEmpty)
         .verifying(yearChoiceJsonConstraint)
     )(
-      AtsYearChoice.fromString
+      AtsYearChoice.fromFormString
     )(AtsYearChoice.toOptionString)
   )
 }
