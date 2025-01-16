@@ -18,20 +18,29 @@ package view_models
 
 import com.google.inject.Inject
 import models.AtsYearChoice
+import play.api.Logging
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.Json
 
-class AtsForms @Inject() () {
+class AtsForms @Inject() extends Logging {
 
-  val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
+  private val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
     submittedValue
       .map { value =>
         val json = Json.parse(value)
-        if (Json.fromJson[AtsYearChoice](json).isSuccess) Valid else Invalid("ats.select_tax_year.required")
+        if (Json.fromJson[AtsYearChoice](json).isSuccess) {
+          Valid
+        } else {
+          logger.warn(s"Invalid value submitted on AtsMergePage $value")
+          Invalid("ats.select_tax_year.required")
+        }
       }
-      .getOrElse(Invalid("ats.select_tax_year.required"))
+      .getOrElse{
+        logger.warn(s"Invalid value submitted on AtsMergePage $submittedValue")
+        Invalid("ats.select_tax_year.required")
+      }
   }
 
   val yearChoice = "year"
