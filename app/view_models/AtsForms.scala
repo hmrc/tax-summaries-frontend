@@ -29,8 +29,8 @@ class AtsForms @Inject() (appConfig: ApplicationConfig) extends Logging {
   private val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
     submittedValue
       .map { value =>
-        val data = value.split("-").toList
-        if (data.size > 1) {
+        val data = value.split("-")
+        if (data.size == 2) {
           (data.head, data(1)) match {
             case (_, year)
                 if year.toInt < (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) || year.toInt > appConfig.taxYear =>
