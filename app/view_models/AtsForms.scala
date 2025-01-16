@@ -20,13 +20,28 @@ import com.google.inject.Inject
 import models.AtsYearChoice
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.libs.json.Json
 
 class AtsForms @Inject() () {
+
+  val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
+    submittedValue
+      .map { value =>
+        val json = Json.parse(value)
+        if (Json.fromJson[AtsYearChoice](json).isSuccess) Valid else Invalid("ats.select_tax_year.required")
+      }
+      .getOrElse(Invalid("ats.select_tax_year.required"))
+  }
 
   val yearChoice = "year"
 
   val atsYearFormMapping: Form[AtsYearChoice] = Form(
-    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", _.nonEmpty))(
+    mapping(
+      yearChoice -> optional(text)
+        .verifying("ats.select_tax_year.required", _.nonEmpty)
+        .verifying(yearChoiceJsonConstraint)
+    )(
       AtsYearChoice.fromString
     )(AtsYearChoice.toOptionString)
   )

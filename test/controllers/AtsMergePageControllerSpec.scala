@@ -323,5 +323,29 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       document.text() contains "There is a problem with the form"
       document.text() contains "Select an option for the tax year"
     }
+
+    "return a success response and stay on the same page with form errors if the HTML has been changed to submit an invalid value" in {
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> """{"nonsense":"SA","json":2024}"""))
+      val requestWithQuery = requests.AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        Some(testNino),
+        isAgentActive = false,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
+
+      val result = sut.onSubmit(requestWithQuery)
+
+      status(result) mustBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.text() contains "There is a problem with the form"
+      document.text() contains "Select an option for the tax year"
+    }
   }
 }
