@@ -46,13 +46,9 @@ object AtsYearChoice {
   def fromFormString(value: Option[String]): AtsYearChoice =
     value match {
       case Some(v) =>
-        val Array(atsTypeString, year) = v.split("-")
-        (atsTypeString, year) match {
-          case (atsType, year) => AtsYearChoice(AtsType.fromString(atsType), year.toInt)
-          case _               => throw new Exception(s"Could not convert submitted value $value to AtsYearChoice")
-        }
+        val Array(atsType, year) = v.split("-")
+        AtsYearChoice(AtsType.fromString(atsType), year.toInt)
       case _       => throw new Exception(s"Could not convert submitted value $value to AtsYearChoice")
-
     }
 
   def toOptionString(choice: AtsYearChoice): Option[Option[String]] = Some(Some(Json.stringify(Json.toJson(choice))))
