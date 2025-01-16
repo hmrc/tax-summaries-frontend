@@ -22,7 +22,7 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, times, verify, when}
+import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -126,6 +126,27 @@ class AtsListServiceSpec extends BaseSpec {
 
       whenReady(sut.createModel()) { result =>
         result mustBe Right(AtsList("1111111111", "John", "Smith", List(2022)))
+      }
+
+    }
+
+    "Return an ats list with empty name when received a success response from connector but no tax payer name" in {
+      val atsListData = AtsListData(
+        "1111111111",
+        Some(
+          TaxpayerFrontTierData(
+            None,
+            None
+          )
+        ),
+        Some(List(2022))
+      )
+      when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
+        AtsSuccessResponseWithPayload[AtsListData](atsListData)
+      )
+
+      whenReady(sut.createModel()) { result =>
+        result mustBe Right(AtsList("1111111111", "", "", List(2022)))
       }
 
     }

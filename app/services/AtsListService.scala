@@ -46,11 +46,13 @@ class AtsListService @Inject() (
   ): Future[Either[AtsResponse, AtsList]] =
     getAtsYearList map {
       case Right(atsList)               =>
+        val forename = atsList.taxPayer.flatMap(_.taxpayer_name.flatMap(_.get("forename"))).getOrElse("")
+        val surname  = atsList.taxPayer.flatMap(_.taxpayer_name.flatMap(_.get("surname"))).getOrElse("")
         Right(
           AtsList(
             atsList.utr,
-            atsList.taxPayer.get.taxpayer_name.get("forename"),
-            atsList.taxPayer.get.taxpayer_name.get("surname"),
+            forename,
+            surname,
             atsList.atsYearList.get
           )
         )
