@@ -46,8 +46,8 @@ object AtsYearChoice {
   def fromFormString(value: Option[String]): AtsYearChoice =
     value match {
       case Some(v) =>
-        val data = v.split("-")
-        (data(0), data(1)) match {
+        val Array(atsType, year) = v.split("-")
+        (atsType, year) match {
           case ("SA", year)    => AtsYearChoice(SA, year.toInt)
           case ("PAYE", year)  => AtsYearChoice(PAYE, year.toInt)
           case ("NoATS", year) => AtsYearChoice(NoATS, year.toInt)
