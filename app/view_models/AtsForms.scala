@@ -17,30 +17,26 @@
 package view_models
 
 import com.google.inject.Inject
-import config.ApplicationConfig
 import models.AtsYearChoice
 import play.api.Logging
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import utils.TaxYearUtil
 
-class AtsForms @Inject() (appConfig: ApplicationConfig) extends Logging {
+class AtsForms @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
+
+  private val choices = List("SA", "PAYE", "NoATS")
 
   private val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
     submittedValue
       .map { value =>
-        val data = value.split("-")
-        if (data.size == 2) {
-          (data.head, data(1)) match {
-            case (_, year)
-                if year.toInt < (appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed) || year.toInt > appConfig.taxYear =>
-              Invalid("ats.select_tax_year.required")
-            case ("SA", _)    => Valid
-            case ("PAYE", _)  => Valid
-            case ("NoATS", _) => Valid
-            case _            => Invalid("ats.select_tax_year.required")
-          }
-        } else Invalid("ats.select_tax_year.required")
+        value.split("-").toList match {
+          case atsType :: taxYear :: Nil =>
+            if (taxYearUtil.isValidTaxYear(taxYear.toInt) && choices.contains(atsType)) Valid
+            else Invalid("ats.select_tax_year.required")
+          case _                         => Invalid("ats.select_tax_year.required")
+        }
       }
       .getOrElse(Invalid("ats.select_tax_year.required"))
   }
