@@ -22,7 +22,7 @@ import connectors.PertaxConnector
 import models.{ErrorView, PertaxApiResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Request}
@@ -253,5 +253,38 @@ class PertaxAuthServiceSpec extends BaseSpec {
         result.get.header.status mustBe INTERNAL_SERVER_ERROR
       }
     }
+
+    "redirect to login when UNAUTHORIZED response is returned" in {
+      val service = new PertaxAuthService(
+        mockAuthConnector,
+        messagesApi,
+        mockPertaxConnector,
+        serviceUnavailableView,
+        mainTemplate,
+        mockApplicationConfig
+      )
+
+      when(mockApplicationConfig.loginUrl).thenReturn("/login")
+      when(mockApplicationConfig.loginCallback).thenReturn("/callback")
+      when(mockApplicationConfig.appName).thenReturn("testApp")
+
+      val response: Either[UpstreamErrorResponse, PertaxApiResponse] = Left(
+        UpstreamErrorResponse("Unauthorized", UNAUTHORIZED)
+      )
+      when(mockPertaxConnector.pertaxPostAuthorise()(any(), any())).thenReturn(EitherT(Future(response)))
+
+      whenReady(service.authorise[AnyContent, Request[AnyContent]](FakeRequest())) { result =>
+        result mustBe Some(
+          Redirect(
+            "/login",
+            Map(
+              "continue_url" -> Seq("/callback"),
+              "origin"       -> Seq("testApp")
+            )
+          )
+        )
+      }
+    }
+
   }
 }

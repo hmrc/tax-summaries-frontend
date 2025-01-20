@@ -64,6 +64,61 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
     }
   }
 
+  "isYearListComplete" must {
+    "return false when list empty" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(Nil) mustBe false
+    }
+    "return true when all years present" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(Seq(currentYear - 3, currentYear - 2, currentYear - 1, currentYear)) mustBe true
+    }
+    "return false when first year missing" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(Seq(currentYear - 2, currentYear - 1, currentYear)) mustBe false
+    }
+    "return false when first year missing but correct number of years due to earlier year present" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(Seq(currentYear - 4, currentYear - 2, currentYear - 1, currentYear)) mustBe false
+    }
+    "return false when first year missing but correct number of years due to later year present" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(
+        Seq(currentYear - 3, currentYear - 2, currentYear - 1, currentYear + 1)
+      ) mustBe false
+    }
+
+    "return false when last year missing" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(Seq(currentYear - 3, currentYear - 2, currentYear - 1)) mustBe false
+    }
+    "return false when last year missing but correct number of years due to earlier year present" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(
+        Seq(currentYear - 4, currentYear - 3, currentYear - 2, currentYear - 1)
+      ) mustBe false
+    }
+    "return false when last year missing but correct number of years due to later year present" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(
+        Seq(currentYear - 3, currentYear - 2, currentYear - 1, currentYear + 1)
+      ) mustBe false
+    }
+    "return false when year missing in middle of list" in {
+      when(mockAppConfig.taxYear).thenReturn(currentYear)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      taxYearUtil.isYearListComplete(Seq(currentYear - 3, currentYear - 1, currentYear)) mustBe false
+    }
+  }
+
   "taxYearUtil" must {
     "extract tax year when a valid tax year is present" in {
 
@@ -163,4 +218,5 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
       }
     }
   }
+
 }

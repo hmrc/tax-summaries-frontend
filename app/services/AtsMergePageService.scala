@@ -16,7 +16,6 @@
 
 package services
 
-import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
@@ -38,7 +37,8 @@ class AtsMergePageService @Inject() (
   atsListService: AtsListService,
   appConfig: ApplicationConfig,
   cryptoService: CryptoService,
-  featureFlagService: FeatureFlagService
+  featureFlagService: FeatureFlagService,
+  taxYearUtil: TaxYearUtil
 )(implicit ec: ExecutionContext)
     extends Logging {
 
@@ -46,10 +46,24 @@ class AtsMergePageService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[Either[AtsResponse, AtsMergePageViewModel]] =
-    (for {
-      saData   <- EitherT(getSaYearListIfEnabled)
-      payeData <- EitherT(getPayeYearListIfEnabled(request.isAgent))
-    } yield AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel)).value
+    getPayeYearListIfEnabled(request.isAgent).flatMap {
+      // If paye response has all required years then we don't need to call sa API at all
+      case Right(payeData) if taxYearUtil.isYearListComplete(payeData) =>
+        Future.successful[Either[AtsResponse, AtsMergePageViewModel]](
+          Right(AtsMergePageViewModel(AtsList.empty, payeData, appConfig, request.confidenceLevel))
+        )
+      case payeResponse                                                =>
+        getSaYearListIfEnabled.map { saResponse =>
+          (saResponse, payeResponse) match {
+            case (Left(atsResponse), _)                                                => Left(atsResponse)
+            case (Right(saData), _) if taxYearUtil.isYearListComplete(saData.yearList) =>
+              Right(AtsMergePageViewModel(saData, Nil, appConfig, request.confidenceLevel))
+            case (Right(_), Left(atsResponse))                                         => Left(atsResponse)
+            case (Right(saData), Right(payeData))                                      =>
+              Right(AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel))
+          }
+        }
+    }
 
   private def getSaYearListIfEnabled(implicit
     hc: HeaderCarrier,

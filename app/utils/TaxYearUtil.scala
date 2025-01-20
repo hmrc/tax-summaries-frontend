@@ -37,4 +37,12 @@ class TaxYearUtil @Inject() (
       case _                             =>
         Left(MissingTaxYear)
     }
+
+  def isYearListComplete(years: Seq[Int]): Boolean = {
+    val yearFrom      = appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed
+    val yearTo        = appConfig.taxYear
+    val yrs           = years.distinct.sorted
+    val expTotalYears = yearTo - yearFrom
+    yrs.size == expTotalYears && yrs.headOption.contains(yearFrom + 1) && yrs.lastOption.contains(yearTo)
+  }
 }

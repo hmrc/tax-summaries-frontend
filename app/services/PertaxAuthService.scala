@@ -21,11 +21,12 @@ import config.ApplicationConfig
 import connectors.PertaxConnector
 import models.PertaxApiResponse
 import play.api.Logging
+import play.api.http.Status.UNAUTHORIZED
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{InternalServerError, Redirect, Status}
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -65,6 +66,8 @@ class PertaxAuthService @Inject() (
       .pertaxPostAuthorise()
       .value
       .flatMap {
+        case Left(UpstreamErrorResponse(_, UNAUTHORIZED, _, _))                                 =>
+          Future.successful(Some(redirectToLogin))
         case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                                =>
           Future.successful(None)
         case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect)))             =>
@@ -106,4 +109,13 @@ class PertaxAuthService @Inject() (
           )
       }
   }
+
+  private def redirectToLogin: Result =
+    Redirect(
+      appConfig.loginUrl,
+      Map(
+        "continue_url" -> Seq(appConfig.loginCallback),
+        "origin"       -> Seq(appConfig.appName)
+      )
+    )
 }
