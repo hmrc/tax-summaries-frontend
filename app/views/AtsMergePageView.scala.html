@@ -121,7 +121,7 @@
     radioOptions.map { case (value, label) =>
         RadioItem(
             content = Text(label),
-            value = Some(AtsYearChoice.toString(value)),
+            value = Some(AtsYearChoice.toFormString(value)),
             id = Some(s"$name-${value.year}-${value.atsType}"),
             label = Some(Label(content = Text(label), attributes = Map("id" -> s"$name-${value.year}-${value.atsType}-label"))),
             checked = atsYearForm(name).value.contains(AtsYearChoice.toString(value))

@@ -21,6 +21,12 @@ import play.api.libs.json._
 sealed abstract class AtsType
 object AtsType {
 
+  def fromString(string: String) = string match {
+    case "SA"   => SA
+    case "PAYE" => PAYE
+    case _      => NoATS
+  }
+
   implicit val writes: Writes[AtsType] = new Writes[AtsType] {
     override def writes(o: AtsType): JsValue =
       o match {
