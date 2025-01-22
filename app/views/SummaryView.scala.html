@@ -49,7 +49,7 @@
 
 
     <div class="print-this govuk-!-margin-top-0">
-        <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
+        <img src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
         <a class="print-this__link" href="#" id="printLink">@Messages("ats.treasury_spending.print.this.page")</a>
     </div>
 
@@ -71,7 +71,7 @@
 
     @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
 
-    <div id="taxable-income" class="incomeTaxesSection">
+    <div id="taxable-income" class="govuk-!-margin-bottom-8 xxxxxx">
 
         @h2("ats.summary.total_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -83,7 +83,7 @@
 
     </div>
 
-    <div id="tax-free-income" class="incomeTaxesSection">
+    <div id="tax-free-income" class="govuk-!-margin-bottom-8">
 
         @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -95,7 +95,7 @@
 
     </div>
 
-        <div id="tax-calculated-as" class="incomeTaxesSection">
+        <div id="tax-calculated-as" class="govuk-!-margin-bottom-8">
 
             @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -109,7 +109,7 @@
 
 
         @if(viewModel.hasTaxableGains) {
-            <div id="capital-gains" class="incomeTaxesSection">
+            <div id="capital-gains" class="govuk-!-margin-bottom-8">
 
                 @h2("ats.summary.capital_gains.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
@@ -124,7 +124,7 @@
             </div>
         }
 
-        <div id="your-total-tax" class="incomeTaxesSection">
+        <div id="your-total-tax" class="govuk-!-margin-bottom-8">
 
             @h2("ats.summary.total_tax.your_total_tax", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 

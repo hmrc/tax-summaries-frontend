@@ -46,7 +46,7 @@
 
     <div class="govuk-!-margin-bottom-5">
         <div class="print-this">
-            <img class="print-this__icon" src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
+            <img src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
             <a class="print-this__link" href="#" id="printLink">@Messages("ats.treasury_spending.print.this.page")</a>
         </div>
     </div>
@@ -56,7 +56,7 @@
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
     @p(HtmlContent(Messages("paye.ats.summary.lede")))
 
-    <div id="taxable-income" class="incomeTaxesSection">
+    <div id="taxable-income" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.total_income.title")
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
@@ -68,7 +68,7 @@
         @p(HtmlContent(Messages("paye.ats.summary.total_income.description")))
     </div>
 
-    <div id="tax-free-income" class="incomeTaxesSection">
+    <div id="tax-free-income" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.tax_free.title")
         <p>
             <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
@@ -80,7 +80,7 @@
         @p(HtmlContent(Messages("paye.ats.summary.tax_free.description")))
     </div>
 
-    <div id="tax-calculated-as" class="incomeTaxesSection">
+    <div id="tax-calculated-as" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
             <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
@@ -92,7 +92,7 @@
         @govukInsetText(InsetText(content = Text(Messages("paye.ats.summary.tax_and_nics.description", viewModel.averageTaxRate))))
     </div>
 
-    <div id="income_after_tax_and_nics" class="incomeTaxesSection">
+    <div id="income_after_tax_and_nics" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg")
         <span class="govuk-heading-l" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, twoDecimalPlaces = true)</span>
     </div>

@@ -12,20 +12,8 @@
   ) {
     window.history.replaceState(null, null, window.location.href);
   }
-  // back click handle, dependent upon presence of referrer & no host change
-  var backLink = document.querySelector('#back-link')
-  if (backLink) backLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (
-        window.history &&
-        window.history.back &&
-        typeof window.history.back === 'function' &&
-        docReferrer !== '' &&
-        docReferrer.indexOf(window.location.host) !== -1
-      ) {
-        window.history.back();
-      }
-  });
+
+
   const printlink = document.getElementById('printLink');
 
   if(printlink != null && printlink != 'undefined' ) {

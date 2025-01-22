@@ -15,59 +15,23 @@
  .hmrc-logo-print {
      display: none;
 }
- .print-this {
-     position: relative;
-     display: inline;
+
+.print-this {
+     display: flex;
+     gap: .5em
 }
- .print-this__icon {
-     left: 0;
-     position: absolute;
-     top: 2px;
-}
- .print-this__link {
+
+.print-this__link {
      border-bottom: 1px solid #000;
      color: #000;
      font-size: 16px;
-     margin-left: 25px;
      text-decoration: none;
      font-family: "GDS Transport", Arial, sans-serif;
 }
 
- #howTaxIsSpentTable td:first-child, #totalUkIncomeTax th {
+#totalUkIncomeTax th {
      font-weight: 700;
 }
-
- #adjustments-table {
-     margin-top: 2.0em;
-}
- #national-insurance-contribution-table {
-     margin-top: 2.0em;
-}
-
-
-.info-header-section {
-    margin-top: 0.5em;
-}
-
-
-#timeout-keep-signin-btn {
-    font-size: 19px;
-}
-
-#timeout-sign-out-link {
-    vertical-align: sub;
-}
-
-.incomeTaxesSection {
-    margin-bottom: 3em;
-    padding: 0;
-}
-
-#your-total-tax, #income_after_tax_and_nics {
-   margin-bottom: 6em;
-}
-
-
 
 #tax-spent .content, #tax-spent-header, #tax-spent-footer {
     display: flex;
@@ -112,7 +76,7 @@
 }
 
 @media (min-width: 40.0625em) {
-    #tax-spent .govuk-summary-list__row--no-actions:after {
+    #tax-spent .govuk-summary-list__row--no-actions::after {
         width: 0;
     }
 }
