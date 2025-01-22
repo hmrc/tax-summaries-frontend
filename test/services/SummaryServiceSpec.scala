@@ -101,5 +101,31 @@ class SummaryServiceSpec extends BaseSpec {
         "Smith"
       )
     }
+
+    "return a complete Summary when given incomplete tax payer" in {
+      val atsData = AtsTestData.summaryData.copy(taxPayerData = None)
+      val result  = sut.summaryConverter(atsData)
+
+      result mustBe Summary(
+        2022,
+        "1111111111",
+        Amount(100, "GBP"),
+        Amount(200, "GBP"),
+        Amount(300, "GBP"),
+        Amount(400, "GBP"),
+        Amount(400, "GBP"),
+        Amount(500, "GBP"),
+        Amount(600, "GBP"),
+        Amount(700, "GBP"),
+        Amount(800, "GBP"),
+        Amount(900, "GBP"),
+        Amount(1000, "GBP"),
+        Rate("10%"),
+        Rate("20%"),
+        "",
+        "",
+        ""
+      )
+    }
   }
 }

@@ -33,7 +33,9 @@ class SummaryService @Inject() (atsService: AtsService) {
     atsService.createModel(taxYear, summaryConverter)
 
   private[services] def summaryConverter(atsData: AtsData): Summary = {
-    val summaryData: DataHolder = atsData.summary_data.get
+    val summaryData: DataHolder       = atsData.summary_data.get
+    val taxPayer: Map[String, String] =
+      atsData.taxPayerData.fold(Map.empty[String, String])(_.taxpayer_name.getOrElse(Map.empty))
 
     Summary(
       atsData.taxYear,
@@ -51,9 +53,9 @@ class SummaryService @Inject() (atsService: AtsService) {
       summaryData.payload.get("nics_and_tax_per_currency_unit"),
       summaryData.rates.get("total_cg_tax_rate"),
       summaryData.rates.get("nics_and_tax_rate"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      taxPayer.getOrElse("title", ""),
+      taxPayer.getOrElse("forename", ""),
+      taxPayer.getOrElse("surname", "")
     )
   }
 }
