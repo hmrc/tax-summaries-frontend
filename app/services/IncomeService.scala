@@ -34,6 +34,8 @@ class IncomeService @Inject() (atsService: AtsService) {
 
   private[services] def createIncomeConverter(atsData: AtsData): IncomeBeforeTax = {
     val incomeData: DataHolder = atsData.income_data.get
+    val taxPayer: Map[String, String] =
+      atsData.taxPayerData.fold(Map.empty[String, String])(_.taxpayer_name.getOrElse(Map.empty))
 
     IncomeBeforeTax(
       atsData.taxYear,
@@ -46,9 +48,9 @@ class IncomeService @Inject() (atsService: AtsService) {
       incomeData.payload.get("other_income"),
       incomeData.payload.get("benefits_from_employment"),
       incomeData.payload.get("total_income_before_tax"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      taxPayer.getOrElse("title", ""),
+      taxPayer.getOrElse("forename", ""),
+      taxPayer.getOrElse("surname", "")
     )
   }
 }
