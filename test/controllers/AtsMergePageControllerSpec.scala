@@ -189,7 +189,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"SA\",\"year\":2022}"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "SA-2022"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -212,7 +212,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"PAYE\",\"year\":2022}"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "PAYE-2022"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -235,7 +235,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2022}"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "NoATS-2022"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -258,7 +258,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2022}"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "NoATS-2022"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -281,7 +281,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "{\"atsType\":\"NoATS\",\"year\":2022}"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "NoATS-2022"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -305,6 +305,30 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearFormMapping.bind(Map("year" -> ""))
+      val requestWithQuery = requests.AuthenticatedRequest(
+        "userId",
+        None,
+        Some(SaUtr(testUtr)),
+        Some(testNino),
+        isAgentActive = false,
+        ConfidenceLevel.L50,
+        fakeCredentials,
+        FakeRequest().withMethod("POST").withFormUrlEncodedBody(form.data.toSeq: _*)
+      )
+
+      val result = sut.onSubmit(requestWithQuery)
+
+      status(result) mustBe 200
+      val document = Jsoup.parse(contentAsString(result))
+      document.text() contains "There is a problem with the form"
+      document.text() contains "Select an option for the tax year"
+    }
+
+    "return a success response and stay on the same page with form errors if the HTML has been changed to submit an invalid value" in {
+
+      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> "nonsense value"))
       val requestWithQuery = requests.AuthenticatedRequest(
         "userId",
         None,

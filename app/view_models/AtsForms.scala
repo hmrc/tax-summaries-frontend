@@ -18,16 +18,38 @@ package view_models
 
 import com.google.inject.Inject
 import models.AtsYearChoice
+import play.api.Logging
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid}
+import utils.TaxYearUtil
 
-class AtsForms @Inject() () {
+class AtsForms @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
+
+  private val choices = List("SA", "PAYE", "NoATS")
+
+  private val yearChoiceJsonConstraint: Constraint[Option[String]] = Constraint { submittedValue =>
+    submittedValue
+      .map { value =>
+        value.split("-").toList match {
+          case atsType :: taxYear :: Nil =>
+            if (taxYearUtil.isValidTaxYear(taxYear.toInt) && choices.contains(atsType)) Valid
+            else Invalid("ats.select_tax_year.required")
+          case _                         => Invalid("ats.select_tax_year.required")
+        }
+      }
+      .getOrElse(Invalid("ats.select_tax_year.required"))
+  }
 
   val yearChoice = "year"
 
   val atsYearFormMapping: Form[AtsYearChoice] = Form(
-    mapping(yearChoice -> optional(text).verifying("ats.select_tax_year.required", _.nonEmpty))(
-      AtsYearChoice.fromString
+    mapping(
+      yearChoice -> optional(text)
+        .verifying("ats.select_tax_year.required", _.nonEmpty)
+        .verifying(yearChoiceJsonConstraint)
+    )(
+      AtsYearChoice.fromFormString
     )(AtsYearChoice.toOptionString)
   )
 }
