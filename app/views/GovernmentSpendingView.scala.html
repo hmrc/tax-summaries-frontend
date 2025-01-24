@@ -72,32 +72,28 @@
                 @p(Text(messages("ats.treasury_spending.section.lede")))
             }
 
-            <dl id="tax-spent" class="govuk-summary-list">
-                <div id="tax-spent-header" class="govuk-summary-list__row--no-actions govuk-heading-m">
-                    <dt class="govuk-summary-list__key">@Html(Messages("generic.description"))</dt>
-                    <dd class="govuk-summary-list__value">@Html(Messages("generic.amount_pounds"))</dd>
-                </div>
-
+            <table id="tax-spent" class="govuk-table">
+                <caption class="govuk-visually-hidden">@(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo))</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.description"))</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.amount_pounds"))</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
                 @viewModel.govSpendAmountData.map {
                     case (key, value) => {
-
-                        <div class="govuk-summary-list__row--no-actions content">
-                            <dt id="@key" class="govuk-summary-list__key">@Html(Messages(s"ats.treasury_spending.table.$key"))
-                            <span>&nbsp;(@value.percentage%)</span>
-                            </dt>
-                            <dd class="govuk-summary-list__value">@currencyAmountView(value.amount, twoDecimalPlaces = true)</dd>
-                        </div>
-                        <div aria-hidden="true">
-                            <dt class="graph-green-bar" style="width: @value.percentage%;"></dt>
-                            <dd class="graph-grey-bar"></dd>
-                        </div>
-
+                        <tr class="govuk-table__row">
+                            <th scope="row" id="@key" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages(s"ats.treasury_spending.table.$key")) (@value.percentage%)</th>
+                            <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">@currencyAmountView(value.amount, twoDecimalPlaces = true)</td>
+                        </tr>
+                        <tr class="govuk-table__row" aria-hidden="true">
+                            <td colspan="2" class="govuk-table__cell govuk-!-padding-0">
+                                <meter value="(@value.percentage)" min="0" max="100">(@value.percentage%)</meter>
+                            </td>
+                        </tr>
                     }
                 }
-
-                <div id="tax-spent-footer">
-                    <dt id="gov-spend-total" class="govuk-heading-m">@Html(Messages("ats.treasury_spending.total"))</dt>
-                    <dd>@currencyAmountView(viewModel.totalAmount, true)</dd>
-                </div>
-            </dl>
+                </tbody>
+            </table>
 }

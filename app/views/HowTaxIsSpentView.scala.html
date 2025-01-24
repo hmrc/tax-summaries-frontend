@@ -50,27 +50,32 @@
 
     @p(Text(messages("paye.ats.treasury_spending.introParagraph")), elmId=Some("intro-paragraph"))
 
-    <dl id="tax-spent" class="govuk-summary-list">
-        <div id="tax-spent-header" class="govuk-summary-list__row--no-actions govuk-heading-m">
-            <dt class="govuk-summary-list__key">@messages("generic.description")</dt>
-            <dd class="govuk-summary-list__value">@messages("ats.howYourTaxWasSpent.table.percentage.title")</dd>
-        </div>
 
+    <table id="tax-spent" class="govuk-table">
+        <caption class="govuk-visually-hidden">@(Messages("ats.howYourTaxWasSpent.heading"))</caption>
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@messages("generic.description")</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@messages("ats.howYourTaxWasSpent.table.percentage.title")</th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
         @{
             spendData.map { case (name, percentage) =>
-                <div class="govuk-summary-list__row--no-actions content">
-                    <dt id={s"$name"} class="govuk-summary-list__key">{messages(s"ats.treasury_spending.table.$name")}
-                    </dt>
-                    <dd class="govuk-summary-list__value">{percentage}%</dd>
-                </div>
-                <div aria-hidden="true">
-                    <dt class="graph-green-bar" style={s"width: $percentage%"}></dt>
-                    <dd class="graph-grey-bar"></dd>
-                </div>
-            }
+                <tr class="govuk-table__row">
+                    <th id={s"$name"} scope="row" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0">{messages(s"ats.treasury_spending.table.$name")}</th>
+                    <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">{percentage}%</td>
+                </tr>
+                <tr class="govuk-table__row" aria-hidden="true">
+                    <td colspan="2" class="govuk-table__cell govuk-!-padding-0">
+                        <meter value="{percentage}" min="0" max="100">{percentage}%</meter>
+                    </td>
+                </tr>
 
+            }
         }
-    </dl>
+        </tbody>
+    </table>
 
     @p(Text(messages("paye.ats.treasury_spending.para1")), elmId=Some("paragraph-1"))
 

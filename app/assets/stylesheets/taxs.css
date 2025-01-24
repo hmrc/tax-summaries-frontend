@@ -9,7 +9,7 @@
      display: block;
 }
  a, a:visited {
-    color:#005ea5;
+   color:#005ea5;
 }
 
  .hmrc-logo-print {
@@ -63,6 +63,7 @@
   text-align: right;
 }
 
+/*
 #tax-spent #tax-spent-header, #tax-spent-footer {
     margin-top: 2em;
 }
@@ -70,6 +71,7 @@
 #tax-spent #tax-spent-footer {
     margin-bottom: 2em;
 }
+*/
 
 #tax-spent .heading-medium {
     margin: 0;
@@ -83,4 +85,53 @@
 
 body:not(.js-enabled) .print-this {
   display: none;
+}
+
+
+meter {
+  width: 100%;
+  border-radius: 0;
+}
+
+meter::-webkit-meter-optimum-value {
+  background: #28a197;
+  height: 100%;
+}
+
+meter::-webkit-meter-bar {
+  background: none;
+  padding:0;
+  margin:0;
+}
+
+.govuk-table__row:nth-child(odd) .govuk-table__cell,
+.govuk-table__row:nth-child(odd) .govuk-table__header {
+  border: none;
+}
+
+.govuk-table__row:nth-child(even) .govuk-table__cell,
+.govuk-table__row:nth-child(even) .govuk-table__header {
+  border-width: 2px;
+}
+
+meter,
+meter::-webkit-meter-bar {
+    /*to remove the default background property */
+    background: none;
+    height: 10px;
+    overflow: hidden;
+}
+
+/*for meter bar*/
+meter::-webkit-meter-optimum-value {
+    background: none;
+    background-color: #28a197;
+}
+:-moz-meter-optimum::-moz-meter-bar {
+    background: none;
+    background-color: #28a197;
+}
+
+td:has(meter) {
+  line-height: 0.5em
 }
