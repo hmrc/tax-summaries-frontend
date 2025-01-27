@@ -74,7 +74,7 @@
 
             <table id="tax-spent" class="govuk-table">
                 <caption class="govuk-visually-hidden">@(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo))</caption>
-                <thead class="govuk-table__head">
+                <thead id="tax-spent-header" class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.description"))</th>
                         <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.amount_pounds"))</th>
@@ -95,5 +95,12 @@
                     }
                 }
                 </tbody>
+                <tfoot id="tax-spent-footer">
+                    <tr class="govuk-table__row">
+                        <th id="gov-spend-total" scope="row" class="govuk-table__header">@Html(Messages("ats.treasury_spending.total"))</th>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalAmount, true)</td>
+                    </tr>
+                </tfoot>
+
             </table>
 }
