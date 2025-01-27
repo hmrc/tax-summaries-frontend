@@ -66,8 +66,6 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
     atsData: AtsData
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[GovernmentSpend] = {
     val govSpendingData: GovernmentSpendingOutputWrapper = atsData.gov_spending.get
-    val taxPayer: Map[String, String] =
-      atsData.taxPayerData.fold(Map.empty[String, String])(_.taxpayer_name.getOrElse(Map.empty))
 
     getGovernmentSpendFigures(atsData.taxYear)
       .map { governmentSpendFiguredMapList =>
@@ -80,9 +78,9 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
               governmentSpendCategoryOrder.toList,
               govSpendingData.govSpendAmountData.get.toList
             ),
-          taxPayer.getOrElse("title", ""),
-          taxPayer.getOrElse("forename", ""),
-          taxPayer.getOrElse("surname", ""),
+          atsData.taxPayerData.getOrElse("title", ""),
+          atsData.taxPayerData.getOrElse("forename", ""),
+          atsData.taxPayerData.getOrElse("surname", ""),
           govSpendingData.totalAmount,
           atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
           atsData.income_tax.get.payload.get("scottish_income_tax")
@@ -95,9 +93,9 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
             atsData.taxYear,
             atsData.utr.get,
             govSpendingData.govSpendAmountData.get.toList,
-            taxPayer.getOrElse("title", ""),
-            taxPayer.getOrElse("forename", ""),
-            taxPayer.getOrElse("surname", ""),
+            atsData.taxPayerData.getOrElse("title", ""),
+            atsData.taxPayerData.getOrElse("forename", ""),
+            atsData.taxPayerData.getOrElse("surname", ""),
             govSpendingData.totalAmount,
             atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
             atsData.income_tax.get.payload.get("scottish_income_tax")

@@ -50,7 +50,7 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       atsData.income_tax.flatMap(_.rates.flatMap(_.get(key))).getOrElse(Rate.empty)
 
     def taxpayerName(key: String): String =
-      atsData.taxPayerData.flatMap(_.taxpayer_name.flatMap(_.get(key))).getOrElse("")
+      atsData.taxPayerData.getOrElse(key, "")
 
     val scottishTax = ScottishTax(
       getFromIncomeTaxPayload("scottish_starter_rate_tax"),

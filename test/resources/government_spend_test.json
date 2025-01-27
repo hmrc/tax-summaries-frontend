@@ -118,5 +118,5 @@
     }
   }
   },
-     "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+     "taxPayerData":{"title":"Mr","forename":"forename","surname":"surname"}
 }

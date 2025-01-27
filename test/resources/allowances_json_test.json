@@ -9,5 +9,5 @@
         "total_tax_free_amount":{"amount":9740.0,"currency":"GBP"}
       }
   },
-  "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+  "taxPayerData":{"title":"Mr","forename":"forename","surname":"surname"}
 }

@@ -28,5 +28,5 @@
         "basic_rate_income_tax_rate":{"percent":"20%"}
       }
    },
-   "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+   "taxPayerData":{"title":"Mr","forename":"forename","surname":"surname"}
 }

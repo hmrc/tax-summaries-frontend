@@ -103,7 +103,7 @@ class SummaryServiceSpec extends BaseSpec {
     }
 
     "return a complete Summary when given incomplete tax payer" in {
-      val atsData = AtsTestData.summaryData.copy(taxPayerData = None)
+      val atsData = AtsTestData.summaryData.copy(taxPayerData = Map.empty)
       val result  = sut.summaryConverter(atsData)
 
       result mustBe Summary(

@@ -34,8 +34,6 @@ class AllowanceService @Inject() (atsService: AtsService) {
 
   private[services] def allowanceDataConverter(atsData: AtsData): Allowances = {
     val allowanceData: DataHolder = atsData.allowance_data.get
-    val taxPayer: Map[String, String] =
-      atsData.taxPayerData.fold(Map.empty[String, String])(_.taxpayer_name.getOrElse(Map.empty))
 
     Allowances(
       atsData.taxYear,
@@ -44,9 +42,9 @@ class AllowanceService @Inject() (atsService: AtsService) {
       allowanceData.payload.get("marriage_allowance_transferred_amount"),
       allowanceData.payload.get("other_allowances_amount"),
       allowanceData.payload.get("total_tax_free_amount"),
-      taxPayer.getOrElse("title", ""),
-      taxPayer.getOrElse("forename", ""),
-      taxPayer.getOrElse("surname", "")
+      atsData.taxPayerData.getOrElse("title", ""),
+      atsData.taxPayerData.getOrElse("forename", ""),
+      atsData.taxPayerData.getOrElse("surname", "")
     )
   }
 }

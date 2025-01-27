@@ -64,7 +64,7 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         allowance_data = fieldInSection("Field4", BigDecimal(4).setScale(2), "calculusField4"),
         capital_gains_data = fieldInSection("Field5", BigDecimal(5).setScale(2), "calculusField5"),
         gov_spending = None,
-        taxPayerData = None,
+        taxPayerData = Map.empty,
         errors = None,
         taxLiability = Some(Amount(BigDecimal(6).setScale(2), "GBP", None))
       )

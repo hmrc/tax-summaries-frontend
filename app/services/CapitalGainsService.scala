@@ -34,8 +34,6 @@ class CapitalGainsService @Inject() (atsService: AtsService) {
 
   private[services] def capitalGains(atsData: AtsData): CapitalGains = {
     val capitalGainsData: DataHolder = atsData.capital_gains_data.get
-    val taxPayer: Map[String, String] =
-      atsData.taxPayerData.fold(Map.empty[String, String])(_.taxpayer_name.getOrElse(Map.empty))
 
     CapitalGains(
       atsData.taxYear,
@@ -62,9 +60,9 @@ class CapitalGainsService @Inject() (atsService: AtsService) {
       capitalGainsData.rates.get("prop_interest_rate_lower_rate"),
       capitalGainsData.rates.get("prop_interest_rate_higher_rate"),
       capitalGainsData.rates.get("total_cg_tax_rate"),
-      taxPayer.getOrElse("title", ""),
-      taxPayer.getOrElse("forename", ""),
-      taxPayer.getOrElse("surname", "")
+      atsData.taxPayerData.getOrElse("title", ""),
+      atsData.taxPayerData.getOrElse("forename", ""),
+      atsData.taxPayerData.getOrElse("surname", "")
     )
   }
 }

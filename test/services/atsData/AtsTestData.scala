@@ -43,16 +43,10 @@ object AtsTestData {
     ),
     None,
     None,
-    Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     None,
     None
@@ -84,16 +78,10 @@ object AtsTestData {
     None,
     None,
     None,
-    Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     None,
     None
@@ -199,16 +187,10 @@ object AtsTestData {
     allowance_data = None,
     capital_gains_data = None,
     gov_spending = None,
-    taxPayerData = Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    taxPayerData = Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     errors = None,
     None
@@ -259,16 +241,10 @@ object AtsTestData {
         None
       )
     ),
-    Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     None,
     None
@@ -318,16 +294,10 @@ object AtsTestData {
         None
       )
     ),
-    Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     None,
     None
@@ -367,16 +337,10 @@ object AtsTestData {
     allowance_data = None,
     capital_gains_data = None,
     gov_spending = None,
-    taxPayerData = Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    taxPayerData = Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     errors = None,
     None
@@ -425,16 +389,10 @@ object AtsTestData {
       )
     ),
     None,
-    Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     None,
     None
@@ -536,16 +494,10 @@ object AtsTestData {
     allowance_data = None,
     capital_gains_data = None,
     gov_spending = None,
-    taxPayerData = Some(
-      UserData(
-        Some(
-          Map(
-            "title"    -> "Mr",
-            "forename" -> "John",
-            "surname"  -> "Smith"
-          )
-        )
-      )
+    taxPayerData = Map(
+      "title"    -> "Mr",
+      "forename" -> "John",
+      "surname"  -> "Smith"
     ),
     errors = None,
     None

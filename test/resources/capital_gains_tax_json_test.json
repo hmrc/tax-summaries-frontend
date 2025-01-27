@@ -23,5 +23,5 @@
     "total_cg_tax_rate":{"percent":"12.34%"}
   }
  },
- "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+ "taxPayerData":{"title":"Mr","forename":"forename","surname":"surname"}
 }
