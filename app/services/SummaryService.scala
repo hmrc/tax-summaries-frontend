@@ -51,9 +51,9 @@ class SummaryService @Inject() (atsService: AtsService) {
       summaryData.payload.get("nics_and_tax_per_currency_unit"),
       summaryData.rates.get("total_cg_tax_rate"),
       summaryData.rates.get("nics_and_tax_rate"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      atsData.taxPayerData.getOrElse("title", ""),
+      atsData.taxPayerData.getOrElse("forename", ""),
+      atsData.taxPayerData.getOrElse("surname", "")
     )
   }
 }

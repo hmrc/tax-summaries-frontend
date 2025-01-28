@@ -28,7 +28,7 @@ case class AtsData(
   allowance_data: Option[DataHolder],
   capital_gains_data: Option[DataHolder],
   gov_spending: Option[GovernmentSpendingOutputWrapper],
-  taxPayerData: Option[UserData],
+  taxPayerData: Map[String, String],
   errors: Option[IncomingAtsError],
   taxLiability: Option[Amount]
 )

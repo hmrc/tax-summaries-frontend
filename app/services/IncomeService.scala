@@ -46,9 +46,9 @@ class IncomeService @Inject() (atsService: AtsService) {
       incomeData.payload.get("other_income"),
       incomeData.payload.get("benefits_from_employment"),
       incomeData.payload.get("total_income_before_tax"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      atsData.taxPayerData.getOrElse("title", ""),
+      atsData.taxPayerData.getOrElse("forename", ""),
+      atsData.taxPayerData.getOrElse("surname", "")
     )
   }
 }

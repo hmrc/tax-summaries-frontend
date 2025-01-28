@@ -34,6 +34,7 @@ class CapitalGainsService @Inject() (atsService: AtsService) {
 
   private[services] def capitalGains(atsData: AtsData): CapitalGains = {
     val capitalGainsData: DataHolder = atsData.capital_gains_data.get
+
     CapitalGains(
       atsData.taxYear,
       atsData.utr.get,
@@ -59,9 +60,9 @@ class CapitalGainsService @Inject() (atsService: AtsService) {
       capitalGainsData.rates.get("prop_interest_rate_lower_rate"),
       capitalGainsData.rates.get("prop_interest_rate_higher_rate"),
       capitalGainsData.rates.get("total_cg_tax_rate"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      atsData.taxPayerData.getOrElse("title", ""),
+      atsData.taxPayerData.getOrElse("forename", ""),
+      atsData.taxPayerData.getOrElse("surname", "")
     )
   }
 }

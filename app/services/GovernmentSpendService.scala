@@ -78,9 +78,9 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
               governmentSpendCategoryOrder.toList,
               govSpendingData.govSpendAmountData.get.toList
             ),
-          atsData.taxPayerData.get.taxpayer_name.get("title"),
-          atsData.taxPayerData.get.taxpayer_name.get("forename"),
-          atsData.taxPayerData.get.taxpayer_name.get("surname"),
+          atsData.taxPayerData.getOrElse("title", ""),
+          atsData.taxPayerData.getOrElse("forename", ""),
+          atsData.taxPayerData.getOrElse("surname", ""),
           govSpendingData.totalAmount,
           atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
           atsData.income_tax.get.payload.get("scottish_income_tax")
@@ -93,9 +93,9 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
             atsData.taxYear,
             atsData.utr.get,
             govSpendingData.govSpendAmountData.get.toList,
-            atsData.taxPayerData.get.taxpayer_name.get("title"),
-            atsData.taxPayerData.get.taxpayer_name.get("forename"),
-            atsData.taxPayerData.get.taxpayer_name.get("surname"),
+            atsData.taxPayerData.getOrElse("title", ""),
+            atsData.taxPayerData.getOrElse("forename", ""),
+            atsData.taxPayerData.getOrElse("surname", ""),
             govSpendingData.totalAmount,
             atsData.income_tax.get.incomeTaxStatus.getOrElse(""),
             atsData.income_tax.get.payload.get("scottish_income_tax")

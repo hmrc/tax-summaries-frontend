@@ -42,9 +42,9 @@ class AllowanceService @Inject() (atsService: AtsService) {
       allowanceData.payload.get("marriage_allowance_transferred_amount"),
       allowanceData.payload.get("other_allowances_amount"),
       allowanceData.payload.get("total_tax_free_amount"),
-      atsData.taxPayerData.get.taxpayer_name.get("title"),
-      atsData.taxPayerData.get.taxpayer_name.get("forename"),
-      atsData.taxPayerData.get.taxpayer_name.get("surname")
+      atsData.taxPayerData.getOrElse("title", ""),
+      atsData.taxPayerData.getOrElse("forename", ""),
+      atsData.taxPayerData.getOrElse("surname", "")
     )
   }
 }

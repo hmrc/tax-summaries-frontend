@@ -19,5 +19,5 @@
         "nics_and_tax_rate":{"percent":"56.78%"}
       }
     },
-    "taxPayerData":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}}
+    "taxPayerData":{"title":"Mr","forename":"forename","surname":"surname"}
  }
