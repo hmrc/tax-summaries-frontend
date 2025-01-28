@@ -24,6 +24,8 @@ import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import utils.TaxYearUtil
 
+import scala.util.{Failure, Success, Try}
+
 class AtsForms @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
 
   private val choices = List("SA", "PAYE", "NoATS")
@@ -33,9 +35,14 @@ class AtsForms @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
       .map { value =>
         value.split("-").toList match {
           case atsType :: taxYear :: Nil =>
-            if (taxYearUtil.isValidTaxYear(taxYear.toInt) && choices.contains(atsType)) Valid
-            else Invalid("ats.select_tax_year.required")
-          case _                         => Invalid("ats.select_tax_year.required")
+            val isTaxYearValid = Try(taxYear.toInt) match {
+              case Success(value) => taxYearUtil.isValidTaxYear(value)
+              case Failure(_)     => false
+            }
+            if (isTaxYearValid && choices.contains(atsType)) { Valid }
+            else { Invalid("ats.select_tax_year.required") }
+
+          case _ => Invalid("ats.select_tax_year.required")
         }
       }
       .getOrElse(Invalid("ats.select_tax_year.required"))
