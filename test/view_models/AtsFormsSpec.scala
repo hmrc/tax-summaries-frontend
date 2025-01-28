@@ -35,18 +35,13 @@ package view_models
 import models.{AtsYearChoice, SA}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.FormError
-import utils.TaxYearUtil
-import utils.TestConstants.mock
+import utils.{BaseSpec, TaxYearUtil}
 
-class AtsFormsSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
+class AtsFormsSpec extends BaseSpec {
 
   private val mockTaxYearUtil = mock[TaxYearUtil]
   private val atsForms        = new AtsForms(mockTaxYearUtil)
-  private val taxYear         = 2024
 
   "atsYearFormMapping" must {
     "map correctly for a valid year option" in {
