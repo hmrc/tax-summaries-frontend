@@ -17,8 +17,9 @@
 }
 
 .print-this {
-     display: flex;
-     gap: .5em
+     display: inline-flex;
+     gap: .5em;
+     justify-content: end;
 }
 
 .print-this__link {
