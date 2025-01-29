@@ -123,7 +123,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
     val ty = taxYears.foldLeft("")((acc, c) => acc + (if (acc.isEmpty) "" else ",") + c)
     """{
       |  "utr":"$utr",
-      |  "taxPayer":{"taxpayer_name":{"title":"Mr","forename":"forename","surname":"surname"}},
+      |  "taxPayer":{"title":"Mr","forename":"forename","surname":"surname"},
       |  "atsYearList":[$YEARS]
       |}""".stripMargin.replace("$YEARS", ty)
   }
