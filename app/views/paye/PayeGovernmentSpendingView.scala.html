@@ -19,6 +19,8 @@
 @import utils.HtmlFormatter
 @import helpers.{H1, P, Link}
 @import views.MainTemplate
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 @this(
 	main: MainTemplate,
@@ -46,29 +48,34 @@
 
         @p(Text(messages("paye.ats.treasury_spending.introParagraph")), elmId=Some("intro-paragraph"))
 
-
-		<dl id="tax-spent" class="govuk-summary-list">
-			<div id="tax-spent-header" class="govuk-summary-list__row--no-actions govuk-heading-m">
-				<dt class="govuk-summary-list__key">@Html(Messages("generic.description"))</dt>
-				<dd class="govuk-summary-list__value">@Html(Messages("generic.amount_pounds"))</dd>
-			</div>
-			@for(rowModel <- viewModel.orderedSpendRows){
-				<div class="govuk-summary-list__row--no-actions content">
-					<dt id="@rowModel.category" class="govuk-summary-list__key">@Messages("paye.ats.treasury_spending.table." + rowModel.category)
-						<span>&nbsp;(@rowModel.spendData.percentage%)</span>
-					</dt>
-					<dd class="govuk-summary-list__value">&pound;@rowModel.spendData.amount.toHalfRoundedUpAmount</dd>
-				</div>
-				<div aria-hidden="true">
-					<dt class="graph-green-bar" style="width: @{rowModel.spendData.percentage}%;"></dt>
-					<dd class="graph-grey-bar"></dd>
-				</div>
-			}
-			<div id="tax-spent-footer" class="paye-tax-spent-footer">
-				<dt id="gov-spend-total" class="govuk-heading-m">@Messages("paye.ats.treasury_spending.total")</dt>
-				<dd>&pound;@viewModel.totalAmount</dd>
-			</div>
-		</dl>
+		<table id="tax-spent" class="govuk-table">
+			<caption class="govuk-visually-hidden">@(Messages("paye.ats.treasury_spending.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo))</caption>
+			<thead id="tax-spent-header" class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.description"))</th>
+				<th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.amount_pounds"))</th>
+			</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				@for(rowModel <- viewModel.orderedSpendRows) {
+					<tr class="govuk-table__row">
+						<th scope="col" id="@rowModel.category" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Messages("paye.ats.treasury_spending.table." + rowModel.category) (@rowModel.spendData.percentage%)</th>
+						<td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">£@rowModel.spendData.amount.toHalfRoundedUpAmount</td>
+					</tr>
+					<tr class="govuk-table__row" aria-hidden="true">
+						<td colspan="2" class="govuk-table__cell govuk-!-padding-0">
+							<meter value="@rowModel.spendData.percentage" min="0" max="100">(@rowModel.spendData.percentage%)</meter>
+						</td>
+					</tr>
+				}
+			</tbody>
+			<tfoot>
+				<tr class="govuk-table__row">
+					<th id="gov-spend-total" scope="row" class="govuk-table__header govuk-!-font-size-24 govuk-!-padding-top-7">@Messages("paye.ats.treasury_spending.total")</th>
+					<td class="govuk-table__cell govuk-table__cell--numeric  govuk-!-padding-top-7">&pound;@viewModel.totalAmount</td>
+				</tr>
+			</tfoot>
+		</table>
 
 		@p(Text(messages("paye.ats.treasury_spending.para1")), elmId=Some("paragraph-1"))
 

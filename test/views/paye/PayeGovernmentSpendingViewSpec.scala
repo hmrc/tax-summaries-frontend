@@ -60,53 +60,53 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
       val document = Jsoup.parse(view)
 
       document.getElementById("Welfare").text() mustBe "Welfare (23.5%)"
-      document.select("#Welfare + dd").text() mustBe "£451"
+      document.select("#Welfare + td").text() mustBe "£451"
 
       document.getElementById("Health").text() mustBe "Health (20.2%)"
-      document.select("#Health + dd").text() mustBe "£388"
+      document.select("#Health + td").text() mustBe "£388"
 
       document.getElementById("StatePensions").text() mustBe "State Pensions (12.8%)"
-      document.select("#StatePensions + dd").text() mustBe "£246"
+      document.select("#StatePensions + td").text() mustBe "£246"
 
       document.getElementById("Education").text() mustBe "Education (11.8%)"
-      document.select("#Education + dd").text() mustBe "£226"
+      document.select("#Education + td").text() mustBe "£226"
 
       document.getElementById("Defence").text() mustBe "Defence (5.3%)"
-      document.select("#Defence + dd").text() mustBe "£102"
+      document.select("#Defence + td").text() mustBe "£102"
 
       document.getElementById("NationalDebtInterest").text() mustBe "National Debt Interest (5.3%)"
-      document.select("#NationalDebtInterest + dd").text() mustBe "£102"
+      document.select("#NationalDebtInterest + td").text() mustBe "£102"
 
       document.getElementById("Transport").text() mustBe "Transport (4.3%)"
-      document.select("#Transport + dd").text() mustBe "£83"
+      document.select("#Transport + td").text() mustBe "£83"
 
       document.getElementById("PublicOrderAndSafety").text() mustBe "Public Order and Safety (4.3%)"
-      document.select("#PublicOrderAndSafety + dd").text() mustBe "£83"
+      document.select("#PublicOrderAndSafety + td").text() mustBe "£83"
 
       document.getElementById("BusinessAndIndustry").text() mustBe "Business and Industry (3.6%)"
-      document.select("#BusinessAndIndustry + dd").text() mustBe "£69"
+      document.select("#BusinessAndIndustry + td").text() mustBe "£69"
 
       document.getElementById("GovernmentAdministration").text() mustBe "Government Administration (2.1%)"
-      document.select("#GovernmentAdministration + dd").text() mustBe "£40"
+      document.select("#GovernmentAdministration + td").text() mustBe "£40"
 
       document
         .getElementById("HousingAndUtilities")
         .text() mustBe "Housing and Utilities, like street lighting (1.6%)"
-      document.select("#HousingAndUtilities + dd").text() mustBe "£31"
+      document.select("#HousingAndUtilities + td").text() mustBe "£31"
 
       document.getElementById("Environment").text() mustBe "Environment (1.5%)"
-      document.select("#Environment + dd").text() mustBe "£29"
+      document.select("#Environment + td").text() mustBe "£29"
 
       document.getElementById("Culture").text() mustBe "Culture, like sports, libraries and museums (1.5%)"
-      document.select("#Culture + dd").text() mustBe "£29"
+      document.select("#Culture + td").text() mustBe "£29"
 
       document.getElementById("OverseasAid").text() mustBe "Overseas Aid (1.2%)"
-      document.select("#OverseasAid + dd").text() mustBe "£23"
+      document.select("#OverseasAid + td").text() mustBe "£23"
 
       document.getElementById("UkContributionToEuBudget").text() mustBe "UK Contribution to the EU Budget (1%)"
-      document.select("#UkContributionToEuBudget + dd").text() mustBe "£19"
+      document.select("#UkContributionToEuBudget + td").text() mustBe "£19"
 
-      document.select("#gov-spend-total + dd").text() mustBe "£200"
+      document.select("#gov-spend-total + td").text() mustBe "£200"
 
       document
         .select("h1")

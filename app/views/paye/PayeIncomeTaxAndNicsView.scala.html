@@ -93,10 +93,10 @@
             }
             </tbody>
             <tfoot>
-            <tr id="totalRestOfUkIncomeTax" class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">@Messages("paye.ats.treasury_spending.total")</th>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalRestOfUKIncomeTax, twoDecimalPlaces = true)</td>
-            </tr>
+                <tr id="totalRestOfUkIncomeTax" class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">@Messages("paye.ats.treasury_spending.total")</th>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalRestOfUKIncomeTax, twoDecimalPlaces = true)</td>
+                </tr>
             </tfoot>
         </table>
     }
@@ -154,7 +154,7 @@
         </table>
     }
 
-    <table class="paye-ats-data-table govuk-table" id="national-insurance-contribution-table">
+    <table class="paye-ats-data-table govuk-table govuk-!-margin-top-5" id="national-insurance-contribution-table">
         <caption class="govuk-visually-hidden">@Messages("paye.ats.national_insurance.title")</caption>
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">

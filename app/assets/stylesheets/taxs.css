@@ -9,7 +9,7 @@
      display: block;
 }
  a, a:visited {
-    color:#005ea5;
+   color:#005ea5;
 }
 
  .hmrc-logo-print {
@@ -34,54 +34,61 @@
      font-weight: 700;
 }
 
-#tax-spent .content, #tax-spent-header, #tax-spent-footer {
+#tax-spent .content {
     display: flex;
     flex-flow: row nowrap;
     margin: 1em 0 0.2em;
 }
 
-#tax-spent .graph-green-bar {
-    border-bottom: 10px solid #28a197;
-}
-
-#tax-spent .graph-grey-bar {
-    border-top: 2px solid #b1b4b6;
-}
-
-#tax-spent dd {
-    flex-grow: 1;
-    padding: 0;
-    margin: 0;
-}
-
-#tax-spent dt {
-    flex-grow: 3;
-    padding: 0;
-    margin: 0;
-}
-
-#tax-spent dd {
-  text-align: right;
-}
-
-#tax-spent #tax-spent-header, #tax-spent-footer {
-    margin-top: 2em;
-}
-
-#tax-spent #tax-spent-footer {
-    margin-bottom: 2em;
-}
-
-#tax-spent .heading-medium {
-    margin: 0;
-}
-
-@media (min-width: 40.0625em) {
-    #tax-spent .govuk-summary-list__row--no-actions::after {
-        width: 0;
-    }
-}
-
 body:not(.js-enabled) .print-this {
   display: none;
+}
+
+
+meter {
+  width: 100%;
+  border-radius: 0;
+}
+
+meter::-webkit-meter-optimum-value {
+  background: #28a197;
+  height: 100%;
+}
+
+meter::-webkit-meter-bar {
+  background: none;
+  padding:0;
+  margin:0;
+}
+
+.govuk-table__row:nth-child(odd) .govuk-table__cell,
+.govuk-table__row:nth-child(odd) .govuk-table__header {
+  border: none;
+}
+
+.govuk-table__row:nth-child(even) .govuk-table__cell,
+.govuk-table__row:nth-child(even) .govuk-table__header {
+  border-width: 2px;
+}
+
+meter,
+meter::-webkit-meter-bar {
+    /*to remove the default background property */
+    background: none;
+    height: 10px;
+    overflow: hidden;
+}
+
+/*for meter bar*/
+meter::-webkit-meter-optimum-value {
+    background: none;
+    background-color: #28a197;
+}
+:-moz-meter-optimum::-moz-meter-bar {
+    background: none;
+    background-color: #28a197;
+}
+
+td:has(meter) {
+  line-height: 0.5em
 }
