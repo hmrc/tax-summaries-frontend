@@ -79,7 +79,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
     ) match {
       case Right(safeRedirectUrl) => safeRedirectUrl.url
-      case Left(error)            => throw new IllegalArgumentException(error)
+      case Left(_)                => controllers.routes.AtsMergePageController.onPageLoad.url
     }
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=$redirectUrl"
   }
