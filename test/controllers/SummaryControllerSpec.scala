@@ -224,21 +224,22 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
       "Income tax is zero or less" in {
 
-        forAll { bd: BigDecimal =>
-          whenever(bd <= 0) {
+        forAll {
+          bd: BigDecimal =>
+            whenever(bd <= 0) {
 
-            val model5 = baseModel.copy(
-              totalIncomeTaxAmount = Amount(bd, "GBP")
-            )
-            when(mockSummaryService.getSummaryData(any())(any(), any()))
-              .thenReturn(Future.successful(model5))
+              val model5 = baseModel.copy(
+                totalIncomeTaxAmount = Amount(bd, "GBP")
+              )
+              when(mockSummaryService.getSummaryData(any())(any(), any()))
+                .thenReturn(Future.successful(model5))
 
-            val result   = sut.show(request)
-            status(result) mustBe 200
-            val document = Jsoup.parse(contentAsString(result))
+              val result   = sut.show(request)
+              status(result) mustBe 200
+              val document = Jsoup.parse(contentAsString(result))
 
-            document.getElementById("total-income-tax-and-nics").text() must equal("£1,200")
-          }
+              document.getElementById("total-income-tax-and-nics").text() must equal("£1,200")
+            }
         }
       }
     }

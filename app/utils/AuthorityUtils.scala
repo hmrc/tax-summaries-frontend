@@ -39,7 +39,7 @@ class AuthorityUtils @Inject() () {
     utr.fold(false)(checkUtr(_, agentToken))
 
   def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr =
-    //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
+    // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
       case taxsAgent: Uar =>
         agentToken.fold {

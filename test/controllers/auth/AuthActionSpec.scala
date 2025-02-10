@@ -118,9 +118,12 @@ class AuthActionSpec extends BaseSpec {
     val utr = enrolments.find(_.key == "IR-SA").flatMap(_.identifiers.find(_.key == "UTR").map(_.value))
     when(
       mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
-          String
-        ] ~ ConfidenceLevel](any(), any())(any(), any())
+        .authorise[
+          Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~
+            Option[
+              String
+            ] ~ ConfidenceLevel
+        ](any(), any())(any(), any())
     ).thenReturn(
       Future.successful(
         Enrolments(enrolments) ~ externalId ~ creds ~ utr ~ nino ~ confidenceLevel

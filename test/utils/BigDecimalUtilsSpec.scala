@@ -28,9 +28,10 @@ class BigDecimalUtilsSpec extends AnyWordSpec with BigDecimalUtils with Matchers
 
       "two big decimals are exactly equal" in {
 
-        forAll { bd: BigDecimal =>
-          assert(bd === bd)
-          assert(!(bd !== bd))
+        forAll {
+          bd: BigDecimal =>
+            assert(bd === bd)
+            assert(!(bd !== bd))
         }
       }
     }

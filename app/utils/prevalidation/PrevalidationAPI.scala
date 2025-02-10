@@ -90,7 +90,7 @@ trait PrevalidationAPI[T] {
   private def cleanForm(data: Map[String, String]): Map[String, String] =
     data.map { case (key, value) => (key, preprocess(key, value)) }
 
-  def bind(data: Map[String, String]): Form[T]                          =
+  def bind(data: Map[String, String]): Form[T] =
     formValidation.bind(preProcessFormData(cleanForm(data)))
 
   private def bindFromRequest(data: Map[String, Seq[String]]): Form[T] =

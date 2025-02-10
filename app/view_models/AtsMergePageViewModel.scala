@@ -40,7 +40,7 @@ case class AtsMergePageViewModel(
 
   private val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
 
-  val showIvUpliftLink: Boolean = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
+  val showIvUpliftLink: Boolean             = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
   val completeYearList: List[AtsYearChoice] = {
     val saDataYearChoiceList  =
       saData.getDescendingYearList.filter(_ <= appConfig.taxYear).map(year => AtsYearChoice(SA, year))

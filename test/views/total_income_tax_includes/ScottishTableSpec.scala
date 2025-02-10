@@ -112,7 +112,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
             case Amount.empty =>
               result must not include viewUtils.toCurrency(tax)
 
-            case _            =>
+            case _ =>
               result must include(
                 messages(
                   s"ats.total_income_tax.scottish_income_tax.table.$id",
@@ -127,18 +127,19 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
 
     "show total row" in {
 
-      forAll { total: Amount =>
-        val taxData = scottishTaxData.copy(scottishTotalTax = total)
-        val result  = view(taxData)
+      forAll {
+        total: Amount =>
+          val taxData = scottishTaxData.copy(scottishTotalTax = total)
+          val result  = view(taxData)
 
-        total match {
-          case Amount.empty =>
-            result must not include messages("ats.total_income_tax.scottish_income_tax.table.total")
+          total match {
+            case Amount.empty =>
+              result must not include messages("ats.total_income_tax.scottish_income_tax.table.total")
 
-          case _            =>
-            result must include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
-            result must include(viewUtils.toCurrency(total))
-        }
+            case _ =>
+              result must include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
+              result must include(viewUtils.toCurrency(total))
+          }
       }
     }
   }
