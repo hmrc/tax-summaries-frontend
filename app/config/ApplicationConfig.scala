@@ -82,7 +82,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
       case Right(safeRedirectUrl) => safeRedirectUrl.url
       case Left(errorString)      =>
         logger.warn(errorString)
-        controllers.routes.AtsMergePageController.onPageLoad.url
+        loginCallback
     }
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=$redirectUrl"
   }

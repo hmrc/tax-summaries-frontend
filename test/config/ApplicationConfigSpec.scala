@@ -26,7 +26,7 @@ class ApplicationConfigSpec extends BaseSpec {
       val config: ApplicationConfig = fakeApplication().injector.instanceOf[ApplicationConfig]
       config
         .accessibilityStatementUrl("invalid-referer-url")
-        .contains(s"?referrerUrl=${controllers.routes.AtsMergePageController.onPageLoad.url}") mustBe true
+        .contains(s"?referrerUrl=${config.loginCallback}") mustBe true
     }
   }
 
