@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,15 @@ object PayeGovernmentSpend {
 
     val spendRows: List[SpendRow] =
       payeAtsData.gov_spending
-        .flatMap {
-          govSpending: GovernmentSpendingOutputWrapper =>
-            govSpending.govSpendAmountData
-              .map { govSpendAmountDataMap =>
-                val sortedSpendData  = govSpendAmountDataMap.toList.sortWith(_._2.percentage > _._2.percentage)
-                val orderedSpendData =
-                  CategoriesUtils.reorderCategories(categoryOrderList.toList, sortedSpendData)
-                for ((category, spendData) <- orderedSpendData)
-                  yield SpendRow(category, spendData)
-              }
+        .flatMap { (govSpending: GovernmentSpendingOutputWrapper) =>
+          govSpending.govSpendAmountData
+            .map { govSpendAmountDataMap =>
+              val sortedSpendData  = govSpendAmountDataMap.toList.sortWith(_._2.percentage > _._2.percentage)
+              val orderedSpendData =
+                CategoriesUtils.reorderCategories(categoryOrderList.toList, sortedSpendData)
+              for ((category, spendData) <- orderedSpendData)
+                yield SpendRow(category, spendData)
+            }
         }
         .getOrElse(List(SpendRow("", SpendData(Amount.empty, 0.0))))
 
