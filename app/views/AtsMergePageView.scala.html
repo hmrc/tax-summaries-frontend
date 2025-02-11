@@ -16,7 +16,7 @@
 
 @import config.ApplicationConfig
 @import controllers.auth.requests.AuthenticatedRequest
-@import helpers.{Button, ErrorSummary, HeaderSection, InputRadios, Link, P, PageHeading}
+@import helpers.{SubmitButton, FormErrorSummary, HeaderSection, InputRadios, Link, P, PageHeading}
 @import view_models.{AtsForms, AtsMergePageViewModel}
 @import views.MainTemplate
 
@@ -26,9 +26,9 @@
         atsForms: AtsForms,
         formWithCSRF: FormWithCSRF,
         p: P,
-        errorSummary: ErrorSummary,
+        errorSummary: FormErrorSummary,
         link: Link,
-        button: Button,
+        button: SubmitButton,
         inputRadios: InputRadios,
         pageHeading: PageHeading
 )
