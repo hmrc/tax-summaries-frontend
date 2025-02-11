@@ -45,7 +45,6 @@ lazy val microservice = Project(appName, file("."))
       "-feature",
       "-Xfatal-warnings",
       "-language:noAutoTupling",
-      "-language:strictEquality",
       "-Wunused:imports",
       "-Wvalue-discard",
       "-Werror",
@@ -69,7 +68,6 @@ lazy val microservice = Project(appName, file("."))
 
 Test / Keys.fork := true
 Test / parallelExecution := true
-Test / scalacOptions --= Seq("-language:strictEquality")
 
 lazy val it = project
   .enablePlugins(play.sbt.PlayScala)
