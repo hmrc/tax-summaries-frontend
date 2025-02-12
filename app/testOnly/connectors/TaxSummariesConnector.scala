@@ -24,6 +24,7 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.*
 
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
@@ -35,6 +36,7 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
 
   private def url(path: String) = s"$serviceUrl$path"
 
+  @nowarn("msg=match may not be exhaustive")
   def connectToAtsSaFields(
     taxYear: Int
   )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Seq[String]]] = {
@@ -45,6 +47,7 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
     }
   }
 
+  @nowarn("msg=match may not be exhaustive")
   def connectToAtsSaDataWithoutAuth(taxYear: Int, utr: String)(implicit
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, JsValue]] = {

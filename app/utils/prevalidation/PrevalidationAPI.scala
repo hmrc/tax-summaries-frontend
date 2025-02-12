@@ -131,20 +131,21 @@ private object FormUtils {
   import play.api.libs.json._
 
   def fromJson(prefix: String = "", js: JsValue): Map[String, String] = js match {
-    case JsObject(fields)              =>
+    case JsObject(fields) =>
       fields
         .map { case (key, value) =>
           fromJson(Option(prefix).filterNot(_.isEmpty).map(_ + ".").getOrElse("") + key, value)
         }
         .foldLeft(Map.empty[String, String])(_ ++ _)
-    case JsArray(values)               =>
+    case JsArray(values)  =>
       values.zipWithIndex
         .map { case (value, i) => fromJson(prefix + "[" + i + "]", value) }
         .foldLeft(Map.empty[String, String])(_ ++ _)
-    case value if value.equals(JsNull) => Map.empty
-    case JsUndefined()                 => Map.empty
-    case JsBoolean(value)              => Map(prefix -> value.toString)
-    case JsNumber(value)               => Map(prefix -> value.toString)
-    case JsString(value)               => Map(prefix -> value)
+    case JsNull           => Map.empty
+    case JsUndefined()    => Map.empty
+    case JsTrue           => Map(prefix -> "true")
+    case JsFalse          => Map(prefix -> "false")
+    case JsNumber(value)  => Map(prefix -> value.toString)
+    case JsString(value)  => Map(prefix -> value)
   }
 }
