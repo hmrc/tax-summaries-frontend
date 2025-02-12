@@ -48,14 +48,14 @@ lazy val microservice = Project(appName, file("."))
       "-Wunused:imports",
       "-Wvalue-discard",
       "-Werror",
-      "-Wconf:msg=unused import&src=.*views\\.html.*:s",
+      "-Wconf:msg=unused import&src=.*views/.*:s",
       "-Wconf:msg=unused import&src=<empty>:s",
       "-Wconf:msg=unused&src=.*RoutesPrefix\\.scala:s",
       "-Wconf:msg=unused&src=.*Routes\\.scala:s",
       "-Wconf:msg=unused&src=.*ReverseRoutes\\.scala:s",
       "-Wconf:msg=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
       "-Wconf:msg=other-match-analysis:s",
-      "-Wconf:msg=trait HttpClient in package http is deprecated.*:s",
+      "-Wconf:msg=trait HttpClient in package uk.gov.hmrc.http is deprecated.*:s",
       "-Wconf:msg=a type was inferred to be `Object`; this may indicate a programming error\\.&src=.*Spec\\.scala:s",
       "-Wconf:msg=Flag.*repeatedly:s"
     )
