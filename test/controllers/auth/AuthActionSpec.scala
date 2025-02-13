@@ -17,6 +17,7 @@
 package controllers.auth
 
 import cats.data.EitherT
+import cats.instances.future.*
 import config.ApplicationConfig
 import controllers.auth.actions.AuthAction
 import models.AgentToken
