@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,10 +50,8 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(
-      mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request))
-    ) thenReturn Future
-      .successful(baseModel)
+    val _ = when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+      .thenReturn(Future.successful(baseModel))
   }
 
   "Calling Index Page" must {

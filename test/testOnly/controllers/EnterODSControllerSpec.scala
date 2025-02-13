@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,14 +56,13 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
   private val saODSModel = SAODSModel(utr, taxYear, country, Nil)
 
   override def beforeEach(): Unit = {
-    reset(mockTaxSummariesConnector)
-    reset(mockTaxSummariesStubsConnector)
+    reset(mockTaxSummariesConnector, mockTaxSummariesStubsConnector)
     when(mockTaxSummariesConnector.connectToAtsSaFields(any())(any())).thenReturn(
       Future.successful(Right(atsSaFields))
     )
     when(mockTaxSummariesStubsConnector.get(any(), any())(any(), any()))
       .thenReturn(Future.successful(saODSModel))
-    when(mockTaxSummariesStubsConnector.save(any(), any(), any())(any(), any()))
+    val _ = when(mockTaxSummariesStubsConnector.save(any(), any(), any())(any(), any()))
       .thenReturn(Future.successful((): Unit))
   }
 

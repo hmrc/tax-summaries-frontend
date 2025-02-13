@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,9 +45,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockGovernmentSpendService)
-    reset(mockTaxYearUtil)
-    when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    reset(mockGovernmentSpendService, mockTaxYearUtil)
+    val _ = when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
   }
 
   def sut: ErrorController                  =

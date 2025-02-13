@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+    val _ = when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
   }
 

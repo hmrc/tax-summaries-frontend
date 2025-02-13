@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ class AuthActionSpec extends BaseSpec {
     reset(mockPertaxAuthService)
     reset(mockFeatureFlagService)
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+    val _ = when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
@@ -116,7 +116,7 @@ class AuthActionSpec extends BaseSpec {
     confidenceLevel: ConfidenceLevel = L50
   ): Unit = {
     val utr = enrolments.find(_.key == "IR-SA").flatMap(_.identifiers.find(_.key == "UTR").map(_.value))
-    when(
+    val _   = when(
       mockAuthConnector
         .authorise[
           Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~
