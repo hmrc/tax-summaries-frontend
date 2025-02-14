@@ -17,6 +17,7 @@
 package config
 
 import com.google.inject.Inject
+import play.api.Logging
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
 import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative, RedirectUrl}
@@ -25,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Singleton
 
 @Singleton
-class ApplicationConfig @Inject() (config: ServicesConfig) {
+class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
 
   private def getConf(key: String): String =
     config.getConfString(key, throw new Exception(s"Could not find config '$key'"))
@@ -79,7 +80,9 @@ class ApplicationConfig @Inject() (config: ServicesConfig) {
       OnlyRelative | AbsoluteWithHostnameFromAllowlist("localhost")
     ) match {
       case Right(safeRedirectUrl) => safeRedirectUrl.url
-      case Left(error)            => throw new IllegalArgumentException(error)
+      case Left(errorString)      =>
+        logger.warn(errorString)
+        loginCallback
     }
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=$redirectUrl"
   }
