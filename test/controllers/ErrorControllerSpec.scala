@@ -22,7 +22,6 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.AtsErrorResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

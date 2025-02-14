@@ -23,7 +23,6 @@ import models.admin.PAYEServiceToggle
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
-import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
