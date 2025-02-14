@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
   override def beforeEach(): Unit = {
     when(mockAppConfig.taxYear).thenReturn(taxYear)
-    when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+    val _ = when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
   }
 
   "view" must {

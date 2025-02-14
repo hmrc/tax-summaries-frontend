@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class PrevalidationSpec extends TaxsUnitTestTraits {
     val dummyForm: Form[DummyData] = Form[DummyData](
       mapping(
         "string1" -> text
-      )(DummyData.apply)(DummyData.unapply)
+      )(DummyData.apply)(d => Some(d.string1))
     )
 
     def preprocessedForm(

@@ -25,7 +25,7 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 trait AccountUtils {
   def getAccount(request: AuthenticatedRequest[_]): TaxIdentifier =
     request.agentRef.getOrElse(request.saUtr.getOrElse(SaUtr("")))
-  //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
+  // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
   def getAccountId(request: AuthenticatedRequest[_]): String      = (getAccount(request): @unchecked) match {
     case sa: SaUtr => sa.utr
     case ta: Uar   => ta.uar

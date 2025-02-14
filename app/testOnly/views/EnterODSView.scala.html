@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
-@import helpers.{H1, P, ErrorSummary}
+@import helpers.{H1, P, FormErrorSummary}
 @import views.MainTemplate
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 @import testOnly.models.CountryAndODSValues
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton, formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea, errorSummary: ErrorSummary)
+@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton, formWithCSRF: FormWithCSRF, govukTextarea : GovukTextarea, errorSummary: FormErrorSummary)
 @(submitCall: Call, countries: Seq[SelectItem], form: Form[CountryAndODSValues])(implicit request: Request[_], messages: Messages)
 
 @main(

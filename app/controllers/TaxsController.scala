@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,8 @@ abstract class TaxsController @Inject() (
 
   def extractViewModel()(implicit request: AuthenticatedRequest[_]): Future[Either[ErrorResponse, GenericViewModel]]
 
-  @nowarn("msg=abstract type pattern")
-  @nowarn("msg=The outer reference in this type test cannot be checked at run time")
+  @nowarn("msg=match may not be exhaustive")
+  @nowarn("msg=the type test for .*ViewModel cannot be checked at runtime")
   private def transformation(implicit request: AuthenticatedRequest[_]): Future[Result] =
     extractViewModel() map {
       case Right(NoATSViewModel(year))       => Redirect(routes.ErrorController.authorisedNoAts(year))

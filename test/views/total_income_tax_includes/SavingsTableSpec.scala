@@ -96,7 +96,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
             case Amount.empty =>
               result must not include viewUtils.toCurrency(tax)
 
-            case _            =>
+            case _ =>
               result must include(
                 messages(
                   s"ats.total_income_tax.savings_income_tax.table.$id",

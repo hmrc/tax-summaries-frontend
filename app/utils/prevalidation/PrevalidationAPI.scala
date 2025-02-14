@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ trait PrevalidationAPI[T] {
   private def cleanForm(data: Map[String, String]): Map[String, String] =
     data.map { case (key, value) => (key, preprocess(key, value)) }
 
-  def bind(data: Map[String, String]): Form[T]                          =
+  def bind(data: Map[String, String]): Form[T] =
     formValidation.bind(preProcessFormData(cleanForm(data)))
 
   private def bindFromRequest(data: Map[String, Seq[String]]): Form[T] =
@@ -143,7 +143,8 @@ private object FormUtils {
         .foldLeft(Map.empty[String, String])(_ ++ _)
     case JsNull           => Map.empty
     case JsUndefined()    => Map.empty
-    case JsBoolean(value) => Map(prefix -> value.toString)
+    case JsTrue           => Map(prefix -> "true")
+    case JsFalse          => Map(prefix -> "false")
     case JsNumber(value)  => Map(prefix -> value.toString)
     case JsString(value)  => Map(prefix -> value)
   }
