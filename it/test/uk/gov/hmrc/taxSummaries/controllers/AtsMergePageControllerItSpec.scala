@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import models.AgentToken
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any => mockAny}
-import org.mockito.Mockito.{when, reset => mockReset}
+import org.mockito.Mockito.{reset => mockReset, when}
 import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi

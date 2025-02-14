@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ object LoginPage {
 
   private val encKey = "1111111111111111111111"
 
-  //KxF3antRTEtdaFgpwbmoISnwJDJRvyl0NAnCRwa3SB5EIrpF0IMS/wZwQnvsprKx
+  // KxF3antRTEtdaFgpwbmoISnwJDJRvyl0NAnCRwa3SB5EIrpF0IMS/wZwQnvsprKx
 
   private val crypto = new AesCrypto {
     override protected val encryptionKey: String = encKey
@@ -33,7 +33,7 @@ object LoginPage {
 
   def agentToken(utr: String) = {
     val token =
-      URLEncoder.encode((crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value), "UTF-8")
+      URLEncoder.encode(crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value, "UTF-8")
     token
   }
 }
