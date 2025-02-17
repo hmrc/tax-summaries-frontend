@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -26,7 +26,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Injecting
-import testOnly.models.{OdsValue, SAODSModel}
+import testOnly.models.{CountryAndODSValues, OdsValue, SAODSModel}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{JsonUtil, WireMockHelper}
 
@@ -59,7 +59,11 @@ class TaxSummariesStubsConnectorSpec
   private val taxYear = 2023
   private val utr     = "0000000010"
 
-  private val saODSModel = SAODSModel(utr, taxYear, "0001", List(OdsValue("abc", BigDecimal(44.44))))
+  private val saODSModel          = SAODSModel(utr, taxYear, "0001", List(OdsValue("abc", BigDecimal(44.44))))
+  private val countryAndODSValues = CountryAndODSValues(
+    country = "0001",
+    odsValues = Map("aaa" -> "0.00", "abc" -> "0.00", "def" -> "180.99", "ghi" -> "0.00")
+  )
 
   "connectToCid" must {
     "return an OK response when the connector returns OK" in {
@@ -90,6 +94,32 @@ class TaxSummariesStubsConnectorSpec
 
       a[RuntimeException] mustBe thrownBy {
         Await.result(connector.get(taxYear, utr), 5.seconds)
+      }
+    }
+  }
+
+  "save" must {
+    "execute successfully when the connector returns CREATED" in {
+      server.stubFor(
+        post(url)
+          .withRequestBody(equalToJson(Json.toJson(countryAndODSValues).toString()))
+          .willReturn(created())
+      )
+
+      noException mustBe thrownBy {
+        Await.result(connector.save(taxYear, utr, countryAndODSValues), 5.seconds)
+      }
+    }
+
+    "throw an exception when the connector returns an unexpected response" in {
+      server.stubFor(
+        post(url)
+          .withRequestBody(equalToJson(Json.toJson(countryAndODSValues).toString()))
+          .willReturn(serverError())
+      )
+
+      a[RuntimeException] mustBe thrownBy {
+        Await.result(connector.save(taxYear, utr, countryAndODSValues), 5.seconds)
       }
     }
   }
