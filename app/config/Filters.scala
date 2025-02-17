@@ -28,8 +28,6 @@ class Filters @Inject() (
   wrapperDataFilter: WrapperDataFilter
 ) extends HttpFilters {
 
-  override val filters: Seq[EssentialFilter] = {
-
+  override val filters: Seq[EssentialFilter] =
     defaultFilters.filters ++ Some(wrapperDataFilter)
-  }
 }

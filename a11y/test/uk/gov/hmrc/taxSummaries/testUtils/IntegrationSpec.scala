@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,15 +145,10 @@ class IntegrationSpec
         .willReturn(ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}"))
     )
 
-    when(
-      mockTaxsAgentTokenSessionCacheRepository
-        .putSession[AgentToken](DataKey(any), any)(any, any, any)
-    ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
+    when(mockTaxsAgentTokenSessionCacheRepository.putSession[AgentToken](DataKey(any), any)(any, any, any))
+      .thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
 
-    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
-      .thenReturn(
-        Future
-          .successful(Some(agentTokenMock))
-      )
+    val _ = when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
+      .thenReturn(Future.successful(Some(agentTokenMock)))
   }
 }

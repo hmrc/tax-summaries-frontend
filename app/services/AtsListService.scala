@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,16 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.requests.AuthenticatedRequest
-import models._
+import models.*
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils._
+import utils.*
 import view_models.AtsList
 
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsListService @Inject() (
@@ -108,6 +109,7 @@ class AtsListService @Inject() (
     }
   }
 
+  @nowarn("msg=match may not be exhaustive")
   private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[AtsResponse, AtsListData])(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]

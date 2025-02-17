@@ -69,7 +69,7 @@ class CryptoServiceSpec extends BaseSpec {
 
     "throw an AgentTokenException when an expired token is passed" in {
 
-      val token = encryptToken(timestamp = (new Date().getTime - (maxAge * 2000)))
+      val token = encryptToken(timestamp = new Date().getTime - (maxAge * 2000))
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
@@ -80,7 +80,7 @@ class CryptoServiceSpec extends BaseSpec {
 
     "throw an exception when the token date is in the future" in {
 
-      val token = encryptToken(timestamp = (new Date().getTime + (maxAge * 1000)))
+      val token = encryptToken(timestamp = new Date().getTime + (maxAge * 1000))
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)

@@ -66,7 +66,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
 
   lazy val walesIncomeTaxLink = "https://www.gov.wales/calculate-welsh-income-tax-spend"
 
-  //Application name
+  // Application name
   lazy val appName: String = config.getString("appName")
 
   val sessionTimeoutInSeconds: String   = config.getString("timeout.sessionTimeOut")
@@ -90,7 +90,7 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
   def languageMap: Map[String, Lang] =
     Map("english" -> Lang("en"), "welsh" -> Lang("cy"))
 
-  def payeFallbackURL: String        = config.getString("paye.language.fallbackUrl")
+  def payeFallbackURL: String = config.getString("paye.language.fallbackUrl")
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package connectors
 
 import cats.data.EitherT
 import config.ApplicationConfig
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,8 +34,10 @@ class CitizenDetailsConnector @Inject() (
 
   private val baseUrl = applicationConfig.cidHost
 
-  def connectToCid(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, HttpResponse] =
+  def connectToCid(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, HttpResponse] = {
+    val fullUrl = s"$baseUrl/citizen-details/nino/$nino"
     httpClientResponse.read(
-      httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](s"$baseUrl/citizen-details/nino/$nino")
+      httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl")
     )
+  }
 }

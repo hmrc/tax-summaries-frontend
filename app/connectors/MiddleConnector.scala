@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package connectors
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import models._
+import models.*
 import play.api.Logging
 import uk.gov.hmrc.domain.{Nino, SaUtr}
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,24 +53,24 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
 
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit
     hc: HeaderCarrier
-  ): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")
-    ) recover handleHttpExceptions
+  ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
+    val fullUrl = url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions
+  }
 
   def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
     hc: HeaderCarrier
-  ): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")
-    ) recover handleHttpExceptions
+  ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
+    val fullUrl = url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions
+  }
 
   def connectToGovernmentSpend(
     taxYear: Int
-  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url(s"/taxs/government-spend/$taxYear")
-    ) recover handleHttpExceptions
+  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
+    val fullUrl = url(s"/taxs/government-spend/$taxYear")
+    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions
+  }
 
   val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
     case e: HttpException =>

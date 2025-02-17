@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     reset(mockTaxYearUtil)
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+    val _ = when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
 
   }

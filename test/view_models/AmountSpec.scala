@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
 
       "return false" when {
         "the amount is greater than zero" in {
-          forAll { bd: BigDecimal =>
+          forAll { (bd: BigDecimal) =>
             whenever(bd > 0) {
               val amount = Amount(bd, testCurrency)
               amount.isZero mustBe false
@@ -92,7 +92,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         }
 
         "the amount is less than zero" in {
-          forAll { bd: BigDecimal =>
+          forAll { (bd: BigDecimal) =>
             whenever(bd < 0) {
               val amount = Amount(bd, testCurrency)
               amount.isZero mustBe false
@@ -111,7 +111,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         }
 
         "the amount is less than zero" in {
-          forAll { bd: BigDecimal =>
+          forAll { (bd: BigDecimal) =>
             whenever(bd < 0) {
               val amount = Amount(bd, testCurrency)
               amount.isZeroOrLess mustBe true
@@ -122,7 +122,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
 
       "return false" when {
         "the amount is greater than zero" in {
-          forAll { bd: BigDecimal =>
+          forAll { (bd: BigDecimal) =>
             whenever(bd > 0) {
               val amount = Amount(bd, testCurrency)
               amount.isZeroOrLess mustBe false
@@ -135,7 +135,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
     "nonZero is called" must {
 
       "the amount is not zero" in {
-        forAll { bd: BigDecimal =>
+        forAll { (bd: BigDecimal) =>
           whenever(bd.compareTo(0) != 0) {
             val amount = Amount(bd, testCurrency)
             amount.nonZero mustBe true
@@ -189,7 +189,7 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
 
   "unary '-' is called" ignore {
     "turn the amount negative" in {
-      forAll { bd: BigDecimal =>
+      forAll { (bd: BigDecimal) =>
         whenever(bd > 1) {
           val result = -Amount(bd, testCurrency)
           result.amount mustBe -bd

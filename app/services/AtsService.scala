@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@ import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.requests.AuthenticatedRequest
-import models._
+import models.*
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils._
+import utils.*
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
 import java.util.Date
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsService @Inject() (
@@ -98,6 +99,7 @@ class AtsService @Inject() (
       getAtsAndStore(taxYear).value
     }
 
+  @nowarn("msg=match may not be exhaustive")
   private def getAtsAndStore(taxYear: Int, agentToken: Option[AgentToken] = None)(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
@@ -105,7 +107,7 @@ class AtsService @Inject() (
     val account      = utils.AccountUtils.getAccount(request)
     val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
 
-    //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
+    // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     val gotData = (account: @unchecked) match {
       case _: Uar               => middleConnector.connectToAtsOnBehalfOf(requestedUTR, taxYear)
       case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
