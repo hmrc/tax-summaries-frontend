@@ -85,7 +85,8 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    val _ = when(mockAppConfig.taxYear).thenReturn(2020)
+    when(mockAppConfig.taxYear).thenReturn(2020)
+    ()
   }
 
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =

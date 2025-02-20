@@ -73,9 +73,10 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockTaxSummariesConnector)
-    val _ = when(mockTaxSummariesConnector.connectToAtsSaDataWithoutAuth(any(), any())(any())).thenReturn(
+    when(mockTaxSummariesConnector.connectToAtsSaDataWithoutAuth(any(), any())(any())).thenReturn(
       Future.successful(Right(connectorResponse))
     )
+    ()
   }
 
   "onPageLoad" must {

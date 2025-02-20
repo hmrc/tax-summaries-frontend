@@ -97,8 +97,9 @@ class AuthActionSpec extends BaseSpec {
     reset(mockPertaxAuthService)
     reset(mockFeatureFlagService)
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-    val _ = when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    ()
   }
 
   private val extId: String          = "123"

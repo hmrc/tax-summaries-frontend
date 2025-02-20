@@ -75,8 +75,9 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
 
-    val _ = when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
+    ()
   }
 
   "AtsMergePageController for onPageLoad" must {

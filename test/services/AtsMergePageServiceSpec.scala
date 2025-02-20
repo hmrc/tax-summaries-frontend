@@ -90,9 +90,9 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     reset(mockTaxYearUtil)
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
-    val _ = when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
+    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
-
+    ()
   }
 
   "AtsMergePageService" when {

@@ -52,8 +52,9 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService, mockTotalIncomeTaxService)
-    val _ = when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
+    when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
       .thenReturn(Future.successful(totalIncomeTaxModel))
+    ()
   }
 
   "Calling deprecated total income tax endpoint" must {

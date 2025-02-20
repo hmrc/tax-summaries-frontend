@@ -50,8 +50,9 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    val _ = when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+    when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
+    ()
   }
 
   "Calling Index Page" must {

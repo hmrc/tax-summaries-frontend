@@ -62,8 +62,9 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
     )
     when(mockTaxSummariesStubsConnector.get(any(), any())(any(), any()))
       .thenReturn(Future.successful(saODSModel))
-    val _ = when(mockTaxSummariesStubsConnector.save(any(), any(), any())(any(), any()))
+    when(mockTaxSummariesStubsConnector.save(any(), any(), any())(any(), any()))
       .thenReturn(Future.successful((): Unit))
+    ()
   }
 
   "onPageLoad" must {

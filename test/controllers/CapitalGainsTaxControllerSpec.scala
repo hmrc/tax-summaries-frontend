@@ -52,8 +52,9 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    val _ = when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+    when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
+    ()
   }
 
   "Calling Capital Gains" must {

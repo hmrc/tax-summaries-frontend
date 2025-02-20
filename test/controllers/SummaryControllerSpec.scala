@@ -76,7 +76,8 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    val _ = when(mockSummaryService.getSummaryData(any())(any(), any())).thenReturn(Future.successful(baseModel))
+    when(mockSummaryService.getSummaryData(any())(any(), any())).thenReturn(Future.successful(baseModel))
+    ()
   }
 
   "Calling Summary" must {

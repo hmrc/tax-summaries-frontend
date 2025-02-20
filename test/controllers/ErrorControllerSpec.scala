@@ -45,7 +45,8 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockGovernmentSpendService, mockTaxYearUtil)
-    val _ = when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    ()
   }
 
   def sut: ErrorController                  =

@@ -68,8 +68,9 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    val _ = when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+    when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
+    ()
   }
 
   "Calling incomes" must {

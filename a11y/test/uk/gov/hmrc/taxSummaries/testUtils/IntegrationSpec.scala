@@ -148,7 +148,8 @@ class IntegrationSpec
     when(mockTaxsAgentTokenSessionCacheRepository.putSession[AgentToken](DataKey(any), any)(any, any, any))
       .thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
 
-    val _ = when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
+    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any))(any, any))
       .thenReturn(Future.successful(Some(agentTokenMock)))
+    ()
   }
 }

@@ -69,8 +69,9 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    val _ = when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
       .thenReturn(Future.successful(model))
+    ()
   }
 
   def sut: GovernmentSpendController =

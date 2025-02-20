@@ -93,7 +93,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
   override def beforeEach(): Unit = {
     when(mockAppConfig.taxYear).thenReturn(taxYear)
-    val _ = when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+    when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+    ()
   }
 
   "view" must {

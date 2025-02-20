@@ -70,7 +70,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    val _ = when(mockAllowanceService.getAllowances(any())(any(), any())).thenReturn(Future.successful(baseModel))
+    when(mockAllowanceService.getAllowances(any())(any(), any())).thenReturn(Future.successful(baseModel))
+    ()
   }
 
   "Calling allowances" must {

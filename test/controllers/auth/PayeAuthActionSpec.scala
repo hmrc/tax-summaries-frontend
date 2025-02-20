@@ -61,7 +61,8 @@ class PayeAuthActionSpec extends BaseSpec {
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-    val _ = when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    ()
   }
 
   "A user with a confidence level 200 and a Nino" must {
