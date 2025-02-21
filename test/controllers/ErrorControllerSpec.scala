@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.AtsErrorResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import play.api.http.Status.OK
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -45,9 +44,9 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockGovernmentSpendService)
-    reset(mockTaxYearUtil)
+    reset(mockGovernmentSpendService, mockTaxYearUtil)
     when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    ()
   }
 
   def sut: ErrorController                  =

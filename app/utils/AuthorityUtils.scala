@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,11 @@ import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
-class AuthorityUtils @Inject() () {
+import scala.annotation.nowarn
 
+class AuthorityUtils @Inject() {
+
+  @nowarn("msg=match may not be exhaustive")
   def checkUtr(utr: String, agentToken: Option[AgentToken])(implicit request: AuthenticatedRequest[_]): Boolean =
     (AccountUtils.getAccount(request), agentToken) match {
       case (_, None) if AccountUtils.isAgent(request)             =>
@@ -39,7 +42,7 @@ class AuthorityUtils @Inject() () {
     utr.fold(false)(checkUtr(_, agentToken))
 
   def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr =
-    //This warning is unchecked because we know that AuthorisedFor will only give us those accounts
+    // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
       case taxsAgent: Uar =>
         agentToken.fold {

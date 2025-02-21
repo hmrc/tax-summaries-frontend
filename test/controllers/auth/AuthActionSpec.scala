@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package controllers.auth
 
 import cats.data.EitherT
+import cats.instances.future.*
 import config.ApplicationConfig
 import controllers.auth.actions.AuthAction
 import models.AgentToken
@@ -98,6 +99,7 @@ class AuthActionSpec extends BaseSpec {
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    ()
   }
 
   private val extId: String          = "123"
@@ -116,11 +118,14 @@ class AuthActionSpec extends BaseSpec {
     confidenceLevel: ConfidenceLevel = L50
   ): Unit = {
     val utr = enrolments.find(_.key == "IR-SA").flatMap(_.identifiers.find(_.key == "UTR").map(_.value))
-    when(
+    val _   = when(
       mockAuthConnector
-        .authorise[Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~ Option[
-          String
-        ] ~ ConfidenceLevel](any(), any())(any(), any())
+        .authorise[
+          Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~
+            Option[
+              String
+            ] ~ ConfidenceLevel
+        ](any(), any())(any(), any())
     ).thenReturn(
       Future.successful(
         Enrolments(enrolments) ~ externalId ~ creds ~ utr ~ nino ~ confidenceLevel

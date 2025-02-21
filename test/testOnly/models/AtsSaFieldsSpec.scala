@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package utils
+package testOnly.models
 
-import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
+import play.api.libs.json.{JsValue, Json}
+import utils.BaseSpec
 
-import java.net.URLEncoder
-import java.time.Instant
+class AtsSaFieldsSpec extends BaseSpec {
+  "AtsSaFields JSON serialization and deserialization" must {
 
-object LoginPage {
+    val atsSaFields   = AtsSaFields(Seq("abc", "def", "ghi"))
+    val json: JsValue = Json.parse(
+      """{
+        |  "items": ["abc", "def", "ghi"]
+        |}""".stripMargin
+    )
 
-  private val encKey = "1111111111111111111111"
+    "serialize AtsSaFields to JSON correctly" in {
+      Json.toJson(atsSaFields) mustBe json
+    }
 
-  // KxF3antRTEtdaFgpwbmoISnwJDJRvyl0NAnCRwa3SB5EIrpF0IMS/wZwQnvsprKx
-
-  private val crypto = new AesCrypto {
-    override protected val encryptionKey: String = encKey
-  }
-
-  def agentToken(utr: String) = {
-    val token =
-      URLEncoder.encode(crypto.encrypt(PlainText(s"V3264H:$utr:" + (Instant.now.toEpochMilli))).value, "UTF-8")
-    token
+    "deserialize JSON to AtsSaFields correctly" in {
+      json.as[AtsSaFields] mustBe atsSaFields
+    }
   }
 }

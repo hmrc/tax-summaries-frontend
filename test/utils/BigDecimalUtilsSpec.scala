@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ class BigDecimalUtilsSpec extends AnyWordSpec with BigDecimalUtils with Matchers
 
       "two big decimals are exactly equal" in {
 
-        forAll { bd: BigDecimal =>
-          assert(bd === bd)
-          assert(!(bd !== bd))
+        forAll { (bd: BigDecimal) =>
+          (bd === bd) mustBe true
+          (bd !== bd) mustBe false
         }
       }
     }
@@ -40,9 +40,9 @@ class BigDecimalUtilsSpec extends AnyWordSpec with BigDecimalUtils with Matchers
       "two big decimals are not the same" in {
 
         forAll { (bd1: BigDecimal, bd2: BigDecimal) =>
-          if (bd1 !== bd2) {
-            assert(!(bd1 === bd2))
-            assert(bd1 !== bd2)
+          whenever(bd1 !== bd2) {
+            (bd1 === bd2) mustBe false
+            (bd1 !== bd2) mustBe true
           }
         }
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
             case Amount.empty =>
               result must not include viewUtils.toCurrency(tax)
 
-            case _            =>
+            case _ =>
               result must include(
                 messages(
                   s"ats.total_income_tax.scottish_income_tax.table.$id",
@@ -127,7 +127,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
 
     "show total row" in {
 
-      forAll { total: Amount =>
+      forAll { (total: Amount) =>
         val taxData = scottishTaxData.copy(scottishTotalTax = total)
         val result  = view(taxData)
 
@@ -135,7 +135,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
           case Amount.empty =>
             result must not include messages("ats.total_income_tax.scottish_income_tax.table.total")
 
-          case _            =>
+          case _ =>
             result must include(messages("ats.total_income_tax.scottish_income_tax.table.total"))
             result must include(viewUtils.toCurrency(total))
         }

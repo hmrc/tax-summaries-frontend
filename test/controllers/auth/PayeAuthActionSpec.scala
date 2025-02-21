@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import models.admin.PAYEServiceToggle
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
-import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
@@ -63,6 +62,7 @@ class PayeAuthActionSpec extends BaseSpec {
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
     when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
+    ()
   }
 
   "A user with a confidence level 200 and a Nino" must {

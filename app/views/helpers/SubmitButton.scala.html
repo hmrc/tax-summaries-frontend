@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,20 @@
 
 @this(govukButton: GovukButton)
 
-@(msg: String, href: Option[String] = None, classes: Option[String] = None, name: Option[String] = None, id: String = "submit", attrs: Map[String, String] = Map.empty, isStartButton: Boolean = false)(implicit messages: Messages)
+@(  msg: String,
+    href: Option[String] = None,
+    classes: Option[String] = None,
+    name: Option[String] = None,
+    id: String = "submit",
+    attrs: Map[String, String] = Map.empty,
+    isStartButton: Boolean = false
+)(implicit messages: Messages)
 
-@govukButton(Button(content = Text(messages(msg)), href = href, classes = classes.getOrElse(""), name = name, attributes = attrs ++ Map("id" -> id, "type" -> "submit"), isStartButton = isStartButton))
+@govukButton(Button(
+    content = Text(messages(msg)),
+    href = href,
+    classes = classes.getOrElse(""),
+    name = name,
+    attributes = attrs ++ Map("id" -> id, "type" -> "submit"),
+    isStartButton = isStartButton
+))

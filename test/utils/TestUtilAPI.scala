@@ -18,11 +18,12 @@ package utils
 
 trait TestUtilAPI {
 
-  /**
-    * DataFormat is used to specify how the test data will be generated
+  /** DataFormat is used to specify how the test data will be generated
     *
-    * @param character specifies the pattern to use
-    * @param repeat    specifies the number of times the pattern will be repeated
+    * @param character
+    *   specifies the pattern to use
+    * @param repeat
+    *   specifies the number of times the pattern will be repeated
     */
   case class DataFormat(val character: Character, repeat: Int)
 
@@ -33,19 +34,17 @@ trait TestUtilAPI {
     }
   }
 
-  /**
-    * generateTestDataWithFormat is used to aid the generation of test data for a text field
+  /** generateTestDataWithFormat is used to aid the generation of test data for a text field
     *
     * It takes a sequence of DataFormat objects and combines their requirement into a single String
     *
-    * Example usages:
-    * generateTestDataWithFormat (DataFormat("a",10))
-    * // will generate "aaaaaaaaaa"
-    * generateTestDataWithFormat (DataFormat("A",2), DataFormat("1",6), DataFormat("A",1))
-    * // will generate "AA111111A"
+    * Example usages: generateTestDataWithFormat (DataFormat("a",10)) // will generate "aaaaaaaaaa"
+    * generateTestDataWithFormat (DataFormat("A",2), DataFormat("1",6), DataFormat("A",1)) // will generate "AA111111A"
     *
-    * @param formatRequirements a sequence of Dataformats for the string
-    * @return a string consists of the specified Dataformats
+    * @param formatRequirements
+    *   a sequence of Dataformats for the string
+    * @return
+    *   a string consists of the specified Dataformats
     */
   def generateFieldTestDataInThisFormat(formatRequirements: DataFormat*): String = {
     require(formatRequirements.nonEmpty)
@@ -54,101 +53,94 @@ trait TestUtilAPI {
     }
   }
 
-  /**
-    * generateFormTestData is used to aid the generation of test data for a form
+  /** generateFormTestData is used to aid the generation of test data for a form
     *
-    * In this overload a preCondition data map can be passed in as the base of the test data.
-    * Mapping of the new data field will be appended to the preCondition map. This can then be bound to a form
-    * which expects values from preCondition as well as a value from "fieldId"
+    * In this overload a preCondition data map can be passed in as the base of the test data. Mapping of the new data
+    * field will be appended to the preCondition map. This can then be bound to a form which expects values from
+    * preCondition as well as a value from "fieldId"
     *
-    * N.B. if the field already exists then the new value will overwrite the value that was in the
-    * preCondition map
+    * N.B. if the field already exists then the new value will overwrite the value that was in the preCondition map
     *
-    * Example usages:
-    * val preCond = Map[String,String]("firstFieldId"->"value")
-    * generateFormTestData (preCond,"newFieldId","newFieldValue")
-    * // will generate:
-    * // Map[String,String]("firstFieldId"->"value", "newFieldId" -> "newFieldValue")
+    * Example usages: val preCond = Map[String,String]("firstFieldId"->"value") generateFormTestData
+    * (preCond,"newFieldId","newFieldValue") // will generate: // Map[String,String]("firstFieldId"->"value",
+    * "newFieldId" -> "newFieldValue")
     *
-    * @param preCondition the data already exists for the form
-    * @param fieldId      the id of new data field to be added to preCondition
-    * @param dataValue    the value of the new data field
-    * @return the new test data with (fieldId -> dataValue) appended to the preCondition
+    * @param preCondition
+    *   the data already exists for the form
+    * @param fieldId
+    *   the id of new data field to be added to preCondition
+    * @param dataValue
+    *   the value of the new data field
+    * @return
+    *   the new test data with (fieldId -> dataValue) appended to the preCondition
     */
   def generateFormTestData(preCondition: Map[String, String], fieldId: String, dataValue: String): Map[String, String] =
     preCondition ++ generateFormTestData(fieldId, dataValue)
 
-  /**
-    * generateFormTestData is used to aid the generation of test data for a form
+  /** generateFormTestData is used to aid the generation of test data for a form
     *
-    * This overload will create a new Map[String,String] that can be bound to a form
-    * which tests the value from a field with Id "fieldId"
-    * *
-    * Example usages:
-    * generateFormTestData (newFieldId","newFieldValue")
-    * // will generate:
-    * // Map[String,String]("newFieldId" -> "newFieldValue")
+    * This overload will create a new Map[String,String] that can be bound to a form which tests the value from a field
+    * with Id "fieldId" * Example usages: generateFormTestData (newFieldId","newFieldValue") // will generate: //
+    * Map[String,String]("newFieldId" -> "newFieldValue")
     *
-    * @param fieldId   the id of data field used in the test
-    * @param dataValue the value of the new data field
-    * @return the new test data Map(fieldId -> dataValue)
+    * @param fieldId
+    *   the id of data field used in the test
+    * @param dataValue
+    *   the value of the new data field
+    * @return
+    *   the new test data Map(fieldId -> dataValue)
     */
-  def generateFormTestData(fieldId: String, dataValue: String): Map[String, String]       =
+  def generateFormTestData(fieldId: String, dataValue: String): Map[String, String] =
     Map(fieldId -> dataValue)
 
-  /**
-    * generateFormTestData is used to aid the generation of test data for a form
+  /** generateFormTestData is used to aid the generation of test data for a form
     *
-    * This overload assign the data value on all of the field ids provided.
-    * A preCondition data map can be passed in as the base of the test data
-    * the new fields of the specified data value will be appended to the preCondition map.
+    * This overload assign the data value on all of the field ids provided. A preCondition data map can be passed in as
+    * the base of the test data the new fields of the specified data value will be appended to the preCondition map.
     * This can then be bound to a form which expects values from preCondition as well as a value from the fieldIds
     *
-    * N.B. if the field already exists then the new value will overwrite the value that was in the
-    * preCondition map
+    * N.B. if the field already exists then the new value will overwrite the value that was in the preCondition map
     *
-    * Example usages:
-    * val preCond = Map[String,String]("firstFieldId"->"value")
-    * generateFormTestData (preCond,Set("newFieldId1","newFieldId2","newFieldId3"),"newFieldValue")
-    * // will generate:
-    * // Map[String,String]("firstFieldId"->"value",
-    * //                    "newFieldId1" -> "newFieldValue",
-    * //                    "newFieldId2" -> "newFieldValue",
-    * //                    "newFieldId3" -> "newFieldValue")
+    * Example usages: val preCond = Map[String,String]("firstFieldId"->"value") generateFormTestData
+    * (preCond,Set("newFieldId1","newFieldId2","newFieldId3"),"newFieldValue") // will generate: //
+    * Map[String,String]("firstFieldId"->"value", // "newFieldId1" -> "newFieldValue", // "newFieldId2" ->
+    * "newFieldValue", // "newFieldId3" -> "newFieldValue")
     *
-    * @param preCondition the data already exists for the form
-    * @param fieldIds     the ids of new data fields to be added to preCondition e.g. Set("fieldId1","fieldId1",...,"fieldIdN")
-    * @param dataValue    the value to be set for all of the new data fields
-    * @return the new test data with (fieldId1 -> dataValue) + (fieldId2 -> dataValue) ...(fieldIdN -> dataValue) appended to the preCondition
+    * @param preCondition
+    *   the data already exists for the form
+    * @param fieldIds
+    *   the ids of new data fields to be added to preCondition e.g. Set("fieldId1","fieldId1",...,"fieldIdN")
+    * @param dataValue
+    *   the value to be set for all of the new data fields
+    * @return
+    *   the new test data with (fieldId1 -> dataValue) + (fieldId2 -> dataValue) ...(fieldIdN -> dataValue) appended to
+    *   the preCondition
     */
   def generateFormTestData(
     preCondition: Map[String, String],
     fieldIds: Set[String],
     dataValue: String
-  ): Map[String, String]                                                                  =
+  ): Map[String, String] =
     fieldIds.foldLeft(preCondition)((map, fieldId) => map + (fieldId -> dataValue))
 
-  /**
-    * generateFormTestData is used to aid the generation of test data for a form
+  /** generateFormTestData is used to aid the generation of test data for a form
     *
-    * This overload assign the data value on all of the field ids provided.
-    * A preCondition data map can be passed in as the base of the test data
-    * the new fields of the specified data value will be appended to the preCondition map.
+    * This overload assign the data value on all of the field ids provided. A preCondition data map can be passed in as
+    * the base of the test data the new fields of the specified data value will be appended to the preCondition map.
     * This can then be bound to a form which expects values from preCondition as well as a value from the fieldIds
     *
-    * N.B. if the field already exists then the new value will overwrite the value that was in the
-    * preCondition map
+    * N.B. if the field already exists then the new value will overwrite the value that was in the preCondition map
     *
-    * Example usages:
-    * generateFormTestData (Set("newFieldId1","newFieldId2","newFieldId3"),"newFieldValue")
-    * // will generate:
-    * // Map[String,String]("newFieldId1" -> "newFieldValue",
-    * //                    "newFieldId2" -> "newFieldValue",
-    * //                    "newFieldId3" -> "newFieldValue")
+    * Example usages: generateFormTestData (Set("newFieldId1","newFieldId2","newFieldId3"),"newFieldValue") // will
+    * generate: // Map[String,String]("newFieldId1" -> "newFieldValue", // "newFieldId2" -> "newFieldValue", //
+    * "newFieldId3" -> "newFieldValue")
     *
-    * @param fieldIds  the ids of new data fields e.g. Set("fieldId1","fieldId1",...,"fieldIdN")
-    * @param dataValue the value to be set for all of the new data fields
-    * @return the new test data of Map(fieldId1 -> dataValue) + (fieldId2 -> dataValue) ...(fieldIdN -> dataValue)
+    * @param fieldIds
+    *   the ids of new data fields e.g. Set("fieldId1","fieldId1",...,"fieldIdN")
+    * @param dataValue
+    *   the value to be set for all of the new data fields
+    * @return
+    *   the new test data of Map(fieldId1 -> dataValue) + (fieldId2 -> dataValue) ...(fieldIdN -> dataValue)
     */
   def generateFormTestData(fieldIds: Set[String], dataValue: String): Map[String, String] =
     generateFormTestData(Map[String, String](), fieldIds, dataValue)

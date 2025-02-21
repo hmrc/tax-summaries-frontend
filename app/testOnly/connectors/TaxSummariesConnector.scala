@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ import config.ApplicationConfig
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.*
 
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
@@ -35,25 +36,27 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
 
   private def url(path: String) = s"$serviceUrl$path"
 
+  @nowarn("msg=match may not be exhaustive")
   def connectToAtsSaFields(
     taxYear: Int
-  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Seq[String]]] =
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url("/test-only/taxs/" + taxYear + "/ats-sa-fields")
-    ) recover handleHttpExceptions).map {
+  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Seq[String]]] = {
+    val fullUrl = url("/test-only/taxs/" + taxYear + "/ats-sa-fields")
+    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions).map {
       case Right(response) if response.status == OK => Right((response.json \ "items").as[Seq[String]])
       case Left(response)                           => Left(response)
     }
+  }
 
+  @nowarn("msg=match may not be exhaustive")
   def connectToAtsSaDataWithoutAuth(taxYear: Int, utr: String)(implicit
     hc: HeaderCarrier
-  ): Future[Either[UpstreamErrorResponse, JsValue]] =
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](
-      url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data")
-    ) recover handleHttpExceptions).map {
+  ): Future[Either[UpstreamErrorResponse, JsValue]] = {
+    val fullUrl = url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data")
+    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions).map {
       case Right(response) if response.status == OK => Right(response.json)
       case Left(response)                           => Left(response)
     }
+  }
 
   private val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
     case e: HttpException =>

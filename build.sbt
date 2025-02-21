@@ -1,11 +1,10 @@
 import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings
-import uk.gov.hmrc.DefaultBuildSettings.*
 
 val appName = "tax-summaries-frontend"
 
-ThisBuild / majorVersion := 2
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 3
+ThisBuild / scalaVersion := "3.3.4"
 ThisBuild / scalafmtOnCompile := true
 
 lazy val scoverageSettings = {
@@ -38,28 +37,27 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     PlayKeys.playDefaultPort := 9217,
     scoverageSettings,
-    scalaSettings,
     libraryDependencies ++= AppDependencies.all
   )
   .settings(
     scalacOptions ++= Seq(
       "-unchecked",
       "-feature",
-      "-Xlint:_",
-      "-Wdead-code",
-      "-Wunused:_",
-      "-Wextra-implicit",
+      "-Xfatal-warnings",
+      "-language:noAutoTupling",
+      "-Wunused:imports",
       "-Wvalue-discard",
       "-Werror",
-      "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
-      "-Wconf:cat=unused-imports&site=<empty>:s",
-      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
-      "-Wconf:cat=unused&src=.*Routes\\.scala:s",
-      "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
-      "-Wconf:cat=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
-      "-Wconf:cat=other-match-analysis:s",
-      "-Wconf:msg=trait HttpClient in package http is deprecated.*:s",
-      "-Wconf:src=.*Spec\\.scala&msg=a type was inferred to be `Object`; this may indicate a programming error\\.:s"
+      "-Wconf:msg=unused import&src=.*views/.*:s",
+      "-Wconf:msg=unused import&src=<empty>:s",
+      "-Wconf:msg=unused&src=.*RoutesPrefix\\.scala:s",
+      "-Wconf:msg=unused&src=.*Routes\\.scala:s",
+      "-Wconf:msg=unused&src=.*ReverseRoutes\\.scala:s",
+      "-Wconf:msg=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
+      "-Wconf:msg=other-match-analysis:s",
+      "-Wconf:msg=trait HttpClient in package uk.gov.hmrc.http is deprecated.*:s",
+      "-Wconf:msg=a type was inferred to be `Object`; this may indicate a programming error\\.&src=.*Spec\\.scala:s",
+      "-Wconf:msg=Flag.*repeatedly:s"
     )
   )
   .settings(routesImport ++= Seq("models.admin._"))
@@ -70,7 +68,6 @@ lazy val microservice = Project(appName, file("."))
 
 Test / Keys.fork := true
 Test / parallelExecution := true
-Test / scalacOptions --= Seq("-Wdead-code", "-Wvalue-discard")
 
 lazy val it = project
   .enablePlugins(play.sbt.PlayScala)

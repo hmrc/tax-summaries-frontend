@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,24 @@ class AccountControllerTest extends BaseSpec {
       val expected = result.futureValue
 
       expected mustBe expected.withNewSession
+    }
+  }
+
+  "keepAlive" must {
+
+    "return NoContent" in {
+      val result = controller.keepAlive(FakeRequest())
+      status(result) mustBe NO_CONTENT
+    }
+  }
+
+  "sessionExpired" must {
+
+    "return OK and render session expired view" in {
+      val result = controller.sessionExpired(FakeRequest())
+
+      status(result) mustBe OK
+      contentAsString(result) must include("For your security, we signed you out")
     }
   }
 }

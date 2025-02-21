@@ -21,6 +21,7 @@ import play.api.libs.json.{Format, Json}
 case class TaxYearAndUTR(taxYear: Int, utr: String)
 
 object TaxYearAndUTR {
-  implicit lazy val formats: Format[TaxYearAndUTR] =
-    Json.format[TaxYearAndUTR]
+  implicit lazy val formats: Format[TaxYearAndUTR] = Json.format[TaxYearAndUTR]
+
+  def unapply(taxYearAndUTR: TaxYearAndUTR): Option[(Int, String)] = Some((taxYearAndUTR.taxYear, taxYearAndUTR.utr))
 }

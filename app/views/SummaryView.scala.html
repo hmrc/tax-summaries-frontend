@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@
                 @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)
                 } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-                viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)}</span>
+                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)}</span>
                 <span id="total-tax-amount" aria-hidden="true">@currencyAmountView(viewModel.yourTotalTax)</span>
             </p>
 
@@ -143,7 +143,7 @@
                 @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
                 } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-                viewModel.yourTotalTaxTextKeys._2 map {key:String => Html(Messages(key)) }:_*))
+                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*))
                 }
             </p>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, writeableOf_AnyContentAsEmpty, status => getStatus}
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status => getStatus, writeableOf_AnyContentAsEmpty}
 import repository.TaxsAgentTokenSessionCacheRepository
 import testUtils.{FileHelper, IntegrationSpec}
 import uk.gov.hmrc.http.SessionKeys
@@ -92,6 +92,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    ()
   }
 
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] = {

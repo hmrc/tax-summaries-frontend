@@ -87,7 +87,7 @@ class AtsMergePageController @Inject() (
                            )
                          ).withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
 
-                       case _                            =>
+                       case _ =>
                          InternalServerError(genericErrorView())
                      }
     } yield result
@@ -123,7 +123,7 @@ class AtsMergePageController @Inject() (
   private def getYearChoiceForm(
     formWithErrors: Option[Form[AtsYearChoice]],
     request: AuthenticatedRequest[_]
-  ): Form[AtsYearChoice]                                                         =
+  ): Form[AtsYearChoice] =
     formWithErrors.getOrElse {
       request.session
         .get("yearChoice")

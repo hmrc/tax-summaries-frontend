@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import models.PertaxApiResponse
 import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
@@ -56,7 +56,7 @@ class PertaxConnector @Inject() (
   def loadPartial(url: String)(implicit request: RequestHeader, ec: ExecutionContext): Future[HtmlPartial] = {
     implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
 
-    httpClient.GET[HtmlPartial](s"$baseUrl$url") map {
+    httpClient.GET[HtmlPartial](url"$baseUrl$url") map {
       case partial: HtmlPartial.Success =>
         partial
       case partial: HtmlPartial.Failure =>
