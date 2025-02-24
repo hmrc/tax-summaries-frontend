@@ -184,6 +184,20 @@ class PertaxConnectorSpec
       result mustBe returnPartial
     }
 
+    "return failed partial when a malformed URL is provided" in {
+
+      val malformedUrl               = "/this%20is%20a%20malformed%20url"
+      val returnPartial: HtmlPartial = HtmlPartial.Failure(Some(404), "Not Found")
+
+      server.stubFor(
+        get(urlEqualTo(malformedUrl)).willReturn(notFound.withBody("Not Found"))
+      )
+
+      val result = pertaxConnector.loadPartial(malformedUrl).futureValue
+
+      result mustBe returnPartial
+    }
+
     "return a failed partial when the request fails with 404" in {
       val returnPartial: HtmlPartial = HtmlPartial.Failure(Some(404), "Not Found")
       server.stubFor(
