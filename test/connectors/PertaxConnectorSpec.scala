@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, ok, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, notFound, ok, post, serverError, urlEqualTo}
 import models.{ErrorView, PertaxApiResponse}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -24,10 +24,13 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeRequest, Injecting}
+import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.play.partials.HtmlPartial
 import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,7 +46,8 @@ class PertaxConnectorSpec
     with Injecting
     with EitherValues {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  private implicit val hc: HeaderCarrier                                = HeaderCarrier()
+  private implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -53,8 +57,9 @@ class PertaxConnectorSpec
   lazy val pertaxConnector: PertaxConnector = inject[PertaxConnector]
 
   def authoriseUrl() = s"/pertax/authorise"
+  val partialUrl     = "/pertax/partials"
 
-  "PertaxConnector" must {
+  "PertaxConnector.pertaxPostAuthorise" must {
     "return a PertaxApiResponse with ACCESS_GRANTED code" in {
       server.stubFor(
         post(urlEqualTo(authoriseUrl()))
@@ -164,6 +169,54 @@ class PertaxConnectorSpec
           result.statusCode mustBe error
         }
       }
+    }
+  }
+
+  "PertaxConnector.loadPartial" must {
+
+    "return a successful partial" in {
+      val returnPartial: HtmlPartial = HtmlPartial.Success.apply(None, Html("test content"))
+      server.stubFor(
+        get(urlEqualTo(partialUrl)).willReturn(ok("test content"))
+      )
+
+      val result = pertaxConnector.loadPartial(partialUrl).futureValue
+      result mustBe returnPartial
+    }
+
+    "return failed partial when a malformed URL is provided" in {
+
+      val malformedUrl               = "/this%20is%20a%20malformed%20url"
+      val returnPartial: HtmlPartial = HtmlPartial.Failure(Some(404), "Not Found")
+
+      server.stubFor(
+        get(urlEqualTo(malformedUrl)).willReturn(notFound.withBody("Not Found"))
+      )
+
+      val result = pertaxConnector.loadPartial(malformedUrl).futureValue
+
+      result mustBe returnPartial
+    }
+
+    "return a failed partial when the request fails with 404" in {
+      val returnPartial: HtmlPartial = HtmlPartial.Failure(Some(404), "Not Found")
+      server.stubFor(
+        get(urlEqualTo(partialUrl)).willReturn(notFound.withBody("Not Found"))
+      )
+
+      val result = pertaxConnector.loadPartial(partialUrl).futureValue
+      result mustBe returnPartial
+    }
+
+    "return failed partial when the call to the service fails" in {
+
+      val returnPartial: HtmlPartial = HtmlPartial.Failure(Some(500), "Error")
+      server.stubFor(
+        get(urlEqualTo(partialUrl)).willReturn(serverError.withBody("Error"))
+      )
+
+      val result = pertaxConnector.loadPartial(partialUrl).futureValue
+      result mustBe returnPartial
     }
   }
 }
