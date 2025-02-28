@@ -24,14 +24,13 @@ import play.api.http.HeaderNames
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PertaxConnector @Inject() (
-  httpClient: HttpClient,
   http: HttpClientV2,
   httpClientResponse: HttpClientResponse,
   applicationConfig: ApplicationConfig,
@@ -57,7 +56,7 @@ class PertaxConnector @Inject() (
     implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
     val fullUrl                    = s"$baseUrl$url"
 
-    httpClient.GET[HtmlPartial](url"$fullUrl") map {
+    http.get(url"$fullUrl").execute[HtmlPartial] map {
       case partial: HtmlPartial.Success =>
         partial
       case partial: HtmlPartial.Failure =>

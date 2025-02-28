@@ -18,20 +18,21 @@ package testOnly.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
 import config.ApplicationConfig
-import models._
+import models.*
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import testOnly.models.AtsSaFields
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.TestConstants.{testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
 
@@ -65,7 +66,7 @@ class TaxSummariesConnectorSpec
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
-  def sut: TaxSummariesConnector = new TaxSummariesConnector(inject[HttpClient])
+  def sut: TaxSummariesConnector = new TaxSummariesConnector(inject[HttpClientV2])
 
   val utr: SaUtr = SaUtr(testUtr)
 

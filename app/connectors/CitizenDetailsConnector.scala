@@ -19,13 +19,14 @@ package connectors
 import cats.data.EitherT
 import config.ApplicationConfig
 import uk.gov.hmrc.http.HttpReads.Implicits.*
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CitizenDetailsConnector @Inject() (
-  httpClient: HttpClient,
+  httpClient: HttpClientV2,
   applicationConfig: ApplicationConfig,
   httpClientResponse: HttpClientResponse
 )(implicit
@@ -37,7 +38,7 @@ class CitizenDetailsConnector @Inject() (
   def connectToCid(nino: String)(implicit hc: HeaderCarrier): EitherT[Future, UpstreamErrorResponse, HttpResponse] = {
     val fullUrl = s"$baseUrl/citizen-details/nino/$nino"
     httpClientResponse.read(
-      httpClient.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl")
+      httpClient.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]]
     )
   }
 }

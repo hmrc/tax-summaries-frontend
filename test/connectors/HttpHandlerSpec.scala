@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Reads}
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext
@@ -55,7 +55,7 @@ class HttpHandlerSpec
 
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
-  def sut: HttpHandler = new HttpHandler(inject[DefaultHttpClient])
+  def sut: HttpHandler = new HttpHandler(inject[HttpClientV2])
 
   case class TestClass(str: String)
 

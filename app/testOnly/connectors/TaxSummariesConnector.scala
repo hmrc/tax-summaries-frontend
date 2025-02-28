@@ -23,11 +23,12 @@ import play.api.http.Status.OK
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
+class TaxSummariesConnector @Inject() (http: HttpClientV2)(implicit
   appConfig: ApplicationConfig,
   ec: ExecutionContext
 ) extends Logging {
@@ -41,7 +42,7 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
     taxYear: Int
   )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, Seq[String]]] = {
     val fullUrl = url("/test-only/taxs/" + taxYear + "/ats-sa-fields")
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions).map {
+    (http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions).map {
       case Right(response) if response.status == OK => Right((response.json \ "items").as[Seq[String]])
       case Left(response)                           => Left(response)
     }
@@ -52,7 +53,7 @@ class TaxSummariesConnector @Inject() (http: HttpClient)(implicit
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, JsValue]] = {
     val fullUrl = url("/test-only/taxs/" + utr + "/" + taxYear + "/ats-sa-data")
-    (http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions).map {
+    (http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions).map {
       case Right(response) if response.status == OK => Right(response.json)
       case Left(response)                           => Left(response)
     }
