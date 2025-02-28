@@ -31,6 +31,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.TestConstants.{testNino, testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
 
@@ -65,7 +66,7 @@ class MiddleConnectorSpec
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
-  def sut: MiddleConnector = new MiddleConnector(inject[HttpClient], inject[HttpHandler])
+  def sut: MiddleConnector = new MiddleConnector(inject[HttpClientV2], inject[HttpHandler])
 
   val utr: SaUtr = SaUtr(testUtr)
 

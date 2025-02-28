@@ -18,19 +18,20 @@ package connectors
 
 import models.{AtsErrorResponse, AtsNotFoundResponse, AtsResponse, AtsSuccessResponseWithPayload}
 import play.api.Logging
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Reads}
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HttpHandler @Inject() (http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class HttpHandler @Inject() (http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
   def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$url") map {
+    http.get(url"$url").execute[Either[UpstreamErrorResponse, HttpResponse]] map {
       case Left(upstreamErrorResponse) =>
         upstreamErrorResponse.statusCode match {
           case NOT_FOUND                                    =>

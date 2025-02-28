@@ -23,10 +23,11 @@ import play.api.Logging
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(implicit
+class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(implicit
   appConfig: ApplicationConfig,
   ec: ExecutionContext
 ) extends Logging {
@@ -55,21 +56,21 @@ class MiddleConnector @Inject() (http: HttpClient, httpHandler: HttpHandler)(imp
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions
+    http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
   def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions
+    http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
   def connectToGovernmentSpend(
     taxYear: Int
   )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url(s"/taxs/government-spend/$taxYear")
-    http.GET[Either[UpstreamErrorResponse, HttpResponse]](url"$fullUrl") recover handleHttpExceptions
+    http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
   val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
