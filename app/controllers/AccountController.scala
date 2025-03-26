@@ -29,7 +29,6 @@ class AccountController @Inject() (
     extends FrontendController(mcc) {
 
   def signOut: Action[AnyContent] = Action {
-    // Redirect(appConfig.feedbackUrl).withNewSession
     Redirect(appConfig.basGatewaySignOut(appConfig.survey))
   }
 
