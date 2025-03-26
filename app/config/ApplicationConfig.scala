@@ -62,8 +62,11 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
     s"""${config.getConfString("feedback-frontend.host", "")}/feedback/$surveyOrigin"""
   }
 
-  def basGatewaySignOut(continueUrl: String): String =
+  def basGatewaySignOut(continueUrl: String): String = {
+    val basGatewayFrontendHost: String =
+      config.getString("microservice.services.bas-gateway-frontend.url")
     basGatewayFrontendHost + s"/bas-gateway/sign-out-without-state?continue=$continueUrl"
+  }
 
   def scottishIncomeTaxLink(taxYear: Int): String =
     s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
@@ -108,8 +111,4 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 
   lazy val mongoTTL: Int = config.getConfInt("tai.cache.expiryInSeconds", 900)
-
-  private val basGatewayFrontendHost: String =
-    config.getString("microservice.services.bas-gateway-frontend.url")
-
 }
