@@ -17,28 +17,19 @@
 package controllers
 
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.BaseSpec
 
 class AccountControllerTest extends BaseSpec {
 
-  val feedbackUrl                   = "http://localhost:9514/feedback/ATS"
-  val controller: AccountController = inject[AccountController]
+  private val controller: AccountController = inject[AccountController]
 
   "signOut" must {
 
-    "redirect user to feedback url" in {
-
-      val result = controller.signOut(FakeRequest())
-      redirectLocation(result) mustBe Some(feedbackUrl)
-    }
-
-    "clear user session after redirect" in {
-
-      val result   = controller.signOut(FakeRequest().withSession("test" -> "session"))
-      val expected = result.futureValue
-
-      expected mustBe expected.withNewSession
+    "redirect user to bas gateway with feedback url" in {
+      val expUrl: String = appConfig.basGatewaySignOut(appConfig.survey)
+      val result         = controller.signOut(FakeRequest())
+      redirectLocation(result) mustBe Some(expUrl)
     }
   }
 

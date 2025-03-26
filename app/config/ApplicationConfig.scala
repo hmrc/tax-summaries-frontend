@@ -49,7 +49,6 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
   lazy val loginCallback: String                 = getConf(s"login-callback.url")
   lazy val loginUrl: String                      = getConf("login.url")
   lazy val portalUrl: String                     = getConf("portal.url")
-  lazy val feedbackUrl: String                   = getConf("feedback.url")
   lazy val identityVerificationUpliftUrl: String = getConf("paye.iv-uplift-redirect.url")
   lazy val iVUpliftFailureCallback: String       = getConf("paye.iv-uplift-failure.url")
   lazy val contactHmrcSAUrl                      = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
@@ -57,6 +56,12 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
     "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
   lazy val govScotAccounts                       = "https://www.gov.scot/accounts"
   lazy val govScotHowItWorks                     = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
+
+  lazy val surveyOrigin: String = config.getString("sca-wrapper.exit-survey-origin")
+  lazy val survey: String       = s"""${config.getConfString("feedback-frontend.host", "")}/feedback/$surveyOrigin"""
+
+  def basGatewaySignOut(continueUrl: String): String =
+    basGatewayFrontendHost + s"/bas-gateway/sign-out-without-state?continue=$continueUrl"
 
   def scottishIncomeTaxLink(taxYear: Int): String =
     s"https://www.gov.scot/publications/scottish-income-tax-${taxYear - 1}-$taxYear/"
@@ -101,4 +106,8 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
   val showUrBanner: Boolean = config.getBoolean("urBanner.enable")
 
   lazy val mongoTTL: Int = config.getConfInt("tai.cache.expiryInSeconds", 900)
+
+  private val basGatewayFrontendHost: String =
+    config.getString("microservice.services.bas-gateway-frontend.url")
+
 }
