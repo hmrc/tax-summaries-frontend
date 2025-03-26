@@ -57,8 +57,10 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
   lazy val govScotAccounts                       = "https://www.gov.scot/accounts"
   lazy val govScotHowItWorks                     = "https://www.gov.uk/scottish-rate-income-tax/how-it-works"
 
-  lazy val surveyOrigin: String = config.getString("sca-wrapper.exit-survey-origin")
-  lazy val survey: String       = s"""${config.getConfString("feedback-frontend.host", "")}/feedback/$surveyOrigin"""
+  lazy val survey: String = {
+    val surveyOrigin: String = config.getString("sca-wrapper.exit-survey-origin")
+    s"""${config.getConfString("feedback-frontend.host", "")}/feedback/$surveyOrigin"""
+  }
 
   def basGatewaySignOut(continueUrl: String): String =
     basGatewayFrontendHost + s"/bas-gateway/sign-out-without-state?continue=$continueUrl"
