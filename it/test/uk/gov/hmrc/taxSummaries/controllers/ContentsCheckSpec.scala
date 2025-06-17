@@ -146,6 +146,7 @@ class ContentsCheckSpec extends IntegrationSpec {
           MenuItemConfig("signout", "Sign out", "link", leftAligned = false, 0, None, None)
         ),
         PtaMinMenuConfig("MenuName", "BackName"),
+        List.empty,
         List.empty
       )
     )
