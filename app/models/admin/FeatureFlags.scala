@@ -18,13 +18,6 @@ package models.admin
 
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlagName
 
-case object PertaxBackendToggle extends FeatureFlagName {
-  override val name: String                = "pertax-backend-toggle"
-  override val description: Option[String] = Some(
-    "Enable/disable pertax backend during auth"
-  )
-}
-
 case object SelfAssessmentServiceToggle extends FeatureFlagName {
   override val name: String                = "self-assessment-service-toggle"
   override val description: Option[String] = Some(
@@ -35,6 +28,6 @@ case object SelfAssessmentServiceToggle extends FeatureFlagName {
 case object PAYEServiceToggle extends FeatureFlagName {
   override val name: String                = "paye-service-toggle"
   override val description: Option[String] = Some(
-    "Enable/disable PAYE services"
+    "Enable/disable PAYE data fetching, authentication, and display in the Annual Tax Summary (ATS)."
   )
 }

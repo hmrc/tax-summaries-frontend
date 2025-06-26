@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import models.admin.{PAYEServiceToggle, PertaxBackendToggle, SelfAssessmentServiceToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -33,7 +33,7 @@ class FeatureFlagsController @Inject() (
 
   def setDefaults(): Action[AnyContent] = Action.async {
     featureFlagService
-      .setAll(Map(PertaxBackendToggle -> true, SelfAssessmentServiceToggle -> true, PAYEServiceToggle -> true))
+      .setAll(Map(SelfAssessmentServiceToggle -> true, PAYEServiceToggle -> true))
       .map(_ => Ok("Default flags set"))
   }
 }
