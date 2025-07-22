@@ -25,6 +25,41 @@ import views.html.includes.CurrencyAmountView
 class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
   lazy val view: CurrencyAmountView = inject[CurrencyAmountView]
   "view" when {
+    "Value is zero"     must {
+      val amountValue = Amount(BigDecimal(0.00), "GBP")
+      "return correctly when spokenMinus is false and twoDecimalPlaces is false" in {
+        val result: String = view(
+          amount = amountValue,
+          spokenMinus = false,
+          twoDecimalPlaces = false
+        ).body
+        result mustBe "&pound;0"
+      }
+      "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
+        val result: String = view(
+          amount = amountValue,
+          spokenMinus = false,
+          twoDecimalPlaces = true
+        ).body
+        result mustBe "&pound;0.00"
+      }
+      "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
+        val result: String = view(
+          amount = amountValue,
+          spokenMinus = true,
+          twoDecimalPlaces = false
+        ).body
+        result mustBe "&pound;0"
+      }
+      "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
+        val result: String = view(
+          amount = amountValue,
+          spokenMinus = true,
+          twoDecimalPlaces = true
+        ).body
+        result mustBe "&pound;0"
+      }
+    }
     "Value is positive" must {
       val amountValue = Amount(BigDecimal(44.55), "GBP")
       "return correctly when spokenMinus is false and twoDecimalPlaces is false" in {
