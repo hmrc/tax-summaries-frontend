@@ -70,6 +70,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
           MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None)
         ),
         PtaMinMenuConfig("MenuName", "BackName"),
+        List.empty,
         List.empty
       )
     )

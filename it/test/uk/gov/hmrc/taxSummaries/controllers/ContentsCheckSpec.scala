@@ -18,7 +18,7 @@ package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.admin.{PAYEServiceToggle, PertaxBackendToggle, SelfAssessmentServiceToggle}
+import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -146,6 +146,7 @@ class ContentsCheckSpec extends IntegrationSpec {
           MenuItemConfig("signout", "Sign out", "link", leftAligned = false, 0, None, None)
         ),
         PtaMinMenuConfig("MenuName", "BackName"),
+        List.empty,
         List.empty
       )
     )
@@ -155,9 +156,7 @@ class ContentsCheckSpec extends IntegrationSpec {
     super.beforeEach()
     reset(mockFeatureFlagService, mockPertaxAuthService)
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
-
-    when(mockFeatureFlagService.get(ArgumentMatchers.eq(PertaxBackendToggle)))
-      .thenReturn(Future.successful(FeatureFlag(PertaxBackendToggle, isEnabled = false)))
+    
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
