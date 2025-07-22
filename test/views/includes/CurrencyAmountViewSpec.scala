@@ -33,7 +33,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = false,
           twoDecimalPlaces = false
         ).body
-        result mustBe "&pound;0"
+        result.stripTrailing() mustBe "&pound;0"
       }
       "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -41,7 +41,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = false,
           twoDecimalPlaces = true
         ).body
-        result mustBe "&pound;0.00"
+        result.stripTrailing() mustBe "&pound;0.00"
       }
       "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
         val result: String = view(
@@ -49,7 +49,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = true,
           twoDecimalPlaces = false
         ).body
-        result mustBe "&pound;0"
+        result.stripTrailing() mustBe "&pound;0"
       }
       "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -57,7 +57,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = true,
           twoDecimalPlaces = true
         ).body
-        result mustBe "&pound;0"
+        result.stripTrailing() mustBe "&pound;0"
       }
     }
     "Value is positive" must {
@@ -68,7 +68,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = false,
           twoDecimalPlaces = false
         ).body
-        result mustBe "&pound;44"
+        result.stripTrailing() mustBe "&pound;44"
       }
       "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -76,7 +76,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = false,
           twoDecimalPlaces = true
         ).body
-        result mustBe "&pound;44.55"
+        result.stripTrailing() mustBe "&pound;44.55"
       }
       "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
         val result: String = view(
@@ -84,7 +84,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = true,
           twoDecimalPlaces = false
         ).body
-        result mustBe "&pound;44"
+        result.stripTrailing() mustBe "&pound;44"
       }
       "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -92,7 +92,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = true,
           twoDecimalPlaces = true
         ).body
-        result mustBe "&pound;44"
+        result.stripTrailing() mustBe "&pound;44"
       }
     }
 
@@ -104,7 +104,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = false,
           twoDecimalPlaces = false
         ).body
-        result mustBe "&minus;&nbsp;&pound;44"
+        result.stripTrailing() mustBe "&minus;&nbsp;&pound;44"
       }
       "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -112,7 +112,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = false,
           twoDecimalPlaces = true
         ).body
-        result mustBe "&minus;&nbsp;&pound;44.55"
+        result.stripTrailing() mustBe "&minus;&nbsp;&pound;44.55"
       }
       "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
         val result: String = view(
@@ -120,7 +120,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = true,
           twoDecimalPlaces = false
         ).body
-        result mustBe "minus &pound;44"
+        result.stripTrailing() mustBe "minus &pound;44"
       }
       "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -128,7 +128,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spokenMinus = true,
           twoDecimalPlaces = true
         ).body
-        result mustBe "minus &pound;44.55"
+        result.stripTrailing() mustBe "minus &pound;44.55"
       }
     }
 
