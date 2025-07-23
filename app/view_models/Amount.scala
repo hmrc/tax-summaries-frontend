@@ -60,19 +60,19 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
   def renderCurrencyValueAsHtml(poundsOnly: Boolean = false, spoken: Boolean = false)(implicit
     messages: Messages
   ): String = {
-    val absAmountAsBigDecimal = amount.abs
-    val isNegative            = amount < 0
-    lazy val poundsPart       = absAmountAsBigDecimal.setScale(0, BigDecimal.RoundingMode.DOWN)
+    val positiveAmountAsBigDecimal: BigDecimal = amount.abs
+    val isNegative: Boolean                    = amount < 0
+    lazy val poundsPart: BigDecimal            = positiveAmountAsBigDecimal.setScale(0, BigDecimal.RoundingMode.DOWN)
     if (spoken) {
-      val prefix = if (isNegative) s"""${messages("generic.minus")} """ else ""
+      val prefix: String = if (isNegative) s"""${messages("generic.minus")} """ else ""
       if (poundsOnly) {
         s"$prefix$poundsPart ${messages("generic.pounds")}"
       } else {
-        val pencePart = ((absAmountAsBigDecimal - poundsPart) * 100).toInt
+        val pencePart = ((positiveAmountAsBigDecimal - poundsPart) * 100).toInt
         s"$prefix$poundsPart ${messages("generic.pounds")} $pencePart ${messages("generic.pence")}"
       }
     } else {
-      def positiveAmount = Amount(absAmountAsBigDecimal, currency, calculus)
+      def positiveAmount: Amount = Amount(positiveAmountAsBigDecimal, currency, calculus)
       (isNegative, poundsOnly) match {
         case (false, false) => s"&pound;${positiveAmount.toTwoDecimalString}"
         case (false, true)  => s"&pound;$poundsPart"
