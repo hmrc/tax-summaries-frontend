@@ -32,5 +32,4 @@ class ViewUtils @Inject() () {
       Rate.empty
     else
       currentRate
-
 }
