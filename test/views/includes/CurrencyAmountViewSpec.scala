@@ -49,7 +49,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "0 pounds 0 pence"
+        result.stripTrailing() mustBe "0 pounds"
       }
       "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -84,7 +84,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "44 pounds 55 pence"
+        result.stripTrailing() mustBe "44 pounds"
       }
       "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(

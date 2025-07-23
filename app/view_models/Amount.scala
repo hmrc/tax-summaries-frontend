@@ -16,6 +16,7 @@
 
 package view_models
 
+import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import utils.BigDecimalUtils
 
@@ -55,6 +56,31 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
   def isValueEqual(that: Amount): Boolean = this.amount == that.amount && this.currency == that.currency
 
   def isValueNotEqual(that: Amount): Boolean = !isValueEqual(that)
+
+  def renderCurrencyValueAsHtml(poundsOnly: Boolean = false, spoken: Boolean = false)(implicit
+    messages: Messages
+  ): String = {
+    val absAmountAsBigDecimal = amount.abs
+    val isNegative            = amount < 0
+    lazy val poundsPart       = absAmountAsBigDecimal.setScale(0, BigDecimal.RoundingMode.DOWN)
+    if (spoken) {
+      val prefix = if (isNegative) s"""${messages("generic.minus")} """ else ""
+      if (poundsOnly) {
+        s"$prefix$poundsPart ${messages("generic.pounds")}"
+      } else {
+        val pencePart = ((absAmountAsBigDecimal - poundsPart) * 100).toInt
+        s"$prefix$poundsPart ${messages("generic.pounds")} $pencePart ${messages("generic.pence")}"
+      }
+    } else {
+      def positiveAmount = Amount(absAmountAsBigDecimal, currency, calculus)
+      (isNegative, poundsOnly) match {
+        case (false, false) => s"&pound;${positiveAmount.toTwoDecimalString}"
+        case (false, true)  => s"&pound;$poundsPart"
+        case (true, false)  => s"&minus;&nbsp;&pound;${positiveAmount.toTwoDecimalString}"
+        case (true, true)   => s"&minus;&nbsp;&pound;$poundsPart"
+      }
+    }
+  }
 }
 
 object Amount {

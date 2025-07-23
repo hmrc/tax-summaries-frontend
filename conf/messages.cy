@@ -30,6 +30,8 @@ view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
 error.form.error = Gwall:
 generic.total=Cyfanswm
+generic.pounds = pounds
+generic.pence = pence
 
 # View ATS - Select tax year page
 #============================================================

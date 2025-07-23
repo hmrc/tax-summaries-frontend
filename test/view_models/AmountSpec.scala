@@ -19,7 +19,9 @@ package view_models
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.libs.json.Json
+import utils.TestConstants.inject
 
 class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 
@@ -46,6 +48,77 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.toString() mustEqual "1,000"
       }
+    }
+
+    "renderAccessibleCurrencyValue is called with spoken = true" must {
+      implicit val messagesApi: MessagesApi = inject[MessagesApi]
+      implicit val messages: Messages       = MessagesImpl(Lang("en"), messagesApi)
+
+      "format positive amount correctly as pounds and pence" in {
+        val testValue: BigDecimal = 1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "1000 pounds 44 pence"
+      }
+
+      "format negative amount correctly as pounds and pence" in {
+        val testValue: BigDecimal = -1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "minus 1000 pounds 44 pence"
+      }
+      "format negative amount with > 2 decimal places correctly as pounds and pence" in {
+        val testValue: BigDecimal = -1000.445
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "minus 1000 pounds 44 pence"
+      }
+
+      "format positive amount correctly as pounds" in {
+        val testValue: BigDecimal = 1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "1000 pounds"
+      }
+      "format negative amount correctly as pounds" in {
+        val testValue: BigDecimal = -1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "minus 1000 pounds"
+      }
+
+    }
+    "renderAccessibleCurrencyValue is called with spoken = false" must {
+      implicit val messagesApi: MessagesApi = inject[MessagesApi]
+      implicit val messages: Messages       = MessagesImpl(Lang("en"), messagesApi)
+
+      "format positive amount correctly as pounds and pence" in {
+        val testValue: BigDecimal = 1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = false) mustEqual "&pound;1,000.44"
+      }
+
+      "format positive amount with > 2 decimal places correctly as pounds and pence" in {
+        val testValue: BigDecimal = 1000.445
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = false) mustEqual "&pound;1,000.44"
+      }
+
+      "format negative amount correctly as pounds and pence" in {
+        val testValue: BigDecimal = -1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = false) mustEqual "&minus;&nbsp;&pound;1,000.44"
+      }
+
+      "format positive amount correctly as pounds" in {
+        val testValue: BigDecimal = 1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false) mustEqual "&pound;1000"
+      }
+      "format negative amount correctly as pounds" in {
+        val testValue: BigDecimal = -1000.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(
+          poundsOnly = true,
+          spoken = false
+        ) mustEqual "&minus;&nbsp;&pound;1000"
+      }
+
     }
 
     "parsed as JSON" must {
