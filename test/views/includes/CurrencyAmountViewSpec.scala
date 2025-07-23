@@ -27,108 +27,108 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
   "view" when {
     "Value is zero"     must {
       val amountValue = Amount(BigDecimal(0.00), "GBP")
-      "return correctly when spokenMinus is false and twoDecimalPlaces is false" in {
+      "return correctly when spoken is false and twoDecimalPlaces is false" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = false,
+          spoken = false,
           twoDecimalPlaces = false
         ).body
         result.stripTrailing() mustBe "&pound;0"
       }
-      "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
+      "return correctly when spoken is false and twoDecimalPlaces is true" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = false,
+          spoken = false,
           twoDecimalPlaces = true
         ).body
         result.stripTrailing() mustBe "&pound;0.00"
       }
-      "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
+      "return correctly when spoken is true and twoDecimalPlaces is false" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = true,
+          spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "&pound;0"
+        result.stripTrailing() mustBe "0 pounds 0 pence"
       }
-      "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
+      "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = true,
+          spoken = true,
           twoDecimalPlaces = true
         ).body
-        result.stripTrailing() mustBe "&pound;0"
+        result.stripTrailing() mustBe "0 pounds 0 pence"
       }
     }
     "Value is positive" must {
       val amountValue = Amount(BigDecimal(44.55), "GBP")
-      "return correctly when spokenMinus is false and twoDecimalPlaces is false" in {
+      "return correctly when spoken is false and twoDecimalPlaces is false" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = false,
+          spoken = false,
           twoDecimalPlaces = false
         ).body
         result.stripTrailing() mustBe "&pound;44"
       }
-      "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
+      "return correctly when spoken is false and twoDecimalPlaces is true" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = false,
+          spoken = false,
           twoDecimalPlaces = true
         ).body
         result.stripTrailing() mustBe "&pound;44.55"
       }
-      "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
+      "return correctly when spoken is true and twoDecimalPlaces is false" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = true,
+          spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "&pound;44"
+        result.stripTrailing() mustBe "44 pounds 55 pence"
       }
-      "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
+      "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = true,
+          spoken = true,
           twoDecimalPlaces = true
         ).body
-        result.stripTrailing() mustBe "&pound;44"
+        result.stripTrailing() mustBe "44 pounds 55 pence"
       }
     }
 
     "Value is negative" must {
       val amountValue = Amount(BigDecimal(-44.55), "GBP")
-      "return correctly when spokenMinus is false and twoDecimalPlaces is false" in {
+      "return correctly when spoken is false and twoDecimalPlaces is false" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = false,
+          spoken = false,
           twoDecimalPlaces = false
         ).body
         result.stripTrailing() mustBe "&minus;&nbsp;&pound;44"
       }
-      "return correctly when spokenMinus is false and twoDecimalPlaces is true" in {
+      "return correctly when spoken is false and twoDecimalPlaces is true" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = false,
+          spoken = false,
           twoDecimalPlaces = true
         ).body
         result.stripTrailing() mustBe "&minus;&nbsp;&pound;44.55"
       }
-      "return correctly when spokenMinus is true and twoDecimalPlaces is false" in {
+      "return correctly when spoken is true and twoDecimalPlaces is false" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = true,
+          spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "minus &pound;44"
+        result.stripTrailing() mustBe "minus 44 pounds"
       }
-      "return correctly when spokenMinus is true and twoDecimalPlaces is true" in {
+      "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
           amount = amountValue,
-          spokenMinus = true,
+          spoken = true,
           twoDecimalPlaces = true
         ).body
-        result.stripTrailing() mustBe "minus &pound;44.55"
+        result.stripTrailing() mustBe "minus 44 pounds 55 pence"
       }
     }
 

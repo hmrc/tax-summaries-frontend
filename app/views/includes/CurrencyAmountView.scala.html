@@ -14,22 +14,20 @@
  * limitations under the License.
  *@
 
+@import utils.ViewUtils.poundsAndPence
 @this()
-@(amount: view_models.Amount, twoDecimalPlaces: Boolean = false, spokenMinus: Boolean = false)(
+@(amount: view_models.Amount, twoDecimalPlaces: Boolean = false, spoken: Boolean = false)(
 implicit messages: Messages
 )
 @Html(
-    if(spokenMinus && amount.amount < 0 && twoDecimalPlaces) {
-        s"${Messages("generic.minus")} &pound;${(-amount).toTwoDecimalString}"
-    } else if(spokenMinus && amount.amount < 0) {
-        s"${Messages("generic.minus")} &pound;${-amount}"
-    } else if(!spokenMinus && amount.amount < 0 && twoDecimalPlaces) {
-        s"&minus;&nbsp;&pound;${((-amount).toTwoDecimalString)}"
-    } else if(!spokenMinus && amount.amount < 0) {
-        s"&minus;&nbsp;&pound;${-amount}"
-    } else if(!spokenMinus && amount.amount >= 0 && twoDecimalPlaces) {
-        s"&pound;${(amount.toTwoDecimalString)}"
-    } else {
-        s"&pound;$amount"
-    } 
+    (spoken, twoDecimalPlaces, amount.amount < 0) match {
+        case (true, true, true) => s"${Messages("generic.minus")} ${(-amount).toTwoDecimalString} pounds"
+        case (true, false, true) => s"${Messages("generic.minus")} ${-amount} pounds"
+        case (false, true, true) => s"&minus;&nbsp;&pound;${((-amount).toTwoDecimalString)}"
+        case (false, false, true) =>  s"&minus;&nbsp;&pound;${-amount}"
+        case (false, true, false) => s"&pound;${(amount.toTwoDecimalString)}"
+        case (false, false, false) => s"&pound;$amount"
+        case (true, false, false) => poundsAndPence(amount.amount)
+        case (true, true, false) => poundsAndPence(amount.amount)
+    }
 )

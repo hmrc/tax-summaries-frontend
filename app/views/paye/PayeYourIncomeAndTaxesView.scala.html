@@ -18,12 +18,12 @@
 @import controllers.auth.requests.PayeAuthenticatedRequest
 @import utils.HtmlFormatter
 @import views.html.helpers.{H1, H2, P, Link}
-@import views.html.includes.CurrencyAmountView
+@import views.html.includes.OldCurrencyAmountView
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
-    currencyAmountView: CurrencyAmountView,
+    currencyAmountView: OldCurrencyAmountView,
     htmlFormatter: HtmlFormatter,
     h1: H1,
     h2: H2,
@@ -60,7 +60,7 @@
         @h2("paye.ats.summary.total_income.title")
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
-                @linkSectionContents(xLargeText = currencyAmountView(viewModel.incomeBeforeTax, twoDecimalPlaces = true),
+                @linkSectionContents(xLargeText = currencyAmountView(viewModel.incomeBeforeTax, twoDecimalPlaces = true, spokenMinus = false),
                                     xLargeID="income-before-tax-amount", 
                                     smallText = Messages("paye.ats.summary.total_income.link"))
             </a>
@@ -72,7 +72,7 @@
         @h2("paye.ats.summary.tax_free.title")
         <p>
             <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
-                @linkSectionContents(xLargeText = currencyAmountView(viewModel.taxableIncome, twoDecimalPlaces = true),
+                @linkSectionContents(xLargeText = currencyAmountView(viewModel.taxableIncome, twoDecimalPlaces = true, spokenMinus = false),
                                     xLargeID="total-tax-free-income", 
                                     smallText = Messages("paye.ats.summary.tax_free.link"))
             </a>
@@ -84,7 +84,7 @@
         @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
             <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
-                @linkSectionContents(xLargeText = currencyAmountView(viewModel.totalIncomeTax, twoDecimalPlaces = true),
+                @linkSectionContents(xLargeText = currencyAmountView(viewModel.totalIncomeTax, twoDecimalPlaces = true, spokenMinus = false),
                                     xLargeID="total-income-tax-and-nics", 
                                     smallText = Messages("paye.ats.summary.tax_and_nics.link"))
             </a>
@@ -94,7 +94,7 @@
 
     <div id="income_after_tax_and_nics" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg")
-        <span class="govuk-heading-l" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, twoDecimalPlaces = true)</span>
+        <span class="govuk-heading-l" id="income-after-tax-amount">@currencyAmountView(viewModel.incomeAfterTaxNics, twoDecimalPlaces = true, spokenMinus = false)</span>
     </div>
 
 }

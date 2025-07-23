@@ -32,4 +32,13 @@ class ViewUtils @Inject() () {
       Rate.empty
     else
       currentRate
+
+}
+
+object ViewUtils {
+  def poundsAndPence(amount: BigDecimal): String = {
+    val poundsPart = amount.setScale(0, BigDecimal.RoundingMode.DOWN)
+    val pencePart  = ((amount - poundsPart) * 100).toInt
+    s"$poundsPart pounds $pencePart pence"
+  }
 }
