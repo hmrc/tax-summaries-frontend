@@ -64,12 +64,13 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
     val isNegative: Boolean                    = amount < 0
     lazy val poundsPart: BigDecimal            = positiveAmountAsBigDecimal.setScale(0, BigDecimal.RoundingMode.DOWN)
     if (spoken) {
-      val prefix: String = if (isNegative) s"""${messages("generic.minus")} """ else ""
+      val prefix: String  = if (isNegative) s"""${messages("generic.minus")} """ else ""
+      val poundMessageKey = if (poundsPart == BigDecimal(1)) "generic.pound" else "generic.pounds"
       if (poundsOnly) {
-        s"$prefix$poundsPart ${messages("generic.pounds")}"
+        s"$prefix$poundsPart ${messages(poundMessageKey)}"
       } else {
         val pencePart = ((positiveAmountAsBigDecimal - poundsPart) * 100).toInt
-        s"$prefix$poundsPart ${messages("generic.pounds")} $pencePart ${messages("generic.pence")}"
+        s"$prefix$poundsPart ${messages(poundMessageKey)} $pencePart ${messages("generic.pence")}"
       }
     } else {
       def positiveAmount: Amount = Amount(positiveAmountAsBigDecimal, currency, calculus)

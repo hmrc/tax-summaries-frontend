@@ -60,6 +60,12 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "1000 pounds 44 pence"
       }
 
+      "format positive amount of £1.44 correctly as pound and pence" in {
+        val testValue: BigDecimal = 1.44
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "1 pound 44 pence"
+      }
+
       "format negative amount correctly as pounds and pence" in {
         val testValue: BigDecimal = -1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)

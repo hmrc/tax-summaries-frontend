@@ -33,6 +33,7 @@ generic.hm.customs = Customs
 generic.at=at
 generic.total=Total
 generic.pounds = pounds
+generic.pound = pound
 generic.pence = pence
 site.back=Back
 generic.error = Error:
