@@ -49,7 +49,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "0 pounds"
+        result.stripTrailing() mustBe "&pound;0"
       }
       "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -57,7 +57,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = true
         ).body
-        result.stripTrailing() mustBe "0 pounds 0 pence"
+        result.stripTrailing() mustBe "&pound;0.00"
       }
     }
     "Value is positive" must {
@@ -84,7 +84,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "44 pounds"
+        result.stripTrailing() mustBe "&pound;44"
       }
       "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -92,7 +92,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = true
         ).body
-        result.stripTrailing() mustBe "44 pounds 55 pence"
+        result.stripTrailing() mustBe "&pound;44.55"
       }
     }
 
@@ -120,7 +120,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = false
         ).body
-        result.stripTrailing() mustBe "minus 44 pounds"
+        result.stripTrailing() mustBe "minus &pound;44"
       }
       "return correctly when spoken is true and twoDecimalPlaces is true" in {
         val result: String = view(
@@ -128,7 +128,7 @@ class CurrencyAmountViewSpec extends ViewSpecBase with TestConstants with ScalaC
           spoken = true,
           twoDecimalPlaces = true
         ).body
-        result.stripTrailing() mustBe "minus 44 pounds 55 pence"
+        result.stripTrailing() mustBe "minus &pound;44.55"
       }
     }
 

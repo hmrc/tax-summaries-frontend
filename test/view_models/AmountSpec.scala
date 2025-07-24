@@ -57,35 +57,35 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
       "format positive amount correctly as pounds and pence" in {
         val testValue: BigDecimal = 1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "1000 pounds 44 pence"
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "&pound;1,000.44"
       }
 
       "format positive amount of £1.44 correctly as pound and pence" in {
         val testValue: BigDecimal = 1.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "1 pound 44 pence"
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "&pound;1.44"
       }
 
       "format negative amount correctly as pounds and pence" in {
         val testValue: BigDecimal = -1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "minus 1000 pounds 44 pence"
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "minus &pound;1,000.44"
       }
       "format negative amount with > 2 decimal places correctly as pounds and pence" in {
         val testValue: BigDecimal = -1000.445
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "minus 1000 pounds 44 pence"
+        testAmount.renderCurrencyValueAsHtml(spoken = true) mustEqual "minus &pound;1,000.44"
       }
 
       "format positive amount correctly as pounds" in {
         val testValue: BigDecimal = 1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "1000 pounds"
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "&pound;1000"
       }
       "format negative amount correctly as pounds" in {
         val testValue: BigDecimal = -1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "minus 1000 pounds"
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "minus &pound;1000"
       }
 
     }

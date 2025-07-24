@@ -61,19 +61,18 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
     messages: Messages
   ): String = {
     val positiveAmountAsBigDecimal: BigDecimal = amount.abs
-    val isNegative: Boolean                    = amount < 0
-    lazy val poundsPart: BigDecimal            = positiveAmountAsBigDecimal.setScale(0, BigDecimal.RoundingMode.DOWN)
+
+    val isNegative: Boolean         = amount < 0
+    lazy val poundsPart: BigDecimal = positiveAmountAsBigDecimal.setScale(0, BigDecimal.RoundingMode.DOWN)
+    def positiveAmount: Amount      = Amount.apply(positiveAmountAsBigDecimal, currency, calculus)
     if (spoken) {
-      val prefix: String  = if (isNegative) s"""${messages("generic.minus")} """ else ""
-      val poundMessageKey = if (poundsPart == BigDecimal(1)) "generic.pound" else "generic.pounds"
+      val prefix: String = if (isNegative) s"""${messages("generic.minus")} """ else ""
       if (poundsOnly) {
-        s"$prefix$poundsPart ${messages(poundMessageKey)}"
+        s"$prefix&pound;$poundsPart"
       } else {
-        val pencePart = ((positiveAmountAsBigDecimal - poundsPart) * 100).toInt
-        s"$prefix$poundsPart ${messages(poundMessageKey)} $pencePart ${messages("generic.pence")}"
+        s"$prefix&pound;${positiveAmount.toTwoDecimalString}"
       }
     } else {
-      def positiveAmount: Amount = Amount(positiveAmountAsBigDecimal, currency, calculus)
       (isNegative, poundsOnly) match {
         case (false, false) => s"&pound;${positiveAmount.toTwoDecimalString}"
         case (false, true)  => s"&pound;$poundsPart"
