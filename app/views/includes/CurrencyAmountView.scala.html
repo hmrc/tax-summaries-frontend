@@ -16,4 +16,4 @@
 
 @this()
 @(amount: view_models.Amount, twoDecimalPlaces: Boolean = false, spoken: Boolean = false)(implicit messages: Messages)
-@Html(amount.renderCurrencyValueAsHtml(poundsOnly = !twoDecimalPlaces, spoken = spoken))
+@amount.renderCurrencyValueAsHtml(poundsOnly = !twoDecimalPlaces, spoken = spoken)
