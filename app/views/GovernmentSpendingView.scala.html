@@ -17,15 +17,13 @@
 @import config.ApplicationConfig
 @import controllers.auth.requests.AuthenticatedRequest
 @import helpers.{H1, HeaderSection, Link, P, PageHeading}
-@import views.html.includes.CurrencyAmountView
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
     p: P,
-    pageHeading: PageHeading,
-    currencyAmountView: CurrencyAmountView
+    pageHeading: PageHeading
 )
 
 @(  viewModel: view_models.GovernmentSpend,
@@ -85,7 +83,7 @@
                     case (key, value) => {
                         <tr class="govuk-table__row">
                             <th scope="row" id="@key" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages(s"ats.treasury_spending.table.$key")) (@value.percentage%)</th>
-                            <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">@currencyAmountView(value.amount, twoDecimalPlaces = true, spoken = false)</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">@value.amount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
                         </tr>
                         <tr class="govuk-table__row" aria-hidden="true">
                             <td colspan="2" class="govuk-table__cell govuk-!-padding-0">
@@ -98,7 +96,7 @@
                 <tfoot id="tax-spent-footer">
                     <tr class="govuk-table__row">
                         <th id="gov-spend-total" scope="row" class="govuk-table__header">@Html(Messages("ats.treasury_spending.total"))</th>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalAmount, twoDecimalPlaces = true, spoken = false)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalAmount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
                     </tr>
                 </tfoot>
 

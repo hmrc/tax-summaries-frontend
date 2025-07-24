@@ -15,15 +15,13 @@
  *@
 
 @import controllers.auth.requests.AuthenticatedRequest
-@import views.html.includes.CurrencyAmountView
 @import views.html.helpers.{PageHeading, HeaderSection, P}
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView,
-    pageHeading: PageHeading,
+        pageHeading: PageHeading,
     p: P
 )
 
@@ -69,26 +67,26 @@
           @if(!viewModel.taxFreeAllowance.isZero) {
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">@Html(Messages("ats.tax_free_amount.table.line1", viewModel.taxYear.toString))</td>
-            <td id="tax-free-allowance-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.taxFreeAllowance, twoDecimalPlaces = false, spoken = false)</td>
+            <td id="tax-free-allowance-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.taxFreeAllowance.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
           </tr>
           }
           @if(!viewModel.marriageAllowanceTransferred.isZero) {
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">@Html(Messages("ats.tax_free_amount.table.line3", viewModel.taxYear.toString))</td>
-            <td id="marriage_allowance_transferred_amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.marriageAllowanceTransferred, twoDecimalPlaces = false, spoken = false)</td>
+            <td id="marriage_allowance_transferred_amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.marriageAllowanceTransferred.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
           </tr>
           }
           @if(!viewModel.otherAllowances.isZero) {
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">@Html(Messages("ats.tax_free_amount.table.line2"))</td>
-            <td id="other-allowances" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.otherAllowances, twoDecimalPlaces = false, spoken = false)</td>
+            <td id="other-allowances" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.otherAllowances.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
           </tr>
           }
         </tbody>
         <tfoot>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header">@Html(Messages("ats.tax_free_amount.table.total", viewModel.taxYear.toString))</th>
-            <td id="tax-free-total" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalTaxFree, twoDecimalPlaces = false, spoken = false)</td>
+            <td id="tax-free-total" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalTaxFree.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
           </tr>
         </tfoot>
       </table>
