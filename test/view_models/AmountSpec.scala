@@ -80,12 +80,12 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
       "format positive amount correctly as pounds" in {
         val testValue: BigDecimal = 1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "&pound;1000"
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "&pound;1,000"
       }
       "format negative amount correctly as pounds" in {
         val testValue: BigDecimal = -1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "minus &pound;1000"
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true) mustEqual "minus &pound;1,000"
       }
 
     }
@@ -114,12 +114,12 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
       "format positive amount correctly as pounds" in {
         val testValue: BigDecimal = 1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(poundsOnly = true) mustEqual "&pound;1000"
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true) mustEqual "&pound;1,000"
       }
       "format negative amount correctly as pounds" in {
         val testValue: BigDecimal = -1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(poundsOnly = true) mustEqual "&minus;&nbsp;&pound;1000"
+        testAmount.renderCurrencyValueAsHtml(poundsOnly = true) mustEqual "&minus;&nbsp;&pound;1,000"
       }
 
     }
