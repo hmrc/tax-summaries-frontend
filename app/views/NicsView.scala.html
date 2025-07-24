@@ -16,7 +16,7 @@
 
 @import controllers.auth.requests.AuthenticatedRequest
 @import utils.ViewUtils
-@import views.html.includes.OldCurrencyAmountView
+@import views.html.includes.CurrencyAmountView
 @import helpers.{HeaderSection, PageHeading, P, Link}
 @import views.MainTemplate
 @import includes.IncomeTaxDetailsView
@@ -24,7 +24,7 @@
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
-    currencyAmountView: OldCurrencyAmountView,
+    currencyAmountView: CurrencyAmountView,
     viewUtils: ViewUtils,
     pageHeading: PageHeading,
     p: P,
@@ -73,7 +73,7 @@
       <tbody>
         <tr>
           <td class="govuk-table__cell">@Html(Messages("paye.ats.national_insurance.title"))</td>
-          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.employeeNicAmount, twoDecimalPlaces = false, spokenMinus = false)</td>
+          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.employeeNicAmount, twoDecimalPlaces = false, spoken = false)</td>
         </tr>
       </tbody>
     </table>
@@ -88,18 +88,18 @@
       <tbody>
         <tr>
           <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
-            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics, twoDecimalPlaces = false, spokenMinus = false)</td>
+            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics, twoDecimalPlaces = false, spoken = false)</td>
         </tr>
         @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
-                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.scottishIncomeTax, twoDecimalPlaces = false, spokenMinus = false)</td>
+                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.scottishIncomeTax, twoDecimalPlaces = false, spoken = false)</td>
             </tr>
         }
         @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
-                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax, twoDecimalPlaces = false, spokenMinus = false)</td>
+                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax, twoDecimalPlaces = false, spoken = false)</td>
             </tr>
         }      
       </tbody>
