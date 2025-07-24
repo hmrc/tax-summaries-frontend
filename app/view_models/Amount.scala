@@ -63,10 +63,11 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
   ): Html = {
     val isNegative: Boolean    = amount < 0
     val positiveAmount: Amount = Amount(amount.abs, currency, calculus)
+
     Html(
       if (spoken) {
         val prefix: String = if (isNegative) s"""${messages("generic.minus")} """ else ""
-        if (poundsOnly) {
+        if (poundsOnly || positiveAmount.amount.isWhole) {
           s"$prefix&pound;$positiveAmount"
         } else {
           s"$prefix&pound;${positiveAmount.toTwoDecimalString}"

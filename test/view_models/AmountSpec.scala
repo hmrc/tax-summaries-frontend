@@ -60,10 +60,10 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         testAmount.renderCurrencyValueAsHtml(spoken = true).body mustEqual "&pound;1,000.44"
       }
 
-      "format positive amount of £1.44 correctly as pound and pence" in {
-        val testValue: BigDecimal = 1.44
+      "format positive amount with no decimal portion correctly as pounds but no pence" in {
+        val testValue: BigDecimal = 1045.00
         val testAmount: Amount    = new Amount(testValue, testCurrency)
-        testAmount.renderCurrencyValueAsHtml(spoken = true).body mustEqual "&pound;1.44"
+        testAmount.renderCurrencyValueAsHtml(spoken = true).body mustEqual "&pound;1,045"
       }
 
       "format negative amount correctly as pounds and pence" in {
@@ -71,6 +71,13 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.renderCurrencyValueAsHtml(spoken = true).body mustEqual "minus &pound;1,000.44"
       }
+
+      "format negative amount with no decimal portion correctly as pounds but no pence" in {
+        val testValue: BigDecimal = -1000.00
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml(spoken = true).body mustEqual "minus &pound;1,000"
+      }
+
       "format negative amount with > 2 decimal places correctly as pounds and pence" in {
         val testValue: BigDecimal = -1000.445
         val testAmount: Amount    = new Amount(testValue, testCurrency)
@@ -99,6 +106,12 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         testAmount.renderCurrencyValueAsHtml().body mustEqual "&pound;1,000.44"
       }
 
+      "format positive amount with no decimal portion correctly as pounds but include pence" in {
+        val testValue: BigDecimal = 1045.00
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml().body mustEqual "&pound;1,045.00"
+      }
+
       "format positive amount with > 2 decimal places correctly as pounds and pence" in {
         val testValue: BigDecimal = 1000.445
         val testAmount: Amount    = new Amount(testValue, testCurrency)
@@ -109,6 +122,12 @@ class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenProperty
         val testValue: BigDecimal = -1000.44
         val testAmount: Amount    = new Amount(testValue, testCurrency)
         testAmount.renderCurrencyValueAsHtml().body mustEqual "&minus;&nbsp;&pound;1,000.44"
+      }
+
+      "format negative amount with no decimal portion correctly as pounds but include pence" in {
+        val testValue: BigDecimal = -1000.00
+        val testAmount: Amount    = new Amount(testValue, testCurrency)
+        testAmount.renderCurrencyValueAsHtml().body mustEqual "&minus;&nbsp;&pound;1,000.00"
       }
 
       "format positive amount correctly as pounds" in {
