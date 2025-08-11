@@ -16,15 +16,13 @@
 
 @import controllers.auth.requests.AuthenticatedRequest
 @import utils.ViewUtils
-@import views.html.includes.CurrencyAmountView
 @import helpers.{HeaderSection, PageHeading, P}
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView,
-    viewUtils: ViewUtils,
+        viewUtils: ViewUtils,
     pageHeading: PageHeading,
     p: P
 )
@@ -75,20 +73,20 @@
           <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line1"))</td>
-              <td id="taxable-gains" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.taxableGains)</td>
+              <td id="taxable-gains" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.taxableGains.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
             </tr>
 
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line2","""<span id="tax-period">"""+Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)+"""</span>"""))</td>
               <td id="less-taxable-gains" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="gains" class="govuk-visually-hidden">@currencyAmountView(viewModel.lessTaxFreeAmount, false, true)</span>
-                  <span aria-hidden="true">@currencyAmountView(viewModel.lessTaxFreeAmount)</span>
+                  <span id="gains" class="govuk-visually-hidden">@viewModel.lessTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true)</span>
+                  <span aria-hidden="true">@viewModel.lessTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</span>
               </td>
             </tr>
 
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line3"))</td>
-              <td id="cg-pay-tax-on" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.payCgTaxOn)</td>
+              <td id="cg-pay-tax-on" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.payCgTaxOn.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
             </tr>
           </tbody>
         </table>
@@ -106,14 +104,14 @@
               @if(viewModel.rpciLowerTax.nonZero) {
               <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
-                <td id="rpci-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.rpciLowerTax)</td>
+                <td id="rpci-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpciLowerTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
               </tr>
               }
 
               @if(viewModel.rpciHigherTax.nonZero) {
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
-                    <td id="rpci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.rpciHigherTax)</td>
+                    <td id="rpci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
                 </tr>
               }
 
@@ -121,27 +119,27 @@
               @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
               <tr id="entrepreneurs-relief-rate-section" class="govuk-table__row">
                 <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line4",
-                    """<span id="entrepreneurs-relief-rate-before">"""+currencyAmountView(viewModel.entrepreneursReliefRateBefore)+"""</span>""",
+                    """<span id="entrepreneurs-relief-rate-before">"""+viewModel.entrepreneursReliefRateBefore.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)+"""</span>""",
                     """<span id="entrepreneurs-relief-rate">""" + viewModel.entrepreneursReliefRate + """</span>"""))</td>
-                <td id="entrepreneurs-relief-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.entrepreneursReliefRateAmount)</td>
+                <td id="entrepreneurs-relief-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.entrepreneursReliefRateAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
               </tr>
               }
 
               @if(!viewModel.ordinaryRateBefore.isZero) {
               <tr id="ordinary-rate-section" class="govuk-table__row">
                 <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line5",
-                    """<span id="ordinary-rate-before">"""+currencyAmountView(viewModel.ordinaryRateBefore)+"""</span>""",
+                    """<span id="ordinary-rate-before">"""+viewModel.ordinaryRateBefore.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)+"""</span>""",
                     """<span id="ordinary-rate">""" + viewModel.ordinaryRate + """</span>"""))</td>
-                <td id="ordinary-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.ordinaryRateAmount)</td>
+                <td id="ordinary-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ordinaryRateAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
               </tr>
               }
 
               @if(!viewModel.upperRateBefore.isZero) {
               <tr id="upper-rate-section" class="govuk-table__row">
                 <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line6",
-                    """<span id="upper-rate-before">"""+currencyAmountView(viewModel.upperRateBefore)+"""</span>""",
+                    """<span id="upper-rate-before">"""+viewModel.upperRateBefore.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)+"""</span>""",
                     """<span id="upper-rate">""" + viewModel.upperRate + """</span>"""))</td>
-                <td id="upper-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.upperRateAmount)</td>
+                <td id="upper-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.upperRateAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
               </tr>
               }
 
@@ -149,8 +147,8 @@
               <tr id="adjustments-section" class="govuk-table__row">
                 <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line7"))</td>
                 <td id="adjustment-to-capital-gains-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="gains-tax-amount" class="govuk-visually-hidden">@currencyAmountView(viewModel.adjustmentsAmount, false, true)</span>
-                  <span aria-hidden="true">@currencyAmountView(viewModel.adjustmentsAmount)</span>
+                  <span id="gains-tax-amount" class="govuk-visually-hidden">@viewModel.adjustmentsAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = true)</span>
+                  <span aria-hidden="true">@viewModel.adjustmentsAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</span>
                 </td>
               </tr>
               }
@@ -164,7 +162,7 @@
           <tbody class="govuk-table__head">
             <tr class="govuk-table__row">
               <th scope="row" class="govuk-table__header">@Html(Messages("ats.capital_gains_tax.total_capital_gains_tax"))</th>
-              <td id="total-capital-gains-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalCapitalGainsTaxAmount)</td>
+              <td id="total-capital-gains-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalCapitalGainsTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
             </tr>
           </tbody>
         </table>

@@ -156,7 +156,7 @@ class ContentsCheckSpec extends IntegrationSpec {
     super.beforeEach()
     reset(mockFeatureFlagService, mockPertaxAuthService)
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
-    
+
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))

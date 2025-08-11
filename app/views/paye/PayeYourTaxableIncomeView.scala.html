@@ -17,13 +17,11 @@
 @import utils.HtmlFormatter
 @import view_models.paye.PayeYourTaxableIncome
 @import views.html.helpers.{H1, H2, P}
-@import views.html.includes.CurrencyAmountView
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
-    currencyAmountView: CurrencyAmountView,
-    htmlFormatter: HtmlFormatter,
+        htmlFormatter: HtmlFormatter,
     h1: H1,
     p: P
 )
@@ -61,14 +59,14 @@
                     <td class="govuk-table__cell">
                         @Messages("paye.ats.income_before_tax." + row.messageKey)
                     </td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.value, twoDecimalPlaces = true)</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@row.value.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
                 </tr>
             }
             </tbody>
             <tfoot id="income-before-tax-foot">
                 <tr class="govuk-row">
                     <th scope="row" class="govuk-table__header">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
-                    <td id="income-before-tax" class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalIncomeBeforeTax, twoDecimalPlaces = true)</td>
+                    <td id="income-before-tax" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalIncomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
                 </tr>
             </tfoot>
         </table>

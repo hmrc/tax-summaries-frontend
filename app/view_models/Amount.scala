@@ -16,7 +16,9 @@
 
 package view_models
 
+import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import play.twirl.api.Html
 import utils.BigDecimalUtils
 
 import java.text.NumberFormat
@@ -55,6 +57,31 @@ case class Amount(amount: BigDecimal, currency: String, calculus: Option[String]
   def isValueEqual(that: Amount): Boolean = this.amount == that.amount && this.currency == that.currency
 
   def isValueNotEqual(that: Amount): Boolean = !isValueEqual(that)
+
+  def renderCurrencyValueAsHtml(poundsOnly: Boolean = false, spoken: Boolean = false)(implicit
+    messages: Messages
+  ): Html = {
+    val isNegative: Boolean    = amount < 0
+    val positiveAmount: Amount = Amount(amount.abs, currency, calculus)
+
+    Html(
+      if (spoken) {
+        val prefix: String = if (isNegative) s"""${messages("generic.minus")} """ else ""
+        if (poundsOnly || positiveAmount.amount.isWhole) {
+          s"$prefix&pound;$positiveAmount"
+        } else {
+          s"$prefix&pound;${positiveAmount.toTwoDecimalString}"
+        }
+      } else {
+        (isNegative, poundsOnly) match {
+          case (false, false) => s"&pound;${positiveAmount.toTwoDecimalString}"
+          case (false, true)  => s"&pound;$positiveAmount"
+          case (true, false)  => s"&minus;&nbsp;&pound;${positiveAmount.toTwoDecimalString}"
+          case (true, true)   => s"&minus;&nbsp;&pound;$positiveAmount"
+        }
+      }
+    )
+  }
 }
 
 object Amount {

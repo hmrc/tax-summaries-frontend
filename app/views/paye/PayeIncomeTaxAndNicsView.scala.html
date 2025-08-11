@@ -17,13 +17,11 @@
 @import view_models.paye.PayeIncomeTaxAndNics
 @import utils.HtmlFormatter
 @import views.html.helpers.{H1, H2, P}
-@import views.html.includes.CurrencyAmountView
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
-    currencyAmountView: CurrencyAmountView,
-    htmlFormatter: HtmlFormatter,
+        htmlFormatter: HtmlFormatter,
     h1: H1,
     p: P
 )
@@ -61,14 +59,14 @@
                     <td class="govuk-table__cell">
                         @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
                     </td>
-              <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, twoDecimalPlaces = true)</td>
+              <td class="govuk-table__cell govuk-table__cell--numeric">@row.taxPaidInBand.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
           </tr>
         }
     </tbody>
     <tfoot class="govuk-table__footer">
         <tr id="totalScottishIncomeTax" class="govuk-table__row">
                 <th scope="row" class="govuk-table__header">@Messages("paye.ats.treasury_spending.total")</th>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalScottishIncomeTax, twoDecimalPlaces = true)</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalScottishIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
           </tr>
     </tfoot>
     </table>
@@ -88,14 +86,14 @@
                 <td class="govuk-table__cell">
                     @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
                 </td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, twoDecimalPlaces = true)</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@row.taxPaidInBand.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
             </tr>
             }
             </tbody>
             <tfoot>
                 <tr id="totalRestOfUkIncomeTax" class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">@Messages("paye.ats.treasury_spending.total")</th>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalRestOfUKIncomeTax, twoDecimalPlaces = true)</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalRestOfUKIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
                 </tr>
             </tfoot>
         </table>
@@ -115,17 +113,17 @@
             <td class="govuk-table__cell">
                 @Messages("paye.ats.total_income_tax." + row.label) (&pound;@row.incomeAmountInBand @Messages("generic.at") @row.bandRate.percent)
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.taxPaidInBand, twoDecimalPlaces = true)</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@row.taxPaidInBand.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
         </tr>
         }
         <tr id="totalUkIncomeTax" class="govuk-table__row">
                 <td class="govuk-table__cell">@Messages("paye.ats.treasury_spending.total")</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalUKIncomeTax, twoDecimalPlaces = true)</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalUKIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
         </tr>
         @if(isWelshTaxPayer){
         <tr id="welshIncomeTax" class="govuk-table__row">
             <td class="govuk-table__cell">@Messages("paye.ats.welsh_income_tax")</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.welshIncomeTax, twoDecimalPlaces = true)</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.welshIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
         </tr>
         }
         </tbody>
@@ -147,7 +145,7 @@
                         <th scope="row" class="govuk-table__header">
                             @Messages("paye.ats.adjustments." + row.label)
                         </th>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(row.adjustmentAmount, twoDecimalPlaces = true)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@row.adjustmentAmount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
                     </tr>
                 }
             </tbody>
@@ -167,7 +165,7 @@
             <td class="govuk-table__cell">
                 @Messages("paye.ats.national_insurance.title")
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.employeeContributions, twoDecimalPlaces = true)</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.employeeContributions.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
         </tr>
         </tbody>
         <tfoot>
@@ -175,7 +173,7 @@
             <th scope="row" class="govuk-table__header">
                 @Messages("paye.ats.total_income_tax_national_insurance.title")
             </th>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@currencyAmountView(viewModel.totalIncomeTax2Nics, twoDecimalPlaces = true)</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalIncomeTax2Nics.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
         </tr>
         </tfoot>
     </table>

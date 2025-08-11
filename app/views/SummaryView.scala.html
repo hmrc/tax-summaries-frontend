@@ -15,15 +15,13 @@
  *@
 
 @import controllers.auth.requests.AuthenticatedRequest
-@import views.html.includes.CurrencyAmountView
 @import views.html.helpers.{PageHeading, HeaderSection, H2, P}
 @import views.MainTemplate
 
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
-    currencyAmountView: CurrencyAmountView,
-    pageHeading: PageHeading,
+        pageHeading: PageHeading,
     p: P,
     h2: H2
 )
@@ -76,7 +74,7 @@
         @h2("ats.summary.total_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
         <a href="@controllers.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo" class="data-link">
-            @linkSectionContents(Messages("screen.reader.total_income"), currencyAmountView(viewModel.yourIncomeBeforeTax), xLargeID="income-before-tax-amount", Messages("ats.summary.total_income.link"))
+            @linkSectionContents(Messages("screen.reader.total_income"), viewModel.yourIncomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false), xLargeID="income-before-tax-amount", Messages("ats.summary.total_income.link"))
         </a>
 
         @p(HtmlContent(Messages("ats.summary.total_income.description")))
@@ -88,7 +86,7 @@
         @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
         <a href="@controllers.routes.AllowancesController.authorisedAllowance?taxYear=@viewModel.taxYearTo" class="data-link">
-            @linkSectionContents(Messages("screen.reader.tax_free_amount"), currencyAmountView(viewModel.totalTaxFreeAllowance), xLargeID="total-tax-free-income", Messages("ats.summary.tax_free.link"))
+            @linkSectionContents(Messages("screen.reader.tax_free_amount"), viewModel.totalTaxFreeAllowance.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false), xLargeID="total-tax-free-income", Messages("ats.summary.tax_free.link"))
         </a>
 
         @p(HtmlContent(Messages("ats.summary.tax_free.description")))
@@ -100,7 +98,7 @@
             @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
             <a href="@controllers.routes.NicsController.authorisedTaxAndNICs?taxYear=@viewModel.taxYearTo" class="data-link">
-                @linkSectionContents(Messages("screen.reader.income_tax_and_ni"), currencyAmountView(viewModel.nonNegativeTotalIncomeTaxAndNics), xLargeID="total-income-tax-and-nics", Messages("ats.summary.tax_and_nics.link"))
+                @linkSectionContents(Messages("screen.reader.income_tax_and_ni"), viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false), xLargeID="total-income-tax-and-nics", Messages("ats.summary.tax_and_nics.link"))
             </a>
 
             @p(HtmlContent(Messages("ats.summary.tax_and_nics.description")))
@@ -114,7 +112,7 @@
                 @h2("ats.summary.capital_gains.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
                 <a href="@controllers.routes.CapitalGainsTaxController.authorisedCapitalGains?taxYear=@viewModel.taxYearTo" class="data-link">
-                    @linkSectionContents(Messages("screen.reader.capital_gains_tax"), currencyAmountView(viewModel.totalCapitalGainsTax), xLargeID="total-capital-gains-tax", Messages("ats.summary.capital_gains.link"))
+                    @linkSectionContents(Messages("screen.reader.capital_gains_tax"), viewModel.totalCapitalGainsTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false), xLargeID="total-capital-gains-tax", Messages("ats.summary.capital_gains.link"))
                 </a>
 
                 @if(!viewModel.totalCapitalGainsTax.isZero) {
@@ -131,11 +129,11 @@
             <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36 govuk-!-margin-bottom-1">
                 <span class="govuk-visually-hidden" id="total-tax-amount-description">
                 @if(lang.code == "cy-GB"){
-                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)
+                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)
                 } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @currencyAmountView(viewModel.yourTotalTax)}</span>
-                <span id="total-tax-amount" aria-hidden="true">@currencyAmountView(viewModel.yourTotalTax)</span>
+                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)}</span>
+                <span id="total-tax-amount" aria-hidden="true">@viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</span>
             </p>
 
             <p id="total-tax-description" class="govuk-body-m govuk-!-font-weight-bold" aria-hidden="true">
