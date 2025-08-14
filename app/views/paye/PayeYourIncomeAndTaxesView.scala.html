@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@
         @h2("paye.ats.summary.total_income.title")
         <p>
             <a href="@controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
-                @linkSectionContents(xLargeText = viewModel.incomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false),
+                @linkSectionContents(xLargeText = viewModel.incomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = false),
                                     xLargeID="income-before-tax-amount", 
                                     smallText = Messages("paye.ats.summary.total_income.link"))
                 
@@ -71,7 +71,7 @@
         @h2("paye.ats.summary.tax_free.title")
         <p>
             <a href="@controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
-                @linkSectionContents(xLargeText = viewModel.taxableIncome.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false),
+                @linkSectionContents(xLargeText = viewModel.taxableIncome.renderCurrencyValueAsHtml(poundsOnly = false),
                                     xLargeID="total-tax-free-income", 
                                     smallText = Messages("paye.ats.summary.tax_free.link"))
             </a>
@@ -83,7 +83,7 @@
         @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
             <a href="@controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
-                @linkSectionContents(xLargeText = viewModel.totalIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false),
+                @linkSectionContents(xLargeText = viewModel.totalIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false),
                                     xLargeID="total-income-tax-and-nics", 
                                     smallText = Messages("paye.ats.summary.tax_and_nics.link"))
             </a>
@@ -93,7 +93,7 @@
 
     <div id="income_after_tax_and_nics" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.taxable_income.income_after_tax_and_nics_msg")
-        <span class="govuk-heading-l" id="income-after-tax-amount">@viewModel.incomeAfterTaxNics.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</span>
+        <span class="govuk-heading-l" id="income-after-tax-amount">@viewModel.incomeAfterTaxNics.renderCurrencyValueAsHtml(poundsOnly = false)</span>
     </div>
 
 }

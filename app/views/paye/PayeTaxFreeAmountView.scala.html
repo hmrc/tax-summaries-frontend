@@ -51,7 +51,7 @@
 			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
 			</td>
-			<td class="govuk-table__cell govuk-table__cell--numeric">@row.amount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@row.amount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
 		</tr>
 		}
 		</tbody>
@@ -59,7 +59,7 @@
 			<tfoot>
 			<tr id="totalTaxFreeAmount" class="govuk-table__row">
 				<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
-				<td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
+				<td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
 			</tr>
 			</tfoot>
 		}
@@ -80,14 +80,14 @@
 			<td class="govuk-table__cell">
 				@Messages("paye.ats.tax_free_amount." + row.label)
 			</td>
-			<td class="govuk-table__cell govuk-table__cell--numeric">@row.amount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@row.amount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
 		</tr>
 		}
 		</tbody>
 		<tfoot>
 		<tr id="taxLiableAmount" class="govuk-table__row">
 			<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
-			<td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.liableTaxAmount.renderCurrencyValueAsHtml(poundsOnly = false, spoken = false)</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.liableTaxAmount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
 		</tr>
 		</tfoot>
 	</table>

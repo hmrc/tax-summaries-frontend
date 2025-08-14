@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@
       <tbody>
         <tr>
           <td class="govuk-table__cell">@Html(Messages("paye.ats.national_insurance.title"))</td>
-          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.employeeNicAmount.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
+          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.employeeNicAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
         </tr>
       </tbody>
     </table>
@@ -86,18 +86,18 @@
       <tbody>
         <tr>
           <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
-            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
+            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true)</td>
         </tr>
         @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
-                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.scottishIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
+                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.scottishIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
             </tr>
         }
         @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
-                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.welshIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true, spoken = false)</td>
+                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.welshIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
             </tr>
         }      
       </tbody>
