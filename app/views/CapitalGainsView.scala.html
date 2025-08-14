@@ -79,7 +79,7 @@
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line2","""<span id="tax-period">"""+Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)+"""</span>"""))</td>
               <td id="less-taxable-gains" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="gains" class="govuk-visually-hidden">@viewModel.lessTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = true)</span>
+                  <span id="gains">@viewModel.lessTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = true)</span>
               </td>
             </tr>
 
@@ -146,7 +146,7 @@
               <tr id="adjustments-section" class="govuk-table__row">
                 <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line7"))</td>
                 <td id="adjustment-to-capital-gains-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="gains-tax-amount" class="govuk-visually-hidden">@viewModel.adjustmentsAmount.renderCurrencyValueAsHtml(poundsOnly = true)</span>
+                  <span id="gains-tax-amount">@viewModel.adjustmentsAmount.renderCurrencyValueAsHtml(poundsOnly = true)</span>
                 </td>
               </tr>
               }

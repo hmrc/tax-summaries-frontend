@@ -159,7 +159,7 @@
         <tr class="govuk-table__row">
           <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
           <td id="other-adjustments-reducing-amount" class="govuk-table__cell govuk-table__cell--numeric">
-              <span id="reducing-amount" class="govuk-visually-hidden">@viewModel.otherAdjustmentsReducing.renderCurrencyValueAsHtml(poundsOnly = true)</span>
+              <span id="reducing-amount">@viewModel.otherAdjustmentsReducing.renderCurrencyValueAsHtml(poundsOnly = true)</span>
           </td>
         </tr>
         }
