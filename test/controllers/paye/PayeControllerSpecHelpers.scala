@@ -22,24 +22,24 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.ControllerBaseSpec
 import utils.TestConstants.testNino
+import utils.{ControllerBaseSpec, JsonUtil}
 
-import scala.io.Source
-
-trait PayeControllerSpecHelpers extends ControllerBaseSpec {
+trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val expectedResponse2020: JsValue = readJson("/paye_ats_2020.json")
+  protected val expectedResponse2020: JsValue =
+    Json.parse(
+      loadAndReplace(
+        "/paye_ats_2020.json",
+        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYearForTesting.toString)
+      )
+    )
 
-  val expectedResponse2021: JsValue = readJson("/paye_ats_2021.json")
+  protected val expectedResponse2021: JsValue =
+    Json.parse(loadAndReplace("/paye_ats_2021.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString)))
 
-  def buildPayeRequest(endpoint: String): PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
+  protected def buildPayeRequest(endpoint: String): PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.PayeAuthenticatedRequest(testNino, fakeCredentials, FakeRequest("GET", endpoint))
-
-  def readJson(path: String): JsValue = {
-    val resource = getClass.getResourceAsStream(path)
-    Json.parse(Source.fromInputStream(resource).getLines().mkString)
-  }
 }

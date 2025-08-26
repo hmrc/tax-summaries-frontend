@@ -16,21 +16,21 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.ApplicationConfig
-import models._
+import models.*
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.TestConstants.{testNino, testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
@@ -49,7 +49,7 @@ class MiddleConnectorSpec
     with Injecting
     with EitherValues {
 
-  override def fakeApplication(): Application =
+  override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
       .configure(
         "microservice.services.tax-summaries.port" -> server.port(),
@@ -58,11 +58,9 @@ class MiddleConnectorSpec
       )
       .build()
 
-  implicit val hc: HeaderCarrier                 = HeaderCarrier()
-  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
-  private val currentYear                        = 2022
-  private val currentYearMinus1                  = currentYear - 1
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val currentYear        = 2022
+  private val currentYearMinus1  = currentYear - 1
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
@@ -70,23 +68,28 @@ class MiddleConnectorSpec
 
   val utr: SaUtr = SaUtr(testUtr)
 
-  val uar: Uar = Uar(testUar)
+  val uar: Uar                                   = Uar(testUar)
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
+  val loadSAJson: JsValue                        = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
+  val saResponse: String                         = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
+  val expectedSAResponse: AtsData                = Json.fromJson[AtsData](loadSAJson).get
 
-  val loadSAJson: JsValue         = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-  val saResponse: String          = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
-  val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
-
-  val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
-  val loadAtsListData: String               = loadAtsListDataSource.mkString
+  val loadAtsListDataSource: BufferedSource  = Source.fromURL(getClass.getResource("/test_list_utr.json"))
+  val loadAtsListData: String                = loadAtsListDataSource.mkString
   loadAtsListDataSource.close()
-  val atsListData: AtsListData              =
+  val atsListData: AtsListData               =
     Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
-
+  private val currentTaxYearForTesting: Int  = 2024
+  private val previousTaxYearForTesting: Int = currentTaxYearForTesting - 1
   "connectToPayeATS" must {
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace("/paye_ats_2020.json", Map("$nino" -> testNino.nino))
+      val expectedResponse: String = loadAndReplace(
+        "/paye_ats_2020.json",
+        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYearForTesting.toString)
+      )
       val url                      = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
 
       server.stubFor(

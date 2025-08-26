@@ -57,13 +57,9 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
     )
 
   "Government spend controller" must {
-
-    "return OK response for 2021" in {
-
-      val fakeTaxYear: Int = 2021
-
+    s"return OK response for $currentTaxYearForTesting" in {
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = fakeTaxYear
+        override lazy val taxYear: Int = currentTaxYearForTesting
       }
 
       implicit val appConfig: FakeAppConfig = new FakeAppConfig
@@ -94,23 +90,20 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(fakeTaxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearForTesting)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (fakeTaxYear - 1).toString,
-          fakeTaxYear.toString
+          (currentTaxYearForTesting - 1).toString,
+          currentTaxYearForTesting.toString
         )
       )
     }
 
-    "return OK response for 2020" in {
-
-      val taxYear: Int = 2020
-
+    s"return OK response for $previousTaxYearForTesting" in {
       when(
         mockPayeAtsService
           .getPayeATSData(any(), any())(any())
@@ -127,15 +120,15 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(previousTaxYearForTesting)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (previousTaxYearForTesting - 1).toString,
+          previousTaxYearForTesting.toString
         )
       )
     }

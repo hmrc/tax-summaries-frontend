@@ -46,6 +46,9 @@ trait BaseSpec
 
   val taxYear: Int = appConfig.taxYear
 
+  protected val currentTaxYearForTesting: Int  = 2024
+  protected val previousTaxYearForTesting: Int = currentTaxYearForTesting - 1
+
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
