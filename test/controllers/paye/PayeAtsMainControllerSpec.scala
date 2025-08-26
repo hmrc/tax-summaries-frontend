@@ -21,7 +21,7 @@ import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -41,11 +41,6 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
 
   lazy val mainView: PayeTaxsMainView                 = inject[PayeTaxsMainView]
   lazy val payeGenericErrorView: PayeGenericErrorView = inject[PayeGenericErrorView]
-
-  def getSingleYearData: PayeAtsData =
-    parseData[PayeAtsData](
-      loadAndReplace("/paye_ats_2020.json", Map("$nino" -> testNino.nino))
-    )
 
   private def parseData[A](str: String)(implicit reads: Reads[A]): A = Json.parse(str).as[A]
 

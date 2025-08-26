@@ -153,7 +153,7 @@ class TaxYearUtilSpec extends AnyWordSpec with Matchers with BeforeAndAfterEach 
           false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          FakeRequest("GET", "?taxYear=20192")
+          FakeRequest("GET", "?taxYear=20252")
         )
 
         val result = taxYearUtil.extractTaxYear

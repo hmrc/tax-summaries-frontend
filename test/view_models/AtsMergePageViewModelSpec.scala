@@ -79,7 +79,6 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
         AtsYearChoice(SA, taxYear - 2),
         AtsYearChoice(NoATS, taxYear - 3)
       )
-
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {

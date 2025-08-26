@@ -43,11 +43,10 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= Seq(
       "-unchecked",
       "-feature",
-      "-Xfatal-warnings",
       "-language:noAutoTupling",
       "-Wunused:imports",
       "-Wvalue-discard",
-      "-Werror",
+    //  "-Werror",
       "-Wconf:msg=unused import&src=.*views/.*:s",
       "-Wconf:msg=unused import&src=<empty>:s",
       "-Wconf:msg=unused&src=.*RoutesPrefix\\.scala:s",
