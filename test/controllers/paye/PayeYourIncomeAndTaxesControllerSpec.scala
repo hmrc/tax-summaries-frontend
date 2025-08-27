@@ -53,11 +53,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYearMinus1.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

@@ -41,10 +41,13 @@ class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = Json.parse(
-    loadAndReplace("/paye_ats_2020.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+    loadAndReplace(
+      "/json/gov-spend-previous-tax-year-minus-1.json",
+      Map("<TAXYEAR>" -> currentTaxYearForTesting.toString)
+    )
   )
   val expectedResponseCurrentYear: JsValue  = Json.parse(
-    loadAndReplace("/paye_ats_2021.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+    loadAndReplace("/json/gov-spend-previous-tax-year.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
     loadAndReplace("/paye_ats_multiple_years.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))

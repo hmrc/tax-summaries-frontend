@@ -29,20 +29,21 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  protected val expectedResponse2020: JsValue =
+  protected val apiResponseGovSpendPreviousTaxYearMinus1: JsValue =
     Json.parse(
       loadAndReplace(
-        "/paye_ats_2020.json",
+        "/json/gov-spend-previous-tax-year-minus-1.json",
         Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYearForTesting.toString)
       )
     )
 
-  protected val expectedResponse2021: JsValue =
-    Json.parse(loadAndReplace("/paye_ats_2021.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString)))
-
-//  val expectedResponse2020: JsValue = readJson("/paye_ats_2020.json")
-//
-//  val expectedResponse2021: JsValue = readJson("/paye_ats_2021.json")
+  protected val apiResponseGovSpendPreviousTaxYear: JsValue =
+    Json.parse(
+      loadAndReplace(
+        "/json/gov-spend-previous-tax-year.json",
+        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+      )
+    )
 
   protected def buildPayeRequest(endpoint: String): PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.PayeAuthenticatedRequest(testNino, fakeCredentials, FakeRequest("GET", endpoint))

@@ -73,7 +73,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )(fakeAppConfig, implicitly)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 
@@ -115,13 +115,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
           payeGenericErrorView
         )(fakeAppConfig, implicitly)
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(
-            any[HeaderCarrier]
-          )
-      )
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYearMinus1.as[PayeAtsData])))
 
       val result = sut.show(fakePayeConfig.payeYear)(fakeAuthenticatedRequest)
 

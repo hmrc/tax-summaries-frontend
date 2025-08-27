@@ -87,7 +87,7 @@ class MiddleConnectorSpec
     "return successful response" in {
 
       val expectedResponse: String = loadAndReplace(
-        "/paye_ats_2020.json",
+        "/json/gov-spend-previous-tax-year-minus-1.json",
         Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYearForTesting.toString)
       )
       val url                      = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
