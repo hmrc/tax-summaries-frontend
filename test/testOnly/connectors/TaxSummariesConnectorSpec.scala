@@ -70,7 +70,7 @@ class TaxSummariesConnectorSpec
   val utr: SaUtr = SaUtr(testUtr)
 
   val uar: Uar                                = Uar(testUar)
-  protected val currentTaxYearForTesting: Int = 2024
+  protected val currentTaxYearForTesting: Int = currentTaxYearForTesting
   val loadSAJson: JsValue                     = Json.parse(
     loadAndReplace(
       "/json/sa-get-ats-data-previous-tax-year.json",
