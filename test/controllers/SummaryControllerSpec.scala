@@ -222,8 +222,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "show only NICs in Total Income Tax value" when {
 
-      "Income tax is zero or less" in {
-
+      "Income tax is zero or less" in
         forAll { (bd: BigDecimal) =>
           whenever(bd <= 0) {
 
@@ -240,7 +239,6 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
             document.getElementById("total-income-tax-and-nics").text() must equal("£1,200")
           }
         }
-      }
     }
 
     "show Tax and Nics description having (income tax and employee nics)" in {

@@ -101,8 +101,7 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
     )
 
     for ((id, func) <- rowData)
-      s"display $id tax row" in {
-
+      s"display $id tax row" in
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
           val (taxData, rates) = func(tax, total, rate)
 
@@ -123,10 +122,8 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
               result must include(viewUtils.toCurrency(tax))
           }
         }
-      }
 
-    "show total row" in {
-
+    "show total row" in
       forAll { (total: Amount) =>
         val taxData = scottishTaxData.copy(scottishTotalTax = total)
         val result  = view(taxData)
@@ -140,6 +137,5 @@ class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckD
             result must include(viewUtils.toCurrency(total))
         }
       }
-    }
   }
 }

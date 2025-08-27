@@ -154,13 +154,10 @@ class AtsListServiceSpec extends BaseSpec {
 
   "getAtsYearList" must {
 
-    "Return a ats list with 2020 year data" in {
-
+    "Return a ats list with 2020 year data" in
       whenReady(sut.getAtsYearList) { result =>
         result.value.atsYearList.get.contains(2020) mustBe true
       }
-
-    }
 
     "Return a ats list without 2020 year data" in {
       val dataMinus2020 = data copy (atsYearList = data.atsYearList.map(_.filter(_ != 2020)))
@@ -189,8 +186,7 @@ class AtsListServiceSpec extends BaseSpec {
       }
     }
 
-    "Return the ats year list data for a user from the MS" in {
-
+    "Return the ats year list data for a user from the MS" in
       whenReady(sut.getAtsYearList) { result =>
         result mustBe Right(data)
 
@@ -199,7 +195,6 @@ class AtsListServiceSpec extends BaseSpec {
         )
         verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
-    }
 
     // must this be the case? (EDGE CASE)
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
@@ -230,8 +225,7 @@ class AtsListServiceSpec extends BaseSpec {
           FakeRequest()
         )
 
-      "Return the ats year list data for a user from the MS" in {
-
+      "Return the ats year list data for a user from the MS" in
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
@@ -239,7 +233,6 @@ class AtsListServiceSpec extends BaseSpec {
             any[HeaderCarrier]
           )
         }
-      }
 
       "Return the ats year list data for a user when the agent token doesn't match the user" in {
 

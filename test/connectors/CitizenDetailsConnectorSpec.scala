@@ -68,7 +68,7 @@ class CitizenDetailsConnectorSpec
       result.body mustBe "my cid response"
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504).foreach { status =>
         s"a response with status $status is received" in {
           server.stubFor(
@@ -83,6 +83,5 @@ class CitizenDetailsConnectorSpec
           result.statusCode mustBe status
         }
       }
-    }
   }
 }

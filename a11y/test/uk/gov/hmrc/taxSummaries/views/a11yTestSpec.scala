@@ -102,7 +102,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
   }
 
-  "annual-tax-summary" must {
+  "annual-tax-summary" must
     List(
       "/annual-tax-summary/",
       "/annual-tax-summary/paye/main"
@@ -122,9 +122,8 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         contentAsString(result) must passAccessibilityChecks(OutputFormat.Verbose)
       }
     }
-  }
 
-  "annual-tax-summary data pages" must {
+  "annual-tax-summary data pages" must
     List(
       s"/annual-tax-summary/main?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/summary?taxYear=$fakeTaxYear",
@@ -155,5 +154,4 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         contentAsString(result) must passAccessibilityChecks(OutputFormat.Verbose)
       }
     }
-  }
 }

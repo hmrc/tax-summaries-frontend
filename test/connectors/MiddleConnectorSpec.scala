@@ -105,7 +105,7 @@ class MiddleConnectorSpec
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
           val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
@@ -123,7 +123,6 @@ class MiddleConnectorSpec
           result.statusCode mustBe status
         }
       }
-    }
 
     "the connector times out" in {
       server.stubFor(
@@ -416,7 +415,7 @@ class MiddleConnectorSpec
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
           server.stubFor(
@@ -431,7 +430,6 @@ class MiddleConnectorSpec
           result.left.value.statusCode mustBe status
         }
       }
-    }
 
     "the connector times out" in {
       server.stubFor(
@@ -468,7 +466,7 @@ class MiddleConnectorSpec
       result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
           server.stubFor(
@@ -484,7 +482,6 @@ class MiddleConnectorSpec
           result.left.value.statusCode mustBe status
         }
       }
-    }
 
     "the connector times out" in {
       server.stubFor(

@@ -85,8 +85,7 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
     )
 
     for ((id, func) <- rowData)
-      s"display $id tax row" in {
-
+      s"display $id tax row" in
         forAll { (tax: Amount, total: Amount, rate: Rate) =>
           val (taxData, rates) = func(tax, total, rate)
 
@@ -107,6 +106,5 @@ class SavingsTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDr
               result must include(viewUtils.toCurrency(tax))
           }
         }
-      }
   }
 }

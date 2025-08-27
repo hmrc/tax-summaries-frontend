@@ -81,94 +81,85 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
 
     "taxYearInterval is called" must {
 
-      "provide a correctly formatted string" in {
+      "provide a correctly formatted string" in
         forAll(summaryGen) { summary =>
           summary.taxYearInterval mustBe s"${summary.year - 1}-${summary.year.toString.takeRight(2)}"
         }
-      }
     }
 
     "taxYearIntervalTo is called" must {
-      "provide a correctly formatted string" in {
+      "provide a correctly formatted string" in
         forAll(summaryGen) { summary =>
           summary.taxYearIntervalTo mustBe s"${summary.year - 1} to ${summary.year}"
         }
-      }
     }
 
     "hasTotalIncomeTaxAmount is called" must {
 
       "return true" when {
-        "Total income tax amount is above zero" in {
+        "Total income tax amount is above zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount > zero) {
               summary.hasTotalIncomeTaxAmount mustBe true
             }
           }
-        }
       }
 
       "return false" when {
-        "Total income tax amount is below zero" in {
+        "Total income tax amount is below zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount < zero) {
               summary.hasTotalIncomeTaxAmount mustBe false
             }
           }
-        }
 
-        "Total income tax amount is exactly zero" in {
+        "Total income tax amount is exactly zero" in
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
 
             summaryWithZero.hasTotalIncomeTaxAmount mustBe false
           }
-        }
       }
     }
 
     "hasTotalCapitalGains is called" must {
 
       "return true" when {
-        "Total capital gains tax is above zero" in {
+        "Total capital gains tax is above zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.totalCapitalGainsTax.amount > zero) {
               summary.hasTotalCapitalGains mustBe true
             }
           }
-        }
       }
 
       "return false" when {
-        "Total capital gains tax is exactly zero" in {
+        "Total capital gains tax is exactly zero" in
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(totalCapitalGainsTax = Amount(0, "gbp"))
             summaryWithZero.hasTotalCapitalGains mustBe false
           }
-        }
       }
     }
 
     "hasEmployeeNicAmount is called" must {
 
       "return true" when {
-        "employee NICs amount is above zero" in {
+        "employee NICs amount is above zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               summary.hasEmployeeNicAmount mustBe true
             }
           }
-        }
       }
 
       "return false" when {
-        "employee NICs amount is exactly zero" in {
+        "employee NICs amount is exactly zero" in
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(employeeNicAmount = Amount(0, "gbp"))
 
             summaryWithZero.hasEmployeeNicAmount mustBe false
           }
-        }
       }
     }
 
@@ -176,8 +167,7 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
 
       "give the sum of total income tax and NI contributions" when {
 
-        "both income tax and NICs are positive" in {
-
+        "both income tax and NICs are positive" in
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero && summary.employeeNicAmount.amount > zero
@@ -189,30 +179,25 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
                 )
             }
           }
-        }
       }
 
       "give the value of NI contributions" when {
 
-        "total income tax is less than zero" in {
-
+        "total income tax is less than zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryWithLessThanZero = summary.copy(totalIncomeTaxAmount = Amount(-0.01, "gbp"))
               summaryWithLessThanZero.nonNegativeTotalIncomeTaxAndNics mustBe summary.employeeNicAmount
             }
           }
-        }
 
-        "total income tax is zero" in {
-
+        "total income tax is zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
               summaryWithZero.nonNegativeTotalIncomeTaxAndNics mustBe summary.employeeNicAmount
             }
           }
-        }
       }
     }
 
@@ -220,7 +205,7 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
 
       "return the correct message key for the summary" when {
 
-        "Summary has Income tax and NICs" in {
+        "Summary has Income tax and NICs" in
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero && summary.employeeNicAmount.amount > zero
@@ -228,25 +213,22 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
               summary.yourTotalTaxTextKey mustBe "ats.summary.tax_and_nics.title"
             }
           }
-        }
 
-        "Summary has only Income tax" in {
+        "Summary has only Income tax" in
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount > zero) {
               val summaryWithZero = summary.copy(employeeNicAmount = Amount(0, "gbp"))
               summaryWithZero.yourTotalTaxTextKey mustBe "ats.summary.tax.title"
             }
           }
-        }
 
-        "Summary has only NICs" in {
+        "Summary has only NICs" in
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryWithZero = summary.copy(totalIncomeTaxAmount = Amount(0, "gbp"))
               summaryWithZero.yourTotalTaxTextKey mustBe "ats.summary.nics.title"
             }
           }
-        }
       }
     }
 
@@ -260,7 +242,7 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
 
       "return the UNARY message keys" when {
 
-        "Summary has only income tax" in {
+        "Summary has only income tax" in
           forAll(summaryGen) { summary =>
             whenever(summary.totalIncomeTaxAmount.amount > zero) {
               val summaryIncomeOnly = summary.copy(
@@ -271,9 +253,8 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
               summaryIncomeOnly.yourTotalTaxTextKeys._2 mustBe List(incomeTaxDescription)
             }
           }
-        }
 
-        "Summary has only capital gains tax" in {
+        "Summary has only capital gains tax" in
           forAll(summaryGen) { summary =>
             whenever(summary.totalCapitalGainsTax.amount > zero) {
               val summaryCgtOnly = summary.copy(
@@ -284,9 +265,8 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
               summaryCgtOnly.yourTotalTaxTextKeys._2 mustBe List(cgtDescription)
             }
           }
-        }
 
-        "Summary has only NI contributions" in {
+        "Summary has only NI contributions" in
           forAll(summaryGen) { summary =>
             whenever(summary.employeeNicAmount.amount > zero) {
               val summaryNicsOnly = summary.copy(
@@ -297,11 +277,10 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
               summaryNicsOnly.yourTotalTaxTextKeys._2 mustBe List(nicsDescription)
             }
           }
-        }
       }
 
       "return the BINARY message keys" when {
-        "Summary has Income tax and NICs but not Capital gains tax" in {
+        "Summary has Income tax and NICs but not Capital gains tax" in
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero &&
@@ -313,9 +292,8 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
                 List(incomeTaxDescription, nicsDescription)
             }
           }
-        }
 
-        "Summary has Income tax and Capital gains tax but not NICs" in {
+        "Summary has Income tax and Capital gains tax but not NICs" in
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero &&
@@ -327,9 +305,8 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
                 List(incomeTaxDescription, cgtDescription)
             }
           }
-        }
 
-        "Summary has NICs and Capital gains tax but not Income tax" in {
+        "Summary has NICs and Capital gains tax but not Income tax" in
           forAll(summaryGen) { summary =>
             whenever(
               summary.employeeNicAmount.amount > zero &&
@@ -341,11 +318,10 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
                 List(nicsDescription, cgtDescription)
             }
           }
-        }
       }
 
       "return the TERNARY message keys" when {
-        "Summary has Income tax, Nics and Capital gains tax" in {
+        "Summary has Income tax, Nics and Capital gains tax" in
           forAll(summaryGen) { summary =>
             whenever(
               summary.totalIncomeTaxAmount.amount > zero &&
@@ -357,7 +333,6 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
                 List(incomeTaxDescription, nicsDescription, cgtDescription)
             }
           }
-        }
       }
     }
 
@@ -365,40 +340,35 @@ class SummarySpec extends AnyWordSpec with Matchers with ScalaCheckPropertyCheck
 
       "return true" when {
 
-        "Taxable gains is greater than zero" in {
-
+        "Taxable gains is greater than zero" in
           forAll(summaryGen) { summary =>
             whenever(summary.taxableGains.amount > zero) {
               summary.hasTaxableGains mustBe true
             }
           }
-        }
       }
 
       "return false" when {
-        "Taxable gains is exactly zero" in {
+        "Taxable gains is exactly zero" in
           forAll(summaryGen) { summary =>
             val summaryWithZero = summary.copy(taxableGains = Amount(0, "gbp"))
             summaryWithZero.hasTaxableGains mustBe false
           }
-        }
       }
     }
 
     "taxYearTo is called" must {
-      "return the year as a string" in {
+      "return the year as a string" in
         forAll(summaryGen) { summary =>
           summary.taxYearTo mustBe summary.year.toString
         }
-      }
     }
 
     "taxYearFrom is called" must {
-      "return the previous year as a string" in {
+      "return the previous year as a string" in
         forAll(summaryGen) { summary =>
           summary.taxYearFrom mustBe (summary.year - 1).toString
         }
-      }
     }
   }
 }
