@@ -3,8 +3,8 @@ import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "tax-summaries-frontend"
 
-ThisBuild / majorVersion := 4
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / majorVersion := 3
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / scalafmtOnCompile := true
 
 lazy val scoverageSettings = {
