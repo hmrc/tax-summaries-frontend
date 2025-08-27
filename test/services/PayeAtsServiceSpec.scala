@@ -36,7 +36,6 @@ import utils.TestConstants.{testNino, testUtr}
 import utils.BaseSpec
 
 import scala.concurrent.Future
-import scala.io.Source
 
 class PayeAtsServiceSpec extends BaseSpec {
 
@@ -48,7 +47,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     loadAndReplace("/paye_ats_2021.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
-    loadAndReplace("/paye_ats_multiple_years", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+    loadAndReplace("/paye_ats_multiple_years.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
   )
   private val currentYearMinus1: Int        = 2022
   private val currentYear: Int              = 2023

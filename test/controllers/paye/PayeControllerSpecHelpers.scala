@@ -40,6 +40,10 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
   protected val expectedResponse2021: JsValue =
     Json.parse(loadAndReplace("/paye_ats_2021.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString)))
 
+//  val expectedResponse2020: JsValue = readJson("/paye_ats_2020.json")
+//
+//  val expectedResponse2021: JsValue = readJson("/paye_ats_2021.json")
+
   protected def buildPayeRequest(endpoint: String): PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.PayeAuthenticatedRequest(testNino, fakeCredentials, FakeRequest("GET", endpoint))
 }

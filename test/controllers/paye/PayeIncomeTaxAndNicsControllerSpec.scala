@@ -23,7 +23,7 @@ import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, Pay
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -55,36 +55,24 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
   "Paye your income tax and nics controller" must {
 
     "return OK response" in {
-
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = 2021
+      val fakeAppConfig = new ApplicationConfig(inject[ServicesConfig]) {
+        override lazy val taxYear: Int = currentTaxYearForTesting
       }
 
-      val fakeAppConfig = new FakeAppConfig
-
-      class FakePayeConfig extends PayeConfig {
-        override val payeYear: Int = fakeAppConfig.taxYear
-      }
-
-      val fakePayeConfig = new FakePayeConfig
+      val fakePayeConfig = new PayeConfig()(fakeAppConfig) {}
 
       val fakeAuthenticatedRequest = buildPayeRequest("/annual-tax-summary/paye/total-income-tax")
-      val sut                      =
-        new PayeIncomeTaxAndNicsController(
-          mockPayeAtsService,
-          FakeAuthJourney,
-          mcc,
-          inject[PayeIncomeTaxAndNicsView],
-          fakePayeConfig,
-          payeGenericErrorView
-        )(fakeAppConfig, implicitly)
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(
-            any[HeaderCarrier]
-          )
-      )
+      val sut = new PayeIncomeTaxAndNicsController(
+        payeAtsService = mockPayeAtsService,
+        authJourney = FakeAuthJourney,
+        mcc = mcc,
+        payeIncomeTaxAndNicsView = inject[PayeIncomeTaxAndNicsView],
+        payeConfig = fakePayeConfig,
+        payeGenericErrorView = payeGenericErrorView
+      )(fakeAppConfig, implicitly)
+
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
@@ -102,10 +90,10 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    "return OK response when tax year is set to 2020" in {
+    s"return OK response when tax year is set to $previousTaxYearForTesting" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = 2020
+        override lazy val taxYear = previousTaxYearForTesting
       }
 
       val fakeAppConfig = new FakeAppConfig
