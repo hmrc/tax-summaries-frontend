@@ -20,10 +20,9 @@ import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, times, verify, when}
-import play.api.libs.json.Json
+import org.mockito.Mockito.*
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import repository.TaxsAgentTokenSessionCacheRepository
@@ -33,22 +32,14 @@ import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
 import view_models.AtsList
 
 import scala.concurrent.Future
-import scala.io.{BufferedSource, Source}
 
 class AtsListServiceSpec extends BaseSpec {
-
-  val data: AtsListData = {
-    val source: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
-    val sourceString: String   = source.mkString
-    source.close()
-    val json                   = Json.parse(sourceString)
-    Json.fromJson[AtsListData](json).get
-  }
+  val data: AtsListData = getSaAtsList("utr")
 
   val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]

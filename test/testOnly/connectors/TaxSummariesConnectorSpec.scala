@@ -37,7 +37,6 @@ import utils.TestConstants.{testUar, testUtr}
 import utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
-import scala.io.{BufferedSource, Source}
 
 class TaxSummariesConnectorSpec
     extends AnyWordSpec
@@ -84,11 +83,23 @@ class TaxSummariesConnectorSpec
   )
   val expectedSAResponse: AtsData             = Json.fromJson[AtsData](loadSAJson).get
 
-  val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
-  val loadAtsListData: String               = loadAtsListDataSource.mkString
-  loadAtsListDataSource.close()
-  val atsListData: AtsListData              =
-    Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
+  protected def getSaAtsList(utr: String): AtsListData = {
+    val yearList = Range(currentTaxYearForTesting - 4, currentTaxYearForTesting).toList
+    AtsListData(
+      utr = utr,
+      taxPayer = Some(
+        Map(
+          "title"    -> "Mr",
+          "forename" -> "forename",
+          "surname"  -> "surname"
+        )
+      ),
+      atsYearList = Some(yearList)
+    )
+  }
+
+  val atsListData: AtsListData = getSaAtsList("$utr")
+  val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
   "connectToAtsSaFields" must {
     "return successful response" in {
