@@ -30,8 +30,15 @@ import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
-  val dataPath                          = "/json_containing_errors_test.json"
-  val dataPathNoAts                     = "/no_ats_json_test.json"
+  val dataPath: String                  = s"""{
+                                            |  "taxYear":$currentTaxYearForTesting,
+                                            |  "errors":{"error":"AtsParsingError"}
+                                            |}
+                                            |""".stripMargin
+  val dataPathNoAts: String             = s"""{
+                                            | "taxYear":$currentTaxYearForTesting,
+                                            | "errors":{"error": "NoAtsError"}
+                                            |}""".stripMargin
   override val taxYear                  = 2023
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
   implicit val hc: HeaderCarrier        = new HeaderCarrier
