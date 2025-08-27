@@ -81,7 +81,7 @@ class MiddleConnectorSpec
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
 
   protected def getSaAtsList(utr: String): AtsListData = {
-    val yearList = Range(currentTaxYearForTesting - 4, currentTaxYearForTesting).toList
+    val yearList = Range.inclusive(currentTaxYearForTesting - 3, currentTaxYearForTesting).toList
     AtsListData(
       utr = utr,
       taxPayer = Some(

@@ -26,7 +26,6 @@ import org.mockito.Mockito.*
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import repository.TaxsAgentTokenSessionCacheRepository
-import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -76,7 +75,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(mockAppConfig.taxYear).thenReturn(2020)
+    when(mockAppConfig.taxYear).thenReturn(currentTaxYearForTesting)
     ()
   }
 
@@ -110,17 +109,17 @@ class AtsListServiceSpec extends BaseSpec {
 
   "createModel" must {
 
-    "Return a ats list when received a success response from connector" in {
-
-      when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
-        AtsSuccessResponseWithPayload[AtsListData](AtsTestData.atsListData)
-      )
-
+    "Return a ats list when received a success response from connector" in
       whenReady(sut.createModel()) { result =>
-        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2022)))
+        result mustBe Right(
+          AtsList(
+            data.utr,
+            data.taxPayer.fold("")(_.getOrElse("forename", "")),
+            data.taxPayer.fold("")(_.getOrElse("surname", "")),
+            data.atsYearList.get
+          )
+        )
       }
-
-    }
 
     "Return an empty ats list when received a not found response from connector" in {
 
@@ -145,22 +144,19 @@ class AtsListServiceSpec extends BaseSpec {
 
   "getAtsYearList" must {
 
-    "Return a ats list with 2020 year data" in
+    s"Return a ats list with $currentTaxYearForTesting year data" in
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(2020) mustBe true
+        result.value.atsYearList.get.contains(currentTaxYearForTesting) mustBe true
       }
 
-    "Return a ats list without 2020 year data" in {
-      val dataMinus2020 = data copy (atsYearList = data.atsYearList.map(_.filter(_ != 2020)))
-
-      when(mockAppConfig.taxYear).thenReturn(2023)
-
+    "Return a ats list without CY-1 year data" in {
+      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != previousTaxYearForTesting)))
       when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
-        AtsSuccessResponseWithPayload[AtsListData](dataMinus2020)
+        AtsSuccessResponseWithPayload[AtsListData](dataMissingYear)
       )
 
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(2020) mustBe false
+        result.value.atsYearList.get.contains(previousTaxYearForTesting) mustBe false
       }
 
     }
