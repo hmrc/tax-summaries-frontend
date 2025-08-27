@@ -20,8 +20,7 @@ import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.{eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status
@@ -33,8 +32,8 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
-import utils.BaseSpec
 import utils.TestConstants.{testNino, testUtr}
+import utils.BaseSpec
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -42,17 +41,23 @@ import scala.io.Source
 class PayeAtsServiceSpec extends BaseSpec {
 
   implicit val hc: HeaderCarrier            = HeaderCarrier()
-  val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
-  val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
-  val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
+  val expectedResponse: JsValue             = Json.parse(
+    loadAndReplace("/paye_ats_2020.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+  )
+  val expectedResponseCurrentYear: JsValue  = Json.parse(
+    loadAndReplace("/paye_ats_2021.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+  )
+  val expectedResponseMultipleYear: JsValue = Json.parse(
+    loadAndReplace("/paye_ats_multiple_years", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+  )
   private val currentYearMinus1: Int        = 2022
   private val currentYear: Int              = 2023
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
 
-  private def readJson(path: String) = {
-    val resource = getClass.getResourceAsStream(path)
-    Json.parse(Source.fromInputStream(resource).getLines().mkString)
-  }
+//  private def readJson(path: String) = {
+//    val resource = getClass.getResourceAsStream(path)
+//    Json.parse(Source.fromInputStream(resource).getLines().mkString)
+//  }
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =

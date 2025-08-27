@@ -40,7 +40,8 @@ trait BaseSpec
     with Injecting
     with ScalaFutures
     with IntegrationPatience
-    with EitherValues {
+    with EitherValues
+    with JsonUtil {
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
