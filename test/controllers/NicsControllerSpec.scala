@@ -32,8 +32,6 @@ import scala.concurrent.Future
 
 class NicsControllerSpec extends ControllerBaseSpec {
 
-  val dataPath = "/summary_json_test_2021.json"
-
   val mockAuditService: AuditService    = mock[AuditService]
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
   private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
