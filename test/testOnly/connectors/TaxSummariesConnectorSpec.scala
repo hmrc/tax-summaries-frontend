@@ -70,11 +70,19 @@ class TaxSummariesConnectorSpec
 
   val utr: SaUtr = SaUtr(testUtr)
 
-  val uar: Uar = Uar(testUar)
-
-  val loadSAJson: JsValue         = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-  val saResponse: String          = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
-  val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
+  val uar: Uar                                = Uar(testUar)
+  protected val currentTaxYearForTesting: Int = 2024
+  val loadSAJson: JsValue                     = Json.parse(
+    loadAndReplace(
+      "/json/sa-get-ats-data-previous-tax-year.json",
+      Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+    )
+  )
+  val saResponse: String                      = loadAndReplace(
+    "/json/sa-get-ats-data-previous-tax-year.json",
+    Map("testUtr" -> utr.utr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+  )
+  val expectedSAResponse: AtsData             = Json.fromJson[AtsData](loadSAJson).get
 
   val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
   val loadAtsListData: String               = loadAtsListDataSource.mkString

@@ -75,7 +75,7 @@ class MiddleConnectorSpec
   implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
 
   val saResponse: String = loadAndReplace(
-    "/summary_json_test_2021.json",
+    "/json/sa-get-ats-data-previous-tax-year.json",
     Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
   )
 

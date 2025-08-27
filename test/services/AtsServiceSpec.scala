@@ -19,7 +19,7 @@ package services
 import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import play.api.libs.json.Json
@@ -31,19 +31,25 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
-import utils.JsonUtil._
-import utils.TestConstants._
+import utils.JsonUtil.*
+import utils.TestConstants.*
 import utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
 import view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 
 import scala.concurrent.Future
 
 class AtsServiceSpec extends BaseSpec {
-
-  private val data: AtsData = {
-    val json = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-    Json.fromJson[AtsData](json).get
-  }
+  private val data: AtsData =
+    Json
+      .fromJson[AtsData](
+        Json.parse(
+          loadAndReplace(
+            "/json/sa-get-ats-data-previous-tax-year.json",
+            Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+          )
+        )
+      )
+      .get
 
   val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
@@ -118,7 +124,7 @@ class AtsServiceSpec extends BaseSpec {
 
               when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
-              sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
+              sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any())(any())
             }
@@ -159,7 +165,7 @@ class AtsServiceSpec extends BaseSpec {
                   request = FakeRequest()
                 )
 
-              sut.createModel(fakeTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
+              sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any())(any())
             }
@@ -176,7 +182,7 @@ class AtsServiceSpec extends BaseSpec {
           when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
-          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
+          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[NoATSViewModel]
 
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
@@ -196,7 +202,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
-          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
+          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[NoATSViewModel]
         }
 
         "getting data from mockMiddleConnector where tax liability is negative value" in {
@@ -214,7 +220,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
-          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[NoATSViewModel]
+          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[NoATSViewModel]
         }
 
       }
@@ -229,7 +235,7 @@ class AtsServiceSpec extends BaseSpec {
             AtsErrorResponse("Something went wrong")
           )
 
-          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
+          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
@@ -243,7 +249,7 @@ class AtsServiceSpec extends BaseSpec {
           when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
             .successful(AtsSuccessResponseWithPayload(dataWithError))
 
-          sut.createModel(fakeTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
+          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
