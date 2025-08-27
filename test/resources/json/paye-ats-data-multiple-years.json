@@ -1,6 +1,6 @@
 [
   {
-    "taxYear":2022,
+    "taxYear":<TAXYEAR-1>,
     "income_tax":{
       "payload":{
         "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -192,7 +192,7 @@
     }
   },
   {
-    "taxYear":2023,
+    "taxYear":<TAXYEAR-2>,
     "income_tax":{
       "payload":{
         "additional_rate":{"amount":10.0,"currency":"GBP"},

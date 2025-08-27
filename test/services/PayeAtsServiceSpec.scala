@@ -32,13 +32,12 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
-import utils.TestConstants.{testNino, testUtr}
 import utils.BaseSpec
+import utils.TestConstants.{testNino, testUtr}
 
 import scala.concurrent.Future
 
 class PayeAtsServiceSpec extends BaseSpec {
-
   implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = Json.parse(
     loadAndReplace(
@@ -50,16 +49,18 @@ class PayeAtsServiceSpec extends BaseSpec {
     loadAndReplace("/json/gov-spend-previous-tax-year.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
-    loadAndReplace("/paye_ats_multiple_years.json", Map("<TAXYEAR>" -> currentTaxYearForTesting.toString))
+    loadAndReplace(
+      "/json/paye-ats-data-multiple-years.json",
+      Map(
+        "$nino"       -> testNino.nino,
+        "<TAXYEAR-1>" -> previousTaxYearForTesting.toString,
+        "<TAXYEAR-2>" -> currentTaxYearForTesting.toString
+      )
+    )
   )
   private val currentYearMinus1: Int        = 2022
   private val currentYear: Int              = 2023
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
-
-//  private def readJson(path: String) = {
-//    val resource = getClass.getResourceAsStream(path)
-//    Json.parse(Source.fromInputStream(resource).getLines().mkString)
-//  }
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
@@ -163,7 +164,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
 
-      result mustBe Right(List(2023, 2022))
+      result mustBe Right(List(currentTaxYearForTesting, previousTaxYearForTesting))
     }
 
     "return a left of response after receiving left from connector" in {

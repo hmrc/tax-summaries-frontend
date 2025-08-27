@@ -416,7 +416,14 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace("/paye_ats_multiple_years.json", Map("$nino" -> testNino.nino))
+      val expectedResponse: String = loadAndReplace(
+        "/json/paye-ats-data-multiple-years.json",
+        Map(
+          "$nino"       -> testNino.nino,
+          "<TAXYEAR-1>" -> previousTaxYearForTesting.toString,
+          "<TAXYEAR-2>" -> currentTaxYearForTesting.toString
+        )
+      )
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(

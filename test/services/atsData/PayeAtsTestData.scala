@@ -16,9 +16,9 @@
 
 package services.atsData
 
-import models._
+import models.*
 import utils.BaseSpec
-import view_models.paye._
+import view_models.paye.*
 import view_models.{Amount, Rate}
 
 class PayeAtsTestData extends BaseSpec {
@@ -368,29 +368,6 @@ class PayeAtsTestData extends BaseSpec {
     isScottish = false
   )
 
-  val payeGovernmentSpendViewModel2020: PayeGovernmentSpend = PayeGovernmentSpend(
-    2020,
-    List(
-      SpendRow("Welfare", SpendData(Amount(451, "GBP"), 22.1)),
-      SpendRow("Health", SpendData(Amount(388, "GBP"), 20.5)),
-      SpendRow("StatePensions", SpendData(Amount(246, "GBP"), 12.4)),
-      SpendRow("Education", SpendData(Amount(226, "GBP"), 11.6)),
-      SpendRow("NationalDebtInterest", SpendData(Amount(102, "GBP"), 6.9)),
-      SpendRow("Defence", SpendData(Amount(102, "GBP"), 5.3)),
-      SpendRow("Transport", SpendData(Amount(83, "GBP"), 4.3)),
-      SpendRow("PublicOrderAndSafety", SpendData(Amount(83, "GBP"), 4.3)),
-      SpendRow("BusinessAndIndustry", SpendData(Amount(69, "GBP"), 3.8)),
-      SpendRow("GovernmentAdministration", SpendData(Amount(40, "GBP"), 2.1)),
-      SpendRow("HousingAndUtilities", SpendData(Amount(31, "GBP"), 1.8)),
-      SpendRow("Culture", SpendData(Amount(29, "GBP"), 1.5)),
-      SpendRow("Environment", SpendData(Amount(29, "GBP"), 1.5)),
-      SpendRow("OverseasAid", SpendData(Amount(23, "GBP"), 1.1)),
-      SpendRow("UkContributionToEuBudget", SpendData(Amount(19, "GBP"), 0.8))
-    ),
-    totalAmount = Amount(200, "GBP"),
-    isScottish = false
-  )
-
   val payeIncomeTaxAndNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
     taxYear,
     List(
@@ -591,40 +568,6 @@ class PayeAtsTestData extends BaseSpec {
             "Environment"              -> SpendData(Amount(29.00, "GBP"), 1.50),
             "OverseasAid"              -> SpendData(Amount(23.00, "GBP"), 1.20),
             "Health"                   -> SpendData(Amount(388.00, "GBP"), 20.2)
-          )
-        ),
-        Amount(200, "GBP"),
-        None
-      )
-    )
-  )
-
-  val govSpendingDataFor2020: PayeAtsData = PayeAtsData(
-    2020,
-    None,
-    None,
-    None,
-    None,
-    Some(
-      GovernmentSpendingOutputWrapper(
-        taxYear,
-        Some(
-          Map(
-            "UkContributionToEuBudget" -> SpendData(Amount(19.00, "GBP"), 0.80),
-            "Welfare"                  -> SpendData(Amount(451.00, "GBP"), 22.1),
-            "GovernmentAdministration" -> SpendData(Amount(40.00, "GBP"), 2.10),
-            "Education"                -> SpendData(Amount(226.00, "GBP"), 11.60),
-            "StatePensions"            -> SpendData(Amount(246.00, "GBP"), 12.40),
-            "NationalDebtInterest"     -> SpendData(Amount(102.00, "GBP"), 6.90),
-            "Defence"                  -> SpendData(Amount(102.00, "GBP"), 5.30),
-            "PublicOrderAndSafety"     -> SpendData(Amount(83.00, "GBP"), 4.30),
-            "Transport"                -> SpendData(Amount(83.00, "GBP"), 4.30),
-            "BusinessAndIndustry"      -> SpendData(Amount(69.00, "GBP"), 3.80),
-            "Culture"                  -> SpendData(Amount(29.00, "GBP"), 1.50),
-            "HousingAndUtilities"      -> SpendData(Amount(31.00, "GBP"), 1.80),
-            "Environment"              -> SpendData(Amount(29.00, "GBP"), 1.50),
-            "OverseasAid"              -> SpendData(Amount(23.00, "GBP"), 1.10),
-            "Health"                   -> SpendData(Amount(388.00, "GBP"), 20.5)
           )
         ),
         Amount(200, "GBP"),
