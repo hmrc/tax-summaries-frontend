@@ -25,16 +25,16 @@ import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec}
+import utils.{FileHelper, IntegrationSpec, TaxYearForTesting}
 
 import scala.concurrent.Future
 
-class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
+class IncomeBeforeTaxPayeItSpec extends IntegrationSpec with TaxYearForTesting {
   private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
@@ -59,9 +59,6 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
   }
 
-  // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024
-  override lazy val taxYear: Int = 2022
-
   "/paye/income-before-tax" must {
 
     lazy val url = s"/annual-tax-summary/paye/income-before-tax/$taxYear"
@@ -72,7 +69,14 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+          .willReturn(
+            ok(
+              FileHelper.loadFile(
+                s"./it/resources/sa-get-ats-data.json",
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+              )
+            )
+          )
       )
 
       server.stubFor(

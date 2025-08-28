@@ -1,5 +1,5 @@
 {
-  "taxYear": 2023,
+  "taxYear": <TAXYEAR>,
   "utr": "1097172564",
   "income_tax": {
     "payload": {
@@ -402,112 +402,119 @@
     }
   },
   "gov_spending": {
-    "taxYear": 2023,
+    "taxYear": <TAXYEAR>,
     "govSpendAmountData": {
       "PublicOrderAndSafety": {
         "amount": {
           "amount": 192.51,
           "currency": "GBP"
         },
-        "percentage": 4.1
+        "percentage": 4.3
       },
       "Environment": {
         "amount": {
           "amount": 67.16,
           "currency": "GBP"
         },
-        "percentage": 1.3
+        "percentage": 1.5
       },
       "OverseasAid": {
         "amount": {
           "amount": 49.25,
           "currency": "GBP"
         },
-        "percentage": 0.5
+        "percentage": 1.1
       },
       "BusinessAndIndustry": {
         "amount": {
           "amount": 170.13,
           "currency": "GBP"
         },
-        "percentage": 7.6
+        "percentage": 3.8
       },
       "NationalDebtInterest": {
         "amount": {
           "amount": 308.91,
           "currency": "GBP"
         },
-        "percentage": 12.0
+        "percentage": 6.9
       },
       "Defence": {
         "amount": {
           "amount": 237.28,
           "currency": "GBP"
         },
-        "percentage": 5.2
+        "percentage": 5.3
       },
       "Health": {
         "amount": {
           "amount": 917.79,
           "currency": "GBP"
         },
-        "percentage": 19.8
+        "percentage": 20.5
       },
       "Culture": {
         "amount": {
           "amount": 67.16,
           "currency": "GBP"
         },
-        "percentage": 1.3
+        "percentage": 1.5
+      },
+      "UkContributionToEuBudget": {
+        "amount": {
+          "amount": 35.82,
+          "currency": "GBP"
+        },
+        "percentage": 0.8
       },
       "HousingAndUtilities": {
         "amount": {
           "amount": 80.59,
           "currency": "GBP"
         },
-        "percentage": 1.7
+        "percentage": 1.8
       },
       "Transport": {
         "amount": {
           "amount": 192.51,
           "currency": "GBP"
         },
-        "percentage": 4.1
+        "percentage": 4.3
       },
       "Welfare": {
         "amount": {
           "amount": 989.42,
           "currency": "GBP"
         },
-        "percentage": 19.6
+        "percentage": 22.1
       },
       "GovernmentAdministration": {
         "amount": {
           "amount": 94.02,
           "currency": "GBP"
         },
-        "percentage": 2.0
+        "percentage": 2.1
       },
       "Education": {
         "amount": {
           "amount": 519.33,
           "currency": "GBP"
         },
-        "percentage": 9.9
+        "percentage": 11.6
       },
       "StatePensions": {
         "amount": {
           "amount": 555.15,
           "currency": "GBP"
         },
-        "percentage": 10.3
+        "percentage": 12.4
       },
       "OutstandingPaymentsToTheEU": {
         "amount": {
           "amount": 555.15,
           "currency": "GBP"
         },
-        "percentage": 0.6
+        "percentage": 12.4
       }
     },
     "totalAmount": {
@@ -516,9 +523,6 @@
     }
   },
   "taxPayerData": {
-    "title": "Mr",
-    "forename": "Tom",
-    "surname": "Fisher"
   },
   "taxLiability": {
     "amount": 23456.0,

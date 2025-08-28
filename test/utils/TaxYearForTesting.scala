@@ -22,8 +22,9 @@ trait TaxYearForTesting {
   protected val currentTaxYearForTesting: Int  = 2024
   protected val previousTaxYearForTesting: Int = currentTaxYearForTesting - 1
 
-  protected def getSaAtsList(utr: String): AtsListData = {
-    val yearList = Range.inclusive(currentTaxYearForTesting - 3, currentTaxYearForTesting).toList
+  protected def getYearList: List[Int] = Range.inclusive(currentTaxYearForTesting - 3, currentTaxYearForTesting).toList
+
+  protected def getSaAtsList(utr: String): AtsListData =
     AtsListData(
       utr = utr,
       taxPayer = Some(
@@ -33,7 +34,7 @@ trait TaxYearForTesting {
           "surname"  -> "surname"
         )
       ),
-      atsYearList = Some(yearList)
+      atsYearList = Some(getYearList)
     )
-  }
+
 }

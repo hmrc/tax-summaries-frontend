@@ -16,30 +16,30 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
+import com.github.tomakehurst.wiremock.client.WireMock.{status as _, *}
 import models.AgentToken
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any => mockAny}
-import org.mockito.Mockito.{reset => mockReset, when}
+import org.mockito.ArgumentMatchers.any as mockAny
+import org.mockito.Mockito.{reset as mockReset, when}
 import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repository.TaxsAgentTokenSessionCacheRepository
 import services.PertaxAuthService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
+import utils.{FileHelper, Globals, IntegrationSpec, LoginPage, TaxYearForTesting}
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageControllerItSpec extends IntegrationSpec {
+class AtsMergePageControllerItSpec extends IntegrationSpec with TaxYearForTesting {
   private val mockPertaxAuthService               = mock[PertaxAuthService]
   lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 
@@ -151,7 +151,14 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlPaye))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+          .willReturn(
+            ok(
+              FileHelper.loadFile(
+                "./it/resources/payeData.json",
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+              )
+            )
+          )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
@@ -181,7 +188,14 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlPaye))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+          .willReturn(
+            ok(
+              FileHelper.loadFile(
+                "./it/resources/payeData.json",
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+              )
+            )
+          )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
@@ -227,7 +241,14 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrlPaye))
-          .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+          .willReturn(
+            ok(
+              FileHelper.loadFile(
+                "./it/resources/payeData.json",
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+              )
+            )
+          )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
@@ -279,7 +300,14 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
         server.stubFor(
           get(urlEqualTo(backendUrlPaye))
-            .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+            .willReturn(
+              ok(
+                FileHelper.loadFile(
+                  "./it/resources/payeData.json",
+                  Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                )
+              )
+            )
         )
 
         val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")

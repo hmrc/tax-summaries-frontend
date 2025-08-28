@@ -53,7 +53,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
   override lazy val keystoreData: Map[String, JsValue] = Map(
     s"TAXS_ATS_$taxYear" -> Json.parse(
       FileHelper.loadFile(
-        s"./it/resources/atsData_2022.json",
+        s"./it/resources/sa-get-ats-data.json",
         Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
       )
     )
@@ -71,7 +71,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
   }
 
   // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024
-  override lazy val taxYear: Int = 2023
+  override lazy val taxYear: Int = currentTaxYearForTesting
 
   "/income-before-tax" must {
 
@@ -86,7 +86,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                s"./it/resources/atsData_2022.json",
+                s"./it/resources/sa-get-ats-data.json",
                 Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
               )
             )
@@ -108,7 +108,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                s"./it/resources/atsData_2022.json",
+                s"./it/resources/sa-get-ats-data.json",
                 Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
               )
             )
