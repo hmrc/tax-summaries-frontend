@@ -52,7 +52,6 @@ class PayeAtsServiceSpec extends BaseSpec {
     loadAndReplace(
       "/json/paye-ats-data.json",
       Map(
-        "$nino"       -> testNino.nino,
         "<TAXYEAR-1>" -> previousTaxYear.toString,
         "<TAXYEAR-2>" -> currentTaxYear.toString
       )

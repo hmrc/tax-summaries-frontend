@@ -74,12 +74,12 @@ class TaxSummariesConnectorSpec
   val loadSAJson: JsValue         = Json.parse(
     loadAndReplace(
       "/json/ats-data.json",
-      Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYear.toString)
+      Map("<TAXYEAR>" -> currentTaxYear.toString)
     )
   )
   val saResponse: String          = loadAndReplace(
     "/json/ats-data.json",
-    Map("testUtr" -> utr.utr, "<TAXYEAR>" -> currentTaxYear.toString)
+    Map("<TAXYEAR>" -> currentTaxYear.toString)
   )
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
 

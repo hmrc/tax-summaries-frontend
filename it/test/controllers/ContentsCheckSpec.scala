@@ -223,7 +223,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
           ok(
             FileHelper.loadFile(
               s"./it/resources/ats-data.json",
-              Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+              Map("<TAXYEAR>" -> currentTaxYear.toString)
             )
           )
         )

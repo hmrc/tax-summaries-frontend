@@ -59,7 +59,6 @@ class MiddleConnectorSpec
       .build()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
-  private val currentYearMinus1  = currentTaxYear - 1
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
@@ -73,7 +72,7 @@ class MiddleConnectorSpec
 
   val saResponse: String = loadAndReplace(
     "/json/ats-data.json",
-    Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYear.toString)
+    Map("<TAXYEAR>" -> currentTaxYear.toString)
   )
 
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
@@ -395,14 +394,13 @@ class MiddleConnectorSpec
 
   "connectToPayeATSMultipleYears" must {
 
-    val url = s"/taxs/$testNino/$currentYearMinus1/$currentTaxYear/paye-ats-data"
+    val url = s"/taxs/$testNino/$previousTaxYear/$currentTaxYear/paye-ats-data"
 
     "return successful response" in {
 
       val expectedResponse: String = loadAndReplace(
         "/json/paye-ats-data.json",
         Map(
-          "$nino"       -> testNino.nino,
           "<TAXYEAR-1>" -> previousTaxYear.toString,
           "<TAXYEAR-2>" -> currentTaxYear.toString
         )
@@ -417,7 +415,7 @@ class MiddleConnectorSpec
       )
 
       val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentTaxYear).futureValue.value
+        sut.connectToPayeATSMultipleYears(testNino, previousTaxYear, currentTaxYear).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -434,7 +432,7 @@ class MiddleConnectorSpec
           )
 
           val result =
-            sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentTaxYear).futureValue
+            sut.connectToPayeATSMultipleYears(testNino, previousTaxYear, currentTaxYear).futureValue
           result.left.value.statusCode mustBe status
         }
       }
@@ -450,7 +448,7 @@ class MiddleConnectorSpec
       )
 
       val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentTaxYear).futureValue.left.value
+        sut.connectToPayeATSMultipleYears(testNino, previousTaxYear, currentTaxYear).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }

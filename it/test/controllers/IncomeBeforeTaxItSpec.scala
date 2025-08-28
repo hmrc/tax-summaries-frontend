@@ -54,7 +54,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
     s"TAXS_ATS_$currentTaxYear" -> Json.parse(
       FileHelper.loadFile(
         s"./it/resources/ats-data.json",
-        Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+        Map("<TAXYEAR>" -> currentTaxYear.toString)
       )
     )
   )
@@ -84,7 +84,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 s"./it/resources/ats-data.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+                Map("<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )
@@ -106,7 +106,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 s"./it/resources/ats-data.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+                Map("<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )
