@@ -294,7 +294,7 @@ class PayeAtsTestData extends BaseSpec {
             "ordinary_rate"                        -> Amount.gbp(29430),
             "upper_rate_amount"                    -> Amount.gbp(22943),
             "upper_rate"                           -> Amount.gbp(41570),
-            "total_UK_income_tax"                  -> Amount.gbp(20224),
+            "total_UK_income_tax"                  -> Amount.gbp(10224),
             "total_income_tax_2"                   -> Amount.gbp(10477),
             "less_tax_adjustment_previous_year"    -> Amount.gbp(350),
             "marriage_allowance_received_amount"   -> Amount.gbp(200),

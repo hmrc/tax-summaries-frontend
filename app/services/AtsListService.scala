@@ -93,13 +93,7 @@ class AtsListService @Inject() (
     }
 
     val result = response flatMap {
-      case AtsSuccessResponseWithPayload(payload: AtsListData) =>
-        val atsListData = if (appConfig.taxYear < 2020 && payload.atsYearList.isDefined) {
-          AtsListData(payload.utr, payload.taxPayer, Some(payload.atsYearList.get.filter(_ < 2020)))
-        } else {
-          payload
-        }
-        Future.successful(Right(atsListData))
+      case AtsSuccessResponseWithPayload(payload: AtsListData) => Future.successful(Right(payload))
       case r                                                   => Future.successful(Left(r))
     }
 
