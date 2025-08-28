@@ -113,17 +113,17 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
         .text mustBe s"How your tax was spent for the tax year 6 April ${taxYear - 1} to 5 April $taxYear"
     }
 
-    s"link to Scottish government spending page for Scottish users for tax year $currentTaxYearForTesting" in {
+    s"link to Scottish government spending page for Scottish users for tax year $currentTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = currentTaxYearForTesting
+        override lazy val taxYear: Int = currentTaxYear
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
       val view     =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = currentTaxYearForTesting),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = currentTaxYear),
           isWelshTaxPayer = false
         ).body
       val document = Jsoup.parse(view)
@@ -132,20 +132,20 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
         .select("#scottish-spending-link a")
         .attr(
           "href"
-        ) mustBe s"https://www.gov.scot/publications/scottish-income-tax-$previousTaxYearForTesting-$currentTaxYearForTesting/"
+        ) mustBe s"https://www.gov.scot/publications/scottish-income-tax-$previousTaxYear-$currentTaxYear/"
     }
 
-    s"link to Scottish government spending page for Scottish users for tax year $previousTaxYearForTesting" in {
+    s"link to Scottish government spending page for Scottish users for tax year $previousTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = previousTaxYearForTesting
+        override lazy val taxYear: Int = previousTaxYear
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
 
       val view     =
         payeGovernmentSpendingView(
-          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = previousTaxYearForTesting),
+          payeAtsTestData.payeGovernmentSpendViewModel.copy(isScottish = true, taxYear = previousTaxYear),
           isWelshTaxPayer = false
         ).body
       val document = Jsoup.parse(view)
@@ -154,7 +154,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
         .select("#scottish-spending-link a")
         .attr(
           "href"
-        ) mustBe s"https://www.gov.scot/publications/scottish-income-tax-${previousTaxYearForTesting - 1}-$previousTaxYearForTesting/"
+        ) mustBe s"https://www.gov.scot/publications/scottish-income-tax-${previousTaxYear - 1}-$previousTaxYear/"
     }
 
     "not link to Scottish government spending page for non-Scottish users" in {

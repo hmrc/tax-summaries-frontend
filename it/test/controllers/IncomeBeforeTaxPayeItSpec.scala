@@ -62,9 +62,9 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
   "/paye/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$currentTaxYearForTesting"
+    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$currentTaxYear"
 
-    lazy val backendUrl = s"/taxs/$generatedNino/$currentTaxYearForTesting/paye-ats-data"
+    lazy val backendUrl = s"/taxs/$generatedNino/$currentTaxYear/paye-ats-data"
 
     "return an OK response" in {
 
@@ -75,7 +75,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 s"./it/resources/sa-get-ats-data.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )

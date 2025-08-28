@@ -23,7 +23,7 @@ import utils.TaxYearForTesting
 object AtsTestData extends TaxYearForTesting {
 
   val atsAllowancesData = AtsData(
-    currentTaxYearForTesting,
+    currentTaxYear,
     Some("1111111111"),
     None,
     None,
@@ -54,7 +54,7 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val incomeData = AtsData(
-    currentTaxYearForTesting,
+    currentTaxYear,
     Some("1111111111"),
     None,
     None,
@@ -89,7 +89,7 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val totalIncomeTaxData = AtsData(
-    taxYear = currentTaxYearForTesting,
+    taxYear = currentTaxYear,
     utr = Some("1111111111"),
     income_tax = Some(
       DataHolder(
@@ -198,7 +198,7 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val govSpendingDataForWelshUser = AtsData(
-    currentTaxYearForTesting,
+    currentTaxYear,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -218,7 +218,7 @@ object AtsTestData extends TaxYearForTesting {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        currentTaxYearForTesting,
+        currentTaxYear,
         Some(
           Map(
             "Welfare"                  -> SpendData(Amount(100, "GBP"), 10),
@@ -252,7 +252,7 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val govSpendingData = AtsData(
-    currentTaxYearForTesting,
+    currentTaxYear,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -271,7 +271,7 @@ object AtsTestData extends TaxYearForTesting {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        currentTaxYearForTesting,
+        currentTaxYear,
         Some(
           Map(
             "Health"                     -> SpendData(Amount(100, "GBP"), 10),
@@ -305,7 +305,7 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val summaryData = AtsData(
-    taxYear = currentTaxYearForTesting,
+    taxYear = currentTaxYear,
     utr = Some("1111111111"),
     income_tax = None,
     summary_data = Some(
@@ -348,7 +348,7 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val capitalGainsData = AtsData(
-    currentTaxYearForTesting,
+    currentTaxYear,
     Some("1111111111"),
     None,
     None,
@@ -409,13 +409,13 @@ object AtsTestData extends TaxYearForTesting {
     ),
     Some(
       List(
-        currentTaxYearForTesting
+        currentTaxYear
       )
     )
   )
 
   val incomeTaxDataForWelshTaxPayer = AtsData(
-    taxYear = currentTaxYearForTesting,
+    taxYear = currentTaxYear,
     utr = Some("1111111111"),
     income_tax = Some(
       DataHolder(

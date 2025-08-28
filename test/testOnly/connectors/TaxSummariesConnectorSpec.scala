@@ -74,22 +74,22 @@ class TaxSummariesConnectorSpec
   val loadSAJson: JsValue         = Json.parse(
     loadAndReplace(
       "/json/sa-get-ats-data-previous-tax-year.json",
-      Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+      Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYear.toString)
     )
   )
   val saResponse: String          = loadAndReplace(
     "/json/sa-get-ats-data-previous-tax-year.json",
-    Map("testUtr" -> utr.utr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+    Map("testUtr" -> utr.utr, "<TAXYEAR>" -> currentTaxYear.toString)
   )
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
 
-  val atsListData: AtsListData = getSaAtsList("$utr")
+  val atsListData: AtsListData = generateSaAtsYearList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
   "connectToAtsSaFields" must {
     "return successful response" in {
       val expectedResponse: String = Json.toJson(AtsSaFields(Seq("abc", "def"))).toString()
-      val url                      = "/test-only/taxs/" + currentTaxYearForTesting + "/ats-sa-fields"
+      val url                      = "/test-only/taxs/" + currentTaxYear + "/ats-sa-fields"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -99,12 +99,12 @@ class TaxSummariesConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsSaFields(currentTaxYearForTesting).futureValue.value
+      val result = sut.connectToAtsSaFields(currentTaxYear).futureValue.value
 
       result mustBe Seq("abc", "def")
     }
 
-    val url = "/test-only/taxs/" + currentTaxYearForTesting + "/ats-sa-fields"
+    val url = "/test-only/taxs/" + currentTaxYear + "/ats-sa-fields"
     listOfErrors.foreach { status =>
       s"a response with status $status is received" in {
         server.stubFor(
@@ -115,7 +115,7 @@ class TaxSummariesConnectorSpec
             )
         )
 
-        val result = sut.connectToAtsSaFields(currentTaxYearForTesting).futureValue
+        val result = sut.connectToAtsSaFields(currentTaxYear).futureValue
 
         result.left.value.statusCode mustBe status
       }
@@ -125,7 +125,7 @@ class TaxSummariesConnectorSpec
   "connectToAtsSaDataWithoutAuth" must {
     "return successful response" in {
       val expectedResponse: String = Json.toJson(Json.obj("abc" -> "def")).toString()
-      val url                      = "/test-only/taxs/" + utr.utr + "/" + currentTaxYearForTesting + "/ats-sa-data"
+      val url                      = "/test-only/taxs/" + utr.utr + "/" + currentTaxYear + "/ats-sa-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -135,12 +135,12 @@ class TaxSummariesConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsSaDataWithoutAuth(currentTaxYearForTesting, utr.utr).futureValue.value
+      val result = sut.connectToAtsSaDataWithoutAuth(currentTaxYear, utr.utr).futureValue.value
 
       result mustBe Json.obj("abc" -> "def")
     }
 
-    val url = "/test-only/taxs/" + utr.utr + "/" + currentTaxYearForTesting + "/ats-sa-data"
+    val url = "/test-only/taxs/" + utr.utr + "/" + currentTaxYear + "/ats-sa-data"
     listOfErrors.foreach { status =>
       s"a response with status $status is received" in {
         server.stubFor(
@@ -151,7 +151,7 @@ class TaxSummariesConnectorSpec
             )
         )
 
-        val result = sut.connectToAtsSaDataWithoutAuth(currentTaxYearForTesting, utr.utr).futureValue
+        val result = sut.connectToAtsSaDataWithoutAuth(currentTaxYear, utr.utr).futureValue
 
         result.left.value.statusCode mustBe status
       }

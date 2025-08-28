@@ -40,7 +40,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
   lazy val payeTaxFreeAmountView: PayeTaxFreeAmountView                  = inject[PayeTaxFreeAmountView]
 
   val payeTaxFreeAmountViewModel: PayeTaxFreeAmount = PayeTaxFreeAmount(
-    currentTaxYearForTesting,
+    currentTaxYear,
     List.empty,
     Amount.empty,
     List.empty,
@@ -57,7 +57,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
   "PayeTaxFreeAmountView" must {
     "display correct heading for given taxYear" in {
       val viewModel = PayeTaxFreeAmount(
-        currentTaxYearForTesting,
+        currentTaxYear,
         List.empty,
         Amount.empty,
         List.empty,
@@ -69,12 +69,12 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
       document
         .select("h1")
-        .text mustBe s"Tax-free income 6 April $previousTaxYearForTesting to 5 April $currentTaxYearForTesting"
+        .text mustBe s"Tax-free income 6 April $previousTaxYear to 5 April $currentTaxYear"
     }
 
     "display the table of adjustments when there is more than one row" in {
       val viewModel = PayeTaxFreeAmount(
-        currentTaxYearForTesting,
+        currentTaxYear,
         List(
           AmountRow("personal_allowance", Amount.gbp(1)),
           AmountRow("marriage_allowance_transferred_amount", Amount.gbp(1)),
@@ -96,7 +96,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
     "display the table of adjustments without a total when there is just personal allowance" in {
       val viewModel = PayeTaxFreeAmount(
-        currentTaxYearForTesting,
+        currentTaxYear,
         List(
           AmountRow("personal_allowance", Amount.gbp(1))
         ),
@@ -114,7 +114,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
     "not display the table of adjustments when there are no rows" in {
       val viewModel = PayeTaxFreeAmount(
-        currentTaxYearForTesting,
+        currentTaxYear,
         List.empty,
         Amount.empty,
         List.empty,
@@ -129,7 +129,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
     "display the summary table" in {
       val viewModel = PayeTaxFreeAmount(
-        currentTaxYearForTesting,
+        currentTaxYear,
         List.empty,
         Amount.empty,
         List(

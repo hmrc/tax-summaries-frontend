@@ -78,7 +78,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
          |        "lastName": "Smith"
          |    },
          |    "loginTimes": {
-         |        "currentLogin": "$currentTaxYearForTesting-06-07T10:52:02.594Z",
+         |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
          |        "previousLogin": null
          |    },
          |    "optionalCredentials": {
@@ -155,7 +155,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 "./it/resources/payeData.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )
@@ -192,7 +192,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 "./it/resources/payeData.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )
@@ -245,7 +245,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 "./it/resources/payeData.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )
@@ -304,7 +304,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
               ok(
                 FileHelper.loadFile(
                   "./it/resources/payeData.json",
-                  Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                  Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
                 )
               )
             )

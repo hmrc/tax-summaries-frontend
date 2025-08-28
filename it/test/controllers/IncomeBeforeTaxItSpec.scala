@@ -51,10 +51,10 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
     .build()
 
   override lazy val keystoreData: Map[String, JsValue] = Map(
-    s"TAXS_ATS_$currentTaxYearForTesting" -> Json.parse(
+    s"TAXS_ATS_$currentTaxYear" -> Json.parse(
       FileHelper.loadFile(
         s"./it/resources/sa-get-ats-data.json",
-        Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+        Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
       )
     )
   )
@@ -72,9 +72,9 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   "/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYearForTesting"
+    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYear"
 
-    lazy val backendUrl = s"/taxs/$generatedSaUtr/$currentTaxYearForTesting/ats-data"
+    lazy val backendUrl = s"/taxs/$generatedSaUtr/$currentTaxYear/ats-data"
 
     "return an OK response" in {
 
@@ -84,7 +84,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 s"./it/resources/sa-get-ats-data.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )
@@ -106,7 +106,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
             ok(
               FileHelper.loadFile(
                 s"./it/resources/sa-get-ats-data.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
           )

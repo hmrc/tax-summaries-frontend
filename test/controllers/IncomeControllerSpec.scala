@@ -34,7 +34,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
 
   val baseModel: IncomeBeforeTax = IncomeBeforeTax(
-    taxYear = currentTaxYearForTesting,
+    taxYear = currentTaxYear,
     utr = testUtr,
     getSelfEmployTotal = Amount(1100, "GBP"),
     getIncomeFromEmployment = Amount(10500, "GBP"),
@@ -137,7 +137,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         .text mustBe "Your total income"
       document
         .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
-        .text mustBe s"Tax year: April 6 $previousTaxYearForTesting to April 5 $currentTaxYearForTesting"
+        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear"
     }
 
     "have zero-value fields hidden in the view" in {

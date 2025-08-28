@@ -108,7 +108,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
       "/annual-tax-summary/paye/main"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
-        val loadAtsListData: String = Json.stringify(Json.toJson(getSaAtsList("$utr")))
+        val loadAtsListData: String = Json.stringify(Json.toJson(generateSaAtsYearList("$utr")))
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
             .willReturn(ok(loadAtsListData))
@@ -135,7 +135,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
       s"/annual-tax-summary/capital-gains-tax?taxYear=$fakeTaxYear"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
-        val loadAtsListData: String = Json.stringify(Json.toJson(getSaAtsList("$utr")))
+        val loadAtsListData: String = Json.stringify(Json.toJson(generateSaAtsYearList("$utr")))
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
             .willReturn(ok(loadAtsListData))
@@ -147,7 +147,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
               ok(
                 FileHelper.loadFile(
                   s"./it/resources/sa-get-ats-data.json",
-                  Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+                  Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
                 )
               )
             )

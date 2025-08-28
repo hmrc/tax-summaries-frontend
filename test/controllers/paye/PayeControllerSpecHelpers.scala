@@ -33,7 +33,7 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
     Json.parse(
       loadAndReplace(
         "/json/gov-spend-previous-tax-year-minus-1.json",
-        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYearForTesting.toString)
+        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYear.toString)
       )
     )
 
@@ -41,7 +41,7 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
     Json.parse(
       loadAndReplace(
         "/json/gov-spend-previous-tax-year.json",
-        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
       )
     )
 

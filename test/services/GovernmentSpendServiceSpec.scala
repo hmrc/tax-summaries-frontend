@@ -26,7 +26,7 @@ import play.api.http.Status.OK
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
-import services.atsData.AtsTestData.currentTaxYearForTesting
+import services.atsData.AtsTestData.currentTaxYear
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -44,7 +44,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(currentTaxYearForTesting)
+    yearList = List(currentTaxYear)
   )
 
   val mockAtsService: AtsService           = mock[AtsService]
@@ -60,7 +60,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$currentTaxYearForTesting")
+    FakeRequest("GET", s"?taxYear=$currentTaxYear")
   )
 
   def sut: GovernmentSpendService = new GovernmentSpendService(mockAtsService, mockMiddleConnector)
@@ -94,7 +94,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
       val result = Await.result(sut.govSpend(atsData), 1500 millis)
       result mustBe GovernmentSpend(
-        currentTaxYearForTesting,
+        currentTaxYear,
         "1111111111",
         List(
           ("Health", SpendData(Amount(100, "GBP"), 10)),

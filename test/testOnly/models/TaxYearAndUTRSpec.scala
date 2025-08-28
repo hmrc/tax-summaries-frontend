@@ -23,19 +23,19 @@ class TaxYearAndUTRSpec extends BaseSpec {
 
   "TaxYearAndUTR" must {
     "correctly extract values using unapply" in {
-      val taxYearAndUTR = TaxYearAndUTR(currentTaxYearForTesting, "123456789")
-      TaxYearAndUTR.unapply(taxYearAndUTR) mustBe Some((currentTaxYearForTesting, "123456789"))
+      val taxYearAndUTR = TaxYearAndUTR(currentTaxYear, "123456789")
+      TaxYearAndUTR.unapply(taxYearAndUTR) mustBe Some((currentTaxYear, "123456789"))
     }
 
     "correctly serialize to JSON" in {
-      val taxYearAndUTR = TaxYearAndUTR(currentTaxYearForTesting, "123456789")
+      val taxYearAndUTR = TaxYearAndUTR(currentTaxYear, "123456789")
       val json          = Json.toJson(taxYearAndUTR)
-      json mustBe Json.parse(s"""{"taxYear":$currentTaxYearForTesting,"utr":"123456789"}""")
+      json mustBe Json.parse(s"""{"taxYear":$currentTaxYear,"utr":"123456789"}""")
     }
 
     "correctly deserialize from JSON" in {
-      val json = Json.parse(s"""{"taxYear":$currentTaxYearForTesting,"utr":"123456789"}""")
-      json.as[TaxYearAndUTR] mustBe TaxYearAndUTR(currentTaxYearForTesting, "123456789")
+      val json = Json.parse(s"""{"taxYear":$currentTaxYear,"utr":"123456789"}""")
+      json.as[TaxYearAndUTR] mustBe TaxYearAndUTR(currentTaxYear, "123456789")
     }
   }
 }

@@ -58,7 +58,7 @@ class IntegrationSpec
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val fakeTaxYear: Int = currentTaxYearForTesting
+  lazy val fakeTaxYear: Int = currentTaxYear
 
   val mockTaxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository =
     mock[TaxsAgentTokenSessionCacheRepository]
@@ -69,7 +69,7 @@ class IntegrationSpec
         Json.parse(
           FileHelper.loadFile(
             s"./it/resources/sa-get-ats-data.json",
-            Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+            Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
           )
         )
       )
@@ -90,7 +90,7 @@ class IntegrationSpec
        |        "lastName": "Smith"
        |    },
        |    "loginTimes": {
-       |        "currentLogin": "$currentTaxYearForTesting-06-07T10:52:02.594Z",
+       |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
        |        "previousLogin": null
        |    },
        |    "optionalCredentials": {
@@ -116,7 +116,7 @@ class IntegrationSpec
        |        "lastName": "Smith"
        |    },
        |    "loginTimes": {
-       |        "currentLogin": "$currentTaxYearForTesting-06-07T10:52:02.594Z",
+       |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
        |        "previousLogin": null
        |    },
        |    "optionalCredentials": {

@@ -71,9 +71,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
   "Government spend controller" must {
 
-    s"return OK response when set to $currentTaxYearForTesting" in {
+    s"return OK response when set to $currentTaxYear" in {
 
-      val taxYear = currentTaxYearForTesting
+      val taxYear = currentTaxYear
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
@@ -91,9 +91,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    s"return OK response when set to $previousTaxYearForTesting" in {
+    s"return OK response when set to $previousTaxYear" in {
 
-      val taxYear = previousTaxYearForTesting
+      val taxYear = previousTaxYear
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYearMinus1.as[PayeAtsData])))

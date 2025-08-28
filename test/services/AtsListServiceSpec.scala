@@ -38,7 +38,7 @@ import view_models.AtsList
 import scala.concurrent.Future
 
 class AtsListServiceSpec extends BaseSpec {
-  val data: AtsListData = getSaAtsList("utr")
+  val data: AtsListData = generateSaAtsYearList("utr")
 
   val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
@@ -75,7 +75,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(mockAppConfig.taxYear).thenReturn(currentTaxYearForTesting)
+    when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
     ()
   }
 
@@ -144,19 +144,19 @@ class AtsListServiceSpec extends BaseSpec {
 
   "getAtsYearList" must {
 
-    s"Return a ats list with $currentTaxYearForTesting year data" in
+    s"Return a ats list with $currentTaxYear year data" in
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(currentTaxYearForTesting) mustBe true
+        result.value.atsYearList.get.contains(currentTaxYear) mustBe true
       }
 
     "Return a ats list without CY-1 year data" in {
-      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != previousTaxYearForTesting)))
+      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != previousTaxYear)))
       when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
         AtsSuccessResponseWithPayload[AtsListData](dataMissingYear)
       )
 
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(previousTaxYearForTesting) mustBe false
+        result.value.atsYearList.get.contains(previousTaxYear) mustBe false
       }
 
     }

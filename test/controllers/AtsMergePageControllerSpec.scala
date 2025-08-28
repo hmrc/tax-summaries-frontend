@@ -63,13 +63,13 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$currentTaxYearForTesting")
+    FakeRequest("GET", s"?taxYear=$currentTaxYear")
   )
 
   val successViewModel: AtsMergePageViewModel =
     AtsMergePageViewModel(
-      AtsList("", "", "", List(currentTaxYearForTesting)),
-      List(currentTaxYearForTesting),
+      AtsList("", "", "", List(currentTaxYear)),
+      List(currentTaxYear),
       mockAppConfig,
       ConfidenceLevel.L50
     )
@@ -96,7 +96,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.text() contains "Select the tax year"
-      document.text() contains currentTaxYearForTesting
+      document.text() contains currentTaxYear
 
       session(result).get("TAXS_USER_TYPE") mustBe None
     }
@@ -120,7 +120,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.text() contains "Select the tax year"
-      document.text() contains currentTaxYearForTesting
+      document.text() contains currentTaxYear
 
       session(result).get("TAXS_USER_TYPE") mustBe Some("PORTAL")
 
@@ -195,7 +195,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"SA-$currentTaxYearForTesting"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"SA-$currentTaxYear"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -212,7 +212,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 303
       redirectLocation(
         result
-      ).get mustBe (routes.AtsMainController.authorisedAtsMain.url + s"?taxYear=$currentTaxYearForTesting")
+      ).get mustBe (routes.AtsMainController.authorisedAtsMain.url + s"?taxYear=$currentTaxYear")
 
     }
 
@@ -220,7 +220,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"PAYE-$currentTaxYearForTesting"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"PAYE-$currentTaxYear"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -235,7 +235,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe paye.routes.PayeAtsMainController.show(currentTaxYearForTesting).toString
+      redirectLocation(result).get mustBe paye.routes.PayeAtsMainController.show(currentTaxYear).toString
 
     }
 
@@ -243,7 +243,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"NoATS-$currentTaxYearForTesting"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"NoATS-$currentTaxYear"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -259,7 +259,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       status(result) mustBe 303
       redirectLocation(result).get mustBe controllers.routes.ErrorController
-        .authorisedNoAts(currentTaxYearForTesting)
+        .authorisedNoAts(currentTaxYear)
         .toString
 
     }
@@ -268,7 +268,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"NoATS-$currentTaxYearForTesting"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"NoATS-$currentTaxYear"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -284,7 +284,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       status(result) mustBe 303
       redirectLocation(result).get mustBe controllers.routes.ErrorController
-        .authorisedNoAts(currentTaxYearForTesting)
+        .authorisedNoAts(currentTaxYear)
         .toString
 
     }
@@ -293,7 +293,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
-      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"NoATS-$currentTaxYearForTesting"))
+      val form             = atsForms.atsYearFormMapping.bind(Map("year" -> s"NoATS-$currentTaxYear"))
       val requestWithQuery = AuthenticatedRequest(
         "userId",
         None,
@@ -309,7 +309,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
 
       status(result) mustBe 303
       redirectLocation(result).get mustBe controllers.routes.ErrorController
-        .authorisedNoAts(currentTaxYearForTesting)
+        .authorisedNoAts(currentTaxYear)
         .toString
 
     }

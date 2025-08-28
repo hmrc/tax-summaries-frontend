@@ -45,7 +45,7 @@ class AtsServiceSpec extends BaseSpec {
         Json.parse(
           loadAndReplace(
             "/json/sa-get-ats-data-previous-tax-year.json",
-            Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+            Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYear.toString)
           )
         )
       )
@@ -124,7 +124,7 @@ class AtsServiceSpec extends BaseSpec {
 
               when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
-              sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe FakeViewModel(data.toString)
+              sut.createModel(currentTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any())(any())
             }
@@ -165,7 +165,7 @@ class AtsServiceSpec extends BaseSpec {
                   request = FakeRequest()
                 )
 
-              sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe FakeViewModel(data.toString)
+              sut.createModel(currentTaxYear, converter).futureValue mustBe FakeViewModel(data.toString)
 
               verify(mockAuditService).sendEvent(any(), any())(any())
             }
@@ -182,7 +182,7 @@ class AtsServiceSpec extends BaseSpec {
           when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
-          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[NoATSViewModel]
+          sut.createModel(currentTaxYear, converter).futureValue mustBe a[NoATSViewModel]
 
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
@@ -202,7 +202,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
-          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[NoATSViewModel]
+          sut.createModel(currentTaxYear, converter).futureValue mustBe a[NoATSViewModel]
         }
 
         "getting data from mockMiddleConnector where tax liability is negative value" in {
@@ -220,7 +220,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
-          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[NoATSViewModel]
+          sut.createModel(currentTaxYear, converter).futureValue mustBe a[NoATSViewModel]
         }
 
       }
@@ -235,7 +235,7 @@ class AtsServiceSpec extends BaseSpec {
             AtsErrorResponse("Something went wrong")
           )
 
-          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[ATSUnavailableViewModel]
+          sut.createModel(currentTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
@@ -249,7 +249,7 @@ class AtsServiceSpec extends BaseSpec {
           when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
             .successful(AtsSuccessResponseWithPayload(dataWithError))
 
-          sut.createModel(currentTaxYearForTesting, converter).futureValue mustBe a[ATSUnavailableViewModel]
+          sut.createModel(currentTaxYear, converter).futureValue mustBe a[ATSUnavailableViewModel]
 
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }

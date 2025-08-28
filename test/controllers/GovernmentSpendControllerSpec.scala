@@ -41,7 +41,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
 
     val model: GovernmentSpend = GovernmentSpend(
-      taxYear = currentTaxYearForTesting,
+      taxYear = currentTaxYear,
       userUtr = testUtr,
       govSpendAmountData = List(
         ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
@@ -130,7 +130,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
-    s"have correct data for $currentTaxYearForTesting" in {
+    s"have correct data for $currentTaxYear" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -170,13 +170,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 $previousTaxYearForTesting to April 5 $currentTaxYearForTesting Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear Your taxes and public spending"
     }
 
-    s"have correct data for $previousTaxYearForTesting" in {
+    s"have correct data for $previousTaxYear" in {
 
       val model2 = GovernmentSpend(
-        taxYear = previousTaxYearForTesting,
+        taxYear = previousTaxYear,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
