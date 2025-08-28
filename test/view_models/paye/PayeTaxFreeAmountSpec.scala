@@ -20,16 +20,15 @@ import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import utils.JsonUtil
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import utils.{JsonUtil, TaxYearForTesting}
 import view_models.Amount
-import utils.TaxYearForTesting
 
 class PayeTaxFreeAmountSpec
     extends AnyWordSpec
     with Matchers
     with JsonUtil
-    with GuiceOneAppPerTest
+    with GuiceOneAppPerSuite
     with ScalaFutures
     with IntegrationPatience
     with TaxYearForTesting {

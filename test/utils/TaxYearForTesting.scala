@@ -19,10 +19,10 @@ package utils
 import models.AtsListData
 
 trait TaxYearForTesting {
-  protected val currentTaxYear: Int  = 2024
-  protected val previousTaxYear: Int = currentTaxYear - 1
+  protected val currentTaxYear: Int         = 2024
+  protected val previousTaxYear: Int        = currentTaxYear - 1
+  private val maxTaxYearsTobeDisplayed: Int = 4
 
-  // maxTaxYearsTobeDisplayed
   protected def generateSaAtsYearList(utr: String): AtsListData =
     AtsListData(
       utr = utr,
@@ -33,7 +33,7 @@ trait TaxYearForTesting {
           "surname"  -> "surname"
         )
       ),
-      atsYearList = Some(Range.inclusive(currentTaxYear - 3, currentTaxYear).toList)
+      atsYearList = Some(Range.inclusive(currentTaxYear - (maxTaxYearsTobeDisplayed - 1), currentTaxYear).toList)
     )
 
 }

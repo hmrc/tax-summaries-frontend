@@ -19,17 +19,16 @@ package view_models.paye
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
 import utils.{JsonUtil, TaxYearForTesting}
 import view_models.Amount
-
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 class PayeYourIncomeAndTaxesSpec
     extends AnyWordSpec
     with Matchers
     with JsonUtil
-    with GuiceOneAppPerTest
+    with GuiceOneAppPerSuite
     with ScalaFutures
     with IntegrationPatience
     with Injecting
