@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.taxSummaries.controllers
+package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo, urlMatching}
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
@@ -60,7 +60,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
   }
 
   // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024
-  override lazy val taxYear: Int = 2023
+  override lazy val taxYear: Int = 2022
 
   "/paye/income-before-tax" must {
 

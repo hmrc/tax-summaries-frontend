@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.taxSummaries.controllers
+package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
