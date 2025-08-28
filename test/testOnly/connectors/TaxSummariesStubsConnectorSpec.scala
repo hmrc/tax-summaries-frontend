@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.Injecting
 import testOnly.models.{CountryAndODSValues, OdsValue, SAODSModel}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{JsonUtil, WireMockHelper}
+import utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext}
@@ -42,7 +42,8 @@ class TaxSummariesStubsConnectorSpec
     with IntegrationPatience
     with JsonUtil
     with Injecting
-    with EitherValues {
+    with EitherValues
+    with TaxYearForTesting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -56,7 +57,7 @@ class TaxSummariesStubsConnectorSpec
   private lazy val connector: TaxSummariesStubsConnector = inject[TaxSummariesStubsConnector]
   private lazy val url                                   = s"/ods-sa-data/$utr/$taxYear"
 
-  private val taxYear = 2023
+  private val taxYear = currentTaxYearForTesting
   private val utr     = "0000000010"
 
   private val saODSModel          = SAODSModel(utr, taxYear, "0001", List(OdsValue("abc", BigDecimal(44.44))))

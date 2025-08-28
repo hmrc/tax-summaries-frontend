@@ -41,13 +41,12 @@ class IncomeServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2023)
+    yearList = List(currentTaxYearForTesting)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val mockAtsService: AtsService                            = mock[AtsService]
-  override val taxYear                                      = 2023
   val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     userId = "userId",
     agentRef = None,

@@ -57,7 +57,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
   "PayeTaxFreeAmountView" must {
     "display correct heading for given taxYear" in {
       val viewModel = PayeTaxFreeAmount(
-        2023,
+        currentTaxYearForTesting,
         List.empty,
         Amount.empty,
         List.empty,
@@ -69,7 +69,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
       document
         .select("h1")
-        .text mustBe "Tax-free income 6 April 2022 to 5 April 2023"
+        .text mustBe s"Tax-free income 6 April $previousTaxYearForTesting to 5 April $currentTaxYearForTesting"
     }
 
     "display the table of adjustments when there is more than one row" in {

@@ -35,8 +35,6 @@ import scala.language.postfixOps
 
 class IncomeTaxAndNIServiceSpec extends BaseSpec {
 
-  override val taxYear = 2023
-
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
     forename = "forename",
@@ -67,7 +65,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         isAgentActive = false,
         confidenceLevel = ConfidenceLevel.L50,
         credentials = fakeCredentials,
-        request = FakeRequest("GET", "?taxYear=2023")
+        request = FakeRequest("GET", s"?taxYear=$currentTaxYearForTesting")
       )
       val result       = Await.result(sut.getIncomeAndNIData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel

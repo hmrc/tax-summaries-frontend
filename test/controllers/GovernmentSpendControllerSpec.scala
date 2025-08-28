@@ -33,7 +33,6 @@ import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
-  override val taxYear    = 2023
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
@@ -42,7 +41,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
 
     val model: GovernmentSpend = GovernmentSpend(
-      taxYear = 2023,
+      taxYear = currentTaxYearForTesting,
       userUtr = testUtr,
       govSpendAmountData = List(
         ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
@@ -171,13 +170,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 2022 to April 5 2023 Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 $previousTaxYearForTesting to April 5 $currentTaxYearForTesting Your taxes and public spending"
     }
 
-    "have correct data for 2023" in {
+    s"have correct data for $previousTaxYearForTesting" in {
 
       val model2 = GovernmentSpend(
-        taxYear = 2023,
+        taxYear = previousTaxYearForTesting,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),

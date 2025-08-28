@@ -43,10 +43,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2023)
+    yearList = List(currentTaxYearForTesting)
   )
-
-  override val taxYear = 2023
 
   val mockAtsService: AtsService           = mock[AtsService]
   val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
@@ -61,7 +59,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", "?taxYear=2023")
+    FakeRequest("GET", s"?taxYear=$currentTaxYearForTesting")
   )
 
   def sut: GovernmentSpendService = new GovernmentSpendService(mockAtsService, mockMiddleConnector)

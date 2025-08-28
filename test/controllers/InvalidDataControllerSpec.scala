@@ -39,7 +39,6 @@ class InvalidDataControllerSpec extends ControllerBaseSpec {
                                             | "taxYear":$currentTaxYearForTesting,
                                             | "errors":{"error": "NoAtsError"}
                                             |}""".stripMargin
-  override val taxYear                  = 2023
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
   implicit val hc: HeaderCarrier        = new HeaderCarrier
 

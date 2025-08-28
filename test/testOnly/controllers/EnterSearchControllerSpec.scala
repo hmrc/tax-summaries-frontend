@@ -49,12 +49,13 @@ class EnterSearchControllerSpec extends ControllerBaseSpec {
 
   "onSubmit" must {
     "redirect when request valid" in {
-      val postRequest = FakeRequest("POST", "/").withFormUrlEncodedBody(("taxYear", "2023"), ("utr", "0000000010"))
+      val postRequest = FakeRequest("POST", "/")
+        .withFormUrlEncodedBody(("taxYear", s"$currentTaxYearForTesting"), ("utr", "0000000010"))
       val result      = controller.onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        testOnly.controllers.routes.EnterODSController.onPageLoad(2023, "0000000010").url
+        testOnly.controllers.routes.EnterODSController.onPageLoad(currentTaxYearForTesting, "0000000010").url
       )
     }
 

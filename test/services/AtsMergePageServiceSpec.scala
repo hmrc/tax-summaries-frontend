@@ -59,7 +59,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
       mockFeatureFlagService,
       mockTaxYearUtil
     )
-  private val dummyYears: List[Int]        = List(2023, 2023)
+  private val dummyYears: List[Int]        = List(previousTaxYearForTesting, currentTaxYearForTesting)
 
   private val saDataResponse: AtsList = AtsList(
     utr = testUtr,
