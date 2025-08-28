@@ -34,7 +34,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.TestConstants.{testUar, testUtr}
-import utils.{JsonUtil, WireMockHelper}
+import utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 
@@ -47,7 +47,8 @@ class TaxSummariesConnectorSpec
     with IntegrationPatience
     with JsonUtil
     with Injecting
-    with EitherValues {
+    with EitherValues
+    with TaxYearForTesting {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -69,34 +70,19 @@ class TaxSummariesConnectorSpec
 
   val utr: SaUtr = SaUtr(testUtr)
 
-  val uar: Uar                                = Uar(testUar)
-  protected val currentTaxYearForTesting: Int = currentTaxYearForTesting
-  val loadSAJson: JsValue                     = Json.parse(
+  val uar: Uar = Uar(testUar)
+
+  val loadSAJson: JsValue         = Json.parse(
     loadAndReplace(
       "/json/sa-get-ats-data-previous-tax-year.json",
       Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
     )
   )
-  val saResponse: String                      = loadAndReplace(
+  val saResponse: String          = loadAndReplace(
     "/json/sa-get-ats-data-previous-tax-year.json",
     Map("testUtr" -> utr.utr, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
   )
-  val expectedSAResponse: AtsData             = Json.fromJson[AtsData](loadSAJson).get
-
-  protected def getSaAtsList(utr: String): AtsListData = {
-    val yearList = Range.inclusive(currentTaxYearForTesting - 3, currentTaxYearForTesting).toList
-    AtsListData(
-      utr = utr,
-      taxPayer = Some(
-        Map(
-          "title"    -> "Mr",
-          "forename" -> "forename",
-          "surname"  -> "surname"
-        )
-      ),
-      atsYearList = Some(yearList)
-    )
-  }
+  val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
 
   val atsListData: AtsListData = getSaAtsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))

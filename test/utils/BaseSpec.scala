@@ -17,7 +17,6 @@
 package utils
 
 import config.ApplicationConfig
-import models.AtsListData
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -27,7 +26,6 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.Injecting
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
@@ -43,29 +41,12 @@ trait BaseSpec
     with ScalaFutures
     with IntegrationPatience
     with EitherValues
-    with JsonUtil {
+    with JsonUtil
+    with TaxYearForTesting {
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
   val taxYear: Int = appConfig.taxYear
-
-  protected val currentTaxYearForTesting: Int  = 2024
-  protected val previousTaxYearForTesting: Int = currentTaxYearForTesting - 1
-
-  protected def getSaAtsList(utr: String): AtsListData = {
-    val yearList = Range.inclusive(currentTaxYearForTesting - 3, currentTaxYearForTesting).toList
-    AtsListData(
-      utr = utr,
-      taxPayer = Some(
-        Map(
-          "title"    -> "Mr",
-          "forename" -> "forename",
-          "surname"  -> "surname"
-        )
-      ),
-      atsYearList = Some(yearList)
-    )
-  }
 
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 

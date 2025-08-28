@@ -33,7 +33,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.TestConstants.{testNino, testUar, testUtr}
-import utils.{JsonUtil, WireMockHelper}
+import utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 
@@ -46,10 +46,8 @@ class MiddleConnectorSpec
     with IntegrationPatience
     with JsonUtil
     with Injecting
-    with EitherValues {
-
-  protected val currentTaxYearForTesting: Int  = 2024
-  protected val previousTaxYearForTesting: Int = currentTaxYearForTesting - 1
+    with EitherValues
+    with TaxYearForTesting {
 
   override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
@@ -79,21 +77,6 @@ class MiddleConnectorSpec
   )
 
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
-
-  protected def getSaAtsList(utr: String): AtsListData = {
-    val yearList = Range.inclusive(currentTaxYearForTesting - 3, currentTaxYearForTesting).toList
-    AtsListData(
-      utr = utr,
-      taxPayer = Some(
-        Map(
-          "title"    -> "Mr",
-          "forename" -> "forename",
-          "surname"  -> "surname"
-        )
-      ),
-      atsYearList = Some(yearList)
-    )
-  }
 
   val atsListData: AtsListData = getSaAtsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))

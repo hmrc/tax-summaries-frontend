@@ -131,7 +131,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
-    "have correct data for 2022" in {
+    s"have correct data for $currentTaxYearForTesting" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -171,7 +171,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe "Tax year: April 6 2022 to April 5 2023 Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 2022 to April 5 2023 Your taxes and public spending"
     }
 
     "have correct data for 2023" in {
