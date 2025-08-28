@@ -31,11 +31,11 @@ import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec, TaxYearForTesting}
+import utils.{FileHelper, IntegrationSpec}
 
 import scala.concurrent.Future
 
-class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
+class IncomeBeforeTaxItSpec extends IntegrationSpec {
   private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
@@ -51,7 +51,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
     .build()
 
   override lazy val keystoreData: Map[String, JsValue] = Map(
-    s"TAXS_ATS_$taxYear" -> Json.parse(
+    s"TAXS_ATS_$currentTaxYearForTesting" -> Json.parse(
       FileHelper.loadFile(
         s"./it/resources/sa-get-ats-data.json",
         Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
@@ -70,14 +70,11 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
   }
 
-  // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024
-  override lazy val taxYear: Int = currentTaxYearForTesting
-
   "/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$taxYear"
+    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYearForTesting"
 
-    lazy val backendUrl = s"/taxs/$generatedSaUtr/$taxYear/ats-data"
+    lazy val backendUrl = s"/taxs/$generatedSaUtr/$currentTaxYearForTesting/ats-data"
 
     "return an OK response" in {
 

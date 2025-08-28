@@ -40,7 +40,8 @@ class IntegrationSpec
     with ScalaFutures
     with IntegrationPatience
     with Injecting
-    with MockitoSugar {
+    with MockitoSugar
+    with TaxYearForTesting {
 
   val generatedNino: Nino = new Generator().nextNino
 
@@ -51,8 +52,6 @@ class IntegrationSpec
   lazy val messages: Messages = inject[Messages]
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-
-  lazy val taxYear: Int = appConfig.taxYear
 
   lazy val keystoreData: Map[String, JsValue] = Map.empty
 

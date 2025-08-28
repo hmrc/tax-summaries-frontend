@@ -34,12 +34,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, Globals, IntegrationSpec, LoginPage, TaxYearForTesting}
+import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageControllerItSpec extends IntegrationSpec with TaxYearForTesting {
+class AtsMergePageControllerItSpec extends IntegrationSpec {
   private val mockPertaxAuthService               = mock[PertaxAuthService]
   lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
 

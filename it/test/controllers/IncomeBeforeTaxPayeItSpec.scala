@@ -16,7 +16,8 @@
 
 package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo, urlMatching}
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, ok, urlEqualTo, urlMatching}
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -30,11 +31,11 @@ import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec, TaxYearForTesting}
+import utils.{FileHelper, IntegrationSpec}
 
 import scala.concurrent.Future
 
-class IncomeBeforeTaxPayeItSpec extends IntegrationSpec with TaxYearForTesting {
+class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
   private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
@@ -61,14 +62,15 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec with TaxYearForTesting {
 
   "/paye/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$taxYear"
+    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$currentTaxYearForTesting"
 
-    lazy val backendUrl = s"/taxs/$generatedNino/$taxYear/paye-ats-data"
+    lazy val backendUrl = s"/taxs/$generatedNino/$currentTaxYearForTesting/paye-ats-data"
 
     "return an OK response" in {
 
       server.stubFor(
-        get(urlEqualTo(backendUrl))
+        WireMock
+          .get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
               FileHelper.loadFile(
@@ -80,9 +82,11 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec with TaxYearForTesting {
       )
 
       server.stubFor(
-        get(urlMatching(s"/pertax/$generatedNino/authorise")).willReturn(
-          ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}")
-        )
+        WireMock
+          .get(urlMatching(s"/pertax/$generatedNino/authorise"))
+          .willReturn(
+            ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}")
+          )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
@@ -95,7 +99,8 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec with TaxYearForTesting {
     "return an SEE_OTHER when the call to backend returns a NOT_FOUND response" in {
 
       server.stubFor(
-        get(urlEqualTo(backendUrl))
+        WireMock
+          .get(urlEqualTo(backendUrl))
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -115,7 +120,8 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec with TaxYearForTesting {
       s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve paye-ats-data throws a $httpResponse" in {
 
         server.stubFor(
-          get(urlEqualTo(backendUrl))
+          WireMock
+            .get(urlEqualTo(backendUrl))
             .willReturn(aResponse().withStatus(httpResponse))
         )
 

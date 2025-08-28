@@ -35,14 +35,14 @@ import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
-import utils.{FileHelper, IntegrationSpec, JsonUtil, TaxYearForTesting}
+import utils.{FileHelper, IntegrationSpec, JsonUtil}
 
 import java.util.UUID
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.util.Random
 
-class ContentsCheckSpec extends IntegrationSpec with TaxYearForTesting with JsonUtil {
+class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
   private val mockPertaxAuthService = mock[PertaxAuthService]
   case class ExpectedData(title: String)
 
