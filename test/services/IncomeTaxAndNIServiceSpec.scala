@@ -22,14 +22,15 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import services.atsData.AtsTestData.currentTaxYearForTesting
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{BaseSpec, GenericViewModel}
-import view_models._
+import view_models.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
@@ -119,7 +120,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       )
 
       result mustEqual IncomeTaxAndNI(
-        year = 2022,
+        year = currentTaxYearForTesting,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
         totalIncomeTaxAndNics = Amount(200, "GBP"),
@@ -177,7 +178,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       result mustEqual IncomeTaxAndNI(
-        year = 2022,
+        year = currentTaxYearForTesting,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
         totalIncomeTaxAndNics = Amount(200, "GBP"),
@@ -235,7 +236,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       result mustEqual IncomeTaxAndNI(
-        year = 2022,
+        year = currentTaxYearForTesting,
         utr = "1111111111",
         employeeNicAmount = Amount.empty,
         totalIncomeTaxAndNics = Amount.empty,

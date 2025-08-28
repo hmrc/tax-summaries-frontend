@@ -23,6 +23,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import utils.JsonUtil
 import view_models.Amount
+import utils.TaxYearForTesting
 
 class PayeTaxFreeAmountSpec
     extends AnyWordSpec
@@ -30,11 +31,12 @@ class PayeTaxFreeAmountSpec
     with JsonUtil
     with GuiceOneAppPerTest
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with TaxYearForTesting {
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
     PayeAtsData(
-      2022,
+      currentTaxYearForTesting,
       None,
       Some(DataHolder(Some(summary_data), None, None)),
       None,
@@ -60,7 +62,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -94,7 +96,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -127,7 +129,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -162,7 +164,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("marriage_allowance_transferred_amount", Amount.gbp(200)),
@@ -198,7 +200,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
         ),
         Amount.gbp(9740),
@@ -228,7 +230,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
         ),
         Amount.gbp(9740),
@@ -260,7 +262,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
         ),
         Amount.gbp(0),
@@ -286,7 +288,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYearForTesting,
         List(
         ),
         Amount.gbp(0),

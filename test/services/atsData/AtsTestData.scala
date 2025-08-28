@@ -18,11 +18,12 @@ package services.atsData
 
 import models._
 import view_models.{Amount, Rate}
+import utils.TaxYearForTesting
 
-object AtsTestData {
+object AtsTestData extends TaxYearForTesting {
 
   val atsAllowancesData = AtsData(
-    2022,
+    currentTaxYearForTesting,
     Some("1111111111"),
     None,
     None,
@@ -53,7 +54,7 @@ object AtsTestData {
   )
 
   val incomeData = AtsData(
-    2022,
+    currentTaxYearForTesting,
     Some("1111111111"),
     None,
     None,
@@ -88,7 +89,7 @@ object AtsTestData {
   )
 
   val totalIncomeTaxData = AtsData(
-    taxYear = 2022,
+    taxYear = currentTaxYearForTesting,
     utr = Some("1111111111"),
     income_tax = Some(
       DataHolder(
@@ -197,7 +198,7 @@ object AtsTestData {
   )
 
   val govSpendingDataForWelshUser = AtsData(
-    2022,
+    currentTaxYearForTesting,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -217,7 +218,7 @@ object AtsTestData {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2022,
+        currentTaxYearForTesting,
         Some(
           Map(
             "Welfare"                  -> SpendData(Amount(100, "GBP"), 10),
@@ -251,7 +252,7 @@ object AtsTestData {
   )
 
   val govSpendingData = AtsData(
-    2022,
+    currentTaxYearForTesting,
     Some("1111111111"),
     Some(
       DataHolder(
@@ -270,7 +271,7 @@ object AtsTestData {
     None,
     Some(
       GovernmentSpendingOutputWrapper(
-        2022,
+        currentTaxYearForTesting,
         Some(
           Map(
             "Health"                     -> SpendData(Amount(100, "GBP"), 10),
@@ -304,7 +305,7 @@ object AtsTestData {
   )
 
   val summaryData = AtsData(
-    taxYear = 2022,
+    taxYear = currentTaxYearForTesting,
     utr = Some("1111111111"),
     income_tax = None,
     summary_data = Some(
@@ -347,7 +348,7 @@ object AtsTestData {
   )
 
   val capitalGainsData = AtsData(
-    2022,
+    currentTaxYearForTesting,
     Some("1111111111"),
     None,
     None,
@@ -408,13 +409,13 @@ object AtsTestData {
     ),
     Some(
       List(
-        2022
+        currentTaxYearForTesting
       )
     )
   )
 
   val incomeTaxDataForWelshTaxPayer = AtsData(
-    taxYear = 2022,
+    taxYear = currentTaxYearForTesting,
     utr = Some("1111111111"),
     income_tax = Some(
       DataHolder(

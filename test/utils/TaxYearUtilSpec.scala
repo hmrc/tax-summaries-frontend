@@ -151,9 +151,6 @@ class TaxYearUtilSpec extends BaseSpec {
 
   "taxYearUtil" must {
     "extract tax year when a valid tax year is present" in {
-
-      val taxYear = 2022
-
       implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
         "userId",
         None,

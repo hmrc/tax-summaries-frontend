@@ -21,8 +21,10 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import services.atsData.AtsTestData.currentTaxYearForTesting
 import utils.JsonUtil
 import view_models.Amount
+import utils.TaxYearForTesting
 
 class PayeYourTaxableIncomeSpec
     extends AnyWordSpec
@@ -30,7 +32,8 @@ class PayeYourTaxableIncomeSpec
     with JsonUtil
     with GuiceOneAppPerTest
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with TaxYearForTesting {
   val incomeTaxDataStatePensionAndOther = Some(
     DataHolder(
       payload = Some(
@@ -88,7 +91,7 @@ class PayeYourTaxableIncomeSpec
   )
 
   def incomeTaxPayeAtsData(incomeTax: Option[DataHolder]): PayeAtsData =
-    PayeAtsData(2022, None, None, incomeTax, None, None)
+    PayeAtsData(currentTaxYearForTesting, None, None, incomeTax, None, None)
 
   "PayeYourTaxableIncome" must {
     "Transform income tax data just other pension to view model" in {
