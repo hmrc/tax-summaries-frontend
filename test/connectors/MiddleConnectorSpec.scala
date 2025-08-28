@@ -72,7 +72,7 @@ class MiddleConnectorSpec
   implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
 
   val saResponse: String = loadAndReplace(
-    "/json/sa-get-ats-data-previous-tax-year.json",
+    "/json/ats-data.json",
     Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYear.toString)
   )
 
@@ -400,7 +400,7 @@ class MiddleConnectorSpec
     "return successful response" in {
 
       val expectedResponse: String = loadAndReplace(
-        "/json/paye-ats-data-multiple-years.json",
+        "/json/paye-ats-data.json",
         Map(
           "$nino"       -> testNino.nino,
           "<TAXYEAR-1>" -> previousTaxYear.toString,

@@ -222,7 +222,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         .willReturn(
           ok(
             FileHelper.loadFile(
-              s"./it/resources/sa-get-ats-data.json",
+              s"./it/resources/ats-data.json",
               Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
             )
           )
@@ -238,8 +238,8 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         .willReturn(
           ok(
             FileHelper.loadFile(
-              "./it/resources/payeData.json",
-              Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+              "./it/resources/paye-ats-data.json",
+              Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
             )
           )
         )

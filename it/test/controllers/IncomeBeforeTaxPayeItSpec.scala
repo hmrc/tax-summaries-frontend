@@ -74,7 +74,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                s"./it/resources/sa-get-ats-data.json",
+                s"./it/resources/ats-data.json",
                 Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )

@@ -154,8 +154,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                "./it/resources/payeData.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+                "./it/resources/paye-ats-data.json",
+                Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
               )
             )
           )
@@ -191,8 +191,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                "./it/resources/payeData.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+                "./it/resources/paye-ats-data.json",
+                Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
               )
             )
           )
@@ -244,8 +244,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                "./it/resources/payeData.json",
-                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+                "./it/resources/paye-ats-data.json",
+                Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
               )
             )
           )
@@ -303,8 +303,8 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
             .willReturn(
               ok(
                 FileHelper.loadFile(
-                  "./it/resources/payeData.json",
-                  Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
+                  "./it/resources/paye-ats-data.json",
+                  Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
                 )
               )
             )

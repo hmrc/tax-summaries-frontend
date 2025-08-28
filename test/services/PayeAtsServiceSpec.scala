@@ -50,7 +50,7 @@ class PayeAtsServiceSpec extends BaseSpec {
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
     loadAndReplace(
-      "/json/paye-ats-data-multiple-years.json",
+      "/json/paye-ats-data.json",
       Map(
         "$nino"       -> testNino.nino,
         "<TAXYEAR-1>" -> previousTaxYear.toString,

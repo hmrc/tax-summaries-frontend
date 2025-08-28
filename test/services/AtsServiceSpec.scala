@@ -44,7 +44,7 @@ class AtsServiceSpec extends BaseSpec {
       .fromJson[AtsData](
         Json.parse(
           loadAndReplace(
-            "/json/sa-get-ats-data-previous-tax-year.json",
+            "/json/ats-data.json",
             Map("testUtr" -> testUtr, "<TAXYEAR>" -> currentTaxYear.toString)
           )
         )

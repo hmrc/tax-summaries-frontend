@@ -1,6 +1,6 @@
 [
   {
-    "taxYear":<TAXYEAR>,
+    "taxYear":<TAXYEAR-1>,
     "income_tax":{
       "payload":{
         "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -70,7 +70,7 @@
       }
     },
     "gov_spending": {
-      "taxYear": <TAXYEAR>,
+      "taxYear": <TAXYEAR-1>,
       "totalAmount" : {
         "amount": 4512.19,
         "currency": "GBP"
@@ -192,7 +192,7 @@
     }
   },
   {
-    "taxYear":<TAXYEAR>,
+    "taxYear":<TAXYEAR-2>,
     "income_tax":{
       "payload":{
         "additional_rate":{"amount":10.0,"currency":"GBP"},
@@ -262,7 +262,7 @@
       }
     },
     "gov_spending": {
-      "taxYear": <TAXYEAR>,
+      "taxYear": <TAXYEAR-2>,
       "totalAmount" : {
         "amount": 4512.19,
         "currency": "GBP"

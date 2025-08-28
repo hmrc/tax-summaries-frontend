@@ -53,7 +53,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
   override lazy val keystoreData: Map[String, JsValue] = Map(
     s"TAXS_ATS_$currentTaxYear" -> Json.parse(
       FileHelper.loadFile(
-        s"./it/resources/sa-get-ats-data.json",
+        s"./it/resources/ats-data.json",
         Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
       )
     )
@@ -83,7 +83,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                s"./it/resources/sa-get-ats-data.json",
+                s"./it/resources/ats-data.json",
                 Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
@@ -105,7 +105,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
           .willReturn(
             ok(
               FileHelper.loadFile(
-                s"./it/resources/sa-get-ats-data.json",
+                s"./it/resources/ats-data.json",
                 Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYear.toString)
               )
             )
