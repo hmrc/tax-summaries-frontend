@@ -36,13 +36,13 @@ import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
 import utils.{FileHelper, IntegrationSpec}
-
+import utils.{JsonUtil, TaxYearForTesting}
 import java.util.UUID
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.util.Random
 
-class ContentsCheckSpec extends IntegrationSpec {
+class ContentsCheckSpec extends IntegrationSpec with TaxYearForTesting with JsonUtil {
   private val mockPertaxAuthService = mock[PertaxAuthService]
   case class ExpectedData(title: String)
 
@@ -205,7 +205,14 @@ class ContentsCheckSpec extends IntegrationSpec {
     server.stubFor(
       WireMock
         .get(urlMatching(s"/taxs/$generatedNino/2022/paye-ats-data"))
-        .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_2022.json")))
+        .willReturn(
+          ok(
+            FileHelper.loadFile(
+              s"./it/resources/atsData_2022.json",
+              Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+            )
+          )
+        )
     )
 
     server.stubFor(

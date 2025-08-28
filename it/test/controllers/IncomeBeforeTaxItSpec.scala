@@ -26,16 +26,16 @@ import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec}
+import utils.{FileHelper, IntegrationSpec, TaxYearForTesting}
 
 import scala.concurrent.Future
 
-class IncomeBeforeTaxItSpec extends IntegrationSpec {
+class IncomeBeforeTaxItSpec extends IntegrationSpec with TaxYearForTesting {
   private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
@@ -51,7 +51,12 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
     .build()
 
   override lazy val keystoreData: Map[String, JsValue] = Map(
-    s"TAXS_ATS_$taxYear" -> Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))
+    s"TAXS_ATS_$taxYear" -> Json.parse(
+      FileHelper.loadFile(
+        s"./it/resources/atsData_2022.json",
+        Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+      )
+    )
   )
 
   override def beforeEach(): Unit = {
@@ -78,7 +83,14 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+          .willReturn(
+            ok(
+              FileHelper.loadFile(
+                s"./it/resources/atsData_2022.json",
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+              )
+            )
+          )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
@@ -93,7 +105,14 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
       server.stubFor(
         get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+          .willReturn(
+            ok(
+              FileHelper.loadFile(
+                s"./it/resources/atsData_2022.json",
+                Map("testUtr" -> generatedNino.nino, "<TAXYEAR>" -> currentTaxYearForTesting.toString)
+              )
+            )
+          )
       )
 
       val request = FakeRequest(GET, failureUrl).withSession(SessionKeys.authToken -> "Bearer 1")

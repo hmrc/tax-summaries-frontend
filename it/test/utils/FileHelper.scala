@@ -16,13 +16,18 @@
 
 package utils
 
+import scala.io.Source
 import scala.io.Source.fromFile
 
 object FileHelper {
 
-  def loadFile(name: String): String = {
+  def loadFile(name: String, replaceMap: Map[String, String] = Map.empty): String = {
     val source = fromFile(name)
-    try source.mkString
-    finally source.close()
+    val s      =
+      try source.mkString
+      finally source.close()
+    replaceMap.foldLeft(s) { (acc, c) =>
+      acc.replace(c._1, c._2)
+    }
   }
 }
