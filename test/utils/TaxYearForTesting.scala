@@ -27,7 +27,8 @@ trait TaxYearForTesting extends JsonUtil {
   def listOfTaxYears(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
     Range.inclusive(currentTaxYear - (noOfYears - 1), currentTaxYear).toList
 
-  protected def generateSaAtsYearList(utr: String): AtsListData =
+  // Dummy data for endpoint: /taxs/<UTR>/<TAX-YEAR>/<NUMBER-OF-YEARS>/ats-list
+  protected def atsList(utr: String): AtsListData =
     AtsListData(
       utr = utr,
       taxPayer = Some(
@@ -41,19 +42,19 @@ trait TaxYearForTesting extends JsonUtil {
     )
 
   // Dummy data for endpoint: /taxs/<UTR>/<TAX-YEAR>/ats-data
-  def atsData(taxYear: Int): String = loadAndReplace(
+  protected def atsData(taxYear: Int): String = loadAndReplace(
     "/json/ats-data.json",
     Map("<TAXYEAR>" -> taxYear.toString)
   )
 
   // Dummy data for endpoint: /taxs/<NINO>/<TAX-YEAR>/paye-ats-data
-  def payAtsData(taxYear: Int): String = loadAndReplace(
+  protected def payAtsData(taxYear: Int): String = loadAndReplace(
     "/json/paye-ats-data.json",
     Map("$nino" -> testNino.nino, "<TAXYEAR>" -> taxYear.toString)
   )
 
   // Dummy data for endpoint: /taxs/<NINO>/<START-TAX-YEAR>/<END-TAX-YEAR>/paye-ats-data
-  def payeAtsDataForYearRange(noOfYears: Int = maxTaxYearsTobeDisplayed): String =
+  protected def payeAtsDataForYearRange(noOfYears: Int = maxTaxYearsTobeDisplayed): String =
     "[" + listOfTaxYears(noOfYears).foldLeft("") { (acc, year) =>
       acc + (if (acc.isEmpty) {
                ""

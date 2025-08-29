@@ -71,7 +71,7 @@ class TaxSummariesConnectorSpec
 
   val uar: Uar = Uar(testUar)
 
-  val atsListData: AtsListData = generateSaAtsYearList("$utr")
+  val atsListData: AtsListData = atsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
   "connectToAtsSaFields" must {

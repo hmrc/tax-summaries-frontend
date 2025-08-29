@@ -74,7 +74,7 @@ class MiddleConnectorSpec
 
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
 
-  val atsListData: AtsListData = generateSaAtsYearList("$utr")
+  val atsListData: AtsListData = atsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
   "connectToPayeATS" must {

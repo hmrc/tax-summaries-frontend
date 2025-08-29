@@ -239,7 +239,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         )
     )
 
-    val loadAtsListData: String = Json.stringify(Json.toJson(generateSaAtsYearList("$utr")))
+    val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))
     server.stubFor(
       get(urlEqualTo(s"/taxs//$currentTaxYear/4/ats-list"))
         .willReturn(ok(loadAtsListData))

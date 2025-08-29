@@ -38,7 +38,7 @@ import view_models.AtsList
 import scala.concurrent.Future
 
 class AtsListServiceSpec extends BaseSpec {
-  val data: AtsListData = generateSaAtsYearList("utr")
+  val data: AtsListData = atsList("utr")
 
   val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
