@@ -20,11 +20,13 @@ import models.AtsListData
 import utils.TestConstants.testNino
 
 trait TaxYearForTesting extends JsonUtil {
+  // The latest tax year (end year) available in ATS. This will be either last
+  // tax year or last tax year - 1, depending on time of year.
   protected val currentTaxYear: Int         = 2024
   protected val previousTaxYear: Int        = currentTaxYear - 1
   private val maxTaxYearsTobeDisplayed: Int = 4
 
-  def listOfTaxYears(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
+  protected def listOfTaxYears(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
     Range.inclusive(currentTaxYear - (noOfYears - 1), currentTaxYear).toList
 
   // Dummy data for endpoint: /taxs/<UTR>/<TAX-YEAR>/<NUMBER-OF-YEARS>/ats-list
