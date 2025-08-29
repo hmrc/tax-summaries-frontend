@@ -67,7 +67,7 @@ class IntegrationSpec
     Json
       .fromJson[AtsData](
         Json.parse(
-          atsDataFromIt(currentTaxYear)
+          atsData(currentTaxYear)
         )
       )
       .get

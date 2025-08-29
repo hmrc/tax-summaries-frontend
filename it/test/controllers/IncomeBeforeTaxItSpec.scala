@@ -79,7 +79,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              atsDataFromIt(currentTaxYear)
+              atsData(currentTaxYear)
             )
           )
       )
@@ -98,7 +98,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              atsDataFromIt(currentTaxYear)
+              atsData(currentTaxYear)
             )
           )
       )

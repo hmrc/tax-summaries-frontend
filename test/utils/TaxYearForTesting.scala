@@ -37,19 +37,16 @@ trait TaxYearForTesting extends JsonUtil {
       atsYearList = Some(Range.inclusive(currentTaxYear - (maxTaxYearsTobeDisplayed - 1), currentTaxYear).toList)
     )
 
-  def atsData(taxYear: Int): String       = loadAndReplace(
+  def atsData(taxYear: Int): String = loadAndReplace(
     "/json/ats-data.json",
     Map("<TAXYEAR>" -> taxYear.toString)
   )
-  def atsDataFromIt(taxYear: Int): String = loadAndReplace(
-    "/json/ats-data-from-it.json",
-    Map("<TAXYEAR>" -> taxYear.toString)
-  )
-  def govSpend(taxYear: Int): String      = loadAndReplace(
+
+  def govSpend(taxYear: Int): String = loadAndReplace(
     "/json/gov-spend.json",
     Map("$nino" -> testNino.nino, "<TAXYEAR>" -> taxYear.toString)
   )
-  def payeAtsData: String                 = loadAndReplace(
+  def payeAtsData: String            = loadAndReplace(
     "/json/paye-ats-data.json",
     Map(
       "<TAXYEAR-1>" -> previousTaxYear.toString,

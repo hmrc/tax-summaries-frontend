@@ -145,7 +145,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
           get(urlEqualTo(backendUrl))
             .willReturn(
               ok(
-                atsDataFromIt(currentTaxYear)
+                atsData(currentTaxYear)
               )
             )
         )
