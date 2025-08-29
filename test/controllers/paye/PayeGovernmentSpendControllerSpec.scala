@@ -75,7 +75,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         )
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
       val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
         key -> value.percentage.toDouble
@@ -102,7 +102,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
     s"return OK response for $previousTaxYear" in {
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYearMinus1.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
       val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
         key -> value.percentage.toDouble

@@ -76,7 +76,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       val taxYear = currentTaxYear
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -96,7 +96,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       val taxYear = previousTaxYear
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYearMinus1.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

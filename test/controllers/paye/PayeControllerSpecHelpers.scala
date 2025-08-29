@@ -29,12 +29,12 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  protected val apiResponseGovSpendPreviousTaxYearMinus1: JsValue =
+  protected val apiResponseGovSpendPreviousTaxYear: JsValue =
     Json.parse(
       payAtsData(previousTaxYear)
     )
 
-  protected val apiResponseGovSpendPreviousTaxYear: JsValue =
+  protected val apiResponseGovSpendCurrentTaxYear: JsValue =
     Json.parse(
       payAtsData(currentTaxYear)
     )
