@@ -70,10 +70,7 @@ class MiddleConnectorSpec
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
   implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
 
-  val saResponse: String = loadAndReplace(
-    "/json/ats-data.json",
-    Map("<TAXYEAR>" -> currentTaxYear.toString)
-  )
+  val saResponse: String = atsData(currentTaxYear)
 
   val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
 
@@ -84,10 +81,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace(
-        "/json/gov-spend.json",
-        Map("$nino" -> testNino.nino, "<TAXYEAR>" -> previousTaxYear.toString)
-      )
+      val expectedResponse: String = govSpend(previousTaxYear)
       val url                      = s"/taxs/" + testNino + "/" + currentTaxYear + "/paye-ats-data"
 
       server.stubFor(
@@ -398,13 +392,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace(
-        "/json/paye-ats-data.json",
-        Map(
-          "<TAXYEAR-1>" -> previousTaxYear.toString,
-          "<TAXYEAR-2>" -> currentTaxYear.toString
-        )
-      )
+      val expectedResponse: String = payeAtsData
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(

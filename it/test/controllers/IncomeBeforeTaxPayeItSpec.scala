@@ -31,7 +31,7 @@ import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec}
+import utils.IntegrationSpec
 
 import scala.concurrent.Future
 
@@ -73,10 +73,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
           .get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              FileHelper.loadFile(
-                s"./it/resources/ats-data.json",
-                Map("<TAXYEAR>" -> currentTaxYear.toString)
-              )
+              atsData(currentTaxYear)
             )
           )
       )

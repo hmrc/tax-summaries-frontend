@@ -28,9 +28,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status => getStatus, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status as getStatus, writeableOf_AnyContentAsEmpty}
 import repository.TaxsAgentTokenSessionCacheRepository
-import testUtils.{FileHelper, IntegrationSpec}
+import testUtils.IntegrationSpec
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -145,10 +145,7 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
           get(urlEqualTo(backendUrl))
             .willReturn(
               ok(
-                FileHelper.loadFile(
-                  s"./it/resources/ats-data.json",
-                  Map("<TAXYEAR>" -> currentTaxYear.toString)
-                )
+                atsDataFromIt(currentTaxYear)
               )
             )
         )

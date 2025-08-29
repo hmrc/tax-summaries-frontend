@@ -31,7 +31,7 @@ import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec}
+import utils.IntegrationSpec
 
 import scala.concurrent.Future
 
@@ -52,10 +52,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   override lazy val keystoreData: Map[String, JsValue] = Map(
     s"TAXS_ATS_$currentTaxYear" -> Json.parse(
-      FileHelper.loadFile(
-        s"./it/resources/ats-data.json",
-        Map("<TAXYEAR>" -> currentTaxYear.toString)
-      )
+      atsData(currentTaxYear)
     )
   )
 
@@ -82,10 +79,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              FileHelper.loadFile(
-                s"./it/resources/ats-data.json",
-                Map("<TAXYEAR>" -> currentTaxYear.toString)
-              )
+              atsDataFromIt(currentTaxYear)
             )
           )
       )
@@ -104,10 +98,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              FileHelper.loadFile(
-                s"./it/resources/ats-data.json",
-                Map("<TAXYEAR>" -> currentTaxYear.toString)
-              )
+              atsDataFromIt(currentTaxYear)
             )
           )
       )

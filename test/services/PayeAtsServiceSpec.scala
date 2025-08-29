@@ -40,22 +40,13 @@ import scala.concurrent.Future
 class PayeAtsServiceSpec extends BaseSpec {
   implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = Json.parse(
-    loadAndReplace(
-      "/json/gov-spend.json",
-      Map("<TAXYEAR>" -> currentTaxYear.toString)
-    )
+    govSpend(currentTaxYear)
   )
   val expectedResponseCurrentYear: JsValue  = Json.parse(
-    loadAndReplace("/json/gov-spend.json", Map("<TAXYEAR>" -> currentTaxYear.toString))
+    govSpend(currentTaxYear)
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
-    loadAndReplace(
-      "/json/paye-ats-data.json",
-      Map(
-        "<TAXYEAR-1>" -> previousTaxYear.toString,
-        "<TAXYEAR-2>" -> currentTaxYear.toString
-      )
-    )
+    payeAtsData
   )
   private val currentYearMinus1: Int        = previousTaxYear
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")

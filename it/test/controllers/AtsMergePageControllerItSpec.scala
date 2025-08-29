@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, Globals, IntegrationSpec, LoginPage}
+import utils.{Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
@@ -153,10 +153,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(
             ok(
-              FileHelper.loadFile(
-                "./it/resources/paye-ats-data.json",
-                Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
-              )
+              payeAtsData
             )
           )
       )
@@ -190,10 +187,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(
             ok(
-              FileHelper.loadFile(
-                "./it/resources/paye-ats-data.json",
-                Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
-              )
+              payeAtsData
             )
           )
       )
@@ -243,10 +237,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(
             ok(
-              FileHelper.loadFile(
-                "./it/resources/paye-ats-data.json",
-                Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
-              )
+              payeAtsData
             )
           )
       )
@@ -302,10 +293,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
           get(urlEqualTo(backendUrlPaye))
             .willReturn(
               ok(
-                FileHelper.loadFile(
-                  "./it/resources/paye-ats-data.json",
-                  Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
-                )
+                payeAtsData
               )
             )
         )

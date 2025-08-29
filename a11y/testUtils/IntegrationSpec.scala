@@ -67,10 +67,7 @@ class IntegrationSpec
     Json
       .fromJson[AtsData](
         Json.parse(
-          FileHelper.loadFile(
-            s"./it/resources/ats-data.json",
-            Map("<TAXYEAR>" -> currentTaxYear.toString)
-          )
+          atsDataFromIt(currentTaxYear)
         )
       )
       .get

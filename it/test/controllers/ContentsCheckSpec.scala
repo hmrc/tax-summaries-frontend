@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
-import utils.{FileHelper, IntegrationSpec, JsonUtil}
+import utils.{IntegrationSpec, JsonUtil}
 
 import java.util.UUID
 import scala.concurrent.Future
@@ -221,10 +221,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         .get(urlMatching(s"/taxs/$generatedNino/$currentTaxYear/paye-ats-data"))
         .willReturn(
           ok(
-            FileHelper.loadFile(
-              s"./it/resources/ats-data.json",
-              Map("<TAXYEAR>" -> currentTaxYear.toString)
-            )
+            atsData(currentTaxYear)
           )
         )
     )
@@ -237,10 +234,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       )
         .willReturn(
           ok(
-            FileHelper.loadFile(
-              "./it/resources/paye-ats-data.json",
-              Map("<TAXYEAR-1>" -> previousTaxYear.toString, "<TAXYEAR-2>" -> currentTaxYear.toString)
-            )
+            payeAtsData
           )
         )
     )
