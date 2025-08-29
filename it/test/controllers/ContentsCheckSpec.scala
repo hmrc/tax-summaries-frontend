@@ -234,7 +234,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       )
         .willReturn(
           ok(
-            payeAtsData
+            payeAtsDataForYearRange()
           )
         )
     )

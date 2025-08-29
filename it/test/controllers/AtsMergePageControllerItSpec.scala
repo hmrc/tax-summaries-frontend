@@ -153,7 +153,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(
             ok(
-              payeAtsData
+              payeAtsDataForYearRange()
             )
           )
       )
@@ -187,7 +187,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(
             ok(
-              payeAtsData
+              payeAtsDataForYearRange()
             )
           )
       )
@@ -237,7 +237,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrlPaye))
           .willReturn(
             ok(
-              payeAtsData
+              payeAtsDataForYearRange()
             )
           )
       )
@@ -293,7 +293,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
           get(urlEqualTo(backendUrlPaye))
             .willReturn(
               ok(
-                payeAtsData
+                payeAtsDataForYearRange(noOfYears = 2)
               )
             )
         )

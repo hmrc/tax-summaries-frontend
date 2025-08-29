@@ -24,6 +24,9 @@ trait TaxYearForTesting extends JsonUtil {
   protected val previousTaxYear: Int        = currentTaxYear - 1
   private val maxTaxYearsTobeDisplayed: Int = 4
 
+  def listOfTaxYears(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
+    Range.inclusive(currentTaxYear - (noOfYears - 1), currentTaxYear).toList
+
   protected def generateSaAtsYearList(utr: String): AtsListData =
     AtsListData(
       utr = utr,
@@ -34,24 +37,28 @@ trait TaxYearForTesting extends JsonUtil {
           "surname"  -> "surname"
         )
       ),
-      atsYearList = Some(Range.inclusive(currentTaxYear - (maxTaxYearsTobeDisplayed - 1), currentTaxYear).toList)
+      atsYearList = Some(listOfTaxYears(maxTaxYearsTobeDisplayed))
     )
 
+  // Dummy data for endpoint: /taxs/<UTR>/<TAX-YEAR>/ats-data
   def atsData(taxYear: Int): String = loadAndReplace(
     "/json/ats-data.json",
     Map("<TAXYEAR>" -> taxYear.toString)
   )
 
-  def govSpend(taxYear: Int): String = loadAndReplace(
-    "/json/gov-spend.json",
+  // Dummy data for endpoint: /taxs/<NINO>/<TAX-YEAR>/paye-ats-data
+  def payAtsData(taxYear: Int): String = loadAndReplace(
+    "/json/paye-ats-data.json",
     Map("$nino" -> testNino.nino, "<TAXYEAR>" -> taxYear.toString)
   )
-  def payeAtsData: String            = loadAndReplace(
-    "/json/paye-ats-data.json",
-    Map(
-      "<TAXYEAR-1>" -> previousTaxYear.toString,
-      "<TAXYEAR-2>" -> currentTaxYear.toString
-    )
-  )
 
+  // Dummy data for endpoint: /taxs/<NINO>/<START-TAX-YEAR>/<END-TAX-YEAR>/paye-ats-data
+  def payeAtsDataForYearRange(noOfYears: Int = maxTaxYearsTobeDisplayed): String =
+    "[" + listOfTaxYears(noOfYears).foldLeft("") { (acc, year) =>
+      acc + (if (acc.isEmpty) {
+               ""
+             } else {
+               ","
+             }) + payAtsData(year)
+    } + "]"
 }

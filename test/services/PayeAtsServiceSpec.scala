@@ -40,13 +40,13 @@ import scala.concurrent.Future
 class PayeAtsServiceSpec extends BaseSpec {
   implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = Json.parse(
-    govSpend(currentTaxYear)
+    payAtsData(currentTaxYear)
   )
   val expectedResponseCurrentYear: JsValue  = Json.parse(
-    govSpend(currentTaxYear)
+    payAtsData(currentTaxYear)
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
-    payeAtsData
+    payeAtsDataForYearRange()
   )
   private val currentYearMinus1: Int        = previousTaxYear
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
@@ -154,7 +154,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
 
-      result mustBe Right(List(currentTaxYear, previousTaxYear))
+      result mustBe Right(listOfTaxYears().reverse)
     }
 
     "return a left of response after receiving left from connector" in {
