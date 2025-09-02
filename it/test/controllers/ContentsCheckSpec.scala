@@ -229,7 +229,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
     server.stubFor(
       get(
         urlEqualTo(
-          s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+          s"/taxs/$generatedNino/${appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYearSA}/paye-ats-data"
         )
       )
         .willReturn(

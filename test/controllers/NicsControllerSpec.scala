@@ -109,7 +109,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
       val result = nicsController.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
     }
 
     "hide rows if there is a zero value in the left cell amount field of the view" in {

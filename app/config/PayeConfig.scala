@@ -17,28 +17,31 @@
 package config
 
 import com.google.inject.Inject
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{Config, ConfigException, ConfigFactory}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 
+import scala.util.*
+
 class PayeConfig @Inject() ()(implicit val appConfig: ApplicationConfig) {
-  val payeYear: Int        = appConfig.taxYear
+  val payeYear: Int        = appConfig.taxYearPAYE
   protected val configPath = "paye.conf"
 
-  lazy val scottishTaxBandKeys: List[String] = {
+  private def getKeyForCurrentYear(keyForTaxYear: Int => String) = {
+    val key            = keyForTaxYear(payeYear)
     val config: Config = ConfigFactory.load(configPath)
-    val taxBands       = Option(config.getStringList(s"scottishTaxBandKeys.$payeYear")).map(_.toList)
-    taxBands.getOrElse(throw new RuntimeException(s"No scottish tax band keys specified for $payeYear"))
+    Try(config.getStringList(key).toList) match {
+      case Success(ls)                         => ls
+      case Failure(exception: ConfigException) =>
+        throw new RuntimeException(s"No keys specified for $payeYear for $key")
+      case Failure(exception)                  => throw exception
+    }
   }
 
-  lazy val ukTaxBandKeys: List[String] = {
-    val config: Config = ConfigFactory.load(configPath)
-    val taxBands       = Option(config.getStringList(s"ukTaxBandKeys.$payeYear")).map(_.toList)
-    taxBands.getOrElse(throw new RuntimeException(s"No uk tax band keys specified for $payeYear"))
-  }
+  lazy val scottishTaxBandKeys: List[String] =
+    getKeyForCurrentYear(taxYear => s"scottishTaxBandKeys.$taxYear")
 
-  lazy val adjustmentsKeys: List[String] = {
-    val config: Config = ConfigFactory.load(configPath)
-    val adjustments    = Option(config.getStringList(s"adjustmentsKeys.$payeYear")).map(_.toList)
-    adjustments.getOrElse(throw new RuntimeException(s"No adjust keys specified for $payeYear"))
-  }
+  lazy val ukTaxBandKeys: List[String] = getKeyForCurrentYear(taxYear => s"ukTaxBandKeys.$taxYear")
+
+  lazy val adjustmentsKeys: List[String] = getKeyForCurrentYear(taxYear => s"adjustmentsKeys.$taxYear")
+
 }

@@ -116,7 +116,7 @@ class AtsMergePageService @Inject() (
     request.nino
       .map(
         payeAtsService
-          .getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1, appConfig.taxYear)
+          .getPayeTaxYearData(_, appConfig.taxYearPAYE - appConfig.maxTaxYearsTobeDisplayed + 1, appConfig.taxYearPAYE)
       )
       .getOrElse(Future.successful(Right(List.empty)))
 }

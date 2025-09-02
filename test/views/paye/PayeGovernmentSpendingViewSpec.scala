@@ -116,7 +116,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
     s"link to Scottish government spending page for Scottish users for tax year $currentTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = currentTaxYear
+        override lazy val taxYearSA: Int = currentTaxYear
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig
@@ -138,7 +138,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
     s"link to Scottish government spending page for Scottish users for tax year $previousTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = previousTaxYear
+        override lazy val taxYearSA: Int = previousTaxYear
       }
 
       implicit lazy val appConfig: FakeAppConfig = new FakeAppConfig

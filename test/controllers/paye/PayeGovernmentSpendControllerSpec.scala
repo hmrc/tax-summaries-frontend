@@ -59,7 +59,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
   "Government spend controller" must {
     s"return OK response for $currentTaxYear" in {
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = currentTaxYear
+        override lazy val taxYearSA: Int = currentTaxYear
       }
 
       implicit val appConfig: FakeAppConfig = new FakeAppConfig
@@ -138,7 +138,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {

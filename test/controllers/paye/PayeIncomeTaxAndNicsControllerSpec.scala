@@ -56,7 +56,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
       val fakeAppConfig = new ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = currentTaxYear
+        override lazy val taxYearSA: Int = currentTaxYear
       }
 
       val fakePayeConfig = new PayeConfig()(fakeAppConfig) {}
@@ -75,7 +75,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYearSA)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -84,8 +84,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString
+          (fakeAppConfig.taxYearSA - 1).toString,
+          fakeAppConfig.taxYearSA.toString
         )
       )
     }
@@ -93,13 +93,13 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
     s"return OK response when tax year is set to $previousTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = previousTaxYear
+        override lazy val taxYearSA = previousTaxYear
       }
 
       val fakeAppConfig = new FakeAppConfig
 
       class FakePayeConfig extends PayeConfig {
-        override val payeYear: Int = fakeAppConfig.taxYear
+        override val payeYear: Int = fakeAppConfig.taxYearSA
       }
 
       val fakePayeConfig = new FakePayeConfig
@@ -144,7 +144,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
     }
 
     "redirect user to generic error page when receiving INTERNAL_SERVER_ERROR from service" in {

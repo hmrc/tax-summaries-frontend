@@ -75,7 +75,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
+    when(mockAppConfig.taxYearSA).thenReturn(currentTaxYear)
     ()
   }
 

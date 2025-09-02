@@ -95,7 +95,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(NoATSViewModel(taxYear)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
     }
 
     "show Your Capital Gains section with the right user data" in {

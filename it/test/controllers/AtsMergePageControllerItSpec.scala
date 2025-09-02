@@ -129,18 +129,18 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
   }
 
   private def allPreviousYears: Seq[Int] = {
-    val yearFrom = appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1
-    yearFrom to appConfig.taxYear
+    val yearFrom = appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed + 1
+    yearFrom to appConfig.taxYearSA
   }
 
   "/income-before-tax" must {
 
     lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
 
-    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYearSA}/4/ats-list"
 
     lazy val backendUrlPaye =
-      s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1}/${appConfig.taxYear}/paye-ats-data"
+      s"/taxs/$generatedNino/${appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed + 1}/${appConfig.taxYearSA}/paye-ats-data"
 
     "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
 
@@ -173,10 +173,10 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       lazy val url = s"/annual-tax-summary/paye/main"
 
-      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
+      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYearSA}/4/ats-list"
 
       lazy val backendUrlPaye =
-        s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+        s"/taxs/$generatedNino/${appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYearSA}/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))

@@ -165,7 +165,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               request = FakeRequest()
             )
 
-          val result   = sut.authorisedNoAts(appConfig.taxYear)(request)
+          val result   = sut.authorisedNoAts(appConfig.taxYearSA)(request)
           val document = contentAsString(result)
 
           status(result) mustBe NOT_FOUND
@@ -194,7 +194,7 @@ class ErrorControllerSpec extends ControllerBaseSpec with CurrentTaxYear {
               request = FakeRequest()
             )
 
-          val result   = sut.authorisedNoAts(appConfig.taxYear)(request)
+          val result   = sut.authorisedNoAts(appConfig.taxYearSA)(request)
           val document = contentAsString(result)
 
           status(result) mustBe INTERNAL_SERVER_ERROR

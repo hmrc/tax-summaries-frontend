@@ -36,16 +36,26 @@ class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(i
 
   private def url(path: String) = s"$serviceUrl$path"
 
-  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] = {
+    println("\nCONNECTING TO ATS (SA): " + "/taxs/" + UTR + "/" + taxYear + "/ats-data")
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
+  }
 
   def connectToAtsOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
     hc: HeaderCarrier
   ): Future[AtsResponse] =
     connectToAts(requestedUTR, taxYear)
 
-  def connectToAtsList(UTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+  def connectToAtsList(
+    UTR: SaUtr,
+    endYear: Int,
+    numberOfYears: Int
+  )(implicit hc: HeaderCarrier): Future[AtsResponse] = {
+    println(
+      s"\nCONNECTING TO ATS LIST (SA) with endyear $endYear: " + "/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"
+    )
     httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
+  }
 
   def connectToAtsListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
     hc: HeaderCarrier
@@ -56,6 +66,7 @@ class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(i
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")
+    println("\nCONNECTING TO ATS (PAYE): " + fullUrl)
     http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
@@ -63,6 +74,7 @@ class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(i
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")
+    println("\nCONNECTING TO ATS LIST (PAYE): " + fullUrl)
     http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 

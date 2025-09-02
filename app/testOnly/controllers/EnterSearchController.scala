@@ -43,7 +43,7 @@ class EnterSearchController @Inject() (
     with Logging {
 
   private def taxYears: Seq[SelectItem] = {
-    val currentTaxYear  = applicationConfig.taxYear
+    val currentTaxYear  = applicationConfig.taxYearSA
     val earliestTaxYear = currentTaxYear - 3
     (earliestTaxYear to currentTaxYear).map { year =>
       SelectItem(

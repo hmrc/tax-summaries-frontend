@@ -70,7 +70,7 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear).url)
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url)
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {

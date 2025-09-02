@@ -52,18 +52,18 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
     "return OK response" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = currentTaxYear
+        override lazy val taxYearSA = currentTaxYear
       }
 
       val fakeAppConfig = new FakeAppConfig
 
       val fakeAuthenticatedRequest =
-        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYear).url)
+        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYearSA)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -72,8 +72,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.tax_free_amount.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString
+          (fakeAppConfig.taxYearSA - 1).toString,
+          fakeAppConfig.taxYearSA.toString
         )
       )
     }
@@ -81,18 +81,18 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
     s"return OK response for $previousTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = previousTaxYear
+        override lazy val taxYearSA = previousTaxYear
       }
 
       val fakeAppConfig = new FakeAppConfig
 
       val fakeAuthenticatedRequest =
-        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYear).url)
+        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(fakeAppConfig.taxYearSA)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -101,8 +101,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.tax_free_amount.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYear - 1).toString,
-          fakeAppConfig.taxYear.toString
+          (fakeAppConfig.taxYearSA - 1).toString,
+          fakeAppConfig.taxYearSA.toString
         )
       )
     }
@@ -118,7 +118,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {

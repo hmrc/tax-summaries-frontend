@@ -84,11 +84,11 @@ class AtsListService @Inject() (
         case _: Uar            =>
           middleConnector.connectToAtsListOnBehalfOf(
             requestedUTR,
-            appConfig.taxYear,
+            appConfig.taxYearSA,
             appConfig.maxTaxYearsTobeDisplayed
           )
         case individual: SaUtr =>
-          middleConnector.connectToAtsList(individual, appConfig.taxYear, appConfig.maxTaxYearsTobeDisplayed)
+          middleConnector.connectToAtsList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
       }
     }
 

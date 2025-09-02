@@ -92,7 +92,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     ).body
 
   override def beforeEach(): Unit = {
-    when(mockAppConfig.taxYear).thenReturn(taxYear)
+    when(mockAppConfig.taxYearSA).thenReturn(taxYear)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
     ()
   }
@@ -120,7 +120,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     s"show generic no ats message and radiobuttons if there are years missing from paye and sa data from ${currentTaxYear - 2}" in {
 
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYear)
 
       val result =
         view(
@@ -143,7 +143,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         view(
           AtsMergePageViewModel(
             AtsList("", "", "", List.empty),
-            (mockAppConfig.taxYear - 5 to mockAppConfig.taxYear).toList,
+            (mockAppConfig.taxYearSA - 5 to mockAppConfig.taxYearSA).toList,
             mockAppConfig,
             ConfidenceLevel.L200
           ),
