@@ -316,7 +316,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         result.map(status) mustBe Some(INTERNAL_SERVER_ERROR)
       }
     }
-    
+
   }
 
   "Ats merge page when sa and paye tax years are the same" must {

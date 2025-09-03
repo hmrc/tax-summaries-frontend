@@ -59,20 +59,15 @@ case class AtsMergePageViewModel(
       (saDataYearChoiceList ::: payeTaxYearChoiceList ::: noAtsYearChoiceList).sortBy(_.year)(Ordering.Int.reverse)
     }
   }
-//      List(AtsYearChoice(NoATS,2024), AtsYearChoice(NoATS,2023), AtsYearChoice(NoATS,2022), AtsYearChoice(NoATS,2021), AtsYearChoice(NoATS,2020), AtsYearChoice(NoATS,2019),
-//      AtsYearChoice(NoATS,2018), AtsYearChoice(NoATS,2017), AtsYearChoice(NoATS,2016))
-
-  println("\nA1:" + saData.yearList)
-  println("\nA2:" + payeTaxYearList)
-  println("\nA3:" + showNoAtsYearList)
 
   val showContinueButton: Boolean = showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
   val name: String                = s"${saData.forename} ${saData.surname}"
-  val titleMsg: String            = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
+
+  val titleMsg: String    = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
   else {
     "merge.page.ats.select_tax_year.title"
   }
-  val subtitleMsg: String         = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
+  val subtitleMsg: String = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
   else {
     "merge.page.ats.select_tax_year.title"
   }

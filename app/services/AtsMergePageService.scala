@@ -60,14 +60,11 @@ A2
        */
       case payeResponse                                                =>
         getSaYearListIfEnabled.map { saResponse =>
-          println("\nSARE" + saResponse.map(_.yearList))
           (saResponse, payeResponse) match {
             case (Left(atsResponse), _)                                                => Left(atsResponse)
             case (Right(saData), _) if taxYearUtil.isYearListComplete(saData.yearList) =>
-              println("\nA1")
               Right(AtsMergePageViewModel(saData, Nil, appConfig, request.confidenceLevel))
             case (Right(_), Left(atsResponse))                                         =>
-              println("\nA2")
               Left(atsResponse)
             case (Right(saData), Right(payeData))                                      =>
               Right(AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel))

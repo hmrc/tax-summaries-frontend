@@ -93,6 +93,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
   override def beforeEach(): Unit = {
     when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+    when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
     ()
   }
@@ -330,11 +331,13 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     }
 
-    "show paye uplift header message if user only has paye data and needs uplift" in {
+    "show paye uplift header message if user only has paye data and sa/ paye tax years are the same and needs uplift" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
       val result = view(
         AtsMergePageViewModel(
-          AtsList("", "", "", List.empty),
-          List(
+          saData = AtsList("", "", "", List.empty),
+          payeTaxYearList = List(
             currentTaxYearSA - 5,
             currentTaxYearSA - 4,
             currentTaxYearSA - 3,
@@ -342,12 +345,12 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             currentTaxYearSA - 1,
             currentTaxYearSA
           ),
-          mockAppConfig,
-          ConfidenceLevel.L50
+          appConfig = mockAppConfig,
+          confidenceLevel = ConfidenceLevel.L50
         ),
         atsForms.atsYearFormMapping
       )
-      result must include(messages("merge.page.paye.ivuplift.header"))
+      result.contains(messages("merge.page.paye.ivuplift.header")) mustBe true
     }
 
     "not show account menu for agent" in {
