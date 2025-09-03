@@ -239,12 +239,12 @@ class TaxYearUtilSpec extends BaseSpec {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", s"?taxYear=$taxYear")
+        FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
       )
 
       val result = taxYearUtil.extractTaxYear
 
-      result mustBe Right(taxYear)
+      result mustBe Right(currentTaxYearSA)
 
     }
 

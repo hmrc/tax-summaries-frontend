@@ -50,7 +50,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
-    when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+    when(mockSummaryService.getSummaryData(meq(currentTaxYearSA))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
     ()
   }
@@ -76,7 +76,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+      when(mockSummaryService.getSummaryData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -88,8 +88,8 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
-      when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
-        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
+      when(mockSummaryService.getSummaryData(meq(currentTaxYearSA))(any(), meq(request)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
 
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
@@ -108,7 +108,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       document.getElementById("tax-services-link").text mustBe "Your taxes and public spending"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear Self Assessment Annual Tax Summary"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA Self Assessment Annual Tax Summary"
       document
         .getElementById("index-page-description")
         .text mustBe "This summarises your personal tax and National Insurance, and how they are spent by government."
@@ -121,17 +121,17 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
     "display the right years" in {
 
       val model = baseModel.copy(
-        year = taxYear
+        year = currentTaxYearSA
       )
 
-      when(mockSummaryService.getSummaryData(meq(taxYear))(any(), meq(request)))
+      when(mockSummaryService.getSummaryData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model))
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
 
       status(result) mustBe 200
-      document.select("header[data-component='ats_page_heading']").text must include(taxYear.toString)
+      document.select("header[data-component='ats_page_heading']").text must include(currentTaxYearSA.toString)
     }
 
   }

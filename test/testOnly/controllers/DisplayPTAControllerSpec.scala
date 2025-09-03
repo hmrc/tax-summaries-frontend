@@ -56,7 +56,7 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
 
     Json.toJson(
       AtsData(
-        taxYear = taxYear,
+        taxYear = currentTaxYearSA,
         utr = Some(utr),
         income_tax = fieldInSection("Field1", BigDecimal(1).setScale(2), "calculusField1"),
         summary_data = fieldInSection("Field2", BigDecimal(2).setScale(2), "calculusField2"),
@@ -81,7 +81,7 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
 
   "onPageLoad" must {
     "render the page" in {
-      val result                                                        = controller.onPageLoad(taxYear, utr)(request)
+      val result                                                        = controller.onPageLoad(currentTaxYearSA, utr)(request)
       status(result) mustBe OK
       val document                                                      = contentAsString(result)
       val expSections: Seq[(String, Seq[(String, BigDecimal, String)])] = Seq(

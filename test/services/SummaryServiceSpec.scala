@@ -55,7 +55,7 @@ class SummaryServiceSpec extends BaseSpec {
     isAgentActive = false,
     confidenceLevel = ConfidenceLevel.L50,
     credentials = fakeCredentials,
-    request = FakeRequest("GET", s"?taxYear=$taxYear")
+    request = FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
   )
 
   def sut: SummaryService = new SummaryService(mockAtsService)
@@ -69,7 +69,7 @@ class SummaryServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getSummaryData(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(sut.getSummaryData(currentTaxYearSA)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }

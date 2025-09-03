@@ -37,7 +37,7 @@ trait TestConstants extends BaseSpec {
   def genRandNumString(length: Int): String = Random.nextInt(9).toString * length
 
   val testIncomeTaxAndNI: IncomeTaxAndNI = IncomeTaxAndNI(
-    year = taxYear,
+    year = currentTaxYearSA,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -90,7 +90,7 @@ trait TestConstants extends BaseSpec {
   )
 
   val capitalGains: CapitalGains = CapitalGains(
-    taxYear = taxYear,
+    taxYear = currentTaxYearSA,
     utr = testUtr,
     taxableGains = Amount(20000, "GBP"),
     lessTaxFreeAmount = -Amount(10600, "GBP"),
@@ -121,7 +121,7 @@ trait TestConstants extends BaseSpec {
 
   val govSpendTotalTuple: (String, SpendData) = ("GovSpendTotal", SpendData(Amount(2898.13, "GBP"), 100.0))
 
-  val fakeTaxYear: Int = taxYear - 3
+  val fakeTaxYear: Int = currentTaxYearSA - 3
 
   val fakeGovernmentSpend: GovernmentSpend =
     GovernmentSpend(

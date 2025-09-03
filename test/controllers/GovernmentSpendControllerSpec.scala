@@ -68,7 +68,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any()))
       .thenReturn(Future.successful(model))
     ()
   }
@@ -94,8 +94,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.title must include(
         Messages("ats.treasury_spending.html.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }
@@ -109,7 +109,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
+        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -122,7 +122,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
+        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYearSA)))
       val result = sut.show(request)
@@ -204,7 +204,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
+        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(model2))
 

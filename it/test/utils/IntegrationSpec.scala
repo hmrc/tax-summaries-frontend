@@ -43,19 +43,19 @@ class IntegrationSpec
     with MockitoSugar
     with TaxYearForTesting {
 
-  val generatedNino: Nino = new Generator().nextNino
+  protected val generatedNino: Nino = new Generator().nextNino
 
-  val generatedSaUtr: AtedUtr = new Generator().nextAtedUtr
+  protected val generatedSaUtr: AtedUtr = new Generator().nextAtedUtr
 
-  lazy val ec: ExecutionContext = inject[ExecutionContext]
+  protected lazy implicit val ec: ExecutionContext = inject[ExecutionContext]
 
-  lazy val messages: Messages = inject[Messages]
+  protected lazy val messages: Messages = inject[Messages]
 
-  lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  protected lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val keystoreData: Map[String, JsValue] = Map.empty
+  protected lazy val keystoreData: Map[String, JsValue] = Map.empty
 
-  implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
+  protected implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
 
   override def beforeEach(): Unit = {
 

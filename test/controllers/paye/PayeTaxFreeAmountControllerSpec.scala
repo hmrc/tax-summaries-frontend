@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
-    routes.PayeTaxFreeAmountController.show(taxYear).url
+    routes.PayeTaxFreeAmountController.show(currentTaxYearSA).url
   )
   lazy val payeGenericErrorView: PayeGenericErrorView                                     = inject[PayeGenericErrorView]
 
@@ -115,7 +115,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
@@ -129,7 +129,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()

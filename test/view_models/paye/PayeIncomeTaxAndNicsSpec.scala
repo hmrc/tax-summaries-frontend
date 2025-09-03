@@ -33,7 +33,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       val incomeTaxData = payeAtsTestData.totalIncomeTaxAndSummaryData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List(
           TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -120,7 +120,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List(
           TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -158,7 +158,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with only non-zero tax band rates" in {
       val incomeTaxData = PayeAtsData(
-        taxYear,
+        currentTaxYearSA,
         Some(
           DataHolder(
             Some(
@@ -218,7 +218,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List(
           TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
           TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%"))
@@ -249,7 +249,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with an empty tax bands list with no payments in any tax band" in {
       val incomeTaxData = PayeAtsData(
-        taxYear,
+        currentTaxYearSA,
         Some(
           DataHolder(
             Some(
@@ -309,7 +309,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List.empty,
         List.empty,
         Amount(19433, "GBP"),
@@ -334,7 +334,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with empty tax bands with no income and tax data" in {
       val incomeTaxData = PayeAtsData(
-        taxYear,
+        currentTaxYearSA,
         None,
         None,
         None,
@@ -343,7 +343,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List.empty,
         List.empty,
         Amount.empty,
@@ -368,7 +368,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with empty tax bands when no amounts are present" in {
       val incomeTaxData = PayeAtsData(
-        taxYear,
+        currentTaxYearSA,
         Some(DataHolder(Some(Map()), Some(Map()), None)),
         None,
         None,
@@ -377,7 +377,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List.empty,
         List.empty,
         Amount.empty,
@@ -404,7 +404,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
       val incomeData = payeAtsTestData.incomeData
 
       val expectedViewModel = PayeIncomeTaxAndNics(
-        taxYear,
+        currentTaxYearSA,
         List.empty,
         List.empty,
         Amount.empty,

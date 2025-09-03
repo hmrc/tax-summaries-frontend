@@ -56,7 +56,7 @@ class IncomeServiceSpec extends BaseSpec {
     isAgentActive = false,
     confidenceLevel = ConfidenceLevel.L50,
     credentials = fakeCredentials,
-    request = FakeRequest("GET", s"?taxYear=$taxYear")
+    request = FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
   )
 
   def sut: IncomeService = new IncomeService(mockAtsService)
@@ -70,7 +70,7 @@ class IncomeServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getIncomeData(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(sut.getIncomeData(currentTaxYearSA)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
 

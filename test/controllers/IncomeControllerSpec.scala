@@ -67,7 +67,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+    when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
     ()
   }
@@ -79,7 +79,11 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
-        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+        Messages("ats.income_before_tax.title") + Messages(
+          "generic.to_from",
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
+        )
       )
     }
 
@@ -91,7 +95,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -103,7 +107,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYearSA)))
 
       val result = sut.show(request)
@@ -153,7 +157,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model))
 
       val result = sut.show(request)

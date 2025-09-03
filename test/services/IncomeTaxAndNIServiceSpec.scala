@@ -40,7 +40,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(taxYear)
+    yearList = List(currentTaxYearSA)
   )
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -68,7 +68,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         credentials = fakeCredentials,
         request = FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
       )
-      val result       = Await.result(sut.getIncomeAndNIData(taxYear)(hc, request), 1500 millis)
+      val result       = Await.result(sut.getIncomeAndNIData(currentTaxYearSA)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }

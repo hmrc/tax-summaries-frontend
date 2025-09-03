@@ -68,9 +68,12 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService getGovernmentSpendData" must {
 
     "return a GenericViewModel when atsYearListService returns Success(taxYear)" in {
-      when(mockAtsService.createFutureModel(meq(taxYear), any[AtsData => Future[GenericViewModel]]())(any(), any()))
+      when(
+        mockAtsService
+          .createFutureModel(meq(currentTaxYearSA), any[AtsData => Future[GenericViewModel]]())(any(), any())
+      )
         .thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getGovernmentSpendData(taxYear)(hc, request, ec), 1500 millis)
+      val result = Await.result(sut.getGovernmentSpendData(currentTaxYearSA)(hc, request, ec), 1500 millis)
       result mustEqual genericViewModel
     }
   }

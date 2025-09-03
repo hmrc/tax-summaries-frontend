@@ -46,8 +46,6 @@ trait BaseSpec
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  val taxYear: Int = currentTaxYearSA
-
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]

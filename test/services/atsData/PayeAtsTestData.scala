@@ -24,7 +24,7 @@ import view_models.{Amount, Rate}
 class PayeAtsTestData extends BaseSpec {
 
   val yourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     Some(
       DataHolder(
@@ -71,7 +71,7 @@ class PayeAtsTestData extends BaseSpec {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        taxYear,
+        currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
@@ -80,7 +80,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val malformedYourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     Some(
       DataHolder(
@@ -126,7 +126,7 @@ class PayeAtsTestData extends BaseSpec {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        taxYear,
+        currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
@@ -135,7 +135,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val missingYourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     None,
     None,
@@ -154,7 +154,7 @@ class PayeAtsTestData extends BaseSpec {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        taxYear,
+        currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
@@ -163,7 +163,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     Some(
       DataHolder(
@@ -209,7 +209,7 @@ class PayeAtsTestData extends BaseSpec {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        taxYear,
+        currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
@@ -218,7 +218,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     Some(
       DataHolder(
@@ -263,7 +263,7 @@ class PayeAtsTestData extends BaseSpec {
     ),
     Some(
       GovernmentSpendingOutputWrapper(
-        taxYear,
+        currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
@@ -272,7 +272,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val totalIncomeTaxAndSummaryData: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     Some(
       DataHolder(
         Some(
@@ -337,7 +337,7 @@ class PayeAtsTestData extends BaseSpec {
 
   val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes =
     PayeYourIncomeAndTaxes(
-      taxYear,
+      currentTaxYearSA,
       Amount(1000, "GBP"),
       Amount(800, "GBP"),
       Amount(200, "GBP"),
@@ -346,7 +346,7 @@ class PayeAtsTestData extends BaseSpec {
     )
 
   val payeGovernmentSpendViewModel: PayeGovernmentSpend = PayeGovernmentSpend(
-    taxYear,
+    currentTaxYearSA,
     List(
       SpendRow("Welfare", SpendData(Amount(451, "GBP"), 23.5)),
       SpendRow("Health", SpendData(Amount(388, "GBP"), 20.2)),
@@ -369,7 +369,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeIncomeTaxAndNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
-    taxYear,
+    currentTaxYearSA,
     List(
       TaxBand("scottish_starter_rate", Amount(2000, "GBP"), Amount(380, "GBP"), Rate("19%")),
       TaxBand("scottish_basic_rate", Amount(10150, "GBP"), Amount(2030, "GBP"), Rate("20%")),
@@ -398,7 +398,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeUKIncomeTaxAndNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
-    taxYear,
+    currentTaxYearSA,
     List.empty,
     List(
       TaxBand("ordinary_rate", Amount(19430, "GBP"), Amount(4080, "GBP"), Rate("19%")),
@@ -422,7 +422,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeEmployeeContributionNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
-    taxYear,
+    currentTaxYearSA,
     List.empty,
     List.empty,
     Amount.empty,
@@ -436,7 +436,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeEmptyNicsViewModel: PayeIncomeTaxAndNics = PayeIncomeTaxAndNics(
-    taxYear,
+    currentTaxYearSA,
     List.empty,
     List.empty,
     Amount.empty,
@@ -450,7 +450,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val payeYourTaxableIncomeViewModel: PayeYourTaxableIncome = PayeYourTaxableIncome(
-    taxYear,
+    currentTaxYearSA,
     List(
       IncomeTaxRow("self_employment_income", Amount(450, "GBP")),
       IncomeTaxRow("income_from_employment", Amount(550, "GBP")),
@@ -464,7 +464,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val incomeData: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     None,
     Some(
@@ -487,7 +487,7 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val incomeDataWithoutScottishIncomeTax: PayeAtsData = PayeAtsData(
-    taxYear,
+    currentTaxYearSA,
     None,
     None,
     Some(

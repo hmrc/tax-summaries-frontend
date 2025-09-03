@@ -43,7 +43,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
 
   lazy val atsMergePageView: AtsMergePageView = inject[AtsMergePageView]
@@ -57,7 +57,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
 
   val requestWithCL200: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
@@ -68,7 +68,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     isAgentActive = false,
     ConfidenceLevel.L200,
     fakeCredentials,
-    FakeRequest("Get", s"?taxYear=$taxYear")
+    FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
 
   def view(
@@ -92,7 +92,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     ).body
 
   override def beforeEach(): Unit = {
-    when(mockAppConfig.taxYearSA).thenReturn(taxYear)
+    when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
     ()
   }
@@ -125,7 +125,12 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result =
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2)),
+            AtsList(
+              "",
+              "",
+              "",
+              List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 3, currentTaxYearSA - 2)
+            ),
             List.empty,
             mockAppConfig,
             ConfidenceLevel.L200
@@ -134,11 +139,13 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
 
       result must include(messages("merge.page.no.ats.summary.text"))
-      result must include(messages(s"${taxYear - 2} to ${taxYear - 1} for a general Annual Tax Summary"))
-      result must include(messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary"))
+      result must include(
+        messages(s"${currentTaxYearSA - 2} to ${currentTaxYearSA - 1} for a general Annual Tax Summary")
+      )
+      result must include(messages(s"${currentTaxYearSA - 1} to $currentTaxYearSA for a general Annual Tax Summary"))
     }
 
-    s"not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from ${taxYear - 2}" in {
+    s"not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from ${currentTaxYearSA - 2}" in {
       val result =
         view(
           AtsMergePageViewModel(
@@ -151,15 +158,28 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
 
       result must not include messages("merge.page.no.ats.summary.text")
-      result must not include messages(s"${taxYear - 2} to ${taxYear - 1} for a general Annual Tax Summary")
-      result must not include messages(s"${taxYear - 1} to $taxYear for a general Annual Tax Summary")
+      result must not include messages(
+        s"${currentTaxYearSA - 2} to ${currentTaxYearSA - 1} for a general Annual Tax Summary"
+      )
+      result must not include messages(s"${currentTaxYearSA - 1} to $currentTaxYearSA for a general Annual Tax Summary")
     }
 
-    s"not show no ats before ${taxYear - 2} message if there are no years missing from paye and sa data before ${taxYear - 2}" in {
+    s"not show no ats before ${currentTaxYearSA - 2} message if there are no years missing from paye and sa data before ${currentTaxYearSA - 2}" in {
       val result =
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1)),
+            AtsList(
+              "",
+              "",
+              "",
+              List(
+                currentTaxYearSA - 5,
+                currentTaxYearSA - 4,
+                currentTaxYearSA - 3,
+                currentTaxYearSA - 2,
+                currentTaxYearSA - 1
+              )
+            ),
             List.empty,
             mockAppConfig,
             ConfidenceLevel.L200
@@ -174,18 +194,25 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = view(
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
-          List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear),
+          List(
+            currentTaxYearSA - 5,
+            currentTaxYearSA - 4,
+            currentTaxYearSA - 3,
+            currentTaxYearSA - 2,
+            currentTaxYearSA - 1,
+            currentTaxYearSA
+          ),
           mockAppConfig,
           ConfidenceLevel.L200
         ),
         atsForms.atsYearFormMapping
       )
 
-      result must include(s"${taxYear - 1} to $taxYear for PAYE")
-      result must include(s"${taxYear - 2} to ${taxYear - 1} for PAYE")
-      result must include(s"${taxYear - 3} to ${taxYear - 2} for PAYE")
-      result must include(s"${taxYear - 4} to ${taxYear - 3} for PAYE")
-      result must include(s"${taxYear - 5} to ${taxYear - 4} for PAYE")
+      result must include(s"${currentTaxYearSA - 1} to $currentTaxYearSA for PAYE")
+      result must include(s"${currentTaxYearSA - 2} to ${currentTaxYearSA - 1} for PAYE")
+      result must include(s"${currentTaxYearSA - 3} to ${currentTaxYearSA - 2} for PAYE")
+      result must include(s"${currentTaxYearSA - 4} to ${currentTaxYearSA - 3} for PAYE")
+      result must include(s"${currentTaxYearSA - 5} to ${currentTaxYearSA - 4} for PAYE")
       result mustNot include(messages("merge.page.paye.unavailable"))
 
     }
@@ -203,7 +230,12 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     "show showIvUpliftLink if paye data is present and CL is lower than 200" in {
       val result =
         view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear - 5), mockAppConfig, ConfidenceLevel.L50),
+          AtsMergePageViewModel(
+            AtsList("", "", "", List.empty),
+            List(currentTaxYearSA - 5),
+            mockAppConfig,
+            ConfidenceLevel.L50
+          ),
           atsForms.atsYearFormMapping
         )
 
@@ -225,7 +257,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         view(
           AtsMergePageViewModel(
             AtsList("", "", "", List.empty),
-            List(taxYear - 5),
+            List(currentTaxYearSA - 5),
             mockAppConfig,
             ConfidenceLevel.L200
           ),
@@ -242,13 +274,25 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         payeAvailable = false
       )
       result must include(messages("merge.page.paye.unavailable"))
-      result mustNot include(s"${taxYear - 1} to $taxYear for PAYE")
+      result mustNot include(s"${currentTaxYearSA - 1} to $currentTaxYearSA for PAYE")
     }
 
     "show radiobuttons if there is sa data and not show sa shuttered message" in {
       val result = view(
         AtsMergePageViewModel(
-          AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
+          AtsList(
+            "",
+            "",
+            "",
+            List(
+              currentTaxYearSA - 5,
+              currentTaxYearSA - 4,
+              currentTaxYearSA - 3,
+              currentTaxYearSA - 2,
+              currentTaxYearSA - 1,
+              currentTaxYearSA
+            )
+          ),
           List.empty,
           mockAppConfig,
           ConfidenceLevel.L200
@@ -256,11 +300,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         atsForms.atsYearFormMapping
       )
 
-      result must include(s"${taxYear - 1} to $taxYear for Self Assessment")
-      result must include(s"${taxYear - 2} to ${taxYear - 1} for Self Assessment")
-      result must include(s"${taxYear - 3} to ${taxYear - 2} for Self Assessment")
-      result must include(s"${taxYear - 4} to ${taxYear - 3} for Self Assessment")
-      result must include(s"${taxYear - 5} to ${taxYear - 4} for Self Assessment")
+      result must include(s"${currentTaxYearSA - 1} to $currentTaxYearSA for Self Assessment")
+      result must include(s"${currentTaxYearSA - 2} to ${currentTaxYearSA - 1} for Self Assessment")
+      result must include(s"${currentTaxYearSA - 3} to ${currentTaxYearSA - 2} for Self Assessment")
+      result must include(s"${currentTaxYearSA - 4} to ${currentTaxYearSA - 3} for Self Assessment")
+      result must include(s"${currentTaxYearSA - 5} to ${currentTaxYearSA - 4} for Self Assessment")
       result mustNot include(messages("merge.page.sa.unavailable"))
 
     }
@@ -282,7 +326,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         saAvailable = false
       )
       result must include(messages("merge.page.sa.unavailable"))
-      result mustNot include(s"${taxYear - 1} to $taxYear for Self Assessment")
+      result mustNot include(s"${currentTaxYearSA - 1} to $currentTaxYearSA for Self Assessment")
 
     }
 
@@ -290,7 +334,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = view(
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
-          List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear),
+          List(
+            currentTaxYearSA - 5,
+            currentTaxYearSA - 4,
+            currentTaxYearSA - 3,
+            currentTaxYearSA - 2,
+            currentTaxYearSA - 1,
+            currentTaxYearSA
+          ),
           mockAppConfig,
           ConfidenceLevel.L50
         ),
@@ -304,7 +355,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = agentView(
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
-          List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear),
+          List(
+            currentTaxYearSA - 5,
+            currentTaxYearSA - 4,
+            currentTaxYearSA - 3,
+            currentTaxYearSA - 2,
+            currentTaxYearSA - 1,
+            currentTaxYearSA
+          ),
           mockAppConfig,
           ConfidenceLevel.L50
         ),
@@ -318,7 +376,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = view(
         AtsMergePageViewModel(
           AtsList("", "", "", List.empty),
-          List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear),
+          List(
+            currentTaxYearSA - 5,
+            currentTaxYearSA - 4,
+            currentTaxYearSA - 3,
+            currentTaxYearSA - 2,
+            currentTaxYearSA - 1,
+            currentTaxYearSA
+          ),
           mockAppConfig,
           ConfidenceLevel.L50
         ),
@@ -330,7 +395,19 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
+            AtsList(
+              "",
+              "",
+              "",
+              List(
+                currentTaxYearSA - 5,
+                currentTaxYearSA - 4,
+                currentTaxYearSA - 3,
+                currentTaxYearSA - 2,
+                currentTaxYearSA - 1,
+                currentTaxYearSA
+              )
+            ),
             List.empty,
             mockAppConfig,
             ConfidenceLevel.L200
@@ -338,15 +415,20 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           atsForms.atsYearFormMapping.withError("error", "broken")
         )
       )
-      assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-SA").isEmpty)
+      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-SA").isEmpty)
     }
 
     "have an error link to the first radio button if there is an error with PAYE data" in {
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2)),
-            List(taxYear, taxYear - 1),
+            AtsList(
+              "",
+              "",
+              "",
+              List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 3, currentTaxYearSA - 2)
+            ),
+            List(currentTaxYearSA, currentTaxYearSA - 1),
             mockAppConfig,
             ConfidenceLevel.L200
           ),
@@ -354,14 +436,19 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
       )
 
-      assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-PAYE").isEmpty)
+      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-PAYE").isEmpty)
     }
 
     "have an error link to the first radio button if there is an error no ATS" in {
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2)),
+            AtsList(
+              "",
+              "",
+              "",
+              List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 3, currentTaxYearSA - 2)
+            ),
             List.empty,
             mockAppConfig,
             ConfidenceLevel.L200
@@ -370,37 +457,54 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
       )
 
-      assert(!result.getElementsByAttributeValue("href", s"#year-$taxYear-NoATS").isEmpty)
+      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-NoATS").isEmpty)
     }
 
     "have the correct radio option checked when form is filled with SA value" in {
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 3, taxYear - 2, taxYear - 1, taxYear)),
+            AtsList(
+              "",
+              "",
+              "",
+              List(
+                currentTaxYearSA - 5,
+                currentTaxYearSA - 4,
+                currentTaxYearSA - 3,
+                currentTaxYearSA - 2,
+                currentTaxYearSA - 1,
+                currentTaxYearSA
+              )
+            ),
             List.empty,
             mockAppConfig,
             ConfidenceLevel.L200
           ),
-          atsForms.atsYearFormMapping.fill(AtsYearChoice(SA, taxYear))
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(SA, currentTaxYearSA))
         )
       )
-      assert(result.getElementById(s"year-$taxYear-SA").hasAttr("checked"))
+      assert(result.getElementById(s"year-$currentTaxYearSA-SA").hasAttr("checked"))
     }
 
     "have the correct radio option checked when form is filled with PAYE value" in {
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List(taxYear - 5, taxYear - 4, taxYear - 2, taxYear - 1)),
-            List(taxYear - 3, taxYear),
+            AtsList(
+              "",
+              "",
+              "",
+              List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 2, currentTaxYearSA - 1)
+            ),
+            List(currentTaxYearSA - 3, currentTaxYearSA),
             mockAppConfig,
             ConfidenceLevel.L200
           ),
-          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, taxYear - 3))
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, currentTaxYearSA - 3))
         )
       )
-      assert(result.getElementById(s"year-${taxYear - 3}-PAYE").hasAttr("checked"))
+      assert(result.getElementById(s"year-${currentTaxYearSA - 3}-PAYE").hasAttr("checked"))
     }
   }
 }

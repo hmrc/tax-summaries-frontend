@@ -110,7 +110,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
       document
         .select("h1")
-        .text mustBe s"How your tax was spent for the tax year 6 April ${taxYear - 1} to 5 April $taxYear"
+        .text mustBe s"How your tax was spent for the tax year 6 April ${currentTaxYearSA - 1} to 5 April $currentTaxYearSA"
     }
 
     s"link to Scottish government spending page for Scottish users for tax year $currentTaxYearSA" in {

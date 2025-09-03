@@ -48,7 +48,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val noATSViewModel: NoATSViewModel = NoATSViewModel(taxYear)
+  val noATSViewModel: NoATSViewModel = NoATSViewModel(currentTaxYearSA)
 
   lazy val taxsController: TaxsController = mock[TaxsController]
 
@@ -118,8 +118,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.title must include(
         Messages("ats.tax_free_amount.html.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }

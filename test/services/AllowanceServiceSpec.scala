@@ -39,10 +39,10 @@ class AllowanceServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(taxYear)
+    yearList = List(currentTaxYearSA)
   )
 
-  val noAtsaViewModel: NoATSViewModel = NoATSViewModel(taxYear)
+  val noAtsaViewModel: NoATSViewModel = NoATSViewModel(currentTaxYearSA)
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -54,7 +54,7 @@ class AllowanceServiceSpec extends BaseSpec {
     isAgentActive = false,
     confidenceLevel = ConfidenceLevel.L50,
     credentials = fakeCredentials,
-    request = FakeRequest("GET", s"?taxYear=$taxYear")
+    request = FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
   )
 
   val mockAtsService: AtsService = mock[AtsService]
@@ -70,7 +70,7 @@ class AllowanceServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getAllowances(taxYear)(request, hc), 1500 millis)
+      val result = Await.result(sut.getAllowances(currentTaxYearSA)(request, hc), 1500 millis)
       result mustEqual genericViewModel
     }
   }

@@ -46,12 +46,12 @@ class AtsFormsSpec extends BaseSpec {
   "atsYearFormMapping" must {
     "map correctly for a valid year option" in {
       when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
-      val result = atsForms.atsYearFormMapping.bind(Map("year" -> s"SA-$taxYear"))
-      result.value mustBe Some(AtsYearChoice(SA, taxYear))
+      val result = atsForms.atsYearFormMapping.bind(Map("year" -> s"SA-$currentTaxYearSA"))
+      result.value mustBe Some(AtsYearChoice(SA, currentTaxYearSA))
     }
     "return invalid response for an invalid year option (invalid int)" in {
       when(mockTaxYearUtil.isValidTaxYear(any())).thenReturn(true)
-      val result = atsForms.atsYearFormMapping.bind(Map("year" -> s"SA-$taxYear)"))
+      val result = atsForms.atsYearFormMapping.bind(Map("year" -> s"SA-$currentTaxYearSA)"))
       result.errors mustBe Seq(FormError("year", List("ats.select_tax_year.required"), List()))
     }
   }
