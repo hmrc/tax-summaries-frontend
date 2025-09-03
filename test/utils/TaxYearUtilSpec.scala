@@ -21,13 +21,12 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.MissingTaxYear
 import org.mockito.Mockito.when
-
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants._
+import utils.TestConstants.*
 
 class TaxYearUtilSpec extends BaseSpec {
   private val mockAppConfig = mock[ApplicationConfig]

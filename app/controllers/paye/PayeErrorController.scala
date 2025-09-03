@@ -30,13 +30,11 @@ class PayeErrorController @Inject() (
   mcc: MessagesControllerComponents,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView
-) /*(implicit appConfig: ApplicationConfig)*/
-    extends FrontendController(mcc)
+) extends FrontendController(mcc)
     with I18nSupport
     with CurrentTaxYear
     with Logging {
 
-  // val payeYear: Int = appConfig.taxYearPAYE
   override def now: () => LocalDate = () => LocalDate.now()
 
   def notAuthorised: Action[AnyContent] = Action { implicit request: Request[_] =>
