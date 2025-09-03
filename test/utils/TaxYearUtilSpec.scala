@@ -138,12 +138,8 @@ class TaxYearUtilSpec extends BaseSpec {
   }
 
   def validCompleteTaxYear(currentTaxYearSA: Int, currentTaxYearPAYE: Int): Unit = {
-    def allYears(currentTaxYearSA: Int, currentTaxYearPAYE: Int): Seq[Int] = {
-      val maxYear = Seq(currentTaxYearSA, currentTaxYearPAYE).max
-      val minYear = Seq(currentTaxYearSA, currentTaxYearPAYE).min - 3
-      minYear to maxYear
-    }
-    val fullYearList                                                       = allYears(currentTaxYearSA, currentTaxYearPAYE)
+
+    val fullYearList = allYears(currentTaxYearSA, currentTaxYearPAYE)
     "return false when list empty" in {
       when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
       when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
