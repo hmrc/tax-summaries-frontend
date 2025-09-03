@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
-import services.atsData.AtsTestData.currentTaxYear
+import services.atsData.AtsTestData.currentTaxYearSA
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
@@ -66,7 +66,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         isAgentActive = false,
         confidenceLevel = ConfidenceLevel.L50,
         credentials = fakeCredentials,
-        request = FakeRequest("GET", s"?taxYear=$currentTaxYear")
+        request = FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
       )
       val result       = Await.result(sut.getIncomeAndNIData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -120,7 +120,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       )
 
       result mustEqual IncomeTaxAndNI(
-        year = currentTaxYear,
+        year = currentTaxYearSA,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
         totalIncomeTaxAndNics = Amount(200, "GBP"),
@@ -178,7 +178,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       result mustEqual IncomeTaxAndNI(
-        year = currentTaxYear,
+        year = currentTaxYearSA,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
         totalIncomeTaxAndNics = Amount(200, "GBP"),
@@ -236,7 +236,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       result mustEqual IncomeTaxAndNI(
-        year = currentTaxYear,
+        year = currentTaxYearSA,
         utr = "1111111111",
         employeeNicAmount = Amount.empty,
         totalIncomeTaxAndNics = Amount.empty,

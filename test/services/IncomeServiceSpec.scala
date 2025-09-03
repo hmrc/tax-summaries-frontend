@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
-import services.atsData.AtsTestData.currentTaxYear
+import services.atsData.AtsTestData.currentTaxYearSA
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,7 +42,7 @@ class IncomeServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(currentTaxYear)
+    yearList = List(currentTaxYearSA)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
@@ -83,7 +83,7 @@ class IncomeServiceSpec extends BaseSpec {
       val incomeData: AtsData     = AtsTestData.incomeData
       val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
-        currentTaxYear,
+        currentTaxYearSA,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

@@ -73,7 +73,7 @@ class IntegrationSpec
          |        "lastName": "Smith"
          |    },
          |    "loginTimes": {
-         |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
+         |        "currentLogin": "$currentTaxYearSA-06-07T10:52:02.594Z",
          |        "previousLogin": null
          |    },
          |    "optionalCredentials": {

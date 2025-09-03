@@ -40,14 +40,14 @@ class PayeGovernmentSpendSpec
     "Transform PayeAtsData to view model" when {
 
       val govSpendingData: PayeAtsData = PayeAtsData(
-        currentTaxYear,
+        currentTaxYearSA,
         None,
         None,
         None,
         None,
         Some(
           GovernmentSpendingOutputWrapper(
-            currentTaxYear,
+            currentTaxYearSA,
             Some(
               Map(
                 "UkContributionToEuBudget" -> SpendData(Amount(6.00, "GBP"), 0.60),
@@ -74,7 +74,7 @@ class PayeGovernmentSpendSpec
       )
 
       val payeGovernmentSpendViewModel: PayeGovernmentSpend = PayeGovernmentSpend(
-        currentTaxYear,
+        currentTaxYearSA,
         List(
           SpendRow("Health", SpendData(Amount(219, "GBP"), 21.9)),
           SpendRow("Welfare", SpendData(Amount(196, "GBP"), 19.6)),
@@ -151,7 +151,7 @@ class PayeGovernmentSpendSpec
       }
     }
 
-    s"reorder categories for tax year $currentTaxYear" in {
+    s"reorder categories for tax year $currentTaxYearSA" in {
       val expectedCategoryOrderFor: List[String]    =
         List(
           "Welfare",
@@ -172,7 +172,7 @@ class PayeGovernmentSpendSpec
         )
       val expectedPercentageOrder: List[BigDecimal] =
         List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
-      val payeGovSpendingData                       = payeAtsTestData.govSpendingDataForTaxYear(currentTaxYear)
+      val payeGovSpendingData                       = payeAtsTestData.govSpendingDataForTaxYear(currentTaxYearSA)
       val result                                    = PayeGovernmentSpend(payeGovSpendingData, expectedCategoryOrderFor)
 
       result.orderedSpendRows.map(_.spendData.percentage) mustBe expectedPercentageOrder

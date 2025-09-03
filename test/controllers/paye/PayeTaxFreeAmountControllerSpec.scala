@@ -52,7 +52,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
     "return OK response" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA = currentTaxYear
+        override lazy val taxYearSA = currentTaxYearSA
       }
 
       val fakeAppConfig = new FakeAppConfig

@@ -27,8 +27,11 @@ class TaxYearUtil @Inject() (
 
   private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
 
-  def isValidTaxYear(taxYear: Int): Boolean =
-    !(taxYear > appConfig.taxYearSA || taxYear <= (appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed))
+  def isValidTaxYear(taxYear: Int): Boolean = {
+    val maxYear = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).max
+    val minYear = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).min - appConfig.maxTaxYearsTobeDisplayed
+    !(taxYear > maxYear || taxYear <= minYear)
+  }
 
   def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] =
     request.getQueryString("taxYear") match {
@@ -39,8 +42,10 @@ class TaxYearUtil @Inject() (
     }
 
   def isYearListComplete(years: Seq[Int]): Boolean = {
-    val yearFrom      = appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed
-    val yearTo        = appConfig.taxYearSA
+    val maxYear       = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).max
+    val minYear       = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).min
+    val yearFrom      = minYear - appConfig.maxTaxYearsTobeDisplayed
+    val yearTo        = maxYear
     val yrs           = years.distinct.sorted
     val expTotalYears = yearTo - yearFrom
     yrs.size == expTotalYears && yrs.headOption.contains(yearFrom + 1) && yrs.lastOption.contains(yearTo)

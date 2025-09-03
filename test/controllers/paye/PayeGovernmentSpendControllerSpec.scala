@@ -57,9 +57,9 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
     )
 
   "Government spend controller" must {
-    s"return OK response for $currentTaxYear" in {
+    s"return OK response for $currentTaxYearSA" in {
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA: Int = currentTaxYear
+        override lazy val taxYearSA: Int = currentTaxYearSA
       }
 
       implicit val appConfig: FakeAppConfig = new FakeAppConfig
@@ -87,15 +87,15 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(currentTaxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (currentTaxYear - 1).toString,
-          currentTaxYear.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }

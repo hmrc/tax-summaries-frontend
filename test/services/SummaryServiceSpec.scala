@@ -23,7 +23,7 @@ import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
-import services.atsData.AtsTestData.currentTaxYear
+import services.atsData.AtsTestData.currentTaxYearSA
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,7 +41,7 @@ class SummaryServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(currentTaxYear)
+    yearList = List(currentTaxYearSA)
   )
 
   val mockAtsService: AtsService = mock[AtsService]
@@ -81,7 +81,7 @@ class SummaryServiceSpec extends BaseSpec {
       val result  = sut.summaryConverter(atsData)
 
       result mustBe Summary(
-        currentTaxYear,
+        currentTaxYearSA,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),
@@ -107,7 +107,7 @@ class SummaryServiceSpec extends BaseSpec {
       val result  = sut.summaryConverter(atsData)
 
       result mustBe Summary(
-        currentTaxYear,
+        currentTaxYearSA,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

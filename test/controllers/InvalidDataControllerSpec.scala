@@ -31,12 +31,12 @@ import scala.concurrent.Future
 class InvalidDataControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
   val dataPath: String                  = s"""{
-                                            |  "taxYear":$currentTaxYear,
+                                            |  "taxYear":$currentTaxYearSA,
                                             |  "errors":{"error":"AtsParsingError"}
                                             |}
                                             |""".stripMargin
   val dataPathNoAts: String             = s"""{
-                                            | "taxYear":$currentTaxYear,
+                                            | "taxYear":$currentTaxYearSA,
                                             | "errors":{"error": "NoAtsError"}
                                             |}""".stripMargin
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]

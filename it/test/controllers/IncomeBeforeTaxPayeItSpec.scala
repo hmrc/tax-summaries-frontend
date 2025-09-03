@@ -62,9 +62,9 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
 
   "/paye/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$currentTaxYear"
+    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$currentTaxYearSA"
 
-    lazy val backendUrl = s"/taxs/$generatedNino/$currentTaxYear/paye-ats-data"
+    lazy val backendUrl = s"/taxs/$generatedNino/$currentTaxYearSA/paye-ats-data"
 
     "return an OK response" in {
 
@@ -73,7 +73,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
           .get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              atsData(currentTaxYear)
+              atsData(currentTaxYearSA)
             )
           )
       )

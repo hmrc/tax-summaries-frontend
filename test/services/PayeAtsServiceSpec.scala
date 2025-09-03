@@ -40,10 +40,10 @@ import scala.concurrent.Future
 class PayeAtsServiceSpec extends BaseSpec {
   implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = Json.parse(
-    payAtsData(currentTaxYear)
+    payAtsData(currentTaxYearSA)
   )
   val expectedResponseCurrentYear: JsValue  = Json.parse(
-    payAtsData(currentTaxYear)
+    payAtsData(currentTaxYearSA)
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
     payeAtsDataForYearRange()
@@ -143,7 +143,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return a successful response as list of tax years" in {
       when(
         mockMiddleConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
@@ -152,7 +152,7 @@ class PayeAtsServiceSpec extends BaseSpec {
         )
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYearSA)(hc).futureValue
 
       result mustBe Right(listOfTaxYears().reverse)
     }
@@ -161,14 +161,14 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       when(
         mockMiddleConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("body", Status.NOT_FOUND))))
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYearSA)(hc).futureValue
 
       result.value mustBe Nil
     }
@@ -177,14 +177,14 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       when(
         mockMiddleConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("Bad Request", BAD_REQUEST))))
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYearSA)(hc).futureValue
 
       result.left.value mustBe an[AtsBadRequestResponse]
     }
@@ -192,14 +192,14 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return an empty list after receiving NOT_FOUND from connector" in {
       when(
         mockMiddleConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("Not Found", NOT_FOUND))))
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYearSA)(hc).futureValue
 
       result mustBe Right(List.empty)
     }

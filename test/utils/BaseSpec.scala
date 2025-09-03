@@ -46,7 +46,7 @@ trait BaseSpec
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  val taxYear: Int = currentTaxYear
+  val taxYear: Int = currentTaxYearSA
 
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
