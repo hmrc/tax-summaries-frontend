@@ -100,7 +100,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    s"return OK response for $previousTaxYear" in {
+    s"return OK response for ${currentTaxYearSA - 1}" in {
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
@@ -114,15 +114,15 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(previousTaxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearSA - 1)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (previousTaxYear - 1).toString,
-          previousTaxYear.toString
+          (currentTaxYearSA - 2).toString,
+          (currentTaxYearSA - 1).toString
         )
       )
     }

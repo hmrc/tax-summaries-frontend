@@ -78,10 +78,10 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    s"return OK response for $previousTaxYear" in {
+    s"return OK response for ${currentTaxYearSA - 1}" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA = previousTaxYear
+        override lazy val taxYearSA = currentTaxYearSA - 1
       }
 
       val fakeAppConfig = new FakeAppConfig

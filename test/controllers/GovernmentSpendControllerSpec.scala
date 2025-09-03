@@ -170,13 +170,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYearSA Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA Your taxes and public spending"
     }
 
-    s"have correct data for $previousTaxYear" in {
+    s"have correct data for ${currentTaxYearSA - 1}" in {
 
       val model2 = GovernmentSpend(
-        taxYear = previousTaxYear,
+        taxYear = currentTaxYearSA - 1,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),

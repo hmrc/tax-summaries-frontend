@@ -150,13 +150,13 @@ class AtsListServiceSpec extends BaseSpec {
       }
 
     "Return a ats list without CY-1 year data" in {
-      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != previousTaxYear)))
+      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != (currentTaxYearSA - 1))))
       when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
         AtsSuccessResponseWithPayload[AtsListData](dataMissingYear)
       )
 
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(previousTaxYear) mustBe false
+        result.value.atsYearList.get.contains(currentTaxYearSA - 1) mustBe false
       }
 
     }

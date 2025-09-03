@@ -91,9 +91,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    s"return OK response when set to $previousTaxYear" in {
+    s"return OK response when set to ${currentTaxYearSA - 1}" in {
 
-      val taxYear = previousTaxYear
+      val taxYear = currentTaxYearSA - 1
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))

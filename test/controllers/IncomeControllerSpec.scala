@@ -137,7 +137,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         .text mustBe "Your total income"
       document
         .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
-        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYearSA"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA"
     }
 
     "have zero-value fields hidden in the view" in {

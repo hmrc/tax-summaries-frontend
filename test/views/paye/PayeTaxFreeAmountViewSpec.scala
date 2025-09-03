@@ -69,7 +69,7 @@ class PayeTaxFreeAmountViewSpec extends ViewSpecBase with TestConstants with Vie
 
       document
         .select("h1")
-        .text mustBe s"Tax-free income 6 April $previousTaxYear to 5 April $currentTaxYearSA"
+        .text mustBe s"Tax-free income 6 April ${currentTaxYearSA - 1} to 5 April $currentTaxYearSA"
     }
 
     "display the table of adjustments when there is more than one row" in {

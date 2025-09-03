@@ -22,13 +22,16 @@ import utils.TestConstants.testNino
 trait TaxYearForTesting extends JsonUtil {
   // The latest tax year (end year) available in ATS. This will be either last
   // tax year or last tax year - 1, depending on time of year.
-  protected val currentTaxYearSA: Int       = 2024
-  protected val currentTaxYearPAYE: Int     = 2024
-  protected val previousTaxYear: Int        = currentTaxYearSA - 1
+  protected val currentTaxYearSA: Int   = 2024
+  protected val currentTaxYearPAYE: Int = 2024
+
   private val maxTaxYearsTobeDisplayed: Int = 4
 
-  protected def listOfTaxYears(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
+  protected def listOfTaxYearsSA(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
     Range.inclusive(currentTaxYearSA - (noOfYears - 1), currentTaxYearSA).toList
+
+  protected def listOfTaxYearsPAYE(noOfYears: Int = maxTaxYearsTobeDisplayed): List[Int] =
+    Range.inclusive(currentTaxYearPAYE - (noOfYears - 1), currentTaxYearPAYE).toList
 
   // Dummy data for endpoint: /taxs/<UTR>/<TAX-YEAR>/<NUMBER-OF-YEARS>/ats-list
   protected def atsList(utr: String): AtsListData =
@@ -41,7 +44,7 @@ trait TaxYearForTesting extends JsonUtil {
           "surname"  -> "surname"
         )
       ),
-      atsYearList = Some(listOfTaxYears(maxTaxYearsTobeDisplayed))
+      atsYearList = Some(listOfTaxYearsSA(maxTaxYearsTobeDisplayed))
     )
 
   // Dummy data for endpoint: /taxs/<UTR>/<TAX-YEAR>/ats-data
@@ -58,7 +61,7 @@ trait TaxYearForTesting extends JsonUtil {
 
   // Dummy data for endpoint: /taxs/<NINO>/<START-TAX-YEAR>/<END-TAX-YEAR>/paye-ats-data
   protected def payeAtsDataForYearRange(noOfYears: Int = maxTaxYearsTobeDisplayed): String =
-    "[" + listOfTaxYears(noOfYears).foldLeft("") { (acc, year) =>
+    "[" + listOfTaxYearsPAYE(noOfYears).foldLeft("") { (acc, year) =>
       acc + (if (acc.isEmpty) {
                ""
              } else {

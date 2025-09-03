@@ -28,7 +28,7 @@ class TaxYearFormattingSpec extends AnyWordSpec with Matchers with TaxYearForTes
   "TaxYearFormatting" must {
 
     "Calculate valid start year" in {
-      instance.taxYearFrom mustBe s"$previousTaxYear"
+      instance.taxYearFrom mustBe s"${currentTaxYearSA - 1}"
     }
 
     "Calculate valid end year" in {

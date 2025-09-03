@@ -48,7 +48,7 @@ class PayeAtsServiceSpec extends BaseSpec {
   val expectedResponseMultipleYear: JsValue = Json.parse(
     payeAtsDataForYearRange()
   )
-  private val currentYearMinus1: Int        = previousTaxYear
+  private val currentYearMinus1: Int        = currentTaxYearSA - 1
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
@@ -154,7 +154,7 @@ class PayeAtsServiceSpec extends BaseSpec {
       val result =
         sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYearSA)(hc).futureValue
 
-      result mustBe Right(listOfTaxYears().reverse)
+      result mustBe Right(listOfTaxYearsPAYE().reverse)
     }
 
     "return a left of response after receiving left from connector" in {

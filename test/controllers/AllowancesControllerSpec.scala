@@ -91,7 +91,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYearSA Your tax-free income"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA Your tax-free income"
     }
 
     "have zero-value fields hidden in the view" in {
