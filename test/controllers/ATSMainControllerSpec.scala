@@ -94,7 +94,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
 
     }
 

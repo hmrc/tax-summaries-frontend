@@ -143,10 +143,10 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockAllowanceService.getAllowances(any())(any(), any()))
-        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYearSA)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
   }
 }

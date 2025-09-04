@@ -131,10 +131,10 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
       lazy val url = s"/annual-tax-summary/paye/main"
 
-      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYearSA}/4/ats-list"
+      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/$currentTaxYearSA/4/ats-list"
 
       lazy val backendUrlPaye =
-        s"/taxs/$generatedNino/${appConfig.taxYearSA - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYearSA}/paye-ats-data"
+        s"/taxs/$generatedNino/${currentTaxYearSA - appConfig.maxTaxYearsTobeDisplayed}/$currentTaxYearSA/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))

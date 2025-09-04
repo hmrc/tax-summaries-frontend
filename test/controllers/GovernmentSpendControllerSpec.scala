@@ -124,10 +124,10 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       when(
         mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
-        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYearSA)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYearSA).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     s"have correct data for $currentTaxYearSA" in {
