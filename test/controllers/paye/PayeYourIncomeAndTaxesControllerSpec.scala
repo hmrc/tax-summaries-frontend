@@ -56,7 +56,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -65,8 +65,8 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.summary.title") + Messages(
           "generic.to_from",
-          (currentTaxYearSA - 1).toString,
-          currentTaxYearSA.toString
+          (currentTaxYearPAYE - 1).toString,
+          currentTaxYearPAYE.toString
         )
       )
     }
@@ -79,7 +79,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Right(payeAtsTestData.malformedYourIncomeAndTaxesData)))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
     }
@@ -92,7 +92,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Right(payeAtsTestData.missingYourIncomeAndTaxesData)))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
 
@@ -107,10 +107,10 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in {
@@ -121,7 +121,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()
@@ -135,7 +135,7 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()

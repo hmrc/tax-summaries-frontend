@@ -56,7 +56,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
       val fakeAppConfig = new ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA: Int = currentTaxYearSA
+        override lazy val taxYearSA: Int = currentTaxYearPAYE
       }
 
       val fakePayeConfig = new PayeConfig()(fakeAppConfig) {}
@@ -90,10 +90,10 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    s"return OK response when tax year is set to ${currentTaxYearSA - 1}" in {
+    s"return OK response when tax year is set to ${currentTaxYearPAYE - 1}" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA = currentTaxYearSA - 1
+        override lazy val taxYearSA = currentTaxYearPAYE - 1
       }
 
       val fakeAppConfig = new FakeAppConfig
@@ -141,10 +141,10 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
     }
 
     "redirect user to generic error page when receiving INTERNAL_SERVER_ERROR from service" in {
@@ -155,7 +155,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()
@@ -169,7 +169,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsBadRequestResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()

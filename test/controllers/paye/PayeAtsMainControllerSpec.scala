@@ -53,10 +53,10 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       )
         .thenReturn(Future(Right(mock[PayeAtsData])))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe mainView(PayeAtsMain(currentTaxYearSA)).toString
+      contentAsString(result) mustBe mainView(PayeAtsMain(currentTaxYearPAYE)).toString
     }
 
     "redirect user to noAts page when receiving NOT_FOUND from service" in {
@@ -67,10 +67,10 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       )
         .thenReturn(Future(Left(AtsNotFoundResponse("Not found"))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url)
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url)
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
@@ -80,10 +80,10 @@ class PayeAtsMainControllerSpec extends PayeControllerSpecHelpers with JsonUtil 
       )
         .thenReturn(Future(Left(AtsErrorResponse("Error occurred"))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
-      contentAsString(result) mustBe payeGenericErrorView().toString()
+      contentAsString(result) mustBe payeGenericErrorView().toString
     }
   }
 }

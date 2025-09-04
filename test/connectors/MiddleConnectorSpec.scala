@@ -81,8 +81,8 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val expectedResponse: String = payAtsData(currentTaxYearSA)
-      val url                      = s"/taxs/" + testNino + "/" + currentTaxYearSA + "/paye-ats-data"
+      val expectedResponse: String = payAtsData(currentTaxYearPAYE)
+      val url                      = s"/taxs/" + testNino + "/" + currentTaxYearPAYE + "/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -92,7 +92,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentTaxYearSA).futureValue.value
+      val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -100,7 +100,7 @@ class MiddleConnectorSpec
     "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
-          val url = s"/taxs/" + testNino + "/" + currentTaxYearSA + "/paye-ats-data"
+          val url = s"/taxs/" + testNino + "/" + currentTaxYearPAYE + "/paye-ats-data"
 
           server.stubFor(
             get(urlEqualTo(url))
@@ -110,7 +110,7 @@ class MiddleConnectorSpec
               )
           )
 
-          val result = sut.connectToPayeATS(testNino, currentTaxYearSA).futureValue.left.value
+          val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.left.value
 
           result.statusCode mustBe status
         }
@@ -126,7 +126,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentTaxYearSA).futureValue.left.value
+      val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
@@ -388,7 +388,7 @@ class MiddleConnectorSpec
 
   "connectToPayeATSMultipleYears" must {
 
-    val url = s"/taxs/$testNino/${currentTaxYearSA - 1}/$currentTaxYearSA/paye-ats-data"
+    val url = s"/taxs/$testNino/${currentTaxYearPAYE - 1}/$currentTaxYearPAYE/paye-ats-data"
 
     "return successful response" in {
 
@@ -403,7 +403,7 @@ class MiddleConnectorSpec
       )
 
       val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearSA - 1, currentTaxYearSA).futureValue.value
+        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -420,7 +420,7 @@ class MiddleConnectorSpec
           )
 
           val result =
-            sut.connectToPayeATSMultipleYears(testNino, currentTaxYearSA - 1, currentTaxYearSA).futureValue
+            sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue
           result.left.value.statusCode mustBe status
         }
       }
@@ -436,7 +436,7 @@ class MiddleConnectorSpec
       )
 
       val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearSA - 1, currentTaxYearSA).futureValue.left.value
+        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }

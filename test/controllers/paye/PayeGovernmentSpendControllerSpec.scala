@@ -57,9 +57,9 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
     )
 
   "Government spend controller" must {
-    s"return OK response for $currentTaxYearSA" in {
+    s"return OK response for $currentTaxYearPAYE" in {
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA: Int = currentTaxYearSA
+        override lazy val taxYearSA: Int = currentTaxYearPAYE
       }
 
       implicit val appConfig: FakeAppConfig = new FakeAppConfig
@@ -87,20 +87,20 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (currentTaxYearSA - 1).toString,
-          currentTaxYearSA.toString
+          (currentTaxYearPAYE - 1).toString,
+          currentTaxYearPAYE.toString
         )
       )
     }
 
-    s"return OK response for ${currentTaxYearSA - 1}" in {
+    s"return OK response for ${currentTaxYearPAYE - 1}" in {
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
@@ -114,15 +114,15 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(currentTaxYearSA - 1)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE - 1)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (currentTaxYearSA - 2).toString,
-          (currentTaxYearSA - 1).toString
+          (currentTaxYearPAYE - 2).toString,
+          (currentTaxYearPAYE - 1).toString
         )
       )
     }
@@ -135,10 +135,10 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
@@ -149,7 +149,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
-      val result = sut.show(currentTaxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()

@@ -24,7 +24,6 @@ import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.PertaxAuthService
@@ -49,12 +48,6 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
     )
     .build()
-
-  override lazy val keystoreData: Map[String, JsValue] = Map(
-    s"TAXS_ATS_$currentTaxYearSA" -> Json.parse(
-      atsData(currentTaxYearSA)
-    )
-  )
 
   override def beforeEach(): Unit = {
     server.resetAll()

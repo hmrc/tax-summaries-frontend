@@ -31,12 +31,12 @@ trait PayeControllerSpecHelpers extends ControllerBaseSpec with JsonUtil {
 
   protected val apiResponseGovSpendPreviousTaxYear: JsValue =
     Json.parse(
-      payAtsData(currentTaxYearSA - 1)
+      payAtsData(currentTaxYearPAYE - 1)
     )
 
   protected val apiResponseGovSpendCurrentTaxYear: JsValue =
     Json.parse(
-      payAtsData(currentTaxYearSA)
+      payAtsData(currentTaxYearPAYE)
     )
 
   protected def buildPayeRequest(endpoint: String): PayeAuthenticatedRequest[AnyContentAsEmpty.type] =

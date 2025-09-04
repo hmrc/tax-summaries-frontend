@@ -25,7 +25,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
-import play.api.libs.json.JsValue
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -52,8 +51,6 @@ class IntegrationSpec
   protected lazy val messages: Messages = inject[Messages]
 
   protected lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-
-  protected lazy val keystoreData: Map[String, JsValue] = Map.empty
 
   protected implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
 
