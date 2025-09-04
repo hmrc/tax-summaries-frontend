@@ -150,19 +150,21 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result =
         view(
           AtsMergePageViewModel(
-            AtsList("", "", "", List.empty),
-            (mockAppConfig.taxYearSA - 5 to mockAppConfig.taxYearSA).toList,
-            mockAppConfig,
-            ConfidenceLevel.L200
+            saData = AtsList("", "", "", List.empty),
+            payeTaxYearList = (mockAppConfig.taxYearPAYE - 5 to mockAppConfig.taxYearPAYE).toList,
+            appConfig = mockAppConfig,
+            confidenceLevel = ConfidenceLevel.L200
           ),
           atsForms.atsYearFormMapping
         )
 
       result must not include messages("merge.page.no.ats.summary.text")
-      result must not include messages(
-        s"${currentTaxYearSA - 2} to ${currentTaxYearSA - 1} for a general Annual Tax Summary"
-      )
-      result must not include messages(s"${currentTaxYearSA - 1} to $currentTaxYearSA for a general Annual Tax Summary")
+      allYears(currentTaxYearSA, currentTaxYearPAYE).foreach { year =>
+        result must not include messages(
+          s"${year - 1} to $year for a general Annual Tax Summary"
+        )
+      }
+
     }
 
     s"not show no ats before ${currentTaxYearSA - 2} message if there are no years missing from paye and sa data before ${currentTaxYearSA - 2}" in {
@@ -394,11 +396,13 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       )
       result must include("hmrc-account-menu")
     }
-    "have an error link to the first radio button if there is an error with SA data" in {
+    "have an error link to the first radio button if there is an error with SA data and paye/ sa tax years are the same" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList(
+            saData = AtsList(
               "",
               "",
               "",
@@ -411,13 +415,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
                 currentTaxYearSA
               )
             ),
-            List.empty,
-            mockAppConfig,
-            ConfidenceLevel.L200
+            payeTaxYearList = List.empty,
+            appConfig = mockAppConfig,
+            confidenceLevel = ConfidenceLevel.L200
           ),
           atsForms.atsYearFormMapping.withError("error", "broken")
         )
       )
+
       assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-SA").isEmpty)
     }
 
@@ -425,42 +430,42 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList(
+            saData = AtsList(
               "",
               "",
               "",
               List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 3, currentTaxYearSA - 2)
             ),
-            List(currentTaxYearSA, currentTaxYearSA - 1),
-            mockAppConfig,
-            ConfidenceLevel.L200
+            payeTaxYearList = List(currentTaxYearPAYE, currentTaxYearPAYE - 1),
+            appConfig = mockAppConfig,
+            confidenceLevel = ConfidenceLevel.L200
           ),
           atsForms.atsYearFormMapping.withError("error", "broken")
         )
       )
 
-      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-PAYE").isEmpty)
+      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearPAYE-PAYE").isEmpty)
     }
 
     "have an error link to the first radio button if there is an error no ATS" in {
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList(
+            saData = AtsList(
               "",
               "",
               "",
               List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 3, currentTaxYearSA - 2)
             ),
-            List.empty,
-            mockAppConfig,
-            ConfidenceLevel.L200
+            payeTaxYearList = List.empty,
+            appConfig = mockAppConfig,
+            confidenceLevel = ConfidenceLevel.L200
           ),
           atsForms.atsYearFormMapping.withError("error", "broken")
         )
       )
 
-      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-NoATS").isEmpty)
+      assert(!result.getElementsByAttributeValue("href", s"#year-$latestAvailableYear-NoATS").isEmpty)
     }
 
     "have the correct radio option checked when form is filled with SA value" in {
@@ -494,20 +499,20 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
-            AtsList(
+            saData = AtsList(
               "",
               "",
               "",
               List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 2, currentTaxYearSA - 1)
             ),
-            List(currentTaxYearSA - 3, currentTaxYearSA),
-            mockAppConfig,
-            ConfidenceLevel.L200
+            payeTaxYearList = List(currentTaxYearPAYE - 3, currentTaxYearPAYE),
+            appConfig = mockAppConfig,
+            confidenceLevel = ConfidenceLevel.L200
           ),
-          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, currentTaxYearSA - 3))
+          atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, currentTaxYearPAYE - 3))
         )
       )
-      assert(result.getElementById(s"year-${currentTaxYearSA - 3}-PAYE").hasAttr("checked"))
+      assert(result.getElementById(s"year-${currentTaxYearPAYE - 3}-PAYE").hasAttr("checked"))
     }
   }
 }

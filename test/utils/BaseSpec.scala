@@ -62,4 +62,6 @@ trait BaseSpec
     minYear to maxYear
   }
 
+  protected val latestAvailableYear: Int = allYears(currentTaxYearSA, currentTaxYearPAYE).max
+
 }
