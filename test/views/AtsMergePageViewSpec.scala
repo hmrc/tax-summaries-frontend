@@ -443,7 +443,6 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     }
     "SA and PAYE tax years are the same" must {
-
       s"not show generic no ats message nor radiobuttons if user only has paye data & it's for all years" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
@@ -488,19 +487,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         val result = Jsoup.parse(
           view(
             AtsMergePageViewModel(
-              saData = AtsList(
-                "",
-                "",
-                "",
-                List(
-                  currentTaxYearSA - 5,
-                  currentTaxYearSA - 4,
-                  currentTaxYearSA - 3,
-                  currentTaxYearSA - 2,
-                  currentTaxYearSA - 1,
-                  currentTaxYearSA
-                )
-              ),
+              saData = AtsList("", "", "", (currentTaxYearSA - 5 to currentTaxYearSA).toList),
               payeTaxYearList = List.empty,
               appConfig = mockAppConfig,
               confidenceLevel = ConfidenceLevel.L200
