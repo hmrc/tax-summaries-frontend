@@ -134,7 +134,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       lazy val backendUrlSa = s"/taxs/$generatedSaUtr/$currentTaxYearSA/4/ats-list"
 
       lazy val backendUrlPaye =
-        s"/taxs/$generatedNino/${currentTaxYearSA - appConfig.maxTaxYearsTobeDisplayed}/$currentTaxYearSA/paye-ats-data"
+        s"/taxs/$generatedNino/${currentTaxYearPAYE - appConfig.maxTaxYearsTobeDisplayed}/$currentTaxYearSA/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
@@ -320,7 +320,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
   }
 
   "Ats merge page when sa and paye tax years are the same" must {
-    val currentTaxYearPAYE: Int = currentTaxYearSA
+    val currentTaxYearPAYE: Int = currentTaxYearSA // Make both tax years the same
 
     lazy val url          = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
     lazy val backendUrlSa = s"/taxs/$generatedSaUtr/$currentTaxYearSA/4/ats-list"

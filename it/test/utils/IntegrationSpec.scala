@@ -57,36 +57,35 @@ class IntegrationSpec
 
   protected implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
 
-  override def beforeEach(): Unit = {
+  protected val authResponse: String =
+    s"""
+       |{
+       |    "confidenceLevel": 200,
+       |    "nino": "$generatedNino",
+       |    "saUtr": "$generatedSaUtr",
+       |    "name": {
+       |        "name": "John",
+       |        "lastName": "Smith"
+       |    },
+       |    "loginTimes": {
+       |        "currentLogin": "$currentTaxYearSA-06-07T10:52:02.594Z",
+       |        "previousLogin": null
+       |    },
+       |    "optionalCredentials": {
+       |        "providerId": "4911434741952698",
+       |        "providerType": "GovernmentGateway"
+       |    },
+       |    "authProviderId": {
+       |        "ggCredId": "xyz"
+       |    },
+       |    "externalId": "testExternalId",
+       |    "allEnrolments": []
+       |}
+       |""".stripMargin
 
+  override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockFeatureFlagService)
-
-    val authResponse =
-      s"""
-         |{
-         |    "confidenceLevel": 200,
-         |    "nino": "$generatedNino",
-         |    "saUtr": "$generatedSaUtr",
-         |    "name": {
-         |        "name": "John",
-         |        "lastName": "Smith"
-         |    },
-         |    "loginTimes": {
-         |        "currentLogin": "$currentTaxYearSA-06-07T10:52:02.594Z",
-         |        "previousLogin": null
-         |    },
-         |    "optionalCredentials": {
-         |        "providerId": "4911434741952698",
-         |        "providerType": "GovernmentGateway"
-         |    },
-         |    "authProviderId": {
-         |        "ggCredId": "xyz"
-         |    },
-         |    "externalId": "testExternalId",
-         |    "allEnrolments": []
-         |}
-         |""".stripMargin
 
     server.stubFor(
       post(urlEqualTo("/auth/authorise"))
