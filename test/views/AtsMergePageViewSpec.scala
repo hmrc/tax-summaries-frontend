@@ -444,7 +444,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     }
     "SA and PAYE tax years are the same" must {
 
-      s"not show generic no ats message nor radiobuttons if user only has paye data for all years" in {
+      s"not show generic no ats message nor radiobuttons if user only has paye data & it's for all years" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
         val result =
@@ -467,7 +467,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
       }
 
-      "show paye uplift header message if user only has paye data for all years and needs uplift" in {
+      "show paye uplift header message if user only has paye data & it's for all years and needs uplift" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
         val result = view(
