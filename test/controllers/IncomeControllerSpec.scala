@@ -32,10 +32,9 @@ import scala.concurrent.Future
 
 class IncomeControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
-  override val taxYear    = 2023
 
   val baseModel: IncomeBeforeTax = IncomeBeforeTax(
-    taxYear = 2023,
+    taxYear = currentTaxYear,
     utr = testUtr,
     getSelfEmployTotal = Amount(1100, "GBP"),
     getIncomeFromEmployment = Amount(10500, "GBP"),
@@ -138,7 +137,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         .text mustBe "Your total income"
       document
         .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
-        .text mustBe s"Tax year: April 6 2022 to April 5 2023"
+        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear"
     }
 
     "have zero-value fields hidden in the view" in {

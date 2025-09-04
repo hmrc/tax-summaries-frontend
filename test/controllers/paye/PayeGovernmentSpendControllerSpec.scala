@@ -57,13 +57,9 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
     )
 
   "Government spend controller" must {
-
-    "return OK response for 2021" in {
-
-      val fakeTaxYear: Int = 2021
-
+    s"return OK response for $currentTaxYear" in {
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear: Int = fakeTaxYear
+        override lazy val taxYear: Int = currentTaxYear
       }
 
       implicit val appConfig: FakeAppConfig = new FakeAppConfig
@@ -78,11 +74,8 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
           govSpendService
         )
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
+        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
       val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
         key -> value.percentage.toDouble
@@ -94,28 +87,22 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(fakeTaxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (fakeTaxYear - 1).toString,
-          fakeTaxYear.toString
+          (currentTaxYear - 1).toString,
+          currentTaxYear.toString
         )
       )
     }
 
-    "return OK response for 2020" in {
-
-      val taxYear: Int = 2020
-
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+    s"return OK response for $previousTaxYear" in {
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
       val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
         key -> value.percentage.toDouble
@@ -127,15 +114,15 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
       when(govSpendService.getGovernmentSpendFigures(any())(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(serviceResponse)
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(previousTaxYear)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
       contentAsString(result) must include(
         Messages("paye.ats.treasury_spending.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (previousTaxYear - 1).toString,
+          previousTaxYear.toString
         )
       )
     }

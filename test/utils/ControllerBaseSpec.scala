@@ -90,7 +90,7 @@ trait ControllerBaseSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", "?taxYear=20235")
+    FakeRequest("GET", s"?taxYear=${currentTaxYear}5")
   )
 
   protected val totalIncomeTaxModel: IncomeTaxAndNI = IncomeTaxAndNI(

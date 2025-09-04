@@ -17,7 +17,7 @@
 package controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -35,14 +35,14 @@ import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.sca.models.{MenuItemConfig, PtaMinMenuConfig, WrapperDataResponse}
-import utils.{FileHelper, IntegrationSpec}
+import utils.{IntegrationSpec, JsonUtil}
 
 import java.util.UUID
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.util.Random
 
-class ContentsCheckSpec extends IntegrationSpec {
+class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
   private val mockPertaxAuthService = mock[PertaxAuthService]
   case class ExpectedData(title: String)
 
@@ -56,15 +56,25 @@ class ContentsCheckSpec extends IntegrationSpec {
       case "service-unavailable"      =>
         ExpectedData("Sorry there is a problem with the service - Annual Tax Summary - GOV.UK")
       case "paye-year"                =>
-        ExpectedData("How your tax was spent for the tax year: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData(
+          s"How your tax was spent for the tax year: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+        )
       case "paye-summary-year"        =>
-        ExpectedData("Your income and taxes: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData(
+          s"Your income and taxes: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+        )
       case "income-insurance-year"    =>
-        ExpectedData("Income Tax and National Insurance contributions: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData(
+          s"Income Tax and National Insurance contributions: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+        )
       case "income-before-tax-year"   =>
-        ExpectedData("Taxable income: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData(
+          s"Taxable income: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+        )
       case "tax-free-income-year"     =>
-        ExpectedData("Tax-free income: 2021 to 2022 - Annual Tax Summary - GOV.UK")
+        ExpectedData(
+          s"Tax-free income: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+        )
       case "paye-not-authorised"      =>
         ExpectedData("We could not confirm your identity - Annual Tax Summary - GOV.UK")
       case "paye-service-unavailable" =>
@@ -80,17 +90,21 @@ class ContentsCheckSpec extends IntegrationSpec {
     }
 
   val urls: Map[String, ExpectedData] = Map(
-    "/annual-tax-summary/not-authorised"                              -> getExpectedData("not-authorised"),
-    "/annual-tax-summary/no-ats"                                      -> getExpectedData("no-ats"),
-    "/annual-tax-summary/service-unavailable"                         -> getExpectedData("service-unavailable"),
-    "/annual-tax-summary/paye/treasury-spending/2022"                 -> getExpectedData("paye-year"),
-    "/annual-tax-summary/paye/summary/2022"                           -> getExpectedData("paye-summary-year"),
-    "/annual-tax-summary/paye/income-tax-and-national-insurance/2022" -> getExpectedData("income-insurance-year"),
-    "/annual-tax-summary/paye/income-before-tax/2022"                 -> getExpectedData("income-before-tax-year"),
-    "/annual-tax-summary/paye/tax-free-income/2022"                   -> getExpectedData("tax-free-income-year"),
-    "/annual-tax-summary/paye/not-authorised"                         -> getExpectedData("paye-not-authorised"),
-    "/annual-tax-summary/paye/service-unavailable"                    -> getExpectedData("paye-service-unavailable"),
-    "/annual-tax-summary/session-expired"                             -> getExpectedData("session-expired")
+    "/annual-tax-summary/not-authorised"                                          -> getExpectedData("not-authorised"),
+    "/annual-tax-summary/no-ats"                                                  -> getExpectedData("no-ats"),
+    "/annual-tax-summary/service-unavailable"                                     -> getExpectedData("service-unavailable"),
+    s"/annual-tax-summary/paye/treasury-spending/$currentTaxYear"                 -> getExpectedData("paye-year"),
+    s"/annual-tax-summary/paye/summary/$currentTaxYear"                           -> getExpectedData("paye-summary-year"),
+    s"/annual-tax-summary/paye/income-tax-and-national-insurance/$currentTaxYear" -> getExpectedData(
+      "income-insurance-year"
+    ),
+    s"/annual-tax-summary/paye/income-before-tax/$currentTaxYear"                 -> getExpectedData(
+      "income-before-tax-year"
+    ),
+    s"/annual-tax-summary/paye/tax-free-income/$currentTaxYear"                   -> getExpectedData("tax-free-income-year"),
+    "/annual-tax-summary/paye/not-authorised"                                     -> getExpectedData("paye-not-authorised"),
+    "/annual-tax-summary/paye/service-unavailable"                                -> getExpectedData("paye-service-unavailable"),
+    "/annual-tax-summary/session-expired"                                         -> getExpectedData("session-expired")
   )
 
   val messageCount: Int = Random.between(1, 100)
@@ -123,7 +137,7 @@ class ContentsCheckSpec extends IntegrationSpec {
        |        "lastName": "Smith"
        |    },
        |    "loginTimes": {
-       |        "currentLogin": "2021-06-07T10:52:02.594Z",
+       |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
        |        "previousLogin": null
        |    },
        |    "optionalCredentials": {
@@ -204,8 +218,12 @@ class ContentsCheckSpec extends IntegrationSpec {
 
     server.stubFor(
       WireMock
-        .get(urlMatching(s"/taxs/$generatedNino/2022/paye-ats-data"))
-        .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_2022.json")))
+        .get(urlMatching(s"/taxs/$generatedNino/$currentTaxYear/paye-ats-data"))
+        .willReturn(
+          ok(
+            atsData(currentTaxYear)
+          )
+        )
     )
 
     server.stubFor(
@@ -214,12 +232,17 @@ class ContentsCheckSpec extends IntegrationSpec {
           s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
         )
       )
-        .willReturn(ok(FileHelper.loadFile("./it/resources/payeData.json")))
+        .willReturn(
+          ok(
+            payeAtsDataForYearRange()
+          )
+        )
     )
 
+    val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))
     server.stubFor(
-      get(urlEqualTo(s"/taxs//2022/4/ats-list"))
-        .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+      get(urlEqualTo(s"/taxs//$currentTaxYear/4/ats-list"))
+        .willReturn(ok(loadAtsListData))
     )
   }
 
@@ -247,7 +270,7 @@ class ContentsCheckSpec extends IntegrationSpec {
     FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid, SessionKeys.authToken -> "Bearer 1")
 
   "/personal-account/" when {
-    "calling authenticated pages" must {
+    "calling authenticated pages" must
       urls.foreach { case (url, expectedData: ExpectedData) =>
         s"pass content checks at url $url" in {
           server.stubFor(post(urlEqualTo("/auth/authorise")).willReturn(ok(authResponse)))
@@ -300,6 +323,5 @@ class ContentsCheckSpec extends IntegrationSpec {
           ptaJs mustBe "/annual-tax-summary/sca/assets/pta.js"
         }
       }
-    }
   }
 }

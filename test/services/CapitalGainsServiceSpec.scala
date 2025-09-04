@@ -40,7 +40,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2023)
+    yearList = List(currentTaxYear)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
@@ -81,7 +81,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
       val result  = sut.capitalGains(atsData)
 
       result mustBe CapitalGains(
-        2022,
+        currentTaxYear,
         "1111111111",
         Amount.gbp(100),
         Amount.gbp(-200),

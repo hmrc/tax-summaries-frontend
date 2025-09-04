@@ -143,8 +143,7 @@ class PertaxConnectorSpec
       )
     }
 
-    "return a UpstreamErrorResponse with the correct error code" when {
-
+    "return a UpstreamErrorResponse with the correct error code" when
       List(
         BAD_REQUEST,
         NOT_FOUND,
@@ -169,7 +168,6 @@ class PertaxConnectorSpec
           result.statusCode mustBe error
         }
       }
-    }
   }
 
   "PertaxConnector.loadPartial" must {

@@ -16,27 +16,26 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.ApplicationConfig
-import models._
+import models.*
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.TestConstants.{testNino, testUar, testUtr}
-import utils.{JsonUtil, WireMockHelper}
+import utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
-import scala.io.{BufferedSource, Source}
 
 class MiddleConnectorSpec
     extends AnyWordSpec
@@ -47,9 +46,10 @@ class MiddleConnectorSpec
     with IntegrationPatience
     with JsonUtil
     with Injecting
-    with EitherValues {
+    with EitherValues
+    with TaxYearForTesting {
 
-  override def fakeApplication(): Application =
+  override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
       .configure(
         "microservice.services.tax-summaries.port" -> server.port(),
@@ -58,11 +58,7 @@ class MiddleConnectorSpec
       )
       .build()
 
-  implicit val hc: HeaderCarrier                 = HeaderCarrier()
-  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
-  private val currentYear                        = 2022
-  private val currentYearMinus1                  = currentYear - 1
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
@@ -70,24 +66,23 @@ class MiddleConnectorSpec
 
   val utr: SaUtr = SaUtr(testUtr)
 
-  val uar: Uar = Uar(testUar)
+  val uar: Uar                                   = Uar(testUar)
+  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
 
-  val loadSAJson: JsValue         = loadAndParseJsonWithDummyData("/summary_json_test_2021.json")
-  val saResponse: String          = loadAndReplace("/summary_json_test_2021.json", Map("testUtr" -> utr.utr))
-  val expectedSAResponse: AtsData = Json.fromJson[AtsData](loadSAJson).get
+  val saResponse: String = atsData(currentTaxYear)
 
-  val loadAtsListDataSource: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
-  val loadAtsListData: String               = loadAtsListDataSource.mkString
-  loadAtsListDataSource.close()
-  val atsListData: AtsListData              =
-    Json.fromJson[AtsListData](Json.parse(loadAtsListData)).get
+  val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
+
+  val atsListData: AtsListData = atsList("$utr")
+  val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
   "connectToPayeATS" must {
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace("/paye_ats_2020.json", Map("$nino" -> testNino.nino))
-      val url                      = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
+      val expectedResponse: String = payAtsData(currentTaxYear)
+      val url                      = s"/taxs/" + testNino + "/" + currentTaxYear + "/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -97,15 +92,15 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentYear).futureValue.value
+      val result = sut.connectToPayeATS(testNino, currentTaxYear).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
-          val url = s"/taxs/" + testNino + "/" + currentYear + "/paye-ats-data"
+          val url = s"/taxs/" + testNino + "/" + currentTaxYear + "/paye-ats-data"
 
           server.stubFor(
             get(urlEqualTo(url))
@@ -115,12 +110,11 @@ class MiddleConnectorSpec
               )
           )
 
-          val result = sut.connectToPayeATS(testNino, currentYear).futureValue.left.value
+          val result = sut.connectToPayeATS(testNino, currentTaxYear).futureValue.left.value
 
           result.statusCode mustBe status
         }
       }
-    }
 
     "the connector times out" in {
       server.stubFor(
@@ -132,7 +126,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentYear).futureValue.left.value
+      val result = sut.connectToPayeATS(testNino, currentTaxYear).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
@@ -141,7 +135,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
 
       server.stubFor(
         get(urlEqualTo(url))
@@ -152,14 +146,14 @@ class MiddleConnectorSpec
           )
       )
 
-      val result = sut.connectToAts(utr, currentYear).futureValue
+      val result = sut.connectToAts(utr, currentTaxYear).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url  = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -170,14 +164,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAts(utr, currentYear).futureValue
+      val result = sut.connectToAts(utr, currentTaxYear).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url  = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -188,14 +182,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAts(utr, currentYear).futureValue
+      val result = sut.connectToAts(utr, currentTaxYear).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
 
-      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -205,7 +199,7 @@ class MiddleConnectorSpec
         )
       )
 
-      sut.connectToAts(utr, currentYear).futureValue mustBe a[AtsErrorResponse]
+      sut.connectToAts(utr, currentTaxYear).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
@@ -213,7 +207,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -223,14 +217,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(utr, currentYear).futureValue
+      val result = sut.connectToAtsOnBehalfOf(utr, currentTaxYear).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url  = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -241,14 +235,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(utr, currentYear).futureValue
+      val result = sut.connectToAtsOnBehalfOf(utr, currentTaxYear).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentYear + "/ats-data"
+      val url  = s"/taxs/" + utr + "/" + currentTaxYear + "/ats-data"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -259,7 +253,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(utr, currentYear).futureValue
+      val result = sut.connectToAtsOnBehalfOf(utr, currentTaxYear).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
@@ -269,7 +263,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -279,14 +273,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, 2022, 5).futureValue
+      val result = sut.connectToAtsList(utr, currentTaxYear, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -297,14 +291,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, 2022, 5).futureValue
+      val result = sut.connectToAtsList(utr, currentTaxYear, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -315,14 +309,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, 2022, 5).futureValue
+      val result = sut.connectToAtsList(utr, currentTaxYear, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
 
     "return BadRequest response" in {
 
-      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -332,7 +326,7 @@ class MiddleConnectorSpec
         )
       )
 
-      sut.connectToAtsList(utr, 2022, 5).futureValue mustBe a[AtsErrorResponse]
+      sut.connectToAtsList(utr, currentTaxYear, 5).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
@@ -340,7 +334,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -350,14 +344,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, 2022, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, currentTaxYear, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -368,14 +362,14 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, 2022, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, currentTaxYear, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/2022/5" + "/" + "ats-list"
+      val url  = s"/taxs/" + utr + s"/$currentTaxYear/5" + "/" + "ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -386,7 +380,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, 2022, 5).futureValue
+      val result = sut.connectToAtsListOnBehalfOf(utr, currentTaxYear, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
@@ -394,11 +388,11 @@ class MiddleConnectorSpec
 
   "connectToPayeATSMultipleYears" must {
 
-    val url = s"/taxs/$testNino/$currentYearMinus1/$currentYear/paye-ats-data"
+    val url = s"/taxs/$testNino/$previousTaxYear/$currentTaxYear/paye-ats-data"
 
     "return successful response" in {
 
-      val expectedResponse: String = loadAndReplace("/paye_ats_multiple_years.json", Map("$nino" -> testNino.nino))
+      val expectedResponse: String = payeAtsDataForYearRange()
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -408,12 +402,13 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.value
+      val result =
+        sut.connectToPayeATSMultipleYears(testNino, previousTaxYear, currentTaxYear).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
           server.stubFor(
@@ -424,11 +419,11 @@ class MiddleConnectorSpec
               )
           )
 
-          val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue
+          val result =
+            sut.connectToPayeATSMultipleYears(testNino, previousTaxYear, currentTaxYear).futureValue
           result.left.value.statusCode mustBe status
         }
       }
-    }
 
     "the connector times out" in {
       server.stubFor(
@@ -440,14 +435,15 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATSMultipleYears(testNino, currentYearMinus1, currentYear).futureValue.left.value
+      val result =
+        sut.connectToPayeATSMultipleYears(testNino, previousTaxYear, currentTaxYear).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
 
   "connectToGovernmentSpend" must {
 
-    val url = s"/taxs/government-spend/$currentYear"
+    val url = s"/taxs/government-spend/$currentTaxYear"
 
     "return a successful response" in {
 
@@ -459,13 +455,13 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentYear).futureValue.value
+      val result = sut.connectToGovernmentSpend(currentTaxYear).futureValue.value
 
       result.status mustBe OK
       result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
     }
 
-    "return an UpstreamErrorResponse" when {
+    "return an UpstreamErrorResponse" when
       listOfErrors.foreach { status =>
         s"a response with status $status is received" in {
           server.stubFor(
@@ -476,12 +472,11 @@ class MiddleConnectorSpec
               )
           )
 
-          val result = sut.connectToGovernmentSpend(currentYear).futureValue
+          val result = sut.connectToGovernmentSpend(currentTaxYear).futureValue
 
           result.left.value.statusCode mustBe status
         }
       }
-    }
 
     "the connector times out" in {
       server.stubFor(
@@ -493,7 +488,7 @@ class MiddleConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentYear).futureValue.left.value
+      val result = sut.connectToGovernmentSpend(currentTaxYear).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }

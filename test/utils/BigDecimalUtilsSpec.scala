@@ -26,26 +26,22 @@ class BigDecimalUtilsSpec extends AnyWordSpec with BigDecimalUtils with Matchers
 
     "return true for === and false for !==" when {
 
-      "two big decimals are exactly equal" in {
-
+      "two big decimals are exactly equal" in
         forAll { (bd: BigDecimal) =>
           (bd === bd) mustBe true
           (bd !== bd) mustBe false
         }
-      }
     }
 
     "return false for === and true for !==" when {
 
-      "two big decimals are not the same" in {
-
+      "two big decimals are not the same" in
         forAll { (bd1: BigDecimal, bd2: BigDecimal) =>
           whenever(bd1 !== bd2) {
             (bd1 === bd2) mustBe false
             (bd1 !== bd2) mustBe true
           }
         }
-      }
     }
   }
 }

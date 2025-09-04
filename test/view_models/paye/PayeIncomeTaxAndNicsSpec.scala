@@ -47,7 +47,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
           TaxBand("upper_rate", Amount(41570, "GBP"), Amount(22943, "GBP"), Rate("41%"))
         ),
         Amount(19433, "GBP"),
-        Amount(20224, "GBP"),
+        Amount(10224, "GBP"),
         Amount(10477, "GBP"),
         List(
           AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
@@ -94,7 +94,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
                 "ordinary_rate"                        -> Amount.gbp(29430),
                 "upper_rate_amount"                    -> Amount.gbp(22943),
                 "upper_rate"                           -> Amount.gbp(41570),
-                "total_UK_income_tax"                  -> Amount.gbp(20224),
+                "total_UK_income_tax"                  -> Amount.gbp(10224),
                 "total_income_tax_2"                   -> Amount.gbp(10477),
                 "less_tax_adjustment_previous_year"    -> Amount.gbp(350),
                 "tax_underpaid_previous_year"          -> Amount.gbp(450),
@@ -134,7 +134,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
           TaxBand("upper_rate", Amount(41570, "GBP"), Amount(22943, "GBP"), Rate("41%"))
         ),
         Amount(19433, "GBP"),
-        Amount(20224, "GBP"),
+        Amount(10224, "GBP"),
         Amount(10477, "GBP"),
         List(
           AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
@@ -180,7 +180,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
                 "ordinary_rate"                     -> Amount.gbp(3000),
                 "upper_rate_amount"                 -> Amount.gbp(3030),
                 "upper_rate"                        -> Amount.gbp(20150),
-                "total_UK_income_tax"               -> Amount.gbp(20224),
+                "total_UK_income_tax"               -> Amount.gbp(10224),
                 "total_income_tax_2"                -> Amount.gbp(10477)
               )
             ),
@@ -228,7 +228,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
           TaxBand("upper_rate", Amount(20150, "GBP"), Amount(3030, "GBP"), Rate("41%"))
         ),
         Amount(19433, "GBP"),
-        Amount(20224, "GBP"),
+        Amount(10224, "GBP"),
         Amount(10477, "GBP"),
         List.empty,
         Amount(70, "GBP"),
@@ -271,7 +271,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
                 "ordinary_rate"                     -> Amount.gbp(0),
                 "upper_rate_amount"                 -> Amount.gbp(0),
                 "upper_rate"                        -> Amount.gbp(0),
-                "total_UK_income_tax"               -> Amount.gbp(20224),
+                "total_UK_income_tax"               -> Amount.gbp(10224),
                 "total_income_tax_2"                -> Amount.gbp(10477)
               )
             ),
@@ -313,7 +313,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         List.empty,
         List.empty,
         Amount(19433, "GBP"),
-        Amount(20224, "GBP"),
+        Amount(10224, "GBP"),
         Amount(10477, "GBP"),
         List.empty,
         Amount(70, "GBP"),

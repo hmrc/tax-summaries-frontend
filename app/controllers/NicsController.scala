@@ -48,8 +48,8 @@ class NicsController @Inject() (
       case _             => Redirect(controllers.routes.AtsMergePageController.onPageLoad)
     }
 
-  def redirectForDeprecatedTotalIncomeTaxPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents {
-    request => redirectToMainTaxAndNIPage(request)
+  def redirectForDeprecatedTotalIncomeTaxPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents { request =>
+    redirectToMainTaxAndNIPage(request)
   }
 
   def redirectForDeprecatedNicsPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents { request =>

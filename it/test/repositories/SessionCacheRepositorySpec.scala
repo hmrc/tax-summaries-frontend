@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.taxSummaries.repositories
+package repositories
 
 import play.api.libs.json.{Json, OFormat}
 import repository.{SessionCacheId, SessionCacheRepository}

@@ -20,21 +20,22 @@ import models.{DataHolder, PayeAtsData}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import utils.JsonUtil
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import utils.{JsonUtil, TaxYearForTesting}
 import view_models.Amount
 
 class PayeTaxFreeAmountSpec
     extends AnyWordSpec
     with Matchers
     with JsonUtil
-    with GuiceOneAppPerTest
+    with GuiceOneAppPerSuite
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with TaxYearForTesting {
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
     PayeAtsData(
-      2022,
+      currentTaxYear,
       None,
       Some(DataHolder(Some(summary_data), None, None)),
       None,
@@ -60,7 +61,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -94,7 +95,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -127,7 +128,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("other_allowances_amount", Amount.gbp(300))
@@ -162,7 +163,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
           AmountRow("personal_tax_free_amount", Amount.gbp(9440)),
           AmountRow("marriage_allowance_transferred_amount", Amount.gbp(200)),
@@ -198,7 +199,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
         ),
         Amount.gbp(9740),
@@ -228,7 +229,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
         ),
         Amount.gbp(9740),
@@ -260,7 +261,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
         ),
         Amount.gbp(0),
@@ -286,7 +287,7 @@ class PayeTaxFreeAmountSpec
       )
 
       val expectedViewModel = PayeTaxFreeAmount(
-        2022,
+        currentTaxYear,
         List(
         ),
         Amount.gbp(0),

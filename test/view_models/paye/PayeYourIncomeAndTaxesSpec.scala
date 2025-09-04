@@ -19,24 +19,22 @@ package view_models.paye
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Injecting
 import services.atsData.PayeAtsTestData
-import utils.JsonUtil
+import utils.{JsonUtil, TaxYearForTesting}
 import view_models.Amount
-
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 class PayeYourIncomeAndTaxesSpec
     extends AnyWordSpec
     with Matchers
     with JsonUtil
-    with GuiceOneAppPerTest
+    with GuiceOneAppPerSuite
     with ScalaFutures
     with IntegrationPatience
-    with Injecting {
+    with Injecting
+    with TaxYearForTesting {
 
   lazy val payeAtsTestData = inject[PayeAtsTestData]
-
-  val taxYear: Int = 2022
 
   "PayeYourIncomeAndTaxesData" must {
 
@@ -46,7 +44,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          taxYear,
+          currentTaxYear,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -55,7 +53,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
 
       result mustBe expectedViewModel
     }
@@ -66,7 +64,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          taxYear,
+          currentTaxYear,
           Amount(0, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -75,7 +73,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
 
       result mustBe expectedViewModel
     }
@@ -86,7 +84,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          taxYear,
+          currentTaxYear,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -95,7 +93,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
 
       result mustBe expectedViewModel
     }
@@ -106,7 +104,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          taxYear,
+          currentTaxYear,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -115,7 +113,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, taxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
 
       result mustBe expectedViewModel
     }

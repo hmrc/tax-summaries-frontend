@@ -16,28 +16,23 @@
 
 package utils
 
-import play.api.libs.json._
-import utils.TestConstants._
+import play.api.libs.json.*
+import utils.TestConstants.*
 
 import scala.io.Source
 
 object JsonUtil extends JsonUtil
 
 trait JsonUtil {
-
   lazy val dummyDataMap: Map[String, String] = Map("testUtr" -> testUtr)
 
-  def load(path: String): String =
-    Source.fromURL(getClass.getResource(path)).mkString
+  def loadAndParseJsonWithDummyData(path: String): JsValue = Json.parse(loadAndReplace(path, dummyDataMap))
 
-  def loadAndParseJsonWithDummyData(path: String): JsValue =
-    Json.parse(loadAndReplace(path, dummyDataMap))
-
-  def loadAndReplace(path: String, replaceMap: Map[String, String]): String = {
-    var jsonString = Source.fromURL(getClass.getResource(path)).mkString
-    for ((key, value) <- replaceMap)
-      jsonString = jsonString.replace(key, value)
-    jsonString
+  def loadAndReplace(path: String, replaceMap: Map[String, String] = Map.empty): String = {
+    val resource = getClass.getResourceAsStream(path)
+    replaceMap.foldLeft(Source.fromInputStream(resource).getLines().mkString) { (acc, c) =>
+      acc.replace(c._1, c._2)
+    }
   }
 
 }

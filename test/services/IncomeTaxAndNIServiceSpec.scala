@@ -22,20 +22,19 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import services.atsData.AtsTestData.currentTaxYear
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{BaseSpec, GenericViewModel}
-import view_models._
+import view_models.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
 class IncomeTaxAndNIServiceSpec extends BaseSpec {
-
-  override val taxYear = 2023
 
   val genericViewModel: GenericViewModel = AtsList(
     utr = "3000024376",
@@ -67,7 +66,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         isAgentActive = false,
         confidenceLevel = ConfidenceLevel.L50,
         credentials = fakeCredentials,
-        request = FakeRequest("GET", "?taxYear=2023")
+        request = FakeRequest("GET", s"?taxYear=$currentTaxYear")
       )
       val result       = Await.result(sut.getIncomeAndNIData(taxYear)(hc, request), 1500 millis)
       result mustEqual genericViewModel
@@ -121,7 +120,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       )
 
       result mustEqual IncomeTaxAndNI(
-        year = 2022,
+        year = currentTaxYear,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
         totalIncomeTaxAndNics = Amount(200, "GBP"),
@@ -179,7 +178,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       result mustEqual IncomeTaxAndNI(
-        year = 2022,
+        year = currentTaxYear,
         utr = "1111111111",
         employeeNicAmount = Amount(100, "GBP"),
         totalIncomeTaxAndNics = Amount(200, "GBP"),
@@ -237,7 +236,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       result mustEqual IncomeTaxAndNI(
-        year = 2022,
+        year = currentTaxYear,
         utr = "1111111111",
         employeeNicAmount = Amount.empty,
         totalIncomeTaxAndNics = Amount.empty,

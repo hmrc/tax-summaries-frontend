@@ -16,9 +16,9 @@
 
 package testUtils
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.ApplicationConfig
-import models.{AgentToken, AtsData, AtsListData}
+import models.{AgentToken, AtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -33,7 +33,7 @@ import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.TestConstants.mock
-import utils.{Globals, WireMockHelper}
+import utils.{Globals, TaxYearForTesting, WireMockHelper}
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +45,8 @@ class IntegrationSpec
     with WireMockHelper
     with ScalaFutures
     with IntegrationPatience
-    with Injecting {
+    with Injecting
+    with TaxYearForTesting {
 
   val generatedNino: Nino = new Generator().nextNino
 
@@ -57,16 +58,19 @@ class IntegrationSpec
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val fakeTaxYear: Int = 2022
+  lazy val fakeTaxYear: Int = currentTaxYear
 
   val mockTaxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository =
     mock[TaxsAgentTokenSessionCacheRepository]
 
-  val atsListData: AtsListData =
-    Json.fromJson[AtsListData](Json.parse(FileHelper.loadFile("./it/resources/atsList.json"))).get
-
   val atsData: AtsData =
-    Json.fromJson[AtsData](Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json"))).get
+    Json
+      .fromJson[AtsData](
+        Json.parse(
+          atsData(currentTaxYear)
+        )
+      )
+      .get
 
   val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
@@ -83,7 +87,7 @@ class IntegrationSpec
        |        "lastName": "Smith"
        |    },
        |    "loginTimes": {
-       |        "currentLogin": "2021-06-07T10:52:02.594Z",
+       |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
        |        "previousLogin": null
        |    },
        |    "optionalCredentials": {
@@ -109,7 +113,7 @@ class IntegrationSpec
        |        "lastName": "Smith"
        |    },
        |    "loginTimes": {
-       |        "currentLogin": "2021-06-07T10:52:02.594Z",
+       |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
        |        "previousLogin": null
        |    },
        |    "optionalCredentials": {

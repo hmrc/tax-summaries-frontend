@@ -71,15 +71,12 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
   "Government spend controller" must {
 
-    "return OK response when set to 2021" in {
+    s"return OK response when set to $currentTaxYear" in {
 
-      val taxYear = 2021
+      val taxYear = currentTaxYear
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
+        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 
@@ -94,15 +91,12 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    "return OK response when set to 2020" in {
+    s"return OK response when set to $previousTaxYear" in {
 
-      val taxYear = 2020
+      val taxYear = previousTaxYear
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any[HeaderCarrier])
-      )
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
       val result = sut.show(taxYear)(fakeAuthenticatedRequest)
 

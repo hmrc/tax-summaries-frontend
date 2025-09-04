@@ -43,7 +43,7 @@ class PayeAuthActionSpec extends BaseSpec {
   override implicit lazy val appConfig: ApplicationConfig = mock[ApplicationConfig]
   private val mockAuthConnector: DefaultAuthConnector     = mock[DefaultAuthConnector]
   private val mockPertaxAuthService                       = mock[PertaxAuthService]
-  override val taxYear                                    = 2024
+  override val taxYear                                    = currentTaxYear
   private val mockTaxYearUtil                             = mock[TaxYearUtil]
 
   private class Harness(authAction: PayeAuthActionImpl) extends InjectedController {

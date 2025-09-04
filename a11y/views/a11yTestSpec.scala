@@ -28,9 +28,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status => getStatus, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status as getStatus, writeableOf_AnyContentAsEmpty}
 import repository.TaxsAgentTokenSessionCacheRepository
-import testUtils.{FileHelper, IntegrationSpec}
+import testUtils.IntegrationSpec
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -102,15 +102,16 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
   }
 
-  "annual-tax-summary" must {
+  "annual-tax-summary" must
     List(
       "/annual-tax-summary/",
       "/annual-tax-summary/paye/main"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
+        val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
-            .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+            .willReturn(ok(loadAtsListData))
         )
         server.stubFor(
           get(urlEqualTo(s"/pertax/$generatedNino/authorise"))
@@ -122,9 +123,8 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         contentAsString(result) must passAccessibilityChecks(OutputFormat.Verbose)
       }
     }
-  }
 
-  "annual-tax-summary data pages" must {
+  "annual-tax-summary data pages" must
     List(
       s"/annual-tax-summary/main?taxYear=$fakeTaxYear",
       s"/annual-tax-summary/summary?taxYear=$fakeTaxYear",
@@ -135,14 +135,19 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
       s"/annual-tax-summary/capital-gains-tax?taxYear=$fakeTaxYear"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
+        val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
-            .willReturn(ok(FileHelper.loadFile("./it/resources/atsList.json")))
+            .willReturn(ok(loadAtsListData))
         )
 
         server.stubFor(
           get(urlEqualTo(backendUrl))
-            .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$fakeTaxYear.json")))
+            .willReturn(
+              ok(
+                atsData(currentTaxYear)
+              )
+            )
         )
 
         server.stubFor(
@@ -155,5 +160,4 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         contentAsString(result) must passAccessibilityChecks(OutputFormat.Verbose)
       }
     }
-  }
 }

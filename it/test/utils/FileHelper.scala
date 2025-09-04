@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package testUtils
+package utils
 
+import scala.io.Source
 import scala.io.Source.fromFile
 
 object FileHelper {
 
-  def loadFile(name: String): String = {
+  def loadFile(name: String, replaceMap: Map[String, String] = Map.empty): String = {
     val source = fromFile(name)
-    try source.mkString
-    finally source.close()
+    val s      =
+      try source.mkString
+      finally source.close()
+    replaceMap.foldLeft(s) { (acc, c) =>
+      acc.replace(c._1, c._2)
+    }
   }
 }

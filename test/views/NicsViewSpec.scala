@@ -116,21 +116,17 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
 
   "view" must {
 
-    "include scottish table" in {
-
+    "include scottish table" in
       forAll { (tax: ScottishTax, rates: ScottishRates) =>
         val data = testIncomeTaxAndNI.copy(scottishTax = tax, scottishRates = rates)
         view(data) must include(scottishTableView(tax, rates).body)
       }
-    }
 
-    "include savings table" in {
-
+    "include savings table" in
       forAll { (tax: SavingsTax, rates: SavingsRates) =>
         val data = testIncomeTaxAndNI.copy(savingsTax = tax, savingsRates = rates)
         view(data) must include(savingsTableView(tax, rates).body)
       }
-    }
 
     "include total uk income tax if there are any values (and scottish)" in {
       val data = testIncomeTaxAndNI.copy(

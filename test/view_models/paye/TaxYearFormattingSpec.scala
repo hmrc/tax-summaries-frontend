@@ -18,21 +18,21 @@ package view_models.paye
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-
-class TaxYearFormattingSpec extends AnyWordSpec with Matchers {
+import utils.TaxYearForTesting
+class TaxYearFormattingSpec extends AnyWordSpec with Matchers with TaxYearForTesting {
 
   val instance = new TaxYearFormatting {
-    val taxYear = 2023
+    val taxYear = currentTaxYear
   }
 
   "TaxYearFormatting" must {
 
     "Calculate valid start year" in {
-      instance.taxYearFrom mustBe "2022"
+      instance.taxYearFrom mustBe s"$previousTaxYear"
     }
 
     "Calculate valid end year" in {
-      instance.taxYearTo mustBe "2023"
+      instance.taxYearTo mustBe s"$currentTaxYear"
     }
 
   }

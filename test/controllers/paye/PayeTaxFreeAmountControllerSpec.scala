@@ -52,7 +52,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
     "return OK response" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = 2021
+        override lazy val taxYear = currentTaxYear
       }
 
       val fakeAppConfig = new FakeAppConfig
@@ -60,11 +60,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val fakeAuthenticatedRequest =
         buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYear).url)
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2021.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
+        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 
@@ -81,10 +78,10 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    "return OK response for 2020" in {
+    s"return OK response for $previousTaxYear" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYear = 2020
+        override lazy val taxYear = previousTaxYear
       }
 
       val fakeAppConfig = new FakeAppConfig
@@ -92,11 +89,8 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val fakeAuthenticatedRequest =
         buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYear).url)
 
-      when(
-        mockPayeAtsService
-          .getPayeATSData(any(), any())(any())
-      )
-        .thenReturn(Future(Right(expectedResponse2020.as[PayeAtsData])))
+      when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
+        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYear)(fakeAuthenticatedRequest)
 

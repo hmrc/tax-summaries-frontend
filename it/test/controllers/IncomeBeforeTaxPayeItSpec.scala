@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.taxSummaries.controllers
+package controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, ok, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, ok, urlEqualTo, urlMatching}
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -24,24 +25,23 @@ import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.PertaxAuthService
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import utils.{FileHelper, IntegrationSpec}
+import utils.IntegrationSpec
 
 import scala.concurrent.Future
 
-class IncomeBeforeTaxItSpec extends IntegrationSpec {
+class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
   private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"                   -> server.port(),
-      "microservice.services.tax-summaries.port"          -> server.port(),
-      "microservice.services.cachable.session-cache.port" -> server.port()
+      "microservice.services.auth.port"          -> server.port(),
+      "microservice.services.tax-summaries.port" -> server.port(),
+      "microservice.services.pertax.port"        -> server.port()
     )
     .overrides(
       api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
@@ -49,66 +49,55 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       api.inject.bind[PertaxAuthService].toInstance(mockPertaxAuthService)
     )
     .build()
-
-  override lazy val keystoreData: Map[String, JsValue] = Map(
-    s"TAXS_ATS_$taxYear" -> Json.parse(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json"))
-  )
-
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit             = {
     server.resetAll()
     super.beforeEach()
     reset(mockPertaxAuthService, mockFeatureFlagService)
-    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
   }
 
-  // TODO DDCNL-9288 : Remove the override below when PAYE uprating done for tax year 2024
-  override lazy val taxYear: Int = 2023
+  "/paye/income-before-tax" must {
 
-  "/income-before-tax" must {
+    lazy val url = s"/annual-tax-summary/paye/income-before-tax/$currentTaxYear"
 
-    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$taxYear"
-
-    lazy val backendUrl = s"/taxs/$generatedSaUtr/$taxYear/ats-data"
+    lazy val backendUrl = s"/taxs/$generatedNino/$currentTaxYear/paye-ats-data"
 
     "return an OK response" in {
 
       server.stubFor(
-        get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
+        WireMock
+          .get(urlEqualTo(backendUrl))
+          .willReturn(
+            ok(
+              atsData(currentTaxYear)
+            )
+          )
+      )
+
+      server.stubFor(
+        WireMock
+          .get(urlMatching(s"/pertax/$generatedNino/authorise"))
+          .willReturn(
+            ok("{\"code\": \"ACCESS_GRANTED\", \"message\": \"Access granted\"}")
+          )
       )
 
       val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
 
       val result = route(fakeApplication(), request)
+
       result.map(status) mustBe Some(OK)
     }
 
-    "return a 400 when TaxYearUtil.extractTaxYear returns invalid tax year" in {
-
-      val failureUrl = "/annual-tax-summary/income-before-tax"
+    "return an SEE_OTHER when the call to backend returns a NOT_FOUND response" in {
 
       server.stubFor(
-        get(urlEqualTo(backendUrl))
-          .willReturn(ok(FileHelper.loadFile(s"./it/resources/atsData_$taxYear.json")))
-      )
-
-      val request = FakeRequest(GET, failureUrl).withSession(SessionKeys.authToken -> "Bearer 1")
-
-      val result = route(fakeApplication(), request)
-
-      result.map(status) mustBe Some(SEE_OTHER)
-      result.flatMap(redirectLocation) mustBe Some(controllers.routes.ErrorController.authorisedNoTaxYear.url)
-
-    }
-
-    "return a SEE_OTHER when the call to backend to retrieve ats-data throws a NOT_FOUND" in {
-
-      server.stubFor(
-        get(urlEqualTo(backendUrl))
+        WireMock
+          .get(urlEqualTo(backendUrl))
           .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
@@ -125,10 +114,11 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve ats-data throws a $httpResponse" in {
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve paye-ats-data throws a $httpResponse" in {
 
         server.stubFor(
-          get(urlEqualTo(backendUrl))
+          WireMock
+            .get(urlEqualTo(backendUrl))
             .willReturn(aResponse().withStatus(httpResponse))
         )
 

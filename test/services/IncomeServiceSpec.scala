@@ -24,14 +24,15 @@ import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.atsData.AtsTestData
+import services.atsData.AtsTestData.currentTaxYear
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{BaseSpec, GenericViewModel}
 import view_models.{Amount, AtsList, IncomeBeforeTax}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
@@ -41,13 +42,12 @@ class IncomeServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(2023)
+    yearList = List(currentTaxYear)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val mockAtsService: AtsService                            = mock[AtsService]
-  override val taxYear                                      = 2023
   val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     userId = "userId",
     agentRef = None,
@@ -83,7 +83,7 @@ class IncomeServiceSpec extends BaseSpec {
       val incomeData: AtsData     = AtsTestData.incomeData
       val result: IncomeBeforeTax = sut.createIncomeConverter(incomeData)
       result mustEqual IncomeBeforeTax(
-        2022,
+        currentTaxYear,
         "1111111111",
         Amount(100, "GBP"),
         Amount(200, "GBP"),

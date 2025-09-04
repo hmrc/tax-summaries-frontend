@@ -20,8 +20,7 @@ import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.{eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status
@@ -37,22 +36,20 @@ import utils.BaseSpec
 import utils.TestConstants.{testNino, testUtr}
 
 import scala.concurrent.Future
-import scala.io.Source
 
 class PayeAtsServiceSpec extends BaseSpec {
-
   implicit val hc: HeaderCarrier            = HeaderCarrier()
-  val expectedResponse: JsValue             = readJson("/paye_ats_2020.json")
-  val expectedResponseCurrentYear: JsValue  = readJson("/paye_ats_2021.json")
-  val expectedResponseMultipleYear: JsValue = readJson("/paye_ats_multiple_years.json")
-  private val currentYearMinus1: Int        = 2022
-  private val currentYear: Int              = 2023
+  val expectedResponse: JsValue             = Json.parse(
+    payAtsData(currentTaxYear)
+  )
+  val expectedResponseCurrentYear: JsValue  = Json.parse(
+    payAtsData(currentTaxYear)
+  )
+  val expectedResponseMultipleYear: JsValue = Json.parse(
+    payeAtsDataForYearRange()
+  )
+  private val currentYearMinus1: Int        = previousTaxYear
   val fakeCredentials: Credentials          = new Credentials("provider ID", "provider type")
-
-  private def readJson(path: String) = {
-    val resource = getClass.getResourceAsStream(path)
-    Json.parse(Source.fromInputStream(resource).getLines().mkString)
-  }
 
   val mockMiddleConnector: MiddleConnector                                       = mock[MiddleConnector]
   val payeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] =
@@ -145,31 +142,33 @@ class PayeAtsServiceSpec extends BaseSpec {
   "getPayeATSMultipleYearData" must {
     "return a successful response as list of tax years" in {
       when(
-        mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]
-        )
+        mockMiddleConnector
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+            any[HeaderCarrier]
+          )
       )
         .thenReturn(
           Future.successful(Right(HttpResponse(OK, expectedResponseMultipleYear, Map[String, Seq[String]]())))
         )
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
 
-      result mustBe Right(List(2023, 2022))
+      result mustBe Right(listOfTaxYears().reverse)
     }
 
     "return a left of response after receiving left from connector" in {
 
       when(
-        mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]
-        )
+        mockMiddleConnector
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+            any[HeaderCarrier]
+          )
       )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("body", Status.NOT_FOUND))))
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
 
       result.value mustBe Nil
     }
@@ -177,28 +176,30 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return a BAD_REQUEST response after receiving a BAD_REQUEST from connector" in {
 
       when(
-        mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]
-        )
+        mockMiddleConnector
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+            any[HeaderCarrier]
+          )
       )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("Bad Request", BAD_REQUEST))))
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
 
       result.left.value mustBe an[AtsBadRequestResponse]
     }
 
     "return an empty list after receiving NOT_FOUND from connector" in {
       when(
-        mockMiddleConnector.connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentYear))(
-          any[HeaderCarrier]
-        )
+        mockMiddleConnector
+          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYear))(
+            any[HeaderCarrier]
+          )
       )
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("Not Found", NOT_FOUND))))
 
       val result =
-        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentYear)(hc).futureValue
+        sut.getPayeTaxYearData(testNino, currentYearMinus1, currentTaxYear)(hc).futureValue
 
       result mustBe Right(List.empty)
     }

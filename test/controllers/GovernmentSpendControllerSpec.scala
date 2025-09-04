@@ -33,7 +33,6 @@ import scala.concurrent.Future
 
 class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
-  override val taxYear    = 2023
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
@@ -42,7 +41,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
 
     val model: GovernmentSpend = GovernmentSpend(
-      taxYear = 2023,
+      taxYear = currentTaxYear,
       userUtr = testUtr,
       govSpendAmountData = List(
         ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
@@ -131,7 +130,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
     }
 
-    "have correct data for 2022" in {
+    s"have correct data for $currentTaxYear" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -171,13 +170,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe "Tax year: April 6 2022 to April 5 2023 Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear Your taxes and public spending"
     }
 
-    "have correct data for 2023" in {
+    s"have correct data for $previousTaxYear" in {
 
       val model2 = GovernmentSpend(
-        taxYear = 2023,
+        taxYear = previousTaxYear,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),

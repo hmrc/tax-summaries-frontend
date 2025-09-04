@@ -20,35 +20,25 @@ import config.ApplicationConfig
 import connectors.MiddleConnector
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, times, verify, when}
-import play.api.libs.json.Json
+import org.mockito.Mockito.*
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import repository.TaxsAgentTokenSessionCacheRepository
-import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{AgentTokenException, AuthorityUtils, BaseSpec}
 import view_models.AtsList
 
 import scala.concurrent.Future
-import scala.io.{BufferedSource, Source}
 
 class AtsListServiceSpec extends BaseSpec {
-
-  val data: AtsListData = {
-    val source: BufferedSource = Source.fromURL(getClass.getResource("/test_list_utr.json"))
-    val sourceString: String   = source.mkString
-    source.close()
-    val json                   = Json.parse(sourceString)
-    Json.fromJson[AtsListData](json).get
-  }
+  val data: AtsListData = atsList("utr")
 
   val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
@@ -85,7 +75,7 @@ class AtsListServiceSpec extends BaseSpec {
     when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
     when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
-    when(mockAppConfig.taxYear).thenReturn(2020)
+    when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
     ()
   }
 
@@ -119,17 +109,17 @@ class AtsListServiceSpec extends BaseSpec {
 
   "createModel" must {
 
-    "Return a ats list when received a success response from connector" in {
-
-      when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
-        AtsSuccessResponseWithPayload[AtsListData](AtsTestData.atsListData)
-      )
-
+    "Return a ats list when received a success response from connector" in
       whenReady(sut.createModel()) { result =>
-        result mustBe Right(AtsList("1111111111", "John", "Smith", List(2022)))
+        result mustBe Right(
+          AtsList(
+            data.utr,
+            data.taxPayer.fold("")(_.getOrElse("forename", "")),
+            data.taxPayer.fold("")(_.getOrElse("surname", "")),
+            data.atsYearList.get
+          )
+        )
       }
-
-    }
 
     "Return an empty ats list when received a not found response from connector" in {
 
@@ -154,25 +144,19 @@ class AtsListServiceSpec extends BaseSpec {
 
   "getAtsYearList" must {
 
-    "Return a ats list with 2020 year data" in {
-
+    s"Return a ats list with $currentTaxYear year data" in
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(2020) mustBe true
+        result.value.atsYearList.get.contains(currentTaxYear) mustBe true
       }
 
-    }
-
-    "Return a ats list without 2020 year data" in {
-      val dataMinus2020 = data copy (atsYearList = data.atsYearList.map(_.filter(_ != 2020)))
-
-      when(mockAppConfig.taxYear).thenReturn(2023)
-
+    "Return a ats list without CY-1 year data" in {
+      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != previousTaxYear)))
       when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
-        AtsSuccessResponseWithPayload[AtsListData](dataMinus2020)
+        AtsSuccessResponseWithPayload[AtsListData](dataMissingYear)
       )
 
       whenReady(sut.getAtsYearList) { result =>
-        result.value.atsYearList.get.contains(2020) mustBe false
+        result.value.atsYearList.get.contains(previousTaxYear) mustBe false
       }
 
     }
@@ -189,8 +173,7 @@ class AtsListServiceSpec extends BaseSpec {
       }
     }
 
-    "Return the ats year list data for a user from the MS" in {
-
+    "Return the ats year list data for a user from the MS" in
       whenReady(sut.getAtsYearList) { result =>
         result mustBe Right(data)
 
@@ -199,7 +182,6 @@ class AtsListServiceSpec extends BaseSpec {
         )
         verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
-    }
 
     // must this be the case? (EDGE CASE)
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
@@ -230,8 +212,7 @@ class AtsListServiceSpec extends BaseSpec {
           FakeRequest()
         )
 
-      "Return the ats year list data for a user from the MS" in {
-
+      "Return the ats year list data for a user from the MS" in
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
@@ -239,7 +220,6 @@ class AtsListServiceSpec extends BaseSpec {
             any[HeaderCarrier]
           )
         }
-      }
 
       "Return the ats year list data for a user when the agent token doesn't match the user" in {
 

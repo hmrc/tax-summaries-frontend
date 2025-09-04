@@ -19,7 +19,7 @@ package utils
 import models.SpendData
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.{Generator, Nino, SaUtrGenerator}
-import view_models._
+import view_models.*
 
 import scala.util.Random
 
@@ -182,71 +182,6 @@ trait TestConstants extends BaseSpec {
       Amount(2000.00, "GBP")
     )
 
-  val expectedPercentageOrder2022: List[BigDecimal] =
-    List(23.5, 20.2, 12.8, 11.8, 5.3, 5.3, 4.3, 4.3, 3.6, 2.1, 1.6, 1.5, 1.5, 1.2, 1)
-
-  val expectedPercentageOrder2020: List[BigDecimal] =
-    List(22.1, 20.5, 12.4, 11.6, 6.9, 5.3, 4.3, 4.3, 3.8, 2.1, 1.8, 1.5, 1.5, 1.1, 0.8)
-
-  val expectedPercentageOrder2021: List[BigDecimal] =
-    List(21.9, 19.6, 14.4, 10.1, 9.6, 4.5, 4.5, 4.1, 3.9, 2.0, 1.4, 1.3, 1.2, 0.9, 0.6)
-
-  val expectedCategoryOrderFor2022: List[String] =
-    List(
-      "Welfare",
-      "Health",
-      "StatePensions",
-      "Education",
-      "Defence",
-      "NationalDebtInterest",
-      "Transport",
-      "PublicOrderAndSafety",
-      "BusinessAndIndustry",
-      "GovernmentAdministration",
-      "HousingAndUtilities",
-      "Environment",
-      "Culture",
-      "OverseasAid",
-      "UkContributionToEuBudget"
-    )
-
-  val expectedCategoryOrderFor2020: List[String] =
-    List(
-      "Welfare",
-      "Health",
-      "StatePensions",
-      "Education",
-      "NationalDebtInterest",
-      "Defence",
-      "Transport",
-      "PublicOrderAndSafety",
-      "BusinessAndIndustry",
-      "GovernmentAdministration",
-      "HousingAndUtilities",
-      "Culture",
-      "Environment",
-      "OverseasAid",
-      "UkContributionToEuBudget"
-    )
-
-  val expectedCategoryOrderFor2021: List[String] =
-    List(
-      "Health",
-      "Welfare",
-      "BusinessAndIndustry",
-      "StatePensions",
-      "Education",
-      "Transport",
-      "Defence",
-      "NationalDebtInterest",
-      "PublicOrderAndSafety",
-      "GovernmentAdministration",
-      "HousingAndUtilities",
-      "Environment",
-      "Culture",
-      "OverseasAid",
-      "UkContributionToEuBudget"
-    )
 }
 
 object TestConstants extends TestConstants

@@ -21,9 +21,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 
 class PayeConfig @Inject() ()(implicit val appConfig: ApplicationConfig) {
-
-  // TODO DDCNL-9288 : Remove the -1 below when PAYE uprating done for tax year 2024
-  val payeYear: Int        = appConfig.taxYear - 1
+  val payeYear: Int        = appConfig.taxYear
   protected val configPath = "paye.conf"
 
   lazy val scottishTaxBandKeys: List[String] = {

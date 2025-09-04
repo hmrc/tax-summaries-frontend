@@ -40,11 +40,13 @@ trait BaseSpec
     with Injecting
     with ScalaFutures
     with IntegrationPatience
-    with EitherValues {
+    with EitherValues
+    with JsonUtil
+    with TaxYearForTesting {
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  val taxYear: Int = appConfig.taxYear
+  val taxYear: Int = currentTaxYear
 
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 

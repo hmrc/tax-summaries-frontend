@@ -4,7 +4,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 val appName = "tax-summaries-frontend"
 
 ThisBuild / majorVersion := 3
-ThisBuild / scalaVersion := "3.3.4"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / scalafmtOnCompile := true
 
 lazy val scoverageSettings = {
@@ -43,7 +43,6 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= Seq(
       "-unchecked",
       "-feature",
-      "-Xfatal-warnings",
       "-language:noAutoTupling",
       "-Wunused:imports",
       "-Wvalue-discard",

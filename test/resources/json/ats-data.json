@@ -1,5 +1,5 @@
 {
-  "taxYear": 2020,
+  "taxYear": <TAXYEAR>,
   "utr": "1097172564",
   "income_tax": {
     "payload": {
@@ -402,7 +402,7 @@
     }
   },
   "gov_spending": {
-    "taxYear": 2020,
+    "taxYear": <TAXYEAR>,
     "govSpendAmountData": {
       "PublicOrderAndSafety": {
         "amount": {
@@ -508,6 +508,13 @@
           "currency": "GBP"
         },
         "percentage": 12.4
+      },
+      "OutstandingPaymentsToTheEU": {
+        "amount": {
+          "amount": 555.15,
+          "currency": "GBP"
+        },
+        "percentage": 12.4
       }
     },
     "totalAmount": {
@@ -516,9 +523,6 @@
     }
   },
   "taxPayerData": {
-    "title": "Mr",
-    "forename": "Tom",
-    "surname": "Fisher"
   },
   "taxLiability": {
     "amount": 23456.0,
