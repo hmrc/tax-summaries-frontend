@@ -21,7 +21,7 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
 import org.jsoup.Jsoup
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.mvc.AnyContentAsEmpty
@@ -92,6 +92,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     ).body
 
   override def beforeEach(): Unit = {
+    reset(mockAppConfig)
     when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
     when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
     when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
@@ -146,12 +147,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must include(messages(s"${currentTaxYearSA - 1} to $currentTaxYearSA for a general Annual Tax Summary"))
     }
 
-    s"not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from ${currentTaxYearSA - 2}" in {
+    s"not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from ${currentTaxYearSA - 2} and sa/ paye tax years are the same" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
       val result =
         view(
           AtsMergePageViewModel(
             saData = AtsList("", "", "", List.empty),
-            payeTaxYearList = (mockAppConfig.taxYearPAYE - 5 to mockAppConfig.taxYearPAYE).toList,
+            payeTaxYearList = (currentTaxYearSA - 5 to currentTaxYearSA).toList,
             appConfig = mockAppConfig,
             confidenceLevel = ConfidenceLevel.L200
           ),
@@ -159,7 +162,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
 
       result must not include messages("merge.page.no.ats.summary.text")
-      allYears(currentTaxYearSA, currentTaxYearPAYE).foreach { year =>
+      allYears(currentTaxYearSA, currentTaxYearSA).foreach { year =>
         result must not include messages(
           s"${year - 1} to $year for a general Annual Tax Summary"
         )
@@ -426,7 +429,9 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-SA").isEmpty)
     }
 
-    "have an error link to the first radio button if there is an error with PAYE data" in {
+    "have an error link to the first radio button if there is an error with PAYE data and paye/ sa tax years are the same" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
       val result = Jsoup.parse(
         view(
           AtsMergePageViewModel(
@@ -436,7 +441,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               "",
               List(currentTaxYearSA - 5, currentTaxYearSA - 4, currentTaxYearSA - 3, currentTaxYearSA - 2)
             ),
-            payeTaxYearList = List(currentTaxYearPAYE, currentTaxYearPAYE - 1),
+            payeTaxYearList = List(currentTaxYearSA, currentTaxYearSA - 1),
             appConfig = mockAppConfig,
             confidenceLevel = ConfidenceLevel.L200
           ),
@@ -444,7 +449,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         )
       )
 
-      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearPAYE-PAYE").isEmpty)
+      assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-PAYE").isEmpty)
     }
 
     "have an error link to the first radio button if there is an error no ATS" in {
