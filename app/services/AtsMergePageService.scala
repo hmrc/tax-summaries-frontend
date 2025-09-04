@@ -52,12 +52,6 @@ class AtsMergePageService @Inject() (
         Future.successful[Either[AtsResponse, AtsMergePageViewModel]](
           Right(AtsMergePageViewModel(AtsList.empty, payeData, appConfig, request.confidenceLevel))
         )
-      /*
-        SARERight(List(2022, 2023, 2024, 2025))
-
-A2
-
-       */
       case payeResponse                                                =>
         getSaYearListIfEnabled.map { saResponse =>
           (saResponse, payeResponse) match {

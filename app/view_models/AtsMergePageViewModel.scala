@@ -39,8 +39,7 @@ case class AtsMergePageViewModel(
 
   private val showPayeYearList: Boolean = payeTaxYearList.nonEmpty
 
-  // val showNoAtsYearList: Boolean = !totalTaxYearList.forall(saAndPayeTaxYearList.toSet)
-  val showNoAtsYearList: Boolean = totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).exists(_ >= 2019)
+  val showNoAtsYearList: Boolean = !totalTaxYearList.forall(saAndPayeTaxYearList.toSet)
 
   private val onlyPaye: Boolean = showPayeYearList && !showSaYearList && !showNoAtsYearList
 
@@ -59,7 +58,8 @@ case class AtsMergePageViewModel(
     }
   }
 
-  val showContinueButton: Boolean = showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
+  val showContinueButton: Boolean =
+    showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
   val name: String                = s"${saData.forename} ${saData.surname}"
 
   val titleMsg: String    = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
