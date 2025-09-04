@@ -166,7 +166,9 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       model.showContinueButton mustBe false
     }
 
-    "set showContinueButton to false when there is no sa or no ats data, there is paye data but the user needs iv uplift" in {
+    "set showContinueButton to false when there is no SA data, SA and PAYE tax years are the same & there is paye data but the user needs iv uplift" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
         AtsMergePageViewModel(

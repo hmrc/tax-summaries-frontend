@@ -319,7 +319,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
 
   }
 
-  "Ats merge page when sa and paye tax years are the same" must {
+  "Ats merge page when SA and PAYE tax years are the same" must {
     val currentTaxYearPAYE: Int = currentTaxYearSA // Make both tax years the same
 
     lazy val url          = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"

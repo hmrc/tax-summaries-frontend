@@ -40,7 +40,7 @@ class TaxYearUtilSpec extends BaseSpec {
     super.beforeEach()
 
   "isValidTaxYear" when {
-    "sa and paye tax year are the same" must {
+    "SA and PAYE tax years are the same" must {
       "return true for current year" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)

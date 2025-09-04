@@ -27,10 +27,14 @@ class TaxYearUtil @Inject() (
 
   private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
 
+  private def minAndMaxYear: (Int, Int) = {
+    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE)
+    (taxYears.min, taxYears.max)
+  }
+
   def isValidTaxYear(taxYear: Int): Boolean = {
-    val maxYear = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).max
-    val minYear = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).min - appConfig.maxTaxYearsTobeDisplayed
-    !(taxYear > maxYear || taxYear <= minYear)
+    val (minYear, maxYear) = minAndMaxYear
+    !(taxYear > maxYear || taxYear <= minYear - appConfig.maxTaxYearsTobeDisplayed)
   }
 
   def extractTaxYear(implicit request: AuthenticatedRequest[_]): Either[ErrorResponse, Int] =
@@ -42,12 +46,11 @@ class TaxYearUtil @Inject() (
     }
 
   def isYearListComplete(years: Seq[Int]): Boolean = {
-    val maxYear       = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).max
-    val minYear       = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE).min
-    val yearFrom      = minYear - appConfig.maxTaxYearsTobeDisplayed
-    val yearTo        = maxYear
-    val yrs           = years.distinct.sorted
-    val expTotalYears = yearTo - yearFrom
+    val (minYear, maxYear) = minAndMaxYear
+    val yearFrom           = minYear - appConfig.maxTaxYearsTobeDisplayed
+    val yearTo             = maxYear
+    val yrs                = years.distinct.sorted
+    val expTotalYears      = yearTo - yearFrom
     yrs.size == expTotalYears && yrs.headOption.contains(yearFrom + 1) && yrs.lastOption.contains(yearTo)
   }
 }

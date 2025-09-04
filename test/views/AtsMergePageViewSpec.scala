@@ -147,14 +147,14 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       result must include(messages(s"${currentTaxYearSA - 1} to $currentTaxYearSA for a general Annual Tax Summary"))
     }
 
-    s"not show generic no ats message nor radiobuttons if there are no years missing from paye and sa data from ${currentTaxYearSA - 2} and sa/ paye tax years are the same" in {
-      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
-      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
+    s"not show generic no ats message nor radiobuttons if there is no SA data & no years missing from paye & SA and PAYE tax years are the same" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
       val result =
         view(
           AtsMergePageViewModel(
             saData = AtsList("", "", "", List.empty),
-            payeTaxYearList = (currentTaxYearSA - 5 to currentTaxYearSA).toList,
+            payeTaxYearList = (currentTaxYearPAYE - 5 to currentTaxYearPAYE).toList,
             appConfig = mockAppConfig,
             confidenceLevel = ConfidenceLevel.L200
           ),
@@ -336,19 +336,19 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
     }
 
-    "show paye uplift header message if user only has paye data and sa/ paye tax years are the same and needs uplift" in {
-      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
-      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
+    "show paye uplift header message if user only has paye data and SA and PAYE tax years are the same and needs uplift" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
       val result = view(
         AtsMergePageViewModel(
           saData = AtsList("", "", "", List.empty),
           payeTaxYearList = List(
-            currentTaxYearSA - 5,
-            currentTaxYearSA - 4,
-            currentTaxYearSA - 3,
-            currentTaxYearSA - 2,
-            currentTaxYearSA - 1,
-            currentTaxYearSA
+            currentTaxYearPAYE - 5,
+            currentTaxYearPAYE - 4,
+            currentTaxYearPAYE - 3,
+            currentTaxYearPAYE - 2,
+            currentTaxYearPAYE - 1,
+            currentTaxYearPAYE
           ),
           appConfig = mockAppConfig,
           confidenceLevel = ConfidenceLevel.L50
@@ -399,7 +399,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       )
       result must include("hmrc-account-menu")
     }
-    "have an error link to the first radio button if there is an error with SA data and paye/ sa tax years are the same" in {
+    "have an error link to the first radio button if there is an error with SA data and SA and PAYE tax years are the same" in {
       when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
       when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
       val result = Jsoup.parse(
@@ -429,7 +429,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       assert(!result.getElementsByAttributeValue("href", s"#year-$currentTaxYearSA-SA").isEmpty)
     }
 
-    "have an error link to the first radio button if there is an error with PAYE data and paye/ sa tax years are the same" in {
+    "have an error link to the first radio button if there is an error with SA and PAYE tax years are the same" in {
       when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
       when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
       val result = Jsoup.parse(
