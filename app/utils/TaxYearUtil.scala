@@ -28,7 +28,7 @@ class TaxYearUtil @Inject() (
   private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
 
   private def minAndMaxYear: (Int, Int) = {
-    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE)
+    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE, appConfig.taxYearGovSpend)
     (taxYears.min, taxYears.max)
   }
 

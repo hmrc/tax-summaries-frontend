@@ -56,8 +56,8 @@ trait BaseSpec
     )
     .build()
 
-  protected def allYears(currentTaxYearSA: Int, currentTaxYearPAYE: Int): Seq[Int] = {
-    val taxYears = Seq(currentTaxYearSA, currentTaxYearPAYE)
+  protected def allYears(currentTaxYearSA: Int, currentTaxYearPAYE: Int, currentGovSpendYear: Int): Seq[Int] = {
+    val taxYears = Seq(currentTaxYearSA, currentTaxYearPAYE, currentGovSpendYear)
     val minYear  = taxYears.min - (maxTaxYearsTobeDisplayed - 1)
     val maxYear  = taxYears.max
     minYear to maxYear

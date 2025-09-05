@@ -44,7 +44,8 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     credentials = fakeCredentials,
     request = FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
-  private val allAvailableYears: Seq[Int]                                 = allYears(currentTaxYearSA, currentTaxYearPAYE).reverse
+  private val allAvailableYears: Seq[Int]                                 =
+    allYears(currentTaxYearSA, currentTaxYearPAYE, currentTaxYearGovSpend).reverse
   override def beforeEach(): Unit                                         = {
     reset(mockAppConfig)
     when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
@@ -98,6 +99,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
         case y if y == this.currentTaxYearPAYE   => AtsYearChoice(PAYE, y)
         case y                                   => AtsYearChoice(NoATS, y)
       }
+
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
@@ -155,6 +157,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     "set showContinueButton to false when there is no paye, sa or no ats data" in {
       when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA - 10)
       when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA - 10)
+      when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearSA - 10)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
         AtsMergePageViewModel(
@@ -166,9 +169,10 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       model.showContinueButton mustBe false
     }
 
-    "set showContinueButton to false when there is no SA data, SA and PAYE tax years are the same & there is paye data but the user needs iv uplift" in {
+    "set showContinueButton to false when there is no SA data, SA/PAYE/gov spend tax years are the same & there is paye data but the user needs iv uplift" in {
       when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
       when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearPAYE)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
         AtsMergePageViewModel(
