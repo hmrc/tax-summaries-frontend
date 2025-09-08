@@ -442,7 +442,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       }
 
     }
-    "SA and PAYE tax years are the same" must {
+    "SA, PAYE & gov spend tax years are the same" must {
       s"not show generic no ats message nor radiobuttons if user only has paye data & it's for all years" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)

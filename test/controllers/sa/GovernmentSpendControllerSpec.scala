@@ -41,13 +41,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
 
-  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearGovSpend)
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
     val model: GovernmentSpend = GovernmentSpend(
-      taxYear = currentTaxYearGovSpend,
+      taxYear = currentTaxYearSA,
       userUtr = testUtr,
       govSpendAmountData = List(
         ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
@@ -76,7 +76,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     when(
       mockGovernmentSpendService
-        .getGovernmentSpendData(meq(currentTaxYearGovSpend))(any(), meq(request), any())
+        .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
     )
       .thenReturn(Future.successful(model))
     ()
@@ -103,8 +103,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.title must include(
         Messages("ats.treasury_spending.html.title") + Messages(
           "generic.to_from",
-          (currentTaxYearGovSpend - 1).toString,
-          currentTaxYearGovSpend.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }
@@ -119,7 +119,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
       when(
         mockGovernmentSpendService
-          .getGovernmentSpendData(meq(currentTaxYearGovSpend))(any(), meq(request), any())
+          .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -133,15 +133,15 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
         mockGovernmentSpendService
-          .getGovernmentSpendData(meq(currentTaxYearGovSpend))(any(), meq(request), any())
+          .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
-        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearGovSpend)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearGovSpend).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
-    s"have correct data for $currentTaxYearGovSpend" in {
+    s"have correct data for $currentTaxYearSA" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -181,13 +181,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 ${currentTaxYearGovSpend - 1} to April 5 $currentTaxYearGovSpend Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA Your taxes and public spending"
     }
 
-    s"have correct data for ${currentTaxYearGovSpend - 1}" in {
+    s"have correct data for ${currentTaxYearSA - 1}" in {
 
       val model2 = GovernmentSpend(
-        taxYear = currentTaxYearGovSpend - 1,
+        taxYear = currentTaxYearSA - 1,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
@@ -216,7 +216,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
       when(
         mockGovernmentSpendService
-          .getGovernmentSpendData(meq(currentTaxYearGovSpend))(any(), meq(request), any())
+          .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(model2))
 
