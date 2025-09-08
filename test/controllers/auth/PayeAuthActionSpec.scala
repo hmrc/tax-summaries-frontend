@@ -18,7 +18,6 @@ package controllers.auth
 
 import config.ApplicationConfig
 import controllers.auth.actions.PayeAuthActionImpl
-import controllers.paye.routes
 import models.admin.PAYEServiceToggle
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

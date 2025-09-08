@@ -17,8 +17,6 @@
 package controllers.sa
 
 import controllers.auth.FakeAuthJourney
-import controllers.sa.SummaryController
-import controllers.routes
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
