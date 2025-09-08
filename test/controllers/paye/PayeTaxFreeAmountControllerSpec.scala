@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
-    routes.PayeTaxFreeAmountController.show(currentTaxYearPAYE).url
+    controllers.paye.routes.PayeTaxFreeAmountController.show(currentTaxYearPAYE).url
   )
   lazy val payeGenericErrorView: PayeGenericErrorView                                     = inject[PayeGenericErrorView]
 
@@ -58,7 +58,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val fakeAppConfig = new FakeAppConfig
 
       val fakeAuthenticatedRequest =
-        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
+        buildPayeRequest(controllers.paye.routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponsePayeAtsDataCurrentTaxYear.as[PayeAtsData])))
@@ -87,7 +87,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val fakeAppConfig = new FakeAppConfig
 
       val fakeAuthenticatedRequest =
-        buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
+        buildPayeRequest(controllers.paye.routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponsePayeAtsDataPreviousTaxYear.as[PayeAtsData])))

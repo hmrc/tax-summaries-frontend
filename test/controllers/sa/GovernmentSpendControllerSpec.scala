@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import controllers.auth.FakeAuthJourney
 import controllers.auth.requests.AuthenticatedRequest
+import controllers.routes
+import controllers.sa.GovernmentSpendController
 import models.SpendData
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq as meq}
@@ -136,7 +138,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(NoATSViewModel(currentTaxYearGovSpend)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearGovSpend).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearGovSpend).url
     }
 
     s"have correct data for $currentTaxYearGovSpend" in {

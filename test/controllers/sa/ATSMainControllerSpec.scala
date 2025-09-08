@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import controllers.auth.FakeAuthJourney
 import controllers.auth.requests.AuthenticatedRequest
+import controllers.routes
+import controllers.sa.AtsMainController
+import controllers.sa.SummaryControllerSpec.currentTaxYearSA
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
@@ -27,13 +30,32 @@ import play.api.test.Helpers.*
 import services.*
 import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
-import view_models.{ATSUnavailableViewModel, NoATSViewModel, Summary}
+import view_models.*
 
 import scala.concurrent.Future
 
 class ATSMainControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
-  val baseModel: Summary  = SummaryControllerSpec.baseModel
+  val baseModel: Summary  = Summary(
+    year = currentTaxYearSA,
+    utr = testUtr,
+    employeeNicAmount = Amount(1200, "GBP"),
+    totalIncomeTaxAndNics = Amount(1400, "GBP"),
+    yourTotalTax = Amount(1800, "GBP"),
+    totalTaxFree = Amount(9440, "GBP"),
+    totalTaxFreeAllowance = Amount(9740, "GBP"),
+    yourIncomeBeforeTax = Amount(11600, "GBP"),
+    totalIncomeTaxAmount = Amount(372, "GBP"),
+    totalCapitalGainsTax = Amount(5500, "GBP"),
+    taxableGains = Amount(20000, "GBP"),
+    cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
+    nicsAndTaxPerCurrencyUnit = Amount(0.5678, "GBP"),
+    totalCgTaxRate = Rate("12.34%"),
+    nicsAndTaxRate = Rate("56.78%"),
+    title = "Mr",
+    forename = "forename",
+    surname = "surname"
+  )
 
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
@@ -97,7 +119,7 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
 
     }
 

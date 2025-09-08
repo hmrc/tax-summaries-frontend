@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import controllers.auth.FakeAuthJourney
 import controllers.auth.requests.AuthenticatedRequest
+import controllers.routes
+import controllers.sa.IncomeController
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
@@ -116,7 +118,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     "have the right user data in the view" in {

@@ -6,15 +6,15 @@ GET     /assets/*file                                           controllers.Asse
 
 GET     /                                                      controllers.AtsMergePageController.onPageLoad
 POST    /                                                      controllers.AtsMergePageController.onSubmit
-GET     /main                                                  controllers.AtsMainController.authorisedAtsMain
-GET     /summary                                               controllers.SummaryController.authorisedSummaries
-GET    /nics                                                  controllers.NicsController.redirectForDeprecatedNicsPage
-GET     /income-tax-national-insurance-contributions           controllers.NicsController.authorisedTaxAndNICs
-GET     /treasury-spending                                     controllers.GovernmentSpendController.authorisedGovernmentSpendData
-GET     /income-before-tax                                     controllers.IncomeController.authorisedIncomeBeforeTax
-GET     /tax-free-income                                       controllers.AllowancesController.authorisedAllowance
-GET     /total-income-tax                                      controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
-GET     /capital-gains-tax                                     controllers.CapitalGainsTaxController.authorisedCapitalGains
+GET     /sa/main                                                  controllers.sa.AtsMainController.authorisedAtsMain
+GET     /sa/summary                                               controllers.sa.SummaryController.authorisedSummaries
+GET     /sa/nics                                                  controllers.sa.NicsController.redirectForDeprecatedNicsPage
+GET     /sa/income-tax-national-insurance-contributions           controllers.sa.NicsController.authorisedTaxAndNICs
+GET     /sa/treasury-spending                                     controllers.sa.GovernmentSpendController.authorisedGovernmentSpendData
+GET     /sa/income-before-tax                                     controllers.sa.IncomeController.authorisedIncomeBeforeTax
+GET     /sa/tax-free-income                                       controllers.sa.AllowancesController.authorisedAllowance
+GET     /sa/total-income-tax                                      controllers.sa.NicsController.redirectForDeprecatedTotalIncomeTaxPage
+GET     /sa/capital-gains-tax                                     controllers.sa.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                        controllers.ErrorController.notAuthorised
 GET     /no-ats                                                controllers.ErrorController.authorisedNoAts(taxYear:Int)

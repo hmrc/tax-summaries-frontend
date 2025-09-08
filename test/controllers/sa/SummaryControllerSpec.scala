@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import controllers.auth.FakeAuthJourney
+import controllers.sa.SummaryController
+import controllers.routes
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -119,7 +121,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
         .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     "have the right user data in the view" in {

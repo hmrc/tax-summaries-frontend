@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.requests.AuthenticatedRequest
+import controllers.routes
 import models.{ErrorResponse, InvalidTaxYear, MissingTaxYear}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{MessagesControllerComponents, Result}
-import services._
+import services.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils._
+import utils.*
 import view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
