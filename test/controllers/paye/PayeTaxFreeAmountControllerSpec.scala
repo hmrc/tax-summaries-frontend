@@ -61,7 +61,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
         buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponsePayeAtsDataCurrentTaxYear.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYearSA)(fakeAuthenticatedRequest)
 
@@ -90,7 +90,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
         buildPayeRequest(routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponsePayeAtsDataPreviousTaxYear.as[PayeAtsData])))
 
       val result = sut.show(fakeAppConfig.taxYearSA)(fakeAuthenticatedRequest)
 

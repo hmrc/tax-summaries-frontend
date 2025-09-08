@@ -17,14 +17,16 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, IncomeService}
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
 
@@ -52,7 +54,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   val mockIncomeService: IncomeService = mock[IncomeService]
   val mockAuditService: AuditService   = mock[AuditService]
 
-  def sut =
+  def sut                                                           =
     new IncomeController(
       mockIncomeService,
       mockAuditService,
@@ -63,6 +65,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       tokenErrorView,
       taxYearUtil
     )
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)

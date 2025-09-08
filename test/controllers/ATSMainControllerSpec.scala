@@ -17,13 +17,15 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
-import play.api.test.Helpers._
-import services._
-import utils.TestConstants._
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.Helpers.*
+import services.*
+import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models.{ATSUnavailableViewModel, NoATSViewModel, Summary}
 
@@ -48,12 +50,13 @@ class ATSMainControllerSpec extends ControllerBaseSpec {
       taxYearUtil
     )
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit                                   = {
     reset(mockFeatureFlagService)
     when(mockSummaryService.getSummaryData(meq(currentTaxYearSA))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
     ()
   }
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   "Calling Index Page" must {
 

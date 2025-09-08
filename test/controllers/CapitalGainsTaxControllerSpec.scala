@@ -17,11 +17,13 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{AuditService, CapitalGainsService}
 import utils.TestConstants.{capitalGains, testUtr}
@@ -37,7 +39,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
   val mockCapitalGainsService: CapitalGainsService = mock[CapitalGainsService]
   val mockAuditService: AuditService               = mock[AuditService]
 
-  def sut: CapitalGainsTaxController =
+  def sut: CapitalGainsTaxController                                =
     new CapitalGainsTaxController(
       mockCapitalGainsService,
       mockAuditService,
@@ -48,6 +50,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       tokenErrorView,
       taxYearUtil
     )
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)

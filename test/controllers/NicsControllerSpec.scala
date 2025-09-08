@@ -18,15 +18,15 @@ package controllers
 
 import controllers.auth.FakeAuthJourney
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{AuditService, IncomeTaxAndNIService}
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
-import view_models._
+import view_models.*
 
 import scala.concurrent.Future
 
@@ -35,6 +35,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
   val mockAuditService: AuditService    = mock[AuditService]
   private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
   private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
+  private val request                   = buildRequest(currentTaxYearSA)
 
   private def nicsController =
     new NicsController(
@@ -67,7 +68,9 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
     "redirect to the year selection page when there is a no tax year in request" in {
       val result =
-        nicsController.redirectForDeprecatedTotalIncomeTaxPage(request copy (request = FakeRequest("GET", "/")))
+        nicsController.redirectForDeprecatedTotalIncomeTaxPage(
+          request copy (request = FakeRequest("GET", "/"))
+        )
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result).get mustBe controllers.routes.AtsMergePageController.onPageLoad.url

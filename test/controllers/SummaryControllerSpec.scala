@@ -22,11 +22,11 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
-import play.api.test.Helpers._
-import services._
-import utils.TestConstants._
+import play.api.test.Helpers.*
+import services.*
+import utils.TestConstants.*
 import utils.{BaseSpec, ControllerBaseSpec, TaxYearUtil}
-import view_models._
+import view_models.*
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal
@@ -61,7 +61,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
   val mockSummaryService: SummaryService = mock[SummaryService]
   val mockAuditService: AuditService     = mock[AuditService]
 
-  def sut =
+  def sut             =
     new SummaryController(
       mockSummaryService,
       mockAuditService,
@@ -72,6 +72,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       tokenErrorView,
       taxYearUtil
     )
+  private val request = buildRequest(currentTaxYearSA)
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)

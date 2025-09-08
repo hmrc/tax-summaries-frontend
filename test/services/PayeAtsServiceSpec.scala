@@ -40,10 +40,10 @@ import scala.concurrent.Future
 class PayeAtsServiceSpec extends BaseSpec {
   implicit val hc: HeaderCarrier            = HeaderCarrier()
   val expectedResponse: JsValue             = Json.parse(
-    payAtsData(currentTaxYearSA)
+    payeAtsData(currentTaxYearSA)
   )
   val expectedResponseCurrentYear: JsValue  = Json.parse(
-    payAtsData(currentTaxYearSA)
+    payeAtsData(currentTaxYearSA)
   )
   val expectedResponseMultipleYear: JsValue = Json.parse(
     payeAtsDataForYearRange()
