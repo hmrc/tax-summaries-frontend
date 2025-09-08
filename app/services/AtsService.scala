@@ -79,8 +79,8 @@ class AtsService @Inject() (
     converter: AtsData => Future[GenericViewModel]
   ): Future[GenericViewModel] = {
     val finalOutput = output match {
-      case Right(atsList) if atsList.taxYear > appConfig.taxYearSA => Future.successful(new ATSUnavailableViewModel)
-      case Right(atsList)                                          => converter(atsList)
+      case Right(atsData) if atsData.taxYear > appConfig.taxYearSA => Future.successful(new ATSUnavailableViewModel)
+      case Right(atsData)                                          => converter(atsData)
       case Left(NOT_FOUND)                                         => Future.successful(NoATSViewModel(taxYear))
       case Left(_)                                                 => Future.successful(new ATSUnavailableViewModel)
     }

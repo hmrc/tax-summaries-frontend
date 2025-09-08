@@ -193,7 +193,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
     server.stubFor(
       WireMock
         .get(urlMatching(s"/taxs/$generatedNino/$currentTaxYearPAYE/paye-ats-data"))
-        .willReturn(ok(payAtsData(currentTaxYearPAYE)))
+        .willReturn(ok(payeAtsData(currentTaxYearPAYE)))
     )
 
     server.stubFor(

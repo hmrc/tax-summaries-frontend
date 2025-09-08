@@ -71,7 +71,7 @@ trait ControllerBaseSpec extends BaseSpec {
 
   val fakeCredentials = new Credentials("provider ID", "provider type")
 
-  lazy val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
+  def buildRequest(taxYear: Int): AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
     None,
     Some(SaUtr(testUtr)),
@@ -79,7 +79,7 @@ trait ControllerBaseSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
+    FakeRequest("GET", s"?taxYear=$taxYear")
   )
 
   lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import com.google.inject.Inject
 import config.ApplicationConfig
@@ -22,56 +22,37 @@ import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AuditService, IncomeTaxAndNIService}
+import services.{AuditService, CapitalGainsService}
 import utils.{GenericViewModel, TaxYearUtil}
-import view_models.IncomeTaxAndNI
-import views.html.NicsView
+import view_models.CapitalGains
+import views.html.CapitalGainsView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NicsController @Inject() (
+class CapitalGainsTaxController @Inject() (
+  capitalGainsService: CapitalGainsService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
-  nicsView: NicsView,
+  capitalGainsView: CapitalGainsView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView,
-  incomeTaxAndNIService: IncomeTaxAndNIService,
   taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
-  private def redirectToMainTaxAndNIPage(request: AuthenticatedRequest[AnyContent]): Result =
-    request.getQueryString("taxYear") match {
-      case Some(taxYear) => Redirect(controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$taxYear")
-      case _             => Redirect(controllers.routes.AtsMergePageController.onPageLoad)
-    }
-
-  def redirectForDeprecatedTotalIncomeTaxPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents { request =>
-    redirectToMainTaxAndNIPage(request)
-  }
-
-  def redirectForDeprecatedNicsPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents { request =>
-    redirectToMainTaxAndNIPage(request)
-  }
-
-  def authorisedTaxAndNICs: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
+  def authorisedCapitalGains: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)
   }
 
-  type ViewModel = IncomeTaxAndNI
+  type ViewModel = CapitalGains
 
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
   ): Future[Either[ErrorResponse, GenericViewModel]] =
-    extractViewModelWithTaxYear(incomeTaxAndNIService.getIncomeAndNIData(_))
+    extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
-    Ok(
-      nicsView(
-        result,
-        getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)
-      )
-    )
+    Ok(capitalGainsView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
 }

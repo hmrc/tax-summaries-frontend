@@ -442,10 +442,11 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       }
 
     }
-    "SA and PAYE tax years are the same" must {
+    "SA, PAYE & gov spend tax years are the same" must {
       s"not show generic no ats message nor radiobuttons if user only has paye data & it's for all years" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearPAYE)
         val result =
           view(
             AtsMergePageViewModel(
@@ -458,7 +459,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           )
 
         result must not include messages("merge.page.no.ats.summary.text")
-        allYears(currentTaxYearSA, currentTaxYearSA).foreach { year =>
+        allYears(Seq(currentTaxYearSA, currentTaxYearSA, currentTaxYearGovSpend)).foreach { year =>
           result must not include messages(
             s"${year - 1} to $year for a general Annual Tax Summary"
           )
@@ -469,6 +470,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "show paye uplift header message if user only has paye data & it's for all years and needs uplift" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearPAYE)
         val result = view(
           AtsMergePageViewModel(
             saData = AtsList("", "", "", List.empty),
@@ -484,6 +486,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "have an error link to the first radio button if there is an error with SA data" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearSA)
         val result = Jsoup.parse(
           view(
             AtsMergePageViewModel(
@@ -502,6 +505,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "have an error link to the first radio button if there is an error" in {
         when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearSA)
         val result = Jsoup.parse(
           view(
             AtsMergePageViewModel(

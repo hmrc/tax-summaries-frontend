@@ -56,7 +56,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
       val fakeAppConfig = new ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA: Int = currentTaxYearPAYE
+        override lazy val taxYearPAYE: Int = currentTaxYearPAYE
       }
 
       val fakePayeConfig = new PayeConfig()(fakeAppConfig) {}
@@ -73,9 +73,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       )(fakeAppConfig, implicitly)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponsePayeAtsDataCurrentTaxYear.as[PayeAtsData])))
 
-      val result = sut.show(fakeAppConfig.taxYearSA)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe OK
 
@@ -84,8 +84,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (fakeAppConfig.taxYearSA - 1).toString,
-          fakeAppConfig.taxYearSA.toString
+          (currentTaxYearPAYE - 1).toString,
+          currentTaxYearPAYE.toString
         )
       )
     }
@@ -93,13 +93,13 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
     s"return OK response when tax year is set to ${currentTaxYearPAYE - 1}" in {
 
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA = currentTaxYearPAYE - 1
+        override lazy val taxYearPAYE = currentTaxYearPAYE - 1
       }
 
       val fakeAppConfig = new FakeAppConfig
 
       class FakePayeConfig extends PayeConfig {
-        override val payeYear: Int = fakeAppConfig.taxYearSA
+        override val payeYear: Int = currentTaxYearPAYE
       }
 
       val fakePayeConfig = new FakePayeConfig
@@ -116,7 +116,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
         )(fakeAppConfig, implicitly)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponsePayeAtsDataCurrentTaxYear.as[PayeAtsData])))
 
       val result = sut.show(fakePayeConfig.payeYear)(fakeAuthenticatedRequest)
 
@@ -127,8 +127,8 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       document.title must include(
         Messages("paye.ats.total_income_tax.title") + Messages(
           "generic.to_from",
-          (fakePayeConfig.payeYear - 1).toString,
-          fakePayeConfig.payeYear.toString
+          (currentTaxYearPAYE - 1).toString,
+          currentTaxYearPAYE.toString
         )
       )
     }

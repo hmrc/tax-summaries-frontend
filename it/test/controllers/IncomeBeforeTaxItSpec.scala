@@ -62,7 +62,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   "/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYearSA"
+    lazy val url = s"/annual-tax-summary/sa/income-before-tax?taxYear=$currentTaxYearSA"
 
     lazy val backendUrl = s"/taxs/$generatedSaUtr/$currentTaxYearSA/ats-data"
 
@@ -85,7 +85,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
     "return a 400 when TaxYearUtil.extractTaxYear returns invalid tax year" in {
 
-      val failureUrl = "/annual-tax-summary/income-before-tax"
+      val failureUrl = "/annual-tax-summary/sa/income-before-tax"
 
       server.stubFor(
         get(urlEqualTo(backendUrl))

@@ -29,7 +29,7 @@ class SaLanguageControllerSpec extends ControllerBaseSpec {
 
   def sut = new SaLanguageController(langUtils, mcc, applicationConfig)
 
-  val fakeRequest         = FakeRequest().withHeaders(("Referer", routes.ErrorController.notAuthorised.url))
+  val fakeRequest         = FakeRequest().withHeaders(("Referer", controllers.routes.ErrorController.notAuthorised.url))
   val redirectLocationUrl = routes.ErrorController.notAuthorised.url
 
   "SaLanguageController" must {

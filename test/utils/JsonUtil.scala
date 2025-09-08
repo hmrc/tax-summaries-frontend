@@ -17,7 +17,7 @@
 package utils
 
 import play.api.libs.json.*
-import utils.TestConstants.*
+import utils.TestConstants.testUtr
 
 import scala.io.Source
 

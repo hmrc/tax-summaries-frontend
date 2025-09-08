@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import models.SpendData
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services._
-import utils.TestConstants._
+import services.*
+import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
-import view_models._
+import view_models.*
 
 import scala.concurrent.Future
 
@@ -36,6 +38,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
   val mockGovernmentSpendService: GovernmentSpendService = mock[GovernmentSpendService]
   val mockAuditService: AuditService                     = mock[AuditService]
+
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
@@ -68,7 +72,10 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any()))
+    when(
+      mockGovernmentSpendService
+        .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
+    )
       .thenReturn(Future.successful(model))
     ()
   }
@@ -109,7 +116,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
+        mockGovernmentSpendService
+          .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -122,12 +130,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
+        mockGovernmentSpendService
+          .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     s"have correct data for $currentTaxYearSA" in {
@@ -204,7 +213,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
+        mockGovernmentSpendService
+          .getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(model2))
 
