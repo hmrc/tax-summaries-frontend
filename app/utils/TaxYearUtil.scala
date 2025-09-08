@@ -27,13 +27,17 @@ class TaxYearUtil @Inject() (
 
   private val taxYearPattern = """((19|[2-9][0-9])[\d]{2})""".r
 
-  private def minAndMaxYear: (Int, Int) = {
+  private def minAndMaxYearIncludingGovSpend: (Int, Int) = {
     val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE, appConfig.taxYearGovSpend)
+    (taxYears.min, taxYears.max)
+  }
+  private def minAndMaxYearExcludingGovSpend: (Int, Int) = {
+    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE)
     (taxYears.min, taxYears.max)
   }
 
   def isValidTaxYear(taxYear: Int): Boolean = {
-    val (minYear, maxYear) = minAndMaxYear
+    val (minYear, maxYear) = minAndMaxYearIncludingGovSpend
     !(taxYear > maxYear || taxYear <= minYear - appConfig.maxTaxYearsTobeDisplayed)
   }
 
@@ -45,8 +49,9 @@ class TaxYearUtil @Inject() (
         Left(MissingTaxYear)
     }
 
+  // Are all tax years present in list of years based on current years set up for PAYE & SA.
   def isYearListComplete(years: Seq[Int]): Boolean = {
-    val (minYear, maxYear) = minAndMaxYear
+    val (minYear, maxYear) = minAndMaxYearExcludingGovSpend
     val yearFrom           = minYear - appConfig.maxTaxYearsTobeDisplayed
     val yearTo             = maxYear
     val yrs                = years.distinct.sorted

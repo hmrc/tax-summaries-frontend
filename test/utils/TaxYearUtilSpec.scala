@@ -188,7 +188,17 @@ class TaxYearUtilSpec extends BaseSpec {
         taxYearUtil.isValidTaxYear(currentTaxYearGovSpend + 1) mustBe false
       }
     }
+  }
 
+  override protected def allYears(
+    currentTaxYearSA: Int,
+    currentTaxYearPAYE: Int,
+    currentGovSpendYear: Int
+  ): Seq[Int] = {
+    val taxYears = Seq(currentTaxYearSA, currentTaxYearPAYE)
+    val minYear  = taxYears.min - (maxTaxYearsTobeDisplayed - 1)
+    val maxYear  = taxYears.max
+    minYear to maxYear
   }
 
   def validCompleteTaxYear(currentTaxYearSA: Int, currentTaxYearPAYE: Int, currentTaxYearGovSpend: Int): Unit = {

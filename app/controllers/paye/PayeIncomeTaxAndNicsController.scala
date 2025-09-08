@@ -46,7 +46,6 @@ class PayeIncomeTaxAndNicsController @Inject() (
 
   def show(taxYear: Int): Action[AnyContent] =
     authJourney.authForPayeIndividuals(taxYear).async { implicit request: PayeAuthenticatedRequest[_] =>
-      println("\nHERE:" + taxYear)
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
         case Right(successResponse: PayeAtsData) =>
           Ok(

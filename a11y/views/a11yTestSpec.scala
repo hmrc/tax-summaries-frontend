@@ -126,13 +126,13 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
   "annual-tax-summary data pages" must
     List(
-      s"/annual-tax-summary/main?taxYear=$currentTaxYearSA",
-      s"/annual-tax-summary/summary?taxYear=$currentTaxYearSA",
-      s"/annual-tax-summary/income-tax-national-insurance-contributions?taxYear=$currentTaxYearSA",
-      s"/annual-tax-summary/treasury-spending?taxYear=$currentTaxYearSA",
-      s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYearSA",
-      s"/annual-tax-summary/tax-free-income?taxYear=$currentTaxYearSA",
-      s"/annual-tax-summary/capital-gains-tax?taxYear=$currentTaxYearSA"
+      s"/annual-tax-summary/sa/main?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/summary?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/income-tax-national-insurance-contributions?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/treasury-spending?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/income-before-tax?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/tax-free-income?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/capital-gains-tax?taxYear=$currentTaxYearSA"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
         val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))
