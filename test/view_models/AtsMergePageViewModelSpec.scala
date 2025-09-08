@@ -45,7 +45,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     request = FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
   private val allAvailableYears: Seq[Int]                                 =
-    allYears(currentTaxYearSA, currentTaxYearPAYE, currentTaxYearGovSpend).reverse
+    allYears(Seq(currentTaxYearSA, currentTaxYearPAYE, currentTaxYearGovSpend)).reverse
   override def beforeEach(): Unit                                         = {
     reset(mockAppConfig)
     when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)

@@ -18,8 +18,6 @@ package controllers.sa
 
 import controllers.auth.FakeAuthJourney
 import controllers.auth.requests.AuthenticatedRequest
-import controllers.routes
-import controllers.sa.{AllowancesController, TaxsController}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}

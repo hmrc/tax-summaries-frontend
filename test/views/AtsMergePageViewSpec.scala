@@ -459,7 +459,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
           )
 
         result must not include messages("merge.page.no.ats.summary.text")
-        allYears(currentTaxYearSA, currentTaxYearSA, currentTaxYearGovSpend).foreach { year =>
+        allYears(Seq(currentTaxYearSA, currentTaxYearSA, currentTaxYearGovSpend)).foreach { year =>
           result must not include messages(
             s"${year - 1} to $year for a general Annual Tax Summary"
           )
