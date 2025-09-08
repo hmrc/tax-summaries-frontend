@@ -24,7 +24,6 @@ import play.api
 import play.api.Application
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.PertaxAuthService
@@ -50,12 +49,6 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
     )
     .build()
 
-  override lazy val keystoreData: Map[String, JsValue] = Map(
-    s"TAXS_ATS_$currentTaxYear" -> Json.parse(
-      atsData(currentTaxYear)
-    )
-  )
-
   override def beforeEach(): Unit = {
     server.resetAll()
     super.beforeEach()
@@ -69,9 +62,9 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
 
   "/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYear"
+    lazy val url = s"/annual-tax-summary/income-before-tax?taxYear=$currentTaxYearSA"
 
-    lazy val backendUrl = s"/taxs/$generatedSaUtr/$currentTaxYear/ats-data"
+    lazy val backendUrl = s"/taxs/$generatedSaUtr/$currentTaxYearSA/ats-data"
 
     "return an OK response" in {
 
@@ -79,7 +72,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              atsData(currentTaxYear)
+              atsData(currentTaxYearSA)
             )
           )
       )
@@ -98,7 +91,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
         get(urlEqualTo(backendUrl))
           .willReturn(
             ok(
-              atsData(currentTaxYear)
+              atsData(currentTaxYearSA)
             )
           )
       )

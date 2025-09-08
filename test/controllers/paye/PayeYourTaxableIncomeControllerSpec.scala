@@ -71,9 +71,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
 
   "Government spend controller" must {
 
-    s"return OK response when set to $currentTaxYear" in {
+    s"return OK response when set to $currentTaxYearPAYE" in {
 
-      val taxYear = currentTaxYear
+      val taxYear = currentTaxYearPAYE
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
@@ -91,9 +91,9 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       )
     }
 
-    s"return OK response when set to $previousTaxYear" in {
+    s"return OK response when set to ${currentTaxYearPAYE - 1}" in {
 
-      val taxYear = previousTaxYear
+      val taxYear = currentTaxYearPAYE - 1
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
@@ -119,10 +119,10 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsNotFoundResponse(""))))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {
@@ -133,7 +133,7 @@ class PayeYourTaxableIncomeControllerSpec extends PayeControllerSpecHelpers {
       )
         .thenReturn(Future(Left(AtsErrorResponse(""))))
 
-      val result = sut.show(taxYear)(fakeAuthenticatedRequest)
+      val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustBe payeGenericErrorView().toString()

@@ -53,7 +53,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
     "aaa"
   )
 
-  private val saODSModel = SAODSModel(utr, taxYear, country, Nil)
+  private val saODSModel = SAODSModel(utr, currentTaxYearSA, country, Nil)
 
   override def beforeEach(): Unit = {
     reset(mockTaxSummariesConnector, mockTaxSummariesStubsConnector)
@@ -69,7 +69,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
 
   "onPageLoad" must {
     "render the page" in {
-      val result = controller.onPageLoad(taxYear, utr)(request)
+      val result = controller.onPageLoad(currentTaxYearSA, utr)(request)
 
       status(result) mustBe OK
     }
@@ -79,11 +79,11 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
     "redirect when request valid and add in any missing values with order as per fields list" in {
       val postRequest =
         FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "def 180.99"))
-      val result      = controller.onSubmit(taxYear, utr)(postRequest)
+      val result      = controller.onSubmit(currentTaxYearSA, utr)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        testOnly.controllers.routes.DisplayPTAController.onPageLoad(taxYear, utr).url
+        testOnly.controllers.routes.DisplayPTAController.onPageLoad(currentTaxYearSA, utr).url
       )
       val expSavedCountryAndOdsValues =
         CountryAndODSValues(
@@ -91,7 +91,11 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
           odsValues = Map("aaa" -> "0.00", "abc" -> "0.00", "def" -> "180.99", "ghi" -> "0.00")
         )
       verify(mockTaxSummariesStubsConnector, times(1))
-        .save(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(utr), ArgumentMatchers.eq(expSavedCountryAndOdsValues))(
+        .save(
+          ArgumentMatchers.eq(currentTaxYearSA),
+          ArgumentMatchers.eq(utr),
+          ArgumentMatchers.eq(expSavedCountryAndOdsValues)
+        )(
           any(),
           any()
         )
@@ -99,7 +103,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
 
     "return bad request when request invalid" in {
       val postRequest = FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0006"))
-      val result      = controller.onSubmit(taxYear, utr)(postRequest)
+      val result      = controller.onSubmit(currentTaxYearSA, utr)(postRequest)
 
       status(result) mustBe BAD_REQUEST
     }
@@ -107,7 +111,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
     "return bad request when request invalid due to invalid ods field" in {
       val postRequest =
         FakeRequest("POST", "/").withFormUrlEncodedBody(("country", "0001"), ("odsValues", "abcd 180.99"))
-      val result      = controller.onSubmit(taxYear, utr)(postRequest)
+      val result      = controller.onSubmit(currentTaxYearSA, utr)(postRequest)
 
       status(result) mustBe BAD_REQUEST
     }

@@ -42,17 +42,27 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     isAgentActive = false,
     confidenceLevel = ConfidenceLevel.L50,
     credentials = fakeCredentials,
-    request = FakeRequest("Get", s"?taxYear=$taxYear")
+    request = FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
-
-  override def beforeEach(): Unit =
+  private val allAvailableYears: Seq[Int]                                 = allYears(currentTaxYearSA, currentTaxYearPAYE).reverse
+  override def beforeEach(): Unit                                         = {
     reset(mockAppConfig)
+    when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+    when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+
+    ()
+  }
 
   "AtsMergePageViewModel" must {
 
     "set showIvUpliftLink to true if paye data is present and confidence level is below 200" in {
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear), mockAppConfig, ConfidenceLevel.L50)
+        AtsMergePageViewModel(
+          AtsList("", "", "", List.empty),
+          List(currentTaxYearSA),
+          mockAppConfig,
+          ConfidenceLevel.L50
+        )
       model.showIvUpliftLink mustBe true
     }
 
@@ -63,78 +73,121 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showIvUpliftLink to false if paye data is present and confidence level is 200" in {
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear), mockAppConfig, ConfidenceLevel.L200)
+        AtsMergePageViewModel(
+          AtsList("", "", "", List.empty),
+          List(currentTaxYearSA),
+          mockAppConfig,
+          ConfidenceLevel.L200
+        )
       model.showIvUpliftLink mustBe false
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is false" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L200)
-      model.completeYearList mustBe List(
-        AtsYearChoice(PAYE, taxYear),
-        AtsYearChoice(NoATS, taxYear - 1),
-        AtsYearChoice(SA, taxYear - 2),
-        AtsYearChoice(NoATS, taxYear - 3)
-      )
+        AtsMergePageViewModel(
+          saData = AtsList("", "", "", List(currentTaxYearSA - 2)),
+          payeTaxYearList = List(currentTaxYearPAYE),
+          appConfig = appConfig,
+          confidenceLevel = ConfidenceLevel.L200
+        )
+
+      model.completeYearList mustBe allAvailableYears.map {
+        case y if y == this.currentTaxYearSA - 2 => AtsYearChoice(SA, y)
+        case y if y == this.currentTaxYearPAYE   => AtsYearChoice(PAYE, y)
+        case y                                   => AtsYearChoice(NoATS, y)
+      }
     }
 
     "set completeYearList to contain all the years sorted and with correct SA types when showIVUplift is true" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List(taxYear), appConfig, ConfidenceLevel.L50)
-      model.completeYearList mustBe List(
-        AtsYearChoice(NoATS, taxYear - 1),
-        AtsYearChoice(SA, taxYear - 2),
-        AtsYearChoice(NoATS, taxYear - 3)
-      )
+        AtsMergePageViewModel(
+          saData = AtsList("", "", "", List(currentTaxYearSA - 2)),
+          payeTaxYearList = List(currentTaxYearPAYE),
+          appConfig = appConfig,
+          confidenceLevel = ConfidenceLevel.L50
+        )
+
+      model.completeYearList mustBe allAvailableYears.filter(_ != currentTaxYearPAYE).map {
+        case y if y == this.currentTaxYearSA - 2 => AtsYearChoice(SA, y)
+        case y                                   => AtsYearChoice(NoATS, y)
+      }
 
     }
 
     "set showContinueButton to true when showSaYearList is true" in {
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List(taxYear - 2)), List.empty, appConfig, ConfidenceLevel.L200)
+        AtsMergePageViewModel(
+          saData = AtsList("", "", "", List(currentTaxYearSA - 2)),
+          payeTaxYearList = List.empty,
+          appConfig = appConfig,
+          confidenceLevel = ConfidenceLevel.L200
+        )
       model.showContinueButton mustBe true
     }
 
     "set showContinueButton to true when showNoAtsYearList is true" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, appConfig, ConfidenceLevel.L200)
+      val model = AtsMergePageViewModel(
+        saData = AtsList("", "", "", List.empty),
+        payeTaxYearList = List.empty,
+        appConfig = appConfig,
+        confidenceLevel = ConfidenceLevel.L200
+      )
       model.showContinueButton mustBe true
     }
 
     "set showContinueButton to true when paye data is present and show IV uplift is false" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear - 1), mockAppConfig, ConfidenceLevel.L200)
+        AtsMergePageViewModel(
+          saData = AtsList("", "", "", List.empty),
+          payeTaxYearList = List(currentTaxYearPAYE - 1),
+          appConfig = mockAppConfig,
+          confidenceLevel = ConfidenceLevel.L200
+        )
       model.showContinueButton mustBe true
     }
 
     "set showContinueButton to false when there is no paye, sa or no ats data" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear - 10)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA - 10)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearSA - 10)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200)
+        AtsMergePageViewModel(
+          saData = AtsList("", "", "", List.empty),
+          payeTaxYearList = List.empty,
+          appConfig = mockAppConfig,
+          confidenceLevel = ConfidenceLevel.L200
+        )
       model.showContinueButton mustBe false
     }
 
-    "set showContinueButton to false when there is no sa or no ats data, there is paye data but the user needs iv uplift" in {
-      when(mockAppConfig.taxYear).thenReturn(taxYear - 10)
+    "set showContinueButton to false when there is no SA data, SA and PAYE tax years are the same & there is paye data but the user needs iv uplift" in {
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
-        AtsMergePageViewModel(AtsList("", "", "", List.empty), List(taxYear), mockAppConfig, ConfidenceLevel.L50)
+        AtsMergePageViewModel(
+          saData = AtsList("", "", "", List.empty),
+          payeTaxYearList = List(currentTaxYearPAYE),
+          appConfig = mockAppConfig,
+          confidenceLevel = ConfidenceLevel.L50
+        )
       model.showContinueButton mustBe false
     }
 
     "set name to be name and surname from sa data" in {
       val model =
-        AtsMergePageViewModel(AtsList("", "name", "surname", List(1)), List.empty, mockAppConfig, ConfidenceLevel.L200)
+        AtsMergePageViewModel(
+          saData = AtsList("", "name", "surname", List(1)),
+          payeTaxYearList = List.empty,
+          appConfig = mockAppConfig,
+          confidenceLevel = ConfidenceLevel.L200
+        )
       model.name mustBe "name surname"
     }
 

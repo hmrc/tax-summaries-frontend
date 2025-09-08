@@ -28,10 +28,10 @@ class EnterSearchFormProviderSpec extends BaseSpec {
 
   "form" must {
     "must bind valid data" in {
-      val expectedResult = TaxYearAndUTR(taxYear, utr)
+      val expectedResult = TaxYearAndUTR(currentTaxYearSA, utr)
 
       val data = Map(
-        "taxYear" -> taxYear.toString,
+        "taxYear" -> currentTaxYearSA.toString,
         "utr"     -> utr
       )
 
@@ -70,7 +70,7 @@ class EnterSearchFormProviderSpec extends BaseSpec {
 
     "must display errors for missing utr" in {
       val data = Map(
-        "taxYear" -> taxYear.toString
+        "taxYear" -> currentTaxYearSA.toString
       )
 
       val result = form.bind(data)

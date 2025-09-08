@@ -41,7 +41,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     reset(mockFeatureFlagService)
 
     val model: GovernmentSpend = GovernmentSpend(
-      taxYear = currentTaxYear,
+      taxYear = currentTaxYearSA,
       userUtr = testUtr,
       govSpendAmountData = List(
         ("welfare", SpendData(Amount(5863.22, "GBP"), 24.52)),
@@ -68,7 +68,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       scottishIncomeTax = new Amount(2000.00, "GBP")
     )
 
-    when(mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any()))
+    when(mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any()))
       .thenReturn(Future.successful(model))
     ()
   }
@@ -94,8 +94,8 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.title must include(
         Messages("ats.treasury_spending.html.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }
@@ -109,7 +109,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
     "display an error page when AtsUnavailableViewModel is returned" in {
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
+        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
@@ -122,15 +122,15 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
+        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
-        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
-    s"have correct data for $currentTaxYear" in {
+    s"have correct data for $currentTaxYearSA" in {
 
       val result   = sut.show(request)
       val document = Jsoup.parse(contentAsString(result))
@@ -170,13 +170,13 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       document.select("#gov-spend-total + td").text() mustBe "£23,912.00"
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear Your taxes and public spending"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA Your taxes and public spending"
     }
 
-    s"have correct data for $previousTaxYear" in {
+    s"have correct data for ${currentTaxYearSA - 1}" in {
 
       val model2 = GovernmentSpend(
-        taxYear = previousTaxYear,
+        taxYear = currentTaxYearSA - 1,
         userUtr = testUtr,
         govSpendAmountData = List(
           ("welfare", SpendData(Amount(2530, "GBP"), 25.3)),
@@ -204,7 +204,7 @@ class GovernmentSpendControllerSpec extends ControllerBaseSpec {
       )
 
       when(
-        mockGovernmentSpendService.getGovernmentSpendData(meq(taxYear))(any(), meq(request), any())
+        mockGovernmentSpendService.getGovernmentSpendData(meq(currentTaxYearSA))(any(), meq(request), any())
       )
         .thenReturn(Future.successful(model2))
 

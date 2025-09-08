@@ -52,7 +52,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+    when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
     ()
   }
@@ -66,8 +66,8 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       document.title must include(
         Messages("ats.capital_gains_tax.html.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }
@@ -80,7 +80,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -91,11 +91,11 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
-        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     "show Your Capital Gains section with the right user data" in {
@@ -107,7 +107,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
       document.getElementById("taxable-gains").text() mustBe "£20,000"
       document.getElementById("less-taxable-gains").text() mustBe "− £10,600"
       document.getElementById("cg-pay-tax-on").text() mustBe "£9,400"
-      document.getElementById("tax-period").text() mustBe s"${taxYear - 1} to $taxYear"
+      document.getElementById("tax-period").text() mustBe s"${currentTaxYearSA - 1} to $currentTaxYearSA"
       document.getElementById("total-cg-tax-rate").text() mustBe "12.34%"
       document.getElementById("user-info").text() must include("forename surname")
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
@@ -116,7 +116,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         .text mustBe "Capital Gains Tax"
       document
         .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
-        .text mustBe s"Tax year: April 6 ${taxYear - 1} to April 5 $taxYear"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA"
     }
 
     "show Capital Gains Tax section if total amount of capital gains to pay tax on is not 0.00" in {
@@ -136,7 +136,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         taxableGains = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model2))
 
       val result   = sut.show(request)
@@ -172,7 +172,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         entrepreneursReliefRateBefore = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model3))
 
       val result   = sut.show(request)
@@ -189,7 +189,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         ordinaryRateBefore = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model4))
 
       val result   = sut.show(request)
@@ -206,7 +206,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         upperRateBefore = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model5))
 
       val result   = sut.show(request)
@@ -241,7 +241,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         adjustmentsAmount = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model6))
 
       val result   = sut.show(request)
@@ -267,7 +267,7 @@ class CapitalGainsTaxControllerSpec extends ControllerBaseSpec {
         totalCapitalGainsTaxAmount = Amount(0, "GBP")
       )
 
-      when(mockCapitalGainsService.getCapitalGains(meq(taxYear))(any(), meq(request)))
+      when(mockCapitalGainsService.getCapitalGains(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model7))
 
       val result   = sut.show(request)

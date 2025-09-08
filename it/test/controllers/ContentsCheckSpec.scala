@@ -57,23 +57,23 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         ExpectedData("Sorry there is a problem with the service - Annual Tax Summary - GOV.UK")
       case "paye-year"                =>
         ExpectedData(
-          s"How your tax was spent for the tax year: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+          s"How your tax was spent for the tax year: ${currentTaxYearPAYE - 1} to $currentTaxYearPAYE - Annual Tax Summary - GOV.UK"
         )
       case "paye-summary-year"        =>
         ExpectedData(
-          s"Your income and taxes: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+          s"Your income and taxes: ${currentTaxYearPAYE - 1} to $currentTaxYearPAYE - Annual Tax Summary - GOV.UK"
         )
       case "income-insurance-year"    =>
         ExpectedData(
-          s"Income Tax and National Insurance contributions: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+          s"Income Tax and National Insurance contributions: ${currentTaxYearPAYE - 1} to $currentTaxYearPAYE - Annual Tax Summary - GOV.UK"
         )
       case "income-before-tax-year"   =>
         ExpectedData(
-          s"Taxable income: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+          s"Taxable income: ${currentTaxYearPAYE - 1} to $currentTaxYearPAYE - Annual Tax Summary - GOV.UK"
         )
       case "tax-free-income-year"     =>
         ExpectedData(
-          s"Tax-free income: $previousTaxYear to $currentTaxYear - Annual Tax Summary - GOV.UK"
+          s"Tax-free income: ${currentTaxYearPAYE - 1} to $currentTaxYearPAYE - Annual Tax Summary - GOV.UK"
         )
       case "paye-not-authorised"      =>
         ExpectedData("We could not confirm your identity - Annual Tax Summary - GOV.UK")
@@ -90,21 +90,21 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
     }
 
   val urls: Map[String, ExpectedData] = Map(
-    "/annual-tax-summary/not-authorised"                                          -> getExpectedData("not-authorised"),
-    "/annual-tax-summary/no-ats"                                                  -> getExpectedData("no-ats"),
-    "/annual-tax-summary/service-unavailable"                                     -> getExpectedData("service-unavailable"),
-    s"/annual-tax-summary/paye/treasury-spending/$currentTaxYear"                 -> getExpectedData("paye-year"),
-    s"/annual-tax-summary/paye/summary/$currentTaxYear"                           -> getExpectedData("paye-summary-year"),
-    s"/annual-tax-summary/paye/income-tax-and-national-insurance/$currentTaxYear" -> getExpectedData(
+    "/annual-tax-summary/not-authorised"                                              -> getExpectedData("not-authorised"),
+    "/annual-tax-summary/no-ats"                                                      -> getExpectedData("no-ats"),
+    "/annual-tax-summary/service-unavailable"                                         -> getExpectedData("service-unavailable"),
+    s"/annual-tax-summary/paye/treasury-spending/$currentTaxYearPAYE"                 -> getExpectedData("paye-year"),
+    s"/annual-tax-summary/paye/summary/$currentTaxYearPAYE"                           -> getExpectedData("paye-summary-year"),
+    s"/annual-tax-summary/paye/income-tax-and-national-insurance/$currentTaxYearPAYE" -> getExpectedData(
       "income-insurance-year"
     ),
-    s"/annual-tax-summary/paye/income-before-tax/$currentTaxYear"                 -> getExpectedData(
+    s"/annual-tax-summary/paye/income-before-tax/$currentTaxYearPAYE"                 -> getExpectedData(
       "income-before-tax-year"
     ),
-    s"/annual-tax-summary/paye/tax-free-income/$currentTaxYear"                   -> getExpectedData("tax-free-income-year"),
-    "/annual-tax-summary/paye/not-authorised"                                     -> getExpectedData("paye-not-authorised"),
-    "/annual-tax-summary/paye/service-unavailable"                                -> getExpectedData("paye-service-unavailable"),
-    "/annual-tax-summary/session-expired"                                         -> getExpectedData("session-expired")
+    s"/annual-tax-summary/paye/tax-free-income/$currentTaxYearPAYE"                   -> getExpectedData("tax-free-income-year"),
+    "/annual-tax-summary/paye/not-authorised"                                         -> getExpectedData("paye-not-authorised"),
+    "/annual-tax-summary/paye/service-unavailable"                                    -> getExpectedData("paye-service-unavailable"),
+    "/annual-tax-summary/session-expired"                                             -> getExpectedData("session-expired")
   )
 
   val messageCount: Int = Random.between(1, 100)
@@ -125,32 +125,6 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         |  "dateOfBirth": "11121971"
         |}
         |""".stripMargin
-
-  val authResponse: String =
-    s"""
-       |{
-       |    "confidenceLevel": 200,
-       |    "nino": "$generatedNino",
-       |    "saUtr": "$generatedSaUtr",
-       |    "name": {
-       |        "name": "John",
-       |        "lastName": "Smith"
-       |    },
-       |    "loginTimes": {
-       |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
-       |        "previousLogin": null
-       |    },
-       |    "optionalCredentials": {
-       |        "providerId": "4911434741952698",
-       |        "providerType": "GovernmentGateway"
-       |    },
-       |    "authProviderId": {
-       |        "ggCredId": "xyz"
-       |    },
-       |    "externalId": "testExternalId",
-       |    "allEnrolments": []
-       |}
-       |""".stripMargin
 
   val wrapperDataResponse: String = Json
     .toJson(
@@ -218,18 +192,14 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
 
     server.stubFor(
       WireMock
-        .get(urlMatching(s"/taxs/$generatedNino/$currentTaxYear/paye-ats-data"))
-        .willReturn(
-          ok(
-            atsData(currentTaxYear)
-          )
-        )
+        .get(urlMatching(s"/taxs/$generatedNino/$currentTaxYearPAYE/paye-ats-data"))
+        .willReturn(ok(payAtsData(currentTaxYearPAYE)))
     )
 
     server.stubFor(
       get(
         urlEqualTo(
-          s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+          s"/taxs/$generatedNino/${currentTaxYearPAYE - appConfig.maxTaxYearsTobeDisplayed}/$currentTaxYearPAYE/paye-ats-data"
         )
       )
         .willReturn(
@@ -241,7 +211,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
 
     val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))
     server.stubFor(
-      get(urlEqualTo(s"/taxs//$currentTaxYear/4/ats-list"))
+      get(urlEqualTo(s"/taxs//$currentTaxYearSA/4/ats-list"))
         .willReturn(ok(loadAtsListData))
     )
   }

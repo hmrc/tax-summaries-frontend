@@ -21,135 +21,211 @@ import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.MissingTaxYear
 import org.mockito.Mockito.when
-
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import utils.TestConstants._
+import utils.TestConstants.*
 
 class TaxYearUtilSpec extends BaseSpec {
   private val mockAppConfig = mock[ApplicationConfig]
   private val taxYearUtil   = new TaxYearUtil(mockAppConfig)
 
+  // Override so that both tax years are always the same, which is required for these tests.
+  override protected val currentTaxYearPAYE: Int = currentTaxYearSA
+  private val maxTaxYearsTobeDisplayed: Int      = 4
+
   override def beforeEach(): Unit =
     super.beforeEach()
 
-  "isValidTaxYear" must {
-    "return true for current year" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      taxYearUtil.isValidTaxYear(currentTaxYear) mustBe true
+  "isValidTaxYear" when {
+    "SA and PAYE tax years are the same" must {
+      "return true for current year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA) mustBe true
+      }
+      "return true for earliest year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA - 3) mustBe true
+      }
+      "return false for earliest year - 1" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA - 4) mustBe false
+      }
+      "return false for current year + 1" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA + 1) mustBe false
+      }
     }
-    "return true for earliest year" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      taxYearUtil.isValidTaxYear(currentTaxYear - 3) mustBe true
+
+    "sa tax year is paye tax year + 1" must {
+      val currentTaxYearSA = currentTaxYearPAYE + 1
+      "return true for current sa year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA) mustBe true
+      }
+      "return true for current paye year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearPAYE) mustBe true
+      }
+      "return true for earliest year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearPAYE - 3) mustBe true
+      }
+      "return false for earliest year - 1" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearPAYE - 4) mustBe false
+      }
+      "return false for current sa year + 1" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA + 1) mustBe false
+      }
     }
-    "return false for earliest year - 1" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      taxYearUtil.isValidTaxYear(currentTaxYear - 4) mustBe false
+
+    "paye tax year is sa tax year + 1" must {
+      val currentTaxYearPAYE = currentTaxYearSA + 1
+      "return true for current paye year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearPAYE) mustBe true
+      }
+      "return true for current sa year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA) mustBe true
+      }
+      "return true for earliest year" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA - 3) mustBe true
+      }
+      "return false for earliest year - 1" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearSA - 4) mustBe false
+      }
+      "return false for current sa year + 1" in {
+        when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+        when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+        when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+        taxYearUtil.isValidTaxYear(currentTaxYearPAYE + 1) mustBe false
+      }
     }
-    "return false for current year + 1" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      taxYearUtil.isValidTaxYear(currentTaxYear + 1) mustBe false
-    }
+
   }
 
-  "isYearListComplete" must {
+  def validCompleteTaxYear(currentTaxYearSA: Int, currentTaxYearPAYE: Int): Unit = {
+
+    val fullYearList = allYears(currentTaxYearSA, currentTaxYearPAYE)
     "return false when list empty" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(Nil) mustBe false
     }
     "return true when all years present" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      taxYearUtil.isYearListComplete(
-        Seq(
-          currentTaxYear - 3,
-          currentTaxYear - 2,
-          currentTaxYear - 1,
-          currentTaxYear
-        )
-      ) mustBe true
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
+      taxYearUtil.isYearListComplete(fullYearList) mustBe true
     }
     "return false when first year missing" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(currentTaxYear - 2, currentTaxYear - 1, currentTaxYear)
+        fullYearList.tail
       ) mustBe false
     }
     "return false when first year missing but correct number of years due to earlier year present" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(
-          currentTaxYear - 4,
-          currentTaxYear - 2,
-          currentTaxYear - 1,
-          currentTaxYear
-        )
+        Seq(currentTaxYearSA - 6) ++ fullYearList.tail
       ) mustBe false
     }
     "return false when first year missing but correct number of years due to later year present" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(
-          currentTaxYear - 3,
-          currentTaxYear - 2,
-          currentTaxYear - 1,
-          currentTaxYear + 1
-        )
+        Seq(currentTaxYearSA + 2) ++ fullYearList.tail
       ) mustBe false
     }
 
     "return false when last year missing" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(currentTaxYear - 3, currentTaxYear - 2, currentTaxYear - 1)
+        fullYearList.reverse.tail.reverse
       ) mustBe false
     }
     "return false when last year missing but correct number of years due to earlier year present" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(
-          currentTaxYear - 4,
-          currentTaxYear - 3,
-          currentTaxYear - 2,
-          currentTaxYear - 1
-        )
+        Seq(currentTaxYearSA - 6) ++ fullYearList.reverse.tail.reverse
       ) mustBe false
     }
     "return false when last year missing but correct number of years due to later year present" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(
-          currentTaxYear - 3,
-          currentTaxYear - 2,
-          currentTaxYear - 1,
-          currentTaxYear + 1
-        )
+        Seq(currentTaxYearSA + 2) ++ fullYearList.reverse.tail.reverse
       ) mustBe false
     }
     "return false when year missing in middle of list" in {
-      when(mockAppConfig.taxYear).thenReturn(currentTaxYear)
-      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
+      when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+      when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
+      when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(maxTaxYearsTobeDisplayed)
       taxYearUtil.isYearListComplete(
-        Seq(currentTaxYear - 3, currentTaxYear - 1, currentTaxYear)
+        Seq(fullYearList.head) ++ fullYearList.tail.tail
       ) mustBe false
     }
   }
 
-  "taxYearUtil" must {
+  "isYearListComplete" when {
+    "SA and PAYE tax years are the same" must {
+      behave like validCompleteTaxYear(currentTaxYearSA, currentTaxYearPAYE)
+    }
+
+    "SA tax year is PAYE tax year + 1" must {
+      behave like validCompleteTaxYear(currentTaxYearSA + currentTaxYearPAYE + 1, currentTaxYearPAYE)
+    }
+
+    "PAYE tax year is SA tax year + 1" must {
+      behave like validCompleteTaxYear(currentTaxYearSA, currentTaxYearSA + 1)
+    }
+  }
+
+  "extractTaxYear" must {
     "extract tax year when a valid tax year is present" in {
       implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
         "userId",
@@ -159,12 +235,12 @@ class TaxYearUtilSpec extends BaseSpec {
         false,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", s"?taxYear=$taxYear")
+        FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
       )
 
       val result = taxYearUtil.extractTaxYear
 
-      result mustBe Right(taxYear)
+      result mustBe Right(currentTaxYearSA)
 
     }
 
@@ -180,7 +256,7 @@ class TaxYearUtilSpec extends BaseSpec {
           false,
           ConfidenceLevel.L50,
           fakeCredentials,
-          FakeRequest("GET", s"?taxYear=${currentTaxYear}2")
+          FakeRequest("GET", s"?taxYear=${currentTaxYearSA}2")
         )
 
         val result = taxYearUtil.extractTaxYear

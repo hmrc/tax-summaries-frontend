@@ -19,8 +19,7 @@ package controllers.paye
 import play.api.http.Status.OK
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.defaultAwaitTimeout
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import utils.ControllerBaseSpec
 import views.html.errors.{PayeNotAuthorisedView, PayeServiceUnavailableView}
 
@@ -29,7 +28,7 @@ class PayeErrorControllerSpec extends ControllerBaseSpec {
   val payeNotAuthorisedView: PayeNotAuthorisedView           = inject[PayeNotAuthorisedView]
   val payeServiceUnavailableView: PayeServiceUnavailableView = inject[PayeServiceUnavailableView]
 
-  val sut = new PayeErrorController(mcc, payeNotAuthorisedView, payeServiceUnavailableView)(appConfig)
+  val sut = new PayeErrorController(mcc, payeNotAuthorisedView, payeServiceUnavailableView)
 
   implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 

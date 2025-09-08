@@ -79,7 +79,7 @@ trait ControllerBaseSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=$taxYear")
+    FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
   )
 
   lazy val badRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
@@ -90,11 +90,11 @@ trait ControllerBaseSpec extends BaseSpec {
     isAgentActive = false,
     ConfidenceLevel.L50,
     fakeCredentials,
-    FakeRequest("GET", s"?taxYear=${currentTaxYear}5")
+    FakeRequest("GET", s"?taxYear=${currentTaxYearSA}5")
   )
 
   protected val totalIncomeTaxModel: IncomeTaxAndNI = IncomeTaxAndNI(
-    year = taxYear,
+    year = currentTaxYearSA,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),

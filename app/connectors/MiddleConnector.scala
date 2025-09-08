@@ -21,8 +21,8 @@ import config.ApplicationConfig
 import models.*
 import play.api.Logging
 import uk.gov.hmrc.domain.{Nino, SaUtr}
-import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,11 @@ class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(i
   ): Future[AtsResponse] =
     connectToAts(requestedUTR, taxYear)
 
-  def connectToAtsList(UTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+  def connectToAtsList(
+    UTR: SaUtr,
+    endYear: Int,
+    numberOfYears: Int
+  )(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
 
   def connectToAtsListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit

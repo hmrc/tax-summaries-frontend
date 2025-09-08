@@ -62,7 +62,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
       redirectLocation(
         result
-      ).get mustBe controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$taxYear"
+      ).get mustBe controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$currentTaxYearSA"
     }
 
     "redirect to the year selection page when there is a no tax year in request" in {
@@ -81,7 +81,11 @@ class NicsControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
-        Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+        Messages("ats.nics.tax_and_nics.title") + Messages(
+          "generic.to_from",
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
+        )
       )
     }
 
@@ -104,12 +108,12 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
     "redirect to the main nics page when deprecated endpoint called" in {
       when(mockTotalIncomeTaxService.getIncomeAndNIData(any())(any(), any()))
-        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
 
       val result = nicsController.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     "hide rows if there is a zero value in the left cell amount field of the view" in {
@@ -238,7 +242,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         upperRate = Amount(0, "GBP"),
         additionalRate = Amount(0, "GBP")
       )
-      when(mockTotalIncomeTaxService.getIncomeAndNIData(meq(taxYear))(any(), meq(request)))
+      when(mockTotalIncomeTaxService.getIncomeAndNIData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model5))
 
       val result   = nicsController.show(request)

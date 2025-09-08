@@ -33,7 +33,7 @@ import scala.math.BigDecimal.double2bigDecimal
 
 object SummaryControllerSpec extends BaseSpec {
   val baseModel: Summary = Summary(
-    year = taxYear,
+    year = currentTaxYearSA,
     utr = testUtr,
     employeeNicAmount = Amount(1200, "GBP"),
     totalIncomeTaxAndNics = Amount(1400, "GBP"),
@@ -88,7 +88,11 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       val document = Jsoup.parse(contentAsString(result))
 
       document.title must include(
-        Messages("ats.summary.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+        Messages("ats.summary.title") + Messages(
+          "generic.to_from",
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
+        )
       )
     }
 
@@ -111,10 +115,10 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockSummaryService.getSummaryData(any())(any(), any()))
-        .thenReturn(Future.successful(NoATSViewModel(taxYear)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     "have the right user data in the view" in {
@@ -435,7 +439,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
 
     "Redirect to 'No ATS' page" in {
 
-      val model17 = NoATSViewModel(taxYear)
+      val model17 = NoATSViewModel(currentTaxYearSA)
 
       when(mockSummaryService.getSummaryData(any())(any(), any()))
         .thenReturn(Future.successful(model17))
@@ -443,7 +447,7 @@ class SummaryControllerSpec extends ControllerBaseSpec with ScalaCheckDrivenProp
       val result = sut.show(request)
 
       status(result) mustBe 303
-      redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$taxYear")
+      redirectLocation(result) mustBe Some(s"/annual-tax-summary/no-ats?taxYear=$currentTaxYearSA")
     }
   }
 }

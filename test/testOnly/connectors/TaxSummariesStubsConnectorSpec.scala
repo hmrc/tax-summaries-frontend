@@ -57,7 +57,7 @@ class TaxSummariesStubsConnectorSpec
   private lazy val connector: TaxSummariesStubsConnector = inject[TaxSummariesStubsConnector]
   private lazy val url                                   = s"/ods-sa-data/$utr/$taxYear"
 
-  private val taxYear = currentTaxYear
+  private val taxYear = currentTaxYearSA
   private val utr     = "0000000010"
 
   private val saODSModel          = SAODSModel(utr, taxYear, "0001", List(OdsValue("abc", BigDecimal(44.44))))

@@ -43,7 +43,7 @@ class PayeAuthActionSpec extends BaseSpec {
   override implicit lazy val appConfig: ApplicationConfig = mock[ApplicationConfig]
   private val mockAuthConnector: DefaultAuthConnector     = mock[DefaultAuthConnector]
   private val mockPertaxAuthService                       = mock[PertaxAuthService]
-  override val taxYear                                    = currentTaxYear
+  override val currentTaxYearSA                           = currentTaxYearSA
   private val mockTaxYearUtil                             = mock[TaxYearUtil]
 
   private class Harness(authAction: PayeAuthActionImpl) extends InjectedController {
@@ -84,7 +84,7 @@ class PayeAuthActionSpec extends BaseSpec {
           mockPertaxAuthService,
           mockFeatureFlagService,
           mockTaxYearUtil,
-          taxYear
+          currentTaxYearSA
         )
       val controller = new Harness(authAction)
 
@@ -113,13 +113,13 @@ class PayeAuthActionSpec extends BaseSpec {
           mockPertaxAuthService,
           mockFeatureFlagService,
           mockTaxYearUtil,
-          taxYear
+          currentTaxYearSA
         )
       val controller = new Harness(authAction)
 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(taxYear).url)
+      redirectLocation(result) mustBe Some(controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url)
     }
     "redirect to failure url when authorisation fails" in {
 
@@ -142,7 +142,7 @@ class PayeAuthActionSpec extends BaseSpec {
           mockPertaxAuthService,
           mockFeatureFlagService,
           mockTaxYearUtil,
-          taxYear
+          currentTaxYearSA
         )
       val controller = new Harness(authAction)
 
@@ -165,7 +165,7 @@ class PayeAuthActionSpec extends BaseSpec {
           mockPertaxAuthService,
           mockFeatureFlagService,
           mockTaxYearUtil,
-          taxYear
+          currentTaxYearSA
         )
 
       val controller = new Harness(authAction)

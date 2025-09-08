@@ -35,7 +35,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
 
   val baseModel: Allowances = Allowances(
-    taxYear = currentTaxYear,
+    taxYear = currentTaxYearSA,
     utr = testUtr,
     taxFreeAllowance = Amount(9440, "GBP"),
     marriageAllowanceTransferred = Amount(0, "GBP"),
@@ -48,7 +48,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  val noATSViewModel: NoATSViewModel = NoATSViewModel(taxYear)
+  val noATSViewModel: NoATSViewModel = NoATSViewModel(currentTaxYearSA)
 
   lazy val taxsController: TaxsController = mock[TaxsController]
 
@@ -91,7 +91,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.getElementById("user-info").text() must include("Unique Taxpayer Reference: " + testUtr)
       document
         .select("header[data-component='ats_page_heading']")
-        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear Your tax-free income"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA Your tax-free income"
     }
 
     "have zero-value fields hidden in the view" in {
@@ -118,8 +118,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
       document.title must include(
         Messages("ats.tax_free_amount.html.title") + Messages(
           "generic.to_from",
-          (taxYear - 1).toString,
-          taxYear.toString
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
         )
       )
     }
@@ -143,10 +143,10 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
       when(mockAllowanceService.getAllowances(any())(any(), any()))
-        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
   }
 }

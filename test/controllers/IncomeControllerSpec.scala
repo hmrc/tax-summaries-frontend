@@ -34,7 +34,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   private val taxYearUtil = app.injector.instanceOf[TaxYearUtil]
 
   val baseModel: IncomeBeforeTax = IncomeBeforeTax(
-    taxYear = currentTaxYear,
+    taxYear = currentTaxYearSA,
     utr = testUtr,
     getSelfEmployTotal = Amount(1100, "GBP"),
     getIncomeFromEmployment = Amount(10500, "GBP"),
@@ -67,7 +67,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit = {
     reset(mockFeatureFlagService)
 
-    when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+    when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
       .thenReturn(Future.successful(baseModel))
     ()
   }
@@ -79,7 +79,11 @@ class IncomeControllerSpec extends ControllerBaseSpec {
       status(result) mustBe 200
       val document = Jsoup.parse(contentAsString(result))
       document.title must include(
-        Messages("ats.income_before_tax.title") + Messages("generic.to_from", (taxYear - 1).toString, taxYear.toString)
+        Messages("ats.income_before_tax.title") + Messages(
+          "generic.to_from",
+          (currentTaxYearSA - 1).toString,
+          currentTaxYearSA.toString
+        )
       )
     }
 
@@ -91,7 +95,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
     "display an error page when AtsUnavailableViewModel is returned" in {
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(new ATSUnavailableViewModel))
 
       val result = sut.show(request)
@@ -103,13 +107,13 @@ class IncomeControllerSpec extends ControllerBaseSpec {
 
     "redirect to the no ATS page when there is no Annual Tax Summary data returned" in {
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
-        .thenReturn(Future.successful(NoATSViewModel(appConfig.taxYear)))
+      when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
+        .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
 
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(appConfig.taxYear).url
+      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
 
     "have the right user data in the view" in {
@@ -137,7 +141,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         .text mustBe "Your total income"
       document
         .getElementsByAttributeValueMatching("data-component", "ats_page_heading__p")
-        .text mustBe s"Tax year: April 6 $previousTaxYear to April 5 $currentTaxYear"
+        .text mustBe s"Tax year: April 6 ${currentTaxYearSA - 1} to April 5 $currentTaxYearSA"
     }
 
     "have zero-value fields hidden in the view" in {
@@ -153,7 +157,7 @@ class IncomeControllerSpec extends ControllerBaseSpec {
         getIncomeBeforeTaxTotal = Amount(0, "GBP")
       )
 
-      when(mockIncomeService.getIncomeData(meq(taxYear))(any(), meq(request)))
+      when(mockIncomeService.getIncomeData(meq(currentTaxYearSA))(any(), meq(request)))
         .thenReturn(Future.successful(model))
 
       val result = sut.show(request)

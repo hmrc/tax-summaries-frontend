@@ -17,13 +17,12 @@
 package controllers.paye
 
 import com.google.inject.Inject
-import config.ApplicationConfig
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.time.CurrentTaxYear
-import views.html.errors._
+import views.html.errors.*
 
 import java.time.LocalDate
 
@@ -31,13 +30,11 @@ class PayeErrorController @Inject() (
   mcc: MessagesControllerComponents,
   payeNotAuthorisedView: PayeNotAuthorisedView,
   payeServiceUnavailableView: PayeServiceUnavailableView
-)(implicit appConfig: ApplicationConfig)
-    extends FrontendController(mcc)
+) extends FrontendController(mcc)
     with I18nSupport
     with CurrentTaxYear
     with Logging {
 
-  val payeYear                      = appConfig.taxYear
   override def now: () => LocalDate = () => LocalDate.now()
 
   def notAuthorised: Action[AnyContent] = Action { implicit request: Request[_] =>

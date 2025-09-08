@@ -30,27 +30,35 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repository.TaxsAgentTokenSessionCacheRepository
 import services.PertaxAuthService
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.{Globals, IntegrationSpec, LoginPage}
 
 import java.time.Instant
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class AtsMergePageControllerItSpec extends IntegrationSpec {
-  private val mockPertaxAuthService               = mock[PertaxAuthService]
-  lazy override implicit val ec: ExecutionContext = inject[ExecutionContext]
+object AtsMergePageControllerItSpec extends IntegrationSpec {
+  private val mockPertaxAuthService = mock[PertaxAuthService]
 
-  lazy implicit val hc: HeaderCarrier = inject[HeaderCarrier]
-
-  val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
+  private val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
 
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
 
-  val agentToken: String = LoginPage.agentToken(generatedSaUtr.utr)
+  private val agentToken: String                     = LoginPage.agentToken(generatedSaUtr.utr)
+  private def atsListForTaxYears(taxYears: Seq[Int]) = {
+    val ty = taxYears.foldLeft("")((acc, c) => acc + (if (acc.isEmpty) "" else ",") + c)
+    """{
+      |  "utr":"$utr",
+      |  "taxPayer":{"title":"Mr","forename":"forename","surname":"surname"},
+      |  "atsYearList":[$YEARS]
+      |}""".stripMargin.replace("$YEARS", ty)
+  }
+}
 
+class AtsMergePageControllerItSpec extends IntegrationSpec {
+  import AtsMergePageControllerItSpec.*
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"          -> server.port(),
@@ -64,89 +72,39 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
     .build()
 
   override def beforeEach(): Unit = {
-
     super.beforeEach()
-
-    val authResponse =
-      s"""
-         |{
-         |    "confidenceLevel": 200,
-         |    "nino": "$generatedNino",
-         |    "saUtr": "$generatedSaUtr",
-         |    "name": {
-         |        "name": "John",
-         |        "lastName": "Smith"
-         |    },
-         |    "loginTimes": {
-         |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
-         |        "previousLogin": null
-         |    },
-         |    "optionalCredentials": {
-         |        "providerId": "4911434741952698",
-         |        "providerType": "GovernmentGateway"
-         |    },
-         |    "authProviderId": {
-         |        "ggCredId": "xyz"
-         |    },
-         |    "externalId": "testExternalId",
-         |    "allEnrolments": []
-         |}
-         |""".stripMargin
-
-    server.stubFor(
-      post(urlEqualTo("/auth/authorise"))
-        .willReturn(ok(authResponse))
-    )
-
     mockReset(mockFeatureFlagService, mockPertaxAuthService)
-
     when(mockPertaxAuthService.authorise(mockAny())).thenReturn(Future.successful(None))
-
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    when(
+      mockTaxsAgentTokenSessionCacheRepository
+        .putSession[AgentToken](DataKey(mockAny), mockAny)(mockAny, mockAny, mockAny)
+    ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
+    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(mockAny))(mockAny, mockAny))
+      .thenReturn(Future.successful(Some(agentTokenMock)))
   }
 
-  when(
-    mockTaxsAgentTokenSessionCacheRepository
-      .putSession[AgentToken](DataKey(mockAny), mockAny)(mockAny, mockAny, mockAny)
-  ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
-
-  when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(mockAny))(mockAny, mockAny))
-    .thenReturn(
-      Future
-        .successful(Some(agentTokenMock))
-    )
-
-  private def atsList(taxYears: Seq[Int]) = {
-    val ty = taxYears.foldLeft("")((acc, c) => acc + (if (acc.isEmpty) "" else ",") + c)
-    """{
-      |  "utr":"$utr",
-      |  "taxPayer":{"title":"Mr","forename":"forename","surname":"surname"},
-      |  "atsYearList":[$YEARS]
-      |}""".stripMargin.replace("$YEARS", ty)
-  }
-
-  private def allPreviousYears: Seq[Int] = {
-    val yearFrom = appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1
-    yearFrom to appConfig.taxYear
+  private def allPreviousYearsSA: Seq[Int] = {
+    val yearFrom = currentTaxYearSA - maxTaxYearsTobeDisplayed + 1
+    yearFrom to currentTaxYearSA
   }
 
   "/income-before-tax" must {
 
-    lazy val url = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
-
-    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
+    lazy val url          = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/$currentTaxYearSA/4/ats-list"
 
     lazy val backendUrlPaye =
-      s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1}/${appConfig.taxYear}/paye-ats-data"
+      s"/taxs/$generatedNino/${currentTaxYearPAYE - appConfig.maxTaxYearsTobeDisplayed + 1}/$currentTaxYearPAYE/paye-ats-data"
 
-    "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsList and payeData" in {
+    "return an OK response with appropriate query parameters for Agent when data is retrieved from backend for both atsListForTaxYears and payeData" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(atsList(allPreviousYears)))
+          .willReturn(ok(atsListForTaxYears(allPreviousYearsSA)))
       )
 
       server.stubFor(
@@ -169,18 +127,18 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
     }
 
-    "return an OK response without query parameters when data is retrieved from backend for both atsList and payeData" in {
+    "return an OK response without query parameters when data is retrieved from backend for both atsListForTaxYears and payeData" in {
 
       lazy val url = s"/annual-tax-summary/paye/main"
 
-      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/${appConfig.taxYear}/4/ats-list"
+      lazy val backendUrlSa = s"/taxs/$generatedSaUtr/$currentTaxYearSA/4/ats-list"
 
       lazy val backendUrlPaye =
-        s"/taxs/$generatedNino/${appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed}/${appConfig.taxYear}/paye-ats-data"
+        s"/taxs/$generatedNino/${currentTaxYearPAYE - appConfig.maxTaxYearsTobeDisplayed}/$currentTaxYearPAYE/paye-ats-data"
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(atsList(allPreviousYears)))
+          .willReturn(ok(atsListForTaxYears(allPreviousYearsSA)))
       )
 
       server.stubFor(
@@ -203,11 +161,11 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe false
     }
 
-    "return an OK response when data is retrieved from backend for atsList but no payeData found" in {
+    "return an OK response when data is retrieved from backend for atsListForTaxYears but no payeData found" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
-          .willReturn(ok(atsList(allPreviousYears)))
+          .willReturn(ok(atsListForTaxYears(allPreviousYearsSA)))
       )
 
       server.stubFor(
@@ -226,7 +184,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
     }
 
-    "return an OK response when data is retrieved from backend for payeData but no atsList data found" in {
+    "return an OK response when data is retrieved from backend for payeData but no atsListForTaxYears data found" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
@@ -253,7 +211,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       request.getQueryString(Globals.TAXS_AGENT_TOKEN_ID).isDefined mustBe true
     }
 
-    "return an OK response when call to backend is successful but no data is found for either atsList or payeData" in {
+    "return an OK response when call to backend is successful but no data is found for either atsListForTaxYears or payeData" in {
 
       server.stubFor(
         get(urlEqualTo(backendUrlSa))
@@ -282,7 +240,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve atsList data throws a $httpResponse" in {
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve atsListForTaxYears data throws a $httpResponse" in {
 
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
@@ -312,33 +270,11 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return a success response when the call to backend to retrieve payeData throws a $httpResponse but sa data present for ALL previous tax years" in {
-        server.stubFor(get(urlEqualTo(backendUrlSa)).willReturn(ok(atsList(allPreviousYears))))
-
-        server.stubFor(
-          get(urlEqualTo(backendUrlPaye))
-            .willReturn(aResponse().withStatus(httpResponse))
-        )
-
-        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
-
-        val result = route(fakeApplication(), request)
-
-        result.map(status) mustBe Some(OK)
-      }
-    }
-
-    List(
-      BAD_REQUEST,
-      IM_A_TEAPOT,
-      INTERNAL_SERVER_ERROR,
-      SERVICE_UNAVAILABLE
-    ).foreach { httpResponse =>
       s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve payeData throws a $httpResponse and sa data not present for all years (one year missing)" in {
 
         server.stubFor(
           get(urlEqualTo(backendUrlSa)).willReturn(
-            ok(atsList(allPreviousYears.take(appConfig.maxTaxYearsTobeDisplayed - 1)))
+            ok(atsListForTaxYears(allPreviousYearsSA.take(appConfig.maxTaxYearsTobeDisplayed - 1)))
           )
         )
 
@@ -361,7 +297,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
       INTERNAL_SERVER_ERROR,
       SERVICE_UNAVAILABLE
     ).foreach { httpResponse =>
-      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve both atsList data and payeData throws a $httpResponse" in {
+      s"return an INTERNAL_SERVER_ERROR when the call to backend to retrieve both atsListForTaxYears data and payeData throws a $httpResponse" in {
 
         server.stubFor(
           get(urlEqualTo(backendUrlSa))
@@ -380,5 +316,34 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
         result.map(status) mustBe Some(INTERNAL_SERVER_ERROR)
       }
     }
+
+  }
+
+  "Ats merge page when SA and PAYE tax years are the same" must {
+    val currentTaxYearPAYE: Int = currentTaxYearSA // Make both tax years the same
+
+    lazy val url          = s"/annual-tax-summary/paye/main?ref=PORTAL&id=$agentToken"
+    lazy val backendUrlSa = s"/taxs/$generatedSaUtr/$currentTaxYearSA/4/ats-list"
+
+    lazy val backendUrlPaye =
+      s"/taxs/$generatedNino/${currentTaxYearPAYE - appConfig.maxTaxYearsTobeDisplayed + 1}/$currentTaxYearPAYE/paye-ats-data"
+
+    List(BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE).foreach { httpResponse =>
+      s"return a success response when the call to backend to retrieve payeData throws a $httpResponse but sa data present for ALL previous tax years" in {
+        server.stubFor(get(urlEqualTo(backendUrlSa)).willReturn(ok(atsListForTaxYears(allPreviousYearsSA))))
+
+        server.stubFor(
+          get(urlEqualTo(backendUrlPaye))
+            .willReturn(aResponse().withStatus(httpResponse))
+        )
+
+        val request = FakeRequest(GET, url).withSession(SessionKeys.authToken -> "Bearer 1")
+
+        val result = route(fakeApplication(), request)
+
+        result.map(status) mustBe Some(OK)
+      }
+    }
+
   }
 }

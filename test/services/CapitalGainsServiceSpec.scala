@@ -26,11 +26,11 @@ import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{BaseSpec, GenericViewModel}
-import view_models._
+import view_models.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
@@ -40,13 +40,12 @@ class CapitalGainsServiceSpec extends BaseSpec {
     utr = "3000024376",
     forename = "forename",
     surname = "surname",
-    yearList = List(currentTaxYear)
+    yearList = List(currentTaxYearSA)
   )
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 
   val mockAtsService: AtsService                            = mock[AtsService]
-  override val taxYear                                      = 2015
   val request: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     userId = "userId",
     agentRef = None,
@@ -55,7 +54,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
     isAgentActive = false,
     confidenceLevel = ConfidenceLevel.L50,
     credentials = fakeCredentials,
-    request = FakeRequest("GET", s"?taxYear=$taxYear")
+    request = FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
   )
 
   val sut = new CapitalGainsService(mockAtsService)
@@ -69,7 +68,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      val result = Await.result(sut.getCapitalGains(taxYear)(hc, request), 1500 millis)
+      val result = Await.result(sut.getCapitalGains(currentTaxYearSA)(hc, request), 1500 millis)
       result mustEqual genericViewModel
     }
   }
@@ -81,7 +80,7 @@ class CapitalGainsServiceSpec extends BaseSpec {
       val result  = sut.capitalGains(atsData)
 
       result mustBe CapitalGains(
-        currentTaxYear,
+        currentTaxYearSA,
         "1111111111",
         Amount.gbp(100),
         Amount.gbp(-200),

@@ -22,17 +22,17 @@ import utils.TaxYearForTesting
 class TaxYearFormattingSpec extends AnyWordSpec with Matchers with TaxYearForTesting {
 
   val instance = new TaxYearFormatting {
-    val taxYear = currentTaxYear
+    val taxYear = currentTaxYearSA
   }
 
   "TaxYearFormatting" must {
 
     "Calculate valid start year" in {
-      instance.taxYearFrom mustBe s"$previousTaxYear"
+      instance.taxYearFrom mustBe s"${currentTaxYearSA - 1}"
     }
 
     "Calculate valid end year" in {
-      instance.taxYearTo mustBe s"$currentTaxYear"
+      instance.taxYearTo mustBe s"$currentTaxYearSA"
     }
 
   }

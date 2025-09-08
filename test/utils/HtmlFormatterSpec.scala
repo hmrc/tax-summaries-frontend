@@ -22,10 +22,10 @@ class HtmlFormatterSpec extends BaseSpec {
 
   "toHtmlNonBroken" must {
     "replace spaces with non breaking spaces" in {
-      val stringBeforeReplace = s"6 April $currentTaxYear to 5 April $currentTaxYear"
+      val stringBeforeReplace = s"6 April $currentTaxYearSA to 5 April $currentTaxYearSA"
 
       val expectedString =
-        s"6&nbsp;April&nbsp;$currentTaxYear&nbsp;to&nbsp;5&nbsp;April&nbsp;$currentTaxYear"
+        s"6&nbsp;April&nbsp;$currentTaxYearSA&nbsp;to&nbsp;5&nbsp;April&nbsp;$currentTaxYearSA"
 
       htmlFormatter.toHtmlNonBroken(stringBeforeReplace) mustBe expectedString
     }

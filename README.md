@@ -25,6 +25,10 @@ Testing
 ------------
 Please run Unit tests by running `sbt test` and `sbt it:test`
 
+Uprating
+------------
+There are separate tax years for SA and PAYE. This is so that the yearly uprating can be done separately for SA and PAYE. The tax year can be increased for either without breaking anything in the other's tests. The tax years are stored in application.conf: taxYearSA and taxYearPAYE. The currentTaxYearSA and currentTaxYearPAYE items in the TaxYearForTesting class should be updated too at the same time: they should always be the same as the items in application.conf.   
+
 
 
 ### License

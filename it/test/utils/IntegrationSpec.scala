@@ -25,7 +25,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
-import play.api.libs.json.JsValue
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
@@ -43,50 +42,47 @@ class IntegrationSpec
     with MockitoSugar
     with TaxYearForTesting {
 
-  val generatedNino: Nino = new Generator().nextNino
+  protected val generatedNino: Nino = new Generator().nextNino
 
-  val generatedSaUtr: AtedUtr = new Generator().nextAtedUtr
+  protected val generatedSaUtr: AtedUtr = new Generator().nextAtedUtr
 
-  lazy val ec: ExecutionContext = inject[ExecutionContext]
+  protected lazy implicit val ec: ExecutionContext = inject[ExecutionContext]
 
-  lazy val messages: Messages = inject[Messages]
+  protected lazy val messages: Messages = inject[Messages]
 
-  lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
+  protected lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val keystoreData: Map[String, JsValue] = Map.empty
+  protected implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
 
-  implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
+  protected val authResponse: String =
+    s"""
+       |{
+       |    "confidenceLevel": 200,
+       |    "nino": "$generatedNino",
+       |    "saUtr": "$generatedSaUtr",
+       |    "name": {
+       |        "name": "John",
+       |        "lastName": "Smith"
+       |    },
+       |    "loginTimes": {
+       |        "currentLogin": "$currentTaxYearSA-06-07T10:52:02.594Z",
+       |        "previousLogin": null
+       |    },
+       |    "optionalCredentials": {
+       |        "providerId": "4911434741952698",
+       |        "providerType": "GovernmentGateway"
+       |    },
+       |    "authProviderId": {
+       |        "ggCredId": "xyz"
+       |    },
+       |    "externalId": "testExternalId",
+       |    "allEnrolments": []
+       |}
+       |""".stripMargin
 
   override def beforeEach(): Unit = {
-
     super.beforeEach()
     reset(mockFeatureFlagService)
-
-    val authResponse =
-      s"""
-         |{
-         |    "confidenceLevel": 200,
-         |    "nino": "$generatedNino",
-         |    "saUtr": "$generatedSaUtr",
-         |    "name": {
-         |        "name": "John",
-         |        "lastName": "Smith"
-         |    },
-         |    "loginTimes": {
-         |        "currentLogin": "$currentTaxYear-06-07T10:52:02.594Z",
-         |        "previousLogin": null
-         |    },
-         |    "optionalCredentials": {
-         |        "providerId": "4911434741952698",
-         |        "providerType": "GovernmentGateway"
-         |    },
-         |    "authProviderId": {
-         |        "ggCredId": "xyz"
-         |    },
-         |    "externalId": "testExternalId",
-         |    "allEnrolments": []
-         |}
-         |""".stripMargin
 
     server.stubFor(
       post(urlEqualTo("/auth/authorise"))

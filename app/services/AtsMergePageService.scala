@@ -58,7 +58,8 @@ class AtsMergePageService @Inject() (
             case (Left(atsResponse), _)                                                => Left(atsResponse)
             case (Right(saData), _) if taxYearUtil.isYearListComplete(saData.yearList) =>
               Right(AtsMergePageViewModel(saData, Nil, appConfig, request.confidenceLevel))
-            case (Right(_), Left(atsResponse))                                         => Left(atsResponse)
+            case (Right(_), Left(atsResponse))                                         =>
+              Left(atsResponse)
             case (Right(saData), Right(payeData))                                      =>
               Right(AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel))
           }
@@ -116,7 +117,7 @@ class AtsMergePageService @Inject() (
     request.nino
       .map(
         payeAtsService
-          .getPayeTaxYearData(_, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed + 1, appConfig.taxYear)
+          .getPayeTaxYearData(_, appConfig.taxYearPAYE - appConfig.maxTaxYearsTobeDisplayed + 1, appConfig.taxYearPAYE)
       )
       .getOrElse(Future.successful(Right(List.empty)))
 }

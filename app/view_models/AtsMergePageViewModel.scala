@@ -29,8 +29,10 @@ case class AtsMergePageViewModel(
 
   private val saAndPayeTaxYearList = saData.yearList ::: payeTaxYearList
 
-  private val totalTaxYearList =
-    Range(appConfig.taxYear, appConfig.taxYear - appConfig.maxTaxYearsTobeDisplayed, -1).toList
+  private val totalTaxYearList = {
+    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE)
+    Range(taxYears.max, taxYears.min - appConfig.maxTaxYearsTobeDisplayed, -1).toList
+  }
 
   private val showSaYearList: Boolean = saData.yearList.nonEmpty
 
@@ -43,7 +45,7 @@ case class AtsMergePageViewModel(
   val showIvUpliftLink: Boolean             = showPayeYearList && (confidenceLevel.compare(ConfidenceLevel.L200) < 0)
   val completeYearList: List[AtsYearChoice] = {
     val saDataYearChoiceList  =
-      saData.getDescendingYearList.filter(_ <= appConfig.taxYear).map(year => AtsYearChoice(SA, year))
+      saData.getDescendingYearList.filter(_ <= appConfig.taxYearSA).map(year => AtsYearChoice(SA, year))
     val payeTaxYearChoiceList = payeTaxYearList.map(year => AtsYearChoice(PAYE, year))
     val noAtsYearChoiceList   =
       totalTaxYearList.filterNot(saAndPayeTaxYearList.toSet).map(year => AtsYearChoice(NoATS, year))
@@ -55,13 +57,15 @@ case class AtsMergePageViewModel(
     }
   }
 
-  val showContinueButton: Boolean = showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
+  val showContinueButton: Boolean =
+    showSaYearList || (showPayeYearList && !showIvUpliftLink) || showNoAtsYearList
   val name: String                = s"${saData.forename} ${saData.surname}"
-  val titleMsg: String            = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
+
+  val titleMsg: String    = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
   else {
     "merge.page.ats.select_tax_year.title"
   }
-  val subtitleMsg: String         = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
+  val subtitleMsg: String = if (onlyPaye && showIvUpliftLink) { "merge.page.paye.ivuplift.header" }
   else {
     "merge.page.ats.select_tax_year.title"
   }

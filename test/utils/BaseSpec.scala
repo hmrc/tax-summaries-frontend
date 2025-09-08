@@ -46,8 +46,6 @@ trait BaseSpec
 
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  val taxYear: Int = currentTaxYear
-
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
 
   implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
@@ -57,5 +55,14 @@ trait BaseSpec
       api.inject.bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
     .build()
+
+  protected def allYears(currentTaxYearSA: Int, currentTaxYearPAYE: Int): Seq[Int] = {
+    val taxYears = Seq(currentTaxYearSA, currentTaxYearPAYE)
+    val minYear  = taxYears.min - (maxTaxYearsTobeDisplayed - 1)
+    val maxYear  = taxYears.max
+    minYear to maxYear
+  }
+
+  protected val latestAvailableYear: Int = Seq(currentTaxYearSA, currentTaxYearPAYE).max
 
 }

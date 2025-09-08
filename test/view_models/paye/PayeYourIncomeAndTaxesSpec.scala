@@ -44,7 +44,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          currentTaxYear,
+          currentTaxYearSA,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -53,7 +53,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYearSA)
 
       result mustBe expectedViewModel
     }
@@ -64,7 +64,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          currentTaxYear,
+          currentTaxYearSA,
           Amount(0, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -73,7 +73,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYearSA)
 
       result mustBe expectedViewModel
     }
@@ -84,7 +84,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          currentTaxYear,
+          currentTaxYearSA,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -93,7 +93,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYearSA)
 
       result mustBe expectedViewModel
     }
@@ -104,7 +104,7 @@ class PayeYourIncomeAndTaxesSpec
 
       val expectedViewModel = Some(
         PayeYourIncomeAndTaxes(
-          currentTaxYear,
+          currentTaxYearSA,
           Amount(500, "GBP"),
           Amount(9740, "GBP"),
           Amount(200, "GBP"),
@@ -113,7 +113,7 @@ class PayeYourIncomeAndTaxesSpec
         )
       )
 
-      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYear)
+      val result = PayeYourIncomeAndTaxes.buildViewModel(yourIncomeAndTaxesData, currentTaxYearSA)
 
       result mustBe expectedViewModel
     }
