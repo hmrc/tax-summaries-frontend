@@ -176,6 +176,7 @@ paye.ats.total_income_tax.scottish_income_tax=Scottish Income Tax
 paye.ats.total_income_tax.scottish_starter_rate=Starter rate
 paye.ats.total_income_tax.scottish_basic_rate=Basic rate
 paye.ats.total_income_tax.scottish_intermediate_rate=Intermediate rate
+paye.ats.total_income_tax.scottish_advanced_rate=Advanced rate
 paye.ats.total_income_tax.scottish_higher_rate=Higher rate
 paye.ats.total_income_tax.scottish_top_rate=Top rate
 paye.ats.total_income_tax.uk_income_tax=UK Income Tax (including savings)
@@ -204,6 +205,7 @@ ats.total_income_tax.scottish_income_tax.table.basic=Basic rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.intermediate=Intermediate rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.higher=Higher rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.additional=Top rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.advanced=Advanced rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.total=Total Scottish income tax
 
 ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK income tax
