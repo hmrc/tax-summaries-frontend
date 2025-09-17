@@ -378,6 +378,54 @@
       "amount_due_at_entrepreneurs_rate": {
         "amount": 100,
         "currency": "GBP"
+      },
+      "brdReduction": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "brdCharge": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "scottish_advanced_rate_tax": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "scottish_advanced_income": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_ci_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_ci_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_ci_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_ci_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_rp_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_rp_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_rp_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_rp_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
       }
     },
     "rates": {
