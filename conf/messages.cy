@@ -138,6 +138,7 @@ ats.total_income_tax.scottish_income_tax.table.starter=Cyfradd cychwyn ({0} ar {
 ats.total_income_tax.scottish_income_tax.table.basic=Cyfradd sylfaenol ({0} ar {1})
 ats.total_income_tax.scottish_income_tax.table.intermediate=Cyfradd ganolradd ({0} ar {1})
 ats.total_income_tax.scottish_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.advanced=Advanced rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.additional=Cyfradd uchaf ({0} ar {1})
 ats.total_income_tax.scottish_income_tax.table.total=Cyfanswm treth incwm yn yr Alban
 
@@ -169,6 +170,9 @@ ats.capital_gains_tax.table.line5=Cyfradd gyffredin ({0} ar {1})
 ats.capital_gains_tax.table.line6=Cyfradd uwch ({0} ar {1})
 ats.capital_gains_tax.table.line7=Addasiad i Dreth Enillion Cyfalaf
 ats.capital_gains_tax.table.rcpi=Unigolion am eiddo preswyl a budd a drosglwyddir ({0} ar {1})
+ats.capital_gains_tax.table.ci=Individuals for carried interest ({0} at {1})
+ats.capital_gains_tax.table.rp=Individuals for residential property ({0} at {1})
+
 ats.capital_gains_tax.tax_year_period={0} i {1}
 
 # View ATS - treasury spending (IND)
@@ -339,7 +343,6 @@ paye.ats.treasury_spending.link.find.out.more.england = dysgwch ragor am sut y c
 paye.ats.treasury_spending.link.find.out.more.scotland = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar wefan Llywodraeth yr Alban.
 paye.ats.treasury_spending.link.find.out.more.wales = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar wefan Llywodraeth Cymru.
 
-
 # Paye ATS - no ats page
 #===========================================================
 paye.ats.no_ats.title=Nid oes Crynodeb Treth Blynyddol gennych ar gyfer y flwyddyn hon
@@ -354,6 +357,7 @@ paye.ats.total_income_tax.scottish_income_tax=Treth Incwm yn yr Alban
 paye.ats.total_income_tax.scottish_starter_rate=Cyfradd cychwyn
 paye.ats.total_income_tax.scottish_basic_rate=Cyfradd sylfaenol
 paye.ats.total_income_tax.scottish_intermediate_rate=Cyfradd ganolradd
+paye.ats.total_income_tax.scottish_advanced_rate=Advanced rate
 paye.ats.total_income_tax.scottish_higher_rate=Cyfradd uwch
 paye.ats.total_income_tax.scottish_top_rate=Cyfradd uwch bellach
 paye.ats.total_income_tax.uk_income_tax=Treth Incwm y DU (gan gynnwys cynilion)
