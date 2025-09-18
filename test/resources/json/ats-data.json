@@ -335,6 +335,7 @@
         "amount": 3000,
         "currency": "GBP"
       },
+      
       "amount_due_at_ordinary_rate": {
         "amount": 200,
         "currency": "GBP"
@@ -436,6 +437,18 @@
         "percent": "18%"
       },
       "prop_interest_rate_higher_rate": {
+        "percent": "0%"
+      },
+      "ci_interest_rate_lower_rate": {
+        "percent": "0%"
+      },
+      "ci_interest_rate_higher_rate": {
+        "percent": "0%"
+      },
+      "rp_interest_rate_lower_rate": {
+        "percent": "0%"
+      },
+      "rp_interest_rate_higher_rate": {
         "percent": "0%"
       },
       "total_cg_tax_rate": {

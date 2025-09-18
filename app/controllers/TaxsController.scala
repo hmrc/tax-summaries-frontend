@@ -79,6 +79,7 @@ abstract class TaxsController @Inject() (
           )
           Ok(tokenErrorView())
         case ex                               =>
+          ex.printStackTrace()
           logger.error(ex.getMessage)
           InternalServerError(genericErrorView())
       }
