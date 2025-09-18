@@ -61,6 +61,8 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       getFromIncomeTaxPayload("scottish_intermediate_income"),
       getFromIncomeTaxPayload("scottish_higher_rate_tax"),
       getFromIncomeTaxPayload("scottish_higher_income"),
+      getFromIncomeTaxPayload("scottish_advanced_rate_tax"),
+      getFromIncomeTaxPayload("scottish_advanced_income"),
       getFromIncomeTaxPayload("scottish_additional_rate_tax"),
       getFromIncomeTaxPayload("scottish_additional_income"),
       getFromIncomeTaxPayload("scottish_top_rate_tax"),
@@ -82,6 +84,7 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       getFromIncomeTaxRates("scottish_basic_rate"),
       getFromIncomeTaxRates("scottish_intermediate_rate"),
       getFromIncomeTaxRates("scottish_higher_rate"),
+      getFromIncomeTaxRates("scottish_advanced_rate"),
       getFromIncomeTaxRates("scottish_additional_rate"),
       getFromIncomeTaxRates("scottish_top_rate")
     )

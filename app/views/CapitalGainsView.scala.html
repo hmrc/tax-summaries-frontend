@@ -113,7 +113,34 @@
                     <td id="rpci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
                 </tr>
               }
-
+              
+              @if(viewModel.ciLowerTax.nonZero) {
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.ci", viewUtils.toCurrency(viewModel.ciLowerTotalAmount), viewModel.ciLowerRate.percent))</td>
+                    <td id="ci-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ciLowerTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+                  </tr>
+              }    
+              
+              @if(viewModel.ciHigherTax.nonZero) {
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.ci", viewUtils.toCurrency(viewModel.ciHigherTotalAmount), viewModel.ciHigherRate.percent))</td>
+                    <td id="ci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+                  </tr>
+              }  
+              
+              @if(viewModel.rpLowerTax.nonZero) {
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rp", viewUtils.toCurrency(viewModel.rpLowerTotalAmount), viewModel.rpLowerRate.percent))</td>
+                    <td id="rp-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpLowerTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+                  </tr>
+              }    
+              
+              @if(viewModel.rpHigherTax.nonZero) {
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rp", viewUtils.toCurrency(viewModel.rpHigherTotalAmount), viewModel.rpHigherRate.percent))</td>
+                    <td id="rp-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpHigherTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+                  </tr>
+              }              
 
               @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
               <tr id="entrepreneurs-relief-rate-section" class="govuk-table__row">

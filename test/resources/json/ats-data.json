@@ -335,6 +335,7 @@
         "amount": 3000,
         "currency": "GBP"
       },
+      
       "amount_due_at_ordinary_rate": {
         "amount": 200,
         "currency": "GBP"
@@ -378,6 +379,54 @@
       "amount_due_at_entrepreneurs_rate": {
         "amount": 100,
         "currency": "GBP"
+      },
+      "brdReduction": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "brdCharge": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "scottish_advanced_rate_tax": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "scottish_advanced_income": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_ci_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_ci_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_ci_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_ci_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_rp_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_rp_lower_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_due_rp_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
+      },
+      "amount_at_rp_higher_rate": {
+        "amount": 0,
+        "currency": "GBP"
       }
     },
     "rates": {
@@ -388,6 +437,18 @@
         "percent": "18%"
       },
       "prop_interest_rate_higher_rate": {
+        "percent": "0%"
+      },
+      "ci_interest_rate_lower_rate": {
+        "percent": "0%"
+      },
+      "ci_interest_rate_higher_rate": {
+        "percent": "0%"
+      },
+      "rp_interest_rate_lower_rate": {
+        "percent": "0%"
+      },
+      "rp_interest_rate_higher_rate": {
         "percent": "0%"
       },
       "total_cg_tax_rate": {

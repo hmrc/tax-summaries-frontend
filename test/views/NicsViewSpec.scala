@@ -73,7 +73,9 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
       k <- arbitrary[Amount]
       l <- arbitrary[Amount]
       m <- arbitrary[Amount]
-    } yield ScottishTax(a, b, c, d, e, f, g, h, i, j, k, l, m)
+      n <- arbitrary[Amount]
+      o <- arbitrary[Amount]
+    } yield ScottishTax(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o)
 
     Gen.frequency((1, Gen.const(ScottishTax.empty)), (19, st))
   }
@@ -86,7 +88,8 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
       d <- arbitrary[Rate]
       e <- arbitrary[Rate]
       f <- arbitrary[Rate]
-    } yield ScottishRates(a, b, c, d, e, f)
+      g <- arbitrary[Rate]
+    } yield ScottishRates(a, b, c, d, e, f, g)
 
     Gen.frequency((1, Gen.const(ScottishRates.empty)), (19, sr))
   }

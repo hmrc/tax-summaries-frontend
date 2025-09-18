@@ -95,28 +95,31 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
       val scottishTax = ScottishTax(
-        Amount.gbp(1800),
-        Amount.gbp(1900),
-        Amount.gbp(2000),
-        Amount.gbp(2100),
-        Amount.gbp(2200),
-        Amount.gbp(2300),
-        Amount.gbp(2400),
-        Amount.gbp(2500),
-        Amount.gbp(2600),
-        Amount.gbp(2700),
-        Amount.gbp(2800),
-        Amount.gbp(2900),
-        Amount.gbp(3000)
+        scottishStarterIncomeTax = Amount.gbp(1800),
+        scottishStarterIncomeTaxAmount = Amount.gbp(1900),
+        scottishBasicIncomeTax = Amount.gbp(2000),
+        scottishBasicIncomeTaxAmount = Amount.gbp(2100),
+        scottishIntermediateIncomeTax = Amount.gbp(2200),
+        scottishIntermediateIncomeTaxAmount = Amount.gbp(2300),
+        scottishHigherIncomeTax = Amount.gbp(2400),
+        scottishHigherIncomeTaxAmount = Amount.gbp(2500),
+        scottishAdvancedIncomeTax = Amount.gbp(3700),
+        scottishAdvancedIncomeTaxAmount = Amount.gbp(3800),
+        scottishAdditionalIncomeTax = Amount.gbp(2600),
+        scottishAdditionalIncomeTaxAmount = Amount.gbp(2700),
+        scottishTopIncomeTax = Amount.gbp(2800),
+        scottishTopIncomeTaxAmount = Amount.gbp(2900),
+        scottishTotalTax = Amount.gbp(3000)
       )
 
       val scottishRates = ScottishRates(
-        Rate("80%"),
-        Rate("90%"),
-        Rate("100%"),
-        Rate("110%"),
-        Rate("120%"),
-        Rate("130%")
+        scottishStarterRate = Rate("80%"),
+        scottishBasicRate = Rate("90%"),
+        scottishIntermediateRate = Rate("100%"),
+        scottishHigherRate = Rate("110%"),
+        scottishAdvancedRate = Rate("160%"),
+        scottishAdditionalRate = Rate("120%"),
+        scottishTopRate = Rate("130%")
       )
 
       result mustEqual IncomeTaxAndNI(
