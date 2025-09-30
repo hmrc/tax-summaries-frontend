@@ -170,8 +170,8 @@ ats.capital_gains_tax.table.line5=Cyfradd gyffredin ({0} ar {1})
 ats.capital_gains_tax.table.line6=Cyfradd uwch ({0} ar {1})
 ats.capital_gains_tax.table.line7=Addasiad i Dreth Enillion Cyfalaf
 ats.capital_gains_tax.table.rcpi=Unigolion am eiddo preswyl a budd a drosglwyddir ({0} ar {1})
-ats.capital_gains_tax.table.ci=Individuals for carried interest ({0} at {1})
-ats.capital_gains_tax.table.rp=Individuals for residential property ({0} at {1})
+ats.capital_gains_tax.table.ci=Unigolion ar gyfer buddiant a drosglwyddir ({0} ar {1})
+ats.capital_gains_tax.table.rp=Unigolion ar gyfer eiddo preswyl ({0} ar {1})
 
 ats.capital_gains_tax.tax_year_period={0} i {1}
 
@@ -357,7 +357,7 @@ paye.ats.total_income_tax.scottish_income_tax=Treth Incwm yn yr Alban
 paye.ats.total_income_tax.scottish_starter_rate=Cyfradd cychwyn
 paye.ats.total_income_tax.scottish_basic_rate=Cyfradd sylfaenol
 paye.ats.total_income_tax.scottish_intermediate_rate=Cyfradd ganolradd
-paye.ats.total_income_tax.scottish_advanced_rate=Advanced rate
+paye.ats.total_income_tax.scottish_advanced_rate=Cyfradd uwch bellach
 paye.ats.total_income_tax.scottish_higher_rate=Cyfradd uwch
 paye.ats.total_income_tax.scottish_top_rate=Cyfradd uwch bellach
 paye.ats.total_income_tax.uk_income_tax=Treth Incwm y DU (gan gynnwys cynilion)
