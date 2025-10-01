@@ -138,7 +138,7 @@ case class ScottishTax(
       scottishBasicIncomeTax.nonZero ||
       scottishIntermediateIncomeTax.nonZero ||
       scottishHigherIncomeTax.nonZero ||
-      scottishAdvancedIncomeTaxAmount.nonZero ||
+      scottishAdvancedIncomeTax.nonZero ||
       scottishAdditionalIncomeTax.nonZero ||
       scottishTotalTax.nonZero
 }
