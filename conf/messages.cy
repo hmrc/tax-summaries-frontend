@@ -354,6 +354,7 @@ paye.ats.total_income_tax.scottish_income_tax=Treth Incwm yn yr Alban
 paye.ats.total_income_tax.scottish_starter_rate=Cyfradd cychwyn
 paye.ats.total_income_tax.scottish_basic_rate=Cyfradd sylfaenol
 paye.ats.total_income_tax.scottish_intermediate_rate=Cyfradd ganolradd
+paye.ats.total_income_tax.scottish_advanced_rate=Cyfradd uwch bellach
 paye.ats.total_income_tax.scottish_higher_rate=Cyfradd uwch
 paye.ats.total_income_tax.scottish_top_rate=Cyfradd uwch bellach
 paye.ats.total_income_tax.uk_income_tax=Treth Incwm y DU (gan gynnwys cynilion)

@@ -31,6 +31,7 @@ class PayeConfigSpec extends BaseSpec {
         "scottish_basic_rate",
         "scottish_intermediate_rate",
         "scottish_higher_rate",
+        "scottish_advanced_rate",
         "scottish_top_rate"
       )
 

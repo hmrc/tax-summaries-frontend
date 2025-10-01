@@ -124,6 +124,8 @@ case class ScottishTax(
   scottishIntermediateIncomeTaxAmount: Amount,
   scottishHigherIncomeTax: Amount,
   scottishHigherIncomeTaxAmount: Amount,
+  scottishAdvancedIncomeTax: Amount,
+  scottishAdvancedIncomeTaxAmount: Amount,
   scottishAdditionalIncomeTax: Amount,
   scottishAdditionalIncomeTaxAmount: Amount,
   scottishTopIncomeTax: Amount,
@@ -136,6 +138,7 @@ case class ScottishTax(
       scottishBasicIncomeTax.nonZero ||
       scottishIntermediateIncomeTax.nonZero ||
       scottishHigherIncomeTax.nonZero ||
+      scottishAdvancedIncomeTaxAmount.nonZero ||
       scottishAdditionalIncomeTax.nonZero ||
       scottishTotalTax.nonZero
 }
@@ -144,6 +147,8 @@ object ScottishTax {
 
   val empty: ScottishTax =
     ScottishTax(
+      Amount.empty,
+      Amount.empty,
       Amount.empty,
       Amount.empty,
       Amount.empty,
@@ -194,6 +199,7 @@ case class ScottishRates(
   scottishIntermediateRate: Rate,
   scottishHigherRate: Rate,
   scottishAdditionalRate: Rate,
+  scottishAdvancedRate: Rate,
   scottishTopRate: Rate
 )
 
@@ -201,6 +207,7 @@ object ScottishRates {
 
   val empty: ScottishRates =
     ScottishRates(
+      Rate.empty,
       Rate.empty,
       Rate.empty,
       Rate.empty,

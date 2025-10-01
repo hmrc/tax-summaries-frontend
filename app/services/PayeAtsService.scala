@@ -40,6 +40,7 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
       response <- middleConnector.connectToPayeATS(nino, taxYear)
     } yield response match {
       case Right(atsData)              =>
+        println("bbbbb " + atsData.json)
         Try(atsData.json.as[PayeAtsData]) match {
           case Success(result) =>
             sendAuditEvent(nino, taxYear, true)

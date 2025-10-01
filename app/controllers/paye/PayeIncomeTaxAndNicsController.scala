@@ -54,6 +54,7 @@ class PayeIncomeTaxAndNicsController @Inject() (
             uKRates = payeConfig.ukTaxBandKeys,
             adjustments = payeConfig.adjustmentsKeys.toSet
           )
+          println("bbbbbb " + a.scottishTaxBands)
           Ok(
             payeIncomeTaxAndNicsView(
               a,
