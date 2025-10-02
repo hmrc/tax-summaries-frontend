@@ -72,7 +72,6 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
         PtaMinMenuConfig("MenuName", "BackName"),
         List.empty,
         List.empty,
-        None,
         None
       )
     )

@@ -136,8 +136,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         ptaMinMenuConfig = PtaMinMenuConfig("MenuName", "BackName"),
         urBanners = List.empty,
         webchatPages = List.empty,
-        unreadMessageCount = None,
-        trustedHelper = None
+        unreadMessageCount = None
       )
     )
     .toString
