@@ -475,7 +475,7 @@ class PayeAtsTestData extends BaseSpec {
             "state_pension"          -> Amount(1000, "GBP"),
             "other_pension_income"   -> Amount(1000, "GBP"),
             "other_income"           -> Amount(15000, "GBP"),
-            "scottish_income_tax"    -> Amount(2500, "GBP")
+            "welsh_income_tax"       -> Amount(2500, "GBP")
           )
         ),
         None,
