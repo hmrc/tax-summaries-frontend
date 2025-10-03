@@ -23,5 +23,5 @@ object AppDependencies {
     "org.scalatestplus" %% "scalacheck-1-18"                                 % "3.2.19.0"
   ).map(_ % "test")
 
-  val all: Seq[ModuleID]  = compile ++ test
+  val all: Seq[ModuleID] = compile ++ test
 }
