@@ -27,11 +27,16 @@ case class PayeAtsData(
   gov_spending: Option[GovernmentSpendingOutputWrapper]
 ) {
 
-  // using scottish_income_tax to identify WelshTaxPayer is not a bug and we expect the field to be changed in the backend in 2021.
-  def isWelshTaxPayer: Boolean =
+  def isWelshTaxPayer: Boolean = {
+    println("\nHERE")
     income_data
-      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
+      .flatMap { incomeData =>
+        val g = incomeData.payload.flatMap(_.get("welsh_income_tax_paye"))
+        println("\nAMOUNT=" + g)
+        g
+      }
       .exists(!_.isZeroOrLess)
+  }
 }
 
 object PayeAtsData {

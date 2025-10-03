@@ -57,7 +57,7 @@ object PayeIncomeTaxAndNics {
 
   private def getWelshIncomeTax(payeAtsData: PayeAtsData): Amount =
     payeAtsData.income_data
-      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
+      .flatMap(incomeData => incomeData.payload.flatMap(_.get("welsh_income_tax_paye")))
       .getOrElse(Amount.empty)
 
   private def getTotalIncomeTax(payeAtsData: PayeAtsData, totalTaxKey: String): Amount =
