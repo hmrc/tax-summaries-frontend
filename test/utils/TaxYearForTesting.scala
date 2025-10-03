@@ -55,7 +55,7 @@ trait TaxYearForTesting extends JsonUtil {
   )
 
   // Dummy data for PAYE endpoint: /taxs/<NINO>/<TAX-YEAR>/paye-ats-data
-  protected def payAtsData(taxYear: Int): String = loadAndReplace(
+  protected def payeAtsData(taxYear: Int): String = loadAndReplace(
     "/json/paye-ats-data.json",
     Map("$nino" -> testNino.nino, "<TAXYEAR>" -> taxYear.toString)
   )
@@ -67,6 +67,6 @@ trait TaxYearForTesting extends JsonUtil {
                ""
              } else {
                ","
-             }) + payAtsData(year)
+             }) + payeAtsData(year)
     } + "]"
 }
