@@ -26,16 +26,9 @@ case class PayeAtsData(
   allowance_data: Option[DataHolder],
   gov_spending: Option[GovernmentSpendingOutputWrapper]
 ) {
-
-  /*
-    The key scottish_income_tax is confusingly holding the WELSH income tax: this is
-    what is returned in the field scottishIncomeTax in the PAYE API response. This is because
-    it was existing functionality from the DA2 API when originally set up by the API team.
-    See the Jira ticket https://jira.tools.tax.service.gov.uk/browse/DDCNL-10985 for more info. 
-   */
   def isWelshTaxPayer: Boolean =
     income_data
-      .flatMap(incomeData => incomeData.payload.flatMap(_.get("scottish_income_tax")))
+      .flatMap(incomeData => incomeData.payload.flatMap(_.get("welsh_income_tax")))
       .exists(!_.isZeroOrLess)
 }
 
