@@ -14,50 +14,48 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
+import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AuditService, GovernmentSpendService}
+import services.{AuditService, SummaryService}
 import utils.{GenericViewModel, TaxYearUtil}
-import view_models.GovernmentSpend
-import views.html.GovernmentSpendingView
+import view_models.Summary
+import views.html.SummaryView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentSpendController @Inject() (
-  governmentSpendService: GovernmentSpendService,
+class SummaryController @Inject() (
+  summaryService: SummaryService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
-  governmentSpendingView: GovernmentSpendingView,
+  summaryView: SummaryView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView,
   taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
-  def authorisedGovernmentSpendData: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
+  def authorisedSummaries: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)
   }
 
-  type ViewModel = GovernmentSpend
+  type ViewModel = Summary
 
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
   ): Future[Either[ErrorResponse, GenericViewModel]] =
-    extractViewModelWithTaxYear(governmentSpendService.getGovernmentSpendData(_))
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
 
-  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
-    Ok(
-      governmentSpendingView(
-        result,
-        getActingAsAttorneyFor(request, result.userForename, result.userSurname, result.userUtr)
-      )
-    )
+  override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result = {
+    implicit val lang: Lang = request.lang
+    Ok(summaryView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+  }
 }

@@ -104,8 +104,9 @@ class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
 
   def saFallbackURL: String = config.getString("sa.language.fallbackUrl")
 
-  lazy val taxYearSA: Int   = config.getInt("taxYearSA")
-  lazy val taxYearPAYE: Int = config.getInt("taxYearPAYE")
+  lazy val taxYearSA: Int       = config.getInt("taxYearSA")
+  lazy val taxYearPAYE: Int     = config.getInt("taxYearPAYE")
+  lazy val taxYearGovSpend: Int = config.getInt("taxYearGovSpend")
 
   val maxTaxYearsTobeDisplayed: Int = config.getInt("max.taxYears.to.display")
 

@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
-import play.api.mvc.Result
-import play.api.test.Helpers._
-import services._
+import play.api.mvc.{AnyContentAsEmpty, Result}
+import play.api.test.Helpers.*
+import services.*
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
-import view_models._
+import view_models.*
 
 import scala.concurrent.Future
 
@@ -72,6 +73,8 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
     when(mockAllowanceService.getAllowances(any())(any(), any())).thenReturn(Future.successful(baseModel))
     ()
   }
+
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   "Calling allowances" must {
 
@@ -146,7 +149,7 @@ class AllowancesControllerSpec extends ControllerBaseSpec {
         .thenReturn(Future.successful(NoATSViewModel(currentTaxYearSA)))
       val result = sut.show(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
     }
   }
 }

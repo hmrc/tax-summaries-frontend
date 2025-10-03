@@ -135,36 +135,6 @@ trait TestConstants extends BaseSpec {
 
   val fakeTaxYear: Int = currentTaxYearSA - 3
 
-  val fakeGovernmentSpend: GovernmentSpend =
-    GovernmentSpend(
-      fakeTaxYear,
-      testUtr,
-      List(
-        ("Welfare", SpendData(Amount(2898.13, "GBP"), 23.5)),
-        ("Health", SpendData(Amount(2898.13, "GBP"), 20.2)),
-        ("StatePensions", SpendData(Amount(2898.13, "GBP"), 11.8)),
-        ("Education", SpendData(Amount(2898.13, "GBP"), 12.8)),
-        ("Defence", SpendData(Amount(2898.13, "GBP"), 5.3)),
-        ("NationalDebtInterest", SpendData(Amount(2898.13, "GBP"), 5.3)),
-        ("PublicOrderAndSafety", SpendData(Amount(2898.13, "GBP"), 4.3)),
-        ("Transport", SpendData(Amount(2898.13, "GBP"), 4.3)),
-        ("BusinessAndIndustry", SpendData(Amount(2898.13, "GBP"), 3.6)),
-        ("GovernmentAdministration", SpendData(Amount(2898.13, "GBP"), 2.1)),
-        ("HousingAndUtilities", SpendData(Amount(2898.13, "GBP"), 1.6)),
-        ("Culture", SpendData(Amount(2898.13, "GBP"), 1.5)),
-        ("Environment", SpendData(Amount(2898.13, "GBP"), 1.5)),
-        ("OverseasAid", SpendData(Amount(2898.13, "GBP"), 1.2)),
-        ("UkContributionToEuBudget", SpendData(Amount(2898.13, "GBP"), 1)),
-        govSpendTotalTuple
-      ),
-      "Mr",
-      "John",
-      "Doe",
-      Amount(23912.00, "GBP"),
-      "0002",
-      Amount(2000.00, "GBP")
-    )
-
   val governmentSpendFromBackend: GovernmentSpend =
     GovernmentSpend(
       fakeTaxYear,

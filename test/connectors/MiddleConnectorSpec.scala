@@ -81,7 +81,7 @@ class MiddleConnectorSpec
 
     "return successful response" in {
 
-      val expectedResponse: String = payAtsData(currentTaxYearPAYE)
+      val expectedResponse: String = payeAtsData(currentTaxYearPAYE)
       val url                      = s"/taxs/" + testNino + "/" + currentTaxYearPAYE + "/paye-ats-data"
 
       server.stubFor(

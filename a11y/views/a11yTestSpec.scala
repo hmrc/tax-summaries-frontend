@@ -44,7 +44,7 @@ import scala.util.Random
 
 class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
-  lazy val backendUrl   = s"/taxs/$generatedSaUtr/$fakeTaxYear/ats-data"
+  lazy val backendUrl   = s"/taxs/$generatedSaUtr/$currentTaxYearSA/ats-data"
   lazy val backendUrlSa = s"/taxs/$generatedSaUtr/ats-list"
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
@@ -127,13 +127,13 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
 
   "annual-tax-summary data pages" must
     List(
-      s"/annual-tax-summary/main?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/summary?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/income-tax-national-insurance-contributions?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/treasury-spending?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/income-before-tax?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/tax-free-income?taxYear=$fakeTaxYear",
-      s"/annual-tax-summary/capital-gains-tax?taxYear=$fakeTaxYear"
+      s"/annual-tax-summary/sa/main?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/summary?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/income-tax-national-insurance-contributions?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/treasury-spending?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/income-before-tax?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/tax-free-income?taxYear=$currentTaxYearSA",
+      s"/annual-tax-summary/sa/capital-gains-tax?taxYear=$currentTaxYearSA"
     ).foreach { url =>
       s"pass accessibility validation at url $url" in {
         val loadAtsListData: String = Json.stringify(Json.toJson(atsList("$utr")))

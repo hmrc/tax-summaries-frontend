@@ -20,7 +20,7 @@ import models.{AtsData, DataHolder}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testOnly.connectors.TaxSummariesConnector
 import testOnly.views.html.DisplayPTAView
 import utils.ControllerBaseSpec
@@ -70,6 +70,7 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
       )
     )
   }
+  private val request                    = buildRequest(currentTaxYearSA)
 
   override def beforeEach(): Unit = {
     reset(mockTaxSummariesConnector)

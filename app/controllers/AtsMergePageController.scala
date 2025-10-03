@@ -24,8 +24,8 @@ import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import models.{AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Session}
-import services._
+import play.api.mvc.*
+import services.*
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{AttorneyUtils, Globals}
@@ -108,7 +108,7 @@ class AtsMergePageController @Inject() (
   private def redirectWithYear(taxYearChoice: AtsYearChoice): Result =
     taxYearChoice.atsType match {
       case SA   =>
-        Redirect(controllers.routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + taxYearChoice.year)
+        Redirect(controllers.sa.routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + taxYearChoice.year)
       case PAYE =>
         Redirect(controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year))
       case _    =>
