@@ -152,7 +152,6 @@ object AtsTestData extends TaxYearForTesting {
             "scottish_higher_rate"            -> Rate("110%"),
             "scottish_advanced_rate"          -> Rate("160%"),
             "scottish_additional_rate"        -> Rate("120%"),
-            "scottish_advanced_rate"          -> Rate("125%"),
             "savings_lower_rate"              -> Rate("130%"),
             "scottish_top_rate"               -> Rate("130%"),
             "savings_higher_rate"             -> Rate("140%"),
