@@ -4,8 +4,8 @@ import sbt.*
 object AppDependencies {
 
   private val playVersion          = "play-30"
-  private val scaWrapperVersion    = "2.17.0"
-  private val featureToggleVersion = "1.10.0"
+  private val scaWrapperVersion    = "3.2.0"
+  private val featureToggleVersion = "2.2.0"
 
   val compile: Seq[ModuleID] = Seq(
     filters,
@@ -23,5 +23,5 @@ object AppDependencies {
     "org.scalatestplus" %% "scalacheck-1-18"                                 % "3.2.19.0"
   ).map(_ % "test")
 
-  val all: Seq[ModuleID]  = compile ++ test
+  val all: Seq[ModuleID] = compile ++ test
 }

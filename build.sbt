@@ -32,7 +32,7 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageHighlighting := true
   )
 }
-lazy val microservice = Project(appName, file("."))
+lazy val microservice      = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
     PlayKeys.playDefaultPort := 9217,
@@ -47,6 +47,8 @@ lazy val microservice = Project(appName, file("."))
       "-Wunused:imports",
       "-Wvalue-discard",
       "-Werror",
+      // TODO DDCNL-11021: Remove line below and fix deprecation warning
+      "-Wconf:msg=.*SafeRedirectUrl is deprecated.*&cat=deprecation:s",
       "-Wconf:msg=unused import&src=.*views/.*:s",
       "-Wconf:msg=unused import&src=<empty>:s",
       "-Wconf:msg=unused&src=.*RoutesPrefix\\.scala:s",

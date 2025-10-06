@@ -58,8 +58,6 @@ class IntegrationSpec
 
   lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
 
-  lazy val fakeTaxYear: Int = currentTaxYearSA
-
   val mockTaxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository =
     mock[TaxsAgentTokenSessionCacheRepository]
 

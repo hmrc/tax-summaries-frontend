@@ -84,6 +84,7 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       getFromIncomeTaxRates("scottish_basic_rate"),
       getFromIncomeTaxRates("scottish_intermediate_rate"),
       getFromIncomeTaxRates("scottish_higher_rate"),
+      getFromIncomeTaxRates("scottish_advanced_rate"),
       getFromIncomeTaxRates("scottish_additional_rate"),
       getFromIncomeTaxRates("scottish_advanced_rate"),
       getFromIncomeTaxRates("scottish_top_rate")

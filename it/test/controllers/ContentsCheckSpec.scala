@@ -52,7 +52,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       case "not-authorised"           =>
         ExpectedData("Not authorised - Annual Tax Summary - GOV.UK")
       case "no-ats"                   =>
-        ExpectedData("Bad request - 400 - Annual Tax Summary - GOV.UK")
+        ExpectedData("Bad request - Annual Tax Summary - GOV.UK")
       case "service-unavailable"      =>
         ExpectedData("Sorry there is a problem with the service - Annual Tax Summary - GOV.UK")
       case "paye-year"                =>
@@ -129,13 +129,14 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
   val wrapperDataResponse: String = Json
     .toJson(
       WrapperDataResponse(
-        Seq(
+        menuItemConfig = Seq(
           MenuItemConfig("id", "NewLayout Item", "link", leftAligned = false, 0, None, None),
           MenuItemConfig("signout", "Sign out", "link", leftAligned = false, 0, None, None)
         ),
-        PtaMinMenuConfig("MenuName", "BackName"),
-        List.empty,
-        List.empty
+        ptaMinMenuConfig = PtaMinMenuConfig("MenuName", "BackName"),
+        urBanners = List.empty,
+        webchatPages = List.empty,
+        unreadMessageCount = None
       )
     )
     .toString
@@ -193,7 +194,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
     server.stubFor(
       WireMock
         .get(urlMatching(s"/taxs/$generatedNino/$currentTaxYearPAYE/paye-ats-data"))
-        .willReturn(ok(payAtsData(currentTaxYearPAYE)))
+        .willReturn(ok(payeAtsData(currentTaxYearPAYE)))
     )
 
     server.stubFor(
@@ -288,9 +289,6 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
           val ptaCss =
             content.getElementsByTag("link").asScala.toList.filter(_.attr("href").contains("pta.css")).head.attr("href")
           ptaCss mustBe "/annual-tax-summary/sca/assets/pta.css"
-          val ptaJs  =
-            content.getElementsByTag("script").asScala.toList.filter(_.attr("src").contains("pta.js")).head.attr("src")
-          ptaJs mustBe "/annual-tax-summary/sca/assets/pta.js"
         }
       }
   }

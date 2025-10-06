@@ -16,11 +16,13 @@
 
 package testOnly.controllers
 
+import controllers.auth.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testOnly.connectors.{TaxSummariesConnector, TaxSummariesStubsConnector}
 import testOnly.forms.EnterODSFormProvider
 import testOnly.models.{CountryAndODSValues, SAODSModel}
@@ -55,7 +57,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
 
   private val saODSModel = SAODSModel(utr, currentTaxYearSA, country, Nil)
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit                                   = {
     reset(mockTaxSummariesConnector, mockTaxSummariesStubsConnector)
     when(mockTaxSummariesConnector.connectToAtsSaFields(any())(any())).thenReturn(
       Future.successful(Right(atsSaFields))
@@ -66,6 +68,7 @@ class EnterODSControllerSpec extends ControllerBaseSpec {
       .thenReturn(Future.successful((): Unit))
     ()
   }
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   "onPageLoad" must {
     "render the page" in {

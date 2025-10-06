@@ -198,6 +198,7 @@ case class ScottishRates(
   scottishBasicRate: Rate,
   scottishIntermediateRate: Rate,
   scottishHigherRate: Rate,
+  scottishAdvancedRate: Rate,
   scottishAdditionalRate: Rate,
   scottishAdvancedRate: Rate,
   scottishTopRate: Rate

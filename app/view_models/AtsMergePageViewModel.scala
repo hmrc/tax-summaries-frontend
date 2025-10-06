@@ -30,7 +30,7 @@ case class AtsMergePageViewModel(
   private val saAndPayeTaxYearList = saData.yearList ::: payeTaxYearList
 
   private val totalTaxYearList = {
-    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE)
+    val taxYears = Seq(appConfig.taxYearSA, appConfig.taxYearPAYE, appConfig.taxYearGovSpend)
     Range(taxYears.max, taxYears.min - appConfig.maxTaxYearsTobeDisplayed, -1).toList
   }
 

@@ -138,6 +138,7 @@ ats.total_income_tax.scottish_income_tax.table.starter=Cyfradd cychwyn ({0} ar {
 ats.total_income_tax.scottish_income_tax.table.basic=Cyfradd sylfaenol ({0} ar {1})
 ats.total_income_tax.scottish_income_tax.table.intermediate=Cyfradd ganolradd ({0} ar {1})
 ats.total_income_tax.scottish_income_tax.table.higher=Cyfradd uwch ({0} ar {1})
+ats.total_income_tax.scottish_income_tax.table.advanced=Advanced rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.additional=Cyfradd uchaf ({0} ar {1})
 ats.total_income_tax.scottish_income_tax.table.total=Cyfanswm treth incwm yn yr Alban
 
@@ -169,6 +170,9 @@ ats.capital_gains_tax.table.line5=Cyfradd gyffredin ({0} ar {1})
 ats.capital_gains_tax.table.line6=Cyfradd uwch ({0} ar {1})
 ats.capital_gains_tax.table.line7=Addasiad i Dreth Enillion Cyfalaf
 ats.capital_gains_tax.table.rcpi=Unigolion am eiddo preswyl a budd a drosglwyddir ({0} ar {1})
+ats.capital_gains_tax.table.ci=Unigolion ar gyfer buddiant a drosglwyddir ({0} ar {1})
+ats.capital_gains_tax.table.rp=Unigolion ar gyfer eiddo preswyl ({0} ar {1})
+
 ats.capital_gains_tax.tax_year_period={0} i {1}
 
 # View ATS - treasury spending (IND)
@@ -338,7 +342,6 @@ paye.ats.treasury_spending.link.you.can = Gallwch
 paye.ats.treasury_spending.link.find.out.more.england = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar GOV.UK.
 paye.ats.treasury_spending.link.find.out.more.scotland = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar wefan Llywodraeth yr Alban.
 paye.ats.treasury_spending.link.find.out.more.wales = dysgwch ragor am sut y cyfrifwyd gwariant cyhoeddus yn eich crynodeb treth ar wefan Llywodraeth Cymru.
-
 
 # Paye ATS - no ats page
 #===========================================================

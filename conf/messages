@@ -205,6 +205,7 @@ ats.total_income_tax.scottish_income_tax.table.basic=Basic rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.intermediate=Intermediate rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.higher=Higher rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.additional=Top rate ({0} at {1})
+ats.total_income_tax.scottish_income_tax.table.advanced=Advanced rate ({0} at {1})
 ats.total_income_tax.scottish_income_tax.table.total=Total Scottish income tax
 
 ats.total_income_tax.scottish_income_uk_income_tax.table.total=Total UK income tax
@@ -235,6 +236,8 @@ ats.capital_gains_tax.table.line5=Ordinary rate ({0} at {1})
 ats.capital_gains_tax.table.line6=Upper rate ({0} at {1})
 ats.capital_gains_tax.table.line7=Adjustment to Capital Gains Tax
 ats.capital_gains_tax.table.rcpi=Individuals for residential property and carried interest ({0} at {1})
+ats.capital_gains_tax.table.ci=Individuals for carried interest ({0} at {1})
+ats.capital_gains_tax.table.rp=Individuals for residential property ({0} at {1})
 ats.capital_gains_tax.tax_year_period={0} to {1}
 
 # View ATS - treasury spending (IND)

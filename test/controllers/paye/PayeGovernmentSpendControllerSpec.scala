@@ -59,7 +59,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
   "Government spend controller" must {
     s"return OK response for $currentTaxYearPAYE" in {
       class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
-        override lazy val taxYearSA: Int = currentTaxYearPAYE
+        override lazy val taxYearGovSpend: Int = currentTaxYearPAYE
       }
 
       implicit val appConfig: FakeAppConfig = new FakeAppConfig
@@ -75,7 +75,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
         )
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendCurrentTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponsePayeAtsDataCurrentTaxYear.as[PayeAtsData])))
 
       val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
         key -> value.percentage.toDouble
@@ -102,7 +102,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
     s"return OK response for ${currentTaxYearPAYE - 1}" in {
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
-        .thenReturn(Future(Right(apiResponseGovSpendPreviousTaxYear.as[PayeAtsData])))
+        .thenReturn(Future(Right(apiResponsePayeAtsDataPreviousTaxYear.as[PayeAtsData])))
 
       val response: Seq[(String, Double)] = governmentSpendFromBackend.govSpendAmountData.map { case (key, value) =>
         key -> value.percentage.toDouble

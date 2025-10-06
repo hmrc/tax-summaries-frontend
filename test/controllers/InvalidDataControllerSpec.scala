@@ -17,30 +17,34 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
+import controllers.auth.requests.AuthenticatedRequest
+import controllers.sa.{AllowancesController, CapitalGainsTaxController, GovernmentSpendController, IncomeController, NicsController, SummaryController}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.i18n.Messages
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services._
+import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{ControllerBaseSpec, TaxYearUtil}
 
 import scala.concurrent.Future
 
 class InvalidDataControllerSpec extends ControllerBaseSpec {
-  private val taxYearUtil               = app.injector.instanceOf[TaxYearUtil]
-  val dataPath: String                  = s"""{
+  private val taxYearUtil                                           = app.injector.instanceOf[TaxYearUtil]
+  val dataPath: String                                              = s"""{
                                             |  "taxYear":$currentTaxYearSA,
                                             |  "errors":{"error":"AtsParsingError"}
                                             |}
                                             |""".stripMargin
-  val dataPathNoAts: String             = s"""{
+  val dataPathNoAts: String                                         = s"""{
                                             | "taxYear":$currentTaxYearSA,
                                             | "errors":{"error": "NoAtsError"}
                                             |}""".stripMargin
-  private val mockTotalIncomeTaxService = mock[IncomeTaxAndNIService]
-  implicit val hc: HeaderCarrier        = new HeaderCarrier
+  private val mockTotalIncomeTaxService                             = mock[IncomeTaxAndNIService]
+  implicit val hc: HeaderCarrier                                    = new HeaderCarrier
+  private val request: AuthenticatedRequest[AnyContentAsEmpty.type] = buildRequest(currentTaxYearSA)
 
   "Calling a service with a JSON containing errors" must {
 

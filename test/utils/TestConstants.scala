@@ -105,6 +105,14 @@ trait TestConstants extends BaseSpec {
     rpciLowerTotalAmount = Amount.gbp(4000),
     rpciHigherTax = Amount.gbp(1500),
     rpciHigherTotalAmount = Amount.gbp(4500),
+    ciLowerTax = Amount.gbp(4600),
+    ciLowerTotalAmount = Amount.gbp(4610),
+    ciHigherTax = Amount.gbp(4620),
+    ciHigherTotalAmount = Amount.gbp(4630),
+    rpLowerTax = Amount.gbp(4640),
+    rpLowerTotalAmount = Amount.gbp(4650),
+    rpHigherTax = Amount.gbp(4660),
+    rpHigherTotalAmount = Amount.gbp(4670),
     adjustmentsAmount = -Amount(500, "GBP"),
     totalCapitalGainsTaxAmount = Amount(5500, "GBP"),
     cgTaxPerCurrencyUnit = Amount(0.1234, "GBP"),
@@ -113,6 +121,10 @@ trait TestConstants extends BaseSpec {
     upperRateRate = Rate("28%"),
     rpciLowerRate = Rate("15%"),
     rpciHigherRate = Rate("25%"),
+    ciLowerRate = Rate("10%"),
+    ciHigherRate = Rate("35%"),
+    rpLowerRate = Rate("5%"),
+    rpHigherRate = Rate("55%"),
     totalCgTaxRate = Rate("12.34%"),
     title = "Mr",
     forename = "forename",
@@ -122,36 +134,6 @@ trait TestConstants extends BaseSpec {
   val govSpendTotalTuple: (String, SpendData) = ("GovSpendTotal", SpendData(Amount(2898.13, "GBP"), 100.0))
 
   val fakeTaxYear: Int = currentTaxYearSA - 3
-
-  val fakeGovernmentSpend: GovernmentSpend =
-    GovernmentSpend(
-      fakeTaxYear,
-      testUtr,
-      List(
-        ("Welfare", SpendData(Amount(2898.13, "GBP"), 23.5)),
-        ("Health", SpendData(Amount(2898.13, "GBP"), 20.2)),
-        ("StatePensions", SpendData(Amount(2898.13, "GBP"), 11.8)),
-        ("Education", SpendData(Amount(2898.13, "GBP"), 12.8)),
-        ("Defence", SpendData(Amount(2898.13, "GBP"), 5.3)),
-        ("NationalDebtInterest", SpendData(Amount(2898.13, "GBP"), 5.3)),
-        ("PublicOrderAndSafety", SpendData(Amount(2898.13, "GBP"), 4.3)),
-        ("Transport", SpendData(Amount(2898.13, "GBP"), 4.3)),
-        ("BusinessAndIndustry", SpendData(Amount(2898.13, "GBP"), 3.6)),
-        ("GovernmentAdministration", SpendData(Amount(2898.13, "GBP"), 2.1)),
-        ("HousingAndUtilities", SpendData(Amount(2898.13, "GBP"), 1.6)),
-        ("Culture", SpendData(Amount(2898.13, "GBP"), 1.5)),
-        ("Environment", SpendData(Amount(2898.13, "GBP"), 1.5)),
-        ("OverseasAid", SpendData(Amount(2898.13, "GBP"), 1.2)),
-        ("UkContributionToEuBudget", SpendData(Amount(2898.13, "GBP"), 1)),
-        govSpendTotalTuple
-      ),
-      "Mr",
-      "John",
-      "Doe",
-      Amount(23912.00, "GBP"),
-      "0002",
-      Amount(2000.00, "GBP")
-    )
 
   val governmentSpendFromBackend: GovernmentSpend =
     GovernmentSpend(

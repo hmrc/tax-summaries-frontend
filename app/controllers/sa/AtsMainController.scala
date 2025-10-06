@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa
 
 import com.google.inject.Inject
 import config.ApplicationConfig
@@ -22,37 +22,37 @@ import controllers.auth.AuthJourney
 import controllers.auth.requests.AuthenticatedRequest
 import models.ErrorResponse
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AuditService, CapitalGainsService}
+import services.{AuditService, SummaryService}
 import utils.{GenericViewModel, TaxYearUtil}
-import view_models.CapitalGains
-import views.html.CapitalGainsView
+import view_models.Summary
+import views.html.TaxsMainView
 import views.html.errors.{GenericErrorView, TokenErrorView}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CapitalGainsTaxController @Inject() (
-  capitalGainsService: CapitalGainsService,
+class AtsMainController @Inject() (
+  summaryService: SummaryService,
   val auditService: AuditService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
-  capitalGainsView: CapitalGainsView,
+  taxsMainView: TaxsMainView,
   genericErrorView: GenericErrorView,
   tokenErrorView: TokenErrorView,
   taxYearUtil: TaxYearUtil
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
-  def authorisedCapitalGains: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
+  def authorisedAtsMain: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents.async { request =>
     show(request)
   }
 
-  type ViewModel = CapitalGains
+  type ViewModel = Summary
 
   override def extractViewModel()(implicit
     request: AuthenticatedRequest[_]
   ): Future[Either[ErrorResponse, GenericViewModel]] =
-    extractViewModelWithTaxYear(capitalGainsService.getCapitalGains(_))
+    extractViewModelWithTaxYear(summaryService.getSummaryData(_))
 
   override def obtainResult(result: ViewModel)(implicit request: AuthenticatedRequest[_]): Result =
-    Ok(capitalGainsView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
+    Ok(taxsMainView(result, getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)))
 }

@@ -22,8 +22,10 @@ import utils.TestConstants.testNino
 trait TaxYearForTesting extends JsonUtil {
   // The latest tax year (end year) available in ATS for both SA and PAYE. This will be either the last
   // tax year or the last tax year - 1, depending on time of year.
-  protected val currentTaxYearSA: Int   = 2024
+
+  protected val currentTaxYearSA: Int   = 2025
   protected val currentTaxYearPAYE: Int = 2025
+  protected val currentTaxYearGovSpend: Int = 2025
 
   protected val maxTaxYearsTobeDisplayed: Int = 4
 
@@ -54,7 +56,7 @@ trait TaxYearForTesting extends JsonUtil {
   )
 
   // Dummy data for PAYE endpoint: /taxs/<NINO>/<TAX-YEAR>/paye-ats-data
-  protected def payAtsData(taxYear: Int): String = loadAndReplace(
+  protected def payeAtsData(taxYear: Int): String = loadAndReplace(
     "/json/paye-ats-data.json",
     Map("$nino" -> testNino.nino, "<TAXYEAR>" -> taxYear.toString)
   )
@@ -66,6 +68,6 @@ trait TaxYearForTesting extends JsonUtil {
                ""
              } else {
                ","
-             }) + payAtsData(year)
+             }) + payeAtsData(year)
     } + "]"
 }
