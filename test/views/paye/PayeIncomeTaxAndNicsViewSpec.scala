@@ -197,5 +197,30 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
         .text() mustBe "Total Income Tax and National Insurance contributions £0.00"
 
     }
+
+    "have brd content when requested" in {
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeUKIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = true
+      ).body
+      val document = Jsoup.parse(view)
+
+      document
+        .getElementById("brd")
+        .text() mustBe "This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid."
+
+    }
+    "not have brd content when not requested" in {
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeUKIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = false
+      ).body
+      val document = Jsoup.parse(view)
+
+      document.select("#brd") mustBe empty
+
+    }
   }
 }
