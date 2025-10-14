@@ -51,20 +51,20 @@ class PayeGovernmentSpendSpec
             Some(
               Map(
                 "UkContributionToEuBudget" -> SpendData(Amount(6.00, "GBP"), 0.60),
-                "Welfare" -> SpendData(Amount(196.00, "GBP"), 19.60),
+                "Welfare"                  -> SpendData(Amount(196.00, "GBP"), 19.60),
                 "GovernmentAdministration" -> SpendData(Amount(20.00, "GBP"), 2.00),
-                "Education" -> SpendData(Amount(96.00, "GBP"), 9.60),
-                "StatePensions" -> SpendData(Amount(101.00, "GBP"), 10.10),
-                "NationalDebtInterest" -> SpendData(Amount(41.00, "GBP"), 4.10),
-                "Defence" -> SpendData(Amount(45.00, "GBP"), 4.50),
-                "PublicOrderAndSafety" -> SpendData(Amount(39.00, "GBP"), 3.90),
-                "Transport" -> SpendData(Amount(45.00, "GBP"), 4.50),
-                "BusinessAndIndustry" -> SpendData(Amount(144.00, "GBP"), 14.40),
-                "Culture" -> SpendData(Amount(12.00, "GBP"), 1.20),
-                "HousingAndUtilities" -> SpendData(Amount(14.00, "GBP"), 1.40),
-                "Environment" -> SpendData(Amount(13.00, "GBP"), 1.30),
-                "OverseasAid" -> SpendData(Amount(9.00, "GBP"), 0.90),
-                "Health" -> SpendData(Amount(219.00, "GBP"), 21.90)
+                "Education"                -> SpendData(Amount(96.00, "GBP"), 9.60),
+                "StatePensions"            -> SpendData(Amount(101.00, "GBP"), 10.10),
+                "NationalDebtInterest"     -> SpendData(Amount(41.00, "GBP"), 4.10),
+                "Defence"                  -> SpendData(Amount(45.00, "GBP"), 4.50),
+                "PublicOrderAndSafety"     -> SpendData(Amount(39.00, "GBP"), 3.90),
+                "Transport"                -> SpendData(Amount(45.00, "GBP"), 4.50),
+                "BusinessAndIndustry"      -> SpendData(Amount(144.00, "GBP"), 14.40),
+                "Culture"                  -> SpendData(Amount(12.00, "GBP"), 1.20),
+                "HousingAndUtilities"      -> SpendData(Amount(14.00, "GBP"), 1.40),
+                "Environment"              -> SpendData(Amount(13.00, "GBP"), 1.30),
+                "OverseasAid"              -> SpendData(Amount(9.00, "GBP"), 0.90),
+                "Health"                   -> SpendData(Amount(219.00, "GBP"), 21.90)
               )
             ),
             Amount(200, "GBP"),
