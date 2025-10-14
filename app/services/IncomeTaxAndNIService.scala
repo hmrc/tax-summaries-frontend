@@ -145,8 +145,9 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       savingsRates = savingsRates,
       title = taxpayerName("title"),
       forename = taxpayerName("forename"),
-      surname = taxpayerName("surname")
+      surname = taxpayerName("surname"),
+      includeBRDMessage = getFromIncomeTaxPayload("brdReduction").amount > 0 ||
+        getFromIncomeTaxPayload("brdCharge").amount > 0
     )
-
   }
 }

@@ -172,7 +172,8 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         savingsRates = savingsRates,
         title = "Mr",
         forename = "John",
-        surname = "Smith"
+        surname = "Smith",
+        includeBRDMessage = false
       )
     }
 
@@ -230,7 +231,8 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         savingsRates = savingsRates,
         title = "Mr",
         forename = "John",
-        surname = "Smith"
+        surname = "Smith",
+        includeBRDMessage = false
       )
     }
 
@@ -288,7 +290,8 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         savingsRates = savingsRates,
         title = "Mr",
         forename = "John",
-        surname = "Smith"
+        surname = "Smith",
+        includeBRDMessage = false
       )
     }
 

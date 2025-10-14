@@ -301,7 +301,6 @@ paye.ats.summary.nicsheading=Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.tax_and_nics.link=Eich Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.tax_and_nics.description=Dyma {0}% o’ch incwm trethadwy. Am bob £1 o incwm, gwnaethoch dalu {0}c o Dreth Incwm a chyfraniadau Yswiriant Gwladol.
 paye.ats.summary.tax_and_nics.description-2=Nid yw cyfanswm eich Treth Incwm a’ch CYG ar eich tudalen grynodeb yn adlewyrchu unrhyw ad-daliadau i chi nac ad-daliadau gennych, ac felly gall fod yn wahanol i’r dreth a gyfrifir sy’n cael ei dangos yn y dadansoddiad hwn.
-paye.ats.summary.brd= Nid yw’r cyfrifiad hwn yn dangos sut mae Rhodd Cymorth yn newid eich treth. Nid yw’n ystyried y gwahaniaeth rhwng eich cyfradd dreth a’r un a ddefnyddir gan elusennau i hawlio Rhodd Cymorth.
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Incwm ar ôl Treth a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.lede=Mae hyn er eich gwybodaeth yn unig. Nid oes rhaid i chi gysylltu â ni, gan nad yw hwn yn fil neu’n orchymyn i dalu.
 
@@ -447,3 +446,6 @@ timeout.dialog.signout.button=Allgofnodi nawr
 #=============================================================
 betaBanner.message=Mae hwn yn wasanaeth newydd ‐ bydd eich {0} yn ein helpu i'w wella.
 betaBanner.linkText=adborth
+
+# BRD content
+ats.summary.brd= Nid yw’r cyfrifiad hwn yn dangos sut mae Rhodd Cymorth yn newid eich treth. Nid yw’n ystyried y gwahaniaeth rhwng eich cyfradd dreth a’r un a ddefnyddir gan elusennau i hawlio Rhodd Cymorth.

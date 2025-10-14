@@ -49,12 +49,16 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
   lazy val nicsView: NicsView                                        = inject[NicsView]
 
   def view(tax: IncomeTaxAndNI): String =
-    nicsView(tax).body
+    nicsView(viewModel = tax, actingAsAttorney = None, includeBRDMessage = false).body
 
   def view: String = view(testIncomeTaxAndNI)
 
   def agentView: String =
-    nicsView(testIncomeTaxAndNI, Some(ActingAsAttorneyFor(Some("Agent"), Map()))).body
+    nicsView(
+      viewModel = testIncomeTaxAndNI,
+      actingAsAttorney = Some(ActingAsAttorneyFor(Some("Agent"), Map())),
+      includeBRDMessage = false
+    ).body
 
   implicit val arbAmount: Arbitrary[Amount]           = Arbitrary(arbitrary[BigDecimal].flatMap(Amount.gbp))
   implicit val arbRate: Arbitrary[Rate]               = Arbitrary(arbitrary[String].flatMap(s => Rate(s)))

@@ -95,8 +95,6 @@ paye.ats.summary.nicsheading=Income Tax and National Insurance contributions
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance contributions
 paye.ats.summary.tax_and_nics.description-2=Your total income tax and NIC’s on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown.
 
-paye.ats.summary.brd= This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.
-
 # View NICS page
 #=============================================================
 ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
@@ -468,3 +466,6 @@ timeout.dialog.signout.button=Sign out now
 #=============================================================
 betaBanner.message=This is a new service ‐ your {0} will help us to improve it.
 betaBanner.linkText=feedback
+
+# BRD content
+ats.summary.brd= This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.
