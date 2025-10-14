@@ -201,8 +201,8 @@ object AtsTestData extends TaxYearForTesting {
   )
 
   val totalIncomeTaxDataWithBRDReductionAmount: AtsData = {
-    val pl = totalIncomeTaxData.income_tax.flatMap(_.payload).map { x =>
-      x ++ Map(
+    val pl = totalIncomeTaxData.income_tax.flatMap(_.payload).map {
+      _ ++ Map(
         "brdReduction" -> Amount(BigDecimal(300), "GBP")
       )
     }

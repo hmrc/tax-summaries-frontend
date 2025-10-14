@@ -22,14 +22,15 @@ import models.ActingAsAttorneyFor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants
-import view_models._
+import view_models.*
 import views.html.NicsView
-import views.html.total_income_tax_includes._
+import views.html.total_income_tax_includes.*
 
 class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
@@ -48,8 +49,8 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
   lazy val savingsTableView: SavingsTableView                        = inject[SavingsTableView]
   lazy val nicsView: NicsView                                        = inject[NicsView]
 
-  def view(tax: IncomeTaxAndNI): String =
-    nicsView(viewModel = tax, actingAsAttorney = None, includeBRDMessage = false).body
+  def view(tax: IncomeTaxAndNI, includeBRDMessage: Boolean = false): String =
+    nicsView(viewModel = tax, actingAsAttorney = None, includeBRDMessage = includeBRDMessage).body
 
   def view: String = view(testIncomeTaxAndNI)
 
@@ -179,6 +180,15 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
 
       val result = view
       result must include("hmrc-account-menu")
+    }
+
+    "not show brd message when includeBRDMessage set to false" in {
+      val data = testIncomeTaxAndNI
+      view(tax = data, includeBRDMessage = false) mustNot include(Messages("ats.summary.brd"))
+    }
+    "show brd message when includeBRDMessage set to true" in {
+      val data = testIncomeTaxAndNI
+      view(tax = data, includeBRDMessage = true) must include(Messages("ats.summary.brd"))
     }
   }
 }
