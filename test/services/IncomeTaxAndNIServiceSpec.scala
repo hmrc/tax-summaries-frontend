@@ -181,16 +181,12 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
       val incomeData: AtsData    = AtsTestData.totalIncomeTaxDataWithBRDReductionAmount
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
 
-      println("\naaa" + incomeData)
-
       result.includeBRDMessage mustBe true
     }
 
     "return includeBRDMessage as true when brd charge amount is > 0" in {
       val incomeData: AtsData    = AtsTestData.totalIncomeTaxDataWithBRDChargeAmount
       val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
-
-      println("\naaa" + incomeData)
 
       result.includeBRDMessage mustBe true
     }
