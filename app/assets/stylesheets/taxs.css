@@ -30,10 +30,6 @@
      font-family: "GDS Transport", Arial, sans-serif;
 }
 
-#totalUkIncomeTax th {
-     font-weight: 700;
-}
-
 #tax-spent .content {
     display: flex;
     flex-flow: row nowrap;
@@ -61,16 +57,6 @@ meter::-webkit-meter-bar {
   margin:0;
 }
 
-.govuk-table__row:nth-child(odd) .govuk-table__cell,
-.govuk-table__row:nth-child(odd) .govuk-table__header {
-  border: none;
-}
-
-.govuk-table__row:nth-child(even) .govuk-table__cell,
-.govuk-table__row:nth-child(even) .govuk-table__header {
-  border-width: 2px;
-}
-
 meter,
 meter::-webkit-meter-bar {
     /*to remove the default background property */
@@ -91,4 +77,8 @@ meter::-webkit-meter-optimum-value {
 
 td:has(meter) {
   line-height: 0.5em
+}
+
+.border-none{
+    border: none
 }

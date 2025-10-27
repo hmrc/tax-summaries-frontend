@@ -63,8 +63,8 @@
         @{
             spendData.map { case (name, percentage) =>
                 <tr class="govuk-table__row">
-                    <th id={s"$name"} scope="row" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0">{messages(s"ats.treasury_spending.table.$name")}</th>
-                    <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">{percentage}%</td>
+                    <th id={s"$name"} scope="row" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none">{messages(s"ats.treasury_spending.table.$name")}</th>
+                    <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none">{percentage}%</td>
                 </tr>
                 <tr class="govuk-table__row" aria-hidden="true">
                     <td colspan="2" class="govuk-table__cell govuk-!-padding-0">

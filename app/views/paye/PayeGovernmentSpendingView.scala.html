@@ -53,8 +53,8 @@
 			<tbody class="govuk-table__body">
 				@for(rowModel <- viewModel.orderedSpendRows) {
 					<tr class="govuk-table__row">
-						<th scope="col" id="@rowModel.category" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Messages("paye.ats.treasury_spending.table." + rowModel.category) (@rowModel.spendData.percentage%)</th>
-						<td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0">£@rowModel.spendData.amount.toHalfRoundedUpAmount</td>
+						<th scope="col" id="@rowModel.category" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0  border-none">@Messages("paye.ats.treasury_spending.table." + rowModel.category) (@rowModel.spendData.percentage%)</th>
+						<td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0  border-none">£@rowModel.spendData.amount.toHalfRoundedUpAmount</td>
 					</tr>
 					<tr class="govuk-table__row" aria-hidden="true">
 						<td colspan="2" class="govuk-table__cell govuk-!-padding-0">
