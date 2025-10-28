@@ -16,9 +16,9 @@
 
 package services.atsData
 
-import models._
-import view_models.{Amount, Rate}
+import models.*
 import utils.TaxYearForTesting
+import view_models.{Amount, Rate}
 
 object AtsTestData extends TaxYearForTesting {
 
@@ -199,6 +199,26 @@ object AtsTestData extends TaxYearForTesting {
     errors = None,
     None
   )
+
+  val totalIncomeTaxDataWithBRDReductionAmount: AtsData = {
+    val pl = totalIncomeTaxData.income_tax.flatMap(_.payload).map {
+      _ ++ Map(
+        "brdReduction" -> Amount(BigDecimal(300), "GBP")
+      )
+    }
+    val sd = totalIncomeTaxData.income_tax.map(dh => dh.copy(payload = pl))
+    totalIncomeTaxData.copy(income_tax = sd)
+  }
+
+  val totalIncomeTaxDataWithBRDChargeAmount: AtsData = {
+    val updatedPayload: Option[Map[String, Amount]] = totalIncomeTaxData.income_tax.flatMap(_.payload).map {
+      _ ++ Map(
+        "brdCharge" -> Amount(BigDecimal(300), "GBP")
+      )
+    }
+    val incomeTaxSection: Option[DataHolder]        = totalIncomeTaxData.income_tax.map(_.copy(payload = updatedPayload))
+    totalIncomeTaxData.copy(income_tax = incomeTaxSection)
+  }
 
   val govSpendingDataForWelshUser = AtsData(
     currentTaxYearSA,

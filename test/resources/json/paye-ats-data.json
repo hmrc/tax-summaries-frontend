@@ -331,5 +331,6 @@
         "percentage": 100.00
       }
     }
-  }
+  },
+  "includeBRDMessage": false
 }

@@ -466,3 +466,6 @@ timeout.dialog.signout.button=Sign out now
 #=============================================================
 betaBanner.message=This is a new service ‐ your {0} will help us to improve it.
 betaBanner.linkText=feedback
+
+# BRD content
+ats.summary.brd= This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.

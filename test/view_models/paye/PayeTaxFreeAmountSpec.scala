@@ -35,12 +35,13 @@ class PayeTaxFreeAmountSpec
 
   def payeAtsData(allowance_data: Map[String, Amount], summary_data: Map[String, Amount]): PayeAtsData =
     PayeAtsData(
-      currentTaxYearSA,
-      None,
-      Some(DataHolder(Some(summary_data), None, None)),
-      None,
-      Some(DataHolder(Some(allowance_data), None, None)),
-      None
+      taxYear = currentTaxYearSA,
+      income_tax = None,
+      summary_data = Some(DataHolder(Some(summary_data), None, None)),
+      income_data = None,
+      allowance_data = Some(DataHolder(Some(allowance_data), None, None)),
+      gov_spending = None,
+      includeBRDMessage = false
     )
 
   "PayeTaxFreeAmount" must {

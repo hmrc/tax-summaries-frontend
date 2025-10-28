@@ -56,7 +56,8 @@ class PayeIncomeTaxAndNicsController @Inject() (
                 uKRates = payeConfig.ukTaxBandKeys,
                 adjustments = payeConfig.adjustmentsKeys.toSet
               ),
-              successResponse.isWelshTaxPayer
+              successResponse.isWelshTaxPayer,
+              includeBRDMessage = successResponse.includeBRDMessage
             )
           )
 

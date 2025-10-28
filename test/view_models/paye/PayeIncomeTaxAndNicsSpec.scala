@@ -158,8 +158,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with only non-zero tax band rates" in {
       val incomeTaxData = PayeAtsData(
-        currentTaxYearSA,
-        Some(
+        taxYear = currentTaxYearSA,
+        income_tax = Some(
           DataHolder(
             Some(
               Map(
@@ -199,7 +199,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
             None
           )
         ),
-        Some(
+        summary_data = Some(
           DataHolder(
             Some(
               Map(
@@ -212,9 +212,10 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
             None
           )
         ),
-        None,
-        None,
-        None
+        income_data = None,
+        allowance_data = None,
+        gov_spending = None,
+        includeBRDMessage = false
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
@@ -249,8 +250,8 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with an empty tax bands list with no payments in any tax band" in {
       val incomeTaxData = PayeAtsData(
-        currentTaxYearSA,
-        Some(
+        taxYear = currentTaxYearSA,
+        income_tax = Some(
           DataHolder(
             Some(
               Map(
@@ -290,7 +291,7 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
             None
           )
         ),
-        Some(
+        summary_data = Some(
           DataHolder(
             Some(
               Map(
@@ -303,9 +304,10 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
             None
           )
         ),
-        None,
-        None,
-        None
+        income_data = None,
+        allowance_data = None,
+        gov_spending = None,
+        includeBRDMessage = false
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
@@ -334,12 +336,13 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with empty tax bands with no income and tax data" in {
       val incomeTaxData = PayeAtsData(
-        currentTaxYearSA,
-        None,
-        None,
-        None,
-        None,
-        None
+        taxYear = currentTaxYearSA,
+        income_tax = None,
+        summary_data = None,
+        income_data = None,
+        allowance_data = None,
+        gov_spending = None,
+        includeBRDMessage = false
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(
@@ -368,12 +371,13 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 
     "transform to view model with empty tax bands when no amounts are present" in {
       val incomeTaxData = PayeAtsData(
-        currentTaxYearSA,
-        Some(DataHolder(Some(Map()), Some(Map()), None)),
-        None,
-        None,
-        None,
-        None
+        taxYear = currentTaxYearSA,
+        income_tax = Some(DataHolder(Some(Map()), Some(Map()), None)),
+        summary_data = None,
+        income_data = None,
+        allowance_data = None,
+        gov_spending = None,
+        includeBRDMessage = false
       )
 
       val expectedViewModel = PayeIncomeTaxAndNics(

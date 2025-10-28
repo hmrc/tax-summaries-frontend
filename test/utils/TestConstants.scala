@@ -86,7 +86,8 @@ trait TestConstants extends BaseSpec {
     SavingsRates.empty,
     "Mr",
     "forename",
-    "surname"
+    "surname",
+    includeBRDMessage = false
   )
 
   val capitalGains: CapitalGains = CapitalGains(

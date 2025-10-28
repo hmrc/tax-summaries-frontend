@@ -172,8 +172,23 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         savingsRates = savingsRates,
         title = "Mr",
         forename = "John",
-        surname = "Smith"
+        surname = "Smith",
+        includeBRDMessage = false
       )
+    }
+
+    "return includeBRDMessage as true when brd reduction amount is > 0" in {
+      val incomeData: AtsData    = AtsTestData.totalIncomeTaxDataWithBRDReductionAmount
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
+
+      result.includeBRDMessage mustBe true
+    }
+
+    "return includeBRDMessage as true when brd charge amount is > 0" in {
+      val incomeData: AtsData    = AtsTestData.totalIncomeTaxDataWithBRDChargeAmount
+      val result: IncomeTaxAndNI = sut.totalIncomeConverter(incomeData)
+
+      result.includeBRDMessage mustBe true
     }
 
     "return complete IncomeTaxAndNI data when given complete AtsData for welsh tax payer" in {
@@ -230,7 +245,8 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         savingsRates = savingsRates,
         title = "Mr",
         forename = "John",
-        surname = "Smith"
+        surname = "Smith",
+        includeBRDMessage = false
       )
     }
 
@@ -288,7 +304,8 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
         savingsRates = savingsRates,
         title = "Mr",
         forename = "John",
-        surname = "Smith"
+        surname = "Smith",
+        includeBRDMessage = false
       )
     }
 

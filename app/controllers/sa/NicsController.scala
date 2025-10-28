@@ -72,7 +72,8 @@ class NicsController @Inject() (
     Ok(
       nicsView(
         result,
-        getActingAsAttorneyFor(request, result.forename, result.surname, result.utr)
+        getActingAsAttorneyFor(request, result.forename, result.surname, result.utr),
+        result.includeBRDMessage
       )
     )
 }

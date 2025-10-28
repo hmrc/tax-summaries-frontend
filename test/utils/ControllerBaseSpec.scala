@@ -143,6 +143,7 @@ trait ControllerBaseSpec extends BaseSpec {
     SavingsRates.empty,
     "Mr",
     "forename",
-    "surname"
+    "surname",
+    includeBRDMessage = false
   )
 }
