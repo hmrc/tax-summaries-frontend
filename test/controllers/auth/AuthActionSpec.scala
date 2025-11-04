@@ -76,8 +76,7 @@ class AuthActionSpec extends BaseSpec {
       cc = FakeAuthAction.mcc,
       taxsAgentTokenSessionCacheRepository = mockTaxsAgentTokenSessionCacheRepository,
       citizenDetailsService = mockCitizenDetailsService,
-      pertaxAuthService = mockPertaxAuthService,
-      mockFeatureFlagService
+      pertaxAuthService = mockPertaxAuthService
     )(ec, appConfig)
     new Harness(authAction)
   }
@@ -249,26 +248,6 @@ class AuthActionSpec extends BaseSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
         verify(mockCitizenDetailsService, times(1)).getMatchingSaUtr(any())(any())
-      }
-    }
-
-    "shutter check is true" must {
-      "redirect to service unavailable page when SA is not enabled" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
-          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
-        val result = createHarness.onPageLoad(saShutterCheck = true)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
-      }
-      "return OK when SA is enabled" in {
-        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
-          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
-        whenRetrieval(nino = Some(nino))
-        when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
-        when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
-          .thenReturn(EitherT.rightT(None))
-        val result = createHarness.onPageLoad()(fakeRequest)
-        status(result) mustBe OK
       }
     }
 

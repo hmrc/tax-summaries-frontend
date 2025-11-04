@@ -22,7 +22,6 @@ import config.ApplicationConfig
 import controllers.auth.requests
 import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
-import models.admin.SelfAssessmentServiceToggle
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -34,7 +33,6 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
-import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
@@ -46,8 +44,6 @@ class AuthImpl(
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   citizenDetailsService: CitizenDetailsService,
   pertaxAuthService: PertaxAuthService,
-  featureFlagService: FeatureFlagService,
-  saShutterCheck: Boolean,
   agentTokenCheck: Boolean,
   utrCheck: Boolean
 )(implicit
@@ -62,24 +58,6 @@ class AuthImpl(
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    if (saShutterCheck) {
-      isSaEnabled.flatMap {
-        case true  => handleRequest(request, block)
-        case false => Future.successful(serviceUnavailablePage)
-      }
-    } else {
-      handleRequest(request, block)
-    }
-  }
-
-  private def isSaEnabled: Future[Boolean] =
-    featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
-
-  private def handleRequest[A](
-    request: Request[A],
-    block: AuthenticatedRequest[A] => Future[Result]
-  )(implicit hc: HeaderCarrier): Future[Result] =
     createAuthenticatedRequest(request).flatMap {
       case Right(authenticatedRequest) =>
         val requestAfterCitizenDetailsCall =
@@ -104,6 +82,7 @@ class AuthImpl(
 
       case Left(result) => Future.successful(result)
     }
+  }
 
   private def agentTokenCheck[A](
     request: Request[A],
@@ -194,8 +173,7 @@ class AuthAction @Inject() (
   cc: MessagesControllerComponents,
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   citizenDetailsService: CitizenDetailsService,
-  pertaxAuthService: PertaxAuthService,
-  featureFlagService: FeatureFlagService
+  pertaxAuthService: PertaxAuthService
 )(implicit
   ec: ExecutionContext,
   appConfig: ApplicationConfig
@@ -207,8 +185,6 @@ class AuthAction @Inject() (
       taxsAgentTokenSessionCacheRepository,
       citizenDetailsService,
       pertaxAuthService,
-      featureFlagService,
-      saShutterCheck,
       agentTokenCheck,
       utrCheck
     )
