@@ -47,17 +47,17 @@ import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {
 
-  private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
-  private val mockCitizenDetailsService = mock[CitizenDetailsService]
-  private val mockPertaxAuthService = mock[PertaxAuthService]
+  private val mockTaxsAgentTokenSessionCacheRepository           = mock[TaxsAgentTokenSessionCacheRepository]
+  private val mockCitizenDetailsService                          = mock[CitizenDetailsService]
+  private val mockPertaxAuthService                              = mock[PertaxAuthService]
   implicit lazy val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   private class Harness(authAction: AuthAction) extends InjectedController {
     def onPageLoad(
-                    saShutterCheck: Boolean = false,
-                    agentTokenCheck: Boolean = false,
-                    utrCheck: Boolean = false
-                  ): Action[AnyContent] =
+      saShutterCheck: Boolean = false,
+      agentTokenCheck: Boolean = false,
+      utrCheck: Boolean = false
+    ): Action[AnyContent] =
       authAction(saShutterCheck = saShutterCheck, agentTokenCheck = agentTokenCheck, utrCheck = utrCheck) { request =>
         Ok(
           s"SaUtr: ${request.saUtr.map(_.utr).getOrElse("fail")}," +
@@ -82,10 +82,10 @@ class AuthActionSpec extends BaseSpec {
     new Harness(authAction)
   }
 
-  val fakeCredentials: Credentials = Credentials("foo", "bar")
+  val fakeCredentials: Credentials            = Credentials("foo", "bar")
   val mockAuthConnector: DefaultAuthConnector = mock[DefaultAuthConnector]
 
-  val ggSignInUrl =
+  val ggSignInUrl                      =
     "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9217%2Fannual-tax-summary&origin=tax-summaries-frontend"
   implicit val timeout: FiniteDuration = 5 seconds
 
@@ -102,23 +102,23 @@ class AuthActionSpec extends BaseSpec {
     ()
   }
 
-  private val extId: String = "123"
-  private val nino: String = "CS121212C"
-  private val utr: String = "123"
-  private val agentRef: String = "123"
+  private val extId: String          = "123"
+  private val nino: String           = "CS121212C"
+  private val utr: String            = "123"
+  private val agentRef: String       = "123"
   private val agentToken: AgentToken = AgentToken(agentUar = agentRef, clientUtr = utr, timestamp = 1L)
 
   private val fakeRequest = FakeRequest("GET", "http://test.com")
 
   private def whenRetrieval(
-                             enrolments: Set[Enrolment] = Set.empty,
-                             externalId: Option[String] = Some(extId),
-                             creds: Option[Credentials] = Some(fakeCredentials),
-                             nino: Option[String] = None,
-                             confidenceLevel: ConfidenceLevel = L50
-                           ): Unit = {
+    enrolments: Set[Enrolment] = Set.empty,
+    externalId: Option[String] = Some(extId),
+    creds: Option[Credentials] = Some(fakeCredentials),
+    nino: Option[String] = None,
+    confidenceLevel: ConfidenceLevel = L50
+  ): Unit = {
     val utr = enrolments.find(_.key == "IR-SA").flatMap(_.identifiers.find(_.key == "UTR").map(_.value))
-    val _ = when(
+    val _   = when(
       mockAuthConnector
         .authorise[
           Enrolments ~ Option[String] ~ Option[Credentials] ~ Option[String] ~
@@ -217,7 +217,7 @@ class AuthActionSpec extends BaseSpec {
       "Throw exception when no credentials" in {
         whenRetrieval(creds = None)
         val result = createHarness.onPageLoad()(fakeRequest)
-        val ex = intercept[RuntimeException] {
+        val ex     = intercept[RuntimeException] {
           await(result)
         }
         ex.getMessage must include("Can't find credentials for user")
