@@ -88,5 +88,6 @@ class IntegrationSpec
       post(urlEqualTo("/auth/authorise"))
         .willReturn(ok(authResponse))
     )
+    ()
   }
 }

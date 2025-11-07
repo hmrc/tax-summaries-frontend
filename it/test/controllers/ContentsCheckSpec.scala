@@ -216,6 +216,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       get(urlEqualTo(s"/taxs//$currentTaxYearSA/4/ats-list"))
         .willReturn(ok(loadAtsListData))
     )
+    ()
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
