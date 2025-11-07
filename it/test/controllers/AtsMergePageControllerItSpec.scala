@@ -85,6 +85,7 @@ class AtsMergePageControllerItSpec extends IntegrationSpec {
     ).thenReturn(Future.successful((Globals.TAXS_AGENT_TOKEN_KEY, "token")))
     when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(mockAny))(mockAny, mockAny))
       .thenReturn(Future.successful(Some(agentTokenMock)))
+    ()
   }
 
   private def allPreviousYearsSA: Seq[Int] = {
