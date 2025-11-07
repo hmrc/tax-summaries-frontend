@@ -30,7 +30,8 @@
 )
 
 @(  viewModel: view_models.IncomeTaxAndNI,
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+    includeBRDMessage: Boolean
     )(
     implicit request: AuthenticatedRequest[_],
     messages: Messages
@@ -102,5 +103,9 @@
         }      
       </tbody>
     </table>
+
+    @if(includeBRDMessage) {
+        @p(Text(messages("ats.summary.brd")), elmId=Some("brd"))
+    }    
 
 }

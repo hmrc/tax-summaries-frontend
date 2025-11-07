@@ -44,7 +44,8 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
     () =>
       payeIncomeTaxAndNicsView(
         payeAtsTestData.payeIncomeTaxAndNicsViewModel,
-        isWelshTaxPayer = false
+        isWelshTaxPayer = false,
+        includeBRDMessage = false
       )(messages, request)
 
   "PayeIncomeTaxAndNicsView when rendered" must {
@@ -55,7 +56,11 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
 
     "have correct data for scottish and rUK tax payer with all adjustments" in {
 
-      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = false
+      ).body
       val document = Jsoup.parse(view)
 
       document.getElementById("scottish_starter_rate").text() mustBe "Starter rate (£2,000 at 19%) £380.00"
@@ -99,7 +104,11 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
 
     "have correct data for UK tax payer" in {
 
-      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeUKIncomeTaxAndNicsViewModel, isWelshTaxPayer = false).body
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeUKIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = false
+      ).body
       val document = Jsoup.parse(view)
 
       document.getElementById("ordinary_rate").text() mustBe "Basic rate Dividend Tax (£19,430 at 19%) £4,080.00"
@@ -119,7 +128,11 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
     "have correct data for Welsh tax payer" in {
 
       val view     =
-        payeIncomeTaxAndNicsView(payeAtsTestData.payeEmployeeContributionNicsViewModel, isWelshTaxPayer = true).body
+        payeIncomeTaxAndNicsView(
+          payeAtsTestData.payeEmployeeContributionNicsViewModel,
+          isWelshTaxPayer = true,
+          includeBRDMessage = false
+        ).body
       val document = Jsoup.parse(view)
 
       document
@@ -133,7 +146,8 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
       val view     =
         payeIncomeTaxAndNicsView(
           payeAtsTestData.payeUKIncomeTaxAndNicsViewModel.copy(adjustments = List.empty),
-          isWelshTaxPayer = false
+          isWelshTaxPayer = false,
+          includeBRDMessage = false
         ).body
       val document = Jsoup.parse(view)
 
@@ -144,7 +158,11 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
     "have correct data for national insurance contributions" in {
 
       val view     =
-        payeIncomeTaxAndNicsView(payeAtsTestData.payeEmployeeContributionNicsViewModel, isWelshTaxPayer = false).body
+        payeIncomeTaxAndNicsView(
+          payeAtsTestData.payeEmployeeContributionNicsViewModel,
+          isWelshTaxPayer = false,
+          includeBRDMessage = false
+        ).body
       val document = Jsoup.parse(view)
 
       document.getElementById("employeeContributions").text() mustBe "National Insurance contributions £70.00"
@@ -165,7 +183,11 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
 
     "have no data for national insurance contributions" in {
 
-      val view     = payeIncomeTaxAndNicsView(payeAtsTestData.payeEmptyNicsViewModel, isWelshTaxPayer = false).body
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeEmptyNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = false
+      ).body
       val document = Jsoup.parse(view)
 
       document.getElementById("employeeContributions").text() mustBe "National Insurance contributions £0.00"
@@ -173,6 +195,31 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
       document
         .getElementById("totalIncomeTaxAndNic")
         .text() mustBe "Total Income Tax and National Insurance contributions £0.00"
+
+    }
+
+    "have brd content when requested" in {
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeUKIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = true
+      ).body
+      val document = Jsoup.parse(view)
+
+      document
+        .getElementById("brd")
+        .text() mustBe "This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid."
+
+    }
+    "not have brd content when not requested" in {
+      val view     = payeIncomeTaxAndNicsView(
+        payeAtsTestData.payeUKIncomeTaxAndNicsViewModel,
+        isWelshTaxPayer = false,
+        includeBRDMessage = false
+      ).body
+      val document = Jsoup.parse(view)
+
+      document.select("#brd") mustBe empty
 
     }
   }

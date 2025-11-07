@@ -446,3 +446,6 @@ timeout.dialog.signout.button=Allgofnodi nawr
 #=============================================================
 betaBanner.message=Mae hwn yn wasanaeth newydd ‐ bydd eich {0} yn ein helpu i'w wella.
 betaBanner.linkText=adborth
+
+# BRD content
+ats.summary.brd= Nid yw’r cyfrifiad hwn yn dangos sut mae Rhodd Cymorth yn newid eich treth. Nid yw’n ystyried y gwahaniaeth rhwng eich cyfradd dreth a’r un a ddefnyddir gan elusennau i hawlio Rhodd Cymorth.

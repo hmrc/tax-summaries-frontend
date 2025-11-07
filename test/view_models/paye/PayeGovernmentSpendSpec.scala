@@ -40,12 +40,12 @@ class PayeGovernmentSpendSpec
     "Transform PayeAtsData to view model" when {
 
       val govSpendingData: PayeAtsData = PayeAtsData(
-        currentTaxYearSA,
-        None,
-        None,
-        None,
-        None,
-        Some(
+        taxYear = currentTaxYearSA,
+        income_tax = None,
+        summary_data = None,
+        income_data = None,
+        allowance_data = None,
+        gov_spending = Some(
           GovernmentSpendingOutputWrapper(
             currentTaxYearSA,
             Some(
@@ -70,7 +70,8 @@ class PayeGovernmentSpendSpec
             Amount(200, "GBP"),
             None
           )
-        )
+        ),
+        includeBRDMessage = false
       )
 
       val payeGovernmentSpendViewModel: PayeGovernmentSpend = PayeGovernmentSpend(

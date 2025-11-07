@@ -68,7 +68,8 @@ case class IncomeTaxAndNI(
   savingsRates: SavingsRates,
   title: String,
   forename: String,
-  surname: String
+  surname: String,
+  includeBRDMessage: Boolean
 ) extends GenericViewModel {
 
   def taxYearTo: String   = year.toString

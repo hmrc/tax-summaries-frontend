@@ -27,7 +27,8 @@
 )
 
 @(  viewModel:PayeIncomeTaxAndNics,
-    isWelshTaxPayer: Boolean
+    isWelshTaxPayer: Boolean,
+    includeBRDMessage: Boolean
     )(
     implicit messages: Messages,
     request: Request[_]
@@ -182,4 +183,7 @@
       @p(Text(messages("paye.ats.total_national_insurance_employer_contribution.title",viewModel.employerContributions.toTwoDecimalString)), elmId=Some("employerContributions"))
     }
     @p(Text(messages("paye.ats.summary.tax_and_nics.description-2")), elmId=Some("incomeTaxBreakdownText"))
+    @if(includeBRDMessage) {
+        @p(Text(messages("ats.summary.brd")), elmId=Some("brd"))
+    }
 }

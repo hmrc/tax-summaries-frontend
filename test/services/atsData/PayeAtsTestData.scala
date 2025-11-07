@@ -24,9 +24,9 @@ import view_models.{Amount, Rate}
 class PayeAtsTestData extends BaseSpec {
 
   val yourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = Some(
       DataHolder(
         Some(
           Map(
@@ -55,8 +55,8 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    Some(
+    income_data = None,
+    allowance_data = Some(
       DataHolder(
         Some(
           Map(
@@ -69,20 +69,21 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    Some(
+    gov_spending = Some(
       GovernmentSpendingOutputWrapper(
         currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
       )
-    )
+    ),
+    includeBRDMessage = false
   )
 
   val malformedYourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = Some(
       DataHolder(
         Some(
           Map(
@@ -110,8 +111,8 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    Some(
+    income_data = None,
+    allowance_data = Some(
       DataHolder(
         Some(
           Map(
@@ -124,22 +125,23 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    Some(
+    gov_spending = Some(
       GovernmentSpendingOutputWrapper(
         currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
       )
-    )
+    ),
+    includeBRDMessage = false
   )
 
   val missingYourIncomeAndTaxesData: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    None,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = None,
+    income_data = None,
+    allowance_data = Some(
       DataHolder(
         Some(
           Map(
@@ -152,20 +154,21 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    Some(
+    gov_spending = Some(
       GovernmentSpendingOutputWrapper(
         currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
       )
-    )
+    ),
+    includeBRDMessage = false
   )
 
   val YourIncomeAndTaxesDataWithMissingTotalTaxFreeAmount: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = Some(
       DataHolder(
         Some(
           Map(
@@ -193,8 +196,8 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    Some(
+    income_data = None,
+    allowance_data = Some(
       DataHolder(
         Some(
           Map(
@@ -207,20 +210,21 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    Some(
+    gov_spending = Some(
       GovernmentSpendingOutputWrapper(
         currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
       )
-    )
+    ),
+    includeBRDMessage = false
   )
 
   val YourIncomeAndTaxesDataWithMissingEmployeeNicAmount: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = Some(
       DataHolder(
         Some(
           Map(
@@ -247,8 +251,8 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    Some(
+    income_data = None,
+    allowance_data = Some(
       DataHolder(
         Some(
           Map(
@@ -261,19 +265,20 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    Some(
+    gov_spending = Some(
       GovernmentSpendingOutputWrapper(
         currentTaxYearSA,
         None,
         Amount(200, "GBP"),
         None
       )
-    )
+    ),
+    includeBRDMessage = false
   )
 
   val totalIncomeTaxAndSummaryData: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = Some(
       DataHolder(
         Some(
           Map(
@@ -317,7 +322,7 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    Some(
+    summary_data = Some(
       DataHolder(
         Some(
           Map(
@@ -330,9 +335,10 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    None,
-    None
+    income_data = None,
+    allowance_data = None,
+    gov_spending = None,
+    includeBRDMessage = false
   )
 
   val payeYourIncomeAndTaxesViewModel: PayeYourIncomeAndTaxes =
@@ -464,10 +470,10 @@ class PayeAtsTestData extends BaseSpec {
   )
 
   val incomeData: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = None,
+    income_data = Some(
       DataHolder(
         Some(
           Map(
@@ -482,15 +488,16 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    None
+    allowance_data = None,
+    gov_spending = None,
+    includeBRDMessage = false
   )
 
   val incomeDataWithoutScottishIncomeTax: PayeAtsData = PayeAtsData(
-    currentTaxYearSA,
-    None,
-    None,
-    Some(
+    taxYear = currentTaxYearSA,
+    income_tax = None,
+    summary_data = None,
+    income_data = Some(
       DataHolder(
         Some(
           Map(
@@ -504,17 +511,18 @@ class PayeAtsTestData extends BaseSpec {
         None
       )
     ),
-    None,
-    None
+    allowance_data = None,
+    gov_spending = None,
+    includeBRDMessage = false
   )
 
   def govSpendingDataForTaxYear(taxYear: Int): PayeAtsData = PayeAtsData(
-    taxYear,
-    None,
-    None,
-    None,
-    None,
-    Some(
+    taxYear = taxYear,
+    income_tax = None,
+    summary_data = None,
+    income_data = None,
+    allowance_data = None,
+    gov_spending = Some(
       GovernmentSpendingOutputWrapper(
         taxYear,
         Some(
@@ -539,6 +547,7 @@ class PayeAtsTestData extends BaseSpec {
         Amount(200, "GBP"),
         None
       )
-    )
+    ),
+    includeBRDMessage = false
   )
 }
