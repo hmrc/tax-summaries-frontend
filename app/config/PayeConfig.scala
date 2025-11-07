@@ -30,10 +30,10 @@ class PayeConfig @Inject() ()(implicit val appConfig: ApplicationConfig) {
     val key            = keyForTaxYear(payeYear)
     val config: Config = ConfigFactory.load(configPath)
     Try(config.getStringList(key).toList) match {
-      case Success(ls)                         => ls
-      case Failure(exception: ConfigException) =>
+      case Success(ls)                 => ls
+      case Failure(_: ConfigException) =>
         throw new RuntimeException(s"No keys specified for $payeYear for $key")
-      case Failure(exception)                  => throw exception
+      case Failure(exception)          => throw exception
     }
   }
 

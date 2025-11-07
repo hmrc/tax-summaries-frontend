@@ -43,20 +43,15 @@ lazy val microservice      = Project(appName, file("."))
     scalacOptions ++= Seq(
       "-unchecked",
       "-feature",
+      "-deprecation",
       "-language:noAutoTupling",
-      "-Wunused:imports",
       "-Wvalue-discard",
       "-Werror",
-      // TODO DDCNL-11021: Remove line below and fix deprecation warning
+      // TODO DLSN-146: Remove line below and fix deprecation warning
       "-Wconf:msg=.*SafeRedirectUrl is deprecated.*&cat=deprecation:s",
-      "-Wconf:msg=unused import&src=.*views/.*:s",
-      "-Wconf:msg=unused import&src=<empty>:s",
-      "-Wconf:msg=unused&src=.*RoutesPrefix\\.scala:s",
-      "-Wconf:msg=unused&src=.*Routes\\.scala:s",
-      "-Wconf:msg=unused&src=.*ReverseRoutes\\.scala:s",
-      "-Wconf:msg=unused&src=.*JavaScriptReverseRoutes\\.scala:s",
-      "-Wconf:msg=other-match-analysis:s",
-      "-Wconf:msg=a type was inferred to be `Object`; this may indicate a programming error\\.&src=.*Spec\\.scala:s",
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:src=views/.*:s",
+      "-Wunused:unsafe-warn-patvars",
       "-Wconf:msg=Flag.*repeatedly:s"
     )
   )
