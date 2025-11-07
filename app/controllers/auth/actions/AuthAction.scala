@@ -63,7 +63,7 @@ class AuthImpl(
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     (for {
-      saFlag <- featureFlagService.get(SelfAssessmentServiceToggle).map(x => x.isEnabled)
+      saFlag <- featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
     } yield (saShutterCheck, saFlag) match {
       case (true, false) => Future.successful(serviceUnavailablePage)
       case (_, saFlag)   => handleRequest(request, block, saFlag)
