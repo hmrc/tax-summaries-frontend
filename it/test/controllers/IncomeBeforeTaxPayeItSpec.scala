@@ -58,6 +58,7 @@ class IncomeBeforeTaxPayeItSpec extends IntegrationSpec {
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
     when(mockPertaxAuthService.authorise(ArgumentMatchers.any())).thenReturn(Future.successful(None))
+    ()
   }
 
   "/paye/income-before-tax" must {

@@ -58,6 +58,7 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
       .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
     when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
+    ()
   }
 
   "/income-before-tax" must {
