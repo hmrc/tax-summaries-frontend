@@ -35,20 +35,27 @@ def 24.44"""
   )
 
   "form" must {
-    "must bind valid data (England), ignoring trailing and leading spaces, empty lines and values beyond 2 items" in {
-      val odsValues      = """      abc 1,122.33 55.77
+    "must bind valid data (England), ignoring trailing and leading spaces, empty lines, case of field name and values beyond 2 items" in {
+      val odsValues = """      ABC 1,122.33 55.77
  def 24.44  
       
       
       """
-      val expectedResult = CountryAndODSValues("0001", expOdsValues)
-      val data           = Map(
+      val data      = Map(
         "country"   -> "0001",
         "odsValues" -> odsValues
       )
 
       val result = form.bind(data)
-      result.value mustBe Some(expectedResult)
+      result.value mustBe Some(
+        CountryAndODSValues(
+          "0001",
+          Map(
+            "ABC" -> "1122.33",
+            "def" -> "24.44"
+          )
+        )
+      )
     }
 
     "must bind valid data (England), allowing blank value but displaying as invalid" in {
@@ -100,6 +107,20 @@ def 24.44"""
 
       val result = form.bind(data)
       result.errors mustBe Seq(FormError("odsValues", List("Duplicated field values: def, hij")))
+    }
+
+    "must display errors for invalid fields (unrecognised field names)" in {
+      val odsValues = """      abc 1,122.33 55.77
+ xxx 7724.44
+ def 24.44
+ zzz 424.44  """
+      val data      = Map(
+        "country"   -> "0001",
+        "odsValues" -> odsValues
+      )
+
+      val result = form.bind(data)
+      result.errors mustBe Seq(FormError("odsValues", List("Unrecognised field names: xxx, zzz")))
     }
 
     "must display errors for invalid field values" in {
