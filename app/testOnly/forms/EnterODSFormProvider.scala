@@ -47,15 +47,15 @@ class EnterODSFormProvider extends Mappings {
             case Right(_)            => Valid
           }
         } else {
-          val unrecognisedFieldIgnoringCase =
+          val unrecognisedFieldsIgnoringCase =
             unrecognisedFields.map(_.toLowerCase).diff(validOdsFieldNames.map(_.toLowerCase))
-          if (unrecognisedFieldIgnoringCase.isEmpty) {
+          if (unrecognisedFieldsIgnoringCase.isEmpty) {
             keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
               case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.sorted.mkString(", ")}")
               case Right(_)            => Valid
             }
           } else {
-            Invalid(s"Unrecognised field names: ${unrecognisedFieldIgnoringCase.sorted.mkString(", ")}")
+            Invalid(s"Unrecognised field names: ${unrecognisedFieldsIgnoringCase.sorted.mkString(", ")}")
           }
         }
       }
