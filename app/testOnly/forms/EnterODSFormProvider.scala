@@ -21,7 +21,7 @@ import play.api.data.Forms.mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import testOnly.forms.mappings.Mappings
 import testOnly.models.CountryAndODSValues
-import testOnly.models.CountryAndODSValues._
+import testOnly.models.CountryAndODSValues.*
 
 class EnterODSFormProvider extends Mappings {
 
@@ -38,16 +38,29 @@ class EnterODSFormProvider extends Mappings {
       if (duplicatedFields.nonEmpty) {
         Invalid(s"Duplicated field values: ${duplicatedFields.sorted.mkString(", ")}")
       } else {
-        val keyValuePairs      = stringToKeyValuePairs(odsValues)
-        val unrecognisedFields = keyValuePairs.keys.toSeq.diff(validOdsFieldNames)
-        if (unrecognisedFields.isEmpty) {
-          keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
-            case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.sorted.mkString(", ")}")
-            case Right(_)            => Valid
-          }
-        } else {
-          Invalid(s"Unrecognised field names: ${unrecognisedFields.sorted.mkString(", ")}")
+        val keyValuePairs = stringToKeyValuePairs(odsValues)
+
+        // Validate field names
+        val fieldNameValidationResult = keyValuePairs.keys.toSeq.diff(validOdsFieldNames) match {
+          case unmatchedFields if unmatchedFields.isEmpty => Valid
+          case unmatchedFields                            =>
+            unmatchedFields.map(_.toLowerCase).diff(validOdsFieldNames.map(_.toLowerCase)) match {
+              case unmatchedFieldsIgnoringCase if unmatchedFieldsIgnoringCase.isEmpty => Valid
+              case unmatchedFieldsIgnoringCase                                        =>
+                Invalid(s"Unrecognised field names: ${unmatchedFieldsIgnoringCase.sorted.mkString(", ")}")
+            }
         }
+
+        fieldNameValidationResult match {
+          case Valid =>
+            // Validate field values
+            keyValuePairsToEitherSeqODSValue(keyValuePairs) match {
+              case Left(invalidFields) => Invalid(s"Invalid field values: ${invalidFields.sorted.mkString(", ")}")
+              case Right(_)            => Valid
+            }
+          case r     => r
+        }
+
       }
     }
 
