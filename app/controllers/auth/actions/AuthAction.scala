@@ -62,34 +62,29 @@ class AuthImpl(
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    if (saShutterCheck) {
-      isSaEnabled.flatMap {
-        case true  => handleRequest(request, block)
-        case false => Future.successful(serviceUnavailablePage)
-      }
-    } else {
-      handleRequest(request, block)
-    }
+    (for {
+      saFlag <- featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
+    } yield (saShutterCheck, saFlag) match {
+      case (true, false) => Future.successful(serviceUnavailablePage)
+      case (_, saFlag)   => handleRequest(request, block, saFlag)
+    }).flatten
   }
-
-  private def isSaEnabled: Future[Boolean] =
-    featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
 
   private def handleRequest[A](
     request: Request[A],
-    block: AuthenticatedRequest[A] => Future[Result]
+    block: AuthenticatedRequest[A] => Future[Result],
+    isSaEnabled: Boolean
   )(implicit hc: HeaderCarrier): Future[Result] =
     createAuthenticatedRequest(request).flatMap {
       case Right(authenticatedRequest) =>
         val requestAfterCitizenDetailsCall =
-          (authenticatedRequest.nino, authenticatedRequest.saUtr, authenticatedRequest.isAgent) match {
-            case (Some(nino), None, false) =>
+          (authenticatedRequest.nino, authenticatedRequest.saUtr, authenticatedRequest.isAgent, isSaEnabled) match {
+            case (Some(nino), None, false, true) =>
               citizenDetailsService
                 .getMatchingSaUtr(nino.nino)
                 .bimap(_ => serviceUnavailablePage, maybeSaUtr => authenticatedRequest.copy(saUtr = maybeSaUtr))
                 .value
-            case _                         =>
+            case _                               =>
               Future.successful(Right(authenticatedRequest))
           }
 

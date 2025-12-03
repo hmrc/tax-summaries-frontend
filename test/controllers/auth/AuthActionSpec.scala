@@ -149,7 +149,16 @@ class AuthActionSpec extends BaseSpec {
         verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
       }
 
-      "Call citizen details and return OK when no SA UTR is in the enrolments" in {
+      "Not call citizen details and return OK when SA UTR is not in the enrolments and SA is shuttered" in {
+        whenRetrieval(nino = Some(nino))
+        when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
+          .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = false)))
+        val result = createHarness.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+        verify(mockCitizenDetailsService, times(0)).getMatchingSaUtr(any())(any())
+      }
+
+      "Call citizen details and return OK when no SA UTR is in the enrolments ans SA is not shuttered" in {
         whenRetrieval(nino = Some(nino))
 
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
@@ -260,15 +269,16 @@ class AuthActionSpec extends BaseSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.serviceUnavailable.url)
       }
-      "return OK when SA is enabled" in {
+      "call Citizen Details and return OK when SA is enabled" in {
         when(mockFeatureFlagService.get(ArgumentMatchers.eq(SelfAssessmentServiceToggle)))
           .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
         whenRetrieval(nino = Some(nino))
         when(mockPertaxAuthService.authorise(any())).thenReturn(Future.successful(None))
         when(mockCitizenDetailsService.getMatchingSaUtr(any())(any()))
           .thenReturn(EitherT.rightT(None))
-        val result = createHarness.onPageLoad()(fakeRequest)
+        val result = createHarness.onPageLoad(saShutterCheck = true)(fakeRequest)
         status(result) mustBe OK
+        verify(mockCitizenDetailsService, times(1)).getMatchingSaUtr(any())(any())
       }
     }
 
@@ -342,5 +352,6 @@ class AuthActionSpec extends BaseSpec {
         redirectLocation(result) mustBe Some(controllers.routes.ErrorController.notAuthorised.url)
       }
     }
+
   }
 }
