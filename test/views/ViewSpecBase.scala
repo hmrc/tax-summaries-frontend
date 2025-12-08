@@ -16,7 +16,8 @@
 
 package views
 
-import controllers.auth.requests
+import models.requests
+import models.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
@@ -41,7 +42,7 @@ trait ViewSpecBase extends BaseSpec with MockitoSugar {
     assert(doc.getElementsByClass(className) != null, "Element " + className + " was not rendered on the page.")
 
   lazy val fakeRequest              = FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
-  lazy val authenticatedFakeRequest = requests.AuthenticatedRequest(
+  lazy val authenticatedFakeRequest = AuthenticatedRequest(
     "",
     None,
     None,

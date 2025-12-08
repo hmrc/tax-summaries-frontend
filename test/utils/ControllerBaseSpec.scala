@@ -16,11 +16,11 @@
 
 package utils
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests
+import models.requests.AuthenticatedRequest
 import play.api.i18n
 import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
 import services.PayeAtsService
@@ -28,9 +28,9 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants.{testNino, testUtr}
-import view_models._
-import views.html._
-import views.html.errors._
+import view_models.*
+import views.html.*
+import views.html.errors.*
 
 import scala.concurrent.ExecutionContext
 

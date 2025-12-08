@@ -16,8 +16,8 @@
 
 package services
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests
+import models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
@@ -26,11 +26,11 @@ import services.atsData.AtsTestData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{BaseSpec, GenericViewModel}
-import view_models._
+import view_models.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 

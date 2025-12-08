@@ -16,13 +16,14 @@
 
 package views
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests
+import models.requests
+import models.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import play.api.i18n.{Lang, MessagesImpl}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.TestConstants

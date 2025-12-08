@@ -16,9 +16,9 @@
 
 package views
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.ActingAsAttorneyFor
+import models.requests
+import models.{ActingAsAttorneyFor, requests}
+import models.requests.AuthenticatedRequest
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel

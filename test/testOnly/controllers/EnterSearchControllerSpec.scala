@@ -17,7 +17,7 @@
 package testOnly.controllers
 
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests.AuthenticatedRequest
 import org.mockito.Mockito.reset
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest

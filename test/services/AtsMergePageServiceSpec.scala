@@ -16,10 +16,10 @@
 
 package services
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests
 import models._
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

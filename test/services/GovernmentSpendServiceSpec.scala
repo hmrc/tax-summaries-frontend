@@ -17,9 +17,8 @@
 package services
 
 import connectors.MiddleConnector
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.{AtsData, SpendData}
+import models.requests.AuthenticatedRequest
+import models.{AtsData, SpendData, requests}
 import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.when
 import play.api.http.Status.OK

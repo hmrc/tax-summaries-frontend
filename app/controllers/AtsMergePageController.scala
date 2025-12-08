@@ -19,8 +19,8 @@ package controllers
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
-import controllers.auth.requests.AuthenticatedRequest
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import models.requests.AuthenticatedRequest
 import models.{AtsYearChoice, PAYE, SA}
 import play.api.data.Form
 import play.api.i18n.I18nSupport

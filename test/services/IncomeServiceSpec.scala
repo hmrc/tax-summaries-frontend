@@ -16,9 +16,8 @@
 
 package services
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.AtsData
+import models.requests.AuthenticatedRequest
+import models.{AtsData, requests}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty

@@ -18,7 +18,7 @@ package utils
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests.AuthenticatedRequest
 import models.{ErrorResponse, MissingTaxYear}
 
 class TaxYearUtil @Inject() (

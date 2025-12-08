@@ -18,9 +18,9 @@ package services
 
 import config.ApplicationConfig
 import connectors.MiddleConnector
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests
 import models.*
+import models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import play.api.mvc.AnyContentAsEmpty

@@ -17,9 +17,9 @@
 package services
 
 import connectors.MiddleConnector
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests
 import models.*
+import models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import play.api.libs.json.Json

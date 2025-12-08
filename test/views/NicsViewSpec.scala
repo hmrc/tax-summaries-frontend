@@ -16,9 +16,9 @@
 
 package views
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.ActingAsAttorneyFor
+import models.requests
+import models.{ActingAsAttorneyFor, requests}
+import models.requests.AuthenticatedRequest
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks

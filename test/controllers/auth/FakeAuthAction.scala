@@ -17,12 +17,13 @@
 package controllers.auth
 
 import controllers.auth.actions.Auth
-import controllers.auth.requests.AuthenticatedRequest
-import play.api.mvc._
+import models.requests
+import models.requests.AuthenticatedRequest
+import play.api.mvc.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import utils.ControllerBaseSpec
-import utils.TestConstants._
+import utils.TestConstants.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

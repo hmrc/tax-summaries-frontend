@@ -17,9 +17,8 @@
 package utils
 
 import config.ApplicationConfig
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.MissingTaxYear
+import models.requests.AuthenticatedRequest
+import models.{MissingTaxYear, requests}
 import org.mockito.Mockito.when
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.AnyContentAsEmpty

@@ -16,8 +16,9 @@
 
 package services
 
-import controllers.auth.requests
+import models.requests
 import models.AtsData
+import models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
@@ -58,7 +59,7 @@ class IncomeTaxAndNIServiceSpec extends BaseSpec {
           any()
         )
       ).thenReturn(Future(genericViewModel))
-      lazy val request = requests.AuthenticatedRequest(
+      lazy val request = AuthenticatedRequest(
         userId = "userId",
         agentRef = None,
         saUtr = Some(SaUtr(testUtr)),

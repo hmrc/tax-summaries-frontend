@@ -18,9 +18,9 @@ package services
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
 import models.AtsResponse
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import models.requests.AuthenticatedRequest
 import play.api.Logging
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.http.HeaderCarrier

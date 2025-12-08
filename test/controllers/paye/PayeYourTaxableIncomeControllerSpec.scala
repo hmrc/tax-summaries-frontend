@@ -32,9 +32,9 @@
 
 package controllers.paye
 
-import controllers.auth.requests.PayeAuthenticatedRequest
-import controllers.auth.{FakeAuthJourney, requests}
-import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
+import controllers.auth.FakeAuthJourney
+import models.requests.PayeAuthenticatedRequest
+import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData, requests}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

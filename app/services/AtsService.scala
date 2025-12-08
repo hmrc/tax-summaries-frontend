@@ -20,8 +20,8 @@ import cats.data.EitherT
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
-import controllers.auth.requests.AuthenticatedRequest
 import models.*
+import models.requests.AuthenticatedRequest
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}

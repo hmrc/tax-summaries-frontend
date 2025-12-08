@@ -16,19 +16,17 @@
 
 package controllers.auth.actions
 
-import cats.implicits._
+import cats.implicits.*
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.AgentToken
 import models.admin.SelfAssessmentServiceToggle
+import models.{AgentToken, requests}
 import play.api.Logging
+import play.api.mvc.*
 import play.api.mvc.Results.Redirect
-import play.api.mvc._
 import repository.TaxsAgentTokenSessionCacheRepository
-import services._
-import uk.gov.hmrc.auth.core._
+import services.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
@@ -38,6 +36,7 @@ import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Globals
+import models.requests._
 
 import scala.concurrent.{ExecutionContext, Future}
 class AuthImpl(

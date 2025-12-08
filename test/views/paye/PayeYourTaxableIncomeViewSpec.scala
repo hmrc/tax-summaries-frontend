@@ -16,8 +16,9 @@
 
 package views.paye
 
-import controllers.auth.requests
-import controllers.auth.requests.PayeAuthenticatedRequest
+import models.requests
+import models.requests
+import models.requests.PayeAuthenticatedRequest
 import org.jsoup.Jsoup
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest

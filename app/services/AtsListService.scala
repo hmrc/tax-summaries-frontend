@@ -19,8 +19,8 @@ package services
 import com.google.inject.Inject
 import config.ApplicationConfig
 import connectors.MiddleConnector
-import controllers.auth.requests.AuthenticatedRequest
 import models.*
+import models.requests.AuthenticatedRequest
 import repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier

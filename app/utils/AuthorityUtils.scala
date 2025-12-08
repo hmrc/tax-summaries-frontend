@@ -17,8 +17,8 @@
 package utils
 
 import com.google.inject.Inject
-import controllers.auth.requests.AuthenticatedRequest
 import models.AgentToken
+import models.requests.AuthenticatedRequest
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
 import scala.annotation.nowarn

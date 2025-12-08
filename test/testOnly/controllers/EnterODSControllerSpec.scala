@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}

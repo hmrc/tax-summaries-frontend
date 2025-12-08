@@ -16,10 +16,11 @@
 
 package controllers.auth
 
-import controllers.auth.requests.PayeAuthenticatedRequest
-import play.api.mvc._
+import models.requests
+import models.requests.PayeAuthenticatedRequest
+import play.api.mvc.*
 import utils.ControllerBaseSpec
-import utils.TestConstants._
+import utils.TestConstants.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

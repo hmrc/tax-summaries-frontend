@@ -18,7 +18,7 @@ package controllers.auth.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests.AuthenticatedRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._

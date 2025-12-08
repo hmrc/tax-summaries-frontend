@@ -16,8 +16,8 @@
 
 package utils
 
-import controllers.auth.requests.AuthenticatedRequest
 import models.ActingAsAttorneyFor
+import models.requests.AuthenticatedRequest
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}

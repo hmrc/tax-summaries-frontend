@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.auth.requests
+package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{Nino, SaUtr, Uar}
 
-case class PayeAuthenticatedRequest[A](
-  nino: Nino,
+case class AuthenticatedRequest[A](
+  userId: String,
+  agentRef: Option[Uar],
+  saUtr: Option[SaUtr],
+  nino: Option[Nino],
+  isAgentActive: Boolean,
+  confidenceLevel: ConfidenceLevel,
   credentials: Credentials,
   request: Request[A]
-) extends WrappedRequest[A](request)
+) extends WrappedRequest[A](request) {
+  def isSa: Boolean    = saUtr.isDefined
+  def isAgent: Boolean = agentRef.isDefined
+}

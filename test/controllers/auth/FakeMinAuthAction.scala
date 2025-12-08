@@ -17,8 +17,9 @@
 package controllers.auth
 
 import controllers.auth.actions.MinAuthAction
-import controllers.auth.requests.AuthenticatedRequest
-import play.api.mvc._
+import models.requests
+import models.requests.AuthenticatedRequest
+import play.api.mvc.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import utils.ControllerBaseSpec
 
@@ -31,16 +32,15 @@ object FakeMinAuthAction extends ControllerBaseSpec with MinAuthAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(
-      requests
-        .AuthenticatedRequest(
-          userId = "userId",
-          agentRef = None,
-          saUtr = None,
-          nino = None,
-          isAgentActive = false,
-          confidenceLevel = ConfidenceLevel.L50,
-          credentials = fakeCredentials,
-          request = request
-        )
+      requests.AuthenticatedRequest(
+        userId = "userId",
+        agentRef = None,
+        saUtr = None,
+        nino = None,
+        isAgentActive = false,
+        confidenceLevel = ConfidenceLevel.L50,
+        credentials = fakeCredentials,
+        request = request
+      )
     )
 }

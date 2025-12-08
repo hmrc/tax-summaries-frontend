@@ -17,10 +17,10 @@
 package controllers
 
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
-import controllers.auth.{FakeAuthJourney, requests}
-import models.AtsErrorResponse
+import controllers.auth.FakeAuthJourney
 import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import models.requests.AuthenticatedRequest
+import models.{AtsErrorResponse, requests}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.AtsMergePageService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr

@@ -17,15 +17,15 @@
 package controllers.auth.actions
 
 import com.google.inject.Inject
-import controllers.auth.requests
-import controllers.auth.requests.PayeAuthenticatedRequest
 import controllers.routes
 import models.admin.PAYEServiceToggle
+import models.requests
+import models.requests.*
 import play.api.Logging
+import play.api.mvc.*
 import play.api.mvc.Results.Redirect
-import play.api.mvc._
 import services.PertaxAuthService
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.Nino

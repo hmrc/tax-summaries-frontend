@@ -17,9 +17,8 @@
 package view_models
 
 import config.ApplicationConfig
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.{AtsYearChoice, NoATS, PAYE, SA}
+import models.requests.AuthenticatedRequest
+import models.*
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.AnyContentAsEmpty

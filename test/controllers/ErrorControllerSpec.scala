@@ -18,8 +18,8 @@ package controllers
 
 import cats.data.EitherT
 import controllers.auth.*
-import controllers.auth.requests.AuthenticatedRequest
-import models.{AtsErrorResponse, SpendData}
+import models.requests.AuthenticatedRequest
+import models.{AtsErrorResponse, SpendData, requests}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.mvc.AnyContentAsEmpty
@@ -29,7 +29,7 @@ import services.GovernmentSpendService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.time.CurrentTaxYear
-import utils.TestConstants.{testUtr, *}
+import utils.TestConstants.*
 import utils.{ControllerBaseSpec, TaxYearUtil}
 import view_models.{Amount, GovernmentSpend}
 

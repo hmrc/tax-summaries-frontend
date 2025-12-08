@@ -16,8 +16,8 @@
 
 package controllers.paye
 
-import controllers.auth.requests
-import controllers.auth.requests.PayeAuthenticatedRequest
+import models.requests
+import models.requests.PayeAuthenticatedRequest
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest

@@ -17,9 +17,9 @@
 package views
 
 import config.ApplicationConfig
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
+import models.requests
+import models.requests.AuthenticatedRequest
+import models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA, requests}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach

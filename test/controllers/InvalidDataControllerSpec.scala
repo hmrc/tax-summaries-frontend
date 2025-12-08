@@ -17,8 +17,8 @@
 package controllers
 
 import controllers.auth.FakeAuthJourney
-import controllers.auth.requests.AuthenticatedRequest
 import controllers.sa.{AllowancesController, CapitalGainsTaxController, GovernmentSpendController, IncomeController, NicsController, SummaryController}
+import models.requests.AuthenticatedRequest
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

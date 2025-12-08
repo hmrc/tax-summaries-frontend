@@ -19,7 +19,7 @@ package controllers.paye
 import com.google.inject.Inject
 import config.ApplicationConfig
 import controllers.auth.AuthJourney
-import controllers.auth.requests.PayeAuthenticatedRequest
+import models.requests.PayeAuthenticatedRequest
 import models.{AtsNotFoundResponse, PayeAtsData}
 import play.api.Logging
 import play.api.i18n.I18nSupport

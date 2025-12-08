@@ -16,14 +16,13 @@
 
 package services
 
-import controllers.auth.requests
-import controllers.auth.requests.AuthenticatedRequest
-import models.AgentToken
+import models.requests.AuthenticatedRequest
+import models.{AgentToken, requests}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
-import utils.TestConstants._
+import utils.TestConstants.*
 import utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 
 class AuthorityUtilsSpec extends BaseSpec {

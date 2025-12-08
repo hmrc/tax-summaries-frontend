@@ -18,7 +18,7 @@ package controllers.sa
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
+import models.requests.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear}
 import play.api.mvc.MessagesControllerComponents
 import utils.{GenericViewModel, TaxYearUtil}

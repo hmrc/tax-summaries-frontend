@@ -18,8 +18,8 @@ package controllers.sa
 
 import com.google.inject.Inject
 import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
 import controllers.routes
+import models.requests.AuthenticatedRequest
 import models.{ErrorResponse, InvalidTaxYear, MissingTaxYear}
 import play.api.Logging
 import play.api.i18n.I18nSupport
