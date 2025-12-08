@@ -1,0 +1,42 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.helpers.Link
+
+@this()
+@(
+    langMap: Map[String, Lang],
+    langToCall: String => Call,
+    dataAttr: Option[Map[String, String]] = None,
+        link: Link
+)(implicit messages: Messages)
+
+<p class="langToggle">
+    @langMap.map { case (key: String, value: Lang) =>
+        @if(messages.lang != value) {
+            @link(link = s"${langToCall(key)}",
+            messageKey = messages(s"view.languageToggle.$key"),
+            id = Some(s"$key-switch"),
+            inParagraph = true,
+            attrs = dataAttr.getOrElse(Map.empty)
+            )
+        } else {
+            @messages(s"view.languageToggle.$key")
+        }
+
+        @if(key != langMap.last._1) { | }
+    }
+</p>

@@ -1,0 +1,134 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.config.ApplicationConfig
+@import common.models.requests.AuthenticatedRequest
+@import common.views.helpers.{SubmitButton, FormErrorSummary, HeaderSection, InputRadios, Link, P, PageHeading}
+@import common.view_models.{AtsForms, AtsMergePageViewModel}
+@import common.views.MainTemplate
+@import common.models._
+@import common.models.AtsYearChoice
+
+@this(
+        main: MainTemplate,
+        headerSection: HeaderSection,
+        atsForms: AtsForms,
+        formWithCSRF: FormWithCSRF,
+        p: P,
+        errorSummary: FormErrorSummary,
+        link: Link,
+        button: SubmitButton,
+        inputRadios: InputRadios,
+        pageHeading: PageHeading
+)
+
+@(atsMergePageViewModel: AtsMergePageViewModel,
+        atsYearForm: Form[common.models.AtsYearChoice],
+        actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+        saAvailable: Boolean,
+        payeAvailable: Boolean
+)(
+        implicit request: AuthenticatedRequest[_],
+        messages: Messages
+)
+
+@beforeContent = {
+@headerSection(
+    name = atsMergePageViewModel.name,
+    utr = atsMergePageViewModel.saData.utr,
+    actingAsAttorney = actingAsAttorney
+)
+}
+
+@title = {
+@if(atsYearForm.errors) {@messages("error.form.error") @messages(atsMergePageViewModel.titleMsg)} else {
+    @messages(atsMergePageViewModel.titleMsg)
+}
+}
+
+@errorSummaryLink = @{atsMergePageViewModel.completeYearList.headOption.map { x =>
+    s"${atsForms.yearChoice}-${x.year}-${x.atsType}"
+    }
+}
+
+@main(
+    pageTitle = title.toString,
+    actingAttorney = actingAsAttorney,
+    beforeContentHtml = Some(beforeContent),
+    pageHeading = Messages("ats.summary.title"),
+    showBackLink = false,
+    headerSectionNeeded = true
+) {
+    @errorSummary(atsYearForm, errorSummaryLink)
+
+    @formWithCSRF(action = common.controllers.routes.AtsMergePageController.onSubmit) {
+        @pageHeading(
+            elmId = "index-page-header",
+            text = atsMergePageViewModel.subtitleMsg
+        )
+
+        @if(atsMergePageViewModel.showNoAtsYearList) {
+            @p(Text(messages("merge.page.no.ats.summary.text")), classes = Some("govuk-hint"), elmId = Some("generic-no-ats"))
+        }
+
+        @inputRadios(
+            form = atsYearForm,
+            legend = atsMergePageViewModel.subtitleMsg,
+            legendClasses = "govuk-visually-hidden",
+            legendAsHeading = false,
+            name = atsForms.yearChoice,
+            items = radioItems(atsForms.yearChoice, atsMergePageViewModel.completeYearList.map(
+                yearChoice => yearChoice -> yearChoice.getLabel
+            )),
+            fieldSetAttrs = Map("id" -> "year_field")
+        )
+
+        @if(!saAvailable) {
+            @p(Text(messages("merge.page.sa.unavailable")), elmId = Some("sa-unavailable"))
+        }
+
+        @if(!payeAvailable) {
+            @p(Text(messages("merge.page.paye.unavailable")), elmId = Some("paye-unavailable"))
+        } else if(atsMergePageViewModel.showIvUpliftLink) {
+        @p(HtmlContent(messages("merge.page.paye.ivuplift.text") +
+                link(
+                    link = common.controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel.url,
+                    messageKey = "merge.page.paye.ivuplift.link.text",
+                    id = Some("ivUplift-link"),
+                    inParagraph = true
+                )
+        ), elmId = Some("paye-uplift"))
+        }
+
+        @if(atsMergePageViewModel.showContinueButton) {
+            @button(msg = "ats.select_tax_year.continue", id = "continue")
+        }
+    }
+}
+
+@radioItems(name: String, radioOptions: Seq[(AtsYearChoice, String)]) = @{
+    radioOptions.map { case (value, label) =>
+        RadioItem(
+            content = Text(label),
+            value = Some(AtsYearChoice.toFormString(value)),
+            id = Some(s"$name-${value.year}-${value.atsType}"),
+            label = Some(Label(content = Text(label), attributes = Map("id" -> s"$name-${value.year}-${value.atsType}-label"))),
+            checked = atsYearForm(name).value.contains(AtsYearChoice.toString(value))
+        )
+    }
+}
+
+

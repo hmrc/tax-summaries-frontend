@@ -57,7 +57,7 @@ lazy val microservice      = Project(appName, file("."))
   .settings(
     scalacOptions ++= commonSettings
   )
-  .settings(routesImport ++= Seq("models.admin._"))
+  .settings(routesImport ++= Seq("common.models.admin._"))
   .configs(A11yTest)
   .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings) *)
   .settings(headerSettings(A11yTest) *)

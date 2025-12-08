@@ -1,0 +1,74 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.utils.HtmlFormatter
+@import common.view_models.paye.PayeYourTaxableIncome
+@import common.views.html.helpers.{H1, H2, P}
+@import common.views.MainTemplate
+
+@this(
+    main: MainTemplate,
+        htmlFormatter: HtmlFormatter,
+    h1: H1,
+    p: P
+)
+
+@(  viewModel:PayeYourTaxableIncome
+    )(
+    implicit messages: Messages,
+    request: Request[_]
+)
+
+
+@main(
+        pageTitle = Messages("paye.ats.income_before_tax.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        showBackLink = true
+    ) {
+
+
+	@h1("paye.ats.income_before_tax.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+        htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
+	@p(Text(Messages("paye.ats.income_before_tax.intro")), elmId=Some("income-before-tax-intro"))
+	
+    @if(viewModel.incomeTaxRows.nonEmpty){
+        <table class="paye-ats-data-table govuk-table" id="income-tax-table">
+            <caption class="govuk-visually-hidden">@Messages("paye.ats.income_before_tax.table_caption")</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">@Messages("ats.income_before_tax.table_header")</th>
+                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">@Messages("generic.amount_pounds")</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+            @for(row <- viewModel.incomeTaxRows) {
+                <tr id="@row.messageKey" class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @Messages("paye.ats.income_before_tax." + row.messageKey)
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@row.value.renderCurrencyValueAsHtml(poundsOnly = false)</td>
+                </tr>
+            }
+            </tbody>
+            <tfoot id="income-before-tax-foot">
+                <tr class="govuk-row">
+                    <th scope="row" class="govuk-table__header">@Html(Messages("paye.ats.income_before_tax.total_income_before_tax"))</th>
+                    <td id="income-before-tax" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalIncomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = false)</td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+}

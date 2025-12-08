@@ -1,0 +1,95 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.view_models.paye.PayeTaxFreeAmount
+@import common.utils.HtmlFormatter
+@import common.views.html.helpers.{H1, H2}
+@import common.views.MainTemplate
+
+@this(
+	main: MainTemplate,
+		htmlFormatter: HtmlFormatter,
+	h1: H1
+)
+
+@(viewModel:PayeTaxFreeAmount)(implicit messages: Messages, request: Request[_])
+
+@main(
+	pageTitle = Messages("paye.ats.tax_free_amount.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+	showBackLink = true
+) {
+
+	@h1("paye.ats.tax_free_amount.title", payeHeading = Some(Messages("paye.generic.tax_year_heading",
+		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.start") + " " + viewModel.taxYearFrom),
+		htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
+
+	@if(viewModel.adjustmentRows.nonEmpty) {
+	<table class="paye-ats-data-table govuk-table"  id="adjustmentRows">
+		<caption class="govuk-visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
+		<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.description")</th>
+			<th scope="col" class="govuk-table__header govuk-table__header--numeric">@Messages("paye.ats.tax_free_amount.amount")</th>
+		</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+		@for(row <- viewModel.adjustmentRows) {
+		<tr id="@row.label" class="govuk-table__row">
+			<td class="govuk-table__cell">
+				@Messages("paye.ats.tax_free_amount." + row.label)
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@row.amount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
+		</tr>
+		}
+		</tbody>
+		@if(viewModel.adjustmentRows.size > 1) {
+			<tfoot>
+			<tr id="totalTaxFreeAmount" class="govuk-table__row">
+				<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_free_amount")</th>
+				<td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
+			</tr>
+			</tfoot>
+		}
+	</table>
+	}
+
+	<table class="paye-ats-data-table govuk-table" id="summaryRows">
+		<caption class="govuk-visually-hidden">@Messages("paye.ats.tax_free_amount.title")</caption>
+		<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.description")</th>
+			<th scope="col" class="govuk-table__header govuk-table__header--numeric">@Messages("paye.ats.tax_free_amount.amount")</th>
+		</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+		@for(row <- viewModel.summaryRows) {
+		<tr id="@row.label" class="govuk-table__row">
+			<td class="govuk-table__cell">
+				@Messages("paye.ats.tax_free_amount." + row.label)
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@row.amount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
+		</tr>
+		}
+		</tbody>
+		<tfoot>
+		<tr id="taxLiableAmount" class="govuk-table__row">
+			<th scope="row" class="govuk-table__header">@Messages("paye.ats.tax_free_amount.total_tax_liable")</th>
+			<td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.liableTaxAmount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
+		</tr>
+		</tfoot>
+	</table>
+
+}

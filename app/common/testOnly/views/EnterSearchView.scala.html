@@ -1,0 +1,65 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.{H1, P, FormErrorSummary}
+@import common.views.MainTemplate
+@import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
+@import common.testOnly.models.TaxYearAndUTR
+
+@this(main: MainTemplate, h1: H1, p: P, govukSelect : GovukSelect,    govukButton : GovukButton,     formWithCSRF: FormWithCSRF, errorSummary: FormErrorSummary)
+@(taxYears: Seq[SelectItem], utrs: Seq[SelectItem], form: Form[TaxYearAndUTR])(implicit request: Request[_], messages: Messages)
+
+@main(
+pageTitle = "Enter which calculations do you want to retrieve",
+disableSessionExpired = true
+) {
+
+    @errorSummary(form)
+
+    @formWithCSRF(action = common.testOnly.controllers.routes.EnterSearchController.onSubmit){
+
+    @h1("Enter which calculations do you want to retrieve")
+
+    @p(Text(messages("This will be used on the following pages.")))
+
+    @govukSelect(Select(
+        id = "taxYear",
+        name = "taxYear",
+        items = taxYears,
+        label = Label(
+          content = Text("Tax year")
+        ),
+        errorMessage = form("taxYear").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message)))
+      ))
+
+    @govukSelect(Select(
+        id = "utr",
+        name = "utr",
+        items = utrs,
+        label = Label(
+          content = Text("UTR")
+        ),
+        errorMessage = form("utr").errors.headOption.map(formError => ErrorMessage(content = Text(formError.message)))
+      ))
+
+
+    @govukButton(Button(
+        content = Text("Continue")
+      ))
+
+}
+
+}
