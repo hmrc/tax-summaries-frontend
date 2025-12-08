@@ -48,7 +48,8 @@ class PayeTaxFreeAmountController @Inject() (
       payeAtsService.getPayeATSData(request.nino, taxYear).map {
         case Right(successResponse: PayeAtsData) =>
           Ok(payeTaxFreeAmountView(PayeTaxFreeAmount(successResponse)))
-        case Left(_: AtsNotFoundResponse)        => Redirect(common.controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        case Left(_: AtsNotFoundResponse)        =>
+          Redirect(common.controllers.routes.ErrorController.authorisedNoAts(taxYear))
         case _                                   => InternalServerError(payeGenericErrorView())
       }
     }

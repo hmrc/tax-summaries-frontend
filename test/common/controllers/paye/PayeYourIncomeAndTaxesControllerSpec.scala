@@ -110,7 +110,9 @@ class PayeYourIncomeAndTaxesControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe common.controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
+      redirectLocation(result).get mustBe common.controllers.routes.ErrorController
+        .authorisedNoAts(currentTaxYearPAYE)
+        .url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR when receiving BAD_REQUEST from service" in {

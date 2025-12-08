@@ -49,7 +49,8 @@ class PayeYourTaxableIncomeController @Inject() (
         case Right(successResponse: PayeAtsData) =>
           val viewModel = PayeYourTaxableIncome.buildViewModel(successResponse)
           Ok(payeYourTaxableIncomeView(viewModel))
-        case Left(_: AtsNotFoundResponse)        => Redirect(common.controllers.routes.ErrorController.authorisedNoAts(taxYear))
+        case Left(_: AtsNotFoundResponse)        =>
+          Redirect(common.controllers.routes.ErrorController.authorisedNoAts(taxYear))
         case _                                   => InternalServerError(payeGenericErrorView())
       }
     }

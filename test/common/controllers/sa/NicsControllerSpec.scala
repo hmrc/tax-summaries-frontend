@@ -63,7 +63,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
 
       redirectLocation(
         result
-      ).get mustBe controllers.sa.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$currentTaxYearSA"
+      ).get mustBe common.controllers.sa.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$currentTaxYearSA"
     }
 
     "redirect to the year selection page when there is a no tax year in request" in {
@@ -116,7 +116,9 @@ class NicsControllerSpec extends ControllerBaseSpec {
       val result = nicsController.show(request)
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe common.controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      redirectLocation(result).get mustBe common.controllers.routes.ErrorController
+        .authorisedNoAts(currentTaxYearSA)
+        .url
     }
 
     "hide rows if there is a zero value in the left cell amount field of the view" in {

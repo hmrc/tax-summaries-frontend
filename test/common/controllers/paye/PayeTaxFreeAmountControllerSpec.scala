@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
   implicit val fakeAuthenticatedRequest: PayeAuthenticatedRequest[AnyContentAsEmpty.type] = buildPayeRequest(
-    controllers.paye.routes.PayeTaxFreeAmountController.show(currentTaxYearPAYE).url
+    common.controllers.paye.routes.PayeTaxFreeAmountController.show(currentTaxYearPAYE).url
   )
   lazy val payeGenericErrorView: PayeGenericErrorView                                     = inject[PayeGenericErrorView]
 
@@ -58,7 +58,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val fakeAppConfig = new FakeAppConfig
 
       val fakeAuthenticatedRequest =
-        buildPayeRequest(controllers.paye.routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
+        buildPayeRequest(common.controllers.paye.routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponsePayeAtsDataCurrentTaxYear.as[PayeAtsData])))
@@ -87,7 +87,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val fakeAppConfig = new FakeAppConfig
 
       val fakeAuthenticatedRequest =
-        buildPayeRequest(controllers.paye.routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
+        buildPayeRequest(common.controllers.paye.routes.PayeTaxFreeAmountController.show(fakeAppConfig.taxYearSA).url)
 
       when(mockPayeAtsService.getPayeATSData(any(), any())(any()))
         .thenReturn(Future(Right(apiResponsePayeAtsDataPreviousTaxYear.as[PayeAtsData])))
@@ -118,7 +118,9 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe common.controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
+      redirectLocation(result).get mustBe common.controllers.routes.ErrorController
+        .authorisedNoAts(currentTaxYearPAYE)
+        .url
     }
 
     "show Generic Error page and return INTERNAL_SERVER_ERROR if error received from NPS service" in {

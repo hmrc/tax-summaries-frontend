@@ -118,7 +118,9 @@ class PayeAuthActionSpec extends BaseSpec {
 
       val result = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(common.controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url)
+      redirectLocation(result) mustBe Some(
+        common.controllers.routes.ErrorController.authorisedNoAts(currentTaxYearSA).url
+      )
     }
     "redirect to failure url when authorisation fails" in {
 
@@ -170,7 +172,7 @@ class PayeAuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe controllers.paye.routes.PayeErrorController.serviceUnavailable.url
+      redirectLocation(result).get mustBe common.controllers.paye.routes.PayeErrorController.serviceUnavailable.url
       verifyNoInteractions(mockAuthConnector)
     }
   }

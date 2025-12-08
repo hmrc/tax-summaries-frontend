@@ -144,7 +144,9 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
       val result = sut.show(currentTaxYearPAYE)(fakeAuthenticatedRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe common.controllers.routes.ErrorController.authorisedNoAts(currentTaxYearPAYE).url
+      redirectLocation(result).get mustBe common.controllers.routes.ErrorController
+        .authorisedNoAts(currentTaxYearPAYE)
+        .url
     }
 
     "redirect user to generic error page when receiving INTERNAL_SERVER_ERROR from service" in {

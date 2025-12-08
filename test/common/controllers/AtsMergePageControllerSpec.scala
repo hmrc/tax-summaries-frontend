@@ -212,7 +212,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       status(result) mustBe 303
       redirectLocation(
         result
-      ).get mustBe (controllers.sa.routes.AtsMainController.authorisedAtsMain.url + s"?taxYear=$currentTaxYearSA")
+      ).get mustBe (common.controllers.sa.routes.AtsMainController.authorisedAtsMain.url + s"?taxYear=$currentTaxYearSA")
 
     }
 
@@ -235,7 +235,9 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
       val result = sut.onSubmit(requestWithQuery)
 
       status(result) mustBe 303
-      redirectLocation(result).get mustBe controllers.paye.routes.PayeAtsMainController.show(currentTaxYearSA).toString
+      redirectLocation(result).get mustBe common.controllers.paye.routes.PayeAtsMainController
+        .show(currentTaxYearSA)
+        .toString
 
     }
 
