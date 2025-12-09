@@ -18,7 +18,6 @@ package sa.services
 
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
-import common.services.AtsService
 import common.services.atsData.AtsTestData
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, GenericViewModel}

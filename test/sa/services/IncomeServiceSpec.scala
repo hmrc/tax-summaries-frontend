@@ -18,7 +18,6 @@ package sa.services
 
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsData, requests}
-import common.services.AtsService
 import common.services.atsData.AtsTestData
 import common.services.atsData.AtsTestData.currentTaxYearSA
 import common.utils.TestConstants.*

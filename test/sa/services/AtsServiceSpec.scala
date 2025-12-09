@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package common.services
+package sa.services
 
 import common.models.*
 import common.models.requests.AuthenticatedRequest
 import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.services.AuditService
 import common.utils.JsonUtil.*
 import common.utils.TestConstants.*
 import common.utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
 import common.view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
-import sa.connectors.SaConnector
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import sa.connectors.SaConnector
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier

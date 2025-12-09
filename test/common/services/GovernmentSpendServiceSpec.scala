@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, GenericViewModel}
 import common.view_models.{Amount, AtsList, GovernmentSpend}
+import sa.services.AtsService
 
 import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}

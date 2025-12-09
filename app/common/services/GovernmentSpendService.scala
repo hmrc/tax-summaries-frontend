@@ -17,7 +17,7 @@
 package common.services
 
 import cats.data.EitherT
-import cats.implicits._
+import cats.implicits.*
 import com.google.inject.Inject
 import common.config.ApplicationConfig
 import common.connectors.GovSpendConnector
@@ -28,6 +28,7 @@ import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HeaderCarrier
 import common.utils.{CategoriesUtils, GenericViewModel}
 import common.view_models.GovernmentSpend
+import sa.services.AtsService
 
 import scala.concurrent.{ExecutionContext, Future}
 
