@@ -1,0 +1,8 @@
+GET     /treasury-spending/:taxYear                       paye.controllers.PayeGovernmentSpendController.show(taxYear: Int)
+GET     /main/:taxYear                                    paye.controllers.PayeAtsMainController.show(taxYear: Int)
+GET     /summary/:taxYear                                 paye.controllers.PayeYourIncomeAndTaxesController.show(taxYear: Int)
+GET     /income-tax-and-national-insurance/:taxYear       paye.controllers.PayeIncomeTaxAndNicsController.show(taxYear: Int)
+GET     /income-before-tax/:taxYear                       paye.controllers.PayeYourTaxableIncomeController.show(taxYear: Int)
+GET     /tax-free-income/:taxYear                         paye.controllers.PayeTaxFreeAmountController.show(taxYear: Int)
+GET     /not-authorised                                   paye.controllers.PayeErrorController.notAuthorised
+GET     /service-unavailable                              paye.controllers.PayeErrorController.serviceUnavailable

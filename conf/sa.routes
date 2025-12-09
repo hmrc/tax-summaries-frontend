@@ -1,0 +1,9 @@
+GET     /main                                               sa.controllers.AtsMainController.authorisedAtsMain
+GET     /summary                                            sa.controllers.SummaryController.authorisedSummaries
+GET     /nics                                               sa.controllers.NicsController.redirectForDeprecatedNicsPage
+GET     /income-tax-national-insurance-contributions        sa.controllers.NicsController.authorisedTaxAndNICs
+GET     /treasury-spending                                  sa.controllers.GovernmentSpendController.authorisedGovernmentSpendData
+GET     /income-before-tax                                  sa.controllers.IncomeController.authorisedIncomeBeforeTax
+GET     /tax-free-income                                    sa.controllers.AllowancesController.authorisedAllowance
+GET     /total-income-tax                                   sa.controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
+GET     /capital-gains-tax                                  sa.controllers.CapitalGainsTaxController.authorisedCapitalGains
