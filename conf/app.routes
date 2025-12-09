@@ -30,9 +30,6 @@ GET     /sa/tax-free-income                                    sa.controllers.Al
 GET     /sa/total-income-tax                                   sa.controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
 GET     /sa/capital-gains-tax                                  sa.controllers.CapitalGainsTaxController.authorisedCapitalGains
 
-GET     /language/:lang                                        paye.controllers.PayeLanguageController.switchToLanguage(lang: String)
-GET     /language/:lang                                        common.controllers.SaLanguageController.switchToLanguage(lang: String)
-
 GET     /paye/treasury-spending/:taxYear                       paye.controllers.PayeGovernmentSpendController.show(taxYear: Int)
 GET     /paye/main/:taxYear                                    paye.controllers.PayeAtsMainController.show(taxYear: Int)
 GET     /paye/summary/:taxYear                                 paye.controllers.PayeYourIncomeAndTaxesController.show(taxYear: Int)
