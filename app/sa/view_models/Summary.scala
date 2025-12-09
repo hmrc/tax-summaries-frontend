@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package common.view_models
+package sa.view_models
 
-import common.utils.ViewUtils
-import common.utils.{GenericViewModel, TextGenerator}
+import common.utils.{GenericViewModel, TextGenerator, ViewUtils}
+import common.view_models.{Amount, Rate}
 
 case class Summary(
   year: Int,

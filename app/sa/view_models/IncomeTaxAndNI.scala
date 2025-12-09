@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package common.view_models
+package sa.view_models
 
 import common.utils.{GenericViewModel, ViewUtils}
+import common.view_models.*
 
 case class IncomeTaxAndNI(
   year: Int,

@@ -28,6 +28,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers.*
 import sa.services.SummaryService
+import sa.view_models.Summary
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal

@@ -19,11 +19,12 @@ package sa.views
 import common.models.requests.AuthenticatedRequest
 import common.models.{ActingAsAttorneyFor, requests}
 import common.utils.TestConstants
-import common.view_models.{Amount, CapitalGains}
+import common.view_models.Amount
 import common.views.ViewSpecBase
 import sa.views.html.CapitalGainsView
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import sa.view_models.CapitalGains
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 

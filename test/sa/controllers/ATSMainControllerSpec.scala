@@ -29,6 +29,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.*
 import sa.services.SummaryService
+import sa.view_models.Summary
 
 import scala.concurrent.Future
 

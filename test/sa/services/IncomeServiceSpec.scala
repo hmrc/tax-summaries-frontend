@@ -21,13 +21,14 @@ import common.models.requests
 import sa.utils.AtsTestData.currentTaxYearSA
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, GenericViewModel}
-import common.view_models.{Amount, AtsList, IncomeBeforeTax}
+import common.view_models.{Amount, AtsList}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import sa.models.AtsData
 import sa.utils.AtsTestData
+import sa.view_models.IncomeBeforeTax
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier

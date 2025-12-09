@@ -27,6 +27,7 @@ import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import sa.models.AtsData
 import sa.utils.AtsTestData
+import sa.view_models.{IncomeTaxAndNI, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier

@@ -16,10 +16,10 @@
 
 package paye.view_models
 
-import common.config.PayeConfig
 import common.models.{DataHolder, TaxBand}
 import common.utils.BaseSpec
 import common.view_models.{Amount, Rate}
+import paye.config.PayeConfig
 import paye.models.PayeAtsData
 import paye.utils.PayeAtsTestData
 

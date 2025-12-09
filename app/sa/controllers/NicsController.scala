@@ -23,10 +23,10 @@ import common.models.ErrorResponse
 import common.models.requests.AuthenticatedRequest
 import common.services.AuditService
 import common.utils.{GenericViewModel, TaxYearUtil}
-import common.view_models.IncomeTaxAndNI
 import common.views.html.errors.{GenericErrorView, TokenErrorView}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import sa.services.IncomeTaxAndNIService
+import sa.view_models.IncomeTaxAndNI
 import sa.views.html.NicsView
 
 import scala.concurrent.{ExecutionContext, Future}

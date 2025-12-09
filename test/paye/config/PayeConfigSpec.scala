@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.config
+package paye.config
 
 import common.utils.BaseSpec
 

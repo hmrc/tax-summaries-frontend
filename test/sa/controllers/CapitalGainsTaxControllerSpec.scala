@@ -21,7 +21,7 @@ import common.models.requests.AuthenticatedRequest
 import common.services.AuditService
 import common.utils.TestConstants.{capitalGains, testUtr}
 import common.utils.{ControllerBaseSpec, TaxYearUtil}
-import common.view_models.{ATSUnavailableViewModel, Amount, CapitalGains, NoATSViewModel}
+import common.view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.{reset, when}
@@ -30,6 +30,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import sa.services.CapitalGainsService
+import sa.view_models.CapitalGains
 
 import scala.concurrent.Future
 

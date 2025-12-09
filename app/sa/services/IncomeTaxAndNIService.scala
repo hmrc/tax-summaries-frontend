@@ -22,6 +22,7 @@ import common.models.DataHolder
 import common.utils.GenericViewModel
 import common.view_models.*
 import sa.models.AtsData
+import sa.view_models.{IncomeTaxAndNI, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

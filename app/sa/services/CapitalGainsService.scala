@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import common.models.requests.AuthenticatedRequest
 import common.models.DataHolder
 import common.utils.GenericViewModel
-import common.view_models.CapitalGains
 import sa.models.AtsData
+import sa.view_models.CapitalGains
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

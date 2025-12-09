@@ -23,11 +23,11 @@ import common.models.ErrorResponse
 import common.models.requests.AuthenticatedRequest
 import common.services.AuditService
 import common.utils.{GenericViewModel, TaxYearUtil}
-import common.view_models.Summary
 import sa.views.html.TaxsMainView
 import common.views.html.errors.{GenericErrorView, TokenErrorView}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import sa.services.SummaryService
+import sa.view_models.Summary
 
 import scala.concurrent.{ExecutionContext, Future}
 

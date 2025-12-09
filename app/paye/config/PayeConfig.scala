@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package common.config
+package paye.config
 
 import com.google.inject.Inject
 import com.typesafe.config.{Config, ConfigException, ConfigFactory}
+import common.config.ApplicationConfig
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 
 import scala.util.*

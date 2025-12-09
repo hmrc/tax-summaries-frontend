@@ -28,6 +28,7 @@ import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
+import sa.view_models.{IncomeTaxAndNI, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
 import sa.views.html.{CapitalGainsView, IncomeBeforeTaxView, NicsView}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials

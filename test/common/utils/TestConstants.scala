@@ -20,6 +20,7 @@ import common.models.SpendData
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.{Generator, Nino, SaUtrGenerator}
 import common.view_models.*
+import sa.view_models.{CapitalGains, IncomeTaxAndNI, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
 
 import scala.util.Random
 
