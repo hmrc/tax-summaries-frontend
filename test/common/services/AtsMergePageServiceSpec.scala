@@ -17,12 +17,12 @@
 package common.services
 
 import common.models.requests
-import common.models._
+import common.models.*
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -34,9 +34,10 @@ import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
-import common.utils.TestConstants._
+import common.utils.TestConstants.*
 import common.utils.{BaseSpec, TaxYearUtil}
 import common.view_models.{AtsList, AtsMergePageViewModel}
+import sa.services.AtsListService
 
 import scala.concurrent.Future
 

@@ -18,7 +18,7 @@ package sa.controllers
 
 import common.controllers.auth.FakeAuthJourney
 import common.models.requests.AuthenticatedRequest
-import common.services.{AuditService, IncomeService}
+import common.services.AuditService
 import common.utils.TestConstants.*
 import common.utils.{ControllerBaseSpec, TaxYearUtil}
 import common.view_models.{ATSUnavailableViewModel, Amount, IncomeBeforeTax, NoATSViewModel}
@@ -29,6 +29,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import sa.services.IncomeService
 
 import scala.concurrent.Future
 

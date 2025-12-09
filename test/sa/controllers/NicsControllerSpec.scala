@@ -17,7 +17,7 @@
 package sa.controllers
 
 import common.controllers.auth.FakeAuthJourney
-import common.services.{AuditService, IncomeTaxAndNIService}
+import common.services.AuditService
 import common.utils.TestConstants.*
 import common.utils.{ControllerBaseSpec, TaxYearUtil}
 import common.view_models.*
@@ -27,6 +27,7 @@ import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import sa.services.IncomeTaxAndNIService
 
 import scala.concurrent.Future
 

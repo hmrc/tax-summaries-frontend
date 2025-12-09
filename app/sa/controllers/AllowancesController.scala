@@ -21,12 +21,13 @@ import common.config.ApplicationConfig
 import common.controllers.auth.AuthJourney
 import common.models.ErrorResponse
 import common.models.requests.AuthenticatedRequest
-import common.services.{AllowanceService, AuditService}
+import common.services.AuditService
 import common.utils.{GenericViewModel, TaxYearUtil}
 import common.view_models.Allowances
 import common.views.html.TaxFreeAmountView
 import common.views.html.errors.{GenericErrorView, TokenErrorView}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import sa.services.AllowanceService
 
 import scala.concurrent.{ExecutionContext, Future}
 

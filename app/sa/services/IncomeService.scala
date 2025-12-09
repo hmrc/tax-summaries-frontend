@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package common.services
+package sa.services
 
 import com.google.inject.Inject
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsData, DataHolder}
-import uk.gov.hmrc.http.HeaderCarrier
+import common.services.AtsService
 import common.utils.GenericViewModel
 import common.view_models.IncomeBeforeTax
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

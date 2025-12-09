@@ -26,8 +26,9 @@ import common.repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import common.utils._
+import common.utils.*
 import common.view_models.{AtsList, AtsMergePageViewModel}
+import sa.services.AtsListService
 
 import scala.concurrent.{ExecutionContext, Future}
 

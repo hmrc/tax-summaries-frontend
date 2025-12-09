@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package common.services
+package sa.services
 
 import common.config.ApplicationConfig
-import sa.connectors.SaConnector
-import common.models.requests
 import common.models.*
 import common.models.requests.AuthenticatedRequest
+import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.services.AuditService
+import common.utils.TestConstants.*
+import common.utils.{AgentTokenException, AuthorityUtils, BaseSpec}
+import common.view_models.AtsList
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import common.repository.TaxsAgentTokenSessionCacheRepository
+import sa.connectors.SaConnector
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import common.utils.TestConstants.*
-import common.utils.{AgentTokenException, AuthorityUtils, BaseSpec}
-import common.view_models.AtsList
 
 import scala.concurrent.Future
 

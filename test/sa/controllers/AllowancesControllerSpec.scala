@@ -28,6 +28,7 @@ import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers.*
+import sa.services.AllowanceService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

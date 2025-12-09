@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package common.services
+package sa.services
 
-import common.models.requests
-import common.models.AtsData
+import common.models.{AtsData, requests}
 import common.models.requests.AuthenticatedRequest
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import play.api.test.FakeRequest
+import common.services.AtsService
 import common.services.atsData.AtsTestData
 import common.services.atsData.AtsTestData.currentTaxYearSA
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, GenericViewModel}
 import common.view_models.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
