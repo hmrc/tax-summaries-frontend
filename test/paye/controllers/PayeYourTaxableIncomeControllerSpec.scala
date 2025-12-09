@@ -34,12 +34,13 @@ package paye.controllers
 
 import common.controllers.auth.FakeAuthJourney
 import common.models.requests.PayeAuthenticatedRequest
-import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData, requests}
+import common.models.{AtsErrorResponse, AtsNotFoundResponse, requests}
 import common.utils.TestConstants.testNino
 import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeYourTaxableIncomeView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import paye.models.PayeAtsData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty

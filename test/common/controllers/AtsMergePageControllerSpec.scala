@@ -18,6 +18,7 @@ package common.controllers
 
 import common.config.ApplicationConfig
 import common.controllers.auth.FakeAuthJourney
+import common.forms.AtsForms
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsErrorResponse, requests}
@@ -36,7 +37,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import common.utils.ControllerBaseSpec
 import common.utils.TestConstants.{testNino, testUtr}
-import common.view_models.{AtsForms, AtsList, AtsMergePageViewModel}
+import common.view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.Future
 

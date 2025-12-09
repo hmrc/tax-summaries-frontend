@@ -30,6 +30,7 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import sa.connectors.SaConnector
+import sa.models.AtsData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package paye.view_models
 
-import common.models.{DataHolder, GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
+import common.models.{DataHolder, GovernmentSpendingOutputWrapper, SpendData}
+import common.utils.{BaseSpec, JsonUtil}
+import common.view_models.Amount
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import paye.models.PayeAtsData
+import paye.utils.PayeAtsTestData
 import play.api.test.Injecting
-import common.services.atsData.PayeAtsTestData
-import common.utils.{BaseSpec, JsonUtil}
-import common.view_models.Amount
-import paye.view_models.{PayeGovernmentSpend, SpendRow}
 
 class PayeGovernmentSpendSpec
     extends BaseSpec

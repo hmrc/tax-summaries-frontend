@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package common.services.atsData
+package paye.utils
 
 import common.models.*
 import common.utils.BaseSpec
-import paye.view_models.*
 import common.view_models.{Amount, Rate}
+import paye.models.PayeAtsData
+import paye.view_models.*
 
 class PayeAtsTestData extends BaseSpec {
 

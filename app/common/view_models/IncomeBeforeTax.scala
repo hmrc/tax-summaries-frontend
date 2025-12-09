@@ -17,7 +17,6 @@
 package common.view_models
 
 import common.utils.GenericViewModel
-import common.view_models.paye.TaxYearFormatting
 
 case class IncomeBeforeTax(
   taxYear: Int,

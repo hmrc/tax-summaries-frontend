@@ -18,13 +18,14 @@ package paye.controllers
 
 import common.controllers.auth.FakeAuthJourney
 import common.models.requests.PayeAuthenticatedRequest
-import common.models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
-import common.services.atsData.PayeAtsTestData
+import common.models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse}
 import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeYourIncomeAndTaxesView
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import paye.models.PayeAtsData
+import paye.utils.PayeAtsTestData
 import play.api.http.Status.*
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty

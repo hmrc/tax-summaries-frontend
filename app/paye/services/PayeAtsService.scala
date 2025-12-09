@@ -21,6 +21,7 @@ import common.models.*
 import common.services.AuditService
 import common.utils.AuditTypes
 import paye.connectors.PayeConnector
+import paye.models.PayeAtsData
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.domain.Nino

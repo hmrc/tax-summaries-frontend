@@ -16,10 +16,10 @@
 
 package paye.view_models
 
-import common.models.{GovernmentSpendingOutputWrapper, PayeAtsData, SpendData}
+import common.models.{GovernmentSpendingOutputWrapper, SpendData}
 import common.utils.CategoriesUtils
-import common.view_models.Amount
-import common.view_models.paye.TaxYearFormatting
+import common.view_models.{Amount, TaxYearFormatting}
+import paye.models.PayeAtsData
 
 case class PayeGovernmentSpend(taxYear: Int, orderedSpendRows: List[SpendRow], totalAmount: Amount, isScottish: Boolean)
     extends TaxYearFormatting

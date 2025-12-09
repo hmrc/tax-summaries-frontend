@@ -25,6 +25,7 @@ import common.services.AuditService
 import common.utils.*
 import common.view_models.AtsList
 import sa.connectors.SaConnector
+import sa.models.AtsListData
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey

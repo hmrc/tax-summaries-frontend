@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package common.services.atsData
+package sa.utils
 
 import common.models.*
 import common.utils.TaxYearForTesting
 import common.view_models.{Amount, Rate}
+import sa.models.{AtsData, AtsListData}
 
 object AtsTestData extends TaxYearForTesting {
 

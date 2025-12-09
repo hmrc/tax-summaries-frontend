@@ -18,7 +18,7 @@ package testUtils
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.config.ApplicationConfig
-import common.models.{AgentToken, AtsData}
+import common.models.AgentToken
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -34,6 +34,7 @@ import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import common.utils.TestConstants.mock
 import common.utils.{Globals, TaxYearForTesting, WireMockHelper}
+import sa.models.AtsData
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}

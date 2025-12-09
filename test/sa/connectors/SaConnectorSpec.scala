@@ -32,6 +32,7 @@ import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Injecting
+import sa.models.{AtsData, AtsListData}
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.*
 

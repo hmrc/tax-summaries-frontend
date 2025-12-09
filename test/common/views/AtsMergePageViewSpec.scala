@@ -17,6 +17,7 @@
 package common.views
 
 import common.config.ApplicationConfig
+import common.forms.AtsForms
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
 import common.models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA, requests}
@@ -29,7 +30,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import common.utils.TestConstants
-import common.view_models.{AtsForms, AtsList, AtsMergePageViewModel}
+import common.view_models.{AtsList, AtsMergePageViewModel}
 import common.views.html.AtsMergePageView
 
 class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {

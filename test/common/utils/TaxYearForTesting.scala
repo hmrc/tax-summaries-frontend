@@ -16,8 +16,8 @@
 
 package common.utils
 
-import common.models.AtsListData
 import common.utils.TestConstants.testNino
+import sa.models.AtsListData
 
 trait TaxYearForTesting extends JsonUtil {
   // The latest tax year (end year) available in ATS for both SA and PAYE. This will be either the last

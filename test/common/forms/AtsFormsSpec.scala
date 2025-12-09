@@ -30,13 +30,13 @@
  * limitations under the License.
  */
 
-package common.view_models
+package common.forms
 
 import common.models.{AtsYearChoice, SA}
+import common.utils.{BaseSpec, TaxYearUtil}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.data.FormError
-import common.utils.{BaseSpec, TaxYearUtil}
 
 class AtsFormsSpec extends BaseSpec {
 

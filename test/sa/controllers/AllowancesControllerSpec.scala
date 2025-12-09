@@ -29,6 +29,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers.*
 import sa.services.AllowanceService
+import sa.view_models.Allowances
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

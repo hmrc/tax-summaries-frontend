@@ -18,12 +18,12 @@ package paye.views
 
 import common.models.requests
 import common.models.requests.PayeAuthenticatedRequest
-import common.services.atsData.PayeAtsTestData
 import common.utils.TestConstants
 import common.views.ViewSpecBase
 import common.views.behaviours.ViewBehaviours
 import paye.views.html.PayeYourTaxableIncomeView
 import org.jsoup.Jsoup
+import paye.utils.PayeAtsTestData
 import paye.view_models.PayeYourTaxableIncome
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest

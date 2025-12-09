@@ -16,9 +16,8 @@
 
 package paye.view_models
 
-import common.models.PayeAtsData
-import common.view_models.paye.TaxYearFormatting
-import common.view_models.{Amount, Rate}
+import common.view_models.{Amount, Rate, TaxYearFormatting}
+import paye.models.PayeAtsData
 
 case class PayeYourIncomeAndTaxes(
   taxYear: Int,

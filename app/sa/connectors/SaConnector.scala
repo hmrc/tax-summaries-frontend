@@ -21,6 +21,7 @@ import common.config.ApplicationConfig
 import common.connectors.HttpHandler
 import common.models.*
 import play.api.Logging
+import sa.models.{AtsData, AtsListData}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.*
 

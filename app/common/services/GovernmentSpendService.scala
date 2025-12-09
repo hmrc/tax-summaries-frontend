@@ -23,11 +23,12 @@ import common.config.ApplicationConfig
 import common.connectors.GovSpendConnector
 import io.jsonwebtoken.io.DeserializationException
 import common.models.requests.AuthenticatedRequest
-import common.models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
+import common.models.{AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
 import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HeaderCarrier
 import common.utils.{CategoriesUtils, GenericViewModel}
 import common.view_models.GovernmentSpend
+import sa.models.AtsData
 import sa.services.AtsService
 
 import scala.concurrent.{ExecutionContext, Future}

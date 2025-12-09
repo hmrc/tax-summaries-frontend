@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package paye.view_models
 
-import common.models.{DataHolder, PayeAtsData}
+import common.models.DataHolder
+import common.utils.{JsonUtil, TaxYearForTesting}
+import common.view_models.Amount
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import common.services.atsData.AtsTestData.currentTaxYearSA
-import common.utils.JsonUtil
-import common.view_models.Amount
-import common.utils.TaxYearForTesting
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import paye.view_models.{IncomeTaxRow, PayeYourTaxableIncome}
+import paye.models.PayeAtsData
+import sa.utils.AtsTestData.currentTaxYearSA
 
 class PayeYourTaxableIncomeSpec
     extends AnyWordSpec

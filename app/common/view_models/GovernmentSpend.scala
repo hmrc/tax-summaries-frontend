@@ -18,7 +18,6 @@ package common.view_models
 
 import common.models.SpendData
 import common.utils.GenericViewModel
-import common.view_models.paye.TaxYearFormatting
 
 case class GovernmentSpend(
   taxYear: Int,

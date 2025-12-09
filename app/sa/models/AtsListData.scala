@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models
+package sa.models
 
 import play.api.libs.json.{Json, OFormat}
 

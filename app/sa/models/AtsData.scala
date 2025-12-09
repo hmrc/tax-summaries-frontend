@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package common.models
+package sa.models
 
-import play.api.libs.json.{Json, OFormat}
+import common.models.{DataHolder, GovernmentSpendingOutputWrapper, IncomingAtsError}
 import common.view_models.Amount
+import play.api.libs.json.{Json, OFormat}
 
 case class AtsData(
   taxYear: Int,

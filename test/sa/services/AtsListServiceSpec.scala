@@ -29,6 +29,7 @@ import org.mockito.Mockito.*
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import sa.connectors.SaConnector
+import sa.models.AtsListData
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier

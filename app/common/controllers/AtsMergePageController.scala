@@ -19,6 +19,7 @@ package common.controllers
 import com.google.inject.Inject
 import common.config.ApplicationConfig
 import common.controllers.auth.AuthJourney
+import common.forms.AtsForms
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsYearChoice, PAYE, SA}
@@ -29,7 +30,6 @@ import common.services.*
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import common.utils.{AttorneyUtils, Globals}
-import common.view_models.AtsForms
 import common.views.html.AtsMergePageView
 import common.views.html.errors.GenericErrorView
 

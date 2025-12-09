@@ -18,9 +18,10 @@ package sa.services
 
 import com.google.inject.Inject
 import common.models.requests.AuthenticatedRequest
-import common.models.{AtsData, DataHolder}
+import common.models.DataHolder
 import common.utils.GenericViewModel
-import common.view_models.Allowances
+import sa.models.AtsData
+import sa.view_models.Allowances
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

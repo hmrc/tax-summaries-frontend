@@ -21,7 +21,7 @@ import play.api.libs.json._
 sealed abstract class AtsType
 object AtsType {
 
-  def fromString(string: String) = string match {
+  def fromString(string: String): AtsType = string match {
     case "SA"   => SA
     case "PAYE" => PAYE
     case _      => NoATS

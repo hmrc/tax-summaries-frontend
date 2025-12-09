@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package paye.view_models
 
 import common.config.PayeConfig
-import common.models.{DataHolder, PayeAtsData, TaxBand}
-import common.services.atsData.PayeAtsTestData
+import common.models.{DataHolder, TaxBand}
 import common.utils.BaseSpec
 import common.view_models.{Amount, Rate}
-import paye.view_models.{AdjustmentRow, PayeIncomeTaxAndNics}
+import paye.models.PayeAtsData
+import paye.utils.PayeAtsTestData
 
 class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 

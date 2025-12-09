@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package common.models
+package paye.models
 
+import common.models.{DataHolder, GovernmentSpendingOutputWrapper}
 import play.api.libs.json.{Json, Reads}
 
 case class PayeAtsData(

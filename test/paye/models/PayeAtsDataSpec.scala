@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package paye.models
 
 import common.models.DataHolder
+import common.view_models.Amount
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import common.services.atsData.PayeAtsTestData
-import common.view_models.Amount
+import paye.utils.PayeAtsTestData
 
 class PayeAtsDataSpec extends AnyWordSpec with Matchers {
 

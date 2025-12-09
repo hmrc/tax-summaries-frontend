@@ -16,13 +16,14 @@
 
 package testOnly.controllers
 
-import common.models.{AtsData, DataHolder}
+import common.models.DataHolder
 import common.utils.ControllerBaseSpec
 import common.view_models.Amount
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.*
+import sa.models.AtsData
 import testOnly.connectors.TaxSummariesConnector
 import testOnly.views.html.DisplayPTAView
 

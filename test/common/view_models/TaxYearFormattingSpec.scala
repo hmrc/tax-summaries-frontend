@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package common.view_models
 
-trait TaxYearFormatting {
+import common.utils.TaxYearForTesting
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+class TaxYearFormattingSpec extends AnyWordSpec with Matchers with TaxYearForTesting {
 
-  val taxYear: Int
+  val instance = new TaxYearFormatting {
+    val taxYear = currentTaxYearSA
+  }
 
-  def taxYearFrom: String     = (taxYear - 1).toString
-  def taxYearTo: String       = taxYear.toString
-  def taxYearInterval: String = (taxYear - 1).toString + "-" + taxYear.toString.substring(2)
+  "TaxYearFormatting" must {
+
+    "Calculate valid start year" in {
+      instance.taxYearFrom mustBe s"${currentTaxYearSA - 1}"
+    }
+
+    "Calculate valid end year" in {
+      instance.taxYearTo mustBe s"$currentTaxYearSA"
+    }
+
+  }
+
 }

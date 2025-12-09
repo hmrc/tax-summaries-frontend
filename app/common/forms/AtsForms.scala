@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package common.view_models
+package common.forms
 
 import com.google.inject.Inject
 import common.models.AtsYearChoice
+import common.utils.TaxYearUtil
 import play.api.Logging
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import common.utils.TaxYearUtil
 
 import scala.util.{Failure, Success, Try}
 

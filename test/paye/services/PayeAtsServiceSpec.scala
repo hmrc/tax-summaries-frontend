@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import paye.connectors.PayeConnector
+import paye.models.PayeAtsData
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsResultException, JsValue, Json}

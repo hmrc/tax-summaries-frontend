@@ -17,13 +17,14 @@
 package testOnly.controllers
 
 import com.google.inject.Inject
-import common.models._
+import common.models.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.DisplayPTAView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import common.utils.{AccountUtils, AttorneyUtils}
+import sa.models.AtsData
 import testOnly.connectors.TaxSummariesConnector
 import testOnly.models.FieldInfo
 

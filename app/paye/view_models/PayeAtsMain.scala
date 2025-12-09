@@ -15,6 +15,7 @@
  */
 
 package paye.view_models
-import common.view_models.paye.TaxYearFormatting
+
+import common.view_models.TaxYearFormatting
 
 case class PayeAtsMain(taxYear: Int) extends TaxYearFormatting

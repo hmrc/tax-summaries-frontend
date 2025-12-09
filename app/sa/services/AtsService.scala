@@ -27,6 +27,7 @@ import common.utils.*
 import common.view_models.{ATSUnavailableViewModel, NoATSViewModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import sa.connectors.SaConnector
+import sa.models.AtsData
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
