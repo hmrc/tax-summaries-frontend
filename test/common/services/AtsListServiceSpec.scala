@@ -17,7 +17,7 @@
 package common.services
 
 import common.config.ApplicationConfig
-import common.connectors.MiddleConnector
+import sa.connectors.SaConnector
 import common.models.requests
 import common.models.*
 import common.models.requests.AuthenticatedRequest
@@ -40,14 +40,14 @@ import scala.concurrent.Future
 class AtsListServiceSpec extends BaseSpec {
   val data: AtsListData = atsList("utr")
 
-  val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
+  val mockSaConnector: SaConnector                     = mock[SaConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
   val mockAuditService: AuditService                   = mock[AuditService]
   val mockAuthUtils: AuthorityUtils                    = mock[AuthorityUtils]
   val mockAppConfig: ApplicationConfig                 = mock[ApplicationConfig]
 
   override def beforeEach(): Unit = {
-    reset(mockMiddleConnector)
+    reset(mockSaConnector)
     reset(mockTaxsAgentTokenSessionCacheRepository)
     reset(mockAuditService)
     reset(mockAuthUtils)
@@ -59,12 +59,12 @@ class AtsListServiceSpec extends BaseSpec {
           .successful(None)
       )
 
-    when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
+    when(mockSaConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
       AtsSuccessResponseWithPayload[AtsListData](data)
     )
 
     when(
-      mockMiddleConnector.connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(any[HeaderCarrier])
+      mockSaConnector.connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(any[HeaderCarrier])
     ) thenReturn Future
       .successful(AtsSuccessResponseWithPayload[AtsListData](data))
 
@@ -101,7 +101,7 @@ class AtsListServiceSpec extends BaseSpec {
   def sut: AtsListService =
     new AtsListService(
       mockAuditService,
-      mockMiddleConnector,
+      mockSaConnector,
       mockTaxsAgentTokenSessionCacheRepository,
       mockAuthUtils,
       appConfig
@@ -123,7 +123,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return an empty ats list when received a not found response from connector" in {
 
-      when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
+      when(mockSaConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
         .successful(AtsNotFoundResponse("Not found"))
 
       whenReady(sut.createModel()) { result =>
@@ -134,7 +134,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return the error status ats list when received an error response from connector" in {
 
-      when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
+      when(mockSaConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
         .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
 
       val result = sut.createModel().futureValue.left.value
@@ -151,7 +151,7 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a ats list without CY-1 year data" in {
       val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != (currentTaxYearSA - 1))))
-      when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
+      when(mockSaConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future.successful(
         AtsSuccessResponseWithPayload[AtsListData](dataMissingYear)
       )
 
@@ -163,13 +163,13 @@ class AtsListServiceSpec extends BaseSpec {
 
     "Return a failed future when the call to the MS fails" in {
 
-      when(mockMiddleConnector.connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier]))
+      when(mockSaConnector.connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("failed")))
 
       whenReady(sut.getAtsYearList.failed) { exception =>
         exception mustBe an[Exception]
 
-        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
+        verify(mockSaConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
     }
 
@@ -180,7 +180,7 @@ class AtsListServiceSpec extends BaseSpec {
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]])(
           any()
         )
-        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
+        verify(mockSaConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
 
     // must this be the case? (EDGE CASE)
@@ -194,7 +194,7 @@ class AtsListServiceSpec extends BaseSpec {
         verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]])(
           any()
         )
-        verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
+        verify(mockSaConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
     }
 
@@ -216,7 +216,7 @@ class AtsListServiceSpec extends BaseSpec {
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
-          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
+          verify(mockSaConnector, times(1)).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -229,7 +229,7 @@ class AtsListServiceSpec extends BaseSpec {
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
-          verify(mockMiddleConnector, times(1)).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
+          verify(mockSaConnector, times(1)).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -239,7 +239,7 @@ class AtsListServiceSpec extends BaseSpec {
 
         "the connector returns a 404" in {
 
-          when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
+          when(mockSaConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
           val result = sut.getAtsYearList.futureValue.left.value
@@ -248,14 +248,14 @@ class AtsListServiceSpec extends BaseSpec {
           verify(mockAuditService).sendEvent(any[String], any[Map[String, String]])(
             any()
           )
-          verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
+          verify(mockSaConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
         }
       }
 
       "Return a left" when {
         "the connector returns a 500" in {
 
-          when(mockMiddleConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
+          when(mockSaConnector.connectToAtsList(any(), any(), any())(any())) thenReturn Future
             .successful(AtsErrorResponse("Something went wrong"))
 
           val result = sut.getAtsYearList.futureValue.left.value
@@ -265,7 +265,7 @@ class AtsListServiceSpec extends BaseSpec {
             any()
           )
 
-          verify(mockMiddleConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
+          verify(mockSaConnector, times(1)).connectToAtsList(any[SaUtr], any(), any())(any[HeaderCarrier])
         }
       }
 
@@ -280,7 +280,7 @@ class AtsListServiceSpec extends BaseSpec {
           exception mustBe a[AgentTokenException]
           exception.getMessage mustBe "Token is empty"
 
-          verify(mockMiddleConnector, never).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
+          verify(mockSaConnector, never).connectToAtsListOnBehalfOf(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }

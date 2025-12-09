@@ -19,24 +19,24 @@ package common.services
 import cats.data.EitherT
 import com.google.inject.Inject
 import common.config.ApplicationConfig
-import common.connectors.MiddleConnector
 import common.models.*
 import common.models.requests.AuthenticatedRequest
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.utils.*
+import common.view_models.{ATSUnavailableViewModel, NoATSViewModel}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import sa.connectors.SaConnector
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import common.utils.*
-import common.view_models.{ATSUnavailableViewModel, NoATSViewModel}
 
 import java.util.Date
 import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsService @Inject() (
-  middleConnector: MiddleConnector,
+  saConnector: SaConnector,
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   appConfig: ApplicationConfig,
   val auditService: AuditService,
@@ -109,8 +109,8 @@ class AtsService @Inject() (
 
     // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     val gotData = (account: @unchecked) match {
-      case _: Uar               => middleConnector.connectToAtsOnBehalfOf(requestedUTR, taxYear)
-      case individualUtr: SaUtr => middleConnector.connectToAts(individualUtr, taxYear)
+      case _: Uar               => saConnector.connectToAtsOnBehalfOf(requestedUTR, taxYear)
+      case individualUtr: SaUtr => saConnector.connectToAts(individualUtr, taxYear)
     }
 
     EitherT {

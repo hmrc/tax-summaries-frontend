@@ -18,23 +18,23 @@ package common.services
 
 import com.google.inject.Inject
 import common.config.ApplicationConfig
-import common.connectors.MiddleConnector
 import common.models.*
 import common.models.requests.AuthenticatedRequest
 import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.utils.*
+import common.view_models.AtsList
+import sa.connectors.SaConnector
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import common.utils.*
-import common.view_models.AtsList
 
 import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class AtsListService @Inject() (
   auditService: AuditService,
-  middleConnector: MiddleConnector,
+  saConnector: SaConnector,
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   authUtils: AuthorityUtils,
   appConfig: ApplicationConfig
@@ -82,13 +82,13 @@ class AtsListService @Inject() (
     } flatMap { requestedUTR =>
       (account: @unchecked) match {
         case _: Uar            =>
-          middleConnector.connectToAtsListOnBehalfOf(
+          saConnector.connectToAtsListOnBehalfOf(
             requestedUTR,
             appConfig.taxYearSA,
             appConfig.maxTaxYearsTobeDisplayed
           )
         case individual: SaUtr =>
-          middleConnector.connectToAtsList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
+          saConnector.connectToAtsList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
       }
     }
 

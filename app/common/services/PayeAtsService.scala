@@ -17,19 +17,19 @@
 package common.services
 
 import com.google.inject.Inject
-import common.connectors.MiddleConnector
-import common.models._
+import common.models.*
+import common.utils.AuditTypes
+import paye.connectors.PayeConnector
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import common.utils.AuditTypes
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: AuditService)(implicit
+class PayeAtsService @Inject() (payeConnector: PayeConnector, auditService: AuditService)(implicit
   ec: ExecutionContext
 ) extends Logging {
 
@@ -37,7 +37,7 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
     hc: HeaderCarrier
   ): Future[Either[AtsResponse, PayeAtsData]] =
     for {
-      response <- middleConnector.connectToPayeATS(nino, taxYear)
+      response <- payeConnector.connectToPayeATS(nino, taxYear)
     } yield response match {
       case Right(atsData)              =>
         Try(atsData.json.as[PayeAtsData]) match {
@@ -63,7 +63,7 @@ class PayeAtsService @Inject() (middleConnector: MiddleConnector, auditService: 
     hc: HeaderCarrier
   ): Future[Either[AtsResponse, List[Int]]] =
     for {
-      response <- middleConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)
+      response <- payeConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)
     } yield response match {
       case Right(atsData)              =>
         val res = atsData.json.as[List[PayeAtsData]]

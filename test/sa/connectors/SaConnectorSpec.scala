@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package common.connectors
+package sa.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.config.ApplicationConfig
+import common.connectors.HttpHandler
 import common.models.*
+import common.utils.TestConstants.{testUar, testUtr}
+import common.utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -27,17 +30,14 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.test.Injecting
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.*
-import uk.gov.hmrc.http.client.HttpClientV2
-import common.utils.TestConstants.{testNino, testUar, testUtr}
-import common.utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 
-class MiddleConnectorSpec
+class SaConnectorSpec
     extends AnyWordSpec
     with Matchers
     with GuiceOneAppPerSuite
@@ -62,7 +62,7 @@ class MiddleConnectorSpec
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
-  def sut: MiddleConnector = new MiddleConnector(inject[HttpClientV2], inject[HttpHandler])
+  def sut: SaConnector = new SaConnector(inject[HttpHandler])
 
   val utr: SaUtr = SaUtr(testUtr)
 
@@ -76,60 +76,6 @@ class MiddleConnectorSpec
 
   val atsListData: AtsListData = atsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
-
-  "connectToPayeATS" must {
-
-    "return successful response" in {
-
-      val expectedResponse: String = payeAtsData(currentTaxYearPAYE)
-      val url                      = s"/taxs/" + testNino + "/" + currentTaxYearPAYE + "/paye-ats-data"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(expectedResponse)
-        )
-      )
-
-      val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.value
-
-      result.json mustBe Json.parse(expectedResponse)
-    }
-
-    "return an UpstreamErrorResponse" when
-      listOfErrors.foreach { status =>
-        s"a response with status $status is received" in {
-          val url = s"/taxs/" + testNino + "/" + currentTaxYearPAYE + "/paye-ats-data"
-
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(
-                aResponse()
-                  .withStatus(status)
-              )
-          )
-
-          val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.left.value
-
-          result.statusCode mustBe status
-        }
-      }
-
-    "the connector times out" in {
-      server.stubFor(
-        get(anyUrl()).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("""{"Environment" : 5.5}""")
-            .withFixedDelay(2000)
-        )
-      )
-
-      val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.left.value
-      result.statusCode mustBe GATEWAY_TIMEOUT
-    }
-  }
 
   "connectToAts" must {
 
@@ -386,110 +332,4 @@ class MiddleConnectorSpec
     }
   }
 
-  "connectToPayeATSMultipleYears" must {
-
-    val url = s"/taxs/$testNino/${currentTaxYearPAYE - 1}/$currentTaxYearPAYE/paye-ats-data"
-
-    "return successful response" in {
-
-      val expectedResponse: String = payeAtsDataForYearRange()
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(expectedResponse)
-        )
-      )
-
-      val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.value
-
-      result.json mustBe Json.parse(expectedResponse)
-    }
-
-    "return an UpstreamErrorResponse" when
-      listOfErrors.foreach { status =>
-        s"a response with status $status is received" in {
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(
-                aResponse()
-                  .withStatus(status)
-              )
-          )
-
-          val result =
-            sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue
-          result.left.value.statusCode mustBe status
-        }
-      }
-
-    "the connector times out" in {
-      server.stubFor(
-        get(anyUrl()).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("""{"Environment" : 5.5}""")
-            .withFixedDelay(2000)
-        )
-      )
-
-      val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.left.value
-      result.statusCode mustBe GATEWAY_TIMEOUT
-    }
-  }
-
-  "connectToGovernmentSpend" must {
-
-    val url = s"/taxs/government-spend/$currentTaxYearSA"
-
-    "return a successful response" in {
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("""{"Environment" : 5.5}""")
-        )
-      )
-
-      val result = sut.connectToGovernmentSpend(currentTaxYearSA).futureValue.value
-
-      result.status mustBe OK
-      result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
-    }
-
-    "return an UpstreamErrorResponse" when
-      listOfErrors.foreach { status =>
-        s"a response with status $status is received" in {
-          server.stubFor(
-            get(urlEqualTo(url))
-              .willReturn(
-                aResponse()
-                  .withStatus(status)
-              )
-          )
-
-          val result = sut.connectToGovernmentSpend(currentTaxYearSA).futureValue
-
-          result.left.value.statusCode mustBe status
-        }
-      }
-
-    "the connector times out" in {
-      server.stubFor(
-        get(anyUrl()).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("""{"Environment" : 5.5}""")
-            .withFixedDelay(2000)
-        )
-      )
-
-      val result = sut.connectToGovernmentSpend(currentTaxYearSA).futureValue.left.value
-      result.statusCode mustBe GATEWAY_TIMEOUT
-    }
-  }
 }

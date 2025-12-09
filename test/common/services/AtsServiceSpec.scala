@@ -16,25 +16,24 @@
 
 package common.services
 
-import common.connectors.MiddleConnector
-import common.models.requests
 import common.models.*
 import common.models.requests.AuthenticatedRequest
+import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.utils.JsonUtil.*
+import common.utils.TestConstants.*
+import common.utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
+import common.view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
+import sa.connectors.SaConnector
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import common.repository.TaxsAgentTokenSessionCacheRepository
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
-import common.utils.JsonUtil.*
-import common.utils.TestConstants.*
-import common.utils.{AccountUtils, AuthorityUtils, BaseSpec, GenericViewModel}
-import common.view_models.{ATSUnavailableViewModel, Amount, NoATSViewModel}
 
 import scala.concurrent.Future
 
@@ -48,14 +47,14 @@ class AtsServiceSpec extends BaseSpec {
       )
       .get
 
-  val mockMiddleConnector: MiddleConnector             = mock[MiddleConnector]
+  val mockSaConnector: SaConnector                     = mock[SaConnector]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
   val mockAuditService: AuditService                   = mock[AuditService]
   val mockAuthUtils: AuthorityUtils                    = mock[AuthorityUtils]
   val mockAccountUtils: AccountUtils                   = mock[AccountUtils]
 
   override def beforeEach(): Unit = {
-    reset(mockMiddleConnector)
+    reset(mockSaConnector)
     reset(mockTaxsAgentTokenSessionCacheRepository)
     reset(mockAuditService)
     reset(mockAuthUtils)
@@ -85,7 +84,7 @@ class AtsServiceSpec extends BaseSpec {
 
   def sut: AtsService =
     new AtsService(
-      mockMiddleConnector,
+      mockSaConnector,
       mockTaxsAgentTokenSessionCacheRepository,
       appConfig,
       mockAuditService,
@@ -107,10 +106,10 @@ class AtsServiceSpec extends BaseSpec {
         "connector returns a success response with valid payload" which {
 
           "a user who is not an agent" that {
-            "getting data from mockMiddleConnector" in {
+            "getting data from mockSaConnector" in {
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
-              when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
+              when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn
                 Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
@@ -146,7 +145,7 @@ class AtsServiceSpec extends BaseSpec {
               when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(Success)
 
               when(
-                mockMiddleConnector
+                mockSaConnector
                   .connectToAtsOnBehalfOf(any(), any())(any())
               ) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
@@ -176,7 +175,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
+          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
           sut.createModel(currentTaxYearSA, converter).futureValue mustBe a[NoATSViewModel]
@@ -184,11 +183,11 @@ class AtsServiceSpec extends BaseSpec {
           verify(mockAuditService, never).sendEvent(any(), any())(any())
         }
 
-        "getting data from mockMiddleConnector where no tax liability" in {
+        "getting data from mockSaConnector where no tax liability" in {
           val dataNoTaxLiability: AtsData = data copy (taxLiability = None)
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
+          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn
             Future.successful(AtsSuccessResponseWithPayload[AtsData](dataNoTaxLiability))
 
           when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
@@ -202,11 +201,11 @@ class AtsServiceSpec extends BaseSpec {
           sut.createModel(currentTaxYearSA, converter).futureValue mustBe a[NoATSViewModel]
         }
 
-        "getting data from mockMiddleConnector where tax liability is negative value" in {
+        "getting data from mockSaConnector where tax liability is negative value" in {
           val dataNegTaxLiability: AtsData = data copy (taxLiability = Some(Amount(BigDecimal(-100), "GBP")))
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn
+          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn
             Future.successful(AtsSuccessResponseWithPayload[AtsData](dataNegTaxLiability))
 
           when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
@@ -228,7 +227,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future(
+          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn Future(
             AtsErrorResponse("Something went wrong")
           )
 
@@ -243,7 +242,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockMiddleConnector.connectToAts(any(), any())(any())) thenReturn Future
+          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn Future
             .successful(AtsSuccessResponseWithPayload(dataWithError))
 
           sut.createModel(currentTaxYearSA, converter).futureValue mustBe a[ATSUnavailableViewModel]

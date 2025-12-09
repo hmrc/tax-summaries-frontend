@@ -16,7 +16,7 @@
 
 package common.services
 
-import common.connectors.MiddleConnector
+import common.connectors.GovSpendConnector
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsData, SpendData, requests}
 import org.mockito.ArgumentMatchers.{any, eq as meq}
@@ -46,8 +46,8 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     yearList = List(currentTaxYearSA)
   )
 
-  val mockAtsService: AtsService           = mock[AtsService]
-  val mockMiddleConnector: MiddleConnector = mock[MiddleConnector]
+  val mockAtsService: AtsService             = mock[AtsService]
+  val mockMiddleConnector: GovSpendConnector = mock[GovSpendConnector]
 
   implicit val hc: HeaderCarrier = new HeaderCarrier
 

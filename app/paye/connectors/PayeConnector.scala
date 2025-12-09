@@ -14,47 +14,26 @@
  * limitations under the License.
  */
 
-package common.connectors
+package paye.connectors
 
 import com.google.inject.Inject
 import common.config.ApplicationConfig
-import common.models.*
 import play.api.Logging
-import uk.gov.hmrc.domain.{Nino, SaUtr}
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(implicit
-  appConfig: ApplicationConfig,
-  ec: ExecutionContext
+class PayeConnector @Inject()(http: HttpClientV2)(implicit
+                                                  appConfig: ApplicationConfig,
+                                                  ec: ExecutionContext
 ) extends Logging {
 
   val serviceUrl: String = appConfig.serviceUrl
 
   private def url(path: String) = s"$serviceUrl$path"
-
-  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
-
-  def connectToAtsOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
-    hc: HeaderCarrier
-  ): Future[AtsResponse] =
-    connectToAts(requestedUTR, taxYear)
-
-  def connectToAtsList(
-    UTR: SaUtr,
-    endYear: Int,
-    numberOfYears: Int
-  )(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
-
-  def connectToAtsListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
-    hc: HeaderCarrier
-  ): Future[AtsResponse] =
-    connectToAtsList(requestedUTR, endYear, numberOfYears)
 
   def connectToPayeATS(nino: Nino, taxYear: Int)(implicit
     hc: HeaderCarrier
@@ -70,16 +49,10 @@ class MiddleConnector @Inject() (http: HttpClientV2, httpHandler: HttpHandler)(i
     http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
-  def connectToGovernmentSpend(
-    taxYear: Int
-  )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
-    val fullUrl = url(s"/taxs/government-spend/$taxYear")
-    http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
-  }
-
-  val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
+  private val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
     case e: HttpException =>
       logger.error(e.message)
       Left(UpstreamErrorResponse(e.message, e.responseCode))
   }
+
 }

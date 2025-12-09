@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import com.google.inject.Inject
 import common.config.ApplicationConfig
-import common.connectors.MiddleConnector
+import common.connectors.GovSpendConnector
 import io.jsonwebtoken.io.DeserializationException
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsData, AtsErrorResponse, GovernmentSpendingOutputWrapper, SpendData}
@@ -31,7 +31,7 @@ import common.view_models.GovernmentSpend
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector: MiddleConnector)(implicit
+class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector: GovSpendConnector)(implicit
   val appConfig: ApplicationConfig
 ) {
 
