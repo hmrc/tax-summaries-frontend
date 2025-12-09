@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package common.views
+package sa.views
 
-import common.models.requests
-import common.models.{ActingAsAttorneyFor, requests}
 import common.models.requests.AuthenticatedRequest
+import common.models.{ActingAsAttorneyFor, requests}
+import common.utils.TestConstants
+import common.view_models.*
+import common.views.ViewSpecBase
+import sa.views.html.NicsView
+import common.views.html.total_income_tax_includes.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -27,10 +31,6 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import common.utils.TestConstants
-import common.view_models.*
-import common.views.html.NicsView
-import common.views.html.total_income_tax_includes.*
 
 class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 

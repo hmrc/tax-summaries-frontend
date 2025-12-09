@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package common.views
+package sa.views
 
-import common.models.requests
-import common.models.{ActingAsAttorneyFor, requests}
 import common.models.requests.AuthenticatedRequest
+import common.models.{ActingAsAttorneyFor, requests}
+import common.utils.TestConstants
+import common.view_models.{Amount, CapitalGains}
+import common.views.ViewSpecBase
+import sa.views.html.CapitalGainsView
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import common.utils.TestConstants
-import common.view_models.{Amount, CapitalGains}
-import common.views.html.CapitalGainsView
 
 class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
 

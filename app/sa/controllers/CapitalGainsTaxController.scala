@@ -24,7 +24,7 @@ import common.models.requests.AuthenticatedRequest
 import common.services.AuditService
 import common.utils.{GenericViewModel, TaxYearUtil}
 import common.view_models.CapitalGains
-import common.views.html.CapitalGainsView
+import sa.views.html.CapitalGainsView
 import common.views.html.errors.{GenericErrorView, TokenErrorView}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import sa.services.CapitalGainsService
