@@ -32,6 +32,8 @@ import sa.views.html.{CapitalGainsView, IncomeBeforeTaxView, NicsView}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
+import sa.views.html.SummaryView
+import sa.views.html.TaxFreeAmountView
 
 import scala.concurrent.ExecutionContext
 
