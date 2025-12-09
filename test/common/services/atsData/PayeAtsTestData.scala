@@ -18,7 +18,7 @@ package common.services.atsData
 
 import common.models.*
 import common.utils.BaseSpec
-import common.view_models.paye.*
+import paye.view_models.*
 import common.view_models.{Amount, Rate}
 
 class PayeAtsTestData extends BaseSpec {

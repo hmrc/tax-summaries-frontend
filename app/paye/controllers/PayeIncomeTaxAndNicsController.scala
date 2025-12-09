@@ -21,10 +21,10 @@ import common.config.{ApplicationConfig, PayeConfig}
 import common.controllers.auth.AuthJourney
 import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsNotFoundResponse, PayeAtsData}
-import common.view_models.paye.PayeIncomeTaxAndNics
 import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeIncomeTaxAndNicsView
 import paye.services.PayeAtsService
+import paye.view_models.PayeIncomeTaxAndNics
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

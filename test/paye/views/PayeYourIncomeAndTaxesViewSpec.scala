@@ -20,11 +20,11 @@ import common.models.requests
 import common.models.requests.PayeAuthenticatedRequest
 import common.services.atsData.PayeAtsTestData
 import common.utils.TestConstants
-import common.view_models.paye.PayeYourIncomeAndTaxes
 import common.views.ViewSpecBase
 import common.views.behaviours.ViewBehaviours
 import paye.views.html.PayeYourIncomeAndTaxesView
 import org.jsoup.Jsoup
+import paye.view_models.PayeYourIncomeAndTaxes
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html

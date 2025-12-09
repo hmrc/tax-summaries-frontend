@@ -25,6 +25,7 @@ import common.utils.JsonUtil
 import common.view_models.Amount
 import common.utils.TaxYearForTesting
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import paye.view_models.{IncomeTaxRow, PayeYourTaxableIncome}
 
 class PayeYourTaxableIncomeSpec
     extends AnyWordSpec

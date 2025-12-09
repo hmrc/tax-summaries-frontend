@@ -24,6 +24,7 @@ import play.api.test.Injecting
 import common.services.atsData.PayeAtsTestData
 import common.utils.{BaseSpec, JsonUtil}
 import common.view_models.Amount
+import paye.view_models.{PayeGovernmentSpend, SpendRow}
 
 class PayeGovernmentSpendSpec
     extends BaseSpec

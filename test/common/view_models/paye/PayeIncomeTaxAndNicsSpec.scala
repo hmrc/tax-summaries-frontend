@@ -21,6 +21,7 @@ import common.models.{DataHolder, PayeAtsData, TaxBand}
 import common.services.atsData.PayeAtsTestData
 import common.utils.BaseSpec
 import common.view_models.{Amount, Rate}
+import paye.view_models.{AdjustmentRow, PayeIncomeTaxAndNics}
 
 class PayeIncomeTaxAndNicsSpec extends BaseSpec {
 

@@ -22,10 +22,10 @@ import common.controllers.auth.AuthJourney
 import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsNotFoundResponse, PayeAtsData}
 import common.services.GovernmentSpendService
-import common.view_models.paye.PayeGovernmentSpend
 import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeGovernmentSpendingView
 import paye.services.PayeAtsService
+import paye.view_models.PayeGovernmentSpend
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

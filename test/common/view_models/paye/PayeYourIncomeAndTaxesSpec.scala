@@ -24,6 +24,7 @@ import common.services.atsData.PayeAtsTestData
 import common.utils.{JsonUtil, TaxYearForTesting}
 import common.view_models.Amount
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import paye.view_models.PayeYourIncomeAndTaxes
 class PayeYourIncomeAndTaxesSpec
     extends AnyWordSpec
     with Matchers

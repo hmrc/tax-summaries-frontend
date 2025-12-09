@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package paye.view_models
+import common.view_models.paye.TaxYearFormatting
 
 case class PayeAtsMain(taxYear: Int) extends TaxYearFormatting

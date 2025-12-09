@@ -23,6 +23,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import common.utils.{JsonUtil, TaxYearForTesting}
 import common.view_models.Amount
+import paye.view_models.{AmountRow, PayeTaxFreeAmount}
 
 class PayeTaxFreeAmountSpec
     extends AnyWordSpec

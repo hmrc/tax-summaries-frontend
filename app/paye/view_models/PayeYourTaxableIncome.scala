@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package common.view_models.paye
+package paye.view_models
 
 import common.models.{DataHolder, PayeAtsData}
 import common.view_models.Amount
+import common.view_models.paye.TaxYearFormatting
 
 case class PayeYourTaxableIncome(
   taxYear: Int,
