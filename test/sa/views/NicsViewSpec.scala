@@ -22,7 +22,7 @@ import common.utils.TestConstants
 import common.view_models.*
 import common.views.ViewSpecBase
 import sa.views.html.NicsView
-import common.views.html.total_income_tax_includes.*
+import sa.views.html.total_income_tax_includes.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks

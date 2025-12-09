@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.views.total_income_tax_includes
+package sa.views.total_income_tax_includes
 
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary._
@@ -22,7 +22,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import common.utils.{TestConstants, ViewUtils}
 import common.view_models.{Amount, Rate, ScottishRates, ScottishTax}
 import common.views.ViewSpecBase
-import common.views.html.total_income_tax_includes.ScottishTableView
+import sa.views.html.total_income_tax_includes.ScottishTableView
 
 class ScottishTableSpec extends ViewSpecBase with TestConstants with ScalaCheckDrivenPropertyChecks {
 
