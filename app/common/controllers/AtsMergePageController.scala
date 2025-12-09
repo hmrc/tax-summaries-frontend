@@ -94,7 +94,7 @@ class AtsMergePageController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
-    atsForms.atsYearFormMapping
+    atsForms.atsYearChoiceForm
       .bindFromRequest()
       .fold(
         formWithErrors => getSaAndPayeYearList(Some(formWithErrors)),
@@ -129,8 +129,8 @@ class AtsMergePageController @Inject() (
     formWithErrors.getOrElse {
       request.session
         .get("yearChoice")
-        .fold(atsForms.atsYearFormMapping)(value =>
-          atsForms.atsYearFormMapping.fill(AtsYearChoice.fromString(Some(value)))
+        .fold(atsForms.atsYearChoiceForm)(value =>
+          atsForms.atsYearChoiceForm.fill(AtsYearChoice.fromString(Some(value)))
         )
     }
 }

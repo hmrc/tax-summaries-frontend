@@ -109,7 +109,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result = view(
           AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, mockAppConfig, ConfidenceLevel.L200),
-          atsForms.atsYearFormMapping
+          atsForms.atsYearChoiceForm
         )
 
         result must include(messages("merge.page.ats.select_tax_year.title"))
@@ -120,7 +120,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         val result =
           view(
             AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must include(messages("merge.page.ats.select_tax_year.title"))
@@ -143,7 +143,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               mockAppConfig,
               ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must include(messages("merge.page.no.ats.summary.text"))
@@ -174,7 +174,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               mockAppConfig,
               ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must not include messages("merge.page.no.ats.summary.unavailable.text")
@@ -196,7 +196,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             mockAppConfig,
             ConfidenceLevel.L200
           ),
-          atsForms.atsYearFormMapping
+          atsForms.atsYearChoiceForm
         )
 
         result must include(s"${currentTaxYearSA - 1} to $currentTaxYearSA for PAYE")
@@ -213,7 +213,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         val result =
           view(
             AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must not include "for PAYE"
@@ -229,7 +229,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               mockAppConfig,
               ConfidenceLevel.L50
             ),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must include(messages("merge.page.paye.ivuplift.text"))
@@ -240,7 +240,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         val result =
           view(
             AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L50),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must not include messages("merge.page.paye.ivuplift.text")
@@ -256,7 +256,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               mockAppConfig,
               ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must not include messages("merge.page.paye.ivuplift.text")
@@ -266,7 +266,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result = view(
           AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
-          atsForms.atsYearFormMapping,
+          atsForms.atsYearChoiceForm,
           payeAvailable = false
         )
         result must include(messages("merge.page.paye.unavailable"))
@@ -294,7 +294,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             mockAppConfig,
             ConfidenceLevel.L200
           ),
-          atsForms.atsYearFormMapping
+          atsForms.atsYearChoiceForm
         )
 
         result must include(s"${currentTaxYearSA - 1} to $currentTaxYearSA for Self Assessment")
@@ -311,7 +311,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         val result =
           view(
             AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must not include "for Self Assessment"
@@ -321,7 +321,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result = view(
           AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
-          atsForms.atsYearFormMapping,
+          atsForms.atsYearChoiceForm,
           saAvailable = false
         )
         result must include(messages("merge.page.sa.unavailable"))
@@ -345,7 +345,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             mockAppConfig,
             ConfidenceLevel.L50
           ),
-          atsForms.atsYearFormMapping
+          atsForms.atsYearChoiceForm
         )
         result must not include "hmrc-account-menu"
       }
@@ -366,7 +366,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             mockAppConfig,
             ConfidenceLevel.L50
           ),
-          atsForms.atsYearFormMapping
+          atsForms.atsYearChoiceForm
         )
         result must include("hmrc-account-menu")
       }
@@ -386,7 +386,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               appConfig = mockAppConfig,
               confidenceLevel = ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping.withError("error", "broken")
+            atsForms.atsYearChoiceForm.withError("error", "broken")
           )
         )
 
@@ -415,7 +415,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               mockAppConfig,
               ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping.fill(AtsYearChoice(SA, currentTaxYearSA))
+            atsForms.atsYearChoiceForm.fill(AtsYearChoice(SA, currentTaxYearSA))
           )
         )
         assert(result.getElementById(s"year-$currentTaxYearSA-SA").hasAttr("checked"))
@@ -436,7 +436,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               appConfig = mockAppConfig,
               confidenceLevel = ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping.fill(AtsYearChoice(PAYE, currentTaxYearPAYE - 3))
+            atsForms.atsYearChoiceForm.fill(AtsYearChoice(PAYE, currentTaxYearPAYE - 3))
           )
         )
         assert(result.getElementById(s"year-${currentTaxYearPAYE - 3}-PAYE").hasAttr("checked"))
@@ -456,7 +456,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               appConfig = mockAppConfig,
               confidenceLevel = ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping
+            atsForms.atsYearChoiceForm
           )
 
         result must not include messages("merge.page.no.ats.summary.text")
@@ -479,7 +479,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
             appConfig = mockAppConfig,
             confidenceLevel = ConfidenceLevel.L50
           ),
-          atsForms.atsYearFormMapping
+          atsForms.atsYearChoiceForm
         )
         result.contains(messages("merge.page.paye.ivuplift.header")) mustBe true
       }
@@ -496,7 +496,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               appConfig = mockAppConfig,
               confidenceLevel = ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping.withError("error", "broken")
+            atsForms.atsYearChoiceForm.withError("error", "broken")
           )
         )
 
@@ -520,7 +520,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
               appConfig = mockAppConfig,
               confidenceLevel = ConfidenceLevel.L200
             ),
-            atsForms.atsYearFormMapping.withError("error", "broken")
+            atsForms.atsYearChoiceForm.withError("error", "broken")
           )
         )
 

@@ -19,7 +19,7 @@
 @import common.view_models.Rate
 
 @this(viewUtils: ViewUtils)
-@(taxModel: common.view_models.ScottishTax, ratesModel: common.view_models.ScottishRates)(implicit messages: Messages)
+@(taxModel: sa.view_models.ScottishTax, ratesModel: sa.view_models.ScottishRates)(implicit messages: Messages)
 
 @taxRow(id: String, tax: Amount, total: Amount, rate: Rate) = {
 @if(tax.nonZero) {

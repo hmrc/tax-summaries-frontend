@@ -50,7 +50,7 @@ class AtsForms @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
 
   val yearChoice = "year"
 
-  val atsYearFormMapping: Form[AtsYearChoice] = Form(
+  val atsYearChoiceForm: Form[AtsYearChoice] = Form(
     mapping(
       yearChoice -> optional(text)
         .verifying("ats.select_tax_year.required", _.nonEmpty)
