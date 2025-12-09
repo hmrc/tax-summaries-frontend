@@ -172,7 +172,7 @@ class PayeAuthActionSpec extends BaseSpec {
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe common.controllers.paye.routes.PayeErrorController.serviceUnavailable.url
+      redirectLocation(result).get mustBe paye.controllers.routes.PayeErrorController.serviceUnavailable.url
       verifyNoInteractions(mockAuthConnector)
     }
   }

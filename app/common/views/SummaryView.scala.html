@@ -74,7 +74,7 @@
 
         @h2("ats.summary.total_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
-        <a href="@common.controllers.sa.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo" class="data-link">
+        <a href="@sa.controllers.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo" class="data-link">
             @linkSectionContents(Messages("screen.reader.total_income"), viewModel.yourIncomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="income-before-tax-amount", Messages("ats.summary.total_income.link"))
         </a>
 
@@ -86,7 +86,7 @@
 
         @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
-        <a href="@common.controllers.sa.routes.AllowancesController.authorisedAllowance?taxYear=@viewModel.taxYearTo" class="data-link">
+        <a href="@sa.controllers.routes.AllowancesController.authorisedAllowance?taxYear=@viewModel.taxYearTo" class="data-link">
             @linkSectionContents(Messages("screen.reader.tax_free_amount"), viewModel.totalTaxFreeAllowance.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="total-tax-free-income", Messages("ats.summary.tax_free.link"))
         </a>
 
@@ -98,7 +98,7 @@
 
             @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
-            <a href="@common.controllers.sa.routes.NicsController.authorisedTaxAndNICs?taxYear=@viewModel.taxYearTo" class="data-link">
+            <a href="@sa.controllers.routes.NicsController.authorisedTaxAndNICs?taxYear=@viewModel.taxYearTo" class="data-link">
                 @linkSectionContents(Messages("screen.reader.income_tax_and_ni"), viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="total-income-tax-and-nics", Messages("ats.summary.tax_and_nics.link"))
             </a>
 
@@ -112,7 +112,7 @@
 
                 @h2("ats.summary.capital_gains.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
 
-                <a href="@common.controllers.sa.routes.CapitalGainsTaxController.authorisedCapitalGains?taxYear=@viewModel.taxYearTo" class="data-link">
+                <a href="@sa.controllers.routes.CapitalGainsTaxController.authorisedCapitalGains?taxYear=@viewModel.taxYearTo" class="data-link">
                     @linkSectionContents(Messages("screen.reader.capital_gains_tax"), viewModel.totalCapitalGainsTax.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="total-capital-gains-tax", Messages("ats.summary.capital_gains.link"))
                 </a>
 

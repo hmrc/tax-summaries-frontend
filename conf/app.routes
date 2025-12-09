@@ -6,45 +6,45 @@ GET     /assets/*file                                          controllers.Asset
 
 GET     /                                                      common.controllers.AtsMergePageController.onPageLoad
 POST    /                                                      common.controllers.AtsMergePageController.onSubmit
-GET     /sa/main                                               common.controllers.sa.AtsMainController.authorisedAtsMain
-GET     /sa/summary                                            common.controllers.sa.SummaryController.authorisedSummaries
-GET     /sa/nics                                               common.controllers.sa.NicsController.redirectForDeprecatedNicsPage
-GET     /sa/income-tax-national-insurance-contributions        common.controllers.sa.NicsController.authorisedTaxAndNICs
-GET     /sa/treasury-spending                                  common.controllers.sa.GovernmentSpendController.authorisedGovernmentSpendData
-GET     /sa/income-before-tax                                  common.controllers.sa.IncomeController.authorisedIncomeBeforeTax
-GET     /sa/tax-free-income                                    common.controllers.sa.AllowancesController.authorisedAllowance
-GET     /sa/total-income-tax                                   common.controllers.sa.NicsController.redirectForDeprecatedTotalIncomeTaxPage
-GET     /sa/capital-gains-tax                                  common.controllers.sa.CapitalGainsTaxController.authorisedCapitalGains
+GET     /sa/main                                               sa.controllers.AtsMainController.authorisedAtsMain
+GET     /sa/summary                                            sa.controllers.SummaryController.authorisedSummaries
+GET     /sa/nics                                               sa.controllers.NicsController.redirectForDeprecatedNicsPage
+GET     /sa/income-tax-national-insurance-contributions        sa.controllers.NicsController.authorisedTaxAndNICs
+GET     /sa/treasury-spending                                  sa.controllers.GovernmentSpendController.authorisedGovernmentSpendData
+GET     /sa/income-before-tax                                  sa.controllers.IncomeController.authorisedIncomeBeforeTax
+GET     /sa/tax-free-income                                    sa.controllers.AllowancesController.authorisedAllowance
+GET     /sa/total-income-tax                                   sa.controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
+GET     /sa/capital-gains-tax                                  sa.controllers.CapitalGainsTaxController.authorisedCapitalGains
 
 GET     /not-authorised                                        common.controllers.ErrorController.notAuthorised
 GET     /no-ats                                                common.controllers.ErrorController.authorisedNoAts(taxYear:Int)
 GET     /no-tax-year                                           common.controllers.ErrorController.authorisedNoTaxYear
 GET     /service-unavailable                                   common.controllers.ErrorController.serviceUnavailable
 
-GET     /language/:lang                                        common.controllers.paye.PayeLanguageController.switchToLanguage(lang: String)
+GET     /language/:lang                                        paye.controllers.PayeLanguageController.switchToLanguage(lang: String)
 GET     /language/:lang                                        common.controllers.SaLanguageController.switchToLanguage(lang: String)
 
 GET     /sign-out                                              common.controllers.AccountController.signOut
 
-GET     /paye/treasury-spending/:taxYear                       common.controllers.paye.PayeGovernmentSpendController.show(taxYear: Int)
+GET     /paye/treasury-spending/:taxYear                       paye.controllers.PayeGovernmentSpendController.show(taxYear: Int)
 
 GET     /paye/main                                             common.controllers.AtsMergePageController.onPageLoad
 POST    /paye/main                                             common.controllers.AtsMergePageController.onSubmit
 
-GET     /paye/main/:taxYear                                    common.controllers.paye.PayeAtsMainController.show(taxYear: Int)
+GET     /paye/main/:taxYear                                    paye.controllers.PayeAtsMainController.show(taxYear: Int)
 GET     /upliftConfidenceLevel                                 common.controllers.IvUpliftRedirectController.upliftConfidenceLevel
 
-GET     /paye/summary/:taxYear                                 common.controllers.paye.PayeYourIncomeAndTaxesController.show(taxYear: Int)
+GET     /paye/summary/:taxYear                                 paye.controllers.PayeYourIncomeAndTaxesController.show(taxYear: Int)
 
-GET     /paye/income-tax-and-national-insurance/:taxYear       common.controllers.paye.PayeIncomeTaxAndNicsController.show(taxYear: Int)
+GET     /paye/income-tax-and-national-insurance/:taxYear       paye.controllers.PayeIncomeTaxAndNicsController.show(taxYear: Int)
 
-GET     /paye/income-before-tax/:taxYear                       common.controllers.paye.PayeYourTaxableIncomeController.show(taxYear: Int)
+GET     /paye/income-before-tax/:taxYear                       paye.controllers.PayeYourTaxableIncomeController.show(taxYear: Int)
 
-GET     /paye/tax-free-income/:taxYear                         common.controllers.paye.PayeTaxFreeAmountController.show(taxYear: Int)
+GET     /paye/tax-free-income/:taxYear                         paye.controllers.PayeTaxFreeAmountController.show(taxYear: Int)
 
-GET     /paye/not-authorised                                   common.controllers.paye.PayeErrorController.notAuthorised
+GET     /paye/not-authorised                                   paye.controllers.PayeErrorController.notAuthorised
 
-GET     /paye/service-unavailable                              common.controllers.paye.PayeErrorController.serviceUnavailable
+GET     /paye/service-unavailable                              paye.controllers.PayeErrorController.serviceUnavailable
 
 GET     /keepalive                                             common.controllers.AccountController.keepAlive
 GET     /session-expired                                       common.controllers.AccountController.sessionExpired

@@ -109,10 +109,10 @@ class AtsMergePageController @Inject() (
     taxYearChoice.atsType match {
       case SA   =>
         Redirect(
-          common.controllers.sa.routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + taxYearChoice.year
+          sa.controllers.routes.AtsMainController.authorisedAtsMain.url + "?taxYear=" + taxYearChoice.year
         )
       case PAYE =>
-        Redirect(common.controllers.paye.routes.PayeAtsMainController.show(taxYearChoice.year))
+        Redirect(paye.controllers.routes.PayeAtsMainController.show(taxYearChoice.year))
       case _    =>
         Redirect(common.controllers.routes.ErrorController.authorisedNoAts(taxYearChoice.year))
     }

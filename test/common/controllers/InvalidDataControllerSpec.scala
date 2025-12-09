@@ -17,17 +17,17 @@
 package common.controllers
 
 import common.controllers.auth.FakeAuthJourney
-import common.controllers.sa.{AllowancesController, CapitalGainsTaxController, GovernmentSpendController, IncomeController, NicsController, SummaryController}
 import common.models.requests.AuthenticatedRequest
+import common.services.*
+import common.utils.{ControllerBaseSpec, TaxYearUtil}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import common.services.*
 import uk.gov.hmrc.http.HeaderCarrier
-import common.utils.{ControllerBaseSpec, TaxYearUtil}
+import sa.controllers._
 
 import scala.concurrent.Future
 

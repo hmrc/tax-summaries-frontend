@@ -26,9 +26,9 @@ import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeConnector @Inject()(http: HttpClientV2)(implicit
-                                                  appConfig: ApplicationConfig,
-                                                  ec: ExecutionContext
+class PayeConnector @Inject() (http: HttpClientV2)(implicit
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext
 ) extends Logging {
 
   val serviceUrl: String = appConfig.serviceUrl

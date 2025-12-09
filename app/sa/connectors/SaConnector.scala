@@ -26,8 +26,8 @@ import uk.gov.hmrc.http.*
 
 import scala.concurrent.Future
 
-class SaConnector @Inject()(httpHandler: HttpHandler)(implicit
-                                                      appConfig: ApplicationConfig
+class SaConnector @Inject() (httpHandler: HttpHandler)(implicit
+  appConfig: ApplicationConfig
 ) extends Logging {
 
   val serviceUrl: String = appConfig.serviceUrl

@@ -76,7 +76,7 @@ class PayeAuthActionImpl(
   }
 
   private def redirectToServiceUnavailable: Future[Result] =
-    Future.successful(Redirect(common.controllers.paye.routes.PayeErrorController.serviceUnavailable))
+    Future.successful(Redirect(paye.controllers.routes.PayeErrorController.serviceUnavailable))
 
   private def handleAuthorisation[A](
     request: Request[A],
@@ -108,7 +108,7 @@ class PayeAuthActionImpl(
       }
 
   private def redirectToNotAuthorised: Future[Result] =
-    Future.successful(Redirect(common.controllers.paye.routes.PayeErrorController.notAuthorised))
+    Future.successful(Redirect(paye.controllers.routes.PayeErrorController.notAuthorised))
 }
 
 @Singleton

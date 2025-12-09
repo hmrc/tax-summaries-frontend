@@ -57,7 +57,7 @@
     <div id="taxable-income" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.total_income.title")
         <p>
-            <a href="@common.controllers.paye.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
+            <a href="@paye.controllers.routes.PayeYourTaxableIncomeController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = viewModel.incomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = false),
                                     xLargeID="income-before-tax-amount", 
                                     smallText = Messages("paye.ats.summary.total_income.link"))
@@ -70,7 +70,7 @@
     <div id="tax-free-income" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.tax_free.title")
         <p>
-            <a href="@common.controllers.paye.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
+            <a href="@paye.controllers.routes.PayeTaxFreeAmountController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = viewModel.taxableIncome.renderCurrencyValueAsHtml(poundsOnly = false),
                                     xLargeID="total-tax-free-income", 
                                     smallText = Messages("paye.ats.summary.tax_free.link"))
@@ -82,7 +82,7 @@
     <div id="tax-calculated-as" class="govuk-!-margin-bottom-8">
         @h2("paye.ats.summary.nicsheading", elmId=Some("tax-and-nics-title"))
         <p>
-            <a href="@common.controllers.paye.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
+            <a href="@paye.controllers.routes.PayeIncomeTaxAndNicsController.show(viewModel.taxYear)" class="data-link">
                 @linkSectionContents(xLargeText = viewModel.totalIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false),
                                     xLargeID="total-income-tax-and-nics", 
                                     smallText = Messages("paye.ats.summary.tax_and_nics.link"))

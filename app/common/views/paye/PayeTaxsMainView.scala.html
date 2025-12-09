@@ -45,9 +45,9 @@
         htmlFormatter.toHtmlNonBroken(Messages("generic.tax.year.end") + " " + viewModel.taxYearTo))))
 
     @p(HtmlContent(Messages("paye.ats.index.html.lede")), elmId=Some("index-page-description"))
-    @h2(link(link=common.controllers.paye.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear).url, messageKey = "ats.index.html.tax_calc_link", id=Some("tax-calc-link"), inParagraph=true).toString, classes=Some("govuk-heading-m"))
+    @h2(link(link=paye.controllers.routes.PayeYourIncomeAndTaxesController.show(viewModel.taxYear).url, messageKey = "ats.index.html.tax_calc_link", id=Some("tax-calc-link"), inParagraph=true).toString, classes=Some("govuk-heading-m"))
     @p(Text(Messages("paye.ats.index.html.tax_calc_description")))
-    @h2(link(link=common.controllers.paye.routes.PayeGovernmentSpendController.show(viewModel.taxYear).url, messageKey="paye.ats.index.html.tax_spend_link", id=Some("tax-services-link"), inParagraph = true).toString, classes=Some("govuk-heading-m"))
+    @h2(link(link=paye.controllers.routes.PayeGovernmentSpendController.show(viewModel.taxYear).url, messageKey="paye.ats.index.html.tax_spend_link", id=Some("tax-services-link"), inParagraph = true).toString, classes=Some("govuk-heading-m"))
     @p(Text(Messages("paye.ats.index.html.tax_spend_description")))
 
 

@@ -58,13 +58,13 @@
         @p(Text(Messages("ats.index.html.lede")), elmId = Some("index-page-description"), classes = Some("govuk-body-l"))
 
         <div id="tax-summary">
-          <h2><a id="tax-calc-link" class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-32" href="@common.controllers.sa.routes.SummaryController.authorisedSummaries?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
+          <h2><a id="tax-calc-link" class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-32" href="@sa.controllers.routes.SummaryController.authorisedSummaries?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_calc_link"))</a></h2>
            @p(HtmlContent(Messages("ats.index.html.tax_calc_description")))
         </div>
 
         <div id="tax-spent">
             <h2>
-                <a id="tax-services-link" class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-32" href="@common.controllers.sa.routes.GovernmentSpendController.authorisedGovernmentSpendData?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a>
+                <a id="tax-services-link" class="govuk-link govuk-!-font-weight-bold govuk-!-font-size-32" href="@sa.controllers.routes.GovernmentSpendController.authorisedGovernmentSpendData?taxYear=@viewModel.taxYearTo">@Html(Messages("ats.index.html.tax_spend_link"))</a>
             </h2>
             @p(HtmlContent(Messages("ats.index.html.tax_spend_description")))
         </div>
