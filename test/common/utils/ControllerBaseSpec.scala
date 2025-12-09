@@ -34,6 +34,7 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import sa.views.html.SummaryView
 import sa.views.html.TaxFreeAmountView
+import sa.views.html.TaxsMainView
 
 import scala.concurrent.ExecutionContext
 
