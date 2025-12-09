@@ -41,12 +41,12 @@ import common.view_models.{AtsList, AtsMergePageViewModel}
 
 import scala.concurrent.Future
 
-class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
+class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
   val mockAtsMergePageService: AtsMergePageService = mock[AtsMergePageService]
   val atsForms: AtsForms                           = inject[AtsForms]
 
   implicit lazy val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
-  val sut                                            = new AtsMergePageController(
+  val sut                                            = new SelectTaxYearController(
     mockAtsMergePageService,
     FakeAuthJourney,
     mcc,
@@ -86,7 +86,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     ()
   }
 
-  "AtsMergePageController for onPageLoad" must {
+  "SelectTaxYearController for onPageLoad" must {
 
     "return a 200 response when called without '?ref=PORTAL' and must not put TAXS_USER_TYPE in session" in {
 
@@ -111,7 +111,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
         isAgentActive = true,
         ConfidenceLevel.L50,
         fakeCredentials,
-        FakeRequest("GET", common.controllers.routes.AtsMergePageController.onPageLoad.toString + "?ref=PORTAL")
+        FakeRequest("GET", common.controllers.routes.SelectTaxYearController.onPageLoad.toString + "?ref=PORTAL")
       )
 
       when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
@@ -190,7 +190,7 @@ class AtsMergePageControllerSpec extends ControllerBaseSpec with ScalaFutures wi
     }
   }
 
-  "AtsMergePageController for onSubmit" must {
+  "SelectTaxYearController for onSubmit" must {
 
     "return a success response and redirect to sa main page when selected sa tax year" in {
 

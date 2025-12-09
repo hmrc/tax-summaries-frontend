@@ -39,7 +39,7 @@ import common.utils.{Globals, IntegrationSpec, LoginPage}
 import java.time.Instant
 import scala.concurrent.Future
 
-object AtsMergePageControllerItSpec extends IntegrationSpec {
+object SelectTaxYearControllerItSpec$ extends IntegrationSpec {
   private val mockPertaxAuthService = mock[PertaxAuthService]
 
   private val agentTokenMock: AgentToken = AgentToken("uar", generatedSaUtr.utr, Instant.now().toEpochMilli)
@@ -57,8 +57,8 @@ object AtsMergePageControllerItSpec extends IntegrationSpec {
   }
 }
 
-class AtsMergePageControllerItSpec extends IntegrationSpec {
-  import AtsMergePageControllerItSpec.*
+class SelectTaxYearControllerItSpec$ extends IntegrationSpec {
+  import SelectTaxYearControllerItSpec$.*
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port"          -> server.port(),

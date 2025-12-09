@@ -74,7 +74,7 @@ class NicsControllerSpec extends ControllerBaseSpec {
         )
       status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get mustBe common.controllers.routes.AtsMergePageController.onPageLoad.url
+      redirectLocation(result).get mustBe common.controllers.routes.SelectTaxYearController.onPageLoad.url
     }
   }
 

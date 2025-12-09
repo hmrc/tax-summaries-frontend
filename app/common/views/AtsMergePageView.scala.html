@@ -75,7 +75,7 @@
 ) {
     @errorSummary(atsYearForm, errorSummaryLink)
 
-    @formWithCSRF(action = common.controllers.routes.AtsMergePageController.onSubmit) {
+    @formWithCSRF(action = common.controllers.routes.SelectTaxYearController.onSubmit) {
         @pageHeading(
             elmId = "index-page-header",
             text = atsMergePageViewModel.subtitleMsg

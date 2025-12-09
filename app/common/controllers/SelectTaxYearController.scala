@@ -35,7 +35,7 @@ import common.views.html.errors.GenericErrorView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageController @Inject() (
+class SelectTaxYearController @Inject() (
   atsMergePageService: AtsMergePageService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,

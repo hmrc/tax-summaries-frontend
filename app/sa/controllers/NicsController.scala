@@ -47,7 +47,7 @@ class NicsController @Inject() (
     request.getQueryString("taxYear") match {
       case Some(taxYear) =>
         Redirect(sa.controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$taxYear")
-      case _             => Redirect(common.controllers.routes.AtsMergePageController.onPageLoad)
+      case _             => Redirect(common.controllers.routes.SelectTaxYearController.onPageLoad)
     }
 
   def redirectForDeprecatedTotalIncomeTaxPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents { request =>

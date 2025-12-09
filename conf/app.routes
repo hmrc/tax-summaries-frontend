@@ -4,8 +4,22 @@
 
 GET     /assets/*file                                          controllers.Assets.versioned(path="/public", file: Asset)
 
-GET     /                                                      common.controllers.AtsMergePageController.onPageLoad
-POST    /                                                      common.controllers.AtsMergePageController.onSubmit
+GET     /                                                      common.controllers.SelectTaxYearController.onPageLoad
+POST    /                                                      common.controllers.SelectTaxYearController.onSubmit
+
+GET     /paye/main                                             common.controllers.SelectTaxYearController.onPageLoad
+POST    /paye/main                                             common.controllers.SelectTaxYearController.onSubmit
+
+GET     /not-authorised                                        common.controllers.ErrorController.notAuthorised
+GET     /no-ats                                                common.controllers.ErrorController.authorisedNoAts(taxYear:Int)
+GET     /no-tax-year                                           common.controllers.ErrorController.authorisedNoTaxYear
+GET     /service-unavailable                                   common.controllers.ErrorController.serviceUnavailable
+
+GET     /sign-out                                              common.controllers.AccountController.signOut
+GET     /upliftConfidenceLevel                                 common.controllers.IvUpliftRedirectController.upliftConfidenceLevel
+GET     /keepalive                                             common.controllers.AccountController.keepAlive
+GET     /session-expired                                       common.controllers.AccountController.sessionExpired
+
 GET     /sa/main                                               sa.controllers.AtsMainController.authorisedAtsMain
 GET     /sa/summary                                            sa.controllers.SummaryController.authorisedSummaries
 GET     /sa/nics                                               sa.controllers.NicsController.redirectForDeprecatedNicsPage
@@ -16,35 +30,15 @@ GET     /sa/tax-free-income                                    sa.controllers.Al
 GET     /sa/total-income-tax                                   sa.controllers.NicsController.redirectForDeprecatedTotalIncomeTaxPage
 GET     /sa/capital-gains-tax                                  sa.controllers.CapitalGainsTaxController.authorisedCapitalGains
 
-GET     /not-authorised                                        common.controllers.ErrorController.notAuthorised
-GET     /no-ats                                                common.controllers.ErrorController.authorisedNoAts(taxYear:Int)
-GET     /no-tax-year                                           common.controllers.ErrorController.authorisedNoTaxYear
-GET     /service-unavailable                                   common.controllers.ErrorController.serviceUnavailable
-
 GET     /language/:lang                                        paye.controllers.PayeLanguageController.switchToLanguage(lang: String)
 GET     /language/:lang                                        common.controllers.SaLanguageController.switchToLanguage(lang: String)
 
-GET     /sign-out                                              common.controllers.AccountController.signOut
-
 GET     /paye/treasury-spending/:taxYear                       paye.controllers.PayeGovernmentSpendController.show(taxYear: Int)
-
-GET     /paye/main                                             common.controllers.AtsMergePageController.onPageLoad
-POST    /paye/main                                             common.controllers.AtsMergePageController.onSubmit
-
 GET     /paye/main/:taxYear                                    paye.controllers.PayeAtsMainController.show(taxYear: Int)
-GET     /upliftConfidenceLevel                                 common.controllers.IvUpliftRedirectController.upliftConfidenceLevel
-
 GET     /paye/summary/:taxYear                                 paye.controllers.PayeYourIncomeAndTaxesController.show(taxYear: Int)
-
 GET     /paye/income-tax-and-national-insurance/:taxYear       paye.controllers.PayeIncomeTaxAndNicsController.show(taxYear: Int)
-
 GET     /paye/income-before-tax/:taxYear                       paye.controllers.PayeYourTaxableIncomeController.show(taxYear: Int)
-
 GET     /paye/tax-free-income/:taxYear                         paye.controllers.PayeTaxFreeAmountController.show(taxYear: Int)
-
 GET     /paye/not-authorised                                   paye.controllers.PayeErrorController.notAuthorised
-
 GET     /paye/service-unavailable                              paye.controllers.PayeErrorController.serviceUnavailable
 
-GET     /keepalive                                             common.controllers.AccountController.keepAlive
-GET     /session-expired                                       common.controllers.AccountController.sessionExpired
