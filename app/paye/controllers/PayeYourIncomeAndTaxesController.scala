@@ -21,7 +21,7 @@ import common.controllers.auth.AuthJourney
 import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsNotFoundResponse, PayeAtsData}
 import common.view_models.paye.PayeYourIncomeAndTaxes
-import common.views.html.errors.PayeGenericErrorView
+import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeYourIncomeAndTaxesView
 import paye.services.PayeAtsService
 import play.api.Logging

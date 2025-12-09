@@ -27,7 +27,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.time.CurrentTaxYear
 import common.utils.TaxYearUtil
 import common.views.html.HowTaxIsSpentView
-import common.views.html.errors.{NotAuthorisedView, PageNotFoundTemplateView, ServiceUnavailableView}
+import common.views.html.errors.{PageNotFoundTemplateView, ServiceUnavailableView}
+import sa.views.html.errors.NotAuthorisedView
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}

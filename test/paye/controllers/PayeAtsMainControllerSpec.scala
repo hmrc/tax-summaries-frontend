@@ -21,7 +21,7 @@ import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import common.utils.JsonUtil
 import common.view_models.paye.PayeAtsMain
-import common.views.html.errors.PayeGenericErrorView
+import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeTaxsMainView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

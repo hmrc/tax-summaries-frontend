@@ -23,7 +23,7 @@ import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import common.services.GovernmentSpendService
 import common.utils.TestConstants.governmentSpendFromBackend
-import common.views.html.errors.PayeGenericErrorView
+import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeGovernmentSpendingView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

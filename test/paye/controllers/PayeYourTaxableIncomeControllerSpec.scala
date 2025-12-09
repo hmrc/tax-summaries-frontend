@@ -36,7 +36,7 @@ import common.controllers.auth.FakeAuthJourney
 import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData, requests}
 import common.utils.TestConstants.testNino
-import common.views.html.errors.PayeGenericErrorView
+import paye.views.html.errors.PayeGenericErrorView
 import paye.views.html.PayeYourTaxableIncomeView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
