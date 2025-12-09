@@ -27,6 +27,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.test.Helpers.*
+import sa.services.SummaryService
 
 import scala.concurrent.Future
 import scala.math.BigDecimal.double2bigDecimal

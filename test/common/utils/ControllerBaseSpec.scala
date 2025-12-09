@@ -23,14 +23,14 @@ import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
-import common.services.PayeAtsService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import common.utils.TestConstants.{testNino, testUtr}
-import common.view_models.*
-import common.views.html.*
-import common.views.html.errors.*
+import common.view_models.{Amount, IncomeTaxAndNI, Rate, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
+import common.views.html.{AtsMergePageView, CapitalGainsView, GovernmentSpendingView, HowTaxIsSpentView, IncomeBeforeTaxView, NicsView, SummaryView, TaxFreeAmountView, TaxsMainView}
+import common.views.html.errors.{GenericErrorView, NotAuthorisedView, PageNotFoundTemplateView, ServiceUnavailableView, TokenErrorView}
+import paye.services.PayeAtsService
 
 import scala.concurrent.ExecutionContext
 

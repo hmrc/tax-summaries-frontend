@@ -37,6 +37,7 @@ import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, TaxYearUtil}
 import common.view_models.{AtsList, AtsMergePageViewModel}
+import paye.services.PayeAtsService
 import sa.services.AtsListService
 
 import scala.concurrent.Future

@@ -28,6 +28,7 @@ import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import common.utils.*
 import common.view_models.{AtsList, AtsMergePageViewModel}
+import paye.services.PayeAtsService
 import sa.services.AtsListService
 
 import scala.concurrent.{ExecutionContext, Future}

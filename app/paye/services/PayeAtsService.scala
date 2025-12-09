@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package common.services
+package paye.services
 
 import com.google.inject.Inject
 import common.models.*
+import common.services.AuditService
 import common.utils.AuditTypes
 import paye.connectors.PayeConnector
 import play.api.Logging

@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package common.services
+package paye.services
 
-import common.models.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
 import common.models.*
+import common.models.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
+import common.services.AuditService
 import common.utils.BaseSpec
 import common.utils.TestConstants.{testNino, testUtr}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
+import paye.connectors.PayeConnector
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsResultException, JsValue, Json}
@@ -32,7 +34,6 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
-import paye.connectors.PayeConnector
 
 import scala.concurrent.Future
 

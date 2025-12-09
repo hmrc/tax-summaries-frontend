@@ -28,6 +28,7 @@ import org.mockito.Mockito.{reset, when}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.*
+import sa.services.SummaryService
 
 import scala.concurrent.Future
 
