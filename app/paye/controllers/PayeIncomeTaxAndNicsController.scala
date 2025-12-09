@@ -23,7 +23,7 @@ import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsNotFoundResponse, PayeAtsData}
 import common.view_models.paye.PayeIncomeTaxAndNics
 import common.views.html.errors.PayeGenericErrorView
-import common.views.html.paye.PayeIncomeTaxAndNicsView
+import paye.views.html.PayeIncomeTaxAndNicsView
 import paye.services.PayeAtsService
 import play.api.Logging
 import play.api.i18n.I18nSupport

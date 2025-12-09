@@ -37,7 +37,7 @@ import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData, requests}
 import common.utils.TestConstants.testNino
 import common.views.html.errors.PayeGenericErrorView
-import common.views.html.paye.PayeYourTaxableIncomeView
+import paye.views.html.PayeYourTaxableIncomeView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

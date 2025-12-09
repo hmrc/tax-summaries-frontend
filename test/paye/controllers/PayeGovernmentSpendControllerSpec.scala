@@ -24,7 +24,7 @@ import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import common.services.GovernmentSpendService
 import common.utils.TestConstants.governmentSpendFromBackend
 import common.views.html.errors.PayeGenericErrorView
-import common.views.html.paye.PayeGovernmentSpendingView
+import paye.views.html.PayeGovernmentSpendingView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

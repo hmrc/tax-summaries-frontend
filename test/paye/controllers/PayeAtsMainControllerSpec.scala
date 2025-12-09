@@ -22,7 +22,7 @@ import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import common.utils.JsonUtil
 import common.view_models.paye.PayeAtsMain
 import common.views.html.errors.PayeGenericErrorView
-import common.views.html.paye.PayeTaxsMainView
+import paye.views.html.PayeTaxsMainView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.*

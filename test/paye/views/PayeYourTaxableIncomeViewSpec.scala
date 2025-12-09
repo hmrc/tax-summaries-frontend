@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package common.views.paye
+package paye.views
 
 import common.models.requests
-import common.models.requests
 import common.models.requests.PayeAuthenticatedRequest
-import org.jsoup.Jsoup
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-import play.twirl.api.Html
 import common.services.atsData.PayeAtsTestData
 import common.utils.TestConstants
 import common.view_models.paye.PayeYourTaxableIncome
 import common.views.ViewSpecBase
 import common.views.behaviours.ViewBehaviours
-import common.views.html.paye.PayeYourTaxableIncomeView
+import paye.views.html.PayeYourTaxableIncomeView
+import org.jsoup.Jsoup
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import play.twirl.api.Html
 
 class PayeYourTaxableIncomeViewSpec extends ViewSpecBase with TestConstants with ViewBehaviours {
 

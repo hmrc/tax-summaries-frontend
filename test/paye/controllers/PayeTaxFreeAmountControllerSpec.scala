@@ -21,7 +21,7 @@ import common.controllers.auth.FakeAuthJourney
 import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import common.views.html.errors.PayeGenericErrorView
-import common.views.html.paye.PayeTaxFreeAmountView
+import paye.views.html.PayeTaxFreeAmountView
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
