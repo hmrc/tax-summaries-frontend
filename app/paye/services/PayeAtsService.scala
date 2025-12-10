@@ -39,7 +39,7 @@ class PayeAtsService @Inject() (payeConnector: PayeConnector, auditService: Audi
     hc: HeaderCarrier
   ): Future[Either[AtsResponse, PayeAtsData]] =
     for {
-      response <- payeConnector.connectToPayeATS(nino, taxYear)
+      response <- payeConnector.getDetail(nino, taxYear)
     } yield response match {
       case Right(atsData)              =>
         Try(atsData.json.as[PayeAtsData]) match {
@@ -65,7 +65,7 @@ class PayeAtsService @Inject() (payeConnector: PayeConnector, auditService: Audi
     hc: HeaderCarrier
   ): Future[Either[AtsResponse, List[Int]]] =
     for {
-      response <- payeConnector.connectToPayeATSMultipleYears(nino, yearFrom, yearTo)
+      response <- payeConnector.getDetailMultipleYears(nino, yearFrom, yearTo)
     } yield response match {
       case Right(atsData)              =>
         val res = atsData.json.as[List[PayeAtsData]]

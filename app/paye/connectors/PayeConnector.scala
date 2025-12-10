@@ -31,18 +31,16 @@ class PayeConnector @Inject() (http: HttpClientV2)(implicit
   ec: ExecutionContext
 ) extends Logging {
 
-  val serviceUrl: String = appConfig.serviceUrl
+  private def url(path: String) = s"${appConfig.serviceUrl}$path"
 
-  private def url(path: String) = s"$serviceUrl$path"
-
-  def connectToPayeATS(nino: Nino, taxYear: Int)(implicit
+  def getDetail(nino: Nino, taxYear: Int)(implicit
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url("/taxs/" + nino + "/" + taxYear + "/paye-ats-data")
     http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
-  def connectToPayeATSMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
+  def getDetailMultipleYears(nino: Nino, yearFrom: Int, yearTo: Int)(implicit
     hc: HeaderCarrier
   ): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url(s"/taxs/$nino/$yearFrom/$yearTo/paye-ats-data")

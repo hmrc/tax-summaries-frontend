@@ -92,7 +92,7 @@ class PayeConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.value
+      val result = sut.getDetail(testNino, currentTaxYearPAYE).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -110,7 +110,7 @@ class PayeConnectorSpec
               )
           )
 
-          val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.left.value
+          val result = sut.getDetail(testNino, currentTaxYearPAYE).futureValue.left.value
 
           result.statusCode mustBe status
         }
@@ -126,7 +126,7 @@ class PayeConnectorSpec
         )
       )
 
-      val result = sut.connectToPayeATS(testNino, currentTaxYearPAYE).futureValue.left.value
+      val result = sut.getDetail(testNino, currentTaxYearPAYE).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }
@@ -148,7 +148,7 @@ class PayeConnectorSpec
       )
 
       val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.value
+        sut.getDetailMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.value
 
       result.json mustBe Json.parse(expectedResponse)
     }
@@ -165,7 +165,7 @@ class PayeConnectorSpec
           )
 
           val result =
-            sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue
+            sut.getDetailMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue
           result.left.value.statusCode mustBe status
         }
       }
@@ -181,7 +181,7 @@ class PayeConnectorSpec
       )
 
       val result =
-        sut.connectToPayeATSMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.left.value
+        sut.getDetailMultipleYears(testNino, currentTaxYearPAYE - 1, currentTaxYearPAYE).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }

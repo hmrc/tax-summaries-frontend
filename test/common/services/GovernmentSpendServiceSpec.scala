@@ -82,7 +82,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
   "GovernmentSpendService govSpend" must {
     "return a complete GovernmentSpend with sorted spending when given complete AtsData" in {
       val atsData = AtsTestData.govSpendingData
-      when(mockMiddleConnector.connectToGovernmentSpend(any())(any[HeaderCarrier]))
+      when(mockMiddleConnector.get(any())(any[HeaderCarrier]))
         .thenReturn(
           Future.successful(
             Right(
@@ -128,7 +128,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
 
     "return a isScottishTaxPayer as true when incomeTaxStatus is 0002" in {
       val atsData = AtsTestData.govSpendingData
-      when(mockMiddleConnector.connectToGovernmentSpend(any())(any[HeaderCarrier]))
+      when(mockMiddleConnector.get(any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(HttpResponse(OK, """{"Environment" : 5.5}""", Map[String, Seq[String]]()))))
 
       val result = Await.result(sut.govSpend(atsData), 1500 millis)
@@ -139,7 +139,7 @@ class GovernmentSpendServiceSpec extends BaseSpec {
     "return a isScottishTaxPayer as false when incomeTaxStatus is not 0002" in {
       val atsData = AtsTestData.govSpendingDataForWelshUser
 
-      when(mockMiddleConnector.connectToGovernmentSpend(any())(any[HeaderCarrier]))
+      when(mockMiddleConnector.get(any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(HttpResponse(OK, """{"Environment" : 5.5}""", Map[String, Seq[String]]()))))
       val result = Await.result(sut.govSpend(atsData), 1500 millis)
 

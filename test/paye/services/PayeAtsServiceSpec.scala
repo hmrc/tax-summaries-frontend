@@ -77,7 +77,7 @@ class PayeAtsServiceSpec extends BaseSpec {
   "getPayeATSData" must {
 
     "return a successful response after transforming tax-summaries data to PAYE model" in {
-      when(mockPayeConnector.connectToPayeATS(any(), any())(any()))
+      when(mockPayeConnector.getDetail(any(), any())(any()))
         .thenReturn(Future.successful(Right(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]()))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc).futureValue
@@ -92,7 +92,7 @@ class PayeAtsServiceSpec extends BaseSpec {
                                  |}
                                  |""".stripMargin)
 
-      when(mockPayeConnector.connectToPayeATS(any(), any())(any[HeaderCarrier]))
+      when(mockPayeConnector.getDetail(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(HttpResponse(OK, badJson, Map[String, Seq[String]]()))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc).failed.futureValue
@@ -101,7 +101,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     }
 
     "return a BAD_REQUEST response after receiving BadRequestException from connector" in {
-      when(mockPayeConnector.connectToPayeATS(any(), any())(any[HeaderCarrier]))
+      when(mockPayeConnector.getDetail(any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("bad request", BAD_REQUEST))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc).futureValue
@@ -110,7 +110,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     }
 
     "return a NOT_FOUND response after receiving NOT_FOUND from connector" in {
-      when(mockPayeConnector.connectToPayeATS(any(), any())(any()))
+      when(mockPayeConnector.getDetail(any(), any())(any()))
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("not found", NOT_FOUND))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc).futureValue
@@ -119,7 +119,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     }
 
     "return a INTERNAL_SERVER_ERROR response after receiving some other error status" in {
-      when(mockPayeConnector.connectToPayeATS(any(), any())(any()))
+      when(mockPayeConnector.getDetail(any(), any())(any()))
         .thenReturn(Future.successful(Left(UpstreamErrorResponse("some error", INTERNAL_SERVER_ERROR))))
 
       val result = sut.getPayeATSData(testNino, currentYearMinus1)(hc).futureValue
@@ -128,7 +128,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     }
 
     "produce a 'success' audit event when returning a successful response" in {
-      when(mockPayeConnector.connectToPayeATS(any(), any())(any()))
+      when(mockPayeConnector.getDetail(any(), any())(any()))
         .thenReturn(Future.successful(Right(HttpResponse(OK, expectedResponse, Map[String, Seq[String]]()))))
 
       sut.getPayeATSData(testNino, currentYearMinus1)(hc).futureValue
@@ -144,7 +144,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return a successful response as list of tax years" in {
       when(
         mockPayeConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
+          .getDetailMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
@@ -162,7 +162,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       when(
         mockPayeConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
+          .getDetailMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
@@ -178,7 +178,7 @@ class PayeAtsServiceSpec extends BaseSpec {
 
       when(
         mockPayeConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
+          .getDetailMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )
@@ -193,7 +193,7 @@ class PayeAtsServiceSpec extends BaseSpec {
     "return an empty list after receiving NOT_FOUND from connector" in {
       when(
         mockPayeConnector
-          .connectToPayeATSMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
+          .getDetailMultipleYears(eqTo(testNino), eqTo(currentYearMinus1), eqTo(currentTaxYearSA))(
             any[HeaderCarrier]
           )
       )

@@ -46,7 +46,7 @@ class GovernmentSpendService @Inject() (atsService: AtsService, middleConnector:
     taxYear: Int
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, AtsErrorResponse, Seq[(String, Double)]] = {
 
-    val governmentSpend = EitherT(middleConnector.connectToGovernmentSpend(taxYear)).leftMap(upStreamErrorResponse =>
+    val governmentSpend = EitherT(middleConnector.get(taxYear)).leftMap(upStreamErrorResponse =>
       AtsErrorResponse(upStreamErrorResponse.message)
     )
 

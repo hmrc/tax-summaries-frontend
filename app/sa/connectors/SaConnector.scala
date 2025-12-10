@@ -31,33 +31,25 @@ class SaConnector @Inject() (httpHandler: HttpHandler)(implicit
   appConfig: ApplicationConfig
 ) extends Logging {
 
-  val serviceUrl: String = appConfig.serviceUrl
+  private def url(path: String) = s"${appConfig.serviceUrl}$path"
 
-  private def url(path: String) = s"$serviceUrl$path"
-
-  def connectToAts(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+  def getDetail(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
-  def connectToAtsOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
+  def getDetailOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
     hc: HeaderCarrier
   ): Future[AtsResponse] =
-    connectToAts(requestedUTR, taxYear)
+    getDetail(requestedUTR, taxYear)
 
-  def connectToAtsList(
+  def getList(
     UTR: SaUtr,
     endYear: Int,
     numberOfYears: Int
   )(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
 
-  def connectToAtsListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
+  def getListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
     hc: HeaderCarrier
   ): Future[AtsResponse] =
-    connectToAtsList(requestedUTR, endYear, numberOfYears)
-
-  val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
-    case e: HttpException =>
-      logger.error(e.message)
-      Left(UpstreamErrorResponse(e.message, e.responseCode))
-  }
+    getList(requestedUTR, endYear, numberOfYears)
 }

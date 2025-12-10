@@ -111,7 +111,7 @@ class AtsServiceSpec extends BaseSpec {
             "getting data from mockSaConnector" in {
               when(mockAccountUtils.isAgent(any())) thenReturn false
 
-              when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn
+              when(mockSaConnector.getDetail(any(), any())(any())) thenReturn
                 Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
@@ -148,7 +148,7 @@ class AtsServiceSpec extends BaseSpec {
 
               when(
                 mockSaConnector
-                  .connectToAtsOnBehalfOf(any(), any())(any())
+                  .getDetailOnBehalfOf(any(), any())(any())
               ) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
@@ -177,7 +177,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn Future
+          when(mockSaConnector.getDetail(any(), any())(any())) thenReturn Future
             .successful(AtsNotFoundResponse("Not found"))
 
           sut.createModel(currentTaxYearSA, converter).futureValue mustBe a[NoATSViewModel]
@@ -189,7 +189,7 @@ class AtsServiceSpec extends BaseSpec {
           val dataNoTaxLiability: AtsData = data copy (taxLiability = None)
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn
+          when(mockSaConnector.getDetail(any(), any())(any())) thenReturn
             Future.successful(AtsSuccessResponseWithPayload[AtsData](dataNoTaxLiability))
 
           when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
@@ -207,7 +207,7 @@ class AtsServiceSpec extends BaseSpec {
           val dataNegTaxLiability: AtsData = data copy (taxLiability = Some(Amount(BigDecimal(-100), "GBP")))
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn
+          when(mockSaConnector.getDetail(any(), any())(any())) thenReturn
             Future.successful(AtsSuccessResponseWithPayload[AtsData](dataNegTaxLiability))
 
           when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
@@ -229,7 +229,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn Future(
+          when(mockSaConnector.getDetail(any(), any())(any())) thenReturn Future(
             AtsErrorResponse("Something went wrong")
           )
 
@@ -244,7 +244,7 @@ class AtsServiceSpec extends BaseSpec {
 
           when(mockAccountUtils.isAgent(any())) thenReturn false
 
-          when(mockSaConnector.connectToAts(any(), any())(any())) thenReturn Future
+          when(mockSaConnector.getDetail(any(), any())(any())) thenReturn Future
             .successful(AtsSuccessResponseWithPayload(dataWithError))
 
           sut.createModel(currentTaxYearSA, converter).futureValue mustBe a[ATSUnavailableViewModel]

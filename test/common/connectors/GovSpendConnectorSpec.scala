@@ -91,7 +91,7 @@ class GovSpendConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentTaxYearSA).futureValue.value
+      val result = sut.get(currentTaxYearSA).futureValue.value
 
       result.status mustBe OK
       result.json.as[Map[String, Double]] mustBe Map("Environment" -> 5.5)
@@ -108,7 +108,7 @@ class GovSpendConnectorSpec
               )
           )
 
-          val result = sut.connectToGovernmentSpend(currentTaxYearSA).futureValue
+          val result = sut.get(currentTaxYearSA).futureValue
 
           result.left.value.statusCode mustBe status
         }
@@ -124,7 +124,7 @@ class GovSpendConnectorSpec
         )
       )
 
-      val result = sut.connectToGovernmentSpend(currentTaxYearSA).futureValue.left.value
+      val result = sut.get(currentTaxYearSA).futureValue.left.value
       result.statusCode mustBe GATEWAY_TIMEOUT
     }
   }

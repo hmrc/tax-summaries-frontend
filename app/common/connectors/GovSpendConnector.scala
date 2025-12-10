@@ -34,14 +34,14 @@ class GovSpendConnector @Inject() (http: HttpClientV2)(implicit
 
   private def url(path: String) = s"$serviceUrl$path"
 
-  def connectToGovernmentSpend(
+  def get(
     taxYear: Int
   )(implicit hc: HeaderCarrier): Future[Either[UpstreamErrorResponse, HttpResponse]] = {
     val fullUrl = url(s"/taxs/government-spend/$taxYear")
     http.get(url"$fullUrl").execute[Either[UpstreamErrorResponse, HttpResponse]] recover handleHttpExceptions
   }
 
-  val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
+  private val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
     case e: HttpException =>
       logger.error(e.message)
       Left(UpstreamErrorResponse(e.message, e.responseCode))

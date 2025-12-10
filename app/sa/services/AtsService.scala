@@ -111,8 +111,8 @@ class AtsService @Inject() (
 
     // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     val gotData = (account: @unchecked) match {
-      case _: Uar               => saConnector.connectToAtsOnBehalfOf(requestedUTR, taxYear)
-      case individualUtr: SaUtr => saConnector.connectToAts(individualUtr, taxYear)
+      case _: Uar               => saConnector.getDetailOnBehalfOf(requestedUTR, taxYear)
+      case individualUtr: SaUtr => saConnector.getDetail(individualUtr, taxYear)
     }
 
     EitherT {

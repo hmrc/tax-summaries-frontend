@@ -93,7 +93,7 @@ class SaConnectorSpec
           )
       )
 
-      val result = sut.connectToAts(utr, currentTaxYearSA).futureValue
+      val result = sut.getDetail(utr, currentTaxYearSA).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
@@ -111,7 +111,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAts(utr, currentTaxYearSA).futureValue
+      val result = sut.getDetail(utr, currentTaxYearSA).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
@@ -129,7 +129,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAts(utr, currentTaxYearSA).futureValue
+      val result = sut.getDetail(utr, currentTaxYearSA).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
@@ -146,7 +146,7 @@ class SaConnectorSpec
         )
       )
 
-      sut.connectToAts(utr, currentTaxYearSA).futureValue mustBe a[AtsErrorResponse]
+      sut.getDetail(utr, currentTaxYearSA).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
@@ -164,7 +164,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(utr, currentTaxYearSA).futureValue
+      val result = sut.getDetailOnBehalfOf(utr, currentTaxYearSA).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
     }
@@ -182,7 +182,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(utr, currentTaxYearSA).futureValue
+      val result = sut.getDetailOnBehalfOf(utr, currentTaxYearSA).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
@@ -200,7 +200,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsOnBehalfOf(utr, currentTaxYearSA).futureValue
+      val result = sut.getDetailOnBehalfOf(utr, currentTaxYearSA).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
@@ -220,7 +220,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, currentTaxYearSA, 5).futureValue
+      val result = sut.getList(utr, currentTaxYearSA, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
@@ -238,7 +238,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, currentTaxYearSA, 5).futureValue
+      val result = sut.getList(utr, currentTaxYearSA, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
@@ -256,7 +256,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsList(utr, currentTaxYearSA, 5).futureValue
+      val result = sut.getList(utr, currentTaxYearSA, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
@@ -273,7 +273,7 @@ class SaConnectorSpec
         )
       )
 
-      sut.connectToAtsList(utr, currentTaxYearSA, 5).futureValue mustBe a[AtsErrorResponse]
+      sut.getList(utr, currentTaxYearSA, 5).futureValue mustBe a[AtsErrorResponse]
     }
   }
 
@@ -291,7 +291,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
+      val result = sut.getListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
 
       result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
     }
@@ -309,7 +309,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
+      val result = sut.getListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
 
       result mustBe a[AtsNotFoundResponse]
     }
@@ -327,7 +327,7 @@ class SaConnectorSpec
         )
       )
 
-      val result = sut.connectToAtsListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
+      val result = sut.getListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
 
       result mustBe a[AtsErrorResponse]
     }
