@@ -84,11 +84,7 @@ class AtsListService @Inject() (
     } flatMap { requestedUTR =>
       (account: @unchecked) match {
         case _: Uar            =>
-          saConnector.getListOnBehalfOf(
-            requestedUTR,
-            appConfig.taxYearSA,
-            appConfig.maxTaxYearsTobeDisplayed
-          )
+          saConnector.getList(requestedUTR, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
         case individual: SaUtr =>
           saConnector.getList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
       }

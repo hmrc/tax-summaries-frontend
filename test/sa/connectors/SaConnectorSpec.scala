@@ -78,7 +78,7 @@ class SaConnectorSpec
   val atsListData: AtsListData = atsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
-  "connectToAts" must {
+  "getDetail" must {
 
     "return successful response" in {
 
@@ -150,63 +150,7 @@ class SaConnectorSpec
     }
   }
 
-  "connectToAtsOnBehalfOf" must {
-
-    "return successful response" in {
-
-      val url = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(saResponse)
-        )
-      )
-
-      val result = sut.getDetailOnBehalfOf(utr, currentTaxYearSA).futureValue
-
-      result mustBe AtsSuccessResponseWithPayload[AtsData](expectedSAResponse)
-    }
-
-    "return 4xx response" in {
-
-      val url  = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
-      val body = "No ATS List found"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(NOT_FOUND)
-            .withBody(body)
-        )
-      )
-
-      val result = sut.getDetailOnBehalfOf(utr, currentTaxYearSA).futureValue
-
-      result mustBe a[AtsNotFoundResponse]
-    }
-
-    "return 5xx response" in {
-
-      val url  = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
-      val body = "Something went wrong"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(INTERNAL_SERVER_ERROR)
-            .withBody(body)
-        )
-      )
-
-      val result = sut.getDetailOnBehalfOf(utr, currentTaxYearSA).futureValue
-
-      result mustBe a[AtsErrorResponse]
-    }
-  }
-
-  "connectToAtsList" must {
+  "getList" must {
 
     "return successful response" in {
 
@@ -274,62 +218,6 @@ class SaConnectorSpec
       )
 
       sut.getList(utr, currentTaxYearSA, 5).futureValue mustBe a[AtsErrorResponse]
-    }
-  }
-
-  "connectToAtsListOnBehalfOf" must {
-
-    "return successful response" in {
-
-      val url = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(loadAtsListData)
-        )
-      )
-
-      val result = sut.getListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
-
-      result mustBe AtsSuccessResponseWithPayload[AtsListData](atsListData)
-    }
-
-    "return 4xx response" in {
-
-      val url  = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
-      val body = "No ATS List found"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(NOT_FOUND)
-            .withBody(body)
-        )
-      )
-
-      val result = sut.getListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
-
-      result mustBe a[AtsNotFoundResponse]
-    }
-
-    "return 5xx response" in {
-
-      val url  = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
-      val body = "Something went wrong"
-
-      server.stubFor(
-        get(urlEqualTo(url)).willReturn(
-          aResponse()
-            .withStatus(INTERNAL_SERVER_ERROR)
-            .withBody(body)
-        )
-      )
-
-      val result = sut.getListOnBehalfOf(utr, currentTaxYearSA, 5).futureValue
-
-      result mustBe a[AtsErrorResponse]
     }
   }
 

@@ -148,7 +148,7 @@ class AtsServiceSpec extends BaseSpec {
 
               when(
                 mockSaConnector
-                  .getDetailOnBehalfOf(any(), any())(any())
+                  .getDetail(any(), any())(any())
               ) thenReturn Future.successful(AtsSuccessResponseWithPayload[AtsData](data))
 
               implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =

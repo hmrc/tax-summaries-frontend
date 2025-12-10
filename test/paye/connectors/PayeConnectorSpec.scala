@@ -77,7 +77,7 @@ class PayeConnectorSpec
   val atsListData: AtsListData = atsList("$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
-  "connectToPayeATS" must {
+  "getDetail" must {
 
     "return successful response" in {
 
@@ -131,7 +131,7 @@ class PayeConnectorSpec
     }
   }
 
-  "connectToPayeATSMultipleYears" must {
+  "getDetailMultipleYears" must {
 
     val url = s"/taxs/$testNino/${currentTaxYearPAYE - 1}/$currentTaxYearPAYE/paye-ats-data"
 

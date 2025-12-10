@@ -65,7 +65,7 @@ class AtsListServiceSpec extends BaseSpec {
     )
 
     when(
-      mockSaConnector.getListOnBehalfOf(any[SaUtr], any(), any())(any[HeaderCarrier])
+      mockSaConnector.getList(any[SaUtr], any(), any())(any[HeaderCarrier])
     ) thenReturn Future
       .successful(AtsSuccessResponseWithPayload[AtsListData](data))
 
@@ -217,7 +217,7 @@ class AtsListServiceSpec extends BaseSpec {
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
-          verify(mockSaConnector, times(1)).getListOnBehalfOf(any[SaUtr], any(), any())(
+          verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -230,7 +230,7 @@ class AtsListServiceSpec extends BaseSpec {
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
-          verify(mockSaConnector, times(1)).getListOnBehalfOf(any[SaUtr], any(), any())(
+          verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }
@@ -281,7 +281,7 @@ class AtsListServiceSpec extends BaseSpec {
           exception mustBe a[AgentTokenException]
           exception.getMessage mustBe "Token is empty"
 
-          verify(mockSaConnector, never).getListOnBehalfOf(any[SaUtr], any(), any())(
+          verify(mockSaConnector, never).getList(any[SaUtr], any(), any())(
             any[HeaderCarrier]
           )
         }

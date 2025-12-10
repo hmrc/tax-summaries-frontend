@@ -36,20 +36,10 @@ class SaConnector @Inject() (httpHandler: HttpHandler)(implicit
   def getDetail(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
 
-  def getDetailOnBehalfOf(requestedUTR: SaUtr, taxYear: Int)(implicit
-    hc: HeaderCarrier
-  ): Future[AtsResponse] =
-    getDetail(requestedUTR, taxYear)
-
   def getList(
     UTR: SaUtr,
     endYear: Int,
     numberOfYears: Int
   )(implicit hc: HeaderCarrier): Future[AtsResponse] =
     httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
-
-  def getListOnBehalfOf(requestedUTR: SaUtr, endYear: Int, numberOfYears: Int)(implicit
-    hc: HeaderCarrier
-  ): Future[AtsResponse] =
-    getList(requestedUTR, endYear, numberOfYears)
 }
