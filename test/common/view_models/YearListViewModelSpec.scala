@@ -17,8 +17,8 @@
 package common.view_models
 
 import common.config.ApplicationConfig
-import common.models.*
 import common.models.requests.AuthenticatedRequest
+import common.models.*
 import common.utils.BaseSpec
 import common.utils.TestConstants.{testUar, testUtr}
 import org.mockito.Mockito.{reset, when}
