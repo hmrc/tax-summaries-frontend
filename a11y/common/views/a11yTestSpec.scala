@@ -19,6 +19,7 @@ package common.views
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{get, ok, urlEqualTo, urlMatching}
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import common.repository.TaxsAgentTokenSessionCacheRepository
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
@@ -29,7 +30,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status as getStatus, writeableOf_AnyContentAsEmpty}
-import common.repository.TaxsAgentTokenSessionCacheRepository
 import testUtils.IntegrationSpec
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag

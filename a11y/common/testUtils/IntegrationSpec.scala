@@ -19,6 +19,9 @@ package testUtils
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.config.ApplicationConfig
 import common.models.AgentToken
+import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.utils.TestConstants.mock
+import common.utils.{Globals, TaxYearForTesting, WireMockHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -28,13 +31,10 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.Injecting
-import common.repository.TaxsAgentTokenSessionCacheRepository
+import sa.models.AtsData
 import uk.gov.hmrc.domain.{AtedUtr, Generator, Nino}
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
-import common.utils.TestConstants.mock
-import common.utils.{Globals, TaxYearForTesting, WireMockHelper}
-import sa.models.AtsData
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}

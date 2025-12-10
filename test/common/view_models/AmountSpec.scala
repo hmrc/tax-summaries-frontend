@@ -16,12 +16,12 @@
 
 package common.view_models
 
+import common.utils.TestConstants.inject
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.libs.json.Json
-import common.utils.TestConstants.inject
 
 class AmountSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 

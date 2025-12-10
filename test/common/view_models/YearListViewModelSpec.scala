@@ -17,8 +17,10 @@
 package common.view_models
 
 import common.config.ApplicationConfig
-import common.models.requests.AuthenticatedRequest
 import common.models.*
+import common.models.requests.AuthenticatedRequest
+import common.utils.BaseSpec
+import common.utils.TestConstants.{testUar, testUtr}
 import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.AnyContentAsEmpty
@@ -26,8 +28,6 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import common.utils.BaseSpec
-import common.utils.TestConstants.{testUar, testUtr}
 
 class YearListViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
   val fakeCredentials: Credentials     = new Credentials("provider ID", "provider type")

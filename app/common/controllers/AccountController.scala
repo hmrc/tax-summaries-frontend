@@ -18,9 +18,9 @@ package common.controllers
 
 import com.google.inject.Inject
 import common.config.ApplicationConfig
+import common.views.html.session_expired
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import common.views.html.session_expired
 
 class AccountController @Inject() (
   mcc: MessagesControllerComponents,

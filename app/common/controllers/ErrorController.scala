@@ -19,16 +19,16 @@ package common.controllers
 import com.google.inject.{Inject, Singleton}
 import common.config.ApplicationConfig
 import common.controllers.auth.AuthJourney
-import play.api.Logging
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import common.services.GovernmentSpendService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.time.CurrentTaxYear
 import common.utils.TaxYearUtil
 import common.views.html.HowTaxIsSpentView
 import common.views.html.errors.{PageNotFoundTemplateView, ServiceUnavailableView}
+import play.api.Logging
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import sa.views.html.errors.NotAuthorisedView
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.time.CurrentTaxYear
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}

@@ -17,11 +17,11 @@
 package common.config
 
 import com.google.inject.Inject
+import common.views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 import play.api.i18n.MessagesApi
 import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import common.views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -17,8 +17,10 @@
 package common.views
 
 import common.models.requests
-import common.models.requests
 import common.models.requests.AuthenticatedRequest
+import common.utils.TestConstants
+import common.view_models.{Amount, Rate}
+import common.views.html.errors.GenericErrorView
 import org.jsoup.Jsoup
 import play.api.i18n.{Lang, MessagesImpl}
 import play.api.mvc.AnyContentAsEmpty
@@ -26,9 +28,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import common.utils.TestConstants
-import common.view_models.{Amount, Rate}
-import common.views.html.errors.GenericErrorView
 
 class GenericErrorViewSpec extends ViewSpecBase with TestConstants {
 

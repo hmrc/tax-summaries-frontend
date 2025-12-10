@@ -16,11 +16,11 @@
 
 package common.utils.view_utils
 
+import common.utils.ViewUtils
+import common.view_models.{Amount, Rate}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import common.utils.ViewUtils
-import common.view_models.{Amount, Rate}
 
 class ViewUtilsSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
 
