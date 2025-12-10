@@ -16,11 +16,11 @@
 
 package paye.view_models
 
-import common.models.{DataHolder, TaxBand}
+import common.models.DataHolder
 import common.utils.BaseSpec
 import common.view_models.{Amount, Rate}
 import paye.config.PayeConfig
-import paye.models.PayeAtsData
+import paye.models.{PayeAtsData, TaxBand}
 import paye.utils.PayeAtsTestData
 
 class PayeIncomeTaxAndNicsSpec extends BaseSpec {

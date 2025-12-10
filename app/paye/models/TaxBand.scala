@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models
+package paye.models
 
 import common.view_models.{Amount, Rate}
 

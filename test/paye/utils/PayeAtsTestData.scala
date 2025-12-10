@@ -19,7 +19,7 @@ package paye.utils
 import common.models.*
 import common.utils.BaseSpec
 import common.view_models.{Amount, Rate}
-import paye.models.PayeAtsData
+import paye.models.{PayeAtsData, TaxBand}
 import paye.view_models.*
 
 class PayeAtsTestData extends BaseSpec {
