@@ -19,21 +19,20 @@ package common.services
 import common.connectors.GovSpendConnector
 import common.models.requests.AuthenticatedRequest
 import common.models.{SpendData, requests}
+import common.utils.TestConstants.*
+import common.utils.{BaseSpec, GenericViewModel}
+import common.view_models.{Amount, AtsList, GovernmentSpend}
 import org.mockito.ArgumentMatchers.{any, eq as meq}
 import org.mockito.Mockito.when
 import play.api.http.Status.OK
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import sa.utils.AtsTestData.currentTaxYearSA
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import common.utils.TestConstants.*
-import common.utils.{BaseSpec, GenericViewModel}
-import common.view_models.{Amount, AtsList, GovernmentSpend}
 import sa.models.AtsData
 import sa.services.AtsService
 import sa.utils.AtsTestData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}

@@ -19,14 +19,14 @@ package common.services
 import cats.data.EitherT
 import cats.instances.future.*
 import common.connectors.CitizenDetailsConnector
+import common.utils.BaseSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.domain.{Generator, Nino, SaUtr, SaUtrGenerator}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
-import common.utils.BaseSpec
 
 class CitizenDetailsServiceSpec extends BaseSpec with ScalaFutures {
 

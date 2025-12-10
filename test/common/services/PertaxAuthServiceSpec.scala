@@ -20,6 +20,9 @@ import cats.data.EitherT
 import common.config.ApplicationConfig
 import common.connectors.PertaxConnector
 import common.models.{ErrorView, PertaxApiResponse}
+import common.utils.BaseSpec
+import common.views.MainTemplate
+import common.views.html.errors.ServiceUnavailableView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED}
@@ -32,9 +35,6 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 import uk.gov.hmrc.play.partials.HtmlPartial
-import common.utils.BaseSpec
-import common.views.MainTemplate
-import common.views.html.errors.ServiceUnavailableView
 
 import scala.concurrent.Future
 

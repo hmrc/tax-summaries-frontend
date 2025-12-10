@@ -22,27 +22,27 @@ import common.config.ApplicationConfig
 import common.controllers.auth.actions.AuthAction
 import common.models.AgentToken
 import common.models.admin.SelfAssessmentServiceToggle
+import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.services.{CitizenDetailsService, PertaxAuthService}
+import common.utils.BaseSpec
+import common.utils.RetrievalOps.Ops
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, InjectedController}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import common.repository.TaxsAgentTokenSessionCacheRepository
-import common.services.{CitizenDetailsService, PertaxAuthService}
+import play.api.test.Helpers.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import common.utils.BaseSpec
-import common.utils.RetrievalOps.Ops
 
 import scala.concurrent.Future
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 class AuthActionSpec extends BaseSpec {

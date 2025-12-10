@@ -16,29 +16,28 @@
 
 package common.services
 
-import common.models.requests
 import common.models.*
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
+import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.utils.TestConstants.*
+import common.utils.{BaseSpec, TaxYearUtil}
+import common.view_models.{AtsList, YearListViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import paye.services.PayeAtsService
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import common.repository.TaxsAgentTokenSessionCacheRepository
+import sa.services.AtsListService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
-import common.utils.TestConstants.*
-import common.utils.{BaseSpec, TaxYearUtil}
-import common.view_models.{AtsList, YearListViewModel}
-import paye.services.PayeAtsService
-import sa.services.AtsListService
 
 import scala.concurrent.Future
 

@@ -18,6 +18,7 @@ package common.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get}
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
+import common.utils.WireMockHelper
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -29,7 +30,6 @@ import play.api.libs.json.{Json, Reads}
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
-import common.utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext
 

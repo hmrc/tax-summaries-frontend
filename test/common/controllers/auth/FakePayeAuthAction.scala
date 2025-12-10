@@ -18,9 +18,9 @@ package common.controllers.auth
 
 import common.models.requests
 import common.models.requests.PayeAuthenticatedRequest
-import play.api.mvc.*
 import common.utils.ControllerBaseSpec
 import common.utils.TestConstants.*
+import play.api.mvc.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

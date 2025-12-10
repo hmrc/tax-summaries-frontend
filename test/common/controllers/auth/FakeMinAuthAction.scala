@@ -19,9 +19,9 @@ package common.controllers.auth
 import common.controllers.auth.actions.MinAuthAction
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
+import common.utils.ControllerBaseSpec
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import common.utils.ControllerBaseSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 

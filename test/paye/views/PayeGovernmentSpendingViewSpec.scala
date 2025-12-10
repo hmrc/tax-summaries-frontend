@@ -22,9 +22,9 @@ import common.models.requests.PayeAuthenticatedRequest
 import common.utils.TestConstants
 import common.views.ViewSpecBase
 import common.views.behaviours.ViewBehaviours
-import paye.views.html.PayeGovernmentSpendingView
 import org.jsoup.Jsoup
 import paye.utils.PayeAtsTestData
+import paye.views.html.PayeGovernmentSpendingView
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html

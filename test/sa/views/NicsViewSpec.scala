@@ -21,15 +21,15 @@ import common.models.{ActingAsAttorneyFor, requests}
 import common.utils.TestConstants
 import common.view_models.*
 import common.views.ViewSpecBase
-import sa.views.html.NicsView
-import sa.views.html.total_income_tax_includes.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import sa.view_models.{IncomeTaxAndNI, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
+import sa.view_models.*
+import sa.views.html.NicsView
+import sa.views.html.total_income_tax_includes.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 

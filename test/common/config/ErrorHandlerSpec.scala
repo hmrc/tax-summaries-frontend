@@ -16,12 +16,12 @@
 
 package common.config
 
+import common.views.ViewSpecBase
+import common.views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import common.views.ViewSpecBase
-import common.views.html.errors.{ErrorTemplateView, PageNotFoundTemplateView}
 
 class ErrorHandlerSpec extends ViewSpecBase {
 

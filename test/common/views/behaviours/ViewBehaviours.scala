@@ -16,8 +16,8 @@
 
 package common.views.behaviours
 
-import play.twirl.api.HtmlFormat
 import common.views.ViewSpecBase
+import play.twirl.api.HtmlFormat
 
 trait ViewBehaviours extends ViewSpecBase {
 

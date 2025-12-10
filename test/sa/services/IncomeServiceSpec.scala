@@ -16,9 +16,8 @@
 
 package sa.services
 
-import common.models.requests.AuthenticatedRequest
 import common.models.requests
-import sa.utils.AtsTestData.currentTaxYearSA
+import common.models.requests.AuthenticatedRequest
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, GenericViewModel}
 import common.view_models.{Amount, AtsList}

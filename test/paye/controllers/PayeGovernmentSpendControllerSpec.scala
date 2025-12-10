@@ -23,11 +23,11 @@ import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse}
 import common.services.GovernmentSpendService
 import common.utils.TestConstants.governmentSpendFromBackend
-import paye.views.html.errors.PayeGenericErrorView
-import paye.views.html.PayeGovernmentSpendingView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import paye.models.PayeAtsData
+import paye.views.html.PayeGovernmentSpendingView
+import paye.views.html.errors.PayeGenericErrorView
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty

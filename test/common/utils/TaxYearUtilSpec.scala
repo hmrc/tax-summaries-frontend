@@ -19,13 +19,13 @@ package common.utils
 import common.config.ApplicationConfig
 import common.models.requests.AuthenticatedRequest
 import common.models.{MissingTaxYear, requests}
+import common.utils.TestConstants.*
 import org.mockito.Mockito.when
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import common.utils.TestConstants.*
 
 class TaxYearUtilSpec extends BaseSpec {
   private val mockAppConfig = mock[ApplicationConfig]

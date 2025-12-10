@@ -17,10 +17,10 @@
 package common.services
 
 import common.models.AgentToken
+import common.utils.TestConstants.*
+import common.utils.{AgentTokenException, BaseSpec}
 import play.utils.UriEncoding
 import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
-import common.utils.TestConstants._
-import common.utils.{AgentTokenException, BaseSpec}
 
 import java.util.Date
 

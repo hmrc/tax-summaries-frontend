@@ -17,16 +17,16 @@
 package common.connectors
 
 import cats.data.EitherT
+import common.utils.WireMockHelper
 import org.mockito.Mockito.{reset, times, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.RecoverMethods
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status._
-import uk.gov.hmrc.http._
-import common.utils.WireMockHelper
-import org.slf4j.{Logger => UnderlyingLogger}
+import org.slf4j.Logger as UnderlyingLogger
 import play.api.Logger
+import play.api.http.Status.*
+import uk.gov.hmrc.http.*
 
 import scala.concurrent.Future
 

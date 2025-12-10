@@ -16,8 +16,8 @@
 
 package testOnly.models
 
-import play.api.libs.json.{JsValue, Json}
 import common.utils.BaseSpec
+import play.api.libs.json.{JsValue, Json}
 
 class FieldInfoSpec extends BaseSpec {
   "fieldNameCamelCase" must {

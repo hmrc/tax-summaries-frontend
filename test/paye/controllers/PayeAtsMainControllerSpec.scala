@@ -20,12 +20,12 @@ import common.controllers.auth.FakeAuthJourney
 import common.models.requests.PayeAuthenticatedRequest
 import common.models.{AtsErrorResponse, AtsNotFoundResponse}
 import common.utils.JsonUtil
-import paye.views.html.errors.PayeGenericErrorView
-import paye.views.html.PayeTaxsMainView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import paye.models.PayeAtsData
 import paye.view_models.PayeAtsMain
+import paye.views.html.PayeTaxsMainView
+import paye.views.html.errors.PayeGenericErrorView
 import play.api.http.Status.*
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}

@@ -16,27 +16,24 @@
 
 package common.utils
 
+import _root_.paye.services.PayeAtsService
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
 import common.utils.TestConstants.{testNino, testUtr}
 import common.view_models.*
-import common.views.html.errors.*
 import common.views.html.*
-import _root_.paye.services.PayeAtsService
+import common.views.html.errors.*
 import play.api.i18n
 import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{stubBodyParser, stubControllerComponents, stubMessagesApi}
-import sa.view_models.{IncomeTaxAndNI, SavingsRates, SavingsTax, ScottishRates, ScottishTax}
-import sa.views.html.{CapitalGainsView, IncomeBeforeTaxView, NicsView}
+import sa.view_models.*
+import sa.views.html.*
+import sa.views.html.errors.NotAuthorisedView
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.SaUtr
-import sa.views.html.SummaryView
-import sa.views.html.TaxFreeAmountView
-import sa.views.html.TaxsMainView
-import sa.views.html.errors.NotAuthorisedView
 
 import scala.concurrent.ExecutionContext
 

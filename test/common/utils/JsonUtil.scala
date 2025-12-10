@@ -16,8 +16,8 @@
 
 package common.utils
 
-import play.api.libs.json.*
 import common.utils.TestConstants.testUtr
+import play.api.libs.json.*
 
 import scala.io.Source
 

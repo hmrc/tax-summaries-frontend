@@ -18,12 +18,12 @@ package common.services
 
 import common.models.requests.AuthenticatedRequest
 import common.models.{AgentToken, requests}
+import common.utils.TestConstants.*
+import common.utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
-import common.utils.TestConstants.*
-import common.utils.{AccountUtils, AgentTokenException, AuthorityUtils, BaseSpec}
 
 class AuthorityUtilsSpec extends BaseSpec {
 

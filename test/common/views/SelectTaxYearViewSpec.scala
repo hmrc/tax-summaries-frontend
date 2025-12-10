@@ -18,9 +18,11 @@ package common.views
 
 import common.config.ApplicationConfig
 import common.forms.AtsYearChoiceFormProvider
-import common.models.requests
+import common.models.*
 import common.models.requests.AuthenticatedRequest
-import common.models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA, requests}
+import common.utils.TestConstants
+import common.view_models.{AtsList, YearListViewModel}
+import common.views.html.SelectTaxYearView
 import org.jsoup.Jsoup
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -29,9 +31,6 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import common.utils.TestConstants
-import common.view_models.{AtsList, YearListViewModel}
-import common.views.html.SelectTaxYearView
 
 class SelectTaxYearViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]

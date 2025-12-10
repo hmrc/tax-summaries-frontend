@@ -18,6 +18,8 @@ package common.views
 
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
+import common.utils.BaseSpec
+import common.utils.TestConstants.fakeCredentials
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
@@ -27,8 +29,6 @@ import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L250
 import uk.gov.hmrc.http.HeaderNames
-import common.utils.BaseSpec
-import common.utils.TestConstants.fakeCredentials
 
 trait ViewSpecBase extends BaseSpec with MockitoSugar {
 

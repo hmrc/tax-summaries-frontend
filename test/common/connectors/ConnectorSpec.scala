@@ -16,8 +16,8 @@
 
 package common.connectors
 
-import uk.gov.hmrc.http.HeaderCarrier
 import common.utils.{BaseSpec, WireMockHelper}
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait ConnectorSpec extends BaseSpec with WireMockHelper {
 

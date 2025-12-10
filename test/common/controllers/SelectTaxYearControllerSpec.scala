@@ -22,6 +22,10 @@ import common.forms.AtsYearChoiceFormProvider
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsErrorResponse, requests}
+import common.services.YearListViewModelService
+import common.utils.ControllerBaseSpec
+import common.utils.TestConstants.{testNino, testUtr}
+import common.view_models.{AtsList, YearListViewModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -31,13 +35,9 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import common.services.YearListViewModelService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
-import common.utils.ControllerBaseSpec
-import common.utils.TestConstants.{testNino, testUtr}
-import common.view_models.{AtsList, YearListViewModel}
 
 import scala.concurrent.Future
 

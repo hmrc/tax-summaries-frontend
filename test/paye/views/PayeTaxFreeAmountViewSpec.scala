@@ -22,9 +22,9 @@ import common.utils.TestConstants
 import common.view_models.Amount
 import common.views.ViewSpecBase
 import common.views.behaviours.ViewBehaviours
-import paye.views.html.PayeTaxFreeAmountView
 import org.jsoup.Jsoup
 import paye.view_models.{AmountRow, PayeTaxFreeAmount}
+import paye.views.html.PayeTaxFreeAmountView
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html

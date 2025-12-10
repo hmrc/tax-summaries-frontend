@@ -17,8 +17,8 @@
 package common.controllers.auth
 
 import common.models.requests.{AuthenticatedRequest, PayeAuthenticatedRequest}
-import play.api.mvc._
 import common.utils.ControllerBaseSpec
+import play.api.mvc.*
 
 object FakeAuthJourney extends ControllerBaseSpec with AuthJourney {
   override val authMinimal: ActionBuilder[AuthenticatedRequest, AnyContent]                              = FakeAuthAction

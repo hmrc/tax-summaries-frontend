@@ -16,9 +16,9 @@
 
 package common.controllers
 
+import common.utils.BaseSpec
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import common.utils.BaseSpec
 
 class AccountControllerTest extends BaseSpec {
 

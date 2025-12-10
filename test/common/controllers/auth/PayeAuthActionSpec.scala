@@ -19,22 +19,22 @@ package common.controllers.auth
 import common.config.ApplicationConfig
 import common.controllers.auth.actions.PayeAuthActionImpl
 import common.models.admin.PAYEServiceToggle
+import common.services.PertaxAuthService
+import common.utils.RetrievalOps.*
+import common.utils.TestConstants.fakeCredentials
+import common.utils.{BaseSpec, TaxYearUtil}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, _}
-import common.services.PertaxAuthService
-import uk.gov.hmrc.auth.core._
+import play.api.test.Helpers.{redirectLocation, *}
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import common.utils.RetrievalOps._
-import common.utils.TestConstants.fakeCredentials
-import common.utils.{BaseSpec, TaxYearUtil}
 
 import scala.concurrent.Future
 

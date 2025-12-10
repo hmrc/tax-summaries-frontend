@@ -19,11 +19,11 @@ package common.controllers.auth
 import common.controllers.auth.actions.Auth
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
+import common.utils.ControllerBaseSpec
+import common.utils.TestConstants.*
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
-import common.utils.ControllerBaseSpec
-import common.utils.TestConstants.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

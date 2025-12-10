@@ -16,8 +16,9 @@
 
 package common.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, notFound, ok, post, serverError, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.models.{ErrorView, PertaxApiResponse}
+import common.utils.{JsonUtil, WireMockHelper}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -31,7 +32,6 @@ import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.partials.HtmlPartial
-import common.utils.{JsonUtil, WireMockHelper}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

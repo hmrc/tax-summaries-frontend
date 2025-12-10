@@ -16,8 +16,8 @@
 
 package common.models
 
-import play.api.libs.json.{JsString, JsSuccess}
 import common.utils.BaseSpec
+import play.api.libs.json.{JsString, JsSuccess}
 
 class AtsTypeSpec extends BaseSpec {
   "AtsType" when {

@@ -17,20 +17,20 @@
 package common.controllers.auth
 
 import common.controllers.auth.actions.MinAuthActionImpl
+import common.utils.BaseSpec
+import common.utils.RetrievalOps.*
+import common.utils.TestConstants.fakeCredentials
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.{Action, AnyContent, InjectedController}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.auth.core._
+import play.api.test.Helpers.{redirectLocation, *}
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import common.utils.BaseSpec
-import common.utils.RetrievalOps._
-import common.utils.TestConstants.fakeCredentials
 
 import scala.concurrent.Future
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 class MinAuthActionSpec extends BaseSpec {

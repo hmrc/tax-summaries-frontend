@@ -335,7 +335,6 @@
         "amount": 3000,
         "currency": "GBP"
       },
-      
       "amount_due_at_ordinary_rate": {
         "amount": 200,
         "currency": "GBP"

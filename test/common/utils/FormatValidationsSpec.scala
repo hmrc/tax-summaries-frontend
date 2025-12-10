@@ -16,9 +16,9 @@
 
 package test.utils
 
+import common.utils.TaxsValidator.*
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import common.utils.TaxsValidator._
 
 class FormatValidationsSpec extends AnyWordSpec with Matchers {
 

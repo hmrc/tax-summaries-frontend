@@ -16,12 +16,12 @@
 
 package sa.views.total_income_tax_includes
 
-import org.scalacheck.Arbitrary
-import org.scalacheck.Arbitrary._
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import common.utils.{TestConstants, ViewUtils}
 import common.view_models.{Amount, Rate}
 import common.views.ViewSpecBase
+import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.*
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import sa.view_models.{ScottishRates, ScottishTax}
 import sa.views.html.total_income_tax_includes.ScottishTableView
 
