@@ -22,24 +22,25 @@ import common.controllers.auth.AuthJourney
 import common.forms.AtsYearChoiceFormProvider
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
-import common.models.{AtsYearChoice, PAYE, SA}
+import common.models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA}
+import common.services.*
+import common.utils.{AttorneyUtils, Globals}
+import common.view_models.YearListViewModel
+import common.views.html.SelectTaxYearView
+import common.views.html.errors.GenericErrorView
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import common.services.*
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import common.utils.{AttorneyUtils, Globals}
-import common.views.html.AtsMergePageView
-import common.views.html.errors.GenericErrorView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectTaxYearController @Inject() (
-  atsMergePageService: AtsMergePageService,
+  yearListViewModelService: YearListViewModelService,
   authJourney: AuthJourney,
   mcc: MessagesControllerComponents,
-  atsMergePageView: AtsMergePageView,
+  selectTaxYearView: SelectTaxYearView,
   genericErrorView: GenericErrorView,
   atsYearChoiceFormProvider: AtsYearChoiceFormProvider,
   featureFlagService: FeatureFlagService
@@ -51,7 +52,7 @@ class SelectTaxYearController @Inject() (
   def onPageLoad: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
     areServicesEnabled.flatMap {
       case false => Future.successful(Redirect(routes.ErrorController.serviceUnavailable.url))
-      case true  => getSaAndPayeYearList()
+      case true  => render()
     }
   }
 
@@ -61,7 +62,7 @@ class SelectTaxYearController @Inject() (
       payeEnabled <- featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
     } yield saEnabled || payeEnabled
 
-  private def getSaAndPayeYearList(
+  private def render(
     formWithErrors: Option[Form[AtsYearChoice]] = None
   )(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     val session = putTaxUserTypeInSession(request)
@@ -70,34 +71,30 @@ class SelectTaxYearController @Inject() (
     for {
       saEnabled   <- featureFlagService.get(SelfAssessmentServiceToggle).map(_.isEnabled)
       payeEnabled <- featureFlagService.get(PAYEServiceToggle).map(_.isEnabled)
-      result      <- atsMergePageService.getSaAndPayeYearList.map {
-                       case Right(atsMergePageViewModel) =>
-                         Ok(
-                           atsMergePageView(
-                             atsMergePageViewModel,
-                             form,
-                             getActingAsAttorneyFor(
-                               request,
-                               atsMergePageViewModel.saData.forename,
-                               atsMergePageViewModel.saData.surname,
-                               atsMergePageViewModel.saData.utr
-                             ),
-                             saEnabled,
-                             payeEnabled
-                           )
-                         ).withSession(session + ("atsList" -> atsMergePageViewModel.saData.toString))
-
-                       case _ =>
+      result      <- yearListViewModelService.getSaAndPayeYearList.map {
+                       case Right(vm) =>
+                         Ok(selectTaxYearView(vm, form, actingAsAttorneyFor(vm), saEnabled, payeEnabled))
+                           .withSession(session + ("atsList" -> vm.saData.toString))
+                       case _         =>
                          InternalServerError(genericErrorView())
                      }
     } yield result
   }
 
+  private def actingAsAttorneyFor(
+    vm: YearListViewModel
+  )(implicit request: AuthenticatedRequest[_]): Option[ActingAsAttorneyFor] = getActingAsAttorneyFor(
+    request,
+    vm.saData.forename,
+    vm.saData.surname,
+    vm.saData.utr
+  )
+
   def onSubmit: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
     atsYearChoiceFormProvider.atsYearChoiceForm
       .bindFromRequest()
       .fold(
-        formWithErrors => getSaAndPayeYearList(Some(formWithErrors)),
+        formWithErrors => render(Some(formWithErrors)),
         value =>
           Future.successful(
             redirectWithYear(value).withSession(request.session + ("yearChoice" -> AtsYearChoice.toString(value)))

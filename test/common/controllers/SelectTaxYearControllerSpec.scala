@@ -31,26 +31,26 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import common.services.AtsMergePageService
+import common.services.YearListViewModelService
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import common.utils.ControllerBaseSpec
 import common.utils.TestConstants.{testNino, testUtr}
-import common.view_models.{AtsList, AtsMergePageViewModel}
+import common.view_models.{AtsList, YearListViewModel}
 
 import scala.concurrent.Future
 
 class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
-  val mockAtsMergePageService: AtsMergePageService = mock[AtsMergePageService]
-  val atsForms: AtsYearChoiceFormProvider          = inject[AtsYearChoiceFormProvider]
+  val mockYearListViewModelService: YearListViewModelService = mock[YearListViewModelService]
+  val atsForms: AtsYearChoiceFormProvider                    = inject[AtsYearChoiceFormProvider]
 
   implicit lazy val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
   val sut                                            = new SelectTaxYearController(
-    mockAtsMergePageService,
+    mockYearListViewModelService,
     FakeAuthJourney,
     mcc,
-    atsMergePageView,
+    selectTaxYearView,
     genericErrorView,
     atsForms,
     mockFeatureFlagService
@@ -67,8 +67,8 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
     FakeRequest("GET", s"?taxYear=$currentTaxYearSA")
   )
 
-  val successViewModel: AtsMergePageViewModel =
-    AtsMergePageViewModel(
+  val successViewModel: YearListViewModel =
+    YearListViewModel(
       AtsList("", "", "", List(currentTaxYearSA)),
       List(currentTaxYearSA),
       mockAppConfig,
@@ -90,7 +90,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a 200 response when called without '?ref=PORTAL' and must not put TAXS_USER_TYPE in session" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val result = sut.onPageLoad(authRequest)
 
@@ -114,7 +114,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
         FakeRequest("GET", common.controllers.routes.SelectTaxYearController.onPageLoad.toString + "?ref=PORTAL")
       )
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val result = sut.onPageLoad(agentRequest)
 
@@ -135,7 +135,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
       when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
         .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val result = sut.onPageLoad(authRequest)
 
@@ -151,7 +151,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
       when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
         .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = true)))
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val result = sut.onPageLoad(authRequest)
 
@@ -168,7 +168,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
       when(mockFeatureFlagService.get(ArgumentMatchers.eq(PAYEServiceToggle)))
         .thenReturn(Future.successful(FeatureFlag(PAYEServiceToggle, isEnabled = false)))
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val result = sut.onPageLoad(authRequest)
 
@@ -179,7 +179,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "redirect to genericErrorView page if service returns an error" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any()))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any()))
         .thenReturn(Future(Left(AtsErrorResponse("some error"))))
 
       val result = sut.onPageLoad(authRequest)
@@ -194,7 +194,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and redirect to sa main page when selected sa tax year" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> s"SA-$currentTaxYearSA"))
       val requestWithQuery = AuthenticatedRequest(
@@ -219,7 +219,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and redirect to paye main page when selected paye tax year" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> s"PAYE-$currentTaxYearSA"))
       val requestWithQuery = AuthenticatedRequest(
@@ -244,7 +244,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and redirect to no ats page when selected no ats tax year for a user with nino and utr" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> s"NoATS-$currentTaxYearSA"))
       val requestWithQuery = AuthenticatedRequest(
@@ -269,7 +269,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and redirect to no ats page when selected no ats tax year for a user with nino and no utr" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> s"NoATS-$currentTaxYearSA"))
       val requestWithQuery = AuthenticatedRequest(
@@ -294,7 +294,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and redirect to no ats page when selected no ats tax year for a user with utr and no nino" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> s"NoATS-$currentTaxYearSA"))
       val requestWithQuery = AuthenticatedRequest(
@@ -319,7 +319,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and stay on the same page with form errors and display the error" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> ""))
       val requestWithQuery = requests.AuthenticatedRequest(
@@ -343,7 +343,7 @@ class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures w
 
     "return a success response and stay on the same page with form errors if the HTML has been changed to submit an invalid value" in {
 
-      when(mockAtsMergePageService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
+      when(mockYearListViewModelService.getSaAndPayeYearList(any(), any())).thenReturn(Future(Right(successViewModel)))
 
       val form             = atsForms.atsYearChoiceForm.bind(Map("year" -> "nonsense value"))
       val requestWithQuery = requests.AuthenticatedRequest(

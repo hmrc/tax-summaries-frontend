@@ -30,10 +30,10 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import common.utils.TestConstants
-import common.view_models.{AtsList, AtsMergePageViewModel}
-import common.views.html.AtsMergePageView
+import common.view_models.{AtsList, YearListViewModel}
+import common.views.html.SelectTaxYearView
 
-class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
+class SelectTaxYearViewSpec extends ViewSpecBase with TestConstants with BeforeAndAfterEach {
   lazy implicit val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
   implicit val agentRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
@@ -47,8 +47,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
 
-  lazy val atsMergePageView: AtsMergePageView  = inject[AtsMergePageView]
-  lazy val atsForms: AtsYearChoiceFormProvider = inject[AtsYearChoiceFormProvider]
+  lazy val selectTaxYearView: SelectTaxYearView = inject[SelectTaxYearView]
+  lazy val atsForms: AtsYearChoiceFormProvider  = inject[AtsYearChoiceFormProvider]
 
   val requestWithCL50: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",
@@ -73,15 +73,15 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
   )
 
   def view(
-    model: AtsMergePageViewModel,
+    model: YearListViewModel,
     form: Form[AtsYearChoice],
     payeAvailable: Boolean = true,
     saAvailable: Boolean = true
   )(implicit request: AuthenticatedRequest[_]): String =
-    atsMergePageView(model, form, payeAvailable = payeAvailable, saAvailable = saAvailable)(request, implicitly).body
+    selectTaxYearView(model, form, payeAvailable = payeAvailable, saAvailable = saAvailable)(request, implicitly).body
 
-  def agentView(model: AtsMergePageViewModel, form: Form[AtsYearChoice]): String =
-    atsMergePageView(
+  def agentView(model: YearListViewModel, form: Form[AtsYearChoice]): String =
+    selectTaxYearView(
       model,
       form,
       Some(ActingAsAttorneyFor(Some("Agent"), Map())),
@@ -108,7 +108,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "display the page heading" in {
         resetMocks
         val result = view(
-          AtsMergePageViewModel(AtsList("", "", "", List()), List.empty, mockAppConfig, ConfidenceLevel.L200),
+          YearListViewModel(AtsList("", "", "", List()), List.empty, mockAppConfig, ConfidenceLevel.L200),
           atsForms.atsYearChoiceForm
         )
 
@@ -119,7 +119,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
+            YearListViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
             atsForms.atsYearChoiceForm
           )
 
@@ -132,7 +132,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
 
         val result =
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               AtsList(
                 "",
                 "",
@@ -157,7 +157,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               AtsList(
                 "",
                 "",
@@ -183,7 +183,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "show radiobuttons if there is paye data when the paye is available and not show paye shuttered message" in {
         resetMocks
         val result = view(
-          AtsMergePageViewModel(
+          YearListViewModel(
             AtsList("", "", "", List.empty),
             List(
               currentTaxYearSA - 5,
@@ -212,7 +212,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
+            YearListViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
             atsForms.atsYearChoiceForm
           )
 
@@ -223,7 +223,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               AtsList("", "", "", List.empty),
               List(currentTaxYearSA - 5),
               mockAppConfig,
@@ -239,7 +239,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L50),
+            YearListViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L50),
             atsForms.atsYearChoiceForm
           )
 
@@ -250,7 +250,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               AtsList("", "", "", List.empty),
               List(currentTaxYearSA - 5),
               mockAppConfig,
@@ -265,7 +265,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "show paye shuttered message if paye service is not available" in {
         resetMocks
         val result = view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
+          YearListViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
           atsForms.atsYearChoiceForm,
           payeAvailable = false
         )
@@ -276,7 +276,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "show radiobuttons if there is sa data and not show sa shuttered message" in {
         resetMocks
         val result = view(
-          AtsMergePageViewModel(
+          YearListViewModel(
             AtsList(
               "",
               "",
@@ -310,7 +310,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result =
           view(
-            AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
+            YearListViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L200),
             atsForms.atsYearChoiceForm
           )
 
@@ -320,7 +320,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "show sa shuttered message if sa service is not available" in {
         resetMocks
         val result = view(
-          AtsMergePageViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
+          YearListViewModel(AtsList("", "", "", List.empty), List(1), mockAppConfig, ConfidenceLevel.L200),
           atsForms.atsYearChoiceForm,
           saAvailable = false
         )
@@ -332,7 +332,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "not show account menu for agent" in {
         resetMocks
         val result = agentView(
-          AtsMergePageViewModel(
+          YearListViewModel(
             AtsList("", "", "", List.empty),
             List(
               currentTaxYearSA - 5,
@@ -353,7 +353,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
       "show account menu for non agent users" in {
         resetMocks
         val result = view(
-          AtsMergePageViewModel(
+          YearListViewModel(
             AtsList("", "", "", List.empty),
             List(
               currentTaxYearSA - 5,
@@ -375,7 +375,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result = Jsoup.parse(
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               saData = AtsList(
                 "",
                 "",
@@ -397,7 +397,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result = Jsoup.parse(
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               AtsList(
                 "",
                 "",
@@ -425,7 +425,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         resetMocks
         val result = Jsoup.parse(
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               saData = AtsList(
                 "",
                 "",
@@ -450,7 +450,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearPAYE)
         val result =
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               saData = AtsList("", "", "", List.empty),
               payeTaxYearList = (currentTaxYearPAYE - 5 to currentTaxYearPAYE).toList,
               appConfig = mockAppConfig,
@@ -473,7 +473,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         when(mockAppConfig.taxYearPAYE).thenReturn(currentTaxYearPAYE)
         when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearPAYE)
         val result = view(
-          AtsMergePageViewModel(
+          YearListViewModel(
             saData = AtsList("", "", "", List.empty),
             payeTaxYearList = (currentTaxYearPAYE - 5 to currentTaxYearPAYE).toList,
             appConfig = mockAppConfig,
@@ -490,7 +490,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearSA)
         val result = Jsoup.parse(
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               saData = AtsList("", "", "", (currentTaxYearSA - 5 to currentTaxYearSA).toList),
               payeTaxYearList = List.empty,
               appConfig = mockAppConfig,
@@ -509,7 +509,7 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
         when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearSA)
         val result = Jsoup.parse(
           view(
-            AtsMergePageViewModel(
+            YearListViewModel(
               saData = AtsList(
                 "",
                 "",

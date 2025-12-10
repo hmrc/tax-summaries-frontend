@@ -20,7 +20,7 @@ import common.config.ApplicationConfig
 import common.models.{AtsYearChoice, NoATS, PAYE, SA}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-case class AtsMergePageViewModel(
+case class YearListViewModel(
   saData: AtsList,
   payeTaxYearList: List[Int],
   appConfig: ApplicationConfig,

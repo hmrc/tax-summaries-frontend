@@ -62,7 +62,7 @@ trait ControllerBaseSpec extends BaseSpec {
   val mockPayeAtsService: PayeAtsService                      = mock[PayeAtsService]
   lazy val taxFreeAmountView: TaxFreeAmountView               = inject[TaxFreeAmountView]
   lazy val genericErrorView: GenericErrorView                 = inject[GenericErrorView]
-  lazy val atsMergePageView: AtsMergePageView                 = inject[AtsMergePageView]
+  lazy val selectTaxYearView: SelectTaxYearView               = inject[SelectTaxYearView]
   lazy val tokenErrorView: TokenErrorView                     = inject[TokenErrorView]
   lazy val taxsMainView: TaxsMainView                         = inject[TaxsMainView]
   lazy val capitalGainsView: CapitalGainsView                 = inject[CapitalGainsView]

@@ -36,13 +36,13 @@ import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 import common.utils.TestConstants.*
 import common.utils.{BaseSpec, TaxYearUtil}
-import common.view_models.{AtsList, AtsMergePageViewModel}
+import common.view_models.{AtsList, YearListViewModel}
 import paye.services.PayeAtsService
 import sa.services.AtsListService
 
 import scala.concurrent.Future
 
-class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
+class YearListViewModelServiceSpec extends BaseSpec with GuiceOneAppPerSuite with ScalaFutures with BeforeAndAfterEach {
   private val mockPayeAtsService: PayeAtsService       = mock[PayeAtsService]
   private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
   private val mockAtsListService: AtsListService       = mock[AtsListService]
@@ -50,9 +50,9 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
 
   private implicit val hc: HeaderCarrier = new HeaderCarrier
 
-  private val mockTaxYearUtil: TaxYearUtil = mock[TaxYearUtil]
-  private def sut: AtsMergePageService     =
-    new AtsMergePageService(
+  private val mockTaxYearUtil: TaxYearUtil  = mock[TaxYearUtil]
+  private def sut: YearListViewModelService =
+    new YearListViewModelService(
       mockTaxsAgentTokenSessionCacheRepository,
       mockPayeAtsService,
       mockAtsListService,
@@ -61,7 +61,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
       mockFeatureFlagService,
       mockTaxYearUtil
     )
-  private val dummyYears: List[Int]        = List(currentTaxYearSA - 1, currentTaxYearSA)
+  private val dummyYears: List[Int]         = List(currentTaxYearSA - 1, currentTaxYearSA)
 
   private val saDataResponse: AtsList = AtsList(
     utr = testUtr,
@@ -97,9 +97,9 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
     ()
   }
 
-  "AtsMergePageService" when {
+  "YearListViewModelService" when {
     "getSaAndPayeYearList is called" must {
-      "return a AtsMergePageViewModel" when {
+      "return a YearListViewModel" when {
         "saData is successfully received and payeData is successfully received" in {
           implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] = createRequest()
           when(mockAtsListService.createModel()).thenReturn(Future(Right(saDataResponse)))
@@ -108,7 +108,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockTaxYearUtil.isYearListComplete(any())).thenReturn(false)
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result mustBe Right(AtsMergePageViewModel(saDataResponse, dummyYears, appConfig, ConfidenceLevel.L50))
+          result mustBe Right(YearListViewModel(saDataResponse, dummyYears, appConfig, ConfidenceLevel.L50))
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
         }
@@ -121,7 +121,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockTaxYearUtil.isYearListComplete(ArgumentMatchers.eq(dummyYears))).thenReturn(true)
           val result                                                         = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(
-            AtsMergePageViewModel(saDataResponse, Nil, appConfig, ConfidenceLevel.L50)
+            YearListViewModel(saDataResponse, Nil, appConfig, ConfidenceLevel.L50)
           )
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
@@ -143,7 +143,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockTaxYearUtil.isYearListComplete(ArgumentMatchers.eq(dummyYears))).thenReturn(true)
           val result                                                         = sut.getSaAndPayeYearList.futureValue
           result mustBe Right(
-            AtsMergePageViewModel(saDataResponse(Nil), dummyYears, appConfig, ConfidenceLevel.L50)
+            YearListViewModel(saDataResponse(Nil), dummyYears, appConfig, ConfidenceLevel.L50)
           )
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())
@@ -157,7 +157,7 @@ class AtsMergePageServiceSpec extends BaseSpec with GuiceOneAppPerSuite with Sca
           when(mockTaxYearUtil.isYearListComplete(any())).thenReturn(false)
 
           val result = sut.getSaAndPayeYearList.futureValue
-          result mustBe Right(AtsMergePageViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
+          result mustBe Right(YearListViewModel(saDataResponse, List(), appConfig, ConfidenceLevel.L50))
 
           verify(mockTaxsAgentTokenSessionCacheRepository, never)
             .putSession[AgentToken](DataKey(any()), any())(any(), any(), any())

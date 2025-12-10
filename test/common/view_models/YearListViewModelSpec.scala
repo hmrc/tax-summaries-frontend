@@ -29,7 +29,7 @@ import uk.gov.hmrc.domain.{SaUtr, Uar}
 import common.utils.BaseSpec
 import common.utils.TestConstants.{testUar, testUtr}
 
-class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
+class YearListViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
   val fakeCredentials: Credentials     = new Credentials("provider ID", "provider type")
   val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
 
@@ -53,11 +53,11 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     ()
   }
 
-  "AtsMergePageViewModel" must {
+  "YearListViewModel" must {
 
     "set showIvUpliftLink to true if paye data is present and confidence level is below 200" in {
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           AtsList("", "", "", List.empty),
           List(currentTaxYearSA),
           mockAppConfig,
@@ -67,13 +67,13 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     }
 
     "set showIvUpliftLink to false if paye data is not present and confidence level is below 200" in {
-      val model = AtsMergePageViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L50)
+      val model = YearListViewModel(AtsList("", "", "", List.empty), List.empty, mockAppConfig, ConfidenceLevel.L50)
       model.showIvUpliftLink mustBe false
     }
 
     "set showIvUpliftLink to false if paye data is present and confidence level is 200" in {
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           AtsList("", "", "", List.empty),
           List(currentTaxYearSA),
           mockAppConfig,
@@ -86,7 +86,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "", "", List(currentTaxYearSA - 2)),
           payeTaxYearList = List(currentTaxYearPAYE),
           appConfig = appConfig,
@@ -105,7 +105,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
 
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "", "", List(currentTaxYearSA - 2)),
           payeTaxYearList = List(currentTaxYearPAYE),
           appConfig = appConfig,
@@ -121,7 +121,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showContinueButton to true when showSaYearList is true" in {
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "", "", List(currentTaxYearSA - 2)),
           payeTaxYearList = List.empty,
           appConfig = appConfig,
@@ -132,7 +132,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set showContinueButton to true when showNoAtsYearList is true" in {
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(4)
-      val model = AtsMergePageViewModel(
+      val model = YearListViewModel(
         saData = AtsList("", "", "", List.empty),
         payeTaxYearList = List.empty,
         appConfig = appConfig,
@@ -144,7 +144,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
     "set showContinueButton to true when paye data is present and show IV uplift is false" in {
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "", "", List.empty),
           payeTaxYearList = List(currentTaxYearPAYE - 1),
           appConfig = mockAppConfig,
@@ -159,7 +159,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearSA - 10)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "", "", List.empty),
           payeTaxYearList = List.empty,
           appConfig = mockAppConfig,
@@ -174,7 +174,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
       when(mockAppConfig.taxYearGovSpend).thenReturn(currentTaxYearPAYE)
       when(mockAppConfig.maxTaxYearsTobeDisplayed).thenReturn(0)
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "", "", List.empty),
           payeTaxYearList = List(currentTaxYearPAYE),
           appConfig = mockAppConfig,
@@ -185,7 +185,7 @@ class AtsMergePageViewModelSpec extends BaseSpec with GuiceOneAppPerSuite {
 
     "set name to be name and surname from sa data" in {
       val model =
-        AtsMergePageViewModel(
+        YearListViewModel(
           saData = AtsList("", "name", "surname", List(1)),
           payeTaxYearList = List.empty,
           appConfig = mockAppConfig,

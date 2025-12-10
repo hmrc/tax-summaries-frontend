@@ -27,13 +27,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import common.utils.*
-import common.view_models.{AtsList, AtsMergePageViewModel}
+import common.view_models.{AtsList, YearListViewModel}
 import paye.services.PayeAtsService
 import sa.services.AtsListService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AtsMergePageService @Inject() (
+class YearListViewModelService @Inject() (
   taxsAgentTokenSessionCacheRepository: TaxsAgentTokenSessionCacheRepository,
   payeAtsService: PayeAtsService,
   atsListService: AtsListService,
@@ -47,23 +47,23 @@ class AtsMergePageService @Inject() (
   def getSaAndPayeYearList(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
-  ): Future[Either[AtsResponse, AtsMergePageViewModel]] =
+  ): Future[Either[AtsResponse, YearListViewModel]] =
     getPayeYearListIfEnabled(request.isAgent).flatMap {
       // If paye response has all required years then we don't need to call sa API at all
       case Right(payeData) if taxYearUtil.isYearListComplete(payeData) =>
-        Future.successful[Either[AtsResponse, AtsMergePageViewModel]](
-          Right(AtsMergePageViewModel(AtsList.empty, payeData, appConfig, request.confidenceLevel))
+        Future.successful[Either[AtsResponse, YearListViewModel]](
+          Right(YearListViewModel(AtsList.empty, payeData, appConfig, request.confidenceLevel))
         )
       case payeResponse                                                =>
         getSaYearListIfEnabled.map { saResponse =>
           (saResponse, payeResponse) match {
             case (Left(atsResponse), _)                                                => Left(atsResponse)
             case (Right(saData), _) if taxYearUtil.isYearListComplete(saData.yearList) =>
-              Right(AtsMergePageViewModel(saData, Nil, appConfig, request.confidenceLevel))
+              Right(YearListViewModel(saData, Nil, appConfig, request.confidenceLevel))
             case (Right(_), Left(atsResponse))                                         =>
               Left(atsResponse)
             case (Right(saData), Right(payeData))                                      =>
-              Right(AtsMergePageViewModel(saData, payeData, appConfig, request.confidenceLevel))
+              Right(YearListViewModel(saData, payeData, appConfig, request.confidenceLevel))
           }
         }
     }
