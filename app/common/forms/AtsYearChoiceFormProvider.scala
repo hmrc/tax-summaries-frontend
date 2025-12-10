@@ -26,7 +26,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import scala.util.{Failure, Success, Try}
 
-class AtsForms @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
+class AtsYearChoiceFormProvider @Inject() (taxYearUtil: TaxYearUtil) extends Logging {
 
   private val choices = List("SA", "PAYE", "NoATS")
 

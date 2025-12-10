@@ -17,7 +17,7 @@
 package common.views
 
 import common.config.ApplicationConfig
-import common.forms.AtsForms
+import common.forms.AtsYearChoiceFormProvider
 import common.models.requests
 import common.models.requests.AuthenticatedRequest
 import common.models.{ActingAsAttorneyFor, AtsYearChoice, PAYE, SA, requests}
@@ -47,8 +47,8 @@ class AtsMergePageViewSpec extends ViewSpecBase with TestConstants with BeforeAn
     FakeRequest("Get", s"?taxYear=$currentTaxYearSA")
   )
 
-  lazy val atsMergePageView: AtsMergePageView = inject[AtsMergePageView]
-  lazy val atsForms: AtsForms                 = inject[AtsForms]
+  lazy val atsMergePageView: AtsMergePageView  = inject[AtsMergePageView]
+  lazy val atsForms: AtsYearChoiceFormProvider = inject[AtsYearChoiceFormProvider]
 
   val requestWithCL50: AuthenticatedRequest[AnyContentAsEmpty.type] = requests.AuthenticatedRequest(
     "userId",

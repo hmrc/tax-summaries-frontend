@@ -18,7 +18,7 @@ package common.controllers
 
 import common.config.ApplicationConfig
 import common.controllers.auth.FakeAuthJourney
-import common.forms.AtsForms
+import common.forms.AtsYearChoiceFormProvider
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsErrorResponse, requests}
@@ -43,7 +43,7 @@ import scala.concurrent.Future
 
 class SelectTaxYearControllerSpec extends ControllerBaseSpec with ScalaFutures with BeforeAndAfterEach {
   val mockAtsMergePageService: AtsMergePageService = mock[AtsMergePageService]
-  val atsForms: AtsForms                           = inject[AtsForms]
+  val atsForms: AtsYearChoiceFormProvider          = inject[AtsYearChoiceFormProvider]
 
   implicit lazy val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
   val sut                                            = new SelectTaxYearController(

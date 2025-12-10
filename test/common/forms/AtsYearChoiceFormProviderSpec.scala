@@ -38,10 +38,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.data.FormError
 
-class AtsFormsSpec extends BaseSpec {
+class AtsYearChoiceFormProviderSpec extends BaseSpec {
 
   private val mockTaxYearUtil = mock[TaxYearUtil]
-  private val atsForms        = new AtsForms(mockTaxYearUtil)
+  private val atsForms        = new AtsYearChoiceFormProvider(mockTaxYearUtil)
 
   "atsYearFormMapping" must {
     "map correctly for a valid year option" in {

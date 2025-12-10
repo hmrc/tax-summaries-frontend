@@ -19,7 +19,7 @@ package common.controllers
 import com.google.inject.Inject
 import common.config.ApplicationConfig
 import common.controllers.auth.AuthJourney
-import common.forms.AtsForms
+import common.forms.AtsYearChoiceFormProvider
 import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import common.models.requests.AuthenticatedRequest
 import common.models.{AtsYearChoice, PAYE, SA}
@@ -41,7 +41,7 @@ class SelectTaxYearController @Inject() (
   mcc: MessagesControllerComponents,
   atsMergePageView: AtsMergePageView,
   genericErrorView: GenericErrorView,
-  atsForms: AtsForms,
+  atsYearChoiceFormProvider: AtsYearChoiceFormProvider,
   featureFlagService: FeatureFlagService
 )(implicit appConfig: ApplicationConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -94,7 +94,7 @@ class SelectTaxYearController @Inject() (
   }
 
   def onSubmit: Action[AnyContent] = authJourney.authForIndividualsOrAgents.async { implicit request =>
-    atsForms.atsYearChoiceForm
+    atsYearChoiceFormProvider.atsYearChoiceForm
       .bindFromRequest()
       .fold(
         formWithErrors => getSaAndPayeYearList(Some(formWithErrors)),
@@ -129,8 +129,8 @@ class SelectTaxYearController @Inject() (
     formWithErrors.getOrElse {
       request.session
         .get("yearChoice")
-        .fold(atsForms.atsYearChoiceForm)(value =>
-          atsForms.atsYearChoiceForm.fill(AtsYearChoice.fromString(Some(value)))
+        .fold(atsYearChoiceFormProvider.atsYearChoiceForm)(value =>
+          atsYearChoiceFormProvider.atsYearChoiceForm.fill(AtsYearChoice.fromString(Some(value)))
         )
     }
 }
