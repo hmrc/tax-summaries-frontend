@@ -17,8 +17,9 @@
 package testOnly.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
-import config.ApplicationConfig
-import models.*
+import common.config.ApplicationConfig
+import common.utils.TestConstants.{testUar, testUtr}
+import common.utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -29,12 +30,11 @@ import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Injecting
+import sa.models.AtsListData
 import testOnly.models.AtsSaFields
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import utils.TestConstants.{testUar, testUtr}
-import utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.ExecutionContext
 

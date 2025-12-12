@@ -17,17 +17,17 @@
 package testOnly.controllers
 
 import com.google.inject.Inject
-import config.ApplicationConfig
+import common.config.ApplicationConfig
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import testOnly.forms.EnterSearchFormProvider
-import testOnly.models.TaxYearAndUTR
 import testOnly.views.html.EnterSearchView
 import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{AccountUtils, AttorneyUtils}
+import common.utils.{AccountUtils, AttorneyUtils}
+import testOnly.forms.EnterSearchFormProvider
+import testOnly.models.TaxYearAndUTR
 
 import scala.concurrent.Future
 

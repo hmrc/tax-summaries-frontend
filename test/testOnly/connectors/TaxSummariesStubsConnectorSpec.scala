@@ -17,6 +17,7 @@
 package testOnly.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import common.utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
@@ -28,7 +29,6 @@ import play.api.libs.json.Json
 import play.api.test.Injecting
 import testOnly.models.{CountryAndODSValues, OdsValue, SAODSModel}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext}

@@ -19,9 +19,9 @@ package testOnly.forms
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import testOnly.models.CountryAndODSValues.*
 import testOnly.forms.mappings.Mappings
 import testOnly.models.CountryAndODSValues
-import testOnly.models.CountryAndODSValues.*
 
 class EnterODSFormProvider extends Mappings {
 

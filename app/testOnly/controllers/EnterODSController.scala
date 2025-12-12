@@ -21,13 +21,13 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import testOnly.connectors.{TaxSummariesConnector, TaxSummariesStubsConnector}
-import testOnly.forms.EnterODSFormProvider
-import testOnly.models.CountryAndODSValues
 import testOnly.views.html.EnterODSView
 import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{AccountUtils, AttorneyUtils}
+import common.utils.{AccountUtils, AttorneyUtils}
+import testOnly.connectors.{TaxSummariesConnector, TaxSummariesStubsConnector}
+import testOnly.forms.EnterODSFormProvider
+import testOnly.models.CountryAndODSValues
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}

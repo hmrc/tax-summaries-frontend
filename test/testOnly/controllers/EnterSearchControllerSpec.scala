@@ -16,15 +16,15 @@
 
 package testOnly.controllers
 
-import config.ApplicationConfig
-import controllers.auth.requests.AuthenticatedRequest
+import common.config.ApplicationConfig
+import common.models.requests.AuthenticatedRequest
+import common.utils.ControllerBaseSpec
 import org.mockito.Mockito.reset
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import testOnly.forms.EnterSearchFormProvider
 import testOnly.views.html.EnterSearchView
-import utils.ControllerBaseSpec
 
 class EnterSearchControllerSpec extends ControllerBaseSpec {
   private val mockApplicationConfig = mock[ApplicationConfig]

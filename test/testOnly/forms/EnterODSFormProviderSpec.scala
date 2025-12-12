@@ -16,9 +16,9 @@
 
 package testOnly.forms
 
+import common.utils.BaseSpec
 import play.api.data.FormError
 import testOnly.models.CountryAndODSValues
-import utils.BaseSpec
 
 class EnterODSFormProviderSpec extends BaseSpec {
 

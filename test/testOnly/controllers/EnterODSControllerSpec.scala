@@ -16,7 +16,8 @@
 
 package testOnly.controllers
 
-import controllers.auth.requests.AuthenticatedRequest
+import common.models.requests.AuthenticatedRequest
+import common.utils.ControllerBaseSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -27,7 +28,6 @@ import testOnly.connectors.{TaxSummariesConnector, TaxSummariesStubsConnector}
 import testOnly.forms.EnterODSFormProvider
 import testOnly.models.{CountryAndODSValues, SAODSModel}
 import testOnly.views.html.EnterODSView
-import utils.ControllerBaseSpec
 
 import scala.concurrent.Future
 

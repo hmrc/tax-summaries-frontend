@@ -30,16 +30,16 @@ lazy val scoverageSettings = {
       "Reverse.*",
       ".*.Routes.*",
       "prod.*",
-      "views.html.*",
+      ".*views.html.*",
       "uk.gov.hmrc.*",
       "testOnlyDoNotUseInAppConf.*",
-      "config.*",
-      "models.*",
-      "connectors.*",
+      ".*config.*",
+      ".*models.*",
+      ".*connectors.*",
       "awrs.app.*",
-      "views.helpers.*",
-      "utils.validation.*",
-      "utils.prevalidation.*"
+      ".*views.helpers.*",
+      ".*utils.validation.*",
+      ".*utils.prevalidation.*"
     ).mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 85,
     ScoverageKeys.coverageMinimumBranchTotal := 81,
@@ -57,7 +57,7 @@ lazy val microservice      = Project(appName, file("."))
   .settings(
     scalacOptions ++= commonSettings
   )
-  .settings(routesImport ++= Seq("models.admin._"))
+  .settings(routesImport ++= Seq("common.models.admin._"))
   .configs(A11yTest)
   .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings) *)
   .settings(headerSettings(A11yTest) *)

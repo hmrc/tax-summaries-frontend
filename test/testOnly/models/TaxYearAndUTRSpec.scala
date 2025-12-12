@@ -16,8 +16,8 @@
 
 package testOnly.models
 
+import common.utils.BaseSpec
 import play.api.libs.json.Json
-import utils.BaseSpec
 
 class TaxYearAndUTRSpec extends BaseSpec {
 

@@ -1,0 +1,291 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package sa.services
+
+import common.config.ApplicationConfig
+import common.models.*
+import common.models.requests.AuthenticatedRequest
+import common.repository.TaxsAgentTokenSessionCacheRepository
+import common.services.AuditService
+import common.utils.TestConstants.*
+import common.utils.{AgentTokenException, AuthorityUtils, BaseSpec}
+import common.view_models.AtsList
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.*
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import sa.connectors.SaConnector
+import sa.models.AtsListData
+import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.cache.DataKey
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
+
+import scala.concurrent.Future
+
+class AtsListServiceSpec extends BaseSpec {
+  val data: AtsListData = atsList("utr")
+
+  val mockSaConnector: SaConnector                     = mock[SaConnector]
+  private val mockTaxsAgentTokenSessionCacheRepository = mock[TaxsAgentTokenSessionCacheRepository]
+  val mockAuditService: AuditService                   = mock[AuditService]
+  val mockAuthUtils: AuthorityUtils                    = mock[AuthorityUtils]
+  val mockAppConfig: ApplicationConfig                 = mock[ApplicationConfig]
+
+  override def beforeEach(): Unit = {
+    reset(mockSaConnector)
+    reset(mockTaxsAgentTokenSessionCacheRepository)
+    reset(mockAuditService)
+    reset(mockAuthUtils)
+
+    // By default we don't want to be an agent
+    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
+      .thenReturn(
+        Future
+          .successful(None)
+      )
+
+    when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future.successful(
+      AtsSuccessResponseWithPayload[AtsListData](data)
+    )
+
+    when(
+      mockSaConnector.getList(any[SaUtr], any(), any())(any[HeaderCarrier])
+    ) thenReturn Future
+      .successful(AtsSuccessResponseWithPayload[AtsListData](data))
+
+    when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(
+      AuditResult.Success
+    )
+
+    when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
+    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+
+    when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+    ()
+  }
+
+  implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+    requests.AuthenticatedRequest(
+      "userId",
+      None,
+      Some(SaUtr(testUtr)),
+      None,
+      isAgentActive = false,
+      ConfidenceLevel.L50,
+      fakeCredentials,
+      FakeRequest()
+    )
+  implicit val hc: HeaderCarrier                                     = new HeaderCarrier
+
+  val agentToken: AgentToken = AgentToken(
+    agentUar = testUar,
+    clientUtr = testUtr,
+    timestamp = 0
+  )
+
+  def sut: AtsListService =
+    new AtsListService(
+      mockAuditService,
+      mockSaConnector,
+      mockTaxsAgentTokenSessionCacheRepository,
+      mockAuthUtils,
+      appConfig
+    )
+
+  "createModel" must {
+
+    "Return a ats list when received a success response from connector" in
+      whenReady(sut.createModel()) { result =>
+        result mustBe Right(
+          AtsList(
+            data.utr,
+            data.taxPayer.fold("")(_.getOrElse("forename", "")),
+            data.taxPayer.fold("")(_.getOrElse("surname", "")),
+            data.atsYearList.get
+          )
+        )
+      }
+
+    "Return an empty ats list when received a not found response from connector" in {
+
+      when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future
+        .successful(AtsNotFoundResponse("Not found"))
+
+      whenReady(sut.createModel()) { result =>
+        result mustBe Right(AtsList.empty)
+      }
+
+    }
+
+    "Return the error status ats list when received an error response from connector" in {
+
+      when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future
+        .successful(AtsErrorResponse("INTERNAL_SERVER_ERROR"))
+
+      val result = sut.createModel().futureValue.left.value
+      result mustBe an[AtsErrorResponse]
+    }
+  }
+
+  "getAtsYearList" must {
+
+    s"Return a ats list with $currentTaxYearSA year data" in
+      whenReady(sut.getAtsYearList) { result =>
+        result.value.atsYearList.get.contains(currentTaxYearSA) mustBe true
+      }
+
+    "Return a ats list without CY-1 year data" in {
+      val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != (currentTaxYearSA - 1))))
+      when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future.successful(
+        AtsSuccessResponseWithPayload[AtsListData](dataMissingYear)
+      )
+
+      whenReady(sut.getAtsYearList) { result =>
+        result.value.atsYearList.get.contains(currentTaxYearSA - 1) mustBe false
+      }
+
+    }
+
+    "Return a failed future when the call to the MS fails" in {
+
+      when(mockSaConnector.getList(any[SaUtr], any(), any())(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("failed")))
+
+      whenReady(sut.getAtsYearList.failed) { exception =>
+        exception mustBe an[Exception]
+
+        verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
+      }
+    }
+
+    "Return the ats year list data for a user from the MS" in
+      whenReady(sut.getAtsYearList) { result =>
+        result mustBe Right(data)
+
+        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]])(
+          any()
+        )
+        verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
+      }
+
+    // must this be the case? (EDGE CASE)
+    "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
+
+      when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
+
+      whenReady(sut.getAtsYearList) { result =>
+        result mustBe Right(data)
+
+        verify(mockAuditService, times(1)).sendEvent(any[String], any[Map[String, String]])(
+          any()
+        )
+        verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
+      }
+    }
+
+    "Agent" must {
+
+      val agentRequest =
+        requests.AuthenticatedRequest(
+          "userId",
+          Some(Uar(testUar)),
+          Some(SaUtr(testUtr)),
+          None,
+          isAgentActive = false,
+          ConfidenceLevel.L50,
+          fakeCredentials,
+          FakeRequest()
+        )
+
+      "Return the ats year list data for a user from the MS" in
+        whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
+          result mustBe Right(data)
+
+          verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(
+            any[HeaderCarrier]
+          )
+        }
+
+      "Return the ats year list data for a user when the agent token doesn't match the user" in {
+
+        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
+          .thenReturn(false)
+
+        whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
+          result mustBe Right(data)
+
+          verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(
+            any[HeaderCarrier]
+          )
+        }
+      }
+
+      "Return a left" when {
+
+        "the connector returns a 404" in {
+
+          when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future
+            .successful(AtsNotFoundResponse("Not found"))
+
+          val result = sut.getAtsYearList.futureValue.left.value
+          result mustBe an[AtsNotFoundResponse]
+
+          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]])(
+            any()
+          )
+          verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
+        }
+      }
+
+      "Return a left" when {
+        "the connector returns a 500" in {
+
+          when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future
+            .successful(AtsErrorResponse("Something went wrong"))
+
+          val result = sut.getAtsYearList.futureValue.left.value
+          result mustBe an[AtsErrorResponse]
+
+          verify(mockAuditService).sendEvent(any[String], any[Map[String, String]])(
+            any()
+          )
+
+          verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
+        }
+      }
+
+      "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in {
+
+        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
+          .thenReturn(false)
+        when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]]))
+          .thenThrow(AgentTokenException("Token is empty"))
+
+        whenReady(sut.getAtsYearList.failed) { exception =>
+          exception mustBe a[AgentTokenException]
+          exception.getMessage mustBe "Token is empty"
+
+          verify(mockSaConnector, never).getList(any[SaUtr], any(), any())(
+            any[HeaderCarrier]
+          )
+        }
+      }
+    }
+  }
+}

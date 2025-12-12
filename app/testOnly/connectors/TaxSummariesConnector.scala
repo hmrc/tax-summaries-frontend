@@ -17,7 +17,7 @@
 package testOnly.connectors
 
 import com.google.inject.Inject
-import config.ApplicationConfig
+import common.config.ApplicationConfig
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.JsValue

@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
+import common.models.admin.{PAYEServiceToggle, SelfAssessmentServiceToggle}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

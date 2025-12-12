@@ -1,0 +1,171 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.models.requests.AuthenticatedRequest
+@import sa.views.html.total_income_tax_includes._
+@import common.views.html.helpers.HeaderSection
+
+@this(
+    scottishTableView: ScottishTableView,
+    savingsTableView: SavingsTableView
+)
+
+@(viewModel: sa.view_models.IncomeTaxAndNI)(implicit messages: Messages)
+
+@if(viewModel.showIncomeTaxTable) {
+<table id="income-tax" class="govuk-table">
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">@Html(Messages("ats.total_income_tax.income_tax"))</th>
+      <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    @if(!viewModel.startingRateForSavings.isZero) {
+    <tr id="starting-rate-for-savings-row" class="govuk-table__row">
+      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.savings",
+          """<span id="start-rate-for-savings-before">"""+viewModel.startingRateForSavings.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+          """<span id="start-rate-for-savings-rate">"""+viewModel.startingRateForSavingsRate+"""</span>"""))</td>
+      <td id="starting-rate-for-savings-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.startingRateForSavingsAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+    }
+
+    @if(!viewModel.basicRateIncomeTax.isZero) {
+    <tr id="basic-rate-income-tax-row" class="govuk-table__row">
+      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.basic",
+            """<span id="basic-rate-income-tax-before">"""+viewModel.basicRateIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+            """<span id="basic-rate-income-tax-rate">"""+viewModel.basicRateIncomeTaxRate+"""</span>"""))</td>
+      <td id="basic-rate-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.basicRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+    }
+
+    @if(!viewModel.basicRateIncomeTax.isZero) {
+      @if(!viewModel.higherRateIncomeTax.isZero) {
+    <tr id="higher-rate-income-tax-row" class="govuk-table__row">
+        <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.higher",
+            """<span id="higher-rate-income-tax-before">"""+viewModel.higherRateIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+            """<span id="higher-rate-income-tax-rate">"""+viewModel.higherRateIncomeTaxRate+"""</span>"""))</td>
+      <td id="higher-rate-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.higherRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+      }
+
+    @if(!viewModel.additionalRateIncomeTax.isZero) {
+    <tr id="additional-rate-income-tax-row" class="govuk-table__row">
+      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.additional",
+          """<span id="additional-rate-income-tax-before">"""+viewModel.additionalRateIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+          """<span id="additional-rate-income-tax-rate">"""+viewModel.additionalRateIncomeTaxRate+"""</span>"""))</td>
+      <td id="additional-rate-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.additionalRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+      }
+    }
+
+  </tbody>
+</table>
+}
+
+@scottishTableView(viewModel.scottishTax, viewModel.scottishRates)
+
+@savingsTableView(viewModel.savingsTax, viewModel.savingsRates)
+
+@if(viewModel.showDividendsTable) {
+<table id="dividends" class="govuk-table">
+  <thead class="govuk-table__head">
+    <tr id="dividends-section-row" class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">@Html(Messages("ats.total_income_tax.dividends"))</th>
+      <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @if(!viewModel.ordinaryRate.isZero) {
+    <tr id="ordinary-rate-row" class="govuk-table__row">
+      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.basic",
+          """<span id="ordinary-rate-before">"""+viewModel.ordinaryRate.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+          """<span id="ordinary-rate-rate">"""+viewModel.ordinaryRateTaxRate+"""</span>"""))</td>
+      <td id="ordinary-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ordinaryRateAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+    }
+
+    @if(!viewModel.upperRate.isZero) {
+    <tr id="upper-rate-row" class="govuk-table__row">
+      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.higher",
+          """<span id="upper-rate-before">"""+viewModel.upperRate.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+          """<span id="upper-rate-rate">"""+viewModel.upperRateRate+"""</span>"""))</td>
+      <td id="upper-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.upperRateAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+    }
+
+    @if(!viewModel.additionalRate.isZero) {
+    <tr id="additional-rate-row" class="govuk-table__row">
+      <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.additional",
+          """<span id="additional-rate-before">"""+viewModel.additionalRate.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
+          """<span id="additional-rate-rate">"""+viewModel.additionalRateRate+"""</span>"""))</td>
+      <td id="additional-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.additionalRateAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+    </tr>
+    }
+  </tbody>
+</table>
+}
+
+@if(viewModel.isScottishTaxPayer && viewModel.scottishAndRestOfUkTotal.nonZero) {
+    <table id="total-uk-income-tax" class="govuk-table">
+        <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">@Html(Messages("ats.total_income_tax.scottish_income_uk_income_tax.table.total"))</th>
+            <td id="total-uk-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.scottishAndRestOfUkTotal.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+        </tr>
+        </tbody>
+    </table>
+}
+
+@if(viewModel.showAdjustmentsTable) {
+    <table id="adjustments" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr id="adjustments-section" class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">@Html(Messages("ats.total_income_tax.adjustments"))</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+    
+      <tbody class="govuk-table__body">
+        @if(!viewModel.otherAdjustmentsIncreasing.isZero) {
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.increasing"))</td>
+          <td id="other-adjustments-increasing-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.otherAdjustmentsIncreasing.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+        </tr>
+        }
+    
+        @if(!viewModel.marriageAllowanceReceivedAmount.isZero) {
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.marriage_allowance_received"))</td>
+          <td id="marriage-allowance-received-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.marriageAllowanceReceivedAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+        </tr>
+        }
+    
+        @if(!viewModel.otherAdjustmentsReducing.isZero) {
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">@Html(Messages("ats.total_income_tax.table.other.reducing"))</td>
+          <td id="other-adjustments-reducing-amount" class="govuk-table__cell govuk-table__cell--numeric">
+              <span id="reducing-amount">@viewModel.otherAdjustmentsReducing.renderCurrencyValueAsHtml(poundsOnly = true)</span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+}
+
+
+

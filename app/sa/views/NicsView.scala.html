@@ -1,0 +1,112 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.models.requests.AuthenticatedRequest
+@import common.utils.ViewUtils
+@import common.views.html.helpers.{HeaderSection, PageHeading, P, Link}
+@import common.views.MainTemplate
+@import common.models._
+@import sa.views.html.includes.IncomeTaxDetailsView
+
+@this(
+    main: MainTemplate,
+    headerSection: HeaderSection,
+        viewUtils: ViewUtils,
+    pageHeading: PageHeading,
+    p: P,
+    incomeTaxDetailsView:IncomeTaxDetailsView
+)
+
+@(  viewModel: sa.view_models.IncomeTaxAndNI,
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+    includeBRDMessage: Boolean
+    )(
+    implicit request: AuthenticatedRequest[_],
+    messages: Messages
+)
+
+@beforeContent = {
+    @headerSection(
+        name = viewModel.forename + ' ' + viewModel.surname,
+        utr = viewModel.utr,
+        actingAsAttorney = actingAsAttorney
+    )
+}
+
+@main(
+        pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+        actingAttorney = actingAsAttorney,
+        beforeContentHtml = Some(beforeContent),
+        pageHeading = Messages("ats.nics.tax_and_nics.title"),
+        headerSectionNeeded = true
+    ) {
+    @pageHeading(
+      text = "ats.nics.tax_and_nics.title",
+      section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    )
+    @p(HtmlContent(Messages("ats.nics.tax_and_nics.lede")))
+    @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
+      "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>")))
+
+    @incomeTaxDetailsView(viewModel)
+
+    <table id="national-insurance" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">@Html(Messages("ats.nics.tax_and_nics_explained"))</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="govuk-table__cell">@Html(Messages("paye.ats.national_insurance.title"))</td>
+          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.employeeNicAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table id="total-income-tax-and-ni" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">@Html(Messages("paye.ats.total_income_tax.title"))</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
+            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+        </tr>
+        @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
+                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.scottishIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+            </tr>
+        }
+        @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
+                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.welshIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
+            </tr>
+        }      
+      </tbody>
+    </table>
+
+    @if(includeBRDMessage) {
+        @p(Text(messages("ats.summary.brd")), elmId=Some("brd"))
+    }    
+
+}

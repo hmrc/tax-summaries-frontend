@@ -1,0 +1,156 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.models.requests.AuthenticatedRequest
+@import common.views.html.helpers.{PageHeading, HeaderSection, H2, P}
+@import common.views.MainTemplate
+@import common.models._
+
+@this(
+    main: MainTemplate,
+    headerSection: HeaderSection,
+        pageHeading: PageHeading,
+    p: P,
+    h2: H2
+)
+
+@(  viewModel: sa.view_models.Summary,
+    actingAsAttorney: Option[ActingAsAttorneyFor] = None
+    )(
+    implicit lang: Lang, request: AuthenticatedRequest[_],
+    messages: Messages
+)
+
+@beforeContent = {
+    <div class="hmrc-logo-print" aria-hidden="true">
+        <img class="logo-image" src="/annual-tax-summary/assets/images/HMRC-logo.png" alt="@Messages("generic.hm.revenue.and.customs")">
+        <h2 class="logo-heading"><span>@Messages("generic.hm.revenue") </span>&amp; @Messages("generic.hm.customs")</h2>
+    </div>
+
+    @headerSection(
+        name = viewModel.forename + ' ' + viewModel.surname,
+        utr = viewModel.utr,
+        actingAsAttorney = actingAsAttorney
+    )
+
+
+    <div class="print-this govuk-!-margin-top-0">
+        <img src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
+        <a class="print-this__link" href="#" id="printLink">@Messages("ats.treasury_spending.print.this.page")</a>
+    </div>
+
+}
+
+
+@main(
+    pageTitle = Messages("ats.summary.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    actingAttorney = actingAsAttorney,
+    beforeContentHtml = Some(beforeContent),
+    pageHeading = Messages("ats.summary.title"),
+    headerSectionNeeded = true
+) {
+
+    @pageHeading(
+        text = "ats.summary.title",
+        section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    )
+
+    @p(Text(Messages("ats.summary.lede")), classes = Some("govuk-body-l"))
+
+    <div id="taxable-income" class="govuk-!-margin-bottom-8 xxxxxx">
+
+        @h2("ats.summary.total_income.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
+
+        <a href="@sa.controllers.routes.IncomeController.authorisedIncomeBeforeTax?taxYear=@viewModel.taxYearTo" class="data-link">
+            @linkSectionContents(Messages("screen.reader.total_income"), viewModel.yourIncomeBeforeTax.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="income-before-tax-amount", Messages("ats.summary.total_income.link"))
+        </a>
+
+        @p(HtmlContent(Messages("ats.summary.total_income.description")))
+
+    </div>
+
+    <div id="tax-free-income" class="govuk-!-margin-bottom-8">
+
+        @h2("ats.summary.tax_free.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
+
+        <a href="@sa.controllers.routes.AllowancesController.authorisedAllowance?taxYear=@viewModel.taxYearTo" class="data-link">
+            @linkSectionContents(Messages("screen.reader.tax_free_amount"), viewModel.totalTaxFreeAllowance.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="total-tax-free-income", Messages("ats.summary.tax_free.link"))
+        </a>
+
+        @p(HtmlContent(Messages("ats.summary.tax_free.description")))
+
+    </div>
+
+        <div id="tax-calculated-as" class="govuk-!-margin-bottom-8">
+
+            @h2(messages(viewModel.yourTotalTaxTextKey), elmId=Some("tax-and-nics-title"), classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
+
+            <a href="@sa.controllers.routes.NicsController.authorisedTaxAndNICs?taxYear=@viewModel.taxYearTo" class="data-link">
+                @linkSectionContents(Messages("screen.reader.income_tax_and_ni"), viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="total-income-tax-and-nics", Messages("ats.summary.tax_and_nics.link"))
+            </a>
+
+            @p(HtmlContent(Messages("ats.summary.tax_and_nics.description")))
+
+        </div>
+
+
+        @if(viewModel.hasTaxableGains) {
+            <div id="capital-gains" class="govuk-!-margin-bottom-8">
+
+                @h2("ats.summary.capital_gains.title", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
+
+                <a href="@sa.controllers.routes.CapitalGainsTaxController.authorisedCapitalGains?taxYear=@viewModel.taxYearTo" class="data-link">
+                    @linkSectionContents(Messages("screen.reader.capital_gains_tax"), viewModel.totalCapitalGainsTax.renderCurrencyValueAsHtml(poundsOnly = true), xLargeID="total-capital-gains-tax", Messages("ats.summary.capital_gains.link"))
+                </a>
+
+                @if(!viewModel.totalCapitalGainsTax.isZero) {
+                    @p(HtmlContent(Messages("ats.summary.capital_gains.description")), elmId = Some("total-cg-description"))
+                }
+
+            </div>
+        }
+
+        <div id="your-total-tax" class="govuk-!-margin-bottom-8">
+
+            @h2("ats.summary.total_tax.your_total_tax", classes = Some("govuk-heading-m govuk-!-margin-bottom-4"))
+
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36 govuk-!-margin-bottom-1">
+                <span class="govuk-visually-hidden" id="total-tax-amount-description">
+                @if(lang.code == "cy-GB"){
+                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)
+                } else {
+                @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)}</span>
+                <span id="total-tax-amount" aria-hidden="true">@viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)</span>
+            </p>
+
+            <p id="total-tax-description" class="govuk-body-m govuk-!-font-weight-bold" aria-hidden="true">
+                @if(lang.code == "cy-GB"){
+                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
+                } else {
+                @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
+                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*))
+                }
+            </p>
+
+        </div>
+}
+
+@linkSectionContents(hiddenText: String, xLargeText: Html, xLargeID: String, smallText: String) = {
+    <span class="govuk-visually-hidden">@Html(hiddenText) </span>
+    <span class="govuk-link govuk-link--no-underline govuk-link--no-visited-state govuk-!-font-weight-bold govuk-!-font-size-36" id=@xLargeID>@xLargeText</span><br>
+    <span class="govuk-link govuk-!-font-weight-bold govuk-link--no-visited-state govuk-!-font-size-19" aria-hidden="true">@Html(smallText)</span>
+}

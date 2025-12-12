@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import config.ApplicationConfig
+import common.config.ApplicationConfig
 import play.api.Logging
 import play.api.http.Status.{CREATED, NOT_FOUND, OK}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue

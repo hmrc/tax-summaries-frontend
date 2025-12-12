@@ -16,7 +16,7 @@
 
 package testOnly.models
 
-import utils.BaseSpec
+import common.utils.BaseSpec
 
 class CountryAndODSValuesSpec extends BaseSpec {
   private val newLine = sys.props("line.separator")
