@@ -23,7 +23,6 @@
 @import common.views.html.helpers.{SubmitButton, FormErrorSummary, HeaderSection, InputRadios, Link, P, PageHeading}
 @import common.views.MainTemplate
 
-
 @this(
         main: MainTemplate,
         headerSection: HeaderSection,
@@ -76,8 +75,6 @@
 ) {
     @errorSummary(atsYearForm, errorSummaryLink)
 
-
-
     @formWithCSRF(action = common.controllers.routes.SelectTaxYearController.onSubmit) {
         @pageHeading(
             elmId = "index-page-header",
@@ -124,8 +121,6 @@
         }
     }
 }
-
-
 
 @radioItems(name: String, radioOptions: Seq[(AtsYearChoice, String)]) = @{
     radioOptions.map { case (value, label) =>
