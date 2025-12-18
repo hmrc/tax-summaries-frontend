@@ -469,3 +469,5 @@ betaBanner.linkText=feedback
 
 # BRD content
 ats.summary.brd= This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.
+
+ats.uprating.delayed = The PAYE and Self Assessment Annual Tax Summary for 2024 to 2025 will be available in January 2026.
