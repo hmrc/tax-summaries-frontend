@@ -76,6 +76,8 @@
 ) {
     @errorSummary(atsYearForm, errorSummaryLink)
 
+
+
     @formWithCSRF(action = common.controllers.routes.SelectTaxYearController.onSubmit) {
         @pageHeading(
             elmId = "index-page-header",
@@ -85,6 +87,8 @@
         @if(yearListViewModel.showNoAtsYearList) {
             @p(Text(messages("merge.page.no.ats.summary.text")), classes = Some("govuk-hint"), elmId = Some("generic-no-ats"))
         }
+
+        @p(Text(messages("ats.uprating.delayed")), elmId = Some("unavailable-tax-year"), classes = Some("govuk-inset-text"))
 
         @inputRadios(
             form = atsYearForm,
@@ -120,6 +124,8 @@
         }
     }
 }
+
+
 
 @radioItems(name: String, radioOptions: Seq[(AtsYearChoice, String)]) = @{
     radioOptions.map { case (value, label) =>

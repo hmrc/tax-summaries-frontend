@@ -449,3 +449,5 @@ betaBanner.linkText=adborth
 
 # BRD content
 ats.summary.brd= Nid yw’r cyfrifiad hwn yn dangos sut mae Rhodd Cymorth yn newid eich treth. Nid yw’n ystyried y gwahaniaeth rhwng eich cyfradd dreth a’r un a ddefnyddir gan elusennau i hawlio Rhodd Cymorth.
+
+ats.uprating.delayed = Bydd y Crynodeb Treth Blynyddol Hunanasesiad a TWE ar gyfer 2024 i 2025 ar gael ym mis Ionawr 2026.
