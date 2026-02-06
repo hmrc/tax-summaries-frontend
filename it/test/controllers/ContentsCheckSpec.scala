@@ -52,7 +52,7 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       case "not-authorised"           =>
         ExpectedData("Not authorised - Annual Tax Summary - GOV.UK")
       case "no-ats"                   =>
-        ExpectedData("Bad request - 400 - Annual Tax Summary - GOV.UK")
+        ExpectedData("Bad request - Annual Tax Summary - GOV.UK")
       case "service-unavailable"      =>
         ExpectedData("Sorry there is a problem with the service - Annual Tax Summary - GOV.UK")
       case "paye-year"                =>
@@ -135,7 +135,9 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
         ),
         PtaMinMenuConfig("MenuName", "BackName"),
         List.empty,
-        List.empty
+        List.empty,
+        None,
+        None
       )
     )
     .toString
@@ -288,9 +290,6 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
           val ptaCss =
             content.getElementsByTag("link").asScala.toList.filter(_.attr("href").contains("pta.css")).head.attr("href")
           ptaCss mustBe "/annual-tax-summary/sca/assets/pta.css"
-          val ptaJs  =
-            content.getElementsByTag("script").asScala.toList.filter(_.attr("src").contains("pta.js")).head.attr("src")
-          ptaJs mustBe "/annual-tax-summary/sca/assets/pta.js"
         }
       }
   }

@@ -17,7 +17,7 @@
 package config
 
 import com.google.inject.Inject
-import play.api.Logging
+import play.api.{ConfigLoader, Configuration, Logging}
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
 import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative, RedirectUrl}
@@ -26,7 +26,9 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Singleton
 
 @Singleton
-class ApplicationConfig @Inject() (config: ServicesConfig) extends Logging {
+class ApplicationConfig @Inject() (runModeConfiguration: Configuration, config: ServicesConfig) extends Logging {
+  def getOptional[A](key: String)(implicit loader: ConfigLoader[A]): Option[A] =
+    runModeConfiguration.getOptional[A](key)
 
   private def getConf(key: String): String =
     config.getConfString(key, throw new Exception(s"Could not find config '$key'"))

@@ -23,9 +23,10 @@ import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.errors.PayeGenericErrorView
 import views.html.paye.PayeTaxFreeAmountView
@@ -51,7 +52,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA = currentTaxYearPAYE
       }
 
@@ -80,7 +81,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     s"return OK response for ${currentTaxYearPAYE - 1}" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA = currentTaxYearPAYE - 1
       }
 

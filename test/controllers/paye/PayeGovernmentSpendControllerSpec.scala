@@ -23,6 +23,7 @@ import controllers.auth.requests.PayeAuthenticatedRequest
 import models.{AtsErrorResponse, AtsNotFoundResponse, PayeAtsData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
@@ -58,7 +59,7 @@ class PayeGovernmentSpendControllerSpec extends PayeControllerSpecHelpers {
 
   "Government spend controller" must {
     s"return OK response for $currentTaxYearPAYE" in {
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA: Int = currentTaxYearPAYE
       }
 

@@ -23,6 +23,7 @@ import models.{AtsBadRequestResponse, AtsErrorResponse, AtsNotFoundResponse, Pay
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.http.Status.*
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
@@ -55,7 +56,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
   "Paye your income tax and nics controller" must {
 
     "return OK response" in {
-      val fakeAppConfig = new ApplicationConfig(inject[ServicesConfig]) {
+      val fakeAppConfig = new ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA: Int = currentTaxYearPAYE
       }
 
@@ -92,7 +93,7 @@ class PayeIncomeTaxAndNicsControllerSpec extends PayeControllerSpecHelpers {
 
     s"return OK response when tax year is set to ${currentTaxYearPAYE - 1}" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA = currentTaxYearPAYE - 1
       }
 
