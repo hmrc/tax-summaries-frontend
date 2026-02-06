@@ -26,6 +26,7 @@ import org.mockito.Mockito.when
 import paye.models.PayeAtsData
 import paye.views.html.PayeTaxFreeAmountView
 import paye.views.html.errors.PayeGenericErrorView
+import play.api.Configuration
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.*
@@ -52,7 +53,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     "return OK response" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA = currentTaxYearPAYE
       }
 
@@ -81,7 +82,7 @@ class PayeTaxFreeAmountControllerSpec extends PayeControllerSpecHelpers {
 
     s"return OK response for ${currentTaxYearPAYE - 1}" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA = currentTaxYearPAYE - 1
       }
 
