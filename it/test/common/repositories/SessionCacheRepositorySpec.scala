@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package common.repositories
 
 import play.api.libs.json.{Json, OFormat}
 import common.repository.{SessionCacheId, SessionCacheRepository}

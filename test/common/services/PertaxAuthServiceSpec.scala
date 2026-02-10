@@ -43,6 +43,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
   private val serviceUnavailableView: ServiceUnavailableView = inject[ServiceUnavailableView]
   private val mainTemplate: MainTemplate                     = inject[MainTemplate]
   private val mockPertaxConnector                            = mock[PertaxConnector]
+  private val mockURLService                                 = mock[URLService]
   private val mockAuthConnector: DefaultAuthConnector        = mock[DefaultAuthConnector]
   private val messagesApi: MessagesApi                       = inject[MessagesApi]
   private val mockApplicationConfig                          = mock[ApplicationConfig]
@@ -58,6 +59,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -82,6 +84,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -95,9 +98,12 @@ class PertaxAuthServiceSpec extends BaseSpec {
           redirect = Some(dummyRedirect)
         )
       )
+
+      val fakeRequest = FakeRequest()
       when(mockPertaxConnector.pertaxPostAuthorise()(any(), any())).thenReturn(EitherT(Future(response)))
-      whenReady(service.authorise[AnyContent, Request[AnyContent]](FakeRequest())) { result =>
-        result mustBe Some(Redirect(s"$dummyRedirect?redirectUrl=%2F"))
+      when(mockURLService.localFriendlyEncodedUrl(fakeRequest.uri, fakeRequest.host)).thenReturn("friendlyUrl")
+      whenReady(service.authorise[AnyContent, Request[AnyContent]](fakeRequest)) { result =>
+        result mustBe Some(Redirect(s"$dummyRedirect?redirectUrl=friendlyUrl"))
       }
     }
 
@@ -106,6 +112,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -140,6 +147,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -163,6 +171,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -192,6 +201,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -218,6 +228,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -241,6 +252,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig
@@ -259,6 +271,7 @@ class PertaxAuthServiceSpec extends BaseSpec {
         mockAuthConnector,
         messagesApi,
         mockPertaxConnector,
+        mockURLService,
         serviceUnavailableView,
         mainTemplate,
         mockApplicationConfig

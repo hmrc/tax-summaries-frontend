@@ -25,6 +25,7 @@ import common.views.behaviours.ViewBehaviours
 import org.jsoup.Jsoup
 import paye.utils.PayeAtsTestData
 import paye.views.html.PayeGovernmentSpendingView
+import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -115,7 +116,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
     s"link to Scottish government spending page for Scottish users for tax year $currentTaxYearSA" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA: Int = currentTaxYearSA
       }
 
@@ -137,7 +138,7 @@ class PayeGovernmentSpendingViewSpec extends ViewSpecBase with TestConstants wit
 
     s"link to Scottish government spending page for Scottish users for tax year ${currentTaxYearSA - 1}" in {
 
-      class FakeAppConfig extends ApplicationConfig(inject[ServicesConfig]) {
+      class FakeAppConfig extends ApplicationConfig(inject[Configuration], inject[ServicesConfig]) {
         override lazy val taxYearSA: Int = currentTaxYearSA - 1
       }
 

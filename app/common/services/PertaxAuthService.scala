@@ -28,7 +28,6 @@ import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, ConfidenceLevel}
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.partials.HtmlPartial
 import common.views.MainTemplate
@@ -40,6 +39,7 @@ class PertaxAuthService @Inject() (
   val authConnector: DefaultAuthConnector,
   val messagesApi: MessagesApi,
   pertaxConnector: PertaxConnector,
+  urlService: URLService,
   serviceUnavailableView: ServiceUnavailableView,
   mainTemplate: MainTemplate,
   appConfig: ApplicationConfig
@@ -60,6 +60,8 @@ class PertaxAuthService @Inject() (
       )
     )
 
+  private def redirectUrl(request: Request[?]): String = urlService.localFriendlyEncodedUrl(request.uri, request.host)
+
   def authorise[T, M <: Request[T]](request: M): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     pertaxConnector
@@ -71,7 +73,7 @@ class PertaxAuthService @Inject() (
         case Right(PertaxApiResponse("ACCESS_GRANTED", _, _, _))                                =>
           Future.successful(None)
         case Right(PertaxApiResponse("NO_HMRC_PT_ENROLMENT", _, _, Some(redirect)))             =>
-          Future.successful(Some(Redirect(s"$redirect?redirectUrl=${SafeRedirectUrl(request.uri).encodedUrl}")))
+          Future.successful(Some(Redirect(s"$redirect?redirectUrl=${redirectUrl(request)}")))
         case Right(PertaxApiResponse("CONFIDENCE_LEVEL_UPLIFT_REQUIRED", _, _, Some(redirect))) =>
           Future.successful(Some(upliftConfidenceLevel(redirect)))
         case Right(PertaxApiResponse("CREDENTIAL_STRENGTH_UPLIFT_REQUIRED", _, _, Some(_)))     =>

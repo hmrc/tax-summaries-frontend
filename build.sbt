@@ -14,8 +14,6 @@ val commonSettings: Seq[String] = Seq(
   "-language:noAutoTupling",
   "-Wvalue-discard",
   "-Werror",
-  // TODO DLSN-146: Remove line below and fix deprecation warning
-  "-Wconf:msg=.*SafeRedirectUrl is deprecated.*&cat=deprecation:s",
   "-Wconf:src=routes/.*:s",
   "-Wconf:src=views/.*:s",
   "-Wunused:unsafe-warn-patvars",
