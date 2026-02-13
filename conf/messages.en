@@ -15,7 +15,6 @@ generic.tax.year.end=5 April
 generic.tax_year_heading=Tax year: April 6 {0} to April 5 {1}
 paye.generic.tax_year_heading={0} to {1}
 generic.to_from=: {0} to {1}
-generic.hm.revenue.and.customs=
 generic.hm.revenue=HM Revenue
 generic.hm.customs=Customs
 generic.at=at
@@ -398,4 +397,5 @@ timeout.dialog.signout.button=Sign out now
 # BRD content
 #=============================================================
 ats.summary.brd=This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.
+
 ats.uprating.delayed=The PAYE and Self Assessment Annual Tax Summary for 2024 to 2025 is still being processed. We expect it to be available in the next couple of months.
