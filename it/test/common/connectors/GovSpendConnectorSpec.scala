@@ -19,35 +19,20 @@ package common.connectors
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.config.ApplicationConfig
 import common.utils.TestConstants.{testUar, testUtr}
-import common.utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
+import common.utils.IntegrationSpec
 import org.scalatest.EitherValues
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Injecting
 import sa.models.{AtsData, AtsListData}
 import uk.gov.hmrc.domain.{SaUtr, Uar}
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
-import scala.concurrent.ExecutionContext
-
 class GovSpendConnectorSpec
-    extends AnyWordSpec
-    with Matchers
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with WireMockHelper
-    with IntegrationPatience
-    with JsonUtil
-    with Injecting
-    with EitherValues
-    with TaxYearForTesting {
+    extends IntegrationSpec
+    with EitherValues {
 
   override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
@@ -67,8 +52,7 @@ class GovSpendConnectorSpec
   val utr: SaUtr = SaUtr(testUtr)
 
   val uar: Uar                                   = Uar(testUar)
-  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
+  implicit lazy val appConfigSut: ApplicationConfig = inject[ApplicationConfig]
 
   val saResponse: String = atsData(currentTaxYearSA)
 

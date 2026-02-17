@@ -18,32 +18,20 @@ package common.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.models.{ErrorView, PertaxApiResponse}
-import common.utils.{JsonUtil, WireMockHelper}
+import common.utils.IntegrationSpec
 import org.scalatest.EitherValues
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.partials.HtmlPartial
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class PertaxConnectorSpec
-    extends AnyWordSpec
-    with Matchers
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with WireMockHelper
-    with IntegrationPatience
-    with JsonUtil
-    with Injecting
+    extends IntegrationSpec
     with EitherValues {
 
   private implicit val hc: HeaderCarrier                                = HeaderCarrier()

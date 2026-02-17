@@ -17,12 +17,10 @@
 package common.connectors
 
 import cats.data.EitherT
-import common.utils.WireMockHelper
+import common.utils.IntegrationSpec
 import org.mockito.Mockito.{reset, times, when}
 import org.mockito.{ArgumentMatchers, Mockito}
-import org.scalatest.RecoverMethods
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.RecoverMethods.recoverToSucceededIf
 import org.slf4j.Logger as UnderlyingLogger
 import play.api.Logger
 import play.api.http.Status.*
@@ -31,12 +29,7 @@ import uk.gov.hmrc.http.*
 import scala.concurrent.Future
 
 class HttpClientResponseSpec
-    extends ConnectorSpec
-    with WireMockHelper
-    with ScalaFutures
-    with IntegrationPatience
-    with RecoverMethods
-    with MockitoSugar {
+    extends IntegrationSpec {
   private val mockLogger = mock[UnderlyingLogger]
 
   private lazy val httpClientResponseUsingMockLogger: HttpClientResponse = new HttpClientResponse {

@@ -17,32 +17,17 @@
 package common.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import common.config.ApplicationConfig
-import common.utils.{JsonUtil, WireMockHelper}
+import common.utils.IntegrationSpec
 import org.scalatest.EitherValues
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.*
-import play.api.test.Injecting
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext
-
 class CitizenDetailsConnectorSpec
-    extends AnyWordSpec
-    with Matchers
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with WireMockHelper
-    with IntegrationPatience
-    with JsonUtil
-    with Injecting
-    with EitherValues {
+    extends IntegrationSpec 
+      with EitherValues {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -52,8 +37,6 @@ class CitizenDetailsConnectorSpec
       .build()
 
   implicit val hc: HeaderCarrier                 = HeaderCarrier()
-  implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
-  implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
   lazy val connector: CitizenDetailsConnector    = inject[CitizenDetailsConnector]
   lazy val nino: Nino                            = new Generator().nextNino
   lazy val url                                   = s"/citizen-details/nino/$nino"

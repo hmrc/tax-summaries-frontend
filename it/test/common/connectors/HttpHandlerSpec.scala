@@ -18,29 +18,17 @@ package common.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, get}
 import common.models.{AtsErrorResponse, AtsNotFoundResponse, AtsSuccessResponseWithPayload}
-import common.utils.WireMockHelper
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import common.utils.IntegrationSpec
+
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Reads}
-import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 
-import scala.concurrent.ExecutionContext
-
 class HttpHandlerSpec
-    extends AnyWordSpec
-    with Matchers
-    with GuiceOneAppPerSuite
-    with ScalaFutures
-    with WireMockHelper
-    with IntegrationPatience
-    with Injecting {
+    extends IntegrationSpec {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -52,9 +40,7 @@ class HttpHandlerSpec
       .build()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
-
+  
   def sut: HttpHandler = new HttpHandler(inject[HttpClientV2])
 
   case class TestClass(str: String)
