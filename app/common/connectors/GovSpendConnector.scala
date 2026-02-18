@@ -30,7 +30,7 @@ class GovSpendConnector @Inject() (http: HttpClientV2)(implicit
   ec: ExecutionContext
 ) extends Logging {
 
-  val serviceUrl: String = appConfig.serviceUrl
+  private val serviceUrl: String = appConfig.serviceUrl
 
   private def url(path: String) = s"$serviceUrl$path"
 
