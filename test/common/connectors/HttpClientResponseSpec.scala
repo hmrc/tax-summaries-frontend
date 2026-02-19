@@ -17,10 +17,10 @@
 package common.connectors
 
 import cats.data.EitherT
-import common.utils.IntegrationSpec
+import common.utils.BaseSpec
 import org.mockito.Mockito.{reset, times, when}
 import org.mockito.{ArgumentMatchers, Mockito}
-import org.scalatest.RecoverMethods.recoverToSucceededIf
+import org.scalatest.RecoverMethods
 import org.slf4j.Logger as UnderlyingLogger
 import play.api.Logger
 import play.api.http.Status.*
@@ -29,7 +29,8 @@ import uk.gov.hmrc.http.*
 import scala.concurrent.Future
 
 class HttpClientResponseSpec
-    extends IntegrationSpec {
+    extends BaseSpec
+    with RecoverMethods {
   private val mockLogger = mock[UnderlyingLogger]
 
   private lazy val httpClientResponseUsingMockLogger: HttpClientResponse = new HttpClientResponse {
