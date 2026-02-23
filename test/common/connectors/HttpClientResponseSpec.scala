@@ -28,9 +28,7 @@ import uk.gov.hmrc.http.*
 
 import scala.concurrent.Future
 
-class HttpClientResponseSpec
-    extends BaseSpec
-    with RecoverMethods {
+class HttpClientResponseSpec extends BaseSpec with RecoverMethods {
   private val mockLogger = mock[UnderlyingLogger]
 
   private lazy val httpClientResponseUsingMockLogger: HttpClientResponse = new HttpClientResponse {
