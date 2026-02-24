@@ -18,28 +18,68 @@ package sa.connectors
 
 import com.google.inject.Inject
 import common.config.ApplicationConfig
-import common.connectors.HttpHandler
 import common.models.*
 import play.api.Logging
+import play.api.http.Status.*
+import play.api.libs.json.{JsValue, Reads}
 import sa.models.{AtsData, AtsListData}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class SaConnector @Inject() (httpHandler: HttpHandler)(implicit
-  appConfig: ApplicationConfig
+class SaConnector @Inject() (
+  http: HttpClientV2
+)(implicit
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext
 ) extends Logging {
 
   private def url(path: String) = s"${appConfig.serviceUrl}$path"
 
-  def getDetail(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
+  def getDetail(utr: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
+    get[AtsData](url(s"/taxs/$utr/$taxYear/ats-data"))
 
   def getList(
-    UTR: SaUtr,
+    utr: SaUtr,
     endYear: Int,
     numberOfYears: Int
   )(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
+    get[AtsListData](url(s"/taxs/$utr/$endYear/$numberOfYears/ats-list"))
+
+  private def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
+    http
+      .get(url"$url")
+      .execute[Either[UpstreamErrorResponse, HttpResponse]]
+      .map {
+        case Left(upstreamErrorResponse) =>
+          upstreamErrorResponse.statusCode match {
+            case NOT_FOUND =>
+              logger.warn(upstreamErrorResponse.message)
+              AtsNotFoundResponse(upstreamErrorResponse.message)
+
+            case _ if upstreamErrorResponse.statusCode >= 500 =>
+              logger.error(upstreamErrorResponse.message)
+              AtsErrorResponse(upstreamErrorResponse.message)
+
+            case _ =>
+              logger.error(upstreamErrorResponse.message, upstreamErrorResponse)
+              AtsErrorResponse(upstreamErrorResponse.message)
+          }
+
+        case Right(response) =>
+          extractJson[A](response.json)
+      }
+      .recover { case e: HttpException =>
+        logger.error(e.message)
+        AtsErrorResponse(e.message)
+      }
+
+  private def extractJson[A](value: JsValue)(implicit reads: Reads[A]): AtsResponse =
+    value.asOpt[A] match {
+      case Some(value) => AtsSuccessResponseWithPayload[A](value)
+      case None        => AtsErrorResponse("Could not parse Json")
+    }
 }
