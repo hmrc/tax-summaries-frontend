@@ -30,56 +30,67 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, StringConte
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SaConnector @Inject() (
-  http: HttpClientV2
-)(implicit
+class SaConnector @Inject() (http: HttpClientV2)(implicit
   appConfig: ApplicationConfig,
   ec: ExecutionContext
 ) extends Logging {
 
   private def url(path: String) = s"${appConfig.serviceUrl}$path"
 
-  def getDetail(utr: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    get[AtsData](url(s"/taxs/$utr/$taxYear/ats-data"))
+  def getDetail(utr: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] = {
+    val fullUrl = url(s"/taxs/$utr/$taxYear/ats-data")
 
-  def getList(
-    utr: SaUtr,
-    endYear: Int,
-    numberOfYears: Int
-  )(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    get[AtsListData](url(s"/taxs/$utr/$endYear/$numberOfYears/ats-list"))
-
-  private def get[A](url: String)(implicit reads: Reads[A], hc: HeaderCarrier): Future[AtsResponse] =
     http
-      .get(url"$url")
+      .get(url"$fullUrl")
       .execute[Either[UpstreamErrorResponse, HttpResponse]]
-      .map {
-        case Left(upstreamErrorResponse) =>
-          upstreamErrorResponse.statusCode match {
-            case NOT_FOUND =>
-              logger.warn(upstreamErrorResponse.message)
-              AtsNotFoundResponse(upstreamErrorResponse.message)
+      .recover(handleHttpExceptions)
+      .map(handleAtsResponse[AtsData])
+  }
 
-            case _ if upstreamErrorResponse.statusCode >= 500 =>
-              logger.error(upstreamErrorResponse.message)
-              AtsErrorResponse(upstreamErrorResponse.message)
+  def getList(utr: SaUtr, endYear: Int, numberOfYears: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] = {
+    val fullUrl = url(s"/taxs/$utr/$endYear/$numberOfYears/ats-list")
 
-            case _ =>
-              logger.error(upstreamErrorResponse.message, upstreamErrorResponse)
-              AtsErrorResponse(upstreamErrorResponse.message)
-          }
+    http
+      .get(url"$fullUrl")
+      .execute[Either[UpstreamErrorResponse, HttpResponse]]
+      .recover(handleHttpExceptions)
+      .map(handleAtsResponse[AtsListData])
+  }
 
-        case Right(response) =>
-          extractJson[A](response.json)
+  private val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
+    case e: HttpException =>
+      logger.error(e.message)
+      Left(UpstreamErrorResponse(e.message, e.responseCode))
+  }
+
+  private def handleAtsResponse[A](implicit
+    reads: Reads[A]
+  ): PartialFunction[
+    Either[UpstreamErrorResponse, HttpResponse],
+    AtsResponse
+  ] = {
+    case Left(upstreamErrorResponse) =>
+      upstreamErrorResponse.statusCode match {
+        case NOT_FOUND =>
+          logger.warn(upstreamErrorResponse.message)
+          AtsNotFoundResponse(upstreamErrorResponse.message)
+
+        case _ if upstreamErrorResponse.statusCode >= 500 =>
+          logger.error(upstreamErrorResponse.message)
+          AtsErrorResponse(upstreamErrorResponse.message)
+
+        case _ =>
+          logger.error(upstreamErrorResponse.message, upstreamErrorResponse)
+          AtsErrorResponse(upstreamErrorResponse.message)
       }
-      .recover { case e: HttpException =>
-        logger.error(e.message)
-        AtsErrorResponse(e.message)
-      }
+
+    case Right(response) =>
+      extractJson[A](response.json)
+  }
 
   private def extractJson[A](value: JsValue)(implicit reads: Reads[A]): AtsResponse =
     value.asOpt[A] match {
-      case Some(value) => AtsSuccessResponseWithPayload[A](value)
-      case None        => AtsErrorResponse("Could not parse Json")
+      case Some(a) => AtsSuccessResponseWithPayload[A](a)
+      case None    => AtsErrorResponse("Could not parse Json")
     }
 }
