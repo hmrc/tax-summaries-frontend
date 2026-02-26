@@ -18,7 +18,6 @@ package sa.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import common.config.ApplicationConfig
-import common.connectors.HttpHandler
 import common.models.*
 import common.utils.TestConstants.{testUar, testUtr}
 import common.utils.{JsonUtil, TaxYearForTesting, WireMockHelper}
@@ -34,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.test.Injecting
 import sa.models.{AtsData, AtsListData}
 import uk.gov.hmrc.domain.{SaUtr, Uar}
-import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
@@ -63,26 +62,27 @@ class SaConnectorSpec
 
   val listOfErrors: List[Int] = List(400, 401, 403, 404, 409, 412, 500, 501, 502, 503, 504)
 
-  def sut: SaConnector = new SaConnector(inject[HttpHandler])
-
   val utr: SaUtr = SaUtr(testUtr)
+  val uar: Uar   = Uar(testUar)
 
-  val uar: Uar                                   = Uar(testUar)
   implicit lazy val appConfig: ApplicationConfig = inject[ApplicationConfig]
   implicit lazy val ec: ExecutionContext         = inject[ExecutionContext]
 
+  private lazy val sut: SaConnector = inject[SaConnector]
+
   val saResponse: String = atsData(currentTaxYearSA)
 
-  val expectedSAResponse: AtsData = Json.fromJson[AtsData](Json.parse(saResponse)).get
+  val expectedSAResponse: AtsData =
+    Json.fromJson[AtsData](Json.parse(saResponse)).get
 
-  val atsListData: AtsListData = atsList("$utr")
+  val atsListData: AtsListData = atsList(s"$utr")
   val loadAtsListData: String  = Json.stringify(Json.toJson(atsListData))
 
   "getDetail" must {
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
+      val url = s"/taxs/$utr/$currentTaxYearSA/ats-data"
 
       server.stubFor(
         get(urlEqualTo(url))
@@ -100,7 +100,7 @@ class SaConnectorSpec
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
+      val url  = s"/taxs/$utr/$currentTaxYearSA/ats-data"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -118,7 +118,7 @@ class SaConnectorSpec
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
+      val url  = s"/taxs/$utr/$currentTaxYearSA/ats-data"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -136,7 +136,7 @@ class SaConnectorSpec
 
     "return BadRequest response" in {
 
-      val url = s"/taxs/" + utr + "/" + currentTaxYearSA + "/ats-data"
+      val url = s"/taxs/$utr/$currentTaxYearSA/ats-data"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -154,7 +154,7 @@ class SaConnectorSpec
 
     "return successful response" in {
 
-      val url = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
+      val url = s"/taxs/$utr/$currentTaxYearSA/5/ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -171,7 +171,7 @@ class SaConnectorSpec
 
     "return 4xx response" in {
 
-      val url  = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
+      val url  = s"/taxs/$utr/$currentTaxYearSA/5/ats-list"
       val body = "No ATS List found"
 
       server.stubFor(
@@ -189,7 +189,7 @@ class SaConnectorSpec
 
     "return 5xx response" in {
 
-      val url  = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
+      val url  = s"/taxs/$utr/$currentTaxYearSA/5/ats-list"
       val body = "Something went wrong"
 
       server.stubFor(
@@ -207,7 +207,7 @@ class SaConnectorSpec
 
     "return BadRequest response" in {
 
-      val url = s"/taxs/" + utr + s"/$currentTaxYearSA/5" + "/" + "ats-list"
+      val url = s"/taxs/$utr/$currentTaxYearSA/5/ats-list"
 
       server.stubFor(
         get(urlEqualTo(url)).willReturn(
@@ -220,5 +220,4 @@ class SaConnectorSpec
       sut.getList(utr, currentTaxYearSA, 5).futureValue mustBe a[AtsErrorResponse]
     }
   }
-
 }
