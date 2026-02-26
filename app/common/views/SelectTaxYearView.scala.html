@@ -85,8 +85,6 @@
             @p(Text(messages("merge.page.no.ats.summary.text")), classes = Some("govuk-hint"), elmId = Some("generic-no-ats"))
         }
 
-        @p(Text(messages("ats.uprating.delayed")), elmId = Some("unavailable-tax-year"), classes = Some("govuk-inset-text"))
-
         @inputRadios(
             form = atsYearForm,
             legend = yearListViewModel.subtitleMsg,
