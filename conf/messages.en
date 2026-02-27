@@ -2,19 +2,12 @@
 #============================================================
 generic.ats=Annual Tax Summary
 generic.ats.browser.title=Annual Tax Summary - GOV.UK
-generic.paye.ats=Annual Tax Summary
-generic.paye.ats.browser.title=Annual Tax Summary - GOV.UK
 generic.description=Description
 generic.amount_pounds=Amount
-generic.back=Back
 generic.is=is
 generic.not_authorised=Not authorised
-generic.exit_tax_summaries=Back to HMRC Online Services
 generic.utr=Unique Taxpayer Reference:
 generic.utr_abbrev=UTR
-generic.minus=minus
-generic.english=English
-generic.welsh=Cymraeg
 generic.acting_for=You are acting for
 generic.name_not_defined=Name Not Defined
 generic.tax.year.start=6 April
@@ -22,30 +15,19 @@ generic.tax.year.end=5 April
 generic.tax_year_heading=Tax year: April 6 {0} to April 5 {1}
 paye.generic.tax_year_heading={0} to {1}
 generic.to_from=: {0} to {1}
-generic.sign_out=Sign out
-generic.errors_heading=There is a problem
-generic.menu = Menu
-generic.beta = Beta
-generic.hm.revenue.and.customs = HM Revenue & Customs
-generic.hm.revenue = HM Revenue
-generic.hm.and = &
-generic.hm.customs = Customs
+generic.hm.revenue=HM Revenue
+generic.hm.customs=Customs
 generic.at=at
 generic.total=Total
-site.back=Back
-generic.error = Error:
 view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
-error.form.error = Error:
+error.form.error=Error:
 
 
 # View ATS - Select the tax year page
 #============================================================
-ats.select_tax_year.title=Select a Self Assessment tax year
-ats.select_tax_year.paye.title=Select a PAYE tax year
 ats.select_tax_year.continue=Continue
 ats.select_tax_year.required=Select the tax year you want to view
-ats.select_tax_year.label={0} to {1}
 
 
 # View ATS - Landing page
@@ -56,14 +38,12 @@ ats.index.html.tax_calc_link=Your income and taxes
 ats.index.html.tax_calc_description=This shows a breakdown of your total income, your tax-free income, and how much tax and National Insurance you have paid or will pay.
 ats.index.html.tax_spend_link=Your taxes and public spending
 ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been, or will be spent by government.
-ats.index.html.view.paye.link=View PAYE Annual Tax Summary
 
 paye.ats.index.html.title=Your PAYE Annual Tax Summary
 paye.ats.index.html.tax_spend_link=How your tax was spent
 paye.ats.index.html.tax_spend_description=This shows a breakdown of how your taxes have been spent by government.
 paye.ats.index.html.tax_calc_description=This shows a breakdown of your taxable income, your tax-free income and how much tax and National Insurance you have paid.
 paye.ats.index.html.lede=This shows you how your Income Tax and National Insurance contributions were calculated and how your money is spent by the government.
-paye.ats.index.html.view.sa.link=View Self Assessment Annual Tax Summary
 
 # View ATS - Summary
 #============================================================
@@ -90,7 +70,6 @@ ats.summary.taxable_income.your_total_tax.description_total_income_tax=total Inc
 ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
 ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
-paye.ats.summary.total_income.paye.title=Taxable income
 paye.ats.summary.nicsheading=Income Tax and National Insurance contributions
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance contributions
 paye.ats.summary.tax_and_nics.description-2=Your total income tax and NIC’s on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown.
@@ -100,14 +79,11 @@ paye.ats.summary.tax_and_nics.description-2=Your total income tax and NIC’s on
 ats.nics.tax_and_nics.title=Your Income Tax and National Insurance contributions
 ats.nics.tax_and_nics.lede=This is how much you pay on income above your tax-free income.
 ats.nics.tax_and_nics.description=Your Income Tax and National Insurance is {0} of your total income.
-ats.nics.tax_and_nics.income_tax=Income Tax
 ats.nics.tax_and_nics_explained=National Insurance
-ats.nics.tax_and_nics.total=Income Tax and National Insurance
 
 # View ATS - your income before tax (IND)
 #============================================================
 ats.income_before_tax.html.title=Your total income
-paye.ats.income_before_tax.html.title=Your income before tax
 ats.income_before_tax.title=Your total income
 ats.income_before_tax.intro=This is your total income for the year.
 
@@ -133,15 +109,14 @@ paye.ats.income_before_tax.total_income_before_tax=Your income before tax
 
 
 # View ATS - your income before tax (IND) - PAYE content
+#============================================================
 paye.ats.income_before_tax.title=Taxable income
 paye.ats.income_before_tax.intro=We have calculated this using information given to us by you and other sources. This includes your employer, pension providers, and banks or building societies.
 paye.ats.income_before_tax.table_caption=Your taxable income
-paye.ats.income_before_tax.table.line6=Other income (including interest)
 
 # View ATS - tax free income (IND)
 #============================================================
 ats.tax_free_amount.html.title=Your tax-free income
-ats.tax_free_amount.subtitle=Your tax-free income
 ats.tax_free_amount.lede=This is how much you can earn before you start paying Income Tax.
 ats.tax_free_amount.description=This includes your Personal Allowance and any other allowances, deductions and expenses.
 
@@ -153,12 +128,10 @@ ats.tax_free_amount.table.total=Total tax-free income
 
 # View ATS - total income tax (IND)
 #============================================================
-ats.total_income_tax.html.title=Income Tax
 
 ats.total_income_tax.income_tax=Income Tax
 ats.total_income_tax.dividends=Dividends
 ats.total_income_tax.adjustments=Adjustments
-ats.total_income_tax.total_income_tax=Total Income Tax
 
 ats.total_income_tax.table.savings=Savings rate ({0} at {1})
 ats.total_income_tax.table.basic=Basic rate ({0} at {1})
@@ -251,7 +224,6 @@ ats.treasury_spending.section.sit.scottish.spending.1=For more information about
 ats.treasury_spending.section.sit.scottish.spending.2=For information about Scottish Rate of Income Tax, go to
 
 
-ats.treasury_spending.return=Back
 ats.treasury_spending.total=Total
 
 ats.treasury_spending.table.Welfare=Welfare
@@ -260,7 +232,6 @@ ats.treasury_spending.table.StatePensions=State Pensions
 ats.treasury_spending.table.Education=Education
 ats.treasury_spending.table.NationalDebtInterest=National Debt Interest
 ats.treasury_spending.table.Defence=Defence
-ats.treasury_spending.table.CriminalJustice=Criminal Justice
 ats.treasury_spending.table.Transport=Transport
 ats.treasury_spending.table.GovernmentAdministration=Government Administration
 ats.treasury_spending.table.Culture=Culture, like sports, libraries, museums
@@ -271,10 +242,7 @@ ats.treasury_spending.table.UkContributionToEuBudget=UK Contribution to the EU B
 ats.treasury_spending.table.OutstandingPaymentsToTheEU=Outstanding payments to the EU
 ats.treasury_spending.table.OverseasAid=Overseas Aid
 ats.treasury_spending.table.PublicOrderAndSafety=Public Order and Safety
-ats.treasury_spending.table.link=View this information as a table
-ats.treasury_spending.chart.link=View this information as a chart
-ats.treasury_spending.print.click = print - click
-ats.treasury_spending.print.this.page = Print this page
+ats.treasury_spending.print.this.page=Print this page
 
 paye.ats.treasury_spending.table.Welfare=Welfare
 paye.ats.treasury_spending.table.Health=Health
@@ -282,7 +250,6 @@ paye.ats.treasury_spending.table.StatePensions=State Pensions
 paye.ats.treasury_spending.table.Education=Education
 paye.ats.treasury_spending.table.NationalDebtInterest=National Debt Interest
 paye.ats.treasury_spending.table.Defence=Defence
-paye.ats.treasury_spending.table.CriminalJustice=Criminal Justice
 paye.ats.treasury_spending.table.Transport=Transport
 paye.ats.treasury_spending.table.GovernmentAdministration=Government Administration
 paye.ats.treasury_spending.table.Culture=Culture, like sports, libraries and museums
@@ -293,31 +260,20 @@ paye.ats.treasury_spending.table.UkContributionToEuBudget=UK Contribution to the
 paye.ats.treasury_spending.table.OutstandingPaymentsToTheEU=Outstanding payments to the EU
 paye.ats.treasury_spending.table.OverseasAid=Overseas Aid
 paye.ats.treasury_spending.table.PublicOrderAndSafety=Public Order and Safety
-paye.ats.treasury_spending.table.link=View this information as a table
-paye.ats.treasury_spending.chart.link=View this information as a chart
-paye.ats.treasury_spending.print.click = print - click
-paye.ats.treasury_spending.print.this.page = Print this page
 
 
 # View ATS - treasury spending (IND) - PAYE content
+#============================================================
 paye.ats.treasury_spending.title=How your tax was spent for the tax year
 paye.ats.treasury_spending.introParagraph=These figures are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.para1=These figures include spending by devolved administrations, such as the Scottish or Welsh Governments. They do not include indirect taxes, such as VAT and other duties.
-paye.ats.treasury_spending.para2=All figures are rounded to the nearest pound.
-paye.ats.treasury_spending.para3=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
 paye.ats.treasury_spending.para4=Spending information is published by HM Treasury. All figures are rounded to the nearest pound.
-paye.ats.treasury_spending.scottish.spending.1=Find out more about
-paye.ats.treasury_spending.scottish.spending.2=your tax and public spending in Scotland
-paye.ats.treasury_spending.scottish.spending.3=on the Scottish Government website.
 paye.ats.treasury_spending.total=Total
-paye.ats.treasury_spending.welsh.tax.payer.para1=The figures in the table above are intended as an illustration of how taxes are spent and not as a direct link between your Income Tax, National Insurance contributions and any specific expenditure.
-paye.ats.treasury_spending.welsh.tax.payer.para3=Spending information is published by HM Treasury.
-paye.ats.treasury_spending.welsh.tax.payer.para4=The policy and funding for most of the key public services delivered in Wales are the responsibility of the Welsh Government. For more information on Welsh Government expenditure please visit
 
-paye.ats.treasury_spending.link.you.can = You can
-paye.ats.treasury_spending.link.find.out.more.england = find out more about how public spending was calculated in your tax summary on GOV.UK.
-paye.ats.treasury_spending.link.find.out.more.scotland = find out more about how public spending was calculated in your tax summary on the Scottish Government website.
-paye.ats.treasury_spending.link.find.out.more.wales = find out more about how public spending was calculated in your tax summary on the Welsh Government website.
+paye.ats.treasury_spending.link.you.can=You can
+paye.ats.treasury_spending.link.find.out.more.england=find out more about how public spending was calculated in your tax summary on GOV.UK.
+paye.ats.treasury_spending.link.find.out.more.scotland=find out more about how public spending was calculated in your tax summary on the Scottish Government website.
+paye.ats.treasury_spending.link.find.out.more.wales=find out more about how public spending was calculated in your tax summary on the Welsh Government website.
 
 
 # View ATS - Summary (PAYE)
@@ -330,19 +286,9 @@ paye.ats.summary.total_income.description=This is your total taxable income for 
 paye.ats.summary.tax_free.title=Tax-free income
 paye.ats.summary.tax_free.link=Your tax-free income
 paye.ats.summary.tax_free.description=This is the amount you received without paying tax.
-paye.ats.summary.tax_and_nics.title=Income Tax and National Insurance
 paye.ats.summary.tax_and_nics.link=Your Income Tax and National Insurance contributions
 paye.ats.summary.tax_and_nics.description=This is {0}% of your taxable income. For every £1 of income, you paid {0}p in Income Tax and National Insurance contributions.
-paye.ats.summary.capital_gains.title=Capital Gains Tax
-paye.ats.summary.capital_gains.link=Your Capital Gains Tax
-paye.ats.summary.capital_gains.description=This is how much tax you pay on profits above your annual tax-free allowance when you sell, or give away, something that has increased in value.
-paye.ats.summary.total_tax.your_total_tax=Total tax
-paye.ats.summary.taxable_income.your_total_tax.msg_ternary=Your {0}, {1} and {2}.
-paye.ats.summary.taxable_income.your_total_tax.msg_binary=Your {0} and {1}.
-paye.ats.summary.taxable_income.your_total_tax.msg_unary=Your {0}.
-paye.ats.summary.taxable_income.your_total_tax.description_total_income_tax=Total Income Tax
-paye.ats.summary.taxable_income.your_total_tax.description_cg=Capital Gains Tax
-paye.ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
+
 
 # PAYE - Tax Free Income
 #============================================================
@@ -360,24 +306,18 @@ paye.ats.tax_free_amount.total_tax_liable=You pay tax on
 
 # Service unavailable
 #============================================================
-global.error.InternalServerError500.title = Sorry, the service is unavailable
-global.error.InternalServerError500.message.you.can = You can use this service later or you can
-global.error.InternalServerError500.message.contact.hmrc = contact HMRC
-global.error.InternalServerError500.message.by.phone.post = online, by phone or by post.
+global.error.InternalServerError500.title=Sorry, the service is unavailable
+global.error.InternalServerError500.message.you.can=You can use this service later or you can
+global.error.InternalServerError500.message.contact.hmrc=contact HMRC
+global.error.InternalServerError500.message.by.phone.post=online, by phone or by post.
 
 
 # No ATS - error page paye content
+#============================================================
 paye.ats.no_ats.title=You had no taxable income this year
 paye.ats.no_ats.heading=Your Annual Tax Summary
 paye.ats.no_ats.paragraph=You do not have an Annual Tax Summary for this year.
 
-
-# No ATS - ats unavailable page
-#============================================================
-no.ats.html.title=No ATS
-no.ats.title=Your Annual Tax Summary
-no.ats.line1=You had no taxable income or capital gains this year so you do not have an Annual Tax Summary.
-no.ats.line2=If you had taxable income, your Annual Tax Summary would show how your taxes and National Insurance contributions are calculated and the public services HM Treasury allocated your taxes to.
 
 # Not authorised page
 #============================================================
@@ -427,30 +367,21 @@ global.page.not.found.error.check.web.address.full=If you pasted the web address
 global.page.not.found.error.contact=If the web address is correct or you selected a link or button, {0} if you need to speak to someone about your Annual Tax Summary.
 global.page.not.found.error.contact.link.text=contact the Self Assessment helpline
 
-ats.howYourTaxWasSpent.heading = How tax was spent
-ats.howYourTaxWasSpent.subheading = This shows how Income Tax and National Insurance contributions for 6&nbsp;April&nbsp;{0} to 5&nbsp;April&nbsp;{1} were spent.
-ats.howYourTaxWasSpent.caveat = It does not include VAT, excise or other duties.
-ats.howYourTaxWasSpent.table.department.title = Department spend
-ats.howYourTaxWasSpent.table.percentage.title  = Percentage of tax
+ats.howYourTaxWasSpent.heading=How tax was spent
+ats.howYourTaxWasSpent.table.percentage.title=Percentage of tax
 
 #Sa and Paye Merge Page
 #=============================================================
-merge.page.no.ats.title=Years where you received a general Annual Tax Summary
 merge.page.no.ats.summary.text=You may see a general Annual Tax Summary as not everyone will have a personal one for each tax year. This may be because no income tax was paid for that year, or HMRC is waiting for information such as a change of address.
 merge.page.sa.unavailable=Self Assessment tax years are unavailable at the moment. Try again later.
 merge.page.paye.unavailable=PAYE tax years are unavailable at the moment. Try again later.
 merge.page.paye.ivuplift.text=To see your PAYE Annual Tax Summary you need to
 merge.page.paye.ivuplift.link.text=answer some extra security questions.
-merge.page.sa.text=Self Assessment
-merge.page.paye.text=PAYE
 merge.page.ats.select_tax_year.title=Which tax year do you want to view?
 ats.select_tax_year.sa.label={0} to {1} for Self Assessment
 ats.select_tax_year.paye.label={0} to {1} for PAYE
 ats.select_tax_year.no_ats.label={0} to {1} for a general Annual Tax Summary
-merge.page.paye.ivuplift.header = You need to answer some extra security questions
-merge.page.sa.utr.inactive.header = You need to request access to your Self Assessment
-merge.page.sa.utr.inactive.text = To see your Self Assessment Annual Tax Summary you need to
-merge.page.sa.utr.inactive.link = request access to your Self Assessment.
+merge.page.paye.ivuplift.header=You need to answer some extra security questions
 
 session_expired.title=For your security, we signed you out
 session_expired.guidance=The details you have given have been deleted because you did not continue the service for 15 minutes.
@@ -462,12 +393,9 @@ timeout.dialog.seconds=seconds
 timeout.dialog.keepAlive.button=Stay signed in
 timeout.dialog.signout.button=Sign out now
 
-# Beta Banner Text
-#=============================================================
-betaBanner.message=This is a new service ‐ your {0} will help us to improve it.
-betaBanner.linkText=feedback
 
 # BRD content
-ats.summary.brd= This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.
+#=============================================================
+ats.summary.brd=This calculation does not show how Gift Aid changes your tax. It does not take into account the difference between your tax rate and the one used by charities to claim Gift Aid.
 
-ats.uprating.delayed = The PAYE and Self Assessment Annual Tax Summary for 2024 to 2025 is still being processed. We expect it to be available in the next couple of months.
+ats.uprating.delayed=The PAYE and Self Assessment Annual Tax Summary for 2024 to 2025 is still being processed. We expect it to be available in the next couple of months.
