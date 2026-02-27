@@ -129,21 +129,15 @@
 
             <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36 govuk-!-margin-bottom-1">
                 <span class="govuk-visually-hidden" id="total-tax-amount-description">
-                @if(lang.code == "cy-GB"){
-                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg")) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)
-                } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
-                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)}</span>
+                viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*)) @Html(Messages("generic.is")) @viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)
+                </span>
                 <span id="total-tax-amount" aria-hidden="true">@viewModel.yourTotalTax.renderCurrencyValueAsHtml(poundsOnly = true)</span>
             </p>
 
             <p id="total-tax-description" class="govuk-body-m govuk-!-font-weight-bold" aria-hidden="true">
-                @if(lang.code == "cy-GB"){
-                @Html(Messages("ats.summary.taxable_income.your_total_tax_msg"))
-                } else {
                 @Html(Messages(viewModel.yourTotalTaxTextKeys._1,
                 viewModel.yourTotalTaxTextKeys._2 map {(key:String) => Html(Messages(key)) }:_*))
-                }
             </p>
 
         </div>
