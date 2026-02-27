@@ -18,28 +18,79 @@ package sa.connectors
 
 import com.google.inject.Inject
 import common.config.ApplicationConfig
-import common.connectors.HttpHandler
 import common.models.*
 import play.api.Logging
+import play.api.http.Status.*
+import play.api.libs.json.{JsValue, Reads}
 import sa.models.{AtsData, AtsListData}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class SaConnector @Inject() (httpHandler: HttpHandler)(implicit
-  appConfig: ApplicationConfig
+class SaConnector @Inject() (http: HttpClientV2)(implicit
+  appConfig: ApplicationConfig,
+  ec: ExecutionContext
 ) extends Logging {
 
   private def url(path: String) = s"${appConfig.serviceUrl}$path"
 
-  def getDetail(UTR: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsData](url("/taxs/" + UTR + "/" + taxYear + "/ats-data"))
+  def getDetail(utr: SaUtr, taxYear: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] = {
+    val fullUrl = url(s"/taxs/$utr/$taxYear/ats-data")
 
-  def getList(
-    UTR: SaUtr,
-    endYear: Int,
-    numberOfYears: Int
-  )(implicit hc: HeaderCarrier): Future[AtsResponse] =
-    httpHandler.get[AtsListData](url("/taxs/" + UTR + "/" + endYear + "/" + numberOfYears + "/ats-list"))
+    http
+      .get(url"$fullUrl")
+      .execute[Either[UpstreamErrorResponse, HttpResponse]]
+      .recover(handleHttpExceptions)
+      .map(handleAtsResponse[AtsData])
+  }
+
+  def getList(utr: SaUtr, endYear: Int, numberOfYears: Int)(implicit hc: HeaderCarrier): Future[AtsResponse] = {
+    val fullUrl = url(s"/taxs/$utr/$endYear/$numberOfYears/ats-list")
+
+    http
+      .get(url"$fullUrl")
+      .execute[Either[UpstreamErrorResponse, HttpResponse]]
+      .recover(handleHttpExceptions)
+      .map(handleAtsResponse[AtsListData])
+  }
+
+  private val handleHttpExceptions: PartialFunction[Throwable, Either[UpstreamErrorResponse, HttpResponse]] = {
+    case e: HttpException =>
+      logger.error(e.message)
+      Left(UpstreamErrorResponse(e.message, e.responseCode))
+  }
+
+  private def handleAtsResponse[A](implicit
+    reads: Reads[A]
+  ): PartialFunction[
+    Either[UpstreamErrorResponse, HttpResponse],
+    AtsResponse
+  ] = {
+    case Left(upstreamErrorResponse) =>
+      upstreamErrorResponse.statusCode match {
+        case NOT_FOUND =>
+          logger.warn(upstreamErrorResponse.message)
+          AtsNotFoundResponse(upstreamErrorResponse.message)
+
+        case _ if upstreamErrorResponse.statusCode >= 500 =>
+          logger.error(upstreamErrorResponse.message)
+          AtsErrorResponse(upstreamErrorResponse.message)
+
+        case _ =>
+          logger.error(upstreamErrorResponse.message, upstreamErrorResponse)
+          AtsErrorResponse(upstreamErrorResponse.message)
+      }
+
+    case Right(response) =>
+      extractJson[A](response.json)
+  }
+
+  private def extractJson[A](value: JsValue)(implicit reads: Reads[A]): AtsResponse =
+    value.asOpt[A] match {
+      case Some(a) => AtsSuccessResponseWithPayload[A](a)
+      case None    => AtsErrorResponse("Could not parse Json")
+    }
 }
