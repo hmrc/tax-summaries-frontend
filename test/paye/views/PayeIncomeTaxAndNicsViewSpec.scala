@@ -177,7 +177,7 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
 
       document
         .getElementById("incomeTaxBreakdownText")
-        .text() mustBe "Your total income tax and NIC’s on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown."
+        .text() mustBe "Your total Income Tax and National Insurance contributions on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown."
 
     }
 
