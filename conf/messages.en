@@ -72,7 +72,7 @@ ats.summary.taxable_income.your_total_tax.description_nics=National Insurance
 
 paye.ats.summary.nicsheading=Income Tax and National Insurance contributions
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Income after Tax and National Insurance contributions
-paye.ats.summary.tax_and_nics.description-2=Your total income tax and NIC’s on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown.
+paye.ats.summary.tax_and_nics.description-2=Your total Income Tax and National Insurance contributions on your summary page does not reflect any refunds or repayments and therefore may be different to the calculated tax shown in this breakdown.
 
 # View NICS page
 #=============================================================
