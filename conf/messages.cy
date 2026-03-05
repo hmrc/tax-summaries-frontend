@@ -16,7 +16,7 @@ generic.tax_year_heading=Blwyddyn dreth: Ebrill 6 {0} i Ebrill 5 {1}
 paye.generic.tax_year_heading={0} hyd at {1}
 generic.to_from=: {0} i {1}
 generic.hm.revenue=Cyllid
-generic.hm.customs=Thollau EM
+generic.hm.customs=Thollau EF
 generic.at=ar
 generic.total=Cyfanswm
 view.languageToggle.english=English
@@ -308,7 +308,7 @@ paye.ats.tax_free_amount.total_tax_liable=Rydych yn talu treth ar y canlynol
 #============================================================
 global.error.InternalServerError500.title=Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
 global.error.InternalServerError500.message.you.can=Gallwch ddefnyddio’r gwasanaeth hwn yn nes ymlaen, neu gallwch
-global.error.InternalServerError500.message.contact.hmrc=gysylltu â CThEM
+global.error.InternalServerError500.message.contact.hmrc=gysylltu â CThEF
 global.error.InternalServerError500.message.by.phone.post=ar-lein, dros y ffôn neu drwy’r post.
 
 
@@ -365,14 +365,14 @@ global.page.not.found.error.heading=Heb ddod o hyd i’r dudalen
 global.page.not.found.error.check.web.address.correct=Os gwnaethoch deipio’r cyfeiriad gwe, gwiriwch ei fod yn gywir.
 global.page.not.found.error.check.web.address.full=Os gwnaethoch ludo’r cyfeiriad gwe, gwiriwch eich bod wedi copïo’r cyfeiriad yn llawn.
 global.page.not.found.error.contact=Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, {0} os ydych am siarad â rhywun am eich Crynodeb Treth Blynyddol.
-global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM
+global.page.not.found.error.contact.link.text=cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF
 
 ats.howYourTaxWasSpent.heading=Sut y gwariwyd treth
 ats.howYourTaxWasSpent.table.percentage.title=Canran o’r dreth
 
 #Sa and Paye Merge Page
 #=============================================================
-merge.page.no.ats.summary.text=Mae’n bosibl y byddwch yn gweld Crynodeb Treth Blynyddol gyffredinol gan na fydd pawb yn cael un personol ar gyfer pob blwyddyn dreth. Gall hyn fod oherwydd na thalwyd Treth Incwm ar gyfer y flwyddyn honno, neu oherwydd bod CThEM yn aros am wybodaeth megis newid cyfeiriad.
+merge.page.no.ats.summary.text=Mae’n bosibl y byddwch yn gweld Crynodeb Treth Blynyddol gyffredinol gan na fydd pawb yn cael un personol ar gyfer pob blwyddyn dreth. Gall hyn fod oherwydd na thalwyd Treth Incwm ar gyfer y flwyddyn honno, neu oherwydd bod CThEF yn aros am wybodaeth megis newid cyfeiriad.
 merge.page.sa.unavailable=Nid yw blynyddoedd treth Hunanasesiad ar gael ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 merge.page.paye.unavailable=Nid yw blynyddoedd treth TWE ar gael ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 merge.page.paye.ivuplift.text=Er mwyn gweld eich Crynodeb Treth Blynyddol TWE, mae angen i chi
