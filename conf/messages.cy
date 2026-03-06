@@ -72,7 +72,7 @@ ats.summary.taxable_income.your_total_tax.description_nics=Yswiriant Gwladol
 
 paye.ats.summary.nicsheading=Treth Incwm a chyfraniadau Yswiriant Gwladol
 paye.ats.summary.taxable_income.income_after_tax_and_nics_msg=Incwm ar ôl Treth a chyfraniadau Yswiriant Gwladol
-paye.ats.summary.tax_and_nics.description-2=Nid yw cyfanswm eich Treth Incwm a’ch CYG ar eich tudalen grynodeb yn adlewyrchu unrhyw ad-daliadau i chi nac ad-daliadau gennych, ac felly gall fod yn wahanol i’r dreth a gyfrifir sy’n cael ei dangos yn y dadansoddiad hwn.
+paye.ats.summary.tax_and_nics.description-2=Nid yw cyfanswm eich Treth Incwm a’ch cyfraniadau Yswiriant Gwladol ar eich tudalen grynodeb yn adlewyrchu unrhyw ad-daliadau i chi nac ad-daliadau gennych ac felly, gall fod yn wahanol i’r dreth a gyfrifir sy’n cael ei dangos yn y dadansoddiad hwn.
 
 # View NICS page
 #=============================================================
