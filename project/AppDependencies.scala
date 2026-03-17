@@ -4,8 +4,8 @@ import sbt.*
 object AppDependencies {
 
   private val playVersion          = "play-30"
-  private val scaWrapperVersion    = "4.9.0"
-  private val featureToggleVersion = "2.4.0"
+  private val scaWrapperVersion    = "4.13.0"
+  private val featureToggleVersion = "2.5.0"
 
   val compile: Seq[ModuleID] = Seq(
     filters,
@@ -17,7 +17,7 @@ object AppDependencies {
   )
 
   val test: Seq[ModuleID] = Seq(
-    "org.jsoup"          % "jsoup"                                           % "1.21.2",
+    "org.jsoup"          % "jsoup"                                           % "1.22.1",
     "uk.gov.hmrc"       %% s"mongo-feature-toggles-client-test-$playVersion" % featureToggleVersion,
     "uk.gov.hmrc"       %% s"sca-wrapper-test-$playVersion"                  % scaWrapperVersion,
     "org.scalatestplus" %% "scalacheck-1-18"                                 % "3.2.19.0"
