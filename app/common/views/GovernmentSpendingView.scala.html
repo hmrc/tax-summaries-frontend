@@ -16,15 +16,17 @@
 
 @import common.config.ApplicationConfig
 @import common.models.requests.AuthenticatedRequest
-@import common.views.html.helpers.{H1, HeaderSection, Link, P, PageHeading}
+@import common.views.html.helpers.{HeaderSection, P, PageHeading}
 @import common.views.MainTemplate
 @import common.models._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
     p: P,
-    pageHeading: PageHeading
+    pageHeading: PageHeading,
+        govukTable: GovukTable
 )
 
 @(  viewModel: common.view_models.GovernmentSpend,
@@ -40,6 +42,41 @@
         name = viewModel.userForename + ' ' + viewModel.userSurname,
         utr = viewModel.userUtr,
         actingAsAttorney = actingAsAttorney
+    )
+}
+
+@tableRows = @{
+    viewModel.govSpendAmountData.map { case (key, value) =>
+        Seq(
+            TableRow(
+                content = HtmlContent(
+                    s"""
+                       |${Messages(s"ats.treasury_spending.table.$key")} (${value.percentage}%)
+                       |<div class="govuk-!-padding-top-2" aria-hidden="true">
+                       |  <meter value="${value.percentage}" min="0" max="100">(${value.percentage}%)</meter>
+                       |</div>
+                       |""".stripMargin
+                ),
+                classes = "govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none",
+                attributes = Map("id" -> key)
+            ),
+            TableRow(
+                content = HtmlContent(value.amount.renderCurrencyValueAsHtml(poundsOnly = false).body),
+                classes = "govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none"
+            )
+        )
+    } ++ Seq(
+        Seq(
+            TableRow(
+                content = HtmlContent(Messages("ats.treasury_spending.total")),
+                classes = "govuk-!-font-weight-bold",
+                attributes = Map("id" -> "gov-spend-total")
+            ),
+            TableRow(
+                content = HtmlContent(viewModel.totalAmount.renderCurrencyValueAsHtml(poundsOnly = false).body),
+                classes = "govuk-table__cell--numeric govuk-!-font-weight-bold"
+            )
+        )
     )
 }
 
@@ -71,35 +108,20 @@
                 @p(Text(messages("ats.treasury_spending.section.lede")))
             }
 
-            <table id="tax-spent" class="govuk-table">
-                <caption class="govuk-visually-hidden">@(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo))</caption>
-                <thead id="tax-spent-header" class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.description"))</th>
-                        <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0">@Html(Messages("generic.amount_pounds"))</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                @viewModel.govSpendAmountData.map {
-                    case (key, value) => {
-                        <tr class="govuk-table__row">
-                            <th scope="row" id="@key" class="govuk-table__header govuk-!-padding-top-5 govuk-!-padding-bottom-0  border-none">@Html(Messages(s"ats.treasury_spending.table.$key")) (@value.percentage%)</th>
-                            <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0  border-none">@value.amount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
-                        </tr>
-                        <tr class="govuk-table__row" aria-hidden="true">
-                            <td colspan="2" class="govuk-table__cell govuk-!-padding-0">
-                                <meter value="@value.percentage" min="0" max="100">(@value.percentage%)</meter>
-                            </td>
-                        </tr>
-                    }
-                }
-                </tbody>
-                <tfoot id="tax-spent-footer">
-                    <tr class="govuk-table__row">
-                        <th id="gov-spend-total" scope="row" class="govuk-table__header">@Html(Messages("ats.treasury_spending.total"))</th>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalAmount.renderCurrencyValueAsHtml(poundsOnly = false)</td>
-                    </tr>
-                </tfoot>
-
-            </table>
+    @govukTable(Table(
+        caption = Some(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)),
+        captionClasses = "govuk-visually-hidden",
+        firstCellIsHeader = true,
+        head = Some(Seq(
+            HeadCell(
+                content = HtmlContent(Messages("generic.description")),
+                classes = "govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0"
+            ),
+            HeadCell(
+                content = HtmlContent(Messages("generic.amount_pounds")),
+                classes = "govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0"
+            )
+        )),
+        rows = tableRows
+    ))
 }
