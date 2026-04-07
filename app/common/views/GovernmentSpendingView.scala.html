@@ -46,23 +46,30 @@
 }
 
 @tableRows = @{
-    viewModel.govSpendAmountData.map { case (key, value) =>
+    viewModel.govSpendAmountData.flatMap { case (key, value) =>
         Seq(
-            TableRow(
-                content = HtmlContent(
-                    s"""
-                       |${Messages(s"ats.treasury_spending.table.$key")} (${value.percentage}%)
-                       |<div class="govuk-!-padding-top-2" aria-hidden="true">
-                       |  <meter value="${value.percentage}" min="0" max="100">(${value.percentage}%)</meter>
-                       |</div>
-                       |""".stripMargin
+            Seq(
+                TableRow(
+                    content = HtmlContent(s"${Messages(s"ats.treasury_spending.table.$key")} (${value.percentage}%)"),
+                    classes = "govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none",
+                    attributes = Map("id" -> key)
                 ),
-                classes = "govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none",
-                attributes = Map("id" -> key)
+                TableRow(
+                    content = HtmlContent(value.amount.renderCurrencyValueAsHtml(poundsOnly = false).body),
+                    classes = "govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none"
+                )
             ),
-            TableRow(
-                content = HtmlContent(value.amount.renderCurrencyValueAsHtml(poundsOnly = false).body),
-                classes = "govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none"
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        s"""<meter value="${value.percentage}" min="0" max="100">(${value.percentage}%)</meter>"""
+                    ),
+                    classes = "govuk-!-padding-0"
+                ),
+                TableRow(
+                    content = HtmlContent(""),
+                    classes = "govuk-!-padding-0"
+                )
             )
         )
     } ++ Seq(
