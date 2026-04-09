@@ -19,17 +19,18 @@
 @import common.views.html.helpers.{HeaderSection, P, PageHeading}
 @import common.views.MainTemplate
 @import common.models._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import common.view_models.GovernmentSpendTableViewModelBuilder
+@import common.views.html.components.GovernmentSpendTable
 
 @this(
     main: MainTemplate,
     headerSection: HeaderSection,
     p: P,
     pageHeading: PageHeading,
-        govukTable: GovukTable
+    governmentSpendTable: GovernmentSpendTable
 )
 
-@(  viewModel: common.view_models.GovernmentSpend,
+@(viewModel: common.view_models.GovernmentSpend,
     actingAsAttorney: Option[ActingAsAttorneyFor] = None
     )(
     implicit request: AuthenticatedRequest[_],
@@ -39,51 +40,9 @@
 
 @beforeContent = {
     @headerSection(
-        name = viewModel.userForename + ' ' + viewModel.userSurname,
+        name = viewModel.userForename + " " + viewModel.userSurname,
         utr = viewModel.userUtr,
         actingAsAttorney = actingAsAttorney
-    )
-}
-
-@tableRows = @{
-    viewModel.govSpendAmountData.flatMap { case (key, value) =>
-        Seq(
-            Seq(
-                TableRow(
-                    content = HtmlContent(s"${Messages(s"ats.treasury_spending.table.$key")} (${value.percentage}%)"),
-                    classes = "govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none",
-                    attributes = Map("id" -> key)
-                ),
-                TableRow(
-                    content = HtmlContent(value.amount.renderCurrencyValueAsHtml(poundsOnly = false).body),
-                    classes = "govuk-table__cell--numeric govuk-!-padding-top-5 govuk-!-padding-bottom-0 border-none"
-                )
-            ),
-            Seq(
-                TableRow(
-                    content = HtmlContent(
-                        s"""<meter value="${value.percentage}" min="0" max="100">(${value.percentage}%)</meter>"""
-                    ),
-                    classes = "govuk-!-padding-0"
-                ),
-                TableRow(
-                    content = HtmlContent(""),
-                    classes = "govuk-!-padding-0"
-                )
-            )
-        )
-    } ++ Seq(
-        Seq(
-            TableRow(
-                content = HtmlContent(Messages("ats.treasury_spending.total")),
-                classes = "govuk-!-font-weight-bold",
-                attributes = Map("id" -> "gov-spend-total")
-            ),
-            TableRow(
-                content = HtmlContent(viewModel.totalAmount.renderCurrencyValueAsHtml(poundsOnly = false).body),
-                classes = "govuk-table__cell--numeric govuk-!-font-weight-bold"
-            )
-        )
     )
 }
 
@@ -95,12 +54,10 @@
         headerSectionNeeded = true
 ) {
 
-
         <div class="print-this">
             <img src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
             <a class="print-this__link" href="#" id="printLink">@Messages("ats.treasury_spending.print.this.page")</a>
         </div>
-
 
         @pageHeading(
             text = "ats.treasury_spending.title",
@@ -108,27 +65,19 @@
             marginTop = false
         )
 
-        @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
-                @p(Text(messages("ats.treasury_spending.section.sit.lede")))
-                <p class="govuk-body">@Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1")) <a href="@appConfig.govScotAccounts" class="govuk-link" rel="noreferrer noopener" target="_blank">@appConfig.govScotAccounts</a> @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2")) <a href="@appConfig.govScotHowItWorks" class="govuk-link" rel="noreferrer noopener" target="_blank">@appConfig.govScotHowItWorks</a></p>
-            } else {
-                @p(Text(messages("ats.treasury_spending.section.lede")))
-            }
+    @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
+        @p(Text(messages("ats.treasury_spending.section.sit.lede")))
+        <p class="govuk-body">
+            @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.1"))
+            <a href="@appConfig.govScotAccounts" class="govuk-link" rel="noreferrer noopener" target="_blank">@appConfig.govScotAccounts</a>
+            @Html(Messages("ats.treasury_spending.section.sit.scottish.spending.2"))
+            <a href="@appConfig.govScotHowItWorks" class="govuk-link" rel="noreferrer noopener" target="_blank">@appConfig.govScotHowItWorks</a>
+        </p>
+    } else {
+        @p(Text(messages("ats.treasury_spending.section.lede")))
+    }
 
-    @govukTable(Table(
-        caption = Some(Messages("ats.treasury_spending.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo)),
-        captionClasses = "govuk-visually-hidden",
-        firstCellIsHeader = true,
-        head = Some(Seq(
-            HeadCell(
-                content = HtmlContent(Messages("generic.description")),
-                classes = "govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0"
-            ),
-            HeadCell(
-                content = HtmlContent(Messages("generic.amount_pounds")),
-                classes = "govuk-table__header--numeric govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0"
-            )
-        )),
-        rows = tableRows
-    ))
+    @governmentSpendTable(
+        GovernmentSpendTableViewModelBuilder(viewModel)
+    )
 }
