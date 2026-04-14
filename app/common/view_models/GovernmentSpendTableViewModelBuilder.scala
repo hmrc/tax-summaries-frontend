@@ -49,7 +49,7 @@ object GovernmentSpendTableViewModelBuilder {
               ),
               classes = "govuk-!-padding-top-5 govuk-!-padding-bottom-1",
               attributes = Map(
-                "id" -> key,
+                "id"    -> key,
                 "style" -> "border-bottom: 0;"
               )
             ),
