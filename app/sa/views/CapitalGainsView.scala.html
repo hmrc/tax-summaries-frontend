@@ -19,177 +19,302 @@
 @import common.views.html.helpers.{HeaderSection, PageHeading, P}
 @import common.views.MainTemplate
 @import common.models._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text}
 
 @this(
-    main: MainTemplate,
-    headerSection: HeaderSection,
+        main: MainTemplate,
+        headerSection: HeaderSection,
         viewUtils: ViewUtils,
-    pageHeading: PageHeading,
-    p: P
+        pageHeading: PageHeading,
+        p: P,
+        govukTable: GovukTable
 )
 
-@(  viewModel: sa.view_models.CapitalGains,
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None
-    )(
-    implicit request: AuthenticatedRequest[_],
-    messages: Messages
+@(viewModel: sa.view_models.CapitalGains,
+        actingAsAttorney: Option[ActingAsAttorneyFor] = None
+)(
+        implicit request: AuthenticatedRequest[_],
+        messages: Messages
 )
 
 @beforeContent = {
-    @headerSection(
-        name = viewModel.forename + ' ' + viewModel.surname,
-        utr = viewModel.utr,
-        actingAsAttorney = actingAsAttorney
+@headerSection(
+    name = viewModel.forename + ' ' + viewModel.surname,
+    utr = viewModel.utr,
+    actingAsAttorney = actingAsAttorney
+)
+}
+
+@capitalGainsRows = @{
+    Seq(
+        Seq(
+            TableRow(
+                content = HtmlContent(Messages("ats.capital_gains_tax.table.line1"))
+            ),
+            TableRow(
+                content = HtmlContent(viewModel.taxableGains.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                classes = "govuk-table__cell--numeric",
+                attributes = Map("id" -> "taxable-gains")
+            )
+        ),
+        Seq(
+            TableRow(
+                content = HtmlContent(
+                    Messages(
+                        "ats.capital_gains_tax.table.line2",
+                        s"""<span id="tax-period">${Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)}</span>"""
+                    )
+                )
+            ),
+            TableRow(
+                content = HtmlContent(
+                    s"""<span id="gains">${viewModel.lessTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = true)}</span>"""
+                ),
+                classes = "govuk-table__cell--numeric",
+                attributes = Map("id" -> "less-taxable-gains")
+            )
+        ),
+        Seq(
+            TableRow(
+                content = HtmlContent(Messages("ats.capital_gains_tax.table.line3"))
+            ),
+            TableRow(
+                content = HtmlContent(viewModel.payCgTaxOn.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                classes = "govuk-table__cell--numeric",
+                attributes = Map("id" -> "cg-pay-tax-on")
+            )
+        )
     )
 }
 
+@capitalGainsTaxRows = @{
+    Seq(
+        Option.when(viewModel.rpciLowerTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent)
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.rpciLowerTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "rpci-lower-rate-amount")
+                )
+            )
+        },
+        Option.when(viewModel.rpciHigherTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent)
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.rpciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "rpci-higher-rate-amount")
+                )
+            )
+        },
+        Option.when(viewModel.ciLowerTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages("ats.capital_gains_tax.table.ci", viewUtils.toCurrency(viewModel.ciLowerTotalAmount), viewModel.ciLowerRate.percent)
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.ciLowerTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "ci-lower-rate-amount")
+                )
+            )
+        },
+        Option.when(viewModel.ciHigherTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages("ats.capital_gains_tax.table.ci", viewUtils.toCurrency(viewModel.ciHigherTotalAmount), viewModel.ciHigherRate.percent)
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.ciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "ci-higher-rate-amount")
+                )
+            )
+        },
+        Option.when(viewModel.rpLowerTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages("ats.capital_gains_tax.table.rp", viewUtils.toCurrency(viewModel.rpLowerTotalAmount), viewModel.rpLowerRate.percent)
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.rpLowerTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "rp-lower-rate-amount")
+                )
+            )
+        },
+        Option.when(viewModel.rpHigherTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages("ats.capital_gains_tax.table.rp", viewUtils.toCurrency(viewModel.rpHigherTotalAmount), viewModel.rpHigherRate.percent)
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.rpHigherTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "rp-higher-rate-amount")
+                )
+            )
+        },
+        Option.when(!viewModel.entrepreneursReliefRateBefore.isZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages(
+                            "ats.capital_gains_tax.table.line4",
+                            s"""<span id="entrepreneurs-relief-rate-before">${viewModel.entrepreneursReliefRateBefore.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                            s"""<span id="entrepreneurs-relief-rate">${viewModel.entrepreneursReliefRate}</span>"""
+                        )
+                    ),
+                    attributes = Map("id" -> "entrepreneurs-relief-rate-section")
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.entrepreneursReliefRateAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "entrepreneurs-relief-rate-amount")
+                )
+            )
+        },
+        Option.when(!viewModel.ordinaryRateBefore.isZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages(
+                            "ats.capital_gains_tax.table.line5",
+                            s"""<span id="ordinary-rate-before">${viewModel.ordinaryRateBefore.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                            s"""<span id="ordinary-rate">${viewModel.ordinaryRate}</span>"""
+                        )
+                    ),
+                    attributes = Map("id" -> "ordinary-rate-section")
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.ordinaryRateAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "ordinary-rate-amount")
+                )
+            )
+        },
+        Option.when(!viewModel.upperRateBefore.isZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        Messages(
+                            "ats.capital_gains_tax.table.line6",
+                            s"""<span id="upper-rate-before">${viewModel.upperRateBefore.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                            s"""<span id="upper-rate">${viewModel.upperRate}</span>"""
+                        )
+                    ),
+                    attributes = Map("id" -> "upper-rate-section")
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.upperRateAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "upper-rate-amount")
+                )
+            )
+        },
+        Option.when(!viewModel.adjustmentsAmount.isZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(Messages("ats.capital_gains_tax.table.line7")),
+                    attributes = Map("id" -> "adjustments-section")
+                ),
+                TableRow(
+                    content = HtmlContent(
+                        s"""<span id="gains-tax-amount">${viewModel.adjustmentsAmount.renderCurrencyValueAsHtml(poundsOnly = true)}</span>"""
+                    ),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "adjustment-to-capital-gains-tax-amount")
+                )
+            )
+        }
+    ).flatten
+}
+
 @main(
-        pageTitle = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent),
-        headerSectionNeeded = true,
-        pageHeading = Messages("ats.capital_gains_tax.subtitle")
+    pageTitle = Messages("ats.capital_gains_tax.html.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    actingAttorney = actingAsAttorney,
+    beforeContentHtml = Some(beforeContent),
+    headerSectionNeeded = true,
+    pageHeading = Messages("ats.capital_gains_tax.subtitle")
 ) {
 
-        @pageHeading(
-            text = "ats.capital_gains_tax.subtitle",
-            section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    @pageHeading(
+        text = "ats.capital_gains_tax.subtitle",
+        section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+    )
+
+    @p(HtmlContent(Messages("ats.capital_gains_tax.lede")), classes = Some("govuk-body-l"))
+
+    @if(!viewModel.totalCapitalGainsTaxAmount.isZero) {
+        @p(
+            HtmlContent(
+                Messages(
+                    "ats.capital_gains_tax.description",
+                    s"""<span id="total-cg-tax-rate">${viewModel.totalCgTaxRate.percent}</span>"""
+                )
+            ),
+            elmId = Some("total-cg-description")
         )
+    }
 
-        @p(HtmlContent(Messages("ats.capital_gains_tax.lede")), classes = Some("govuk-body-l"))
+    @govukTable(Table(
+        head = Some(Seq(
+            HeadCell(content = HtmlContent(Messages("ats.capital_gains_tax.capital_gains"))),
+            HeadCell(
+                content = HtmlContent(Messages("generic.amount_pounds")),
+                classes = "govuk-table__header--numeric"
+            )
+        )),
+        rows = capitalGainsRows
+    ))
 
-        @if(!viewModel.totalCapitalGainsTaxAmount.isZero) {
-          @p(HtmlContent(Messages("ats.capital_gains_tax.description",
-            """<span id="total-cg-tax-rate">"""+viewModel.totalCgTaxRate.percent+"""</span>""")),
-            elmId = Some("total-cg-description"))
-        }
+    @if(!viewModel.payCgTaxOn.isZero) {
+        <div id="capital-gains-tax-section">
+        @govukTable(Table(
+            head = Some(Seq(
+                HeadCell(content = HtmlContent(Messages("ats.capital_gains_tax.capital_gains_tax"))),
+                HeadCell(
+                    content = HtmlContent(Messages("generic.amount_pounds")),
+                    classes = "govuk-table__header--numeric"
+                )
+            )),
+            rows = capitalGainsTaxRows
+        ))
+        </div>
+    }
 
-        <table class="govuk-table">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header">@Html(Messages("ats.capital_gains_tax.capital_gains"))</th>
-              <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-            </tr>
-          </thead>
-          <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line1"))</td>
-              <td id="taxable-gains" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.taxableGains.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-            </tr>
-
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line2","""<span id="tax-period">"""+Messages("ats.capital_gains_tax.tax_year_period", viewModel.taxYearFrom, viewModel.taxYearTo)+"""</span>"""))</td>
-              <td id="less-taxable-gains" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="gains">@viewModel.lessTaxFreeAmount.renderCurrencyValueAsHtml(poundsOnly = true)</span>
-              </td>
-            </tr>
-
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line3"))</td>
-              <td id="cg-pay-tax-on" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.payCgTaxOn.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-            </tr>
-          </tbody>
-        </table>
-
-        @if(!viewModel.payCgTaxOn.isZero) {
-          <table class="govuk-table">
-            <thead class="govuk-table__head">
-              <tr id="capital-gains-tax-section" class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@Html(Messages("ats.capital_gains_tax.capital_gains_tax"))</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-              </tr>
-            </thead>
-            <tbody>
-
-              @if(viewModel.rpciLowerTax.nonZero) {
-              <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciLowerTotalAmount), viewModel.rpciLowerRate.percent))</td>
-                <td id="rpci-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpciLowerTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-              </tr>
-              }
-
-              @if(viewModel.rpciHigherTax.nonZero) {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rcpi", viewUtils.toCurrency(viewModel.rpciHigherTotalAmount), viewModel.rpciHigherRate.percent))</td>
-                    <td id="rpci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-                </tr>
-              }
-              
-              @if(viewModel.ciLowerTax.nonZero) {
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.ci", viewUtils.toCurrency(viewModel.ciLowerTotalAmount), viewModel.ciLowerRate.percent))</td>
-                    <td id="ci-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ciLowerTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-                  </tr>
-              }    
-              
-              @if(viewModel.ciHigherTax.nonZero) {
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.ci", viewUtils.toCurrency(viewModel.ciHigherTotalAmount), viewModel.ciHigherRate.percent))</td>
-                    <td id="ci-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ciHigherTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-                  </tr>
-              }  
-              
-              @if(viewModel.rpLowerTax.nonZero) {
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rp", viewUtils.toCurrency(viewModel.rpLowerTotalAmount), viewModel.rpLowerRate.percent))</td>
-                    <td id="rp-lower-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpLowerTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-                  </tr>
-              }    
-              
-              @if(viewModel.rpHigherTax.nonZero) {
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.rp", viewUtils.toCurrency(viewModel.rpHigherTotalAmount), viewModel.rpHigherRate.percent))</td>
-                    <td id="rp-higher-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.rpHigherTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-                  </tr>
-              }              
-
-              @if(!viewModel.entrepreneursReliefRateBefore.isZero) {
-              <tr id="entrepreneurs-relief-rate-section" class="govuk-table__row">
-                <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line4",
-                    """<span id="entrepreneurs-relief-rate-before">"""+viewModel.entrepreneursReliefRateBefore.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
-                    """<span id="entrepreneurs-relief-rate">""" + viewModel.entrepreneursReliefRate + """</span>"""))</td>
-                <td id="entrepreneurs-relief-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.entrepreneursReliefRateAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-              </tr>
-              }
-
-              @if(!viewModel.ordinaryRateBefore.isZero) {
-              <tr id="ordinary-rate-section" class="govuk-table__row">
-                <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line5",
-                    """<span id="ordinary-rate-before">"""+viewModel.ordinaryRateBefore.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
-                    """<span id="ordinary-rate">""" + viewModel.ordinaryRate + """</span>"""))</td>
-                <td id="ordinary-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.ordinaryRateAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-              </tr>
-              }
-
-              @if(!viewModel.upperRateBefore.isZero) {
-              <tr id="upper-rate-section" class="govuk-table__row">
-                <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line6",
-                    """<span id="upper-rate-before">"""+viewModel.upperRateBefore.renderCurrencyValueAsHtml(poundsOnly = true)+"""</span>""",
-                    """<span id="upper-rate">""" + viewModel.upperRate + """</span>"""))</td>
-                <td id="upper-rate-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.upperRateAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-              </tr>
-              }
-
-              @if(!viewModel.adjustmentsAmount.isZero) {
-              <tr id="adjustments-section" class="govuk-table__row">
-                <td class="govuk-table__cell">@Html(Messages("ats.capital_gains_tax.table.line7"))</td>
-                <td id="adjustment-to-capital-gains-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">
-                  <span id="gains-tax-amount">@viewModel.adjustmentsAmount.renderCurrencyValueAsHtml(poundsOnly = true)</span>
-                </td>
-              </tr>
-              }
-
-            </tbody>
-          </table>
-        }
-
-
-        <table id="total-capital-gains-tax" class="govuk-table">
-          <tbody class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th scope="row" class="govuk-table__header">@Html(Messages("ats.capital_gains_tax.total_capital_gains_tax"))</th>
-              <td id="total-capital-gains-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalCapitalGainsTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-            </tr>
-          </tbody>
-        </table>
+    @govukTable(Table(
+        firstCellIsHeader = true,
+        rows = Seq(
+            Seq(
+                TableRow(
+                    content = HtmlContent(Messages("ats.capital_gains_tax.total_capital_gains_tax"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.totalCapitalGainsTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "total-capital-gains-tax-amount")
+                )
+            )
+        )
+    ))
 }
