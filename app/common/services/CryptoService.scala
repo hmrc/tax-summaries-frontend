@@ -31,8 +31,8 @@ class CryptoService @Inject() ()(implicit val appConfig: ApplicationConfig) {
   def key: String      = appConfig.encryptionKey
   def tokenMaxAge: Int = appConfig.encryptionTokenMaxAge
 
-  protected def aesCrypto = new AesCrypto {
-    val encryptionKey = key
+  private def aesCrypto: AesCrypto = new AesCrypto {
+    val encryptionKey: String = key
   }
 
   def getAgentToken(token: String): AgentToken = {
@@ -62,7 +62,7 @@ class CryptoService @Inject() ()(implicit val appConfig: ApplicationConfig) {
     AgentToken(agentUar = splitToken(0), clientUtr = splitToken(1), timestamp = splitToken(2).toLong)
   }
 
-  protected def validateTimestamp(agentToken: AgentToken) = {
+  private def validateTimestamp(agentToken: AgentToken): AgentToken = {
     val timeStamp = Instant.ofEpochMilli(agentToken.timestamp)
     val maxAge    = timeStamp.plusSeconds(tokenMaxAge)
     val timeNow   = Instant.now()
