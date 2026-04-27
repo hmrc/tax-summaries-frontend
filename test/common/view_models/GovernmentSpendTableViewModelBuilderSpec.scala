@@ -54,7 +54,7 @@ class GovernmentSpendTableViewModelBuilderSpec extends AnyWordSpec with Matchers
             amount = Amount(BigDecimal(400.00), "GBP"),
             percentage = BigDecimal(40.0)
           ),
-          "health" -> SpendData(
+          "health"  -> SpendData(
             amount = Amount(BigDecimal(600.00), "GBP"),
             percentage = BigDecimal(60.0)
           )

@@ -1,14 +1,30 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package sa.view_models
 
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HeadCell, HtmlContent, TableRow}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, TableRow}
 
 final case class IncomeTaxDetailsTableViewModel(
-                                                 incomeTaxRows: Seq[Seq[TableRow]],
-                                                 dividendRows: Seq[Seq[TableRow]],
-                                                 totalUkIncomeTaxRows: Seq[Seq[TableRow]],
-                                                 adjustmentRows: Seq[Seq[TableRow]]
-                                               )
+  incomeTaxRows: Seq[Seq[TableRow]],
+  dividendRows: Seq[Seq[TableRow]],
+  totalUkIncomeTaxRows: Seq[Seq[TableRow]],
+  adjustmentRows: Seq[Seq[TableRow]]
+)
 
 object IncomeTaxDetailsTableViewModelBuilder {
 
@@ -18,15 +34,19 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.startingRateForSavings.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.savings",
-              s"""<span id="start-rate-for-savings-before">${viewModel.startingRateForSavings.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="start-rate-for-savings-rate">${viewModel.startingRateForSavingsRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.savings",
+                s"""<span id="start-rate-for-savings-before">${viewModel.startingRateForSavings
+                    .renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                s"""<span id="start-rate-for-savings-rate">${viewModel.startingRateForSavingsRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "starting-rate-for-savings-row")
           ),
           TableRow(
-            content = HtmlContent(viewModel.startingRateForSavingsAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+            content =
+              HtmlContent(viewModel.startingRateForSavingsAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
             classes = "govuk-table__cell--numeric",
             attributes = Map("id" -> "starting-rate-for-savings-amount")
           )
@@ -35,11 +55,14 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.basicRateIncomeTax.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.basic",
-              s"""<span id="basic-rate-income-tax-before">${viewModel.basicRateIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="basic-rate-income-tax-rate">${viewModel.basicRateIncomeTaxRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.basic",
+                s"""<span id="basic-rate-income-tax-before">${viewModel.basicRateIncomeTax
+                    .renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                s"""<span id="basic-rate-income-tax-rate">${viewModel.basicRateIncomeTaxRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "basic-rate-income-tax-row")
           ),
           TableRow(
@@ -52,15 +75,19 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.basicRateIncomeTax.isZero && !viewModel.higherRateIncomeTax.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.higher",
-              s"""<span id="higher-rate-income-tax-before">${viewModel.higherRateIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="higher-rate-income-tax-rate">${viewModel.higherRateIncomeTaxRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.higher",
+                s"""<span id="higher-rate-income-tax-before">${viewModel.higherRateIncomeTax
+                    .renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                s"""<span id="higher-rate-income-tax-rate">${viewModel.higherRateIncomeTaxRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "higher-rate-income-tax-row")
           ),
           TableRow(
-            content = HtmlContent(viewModel.higherRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+            content =
+              HtmlContent(viewModel.higherRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
             classes = "govuk-table__cell--numeric",
             attributes = Map("id" -> "higher-rate-income-tax-amount")
           )
@@ -69,15 +96,19 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.basicRateIncomeTax.isZero && !viewModel.additionalRateIncomeTax.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.additional",
-              s"""<span id="additional-rate-income-tax-before">${viewModel.additionalRateIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="additional-rate-income-tax-rate">${viewModel.additionalRateIncomeTaxRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.additional",
+                s"""<span id="additional-rate-income-tax-before">${viewModel.additionalRateIncomeTax
+                    .renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
+                s"""<span id="additional-rate-income-tax-rate">${viewModel.additionalRateIncomeTaxRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "additional-rate-income-tax-row")
           ),
           TableRow(
-            content = HtmlContent(viewModel.additionalRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+            content =
+              HtmlContent(viewModel.additionalRateIncomeTaxAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
             classes = "govuk-table__cell--numeric",
             attributes = Map("id" -> "additional-rate-income-tax-amount")
           )
@@ -89,11 +120,15 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.ordinaryRate.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.basic",
-              s"""<span id="ordinary-rate-before">${viewModel.ordinaryRate.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="ordinary-rate-rate">${viewModel.ordinaryRateTaxRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.basic",
+                s"""<span id="ordinary-rate-before">${viewModel.ordinaryRate.renderCurrencyValueAsHtml(poundsOnly =
+                    true
+                  )}</span>""",
+                s"""<span id="ordinary-rate-rate">${viewModel.ordinaryRateTaxRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "ordinary-rate-row")
           ),
           TableRow(
@@ -106,11 +141,15 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.upperRate.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.higher",
-              s"""<span id="upper-rate-before">${viewModel.upperRate.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="upper-rate-rate">${viewModel.upperRateRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.higher",
+                s"""<span id="upper-rate-before">${viewModel.upperRate.renderCurrencyValueAsHtml(poundsOnly =
+                    true
+                  )}</span>""",
+                s"""<span id="upper-rate-rate">${viewModel.upperRateRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "upper-rate-row")
           ),
           TableRow(
@@ -123,11 +162,15 @@ object IncomeTaxDetailsTableViewModelBuilder {
       Option.when(!viewModel.additionalRate.isZero) {
         Seq(
           TableRow(
-            content = HtmlContent(Messages(
-              "ats.total_income_tax.table.additional",
-              s"""<span id="additional-rate-before">${viewModel.additionalRate.renderCurrencyValueAsHtml(poundsOnly = true)}</span>""",
-              s"""<span id="additional-rate-rate">${viewModel.additionalRateRate}</span>"""
-            )),
+            content = HtmlContent(
+              Messages(
+                "ats.total_income_tax.table.additional",
+                s"""<span id="additional-rate-before">${viewModel.additionalRate.renderCurrencyValueAsHtml(poundsOnly =
+                    true
+                  )}</span>""",
+                s"""<span id="additional-rate-rate">${viewModel.additionalRateRate}</span>"""
+              )
+            ),
             attributes = Map("id" -> "additional-rate-row")
           ),
           TableRow(
@@ -157,7 +200,8 @@ object IncomeTaxDetailsTableViewModelBuilder {
         Seq(
           TableRow(content = HtmlContent(Messages("ats.total_income_tax.table.other.increasing"))),
           TableRow(
-            content = HtmlContent(viewModel.otherAdjustmentsIncreasing.renderCurrencyValueAsHtml(poundsOnly = true).body),
+            content =
+              HtmlContent(viewModel.otherAdjustmentsIncreasing.renderCurrencyValueAsHtml(poundsOnly = true).body),
             classes = "govuk-table__cell--numeric",
             attributes = Map("id" -> "other-adjustments-increasing-amount")
           )
@@ -167,7 +211,8 @@ object IncomeTaxDetailsTableViewModelBuilder {
         Seq(
           TableRow(content = HtmlContent(Messages("ats.total_income_tax.table.marriage_allowance_received"))),
           TableRow(
-            content = HtmlContent(viewModel.marriageAllowanceReceivedAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+            content =
+              HtmlContent(viewModel.marriageAllowanceReceivedAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
             classes = "govuk-table__cell--numeric",
             attributes = Map("id" -> "marriage-allowance-received-amount")
           )
@@ -178,7 +223,9 @@ object IncomeTaxDetailsTableViewModelBuilder {
           TableRow(content = HtmlContent(Messages("ats.total_income_tax.table.other.reducing"))),
           TableRow(
             content = HtmlContent(
-              s"""<span id="reducing-amount">${viewModel.otherAdjustmentsReducing.renderCurrencyValueAsHtml(poundsOnly = true)}</span>"""
+              s"""<span id="reducing-amount">${viewModel.otherAdjustmentsReducing.renderCurrencyValueAsHtml(poundsOnly =
+                  true
+                )}</span>"""
             ),
             classes = "govuk-table__cell--numeric",
             attributes = Map("id" -> "other-adjustments-reducing-amount")
