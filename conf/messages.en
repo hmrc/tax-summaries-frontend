@@ -22,6 +22,7 @@ generic.total=Total
 view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
 error.form.error=Error:
+error.form.prefix=Error
 
 
 # View ATS - Select the tax year page

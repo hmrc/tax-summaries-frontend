@@ -47,6 +47,11 @@
         classes = hintClasses
     )},
     items = items,
-    errorMessage = form(name).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+    errorMessage = form(name).error.map { err =>
+        ErrorMessage(
+            content = Text(messages(err.message, err.args:_*)),
+            visuallyHiddenText = Some(messages("error.form.prefix"))
+        )
+    },
     classes = if(inline){"govuk-radios--inline"}else{"govuk-radios"}
 ))
