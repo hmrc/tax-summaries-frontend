@@ -23,6 +23,7 @@ case object SelfAssessmentServiceToggle extends FeatureFlagName {
   override val description: Option[String] = Some(
     "Enable/disable Self-Assessment services"
   )
+  override val defaultState: Boolean = true
 }
 
 case object PAYEServiceToggle extends FeatureFlagName {
@@ -30,4 +31,5 @@ case object PAYEServiceToggle extends FeatureFlagName {
   override val description: Option[String] = Some(
     "Enable/disable PAYE data fetching, authentication, and display in the Annual Tax Summary (ATS)."
   )
+  override val defaultState: Boolean = true
 }
