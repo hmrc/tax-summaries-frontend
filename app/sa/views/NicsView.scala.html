@@ -20,93 +20,143 @@
 @import common.views.MainTemplate
 @import common.models._
 @import sa.views.html.includes.IncomeTaxDetailsView
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text}
 
 @this(
-    main: MainTemplate,
-    headerSection: HeaderSection,
+        main: MainTemplate,
+        headerSection: HeaderSection,
         viewUtils: ViewUtils,
-    pageHeading: PageHeading,
-    p: P,
-    incomeTaxDetailsView:IncomeTaxDetailsView
+        pageHeading: PageHeading,
+        p: P,
+        incomeTaxDetailsView: IncomeTaxDetailsView,
+        govukTable: GovukTable
 )
 
-@(  viewModel: sa.view_models.IncomeTaxAndNI,
-    actingAsAttorney: Option[ActingAsAttorneyFor] = None,
-    includeBRDMessage: Boolean
-    )(
-    implicit request: AuthenticatedRequest[_],
-    messages: Messages
+@(viewModel: sa.view_models.IncomeTaxAndNI,
+        actingAsAttorney: Option[ActingAsAttorneyFor] = None,
+        includeBRDMessage: Boolean
+)(
+        implicit request: AuthenticatedRequest[_],
+        messages: Messages
 )
 
 @beforeContent = {
-    @headerSection(
-        name = viewModel.forename + ' ' + viewModel.surname,
-        utr = viewModel.utr,
-        actingAsAttorney = actingAsAttorney
+@headerSection(
+    name = viewModel.forename + ' ' + viewModel.surname,
+    utr = viewModel.utr,
+    actingAsAttorney = actingAsAttorney
+)
+}
+
+@nationalInsuranceRows = @{
+    Seq(
+        Seq(
+            TableRow(
+                content = HtmlContent(Messages("paye.ats.national_insurance.title"))
+            ),
+            TableRow(
+                content = HtmlContent(viewModel.employeeNicAmount.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                classes = "govuk-table__cell--numeric",
+                attributes = Map("id" -> "employee-nic-amount")
+            )
+        )
     )
 }
 
+@totalIncomeTaxAndNiRows = @{
+    Seq(
+        Some(
+            Seq(
+                TableRow(
+                    content = HtmlContent(Messages("generic.total"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "total-income-tax-and-nics")
+                )
+            )
+        ),
+        Option.when(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(Messages("ats.total_income_tax.table.scottish_income_tax"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.scottishIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "scottish-income-tax-amount")
+                )
+            )
+        },
+        Option.when(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
+            Seq(
+                TableRow(
+                    content = HtmlContent(Messages("ats.total_income_tax.table.welsh_income_tax"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.welshIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true).body),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> "welsh-income-tax-amount")
+                )
+            )
+        }
+    ).flatten
+}
+
 @main(
-        pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
-        actingAttorney = actingAsAttorney,
-        beforeContentHtml = Some(beforeContent),
-        pageHeading = Messages("ats.nics.tax_and_nics.title"),
-        headerSectionNeeded = true
-    ) {
+    pageTitle = Messages("ats.nics.tax_and_nics.title") + Messages("generic.to_from", viewModel.taxYearFrom, viewModel.taxYearTo),
+    actingAttorney = actingAsAttorney,
+    beforeContentHtml = Some(beforeContent),
+    pageHeading = Messages("ats.nics.tax_and_nics.title"),
+    headerSectionNeeded = true
+) {
     @pageHeading(
-      text = "ats.nics.tax_and_nics.title",
-      section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
+        text = "ats.nics.tax_and_nics.title",
+        section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo)
     )
+
     @p(HtmlContent(Messages("ats.nics.tax_and_nics.lede")))
-    @p(HtmlContent(Messages("ats.nics.tax_and_nics.description",
-      "<span id=\"total-cg-tax-rate\">"+viewUtils.positiveOrZero(viewModel.nicsAndTaxRate).percent+"</span>")))
+
+    @p(
+        HtmlContent(
+            Messages(
+                "ats.nics.tax_and_nics.description",
+                s"""<span id="total-cg-tax-rate">${viewUtils.positiveOrZero(viewModel.nicsAndTaxRate).percent}</span>"""
+            )
+        )
+    )
 
     @incomeTaxDetailsView(viewModel)
 
-    <table id="national-insurance" class="govuk-table">
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">@Html(Messages("ats.nics.tax_and_nics_explained"))</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="govuk-table__cell">@Html(Messages("paye.ats.national_insurance.title"))</td>
-          <td id="employee-nic-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.employeeNicAmount.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-        </tr>
-      </tbody>
-    </table>
+    @govukTable(Table(
+        head = Some(Seq(
+            HeadCell(
+                content = HtmlContent(Messages("ats.nics.tax_and_nics_explained"))
+            ),
+            HeadCell(
+                content = HtmlContent(Messages("generic.amount_pounds")),
+                classes = "govuk-table__header--numeric"
+            )
+        )),
+        rows = nationalInsuranceRows
+    ))
 
-    <table id="total-income-tax-and-ni" class="govuk-table">
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">@Html(Messages("paye.ats.total_income_tax.title"))</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--numeric">@Html(Messages("generic.amount_pounds"))</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="govuk-table__cell">@Html(Messages("generic.total"))</td>
-            <td id="total-income-tax-and-nics" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-        </tr>
-        @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.scottish_income_tax")</td>
-                <td id="scottish-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.scottishIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-            </tr>
-        }
-        @if(viewModel.isWelshTaxPayer && viewModel.welshIncomeTax.nonZero) {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@Messages("ats.total_income_tax.table.welsh_income_tax")</td>
-                <td id="welsh-income-tax-amount" class="govuk-table__cell govuk-table__cell--numeric">@viewModel.welshIncomeTax.renderCurrencyValueAsHtml(poundsOnly = true)</td>
-            </tr>
-        }      
-      </tbody>
-    </table>
+    @govukTable(Table(
+        head = Some(Seq(
+            HeadCell(
+                content = HtmlContent(Messages("paye.ats.total_income_tax.title"))
+            ),
+            HeadCell(
+                content = HtmlContent(Messages("generic.amount_pounds")),
+                classes = "govuk-table__header--numeric"
+            )
+        )),
+        rows = totalIncomeTaxAndNiRows
+    ))
 
     @if(includeBRDMessage) {
-        @p(Text(messages("ats.summary.brd")), elmId=Some("brd"))
-    }    
-
+        @p(Text(messages("ats.summary.brd")), elmId = Some("brd"))
+    }
 }

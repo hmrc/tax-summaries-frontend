@@ -17,31 +17,52 @@
 @import common.utils.ViewUtils
 @import common.view_models.Amount
 @import common.view_models.Rate
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(viewUtils: ViewUtils)
+@this(
+        viewUtils: ViewUtils,
+        govukTable: GovukTable
+)
+
 @(taxModel: sa.view_models.SavingsTax, ratesModel: sa.view_models.SavingsRates)(implicit messages: Messages)
 
-@taxRow(id: String, tax: Amount, total: Amount, rate: Rate) = {
-@if(tax.nonZero) {
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@Html(messages(s"ats.total_income_tax.savings_income_tax.table.$id", viewUtils.toCurrency(total), rate.percent))</td>
-        <td id="savings-rate-@id" class="govuk-table__cell govuk-table__cell--numeric">@Html(viewUtils.toCurrency(tax))</td>
-    </tr>
-}
+@rows = @{
+    Seq(
+        ("lower", taxModel.savingsLowerRateTax, taxModel.savingsLowerRateTaxAmount, ratesModel.savingsLowerRate),
+        ("higher", taxModel.savingsHigherRateTax, taxModel.savingsHigherRateTaxAmount, ratesModel.savingsHigherRate),
+        ("additional", taxModel.savingsAdditionalRateTax, taxModel.savingsAdditionalRateTaxAmount, ratesModel.savingsAdditionalRate)
+    ).collect {
+        case (id, tax, total, rate) if tax.nonZero =>
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        messages(
+                            s"ats.total_income_tax.savings_income_tax.table.$id",
+                            viewUtils.toCurrency(total),
+                            rate.percent
+                        )
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewUtils.toCurrency(tax)),
+                    classes = "govuk-table__cell--numeric",
+                    attributes = Map("id" -> s"savings-rate-$id")
+                )
+            )
+    }
 }
 
 @if(taxModel.hasTax) {
-    <table class="govuk-table">
-        <thead class="govuk-table">
-            <tr class="govuk-table__head">
-                <th scope="col" class="govuk-table__header">@messages("ats.total_income_tax.savings_income_tax")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("generic.amount_pounds")</th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-            @taxRow("lower", taxModel.savingsLowerRateTax, taxModel.savingsLowerRateTaxAmount, ratesModel.savingsLowerRate)
-            @taxRow("higher", taxModel.savingsHigherRateTax, taxModel.savingsHigherRateTaxAmount, ratesModel.savingsHigherRate)
-            @taxRow("additional", taxModel.savingsAdditionalRateTax, taxModel.savingsAdditionalRateTaxAmount, ratesModel.savingsAdditionalRate)
-        </tbody>
-    </table>
+    @govukTable(Table(
+        head = Some(Seq(
+            HeadCell(
+                content = Text(messages("ats.total_income_tax.savings_income_tax"))
+            ),
+            HeadCell(
+                content = Text(messages("generic.amount_pounds")),
+                classes = "govuk-table__header--numeric"
+            )
+        )),
+        rows = rows
+    ))
 }
