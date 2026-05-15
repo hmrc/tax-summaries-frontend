@@ -24,7 +24,7 @@ trait TaxYearForTesting extends JsonUtil {
   // tax year or the last tax year - 1, depending on time of year.
 
   protected val currentTaxYearSA: Int       = 2025
-  protected val currentTaxYearPAYE: Int     = 2025
+  protected val currentTaxYearPAYE: Int     = 2026
   protected val currentTaxYearGovSpend: Int = 2025
 
   protected val maxTaxYearsTobeDisplayed: Int = 4
