@@ -22,6 +22,7 @@ generic.total=Cyfanswm
 view.languageToggle.english=English
 view.languageToggle.welsh=Cymraeg
 error.form.error=Gwall:
+error.form.prefix=Gwall
 
 
 # View ATS - Select the tax year page
