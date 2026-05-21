@@ -69,7 +69,8 @@
         captionClasses = "govuk-visually-hidden",
         firstCellIsHeader = true,
         head = Some(tableViewModel.head),
-        rows = tableViewModel.rows
+        rows = tableViewModel.rows,
+        attributes = Map("id" -> "tax-spent")
     ))
 
     @p(Text(messages("paye.ats.treasury_spending.para1")), elmId = Some("paragraph-1"))

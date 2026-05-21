@@ -115,6 +115,7 @@
     @p(HtmlContent(Messages("ats.tax_free_amount.description")))
 
     @govukTable(Table(
+        attributes = Map("id" -> "tax-free-allowance"),
         firstCellIsHeader = true,
         head = Some(Seq(
             HeadCell(

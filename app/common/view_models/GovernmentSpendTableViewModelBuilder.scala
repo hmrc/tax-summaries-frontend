@@ -29,7 +29,8 @@ object GovernmentSpendTableViewModelBuilder {
     val head = Seq(
       HeadCell(
         content = Text(Messages("generic.description")),
-        classes = "govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0"
+        classes = "govuk-!-font-size-24 govuk-!-padding-top-5 govuk-!-padding-bottom-0",
+        attributes = Map("id" -> "tax-spent-header")
       ),
       HeadCell(
         content = Text(Messages("generic.amount_pounds")),

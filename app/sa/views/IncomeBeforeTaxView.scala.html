@@ -161,17 +161,20 @@
 
     @p(Text(Messages("ats.income_before_tax.intro")), classes = Some("govuk-body-l"))
 
-    @govukTable(Table(
-        firstCellIsHeader = true,
-        head = Some(Seq(
-            HeadCell(
-                content = HtmlContent(Messages("ats.income_before_tax.table_header"))
-            ),
-            HeadCell(
-                content = HtmlContent(Messages("generic.amount_pounds")),
-                classes = "govuk-table__header--numeric"
-            )
-        )),
-        rows = rows
-    ))
+    <div id="income-before-tax-foot">
+        @govukTable(Table(
+            firstCellIsHeader = true,
+            head = Some(Seq(
+                HeadCell(
+                    content = HtmlContent(Messages("ats.income_before_tax.table_header"))
+                ),
+                HeadCell(
+                    content = HtmlContent(Messages("generic.amount_pounds")),
+                    classes = "govuk-table__header--numeric"
+                )
+            )),
+            rows = rows,
+            attributes = Map("id" -> "income-before-tax-table")
+        ))
+    </div>
 }

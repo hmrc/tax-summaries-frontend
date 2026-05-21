@@ -131,6 +131,7 @@
     @incomeTaxDetailsView(viewModel)
 
     @govukTable(Table(
+        attributes = Map("id" -> "national-insurance"),
         head = Some(Seq(
             HeadCell(
                 content = HtmlContent(Messages("ats.nics.tax_and_nics_explained"))
@@ -144,6 +145,7 @@
     ))
 
     @govukTable(Table(
+        attributes = Map("id" -> "total-income-tax-and-ni"),
         head = Some(Seq(
             HeadCell(
                 content = HtmlContent(Messages("paye.ats.total_income_tax.title"))
