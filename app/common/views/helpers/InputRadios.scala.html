@@ -31,27 +31,30 @@
         inline: Boolean = false
 )(implicit messages: Messages)
 
-@govukRadios(Radios(
-    idPrefix = id,
-    name = name,
-    fieldset = Some(Fieldset(
-        legend = Some(Legend(
-            content = Text(messages(legend)),
-            isPageHeading = legendAsHeading,
-            classes = legendClasses
-        )),
-        attributes = fieldSetAttrs
-    )),
-    hint = hint.map { hint => Hint(
-        content = hint,
-        classes = hintClasses
-    )},
-    items = items,
-    errorMessage = form(name).error.map { err =>
-        ErrorMessage(
-            content = Text(messages(err.message, err.args:_*)),
-            visuallyHiddenText = Some(messages("error.form.prefix"))
-        )
-    },
-    classes = if(inline){"govuk-radios--inline"}else{"govuk-radios"}
-))
+@govukRadios(
+    Radios(
+        idPrefix = id,
+        name = name,
+        fieldset = Some(
+            Fieldset(
+                legend = Some(
+                    Legend(
+                        content = Text(messages(legend)),
+                        isPageHeading = legendAsHeading,
+                        classes = legendClasses
+                    )
+                ),
+                attributes = fieldSetAttrs
+            )
+        ),
+        hint = hint.map(hint => Hint(content = hint,classes = hintClasses)),
+        items = items,
+        errorMessage = form(name).error.map { err =>
+            ErrorMessage(
+                content = Text(messages(err.message, err.args:_*)),
+                visuallyHiddenText = Some(messages("error.form.prefix"))
+            )
+        },
+        classes = if(inline){"govuk-radios--inline"}else{"govuk-radios"}
+    )
+)

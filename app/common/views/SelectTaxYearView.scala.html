@@ -65,6 +65,14 @@
     }
 }
 
+@optHint = @{
+    if(yearListViewModel.showNoAtsYearList) {
+        Some(Text(messages("merge.page.no.ats.summary.text")))
+    } else {
+        None
+    }
+}
+
 @main(
     pageTitle = title.toString,
     actingAttorney = actingAsAttorney,
@@ -81,10 +89,6 @@
             text = yearListViewModel.subtitleMsg
         )
 
-        @if(yearListViewModel.showNoAtsYearList) {
-            @p(Text(messages("merge.page.no.ats.summary.text")), classes = Some("govuk-hint"), elmId = Some("generic-no-ats"))
-        }
-
         @inputRadios(
             form = atsYearForm,
             legend = yearListViewModel.subtitleMsg,
@@ -94,7 +98,8 @@
             items = radioItems(atsForms.yearChoice, yearListViewModel.completeYearList.map(
                 yearChoice => yearChoice -> yearChoice.getLabel
             )),
-            fieldSetAttrs = Map("id" -> "year_field")
+            fieldSetAttrs = Map("id" -> "year_field"),
+            hint = optHint
         )
 
         @if(!saAvailable) {
