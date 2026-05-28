@@ -109,14 +109,18 @@
         @if(!payeAvailable) {
             @p(Text(messages("merge.page.paye.unavailable")), elmId = Some("paye-unavailable"))
         } else if(yearListViewModel.showIvUpliftLink) {
-        @p(HtmlContent(messages("merge.page.paye.ivuplift.text") +
-                link(
-                    link = common.controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel.url,
-                    messageKey = "merge.page.paye.ivuplift.link.text",
-                    id = Some("ivUplift-link"),
-                    inParagraph = true
-                )
-        ), elmId = Some("paye-uplift"))
+            @p(
+                HtmlContent(
+                    messages("merge.page.paye.ivuplift.text") +
+                    link(
+                        link = common.controllers.routes.IvUpliftRedirectController.upliftConfidenceLevel.url,
+                        messageKey = "merge.page.paye.ivuplift.link.text",
+                        id = Some("ivUplift-link"),
+                        inParagraph = true
+                    )
+                ), 
+                elmId = Some("paye-uplift")
+            )
         }
 
         @if(yearListViewModel.showContinueButton) {
