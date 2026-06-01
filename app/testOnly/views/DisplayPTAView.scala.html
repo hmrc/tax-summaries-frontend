@@ -16,16 +16,24 @@
 
 @import common.views.html.helpers.{H1, H2, H3, P}
 @import common.views.MainTemplate
-@import uk.gov.hmrc.govukfrontend.views.Aliases.SelectItem
-@import testOnly.models.CountryAndODSValues
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text}
 
-@this(main: MainTemplate, h1: H1, h2: H2, h3: H3, p: P,  govukButton : GovukButton)
+@this(
+        main: MainTemplate,
+        h1: H1,
+        h2: H2,
+        h3: H3,
+        p: P,
+        govukButton: GovukButton,
+        govukTable: GovukTable
+)
+
 @(sections: Seq[(String, Seq[(String, BigDecimal, String)])], taxLiability: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
 
 @main(
-pageTitle = "Display ATS Values",
-disableSessionExpired = true
+    pageTitle = "Display ATS Values",
+    disableSessionExpired = true
 ) {
     @h1("Display ATS Values")
 
@@ -36,39 +44,46 @@ disableSessionExpired = true
             taxLiability match {
                 case Some(totalLiabilityAmount) if totalLiabilityAmount < 1 =>
                     p(Text("There is no tax liability for the ODS values entered. This is because the calculated total tax liability (TotalCgTax + TotalIncomeTax) is zero or less. It has been calculated as:-"))
-                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
+                        <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
                 case Some(totalLiabilityAmount) =>
                     <p class="govuk-body">The total tax liability (TotalCgTax + TotalIncomeTax) has been calculated as:-</p>
                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
                 case None =>
                     p(Text("There is no tax liability for the ODS values entered."))
-            } 
+            }
         }
 
         @h2("Retrieved/ calculated fields")
 
         @p(Text("Below are listed all the calculated/ retrieved field values, grouped by the section in which they appear in ATS. The field names displayed in the calculus column in brackets are the field names returned from the ODS API (1535). A value of null means that the field was not found."))
 
-        @sections.map{ case (title, data) =>
+        @sections.map { case (title, data) =>
             @h3(title)
-            <table id="income-tax" class="govuk-table">
-                <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Fieldname</th>
-                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">Value</th>
-                    <th scope="col" class="govuk-table__header">Calculus</th>
-                </tr>
-                </thead>
-                <tbody>
-                @data.map{ t =>
-                    <tr>
-                        <td class="govuk-table__cell">@t._1</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@t._2</td>
-                        <td class="govuk-table__cell">@t._3</td>
-                    </tr>
+
+            @govukTable(Table(
+                head = Some(Seq(
+                    HeadCell(content = Text("Fieldname")),
+                    HeadCell(
+                        content = Text("Value"),
+                        classes = "govuk-table__header--numeric"
+                    ),
+                    HeadCell(content = Text("Calculus"))
+                )),
+                rows = data.map { t =>
+                    Seq(
+                        TableRow(
+                            content = HtmlContent(t._1)
+                        ),
+                        TableRow(
+                            content = HtmlContent(t._2.toString),
+                            classes = "govuk-table__cell--numeric"
+                        ),
+                        TableRow(
+                            content = HtmlContent(t._3)
+                        )
+                    )
                 }
-                </tbody>
-            </table>
+            ))
         }
     } else {
         @p(Text("There are no tax liability values to display for the ODS values entered."))
@@ -78,5 +93,5 @@ disableSessionExpired = true
         href = Some("https://www.staging.tax.service.gov.uk/auth-login-stub/gg-sign-in"),
         isStartButton = true,
         content = Text("Log into PTA")
-      ))
+    ))
 }
