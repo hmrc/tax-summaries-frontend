@@ -1,25 +1,8 @@
 
-Frontend of the Annual Tax Summary application
-======================================================================
+Annual Tax Summary - Frontend Microservice
+====================================================================
 
-This service provides the frontend endpoint for the [Annual Tax Summary - Individual](https://github.com/hmrc/tax-summaries) and [Annual Tax Summary - Agent](https://github.com/hmrc/tax-summaries-agent) projects.
-
-Summary
-----------------
-
-This service is designed for users and agents to view their personal tax and how they're spent.
- 
-
-Requirements
----------------
-
-This service is written in [Scala] and [Play], so needs the latest [JRE] to run.
-
-
-Authentication
-------------
-
-This user logs into this service using [Government Gateway]
+Annual Tax Summary is an online service that allows individuals and agents to view the annual summary of an individual's personal tax and National Insurance contributions (NICs) and how they've been spent.
 
 Running the service using service manager
 ------------
