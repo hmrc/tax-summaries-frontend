@@ -27,12 +27,13 @@ sm2 --start TAXS
 
 Running the app locally
 ------------
-sbt run
+sbt "run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
 
 
 Testing
 ------------
 Please run Unit tests by running `sbt test` and `sbt it:test`
+
 
 
 ### License
