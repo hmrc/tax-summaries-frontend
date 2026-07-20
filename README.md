@@ -1,33 +1,23 @@
 
-Frontend of the Annual Tax Summary application
-======================================================================
+Annual Tax Summary - Frontend Microservice
+====================================================================
 
-This service provides the frontend endpoint for the [Annual Tax Summary - Individual](https://github.com/hmrc/tax-summaries) and [Annual Tax Summary - Agent](https://github.com/hmrc/tax-summaries-agent) projects.
+Annual Tax Summary is an online service that allows individuals and agents to view the annual summary of an individual's personal tax and National Insurance contributions (NICs) and how they've been spent.
 
-Summary
-----------------
+It also includes, accessible via the test routes, a test tool used for supporting the SA uprating process for each tax year. This allows the posting of dynamic stub data and its retrieval and display both within the tool and within the ATS frontend screens.
 
-This service is designed for users and agents to view their personal tax and how they're spent.
- 
-
-Requirements
----------------
-
-This service is written in [Scala] and [Play], so needs the latest [JRE] to run.
-
-
-Authentication
+Running the service using service manager
 ------------
+sm2 --start TAXS
 
-This user logs into this service using [Government Gateway]
+Running the app locally
+------------
+sbt "run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
+
 
 Testing
 ------------
 Please run Unit tests by running `sbt test` and `sbt it:test`
-
-Uprating
-------------
-There are separate tax years for SA and PAYE as well as for gov spend. This is so that the yearly uprating & gov spend tasks can be done separately and independently. The tax year can be increased for each without breaking anything in the other's tests. The tax years are stored in application.conf: taxYearSA and taxYearPAYE, taxYearGovSpend. The currentTaxYearSA and currentTaxYearPAYE & currentTaxYearGovSpend items in the TaxYearForTesting class should be updated too at the same time: they should always be the same as the items in application.conf.   
 
 
 
