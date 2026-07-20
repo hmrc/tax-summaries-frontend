@@ -4,6 +4,8 @@ Annual Tax Summary - Frontend Microservice
 
 Annual Tax Summary is an online service that allows individuals and agents to view the annual summary of an individual's personal tax and National Insurance contributions (NICs) and how they've been spent.
 
+It also includes, accessible via the test routes, a test tool used for supporting the SA uprating process for each tax year. This allows the posting of dynamic stub data and its retrieval and display both within the tool and within the ATS frontend screens.
+
 Running the service using service manager
 ------------
 sm2 --start TAXS
