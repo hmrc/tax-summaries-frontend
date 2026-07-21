@@ -28,21 +28,18 @@ class GenerateAgentTokenController @Inject() (mcc: MessagesControllerComponents)
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+  def onPageLoad(utr: String, agentId: String): Action[AnyContent] = Action { implicit request =>
 
     import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 
-      import java.net.URLEncoder
-      import java.time.Instant
+    import java.net.URLEncoder
+    import java.time.Instant
 
     val encKey = "1111111111111111111111"
 
     val crypto = new AesCrypto {
       override protected val encryptionKey: String = encKey
     }
-
-    val agentId = "V3264H" // <- Put agent id here
-    val utr     = "1130492359" // <- Put UTR here
 
     val token =
       URLEncoder.encode(crypto.encrypt(PlainText(s"$agentId:$utr:" + (Instant.now.toEpochMilli))).value, "UTF-8")

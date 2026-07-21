@@ -22,6 +22,6 @@ POST        /annual-tax-summary/test-only/enterODS/:taxYear/:utr        testOnly
 
 GET         /annual-tax-summary/test-only/displayPTA/:taxYear/:utr        testOnly.controllers.DisplayPTAController.onPageLoad(taxYear: Int, utr: String)
 
-GET         /annual-tax-summary/test-only/generate-agent-token        testOnly.controllers.GenerateAgentTokenController.onPageLoad
+GET         /annual-tax-summary/test-only/generate-agent-token/:utr/:agentId        testOnly.controllers.GenerateAgentTokenController.onPageLoad(utr: String, agentId: String)
 
 ->         /annual-tax-summary/  mongoFeatureTogglesTestOnly.Routes
