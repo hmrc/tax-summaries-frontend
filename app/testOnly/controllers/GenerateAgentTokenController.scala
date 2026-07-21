@@ -17,25 +17,25 @@
 package testOnly.controllers
 
 import com.google.inject.Inject
+import common.config.ApplicationConfig
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
+import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class GenerateAgentTokenController @Inject() (mcc: MessagesControllerComponents)
+import java.net.URLEncoder
+import java.time.Instant
+
+class GenerateAgentTokenController @Inject() (mcc: MessagesControllerComponents, applicationConfig: ApplicationConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with Logging {
 
   def onPageLoad(utr: String, agentId: String): Action[AnyContent] = Action { implicit request =>
 
-    import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
-
-    import java.net.URLEncoder
-    import java.time.Instant
-
-    val encKey = "1111111111111111111111"
+    val encKey = applicationConfig.encryptionKey
 
     val crypto = new AesCrypto {
       override protected val encryptionKey: String = encKey
