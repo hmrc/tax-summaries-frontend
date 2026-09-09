@@ -279,9 +279,9 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
             .attr("href")
           urBannerLink mustBe "https://signup.take-part-in-research.service.gov.uk/?utm_campaign=Ats_FPOS&utm_source=Survey_Banner&utm_medium=other&t=HMRC&id=128"
 
-          val languageToggle = content.getElementsByClass("hmrc-language-select__list")
-          languageToggle.text() must include("English")
-          languageToggle.text() must include("Cymraeg")
+          val languageToggle = content.getElementsByClass("hmrc-service-navigation-language-select")
+          languageToggle.text() must include("ENG")
+          languageToggle.text() must include("CYM")
 
           val reportIssueText = content.getElementsByClass("hmrc-report-technical-issue").get(0).text()
           val reportIssueLink = content.getElementsByClass("hmrc-report-technical-issue").get(0).attr("href")

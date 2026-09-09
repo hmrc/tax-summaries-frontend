@@ -28,6 +28,8 @@ import uk.gov.hmrc.sca.models.BannerConfig
 import uk.gov.hmrc.sca.services.WrapperService
 import common.views.html.components.{AdditionalJavascript, HeadBlock}
 import common.views.html.includes.sidebar
+import uk.gov.hmrc.sca.config.BackLinkConfig
+
 import javax.inject.Inject
 
 @ImplementedBy(classOf[MainTemplateImpl])
@@ -73,18 +75,25 @@ class MainTemplateImpl @Inject() (
 
     val showAccountMenu = actingAttorney.isEmpty && !disableSessionExpired
 
+    val backLinkConfig: Option[BackLinkConfig] =
+      if (showBackLink) {
+        Some(BackLinkConfig.JsBack)
+      } else {
+        None
+      }
+
     wrapperService.standardScaLayout(
       content = contentBlock,
       pageTitle = Some(fullPageTitle),
-      serviceNameKey = Some(messages("generic.ats")),
       serviceURLs = ServiceURLs(
         serviceUrl = Some(appConfig.homePageUrl),
         signOutUrl = Some(common.controllers.routes.AccountController.signOut.url),
         accessibilityStatementUrl = Some(appConfig.accessibilityStatementUrl(requestHeader.uri))
       ),
+      serviceNameKey = Some(messages("generic.ats")),
       sidebarContent = Some(sidebar(beforeContentHtml)),
-      timeOutUrl = Some(common.controllers.routes.AccountController.sessionExpired.url),
-      keepAliveUrl = common.controllers.routes.AccountController.keepAlive.url,
+      backLinkConfig = backLinkConfig,
+      scripts = Seq(scripts()),
       styleSheets = Seq(headBlock()),
       bannerConfig = BannerConfig(
         showAlphaBanner = false,
@@ -93,9 +102,7 @@ class MainTemplateImpl @Inject() (
       ),
       fullWidth = false,
       hideMenuBar = !showAccountMenu,
-      disableSessionExpired = disableSessionExpired,
-      showBackLinkJS = showBackLink,
-      scripts = Seq(scripts())
+      disableSessionExpired = disableSessionExpired
     )(messages, requestHeader)
   }
 }

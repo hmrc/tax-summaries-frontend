@@ -79,13 +79,13 @@ class CapitalGainsViewSpec extends ViewSpecBase with TestConstants {
     "not show account menu for agent" in {
 
       val result = agentView(capitalGains)
-      result must not include "hmrc-account-menu"
+      result must not include "ovuk-service-navigation__wrapper"
     }
 
     "show account menu for non agent users" in {
 
       val result = view(capitalGains)
-      result must include("hmrc-account-menu")
+      result must include("ovuk-service-navigation__wrapper")
     }
 
   }
