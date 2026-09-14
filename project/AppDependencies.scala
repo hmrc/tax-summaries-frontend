@@ -6,6 +6,7 @@ object AppDependencies {
   private val playVersion          = "play-30"
   private val scaWrapperVersion    = "6.3.0"
   private val featureToggleVersion = "2.5.0"
+  private val hmrcPlayVersion      = "13.13.0"
 
   val compile: Seq[ModuleID] = Seq(
     filters,
@@ -13,7 +14,8 @@ object AppDependencies {
     "uk.gov.hmrc"   %% "tax-year"                                   % "6.0.0",
     "org.typelevel" %% "cats-core"                                  % "2.13.0",
     "uk.gov.hmrc"   %% s"mongo-feature-toggles-client-$playVersion" % featureToggleVersion,
-    "uk.gov.hmrc"   %% s"sca-wrapper-$playVersion"                  % scaWrapperVersion
+    "uk.gov.hmrc"   %% s"sca-wrapper-$playVersion"                  % scaWrapperVersion,
+    "uk.gov.hmrc"   %% s"play-frontend-hmrc-$playVersion"           % hmrcPlayVersion
   )
 
   val test: Seq[ModuleID] = Seq(
