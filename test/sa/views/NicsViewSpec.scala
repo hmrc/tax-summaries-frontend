@@ -172,15 +172,13 @@ class NicsViewSpec extends ViewSpecBase with TestConstants with ScalaCheckDriven
     }
 
     "not show account menu for agent" in {
-
       val result = agentView
-      result must not include "hmrc-account-menu"
+      result must not include "govuk-service-navigation__wrapper"
     }
 
     "show account menu for non agent users" in {
-
       val result = view
-      result must include("hmrc-account-menu")
+      result must include("govuk-service-navigation__wrapper")
     }
 
     "not show brd message when includeBRDMessage set to false" in {

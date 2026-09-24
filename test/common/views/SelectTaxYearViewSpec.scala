@@ -346,7 +346,7 @@ class SelectTaxYearViewSpec extends ViewSpecBase with TestConstants with BeforeA
           ),
           atsForms.atsYearChoiceForm
         )
-        result must not include "hmrc-account-menu"
+        result must not include "govuk-service-navigation__wrapper"
       }
 
       "show account menu for non agent users" in {
@@ -367,7 +367,7 @@ class SelectTaxYearViewSpec extends ViewSpecBase with TestConstants with BeforeA
           ),
           atsForms.atsYearChoiceForm
         )
-        result must include("hmrc-account-menu")
+        result must include("govuk-service-navigation__wrapper")
       }
 
       "have an error link to the first radio button if there is an error no ATS" in {
