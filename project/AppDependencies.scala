@@ -4,9 +4,9 @@ import sbt.*
 object AppDependencies {
 
   private val playVersion          = "play-30"
-  private val scaWrapperVersion    = "6.3.0"
+  private val scaWrapperVersion    = "6.4.0"
   private val featureToggleVersion = "2.5.0"
-  private val hmrcPlayVersion      = "13.13.0"
+  private val hmrcPlayVersion      = "13.15.0"
 
   val compile: Seq[ModuleID] = Seq(
     filters,
