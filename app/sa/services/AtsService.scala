@@ -106,13 +106,12 @@ class AtsService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): EitherT[Future, Int, AtsData] = {
-    val account      = common.utils.AccountUtils.getAccount(request)
-    val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
-
+    val optionTaxIdentifier = common.utils.AccountUtils.getOptionAccount(request)
     // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-    val gotData = (account: @unchecked) match {
-      case _: Uar               => saConnector.getDetail(requestedUTR, taxYear)
-      case individualUtr: SaUtr => saConnector.getDetail(individualUtr, taxYear)
+    val gotData             = (optionTaxIdentifier: @unchecked) match {
+      case Some(uar @ Uar(_))             => saConnector.getDetail(authUtils.getRequestedUtr(uar, agentToken), taxYear)
+      case Some(individualUtr @ SaUtr(_)) => saConnector.getDetail(individualUtr, taxYear)
+      case _                              => Future.successful(AtsNotFoundResponse("Not found"))
     }
 
     EitherT {
@@ -122,7 +121,7 @@ class AtsService @Inject() (
         case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty                     =>
           Future.successful(Left(INTERNAL_SERVER_ERROR))
         case AtsSuccessResponseWithPayload(data: AtsData)                                             =>
-          sendAuditEvent(account, data)
+          sendAuditEvent(optionTaxIdentifier, data)
           Future.successful(Right(data))
         case AtsNotFoundResponse(_)                                                                   =>
           Future.successful(Left(NOT_FOUND))
@@ -132,22 +131,25 @@ class AtsService @Inject() (
     }
   }
 
-  private def sendAuditEvent(account: TaxIdentifier, data: AtsData)(implicit
+  private def sendAuditEvent(account: Option[TaxIdentifier], data: AtsData)(implicit
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): Future[AuditResult] =
     (account: @unchecked) match {
-      case _: Uar   =>
+      case Some(Uar(_))   =>
+        val agentMap: Map[String, String] = AccountUtils.getOptionUTR(request) match {
+          case Some(utr) => Map("agentId" -> utr)
+          case _         => Map.empty
+        }
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "agentId"   -> AccountUtils.getAccountId(request),
             "clientUtr" -> data.utr.get,
             "taxYear"   -> data.taxYear.toString,
             "time"      -> new Date().toString
-          )
+          ) ++ agentMap
         )
-      case _: SaUtr =>
+      case Some(SaUtr(_)) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,

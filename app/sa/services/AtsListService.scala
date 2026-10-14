@@ -78,26 +78,30 @@ class AtsListService @Inject() (
   private def getAtsList(
     agentToken: Option[AgentToken] = None
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
-    val account  = getAccount(request)
-    val response = Future {
-      authUtils.getRequestedUtr(account, agentToken)
-    } flatMap { requestedUTR =>
-      (account: @unchecked) match {
-        case _: Uar            =>
-          saConnector.getList(requestedUTR, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
-        case individual: SaUtr =>
-          saConnector.getList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
-      }
-    }
+    val optionAccount = getOptionAccount(request)
+    optionAccount match {
+      case Some(account) =>
+        val response = Future {
+          authUtils.getRequestedUtr(account, agentToken)
+        } flatMap { requestedUTR =>
+          (account: @unchecked) match {
+            case _: Uar            =>
+              saConnector.getList(requestedUTR, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
+            case individual: SaUtr =>
+              saConnector.getList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
+          }
+        }
 
-    val result = response flatMap {
-      case AtsSuccessResponseWithPayload(payload: AtsListData) => Future.successful(Right(payload))
-      case r                                                   => Future.successful(Left(r))
-    }
+        val result = response flatMap {
+          case AtsSuccessResponseWithPayload(payload: AtsListData) => Future.successful(Right(payload))
+          case r                                                   => Future.successful(Left(r))
+        }
 
-    result map { res =>
-      sendAuditEvent(account, res)
-      res
+        result map { res =>
+          sendAuditEvent(account, res)
+          res
+        }
+      case _             => Future.successful(Left(AtsNotFoundResponse("Not found")))
     }
   }
 
@@ -108,12 +112,15 @@ class AtsListService @Inject() (
   ): Future[AuditResult] =
     (dataOpt, account: @unchecked) match {
       case (Right(data), _: Uar)   =>
+        val agentMap: Map[String, String] = AccountUtils.getOptionUTR(request) match {
+          case Some(utr) => Map("agentId" -> utr)
+          case None      => Map.empty
+        }
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "agentId"   -> AccountUtils.getAccountId(request),
             "clientUtr" -> data.utr
-          )
+          ) ++ agentMap
         )
       case (Right(data), _: SaUtr) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"

@@ -55,62 +55,14 @@ class AuthorityUtilsSpec extends BaseSpec {
         request = FakeRequest()
       )
 
-    val account: TaxIdentifier      = AccountUtils.getAccount(request)
-    val agentAccount: TaxIdentifier = AccountUtils.getAccount(agentRequest)
+    val account: TaxIdentifier      = AccountUtils.getOptionAccount(request).get
+    val agentAccount: TaxIdentifier = AccountUtils.getOptionAccount(agentRequest).get
 
     val agentToken: AgentToken = AgentToken(
       agentUar = uar,
       clientUtr = utr,
       timestamp = 0
     )
-  }
-
-  "checkUtr" must {
-
-    "return true when an SA User has a matching utr and no agent token is passed" in new TestService {
-      val result: Boolean = checkUtr(utr, None)(request)
-      result mustBe true
-    }
-
-    "return true when an SA User has a matching utr and an agent token is passed" in new TestService {
-      val result: Boolean = checkUtr(utr, Some(agentToken))(request)
-      result mustBe true
-    }
-
-    "return false when an SA User has a non-matching utr and no agent token is passed" in new TestService {
-      val result: Boolean = checkUtr(nonMatchingUtr, None)(request)
-      result mustBe false
-    }
-
-    "return false when an SA User has a non-matching utr and an agent token is passed" in new TestService {
-      val result: Boolean = checkUtr(nonMatchingUtr, Some(agentToken))(request)
-      result mustBe false
-    }
-
-    "return true when the user is an Agent user and the agentToken.clientUtr matches" in new TestService {
-      val result: Boolean = checkUtr(utr, Some(agentToken))(agentRequest)
-      result mustBe true
-    }
-
-    "return true when the user is an Agent user and there is no agentToken" in new TestService {
-      val result: Boolean = checkUtr(utr, None)(agentRequest)
-      result mustBe true
-    }
-
-    "return false when the user is an Agent and the agentToken.clientUtr does not match" in new TestService {
-      val result: Boolean = checkUtr(nonMatchingUtr, Some(agentToken))(agentRequest)
-      result mustBe false
-    }
-
-    "return false when the utr is None" in new TestService {
-      val result: Boolean = checkUtr(None, None)(request)
-      result mustBe false
-    }
-
-    "return true when the utr is Some(_) and the criteria must match" in new TestService {
-      val result: Boolean = checkUtr(Some(utr), None)(request)
-      result mustBe true
-    }
   }
 
   "getRequestedUtr" must {

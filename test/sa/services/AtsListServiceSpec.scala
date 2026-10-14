@@ -47,39 +47,6 @@ class AtsListServiceSpec extends BaseSpec {
   val mockAuthUtils: AuthorityUtils                    = mock[AuthorityUtils]
   val mockAppConfig: ApplicationConfig                 = mock[ApplicationConfig]
 
-  override def beforeEach(): Unit = {
-    reset(mockSaConnector)
-    reset(mockTaxsAgentTokenSessionCacheRepository)
-    reset(mockAuditService)
-    reset(mockAuthUtils)
-
-    // By default we don't want to be an agent
-    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
-      .thenReturn(
-        Future
-          .successful(None)
-      )
-
-    when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future.successful(
-      AtsSuccessResponseWithPayload[AtsListData](data)
-    )
-
-    when(
-      mockSaConnector.getList(any[SaUtr], any(), any())(any[HeaderCarrier])
-    ) thenReturn Future
-      .successful(AtsSuccessResponseWithPayload[AtsListData](data))
-
-    when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(
-      AuditResult.Success
-    )
-
-    when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
-    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
-
-    when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
-    ()
-  }
-
   implicit val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
     requests.AuthenticatedRequest(
       "userId",
@@ -107,6 +74,32 @@ class AtsListServiceSpec extends BaseSpec {
       mockAuthUtils,
       appConfig
     )
+
+  override def beforeEach(): Unit = {
+    reset(mockSaConnector)
+    reset(mockTaxsAgentTokenSessionCacheRepository)
+    reset(mockAuditService)
+    reset(mockAuthUtils)
+
+    when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
+      .thenReturn(
+        Future
+          .successful(None)
+      )
+
+    when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future.successful(
+      AtsSuccessResponseWithPayload[AtsListData](data)
+    )
+
+    when(mockAuditService.sendEvent(any(), any())(any())) thenReturn Future.successful(
+      AuditResult.Success
+    )
+
+    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+
+    when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
+    ()
+  }
 
   "createModel" must {
 
@@ -143,12 +136,31 @@ class AtsListServiceSpec extends BaseSpec {
     }
   }
 
-  "getAtsYearList" must {
+  "getAtsYearList for non agent" must {
 
     s"Return a ats list with $currentTaxYearSA year data" in
       whenReady(sut.getAtsYearList) { result =>
         result.value.atsYearList.get.contains(currentTaxYearSA) mustBe true
       }
+
+    s"Return an empty list if no UTR and don't call the connector" in {
+      val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
+        requests.AuthenticatedRequest(
+          userId = "userId",
+          agentRef = None,
+          saUtr = None,
+          nino = None,
+          isAgentActive = false,
+          confidenceLevel = ConfidenceLevel.L50,
+          credentials = fakeCredentials,
+          request = FakeRequest()
+        )
+      whenReady(sut.getAtsYearList(implicitly, request)) { result =>
+        result.isLeft mustBe true
+        result.swap.value mustBe AtsNotFoundResponse("Not found")
+        verify(mockSaConnector, never()).getList(any(), any(), any())(any())
+      }
+    }
 
     "Return a ats list without CY-1 year data" in {
       val dataMissingYear = data copy (atsYearList = data.atsYearList.map(_.filter(_ != (currentTaxYearSA - 1))))
@@ -184,11 +196,7 @@ class AtsListServiceSpec extends BaseSpec {
         verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
 
-    // must this be the case? (EDGE CASE)
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
-
-      when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
-
       whenReady(sut.getAtsYearList) { result =>
         result mustBe Right(data)
 
@@ -199,7 +207,7 @@ class AtsListServiceSpec extends BaseSpec {
       }
     }
 
-    "Agent" must {
+    "getAtsYearList for agent" must {
 
       val agentRequest =
         requests.AuthenticatedRequest(
@@ -223,10 +231,6 @@ class AtsListServiceSpec extends BaseSpec {
         }
 
       "Return the ats year list data for a user when the agent token doesn't match the user" in {
-
-        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
-
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
@@ -271,9 +275,6 @@ class AtsListServiceSpec extends BaseSpec {
       }
 
       "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in {
-
-        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
         when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]]))
           .thenThrow(AgentTokenException("Token is empty"))
 
