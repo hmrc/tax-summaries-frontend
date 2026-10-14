@@ -144,9 +144,6 @@ class AtsListServiceSpec extends BaseSpec {
       }
 
     s"Return an empty list if no UTR and don't call the connector" in {
-      when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future
-        .successful(AtsNotFoundResponse("Not found"))
-
       val request: AuthenticatedRequest[AnyContentAsEmpty.type] =
         requests.AuthenticatedRequest(
           userId = "userId",
