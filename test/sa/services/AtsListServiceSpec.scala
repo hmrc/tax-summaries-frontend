@@ -95,7 +95,7 @@ class AtsListServiceSpec extends BaseSpec {
       AuditResult.Success
     )
 
-    when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
     when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
     ()
@@ -278,7 +278,7 @@ class AtsListServiceSpec extends BaseSpec {
       }
 
       "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in {
-        when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]]))
+        when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]]))
           .thenThrow(AgentTokenException("Token is empty"))
 
         whenReady(sut.getAtsYearList.failed) { exception =>

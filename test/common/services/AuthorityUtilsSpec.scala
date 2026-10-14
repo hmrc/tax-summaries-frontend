@@ -55,8 +55,8 @@ class AuthorityUtilsSpec extends BaseSpec {
         request = FakeRequest()
       )
 
-    val account: Option[TaxIdentifier]      = AccountUtils.getOptionAccount(request)
-    val agentAccount: Option[TaxIdentifier] = AccountUtils.getOptionAccount(agentRequest)
+    val account: TaxIdentifier      = AccountUtils.getOptionAccount(request).get
+    val agentAccount: TaxIdentifier = AccountUtils.getOptionAccount(agentRequest).get
 
     val agentToken: AgentToken = AgentToken(
       agentUar = uar,

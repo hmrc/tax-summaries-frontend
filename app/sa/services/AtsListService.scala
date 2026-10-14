@@ -82,7 +82,7 @@ class AtsListService @Inject() (
     optionAccount match {
       case Some(account) =>
         val response = Future {
-          authUtils.getRequestedUtr(optionAccount, agentToken)
+          authUtils.getRequestedUtr(account, agentToken)
         } flatMap { requestedUTR =>
           (account: @unchecked) match {
             case _: Uar            =>

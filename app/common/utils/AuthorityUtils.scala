@@ -16,15 +16,16 @@
 
 package common.utils
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import common.models.AgentToken
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
+@Singleton
 class AuthorityUtils @Inject() {
-  def getRequestedUtr(account: Option[TaxIdentifier], agentToken: Option[AgentToken] = None): SaUtr =
+  def getRequestedUtr(account: TaxIdentifier, agentToken: Option[AgentToken] = None): SaUtr =
     // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
     (account: @unchecked) match {
-      case Some(taxsAgent @ Uar(_)) =>
+      case taxsAgent @ Uar(_) =>
         agentToken.fold {
           throw AgentTokenException("Token is empty")
         } { agentToken =>
@@ -34,7 +35,6 @@ class AuthorityUtils @Inject() {
             throw AgentTokenException(s"Incorrect agent UAR: ${taxsAgent.uar}, ${agentToken.agentUar}")
           }
         }
-      case Some(sa @ SaUtr(_))      => sa
-      case _                        => throw new RuntimeException("UTR not present")
+      case sa @ SaUtr(_)      => sa
     }
 }

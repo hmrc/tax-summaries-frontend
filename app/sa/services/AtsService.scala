@@ -106,12 +106,10 @@ class AtsService @Inject() (
     hc: HeaderCarrier,
     request: AuthenticatedRequest[_]
   ): EitherT[Future, Int, AtsData] = {
-    val account      = common.utils.AccountUtils.getOptionAccount(request)
-    val requestedUTR = authUtils.getRequestedUtr(account, agentToken)
-
+    val optionTaxIdentifier = common.utils.AccountUtils.getOptionAccount(request)
     // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-    val gotData = (account: @unchecked) match {
-      case Some(Uar(_))                   => saConnector.getDetail(requestedUTR, taxYear)
+    val gotData             = (optionTaxIdentifier: @unchecked) match {
+      case Some(uar @ Uar(_))             => saConnector.getDetail(authUtils.getRequestedUtr(uar, agentToken), taxYear)
       case Some(individualUtr @ SaUtr(_)) => saConnector.getDetail(individualUtr, taxYear)
       case _                              => Future.successful(AtsNotFoundResponse("Not found"))
     }
@@ -123,7 +121,7 @@ class AtsService @Inject() (
         case AtsSuccessResponseWithPayload(data: AtsData) if data.errors.nonEmpty                     =>
           Future.successful(Left(INTERNAL_SERVER_ERROR))
         case AtsSuccessResponseWithPayload(data: AtsData)                                             =>
-          sendAuditEvent(account, data)
+          sendAuditEvent(optionTaxIdentifier, data)
           Future.successful(Right(data))
         case AtsNotFoundResponse(_)                                                                   =>
           Future.successful(Left(NOT_FOUND))
