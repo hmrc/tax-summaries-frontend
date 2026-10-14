@@ -77,29 +77,31 @@ class AtsListService @Inject() (
 
   private def getAtsList(
     agentToken: Option[AgentToken] = None
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
-    val account  = getAccount(request)
-    val response = Future {
-      authUtils.getRequestedUtr(account, agentToken)
-    } flatMap { requestedUTR =>
-      (account: @unchecked) match {
-        case _: Uar            =>
-          saConnector.getList(requestedUTR, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
-        case individual: SaUtr =>
-          saConnector.getList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
-      }
-    }
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] =
+    getOptionAccount(request) match {
+      case Some(account) =>
+        val response = Future {
+          authUtils.getRequestedUtr(account, agentToken)
+        } flatMap { requestedUTR =>
+          (account: @unchecked) match {
+            case _: Uar            =>
+              saConnector.getList(requestedUTR, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
+            case individual: SaUtr =>
+              saConnector.getList(individual, appConfig.taxYearSA, appConfig.maxTaxYearsTobeDisplayed)
+          }
+        }
 
-    val result = response flatMap {
-      case AtsSuccessResponseWithPayload(payload: AtsListData) => Future.successful(Right(payload))
-      case r                                                   => Future.successful(Left(r))
-    }
+        val result = response flatMap {
+          case AtsSuccessResponseWithPayload(payload: AtsListData) => Future.successful(Right(payload))
+          case r                                                   => Future.successful(Left(r))
+        }
 
-    result map { res =>
-      sendAuditEvent(account, res)
-      res
+        result map { res =>
+          sendAuditEvent(account, res)
+          res
+        }
+      case _             => Future.successful(Left(AtsNotFoundResponse("Not found")))
     }
-  }
 
   @nowarn("msg=match may not be exhaustive")
   private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[AtsResponse, AtsListData])(implicit

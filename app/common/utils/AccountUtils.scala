@@ -23,16 +23,25 @@ import play.api.mvc.Request
 import uk.gov.hmrc.domain.{SaUtr, TaxIdentifier, Uar}
 
 trait AccountUtils {
+
+  def getOptionAccount(request: AuthenticatedRequest[_]): Option[TaxIdentifier] =
+    (request.agentRef, request.saUtr) match {
+      case (i @ Some(_), _)                        => i
+      case (None, i @ Some(u)) if u.value.nonEmpty => i
+      case _                                       => None
+    }
+
   def getAccount(request: AuthenticatedRequest[_]): TaxIdentifier =
-    request.agentRef.getOrElse(request.saUtr.getOrElse(SaUtr(""))) // TODO: DLSN-1121 - Amend to return Option[SaUtr]
+    getOptionAccount(request).getOrElse(throw new RuntimeException("No UTR present"))
+
   // This warning is unchecked because we know that AuthorisedFor will only give us those accounts
-  def getAccountId(request: AuthenticatedRequest[_]): String      = (getAccount(request): @unchecked) match {
+  def getAccountId(request: AuthenticatedRequest[_]): String = (getAccount(request): @unchecked) match {
     case sa: SaUtr => sa.utr
     case ta: Uar   => ta.uar
   }
-  def isPortalUser(request: Request[_]): Boolean                  =
+  def isPortalUser(request: Request[_]): Boolean             =
     request.session.get(common.utils.Globals.TAXS_USER_TYPE_KEY).contains(common.utils.Globals.TAXS_PORTAL_REFERENCE)
-  def isAgent(request: AuthenticatedRequest[_]): Boolean          = request.agentRef.isDefined
+  def isAgent(request: AuthenticatedRequest[_]): Boolean     = request.agentRef.isDefined
 }
 
 trait AttorneyUtils {

@@ -145,7 +145,7 @@ class AtsListServiceSpec extends BaseSpec {
         result.value.atsYearList.get.contains(currentTaxYearSA) mustBe true
       }
 
-    s"Return an empty list if no UTR" in {
+    s"Return an empty list if no UTR and don't call the connector" in {
       when(mockSaConnector.getList(any(), any(), any())(any())) thenReturn Future
         .successful(AtsNotFoundResponse("Not found"))
 
