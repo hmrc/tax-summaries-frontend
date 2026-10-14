@@ -6,7 +6,7 @@ object AppDependencies {
   private val playVersion          = "play-30"
   private val scaWrapperVersion    = "6.4.0"
   private val featureToggleVersion = "2.5.0"
-  private val hmrcPlayVersion      = "13.15.0"
+  private val hmrcPlayVersion      = "13.16.0"
 
   val compile: Seq[ModuleID] = Seq(
     filters,
