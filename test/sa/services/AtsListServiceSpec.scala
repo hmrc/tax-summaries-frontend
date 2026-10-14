@@ -81,7 +81,6 @@ class AtsListServiceSpec extends BaseSpec {
     reset(mockAuditService)
     reset(mockAuthUtils)
 
-    // By default we don't want to be an agent
     when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
       .thenReturn(
         Future
@@ -96,8 +95,7 @@ class AtsListServiceSpec extends BaseSpec {
       AuditResult.Success
     )
 
-    when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(true)
-    when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
+    when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]])) thenReturn SaUtr(testUtr)
 
     when(mockAppConfig.taxYearSA).thenReturn(currentTaxYearSA)
     ()
@@ -201,11 +199,7 @@ class AtsListServiceSpec extends BaseSpec {
         verify(mockSaConnector, times(1)).getList(any[SaUtr], any(), any())(any[HeaderCarrier])
       }
 
-    // must this be the case? (EDGE CASE)
     "Return the ats year list data for a user from the MS when they have an agentToken in their cache" in {
-
-      when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]])).thenReturn(false)
-
       whenReady(sut.getAtsYearList) { result =>
         result mustBe Right(data)
 
@@ -240,10 +234,6 @@ class AtsListServiceSpec extends BaseSpec {
         }
 
       "Return the ats year list data for a user when the agent token doesn't match the user" in {
-
-        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
-
         whenReady(sut.getAtsYearList(hc, agentRequest)) { result =>
           result mustBe Right(data)
 
@@ -288,10 +278,7 @@ class AtsListServiceSpec extends BaseSpec {
       }
 
       "Return a failed future when an exception is thrown in the AuthUtils.getRequestedUtr method" in {
-
-        when(mockAuthUtils.checkUtr(any[String], any[Option[AgentToken]])(any[AuthenticatedRequest[_]]))
-          .thenReturn(false)
-        when(mockAuthUtils.getRequestedUtr(any[TaxIdentifier], any[Option[AgentToken]]))
+        when(mockAuthUtils.getRequestedUtr(any[Option[TaxIdentifier]], any[Option[AgentToken]]))
           .thenThrow(AgentTokenException("Token is empty"))
 
         whenReady(sut.getAtsYearList.failed) { exception =>

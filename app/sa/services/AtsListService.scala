@@ -77,11 +77,12 @@ class AtsListService @Inject() (
 
   private def getAtsList(
     agentToken: Option[AgentToken] = None
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] =
-    getOptionAccount(request) match {
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Either[AtsResponse, AtsListData]] = {
+    val optionAccount = getOptionAccount(request)
+    optionAccount match {
       case Some(account) =>
         val response = Future {
-          authUtils.getRequestedUtr(account, agentToken)
+          authUtils.getRequestedUtr(optionAccount, agentToken)
         } flatMap { requestedUTR =>
           (account: @unchecked) match {
             case _: Uar            =>
@@ -102,6 +103,7 @@ class AtsListService @Inject() (
         }
       case _             => Future.successful(Left(AtsNotFoundResponse("Not found")))
     }
+  }
 
   @nowarn("msg=match may not be exhaustive")
   private def sendAuditEvent(account: TaxIdentifier, dataOpt: Either[AtsResponse, AtsListData])(implicit
@@ -110,12 +112,15 @@ class AtsListService @Inject() (
   ): Future[AuditResult] =
     (dataOpt, account: @unchecked) match {
       case (Right(data), _: Uar)   =>
+        val agentMap: Map[String, String] = AccountUtils.getOptionUTR(request) match {
+          case Some(utr) => Map("agentId" -> utr)
+          case None      => Map.empty
+        }
         auditService.sendEvent(
           AuditTypes.Tx_SUCCEEDED,
           Map(
-            "agentId"   -> AccountUtils.getAccountId(request),
             "clientUtr" -> data.utr
-          )
+          ) ++ agentMap
         )
       case (Right(data), _: SaUtr) =>
         val userType = if (AccountUtils.isPortalUser(request)) "non-transitioned" else "transitioned"

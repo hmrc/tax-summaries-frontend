@@ -69,14 +69,17 @@ abstract class TaxsController @Inject() (
       logger.info(Globals.TAXS_LOGGER_ERROR_DESCR, error)
       error match {
         case token_error: AgentTokenException =>
+          val agentMap: Map[String, String] = getOptionUTR(request) match {
+            case Some(utr) => Map("userId" -> utr)
+            case _         => Map.empty
+          }
           auditService.sendEvent(
             AuditTypes.Tx_FAILED,
             Map(
-              "userId"         -> getAccountId(request),
               "error"          -> token_error.message,
               "time"           -> new Date().toString,
               "attemptedToken" -> request2flash.get(Globals.TAXS_AGENT_TOKEN_KEY).getOrElse("")
-            )
+            ) ++ agentMap
           )
           Ok(tokenErrorView())
         case ex                               =>
