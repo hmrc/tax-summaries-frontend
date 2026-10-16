@@ -70,6 +70,8 @@ trait TestConstants extends BaseSpec {
     Amount.empty,
     Amount.empty,
     Amount.empty,
+    Amount.empty,
+    Amount.empty,
     ScottishTax.empty,
     Amount.empty,
     Amount.empty,
