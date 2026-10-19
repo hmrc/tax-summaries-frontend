@@ -4,3 +4,4 @@ test-repositories:
   - platform-performance-tests
   - tax-summaries-perf-test
   - tax-summaries-acceptance-tests
+serviceNowMapping: SNSVC0005263
