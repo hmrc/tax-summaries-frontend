@@ -128,6 +128,8 @@ trait ControllerBaseSpec extends BaseSpec {
     additionalRateAmount = Amount(40, "GBP"),
     otherAdjustmentsIncreasing = Amount(90, "GBP"),
     marriageAllowanceReceivedAmount = Amount(0, "GBP"),
+    hicbcAmount = Amount(0, "GBP"),
+    winterFuelPaymentAmount = Amount(0, "GBP"),
     otherAdjustmentsReducing = Amount(-20, "GBP"),
     ScottishTax.empty,
     totalIncomeTax = Amount(372, "GBP"),

@@ -51,10 +51,12 @@ class PayeIncomeTaxAndNicsSpec extends BaseSpec {
         Amount(10224, "GBP"),
         Amount(10477, "GBP"),
         List(
+          AdjustmentRow("hicbc_amount", Amount.gbp(300)),
           AdjustmentRow("less_tax_adjustment_previous_year", Amount.gbp(350)),
           AdjustmentRow("marriage_allowance_received_amount", Amount.gbp(200)),
           AdjustmentRow("married_couples_allowance_adjustment", Amount.gbp(400)),
-          AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450))
+          AdjustmentRow("tax_underpaid_previous_year", Amount.gbp(450)),
+          AdjustmentRow("winter_fuel_payment_amount", Amount.gbp(200))
         ),
         Amount(70, "GBP"),
         Amount(90, "GBP"),

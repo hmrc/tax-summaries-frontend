@@ -51,6 +51,8 @@ case class IncomeTaxAndNI(
   additionalRateAmount: Amount,
   otherAdjustmentsIncreasing: Amount,
   marriageAllowanceReceivedAmount: Amount,
+  hicbcAmount: Amount,
+  winterFuelPaymentAmount: Amount,
   otherAdjustmentsReducing: Amount,
   scottishTax: ScottishTax,
   totalIncomeTax: Amount,

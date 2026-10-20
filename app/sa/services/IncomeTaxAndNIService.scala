@@ -129,6 +129,8 @@ class IncomeTaxAndNIService @Inject() (atsService: AtsService) {
       additionalRateAmount = getFromIncomeTaxPayload("additional_rate_amount"),
       otherAdjustmentsIncreasing = getFromIncomeTaxPayload("other_adjustments_increasing"),
       marriageAllowanceReceivedAmount = getFromIncomeTaxPayload("marriage_allowance_received_amount"),
+      hicbcAmount = getFromIncomeTaxPayload("hicbc_amount"),
+      winterFuelPaymentAmount = getFromIncomeTaxPayload("winter_fuel_payment_amount"),
       otherAdjustmentsReducing = -getFromIncomeTaxPayload("other_adjustments_reducing"),
       scottishTax = scottishTax,
       totalIncomeTax = getFromIncomeTaxPayload("total_income_tax"),
