@@ -136,7 +136,7 @@ class AtsServiceSpec extends BaseSpec {
 
               when(mockAuthUtils.getRequestedUtr(any(), any())) thenReturn SaUtr(testNonMatchingUtr)
 
-              when(mockAccountUtils.getAccount(any())) thenReturn Uar(testUar)
+              when(mockAccountUtils.getOptionAccount(any())) thenReturn Some(Uar(testUar))
 
               when(mockTaxsAgentTokenSessionCacheRepository.getFromSession[AgentToken](DataKey(any()))(any(), any()))
                 .thenReturn(
