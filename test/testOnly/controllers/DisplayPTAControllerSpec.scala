@@ -55,12 +55,27 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
         )
       )
 
+    def fieldsInSection(fields: Map[String, Amount]): Option[DataHolder] = {
+      Some(
+        DataHolder(
+          payload = Some(fields),
+          rates = None,
+          incomeTaxStatus = None
+        )
+      )
+    }
+
     Json.toJson(
       AtsData(
         taxYear = currentTaxYearSA,
         utr = Some(utr),
         income_tax = fieldInSection("Field1", BigDecimal(1).setScale(2), "calculusField1"),
-        summary_data = fieldInSection("Field2", BigDecimal(2).setScale(2), "calculusField2"),
+        summary_data = fieldsInSection(
+          Map(
+            "Field2"       -> Amount(BigDecimal(2).setScale(2), "GBP", Some("calculusField2")),
+            "YourTotalTax" -> Amount(BigDecimal(3).setScale(2), "GBP", Some("calculusFieldYourTotalTax"))
+          )
+        ),
         income_data = fieldInSection("Field3", BigDecimal(3).setScale(2), "calculusField3"),
         allowance_data = fieldInSection("Field4", BigDecimal(4).setScale(2), "calculusField4"),
         capital_gains_data = fieldInSection("Field5", BigDecimal(5).setScale(2), "calculusField5"),
@@ -88,7 +103,13 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
       val document                                                      = contentAsString(result)
       val expSections: Seq[(String, Seq[(String, BigDecimal, String)])] = Seq(
         ("Income tax data", Seq(("Field1", BigDecimal(1.00).setScale(2), "calculusField1"))),
-        ("Summary data", Seq(("Field2", BigDecimal(2.00).setScale(2), "calculusField2"))),
+        (
+          "Summary data",
+          Seq(
+            ("Field2", BigDecimal(2.00).setScale(2), "calculusField2"),
+            ("YourTotalTax", BigDecimal(3.00).setScale(2), "calculusFieldYourTotalTax")
+          )
+        ),
         ("Income data", Seq(("Field3", BigDecimal(3.00).setScale(2), "calculusField3"))),
         ("Allowance data", Seq(("Field4", BigDecimal(4.00).setScale(2), "calculusField4"))),
         ("Capital gains data", Seq(("Field5", BigDecimal(5.00).setScale(2), "calculusField5")))
@@ -96,7 +117,9 @@ class DisplayPTAControllerSpec extends ControllerBaseSpec {
       val expTaxLiability: Option[BigDecimal]                           =
         Some(BigDecimal(6.00).setScale(2))
 
-      document mustBe contentAsString(view(expSections, expTaxLiability)(request, implicitly))
+      document mustBe contentAsString(
+        view(expSections, expTaxLiability, BigDecimal(3.00).setScale(2))(request, implicitly)
+      )
     }
   }
 

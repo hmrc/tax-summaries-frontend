@@ -29,7 +29,7 @@
         govukTable: GovukTable
 )
 
-@(sections: Seq[(String, Seq[(String, BigDecimal, String)])], taxLiability: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
+@(sections: Seq[(String, Seq[(String, BigDecimal, String)])], taxLiability: Option[BigDecimal], yourTotalTaxAmount: BigDecimal)(implicit request: Request[_], messages: Messages)
 
 @main(
     pageTitle = "Display ATS Values",
@@ -40,18 +40,22 @@
     @h2("Total tax liability")
 
     @if(sections.flatMap(_._2).nonEmpty) {
+        @p(Text("""Note that "total tax liability" does not include employee classes 1, 2 or 4 NICs. If this value is zero then ATS displays the generic gov spend."""))
         @{
             taxLiability match {
                 case Some(totalLiabilityAmount) if totalLiabilityAmount < 1 =>
-                    p(Text("There is no tax liability for the ODS values entered. This is because the calculated total tax liability (TotalCgTax + TotalIncomeTax) is zero or less. It has been calculated as:-"))
+                    p(Text("There is no total tax liability for the ODS values entered. This is because the calculated total tax liability (TotalCgTax + TotalIncomeTax) is zero or less. It has been calculated as:-"))
                         <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
                 case Some(totalLiabilityAmount) =>
                     <p class="govuk-body">The total tax liability (TotalCgTax + TotalIncomeTax) has been calculated as:-</p>
                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£{totalLiabilityAmount}</p>
                 case None =>
-                    p(Text("There is no tax liability for the ODS values entered."))
+                    p(Text("There is no total tax liability for the ODS values entered."))
             }
         }
+
+        @h2("Your total tax amount")
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-36">£@yourTotalTaxAmount</p>
 
         @h2("Retrieved/ calculated fields")
 

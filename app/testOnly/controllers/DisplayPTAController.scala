@@ -18,15 +18,16 @@ package testOnly.controllers
 
 import com.google.inject.Inject
 import common.models.*
+import common.utils.{AccountUtils, AttorneyUtils}
+import common.view_models.Amount
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import testOnly.views.html.DisplayPTAView
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import common.utils.{AccountUtils, AttorneyUtils}
 import sa.models.AtsData
 import testOnly.connectors.TaxSummariesConnector
 import testOnly.models.FieldInfo
+import testOnly.views.html.DisplayPTAView
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
@@ -64,6 +65,14 @@ class DisplayPTAController @Inject() (
         val capitalGainsDataSection: Seq[(String, BigDecimal, String)] =
           getSection(atsData.capital_gains_data.map(createSeqFieldInfo).getOrElse(Nil))
         val taxLiability: Option[BigDecimal]                           = atsData.taxLiability.map(_.amount)
+
+        val yourTotalTaxAmount =
+          summaryDataSection
+            .filter((fieldName, _, _) => fieldName == "YourTotalTax")
+            .map(_._2)
+            .headOption
+            .getOrElse(BigDecimal(0))
+
         Ok(
           view(
             Seq(
@@ -73,7 +82,8 @@ class DisplayPTAController @Inject() (
               Tuple2("Allowance data", allowanceDataSection),
               Tuple2("Capital gains data", capitalGainsDataSection)
             ),
-            taxLiability
+            taxLiability,
+            yourTotalTaxAmount
           )
         )
       case Left(e)     => throw e
