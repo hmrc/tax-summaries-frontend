@@ -65,8 +65,7 @@ class DisplayPTAController @Inject() (
         val capitalGainsDataSection: Seq[(String, BigDecimal, String)] =
           getSection(atsData.capital_gains_data.map(createSeqFieldInfo).getOrElse(Nil))
         val taxLiability: Option[BigDecimal]                           = atsData.taxLiability.map(_.amount)
-
-        val yourTotalTaxAmount =
+        val yourTotalTaxAmount                                         =
           summaryDataSection
             .filter((fieldName, _, _) => fieldName == "YourTotalTax")
             .map(_._2)
