@@ -1,20 +1,15 @@
 @-ms-viewport {
-    width: device-width;
-}
-
+    width: device-width; }
 @-o-viewport {
-    width: device-width;
-}
+    width: device-width; }
+
 
 
 #wrapper #content .page-header #user-info {
     float: right;
-    text-align: right;
-}
-
+    text-align: right; }
 #wrapper #content .page-header h1 {
-    clear: right;
-}
+    clear: right; }
 
 h1.heading-xlarge, .heading-48 {
     padding: 25px 0 15px !important;
@@ -30,47 +25,37 @@ h1.heading-xlarge, .heading-48 {
 
 a.data-link + p {
     margin-top: 5px;
-    margin-bottom: 20px;
-}
+    margin-bottom: 20px; }
+
 
 
 /*= Resets
 ---------------------------------------------------------------------------*/
 html {
-    background-color: #fff;
-}
+    background-color: #fff; }
 
 .header-global {
     float: right !important;
     margin-bottom: 15px;
-    width: auto !important;
-}
+    width: auto !important; }
 
 a {
     text-decoration: none !important;
-    color: #0b0c0c;
-}
+    color: #0b0c0c; }
 
 #user-info {
-    clear: both;
-}
+    clear: both; }
 
 .header__menu__proposition-name {
-    color: #0b0c0c;
-}
+    color: #0b0c0c; }
 
 #content a {
     text-decoration: none !important;
-    color: #0b0c0c;
-}
-
+    color: #0b0c0c; }
 #content article {
-    width: 100% !important;
-}
-
+    width: 100% !important; }
 #content article table {
-    margin-top: 0;
-}
+    margin-top: 0; }
 
 /*= Hide these items
 ---------------------------------------------------------------------------*/
@@ -103,18 +88,15 @@ footer,
 /*= Remove urls being pasted after links
 ---------------------------------------------------------------------------*/
 a[href]:after {
-    content: none !important;
-}
+    content: none !important; }
 
 /*= Tax calculation
 ---------------------------------------------------------------------------*/
 #capital-gains {
-    page-break-inside: avoid;
-}
+    page-break-inside: avoid; }
 
 .data-link span {
-    text-decoration: none !important;
-}
+    text-decoration: none !important; }
 
 /*---------------------------------------------------------------------------*/
 .display-block {
@@ -131,14 +113,12 @@ a.data-link, #total-income-tax a {
     border-left: #28A197 solid;
     padding-left: 8px;
 }
-
 .hmrc-logo-print h2 {
     font-size: 1.4em;
     font-weight: normal;
     margin: 0;
     line-height: 1;
 }
-
 .hmrc-logo-print h2 span {
     display: block;
 }
@@ -147,12 +127,9 @@ a.data-link, #total-income-tax a {
     display: none;
 }
 
-.govuk-
-
-!
--font-size-48 {
-    font-size: 2.5em !important;
-}
+.govuk-!-font-size-48 {
+            font-size: 2.5em !important;
+        }
 
 .govuk-heading-l {
     font-size: 2em !important;
@@ -223,14 +200,13 @@ header :first-child {
 }
 
 .govuk-table__header,
-#spend-table tr:last-of-type td {
-    border: none !important;
-}
+tr:last-of-type td {
+    border: none !important;}
 
-#spend-table tr:nth-child(even) {
+tr:nth-child(even) {
     display: none;
 }
 
-#spend-table tr:not(:last-of-type) {
+tr:not(:last-of-type) {
     border-bottom: solid var(--govuk-border-colour) 4px;
 }
