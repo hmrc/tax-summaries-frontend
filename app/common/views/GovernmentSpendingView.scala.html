@@ -63,14 +63,11 @@
         pageHeading = Messages("ats.treasury_spending.title"),
         headerSectionNeeded = true
 ) {
-
-
-
-        @pageHeading(
-            text = "ats.treasury_spending.title",
-            section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo),
-            marginTop = false
-        )
+    @pageHeading(
+        text = "ats.treasury_spending.title",
+        section = Messages("generic.tax_year_heading", viewModel.taxYearFrom, viewModel.taxYearTo),
+        marginTop = false
+    )
 
     @if(viewModel.isScottishTaxPayer && viewModel.scottishIncomeTax.nonZero) {
         @p(Text(messages("ats.treasury_spending.section.sit.lede")))
