@@ -20,7 +20,7 @@ import common.models.AgentToken
 import common.utils.TestConstants.*
 import common.utils.{AgentTokenException, BaseSpec}
 import play.utils.UriEncoding
-import uk.gov.hmrc.crypto.{AesCrypto, PlainText}
+import uk.gov.hmrc.crypto.{AesCrypto, AesGCMCrypto, Encrypter, PlainText}
 
 import java.util.Date
 
@@ -37,7 +37,7 @@ class CryptoServiceSpec extends BaseSpec {
   val agentUar: String   = testUar
   val clientUtr: String  = testUtr
   val invalidUtr: String = testInvalidUtr
-  val timestamp: Long    = new Date().getTime()
+  val timestamp: Long    = new Date().getTime
 
   val agentToken: AgentToken = AgentToken(
     agentUar,
@@ -49,11 +49,16 @@ class CryptoServiceSpec extends BaseSpec {
     override protected val encryptionKey: String = testKey
   }
 
-  // Common method for creating a valid encryped token
+  val gcmCrypto: AesGCMCrypto = new AesGCMCrypto {
+    override protected val encryptionKey: String = testKey
+  }
+
+  // Common method for creating a valid encrypted token
   def encryptToken(
     agent: String = agentUar,
     client: String = clientUtr,
-    timestamp: Long = new Date().getTime
+    timestamp: Long = new Date().getTime,
+    crypto: Encrypter
   ): String = {
     val plain     = s"$agent:$client:$timestamp"
     val encrypted = crypto.encrypt(PlainText(plain)).value
@@ -63,13 +68,13 @@ class CryptoServiceSpec extends BaseSpec {
   "getAgentToken" must {
     "return an AgentToken when the input is valid" in {
 
-      val result = sut.getAgentToken(encryptToken(timestamp = timestamp))
+      val result = sut.getAgentToken(encryptToken(timestamp = timestamp, crypto))
       result mustBe agentToken
     }
 
     "throw an AgentTokenException when an expired token is passed" in {
 
-      val token = encryptToken(timestamp = new Date().getTime - (maxAge * 2000))
+      val token = encryptToken(timestamp = new Date().getTime - (maxAge * 2000), crypto)
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
@@ -80,7 +85,7 @@ class CryptoServiceSpec extends BaseSpec {
 
     "throw an exception when the token date is in the future" in {
 
-      val token = encryptToken(timestamp = new Date().getTime + (maxAge * 1000))
+      val token = encryptToken(timestamp = new Date().getTime + (maxAge * 1000), crypto)
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
@@ -91,7 +96,7 @@ class CryptoServiceSpec extends BaseSpec {
 
     "throw an AgentTokenException when the agentToken is malformed" in {
 
-      val token = encryptToken(client = invalidUtr)
+      val token = encryptToken(client = invalidUtr, timestamp, crypto)
 
       val exception = intercept[AgentTokenException] {
         sut.getAgentToken(token)
@@ -110,5 +115,12 @@ class CryptoServiceSpec extends BaseSpec {
 
       exception.message must include("Cannot decrypt token")
     }
+
+    "return an AgentToken when the input is valid using gcmCrypto" in {
+
+      val result = sut.getAgentToken(encryptToken(timestamp = timestamp, gcmCrypto))
+      result mustBe agentToken
+    }
   }
+
 }
