@@ -131,6 +131,11 @@ a.data-link, #total-income-tax a {
             font-size: 2.5em !important;
         }
 
+.hmrc-banner {
+    border:none;
+    display: block;
+}
+
 .govuk-heading-l {
     font-size: 2em !important;
 }
