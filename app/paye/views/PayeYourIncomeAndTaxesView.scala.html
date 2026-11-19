@@ -19,6 +19,7 @@
 @import common.utils.HtmlFormatter
 @import common.views.html.helpers.{H1, H2, P, Link}
 @import common.views.MainTemplate
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 
 @this(
     main: MainTemplate,
@@ -26,7 +27,8 @@
     h1: H1,
     h2: H2,
     p: P,
-    govukInsetText: GovukInsetText
+    govukInsetText: GovukInsetText,
+    hmrcBanner : HmrcBanner
 )
 
 @(  viewModel:PayeYourIncomeAndTaxes
@@ -41,7 +43,8 @@
         showBackLink = true
     ) {
 
-
+    /*-- @hmrcBanner(Banner()) */
+    
     <div class="govuk-!-margin-bottom-5">
         <div class="print-this">
             <img src="/annual-tax-summary/assets/images/icon-print.svg" alt="">
