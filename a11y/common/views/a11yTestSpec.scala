@@ -51,7 +51,6 @@ class a11yTestSpec extends IntegrationSpec with AccessibilityMatchers {
     .configure(
       "microservice.services.auth.port"                               -> server.port(),
       "microservice.services.tax-summaries.port"                      -> server.port(),
-      "microservice.services.cachable.session-cache.port"             -> server.port(),
       "microservice.services.pertax.port"                             -> server.port(),
       "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}"
     )

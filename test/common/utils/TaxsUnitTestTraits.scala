@@ -75,7 +75,7 @@ trait TaxsUnitTestTraits
   implicit def convertToMockConfiguration5[T](err: Throwable): MockConfiguration[Future[Option[T]]] = Configure(err)
 
   // used to for mock setup functions to specify the location of the data,
-  // CachedLocally for when the data can be found in KeyStore or Save4Later, and NotCachedLocally where
+  // CachedLocally for when the data can be found in cache, and NotCachedLocally where
   // a call to another service is required
   sealed trait CacheConfigurationLocation
 

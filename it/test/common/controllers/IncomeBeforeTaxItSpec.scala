@@ -38,9 +38,8 @@ class IncomeBeforeTaxItSpec extends IntegrationSpec {
   private val mockPertaxAuthService           = mock[PertaxAuthService]
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
-      "microservice.services.auth.port"                   -> server.port(),
-      "microservice.services.tax-summaries.port"          -> server.port(),
-      "microservice.services.cachable.session-cache.port" -> server.port()
+      "microservice.services.auth.port"          -> server.port(),
+      "microservice.services.tax-summaries.port" -> server.port()
     )
     .overrides(
       api.inject.bind[AsyncCacheApi].toInstance(mock[AsyncCacheApi]),
