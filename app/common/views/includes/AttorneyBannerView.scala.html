@@ -15,13 +15,15 @@
  *@
 
 @import common.models._
+@import common.views.html.helpers.P
 
-@this()
+@this(
+    p: P
+)
 
 @(actingAttorney : Option[ActingAsAttorneyFor])(implicit messages: Messages)
 
-@if(actingAttorney.isDefined) {
+
 <div class="nested-banner">
-    <p id="agent-banner">@{Messages("generic.acting_for").mkString} @{actingAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}. </p>
+    @p(HtmlContent(s""" ${Messages("generic.acting_for").mkString} ${actingAttorney.get.name.getOrElse(Messages("generic.name_not_defined")).split(" ").map(_.capitalize).mkString(" ")}. """), elmId = Some("agent-banner"), classes = Some("govuk-body govuk-!-margin-top-1"))
 </div>
-}

@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import common.config.ApplicationConfig
 import common.models.AgentToken
 import play.utils.UriEncoding
-import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, PlainText, SymmetricCryptoFactory}
+import uk.gov.hmrc.crypto.{AesCrypto, Crypted, PlainText}
 import common.utils.AgentTokenException
 
 import java.time.Instant
@@ -31,10 +31,8 @@ class CryptoService @Inject() ()(implicit val appConfig: ApplicationConfig) {
   def key: String      = appConfig.encryptionKey
   def tokenMaxAge: Int = appConfig.encryptionTokenMaxAge
 
-  private def aesCrypto: Encrypter & Decrypter = {
-    val gcmCypher = SymmetricCryptoFactory.aesGcmCrypto(key)
-    val ecbCypher = SymmetricCryptoFactory.aesCrypto(key)
-    SymmetricCryptoFactory.composeCrypto(currentCrypto = ecbCypher, previousDecrypters = List(gcmCypher))
+  private def aesCrypto: AesCrypto = new AesCrypto {
+    val encryptionKey: String = key
   }
 
   def getAgentToken(token: String): AgentToken = {
