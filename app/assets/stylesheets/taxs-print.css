@@ -143,6 +143,7 @@ a.data-link, #total-income-tax a {
 [class*="govuk-grid-"] {
     display: block;
     float: none;
+    padding: 0;
     width: 100%;
 }
 
@@ -153,6 +154,8 @@ a.data-link, #total-income-tax a {
 .govuk-main-wrapper > .govuk-grid-row {
     display: flex;
     flex-direction: column;
+    padding: 0;
+    margin: 0;
 
 }
 

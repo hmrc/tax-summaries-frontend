@@ -56,10 +56,6 @@ lazy val microservice      = Project(appName, file("."))
     scalacOptions ++= commonSettings
   )
   .settings(routesImport ++= Seq("common.models.admin._"))
-  .configs(A11yTest)
-  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings) *)
-  .settings(headerSettings(A11yTest) *)
-  .settings(automateHeaderSettings(A11yTest))
 
 Test / Keys.fork := true
 Test / parallelExecution := true

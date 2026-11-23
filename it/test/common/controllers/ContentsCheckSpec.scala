@@ -24,7 +24,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import play.api
 import play.api.Application
-import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -153,32 +152,6 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       .thenReturn(Future.successful(FeatureFlag(SelfAssessmentServiceToggle, isEnabled = true)))
 
     server.stubFor(
-      get(urlPathMatching(s"$cacheMap/.*"))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("""
-                        |{
-                        | "id": "session-id",
-                        | "data": {
-                        |   "addressPageVisitedDto": {
-                        |     "hasVisitedPage": true
-                        |   }
-                        | },
-                        | "modifiedDetails": {
-                        |    "createdAt": {
-                        |       "$date": 1400258561678
-                        |    },
-                        |    "lastUpdated": {
-                        |       "$date": 1400258561675
-                        |    }
-                        | }
-                        |}
-                        |""".stripMargin)
-        )
-    )
-
-    server.stubFor(
       WireMock
         .get(urlMatching("/single-customer-account-wrapper-data/wrapper-data.*"))
         .willReturn(ok(wrapperDataResponse))
@@ -229,15 +202,11 @@ class ContentsCheckSpec extends IntegrationSpec with JsonUtil {
       "microservice.services.auth.port"                               -> server.port(),
       "microservice.services.tax-summaries.port"                      -> server.port(),
       "sca-wrapper.services.single-customer-account-wrapper-data.url" -> s"http://localhost:${server.port()}",
-      "microservice.services.cachable.session-cache.port"             -> server.port(),
-      "microservice.services.cachable.session-cache.host"             -> "127.0.0.1",
       "urBanner.enable"                                               -> true
     )
     .build()
 
   val uuid: String = UUID.randomUUID().toString
-
-  val cacheMap = s"/keystore/pertax-frontend"
 
   def request(url: String): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, url).withSession(SessionKeys.sessionId -> uuid, SessionKeys.authToken -> "Bearer 1")
