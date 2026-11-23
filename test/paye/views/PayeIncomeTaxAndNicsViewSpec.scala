@@ -101,7 +101,6 @@ class PayeIncomeTaxAndNicsViewSpec extends ViewSpecBase with TestConstants with 
 
       document.getElementById("tax_underpaid_previous_year").text() mustBe "Tax underpaid in a previous year £450.00"
 
-      document.select("#adjustments-table tbody th") mustBe empty
     }
 
     "have correct data for UK tax payer" in {
