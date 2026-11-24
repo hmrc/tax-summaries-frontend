@@ -43,12 +43,13 @@ class NicsController @Inject() (
 )(implicit override val appConfig: ApplicationConfig, ec: ExecutionContext)
     extends TaxYearRequest(mcc, genericErrorView, tokenErrorView, taxYearUtil) {
 
-  private def redirectToMainTaxAndNIPage(request: AuthenticatedRequest[AnyContent]): Result =
+  private def redirectToMainTaxAndNIPage(request: AuthenticatedRequest[AnyContent]): Result = {
     request.getQueryString("taxYear") match {
       case Some(taxYear) =>
         Redirect(sa.controllers.routes.NicsController.authorisedTaxAndNICs.url + s"?taxYear=$taxYear")
       case _             => Redirect(common.controllers.routes.SelectTaxYearController.onPageLoad)
     }
+  }
 
   def redirectForDeprecatedTotalIncomeTaxPage: Action[AnyContent] = authJourney.authForSAIndividualsOrAgents {
     request =>
