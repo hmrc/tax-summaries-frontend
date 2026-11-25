@@ -69,7 +69,8 @@
         Some(
             Seq(
                 TableRow(
-                    content = HtmlContent(Messages("generic.total"))
+                    content = HtmlContent(Messages("generic.total")),
+                    classes = "govuk-!-font-weight-bold"
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.nonNegativeTotalIncomeTaxAndNics.renderCurrencyValueAsHtml(poundsOnly = true).body),
