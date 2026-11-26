@@ -118,7 +118,7 @@
         </tr>
         }
         <tr id="totalUkIncomeTax" class="govuk-table__row">
-                <td class="govuk-table__cell">@Messages("paye.ats.treasury_spending.total")</td>
+                <th class="govuk-table__header ">@Messages("paye.ats.treasury_spending.total")</th>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@viewModel.totalUKIncomeTax.renderCurrencyValueAsHtml(poundsOnly = false)</td>
         </tr>
         @if(isWelshTaxPayer){
