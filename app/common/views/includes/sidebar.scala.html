@@ -16,11 +16,12 @@
 
 @this()
 
-@(beforeContentHtml: Option[Html] = None)
+@(beforeContentHtml: Option[Html] = None)(
+    implicit messages: Messages)
 
 <aside>
     @if(beforeContentHtml.isDefined) {
-        <div class="govuk-grid-column-full govuk-!-text-align-right">
+        <div class="govuk-grid-column-full govuk-!-text-align-right" data-logo-text='@Messages("generic.hm.revenue") & @Messages("generic.hm.customs")'>
         @beforeContentHtml
         </div>
     }
