@@ -11,6 +11,10 @@
    color:#005ea5;
 }
 
+.hmrc-banner{
+    display: none;
+}
+
  .hmrc-logo-print {
      display: none;
 }
